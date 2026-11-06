@@ -108,18 +108,11 @@ for n in range(4):
     U={i for i in X if mask>>i&1}
     assert U<=pre(image(U))
     assert (pre(image(U))==U)==(not image(U)&image(X-U))
-# Visual discovery sequences: failed reciprocal, cancellation, normalization,
-# and the unique direct-sum trial. These are mathematical checks of the figures.
-assert expand((3+4*I)*Rational(1,3)) == 1+Rational(4,3)*I
-assert 3*(-4)+4*3 == 0 and 3*3-4*(-4) == 25
-assert Rational(9,25)+Rational(16,25) == 1
-assert -Rational(12,25)+Rational(12,25) == 0
-for trial,rem in [(1,[3,1]),(2,[2,0]),(3,[1,-1])]:
- assert Matrix([trial,trial])+Matrix(rem) == Matrix([4,2])
- assert (sum(rem)==0) == (trial==3)
- assert trial+trial+sum(rem) == 6
-for diagonal in [Rational(0), Rational(1,2), Rational(1)]:
- assert Matrix([1-diagonal,0])+Matrix([0,1-diagonal])+Matrix([diagonal,diagonal]) == Matrix([1,1])
-diagonal=symbols('diagonal', real=True)
-assert Matrix([1-diagonal,0])+Matrix([0,1-diagonal])+Matrix([diagonal,diagonal]) == Matrix([1,1])
+# Additional textbook examples retained in the reference-style revision.
+u4,v4,alpha=symbols('u4 v4 alpha')
+assert expand(alpha*(5*u4)+5*v4-5*(alpha*u4+v4)) == 0
+xx,yy,zz=symbols('xx yy zz')
+assert Matrix([xx,0,0])+Matrix([0,yy,0]) == Matrix([xx,yy,0])
+assert Matrix([xx,yy,0])+Matrix([0,0,zz]) == Matrix([xx,yy,zz])
+assert Matrix([0,1,0])+Matrix([0,0,1])+Matrix([0,-1,-1]) == Matrix([0,0,0])
 print('Week 1 exact arithmetic, F2 identities and finite-set checks passed.')

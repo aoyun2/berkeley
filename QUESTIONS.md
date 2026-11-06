@@ -1,10 +1,10 @@
 # Backfill restart status and questions
 
-## Current regeneration — Week 1 figures rebuilt
+## Current regeneration — following Aaron's supplied PDF
 
-- **MATH 110 week 1 (2026-08-31): revised**, 19-page [handout](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf), 4-page [solutions](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/solutions.pdf), and an offline [interactive direct-sum supplement](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/vector-explorer.html). All five figures have been replaced with mathematical sequences after Aaron's latest feedback. Independent visual review, exact checks, browser interaction checks and final-page inspection passed after corrections. The [audit](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/audit.md) distinguishes this review from the superseded figure approval; it does not claim Aaron has approved the new version.
+- **MATH 110 week 1 (2026-08-31): revised again to follow the supplied PDF directly**, with a 15-page [handout](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf) and 4-page [solutions](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/solutions.pdf). Compact static illustrations replace the staged full-page figures; the unrequested interactive supplement is removed. Proof motivations are shorter and the worked mathematics remains explicit. A fresh independent reviewer read the full reference and sources and checked all final pages; requested source/proof/layout corrections passed recheck. The [audit](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/audit.md) records this version. Prior figure approvals were superseded by Aaron's feedback.
 - **MATH 110 weeks 2–10: not yet regenerated**, previous versions remain rejected. An unreviewed Week 2 handout draft is preserved locally; its solutions and release review remain unfinished.
-- CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. Production follows the MATH 110 rework in that order.
+- CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. Production follows the MATH 110 rework in that order, using the supplied PDF as the presentation standard.
 
 
 ## Previous MATH 110 release — rejected; revision required
