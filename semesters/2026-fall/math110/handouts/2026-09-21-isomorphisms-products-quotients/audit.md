@@ -1,6 +1,6 @@
 # Week 4 revised packet — independent review
 
-Current version: 14 handout pages and 3 solutions pages. Previous approval of the rejected packet is superseded. The revision follows the supplied reference PDF directly, with short motivations, explicit worked mathematics and compact static illustrations.
+Current version: 13 handout pages and 3 solutions pages. Previous approval of the rejected packet is superseded. The revision follows the supplied reference PDF directly, with short motivations, explicit worked mathematics and compact static illustrations.
 
 ## Sources and scope
 
@@ -24,3 +24,16 @@ Root and reviewer inspected all 14+3 final pages at readable scale. Handout rend
 
 Handout SHA-256: 71a58ddcb331c1b8d5d8825b45eb434dc714281d4b152022ba5e8c3a7ba14494.
 Solutions SHA-256: 57e7ed7016e4b5e1d40d92da956be9e484ad40f3641a723d21de89eb5a6d8335.
+
+## Latest ideas/reconstruction consolidation
+
+Current packet:13 handout pages and3 unchanged solutions pages. Pairing bases now gives one proof for the finite and indexed-basis classification and explicit basis-image criteria. The inverse identity ST=I iff TS=I is proved once with both operator and equal-finite-dimension cases; one-sided inverse existence is stated and constructed from basis images. Invertible-map/invertible-matrix equivalence, every invertible matrix's coordinate-transition interpretation, and addition-map isomorphism iff directness are explicit. Product components and inserted bases are proved once, followed by dimension and concrete basis examples. Point differences recover the affine direction; short coset-equality and representative-independence derivations reuse the same argument. Routine repeated motivation boxes were removed while retaining all necessary proof steps.
+
+All original Notes Definitions21–24, Propositions28–39, Examples34–42, matching LADR3D and3E through3.103, standard numeric examples, HW4 including optionalP7, actual PracticeMidterm1Q2/Q3 and reviewE9/E10 remain. The four compact illustrative figures and separate solutions remain intact. No quotient map/dimension or later theory introduced. Preserved source corrections: product-dimension citation3.92, infinite-field right-inverse qualification, omitted linearity in optionalP7, and typedQ3 statement controlling its solution.
+
+Fresh independent correctness/coverage and ideas/intuition/motivations/reference-style/layout reviews both APPROVED. Reviewer caught and root fixed two notation issues: name the previously defined multiplication maps x→Ax/Bx instead of premature coordinate maps, and spell out column j instead of undefined colon notation. Root and reviewer personally inspected every final13+3 page at readable scale. Final renders /tmp/math110-w04-ideas-final1/handout-01.png through handout-13.png and solutions-01.png through solutions-03.png. Independent report /tmp/math110-w04-ideas-audit.md. No unresolved findings.
+
+Exact check script passes all inverse, coordinate, polynomial, finite-field, coset and new product-basis arithmetic. Build zero overfull boxes. Original materials and Weak spots preserved.
+
+Current handout SHA-256: af6e9af535b473a783bfc412f9d12471411ed9dc63a7da2149212e15b72a022d.
+Current solutions SHA-256: 57e7ed7016e4b5e1d40d92da956be9e484ad40f3641a723d21de89eb5a6d8335.

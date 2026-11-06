@@ -54,3 +54,6 @@ assert s.Matrix([[1,1],[0,1]])*s.diag(2,1)==s.Matrix([[2,1],[0,1]])
 T=s.Matrix([1,0]);S=s.Matrix([[1,0]])
 assert S*T==s.eye(1) and T*S==s.diag(1,0)
 print('Week4 exact inverse, coordinate, polynomial, finite-field, and coset checks passed.')
+
+# Inserted product-basis worked instance.
+assert s.Matrix([2,0,1,3,-1])==2*s.eye(5)[:,0]+s.eye(5)[:,2]+3*s.eye(5)[:,3]-s.eye(5)[:,4]
