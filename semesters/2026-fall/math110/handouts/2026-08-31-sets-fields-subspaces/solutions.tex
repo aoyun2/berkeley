@@ -4,77 +4,161 @@
 \title{MATH 110 --- Week 1}\subtitle{Homework 1 --- Solutions}
 \author{}\date{}\ihead{}
 \begin{document}\maketitle
-\begin{prob}\textbf{HW1 P1(a): images of inverse images.}
-\idea{Membership in the inverse image already requires the output to lie in $V$.}
+\begin{prob}\textbf{HW1 P1(a): sending an inverse image forward.}
+\idea{To belong to $f^{-1}(V)$, an input must already have its output in $V$. Sending those inputs forward therefore selects the elements of $V$ that the function actually attains.}
 \begin{steps}
-\ii If $y\in f(f^{-1}(V))$, then $y=f(x)$ for some $x$ with $f(x)\in V$. Hence $y\in V$.
-\ii More precisely, $f(f^{-1}(V))=V\cap f(X)$: the forward inclusion follows above and from being an output; for the reverse, if $y\in V\cap f(X)$, choose $x$ with $f(x)=y$, so $x\in f^{-1}(V)$.
-\ii Equality with $V$ therefore holds exactly when $V\subseteq f(X)$. It holds for every $V\subseteq Y$ exactly when $f$ is surjective (take $V=Y$ for necessity).
-\end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P1(b): inverse images of images.}
-\idea{Each element of $U$ supplies its own witness that its output belongs to $f(U)$.}
+\ii Let $y\in f(f^{-1}(V))$. By the image definition there is an $x\in f^{-1}(V)$ with $y=f(x)$. By the inverse-image definition, $f(x)\in V$. Thus $y\in V$, proving the requested inclusion.
+\ii In fact $f(f^{-1}(V))=V\cap f(X)$. For the forward inclusion, the preceding step gives $y\in V$ and the equation $y=f(x)$ gives $y\in f(X)$.
+\ii For the reverse inclusion, let $y\in V\cap f(X)$. Because $y\in f(X)$, choose $x\in X$ with $f(x)=y$. Because $y\in V$, this $x$ lies in $f^{-1}(V)$. Hence $y=f(x)\in f(f^{-1}(V))$.
+\end{steps}
+The intersection formula identifies exactly which outputs are lost: the elements of $V$ outside $f(X)$.
+\end{prob}
+\begin{prob}\textbf{HW1 P1(b): taking the inverse image of an image.}
+\idea{Every $u\in U$ supplies an output in $f(U)$. The inverse image selects $u$ and also any other input with the same output. To describe the extra inputs, compare one input outside $U$ with one inside $U$.}
 \begin{steps}
-\ii If $x\in U$, then $f(x)\in f(U)$, hence $x\in f^{-1}(f(U))$.
-\ii Equality holds exactly when there is no $x\notin U$ whose value equals the value at some $u\in U$; equivalently, $f(U)\cap f(X\setminus U)=\varnothing$.
-\ii This says $U$ is a union of complete \emph{fibers}, where a fiber means a set $f^{-1}(\{y\})$ of all inputs with one fixed value.
-\ii If $f$ is injective, $f(x)=f(u)$ implies $x=u$, giving equality for every $U$. Conversely, equality for every singleton $U=\{u\}$ forces any $x$ with $f(x)=f(u)$ to equal $u$, proving injectivity.
-\end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P1(c): strict examples and the quantifiers.}
-\idea{A missed output makes (a) strict; a shared output across $U$ and its complement makes (b) strict.}
+\ii If $u\in U$, then $f(u)\in f(U)$ by the image definition. Thus $u\in f^{-1}(f(U))$, proving $U\subseteq f^{-1}(f(U))$.
+\ii More explicitly,
+\[
+f^{-1}(f(U))=\{x\in X:\text{there exists }u\in U\text{ with }f(x)=f(u)\}.
+\]
+Indeed, $f(x)\in f(U)$ means exactly that some $u\in U$ has value $f(x)$.
+\ii An extra element therefore exists exactly when there are $x\in X\setminus U$ and $u\in U$ with $f(x)=f(u)$. This is equivalent to the images $f(X\setminus U)$ and $f(U)$ having a common element.
+\end{steps}
+No inverse function is used: $f^{-1}(f(U))$ is defined even if several inputs have the same output.
+\end{prob}
+\begin{prob}\textbf{HW1 P1(c): strict examples.}
+\idea{Use one function with both a missing output and repeated outputs. A missing output can make (a) strict; repeated outputs can make (b) strict.}
+Let $X=\{a,b,c,d\}$, $Y=\{p,q,r\}$ and
+\[
+\begin{array}{c|cccc}x&a&b&c&d\\\hline f(x)&p&p&q&q\end{array}.
+\]
 \begin{steps}
-\ii Let $X=\{0\}$, $Y=\{0,1\}$, $f(0)=0$, and $V=\{1\}$. Then $f(f^{-1}(V))=\varnothing\subsetneq\{1\}$.
-\ii Let $X=\{0,1\}$, $Y=\{0\}$, $f(0)=f(1)=0$, and $U=\{0\}$. Then $f^{-1}(f(U))=\{0,1\}\supsetneq U$.
-\ii Global surjectivity or injectivity is not necessary for a \emph{particular} subset: $V=\varnothing$ always gives equality in (a), and $U=X$ always gives equality in (b). The exact fixed-subset conditions are those proved above.
-\end{steps}\end{prob}
+\ii Set $V=\{q,r\}$. Only $c,d$ map into $V$, so $f^{-1}(V)=\{c,d\}$. Their outputs form $\{q\}$, so $f(f^{-1}(V))=\{q\}\subsetneq V$. The missing element is $r$.
+\ii Set $U=\{a,c\}$. Then $f(U)=\{p,q\}$ and every input maps into this set. Thus $f^{-1}(f(U))=X\supsetneq U$. The extra elements are $b,d$.
+\end{steps}
+\end{prob}
+\begin{prob}\textbf{HW1 P1(c): exact equality conditions for a fixed subset.}
+\idea{The previous formulas identify the two possible obstructions: an unattained element of $V$, or a value shared by an input in $U$ and one outside $U$. Excluding the relevant obstruction is both necessary and sufficient.}
+\begin{steps}
+\ii From part (a), $f(f^{-1}(V))=V\cap f(X)$. This equals $V$ if and only if $V\subseteq f(X)$: each element of this particular $V$ must be attained.
+\ii From part (b), equality $f^{-1}(f(U))=U$ holds if and only if
+\[
+f(U)\cap f(X\setminus U)=\varnothing.
+\]
+If the intersection has an element $y=f(u)=f(x)$ with $u\in U$, $x\notin U$, then $x$ is an extra inverse-image element. Conversely, any extra inverse-image element supplies such a $y$.
+\ii For the function in the strict examples, $V=\{p\}$ gives equality in (a), since $f^{-1}(V)=\{a,b\}$ and its image is $\{p\}$, even though $f$ is not surjective.
+\ii For that same function, $U=\{a,b\}$ gives equality in (b), since $f(U)=\{p\}$ and $f^{-1}(\{p\})=\{a,b\}$, even though $f$ is not injective.
+\end{steps}
+These examples show why global surjectivity and injectivity are stronger than the equality conditions for a fixed $V$ or $U$.
+\end{prob}
+\begin{prob}\textbf{HW1 P1(c): equality for every subset.}
+\idea{To force surjectivity, test the whole codomain. To force injectivity, test a singleton input set: equality then prevents another input from having the same value.}
+\begin{steps}
+\ii If $f$ is surjective, $f(X)=Y$, so $V\cap f(X)=V$ for every $V\subseteq Y$. Conversely, equality for every $V$ includes $V=Y$; part (a) then gives $Y=f(X)$, hence surjectivity.
+\ii If $f$ is injective and $x\in f^{-1}(f(U))$, choose $u\in U$ with $f(x)=f(u)$. Injectivity gives $x=u\in U$. Combined with part (b), this proves equality for every $U\subseteq X$.
+\ii Conversely, suppose equality holds for every $U$. If $f(x)=f(u)$, take $U=\{u\}$. Then $x\in f^{-1}(f(\{u\}))=\{u\}$, so $x=u$. This is injectivity.
+\end{steps}
+\end{prob}
 \begin{prob}\textbf{HW1 P2 (LADR 1A.7).}
-\idea{The square is the conjugate, so the cube becomes a real sum of squares.}
+\idea{To prove that $z$ is a cube root of $1$, compute $z^3$. Squaring first is useful here: the square turns out to be the conjugate of $z$, so one more multiplication is real.}
 \begin{steps}
-\ii Set $z=(-1+\sqrt3\,i)/2$. Using $i^2=-1$,
-\[z^2=\frac{1-2\sqrt3\,i-3}{4}=\frac{-1-\sqrt3\,i}{2}.\]
-\ii Multiply: $z^3=\frac{(-1-\sqrt3\,i)(-1+\sqrt3\,i)}4=\frac{1+3}{4}=1$. This is precisely the definition of a cube root of $1$.
+\ii Set $z=(-1+\sqrt3\,i)/2$. Expand the square, using $i^2=-1$:
+\[
+z^2=\frac{(-1)^2+2(-1)(\sqrt3\,i)+(\sqrt3\,i)^2}{4}
+=\frac{1-2\sqrt3\,i-3}{4}
+=\frac{-1-\sqrt3\,i}{2}.
+\]
+\ii Multiply $z^2$ by $z$ and show the imaginary terms cancel:
+\[
+z^3=\frac{(-1-\sqrt3\,i)(-1+\sqrt3\,i)}4
+=\frac{1-\sqrt3\,i+\sqrt3\,i-3i^2}{4}
+=\frac{1+3}{4}=1.
+\]
+\ii A cube root of $1$ means a number whose cube is $1$. The computed equality proves the claim.
 \end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P3.}
-\idea{A nonzero scalar can be removed using its inverse.}
+\begin{prob}\textbf{HW1 P3: a zero product in a field.}
+\idea{The inverse axiom lets us remove $a$ only if $a\ne0$. Split into the two cases first, then multiply the equation by $a^{-1}$ in the second case.}
 \begin{steps}
-\ii If $a=0$, the claimed alternative already holds.
-\ii Otherwise $a^{-1}$ exists by the field axiom, and $b=(a^{-1}a)b=a^{-1}(ab)=a^{-1}0=0$, using associativity and the identity $c0=0$ proved in the handout.
+\ii If $a=0$, one of the required alternatives already holds.
+\ii Suppose $a\ne0$. The field axiom provides $a^{-1}$, with $a^{-1}a=1$. Thus
+\[
+b=1b=(a^{-1}a)b=a^{-1}(ab)=a^{-1}0=0.
+\]
+Associativity gives the third equality, the hypothesis gives the fourth, and the field multiplication-by-zero identity $c0=0$ proved in the handout gives the last.
+\ii Thus either $a=0$ or, in the other case, $b=0$.
 \end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P4 (LADR 1B.2).}
-\idea{Use the same inverse argument with scalar multiplication of a vector.}
+\begin{prob}\textbf{HW1 P4 (LADR 1B.2): zero scalar multiple of a vector.}
+\idea{The field still supplies an inverse for a nonzero scalar. Apply that inverse through scalar multiplication of vectors, using $(ab)v=a(bv)$; Notes Proposition 4 identifies a scalar multiple of the zero vector.}
 \begin{steps}
-\ii If $a=0$, the assertion holds.
-\ii If $a\ne0$, then $v=1v=(a^{-1}a)v=a^{-1}(av)=a^{-1}0_V=0_V$, by the vector-space axioms and Notes Proposition 4.
+\ii If $a=0_F$, the first alternative holds. Suppose instead $a\ne0_F$, so $a^{-1}$ exists.
+\ii Apply $a^{-1}$ to $av=0_V$:
+\[
+v=1v=(a^{-1}a)v=a^{-1}(av)=a^{-1}0_V=0_V.
+\]
+Here $1v=v$ and scalar associativity are vector-space axioms; $a^{-1}0_V=0_V$ is Notes Proposition 4(ii).
+\ii Thus $a=0_F$ or $v=0_V$. The argument does not divide by a vector; only the scalar $a$ is inverted.
 \end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P5 (LADR 1C.4).}
-\idea{The zero function forces the right-hand side to be zero; integration preserves sums and scalar multiples.}
+\begin{prob}\textbf{HW1 P5 (LADR 1C.4): a prescribed integral.}
+\idea{A subspace must contain the zero function, whose integral is zero. If this necessary condition gives $b=0$, check it is sufficient by calculating the integral of $af+g$.}
+We cite three elementary-calculus facts: continuous functions on $[0,1]$ have definite integrals, sums and real scalar multiples of continuous functions are continuous, and integration is linear.
 \begin{steps}
-\ii A continuous function on $[0,1]$ has no discontinuity there; its definite integral $\int_0^1 f$ is the usual signed area, defined by the limit of Riemann sums. We use the elementary-calculus facts that continuous functions are integrable, expressions $af+g$ formed from continuous $f,g$ and real $a$ are continuous, and $\int(af+g)=a\int f+\int g$.
-\ii If $U_b$ is a subspace, it contains the zero function. Its integral is $0$, so the defining equality forces $b=0$.
-\ii Suppose $b=0$. The zero function belongs to $U_0$. For $f,g\in U_0$, $a\in\mathbb R$, $af+g$ is continuous and
-\[\int_0^1(af+g)=a\int_0^1 f+\int_0^1g=a\cdot0+0=0.\]
-\ii Thus $af+g\in U_0$; the subspace test proves the result. For example $f(x)=x-1/2$ belongs to $U_0$ since $\int_0^1(x-1/2)\,dx=0$.
+\ii Suppose $U_b$ is a subspace. Its zero vector is the function $f(x)=0$ for every $x$. Since $\int_0^1 0\,dx=0$, membership in $U_b$ forces $b=0$.
+\ii Conversely, assume $b=0$. The zero function is continuous and has integral zero, so belongs to $U_0$.
+\ii Let $f,g\in U_0$ and $a\in\mathbb R$. The function $af+g$ is continuous, and linearity gives
+\[
+\int_0^1(af(x)+g(x))\,dx
+=a\int_0^1f(x)\,dx+\int_0^1g(x)\,dx
+=a\cdot0+0=0.
+\]
+Thus $af+g\in U_0$.
+\ii The zero and closure conditions are the subspace test (Notes Definition 5). They prove that $U_0$ is a subspace, completing both directions.
+\end{steps}
+For a concrete member, $f(x)=x-1/2$ is continuous and
+\[
+\int_0^1(x-1/2)\,dx=\left[\frac{x^2}{2}-\frac{x}{2}\right]_0^1=\frac12-\frac12=0.
+\]
+\end{prob}
+\begin{prob}\textbf{HW1 P6 (LADR 1C.5): the scalar field matters.}
+\idea{The ambient space is a complex vector space, so scalar closure must include multiplication by $i$. One real vector sent outside $\mathbb R^2$ disproves closure.}
+\begin{steps}
+\ii The vector $(1,0)$ belongs to $\mathbb R^2\subseteq\mathbb C^2$, and $i\in\mathbb C$ is an allowed scalar.
+\ii Multiplication gives $i(1,0)=(i\cdot1,i\cdot0)=(i,0)$. Its first coordinate is not real, so $(i,0)\notin\mathbb R^2$.
+\ii Thus $\mathbb R^2$ is not a subspace of the complex vector space $\mathbb C^2$.
 \end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P6 (LADR 1C.5).}
-\idea{Closure must hold for every scalar in the specified field, including $i$.}
+\begin{prob}\textbf{HW1 P7: repeated squaring over $\mathbb F_2$.}
+\idea{Each squaring has two equal cross terms. In $\mathbb F_2$ they add to zero, so only the two squares remain. Computing powers $2,4,8$ uses this same calculation at each stage.}
+Here $x$ is a formal variable; polynomial equality compares coefficients in the specified field.
 \begin{steps}
-\ii $(1,0)\in\mathbb R^2$, and $i$ is an allowed scalar in the complex vector space $\mathbb C^2$.
-\ii $i(1,0)=(i,0)\notin\mathbb R^2$. Scalar closure fails, so the answer is no.
-\end{steps}\end{prob}
-\begin{prob}\textbf{HW1 P7.}
-\idea{Repeated squaring eliminates the cross term because $1+1=0$ in $\mathbb F_2$.}
-\begin{steps}
-\ii In the polynomial ring over $\mathbb F_2$ (finite sums of formal powers of $x$ with coefficients in $\mathbb F_2$), $(x+1)^2=x^2+2x+1=x^2+1$.
-\ii Square again: $(x+1)^4=(x^2+1)^2=x^4+1$.
-\ii Square once more: $(x+1)^8=(x^4+1)^2=x^8+1$.
-\ii Over $\mathbb R$, the expansion instead is
-\[(x+1)^8=x^8+8x^7+28x^6+56x^5+70x^4+56x^3+28x^2+8x+1.\]
-All seven intermediate coefficients are even, so reduce to zero modulo $2$. Over $\mathbb R$ they remain nonzero.
+\ii First distribute all four terms:
+\[
+(x+1)^2=x^2+x+x+1=x^2+(1+1)x+1=x^2+1.
+\]
+The last equality uses $1+1=0$ in $\mathbb F_2$.
+\ii Next square the result:
+\[
+(x+1)^4=(x^2+1)^2=x^4+x^2+x^2+1=x^4+1.
+\]
+\ii Square once more:
+\[
+(x+1)^8=(x^4+1)^2=x^8+x^4+x^4+1=x^8+1.
+\]
+\ii Over $\mathbb R$, the first squaring is already different: $(x+1)^2=x^2+2x+1$, with $2x$ retained. Repeated distribution over $\mathbb R$ gives
+\[
+(x+1)^8=x^8+8x^7+28x^6+56x^5+70x^4+56x^3+28x^2+8x+1.
+\]
+\ii Every intermediate coefficient in this last expression is even. Reducing those integer coefficients modulo $2$ gives zero for each, in agreement with $x^8+1$ over $\mathbb F_2$. Over $\mathbb R$ the seven coefficients remain nonzero.
 \end{steps}\end{prob}
 \begin{prob}\textbf{Exam practice: Midterm 1 review, Section II, Exercise 7.}
-\idea{Intersection preserves both subspace conditions at once; union can fail to contain a sum.}
+\idea{For intersection, closure must be checked in each subspace using the same vectors. For union, choose one vector from each of two different lines; their sum may lie on neither line.}
 \begin{steps}
-\ii If $U,W$ are subspaces, both contain $0$, so $0\in U\cap W$. If $u,v\in U\cap W$ and $a\in F$, closure in each subspace gives $au+v\in U\cap W$.
-\ii In $\mathbb R^2$, let $U=\{(t,0):t\in\mathbb R\}$ and $W=\{(0,t):t\in\mathbb R\}$. Each is a subspace by direct substitution in the subspace test.
-\ii $(1,0),(0,1)\in U\cup W$ but their sum $(1,1)$ is in neither axis. Thus a union need not be a subspace.
+\ii Let $U,W$ be subspaces of $V$. Each contains $0_V$, so $0_V\in U\cap W$.
+\ii For $u,v\in U\cap W$ and $a\in F$, $u,v\in U$ gives $au+v\in U$. Separately $u,v\in W$ gives $au+v\in W$. Therefore $au+v\in U\cap W$, and the subspace test proves the intersection claim (Notes Proposition 5).
+\ii For union, take $U=\{(t,0):t\in\mathbb R\}$ and $W=\{(0,t):t\in\mathbb R\}$ in $\mathbb R^2$. They contain zero, and
+\[
+a(t,0)+(s,0)=(at+s,0)\in U,\qquad
+a(0,t)+(0,s)=(0,at+s)\in W.
+\]
+Thus each is a subspace.
+\ii Yet $(1,0)$ and $(0,1)$ lie in their union, while $(1,0)+(0,1)=(1,1)$ has neither coordinate zero. It belongs to neither $U$ nor $W$. Thus the union need not be a subspace.
 \end{steps}\end{prob}
 \end{document}

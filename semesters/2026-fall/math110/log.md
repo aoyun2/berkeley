@@ -2,7 +2,9 @@
 
 ## Regeneration against Aaron's reference packet
 
-- 2026-11-06: Aaron rejected the previous backfill for unclear prose, insufficient explanatory figures and vague claims. All ten previous weeks require revision/regeneration and fresh teaching-quality approval under standards/teaching-quality.md. Week 1 is being rewritten first; none is yet approved under the new review.
+- 2026-11-06: Aaron rejected the previous backfill for unclear prose, insufficient explanatory figures and vague claims. All ten previous weeks require revision/regeneration and fresh teaching-quality approval under standards/teaching-quality.md. Week 1 was rewritten first; the individual release record below identifies the regenerated version. The remaining old weeks have no new approval.
+
+- 2026-11-06: Regenerated week of 2026-08-31 against Aaron's reference: 14-page handout and 4-page solutions, five explanatory diagrams, explicit proof choices and intermediate calculations. Fresh review initially withheld release for textbook omissions and unclear wording; all findings corrected and independently rechecked. Root read the final packet, inspected every final page, and reran exact checks. Weeks 2–10 remain queued for revision.
 
 ## Superseded release
 

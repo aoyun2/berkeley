@@ -1,6 +1,6 @@
 """Exact arithmetic checks for the 2026-08-31 handout and solutions."""
 from itertools import product
-from sympy import I, Matrix, Poly, Rational, expand, integrate, simplify, sqrt, symbols
+from sympy import I, Matrix, Poly, Rational, conjugate, expand, integrate, simplify, sqrt, symbols, diff, re, solve_univariate_inequality, Interval, Union
 x=symbols('x')
 assert expand((1+I)**3)==-2+2*I
 assert expand((5+I)*(4+3*I))==17+19*I
@@ -18,6 +18,11 @@ for power in (2,4,8):
  assert Poly((x+1)**power,x,modulus=2)==Poly(x**power+1,x,modulus=2)
 for a,b,c in product(range(2),repeat=3):
  assert ((a+b)+c)%2 == (a+(b+c))%2
+ assert ((a*b)*c)%2 == (a*(b*c))%2
+ assert (a+b)%2 == (b+a)%2
+ assert (a*b)%2 == (b*a)%2
+ assert (a+0)%2 == a and (a*1)%2 == a
+ assert (a+a)%2 == 0
  assert (a*(b+c))%2 == (a*b+a*c)%2
 assert Matrix([3,3])+Matrix([1,-1])==Matrix([4,2])
 t,s,X,Y=symbols('t s X Y')
@@ -27,6 +32,66 @@ assert Matrix([1,0])+Matrix([0,1])+Matrix([-1,-1])==Matrix([0,0])
 fib=[0,1]
 for _ in range(5): fib.append(sum(fib[-2:]))
 assert fib==[0,1,1,2,3,5,8]
+# Every newly displayed numeric or symbolic calculation in the regenerated packet.
+assert expand((1+I)**2) == 2*I
+assert expand((2+I)**2) == 3+4*I
+assert expand((2-I)**2) == 3-4*I
+assert expand((3+4*I)*(3-4*I)) == 25
+assert simplify((3+4*I)*(Rational(3,25)-Rational(4,25)*I)) == 1
+assert I**11 == -I
+assert 2*Matrix([1,3])+Matrix([4,-1]) == Matrix([6,5])
+assert expand(2*(1+I)-(3-I)) == -1+3*I
+assert 2*3+1 == 7
+assert -Matrix([2,-3]) == Matrix([-2,3])
+# Complex laws, including the full associativity-coordinate expansion.
+a,b,c,d,e,f = symbols('a b c d e f', real=True)
+w,z,t = a+b*I,c+d*I,e+f*I
+assert expand(conjugate(w+z)-conjugate(w)-conjugate(z)) == 0
+assert expand(conjugate(w*z)-conjugate(w)*conjugate(z)) == 0
+triple = (a*c*e-a*d*f-b*c*f-b*d*e) + I*(a*c*f+a*d*e+b*c*e-b*d*f)
+assert expand((w*z)*t-triple) == 0
+assert expand(w*(z*t)-triple) == 0
+# The arrow example used in the handout and all equality/strictness cases.
+arrow={'a':'p','b':'p','c':'q','d':'q'}
+inputs=set(arrow)
+img=lambda U: {arrow[u] for u in U}
+pre=lambda V: {u for u in inputs if arrow[u] in V}
+assert img({'a','c'}) == {'p','q'}
+assert pre({'q','r'}) == {'c','d'}
+assert img(pre({'q','r'})) == {'q'}
+assert pre(img({'a','c'})) == inputs
+assert img(pre({'p'})) == {'p'}
+assert pre(img({'a','b'})) == {'a','b'}
+# Squaring preimage shortcut: both real intervals are required.
+r=symbols('r', real=True)
+assert solve_univariate_inequality(r**2>=1,r, relational=False).intersect(
+ solve_univariate_inequality(r**2<=4,r, relational=False)) == Union(Interval(-2,-1),Interval(1,2))
+# Recurrence entries from general initial values, and concrete subspace equations.
+p,q,alpha,rr,ss = symbols('p q alpha rr ss')
+seq=[p,q]
+for _ in range(4): seq.append(expand(seq[-2]+seq[-1]))
+assert seq == [p,q,p+q,p+2*q,2*p+3*q,3*p+5*q]
+assert alpha*Matrix([rr,-rr])+Matrix([ss,-ss]) == Matrix([alpha*rr+ss,-alpha*rr-ss])
+assert alpha*Matrix([2*rr,rr])+Matrix([2*ss,ss]) == Matrix([2*(alpha*rr+ss),alpha*rr+ss])
+Xcoord,Ycoord=symbols('Xcoord Ycoord')
+assert Matrix([0,Ycoord-Xcoord])+Matrix([Xcoord,Xcoord]) == Matrix([Xcoord,Ycoord])
+assert Matrix([1,0])+Matrix([0,1])+Matrix([0,0]) == Matrix([0,0])+Matrix([0,0])+Matrix([1,1])
+# Added after the independent review: field equation and exact LADR examples.
+a_nonzero=symbols('a_nonzero', nonzero=True)
+b_scalar=symbols('b_scalar')
+assert simplify(a_nonzero*(b_scalar/a_nonzero)-b_scalar) == 0
+assert expand((a_nonzero+b_scalar*I)/a_nonzero-(1+b_scalar/a_nonzero*I)) == 0
+assert 2*Rational(1,2) == 1
+assert diff((x-2)**2,x) == 2*(x-2)
+assert diff((x-2)**2,x).subs(x,2) == 0
+assert re(I*I) == -1 and re(I)*re(I) == 0
+A,B,C,D,X4,Y4,Z4=symbols('A B C D X4 Y4 Z4')
+assert Matrix([A,A,B,B])+Matrix([C,C,C,D]) == Matrix([A+C,A+C,B+C,B+D])
+assert Matrix([X4,X4,Y4,Y4])+Matrix([0,0,0,Z4-Y4]) == Matrix([X4,X4,Y4,Z4])
+# Coordinate formula used for closure under a complex scalar in C^infinity.
+a_real,b_real,xn,yn,sn,tn=symbols('a_real b_real xn yn sn tn', real=True)
+assert expand((a_real+b_real*I)*(xn+yn*I)+(sn+tn*I)
+ -((a_real*xn-b_real*yn+sn)+I*(a_real*yn+b_real*xn+tn))) == 0
 # Exhaustively check the image/inverse-image identities on all maps between
 # sets with at most three elements, including empty sets where maps exist.
 for n in range(4):

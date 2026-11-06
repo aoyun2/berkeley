@@ -1,5 +1,12 @@
 # Backfill restart status and questions
 
+## Current regenerated release
+
+- **MATH 110 week 1 (2026-08-31): revised and re-reviewed**, 14-page [handout](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf) and 4-page [solutions](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/solutions.pdf). Fresh correctness/coverage and teaching review passed after specific corrections; every final page inspected, exact computations passed.
+- **MATH 110 weeks 2–10: not yet regenerated**, previous versions remain rejected.
+- CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. Production follows the MATH 110 rework in that order.
+
+
 ## Previous MATH 110 release — rejected; revision required
 
 Aaron rejected the previous packets for unclear prose, insufficient explanatory figures, and vague claims. **All ten weeks below require revision or regeneration against the supplied reference packet. They are not approved finished backfill.** The previous files were built and pushed in week order. Each folder contains `handout.tex`, `handout.pdf`, `solutions.tex`, and `solutions.pdf`. Total: **20 PDFs, 151 pages** (131 handout pages and 20 solution pages).
