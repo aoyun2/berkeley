@@ -17,6 +17,8 @@
 
 - 2026-11-06: Backfilled week of 2026-10-26 (Notes Ch. 16–17, LADR 8D/6A, HW9): 12-page handout and 2-page solutions; exact computation checks, fresh independent source/content review and inspection of every final page passed. Includes all optional attention content with exact toy computations and masking, all homework, and actual matching textbook practice (available exams end at Ch. 15).
 
+- 2026-11-06: Backfilled week of 2026-11-02 (Notes Ch. 18, LADR 6B–6C, HW10): 15-page handout and 2-page solutions; exact computation checks, fresh independent source/content review and inspection of every final page passed. Includes all optional homework, deferred orthogonality/trace facts, exact polynomial and sine approximations, Riesz methods and pseudoinverse computations; analytic Fourier/l2 tools are explicitly cited.
+
 ## Weak spots
 - Midterm 2 (26/30): Q2(c) lost points for claiming p(T)v = 0 makes v an eigenvector (counterexample T = diag(1,2), v = (1,1), p = (z-1)(z-2)). Q1(b) part wrong.
 - Time pressure on 50-minute exams.
