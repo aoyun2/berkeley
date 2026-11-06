@@ -15,6 +15,8 @@
 
 - 2026-11-06: Backfilled week of 2026-10-19 (Notes Ch. 14–15, LADR 8A–8C, HW8): 14-page handout and 2-page solutions; exact computation checks, fresh independent source/content audit, and all-page independent visual inspection passed. Includes all optional homework, actual exam practice, Jordan chains/block counts/powers and textbook square-root results.
 
+- 2026-11-06: Backfilled week of 2026-10-26 (Notes Ch. 16–17, LADR 8D/6A, HW9): 12-page handout and 2-page solutions; exact computation checks, fresh independent source/content review and inspection of every final page passed. Includes all optional attention content with exact toy computations and masking, all homework, and actual matching textbook practice (available exams end at Ch. 15).
+
 ## Weak spots
 - Midterm 2 (26/30): Q2(c) lost points for claiming p(T)v = 0 makes v an eigenvector (counterexample T = diag(1,2), v = (1,1), p = (z-1)(z-2)). Q1(b) part wrong.
 - Time pressure on 50-minute exams.
