@@ -1,11 +1,22 @@
-# Week 7 audit
+# Week 7 regenerated packet — independent review
 
-Scope: Notes Chapters 12–13, LADR 5B and 5D, Homework 7 (all seven problems, including optional P4/P7), and midterm2-review.pdf Problem 6.
+Current packet: 18 handout pages and 3 solutions pages. Replaces the rejected 16+2 version under Aaron's ideas/reconstruction goal and supplied reference style.
 
-Coverage: Notes Definitions 33–36, Examples 53–60, Propositions 59–68; matching textbook polynomial/eigenvalue/minimal-polynomial results, all exact textbook examples, cyclic computation, invertibility, quadratic-kernel parity, odd real dimension, diagonalization, and Gershgorin. Includes the notes' unnumbered stochastic powers, spectral gap, PageRank restriction and Fibonacci calculation. Earlier-week prerequisites have reasons and week references. No Jordan form, general determinant, or later characteristic-polynomial machinery is used.
+## Coverage and explanations
 
-Independent source/content review: fresh agent `audit7`, with no drafting history, checked notes, textbook, homework and the actual exam statement. Corrected the complete-list eigenvalue hypothesis, zero-space conventions, explicit prerequisite definitions, textbook example omissions, result labels, intermediate-degree justification and numbered reasoning. Final review approved with no remaining substantive findings. Reviewer independently ran exact numeric checks.
+Original Notes Chapters 12–13 (Definitions 33–36, Propositions 59–68, Examples 53–60 and unnumbered stochastic, PageRank and Fibonacci material), matching LADR 5B/5D results and actual examples, and every HW7 part including optional P4/P7 were read and retained. Polynomial division is correctly identified as LADR 4.9. General characteristic polynomials, Jordan form and generalized eigenspaces remain in later weeks.
 
-Computation: `python scripts/checks/math110_week07.py` passed. It checks matrix relations and minimal polynomials, every numerical eigenpair and basis, the high power, Fibonacci, stochastic formulas and errors, quartic factorization/inverse, affine substitutions and interpolation projections using exact SymPy arithmetic.
+Shared arguments explain triangular initial spans, proper shifted ranges, polynomial remainders, vector relations and their least common multiple, invariant-part relations, and normalized interpolation. Restored computations include scalar and noncyclic cases, block bounds, the actual Review P5 matrix, two-by-two entry multiplication, rank-one products, high powers from remainders, polynomial inverses, similarity/transpose, and Euclidean gcd divisions. The degree bound uses invariant kernels and quotient relations without Cayley–Hamilton. The real quadratic-kernel parity and odd-dimensional eigenvalue proofs explain the invariant spaces chosen.
 
-Build/layout: both files built with `bash scripts/build.sh`, two passes each, zero overfull boxes. Parent independently viewed all 16 final handout pages and both final solutions pages at 1500-pixel render resolution. Corrected a crowded consecutive list on handout page 10 and separated each solutions heading from its Idea line; changed pages were re-rendered and re-viewed. Byte comparison confirmed the other handout page images were unchanged. All 18 final pages approved.
+Actual saved exam material: Review P6, graded Midterm 2 Question 3 (final diagonal entry −1), Practice Midterm 2 Questions 3–4 and Review P4, with complete separate solutions. The graded matrix has minimal polynomial (x−2)^2(x+1)=x^3−3x^2+4; the erroneous student expansion is not copied. Review P5's characteristic-polynomial part is reserved for Week 8.
+
+## Figures, review and verification
+
+Compact static illustrations show the actual upper-triangular column, differentiation/shift chains, two-state stochastic bottleneck, three interpolation polynomials and their sum, concrete eigenspace components, and Gershgorin disks. Captions identify the equations illustrated; interpolation is normalized at its corresponding eigenvalue, not a root. Routine duplicate motivations were removed while keeping hypotheses and proof steps explicit.
+
+Fresh independent reviewer audit_math110_w07 read original notes/book/HW/exams, the supplied reference and the entire revised packet. Separate final verdicts: correctness/full coverage PASS; ideas/reconstruction/reference teaching/style/layout PASS. Root and reviewer each inspected all 18 handout and 3 solutions pages, including every changed final page; exact PNG comparisons establish unchanged pages across final revisions. Final renders: /tmp/math110-w07-ideas-final2/. No unresolved findings. Source inventory: /tmp/math110-w07-source-audit.md.
+
+Exact checks pass scripts/checks/math110_week07.py, including all restored matrix relations, powers, inverses, interpolation, gcd divisions, actual exam matrices and derivative examples. Both PDFs built with zero overfull boxes. Original materials and Weak spots preserved.
+
+Handout SHA-256: 8249239e7dbcd2d2ee4f15d3de8f58fb63c554193e2341e0c781c153c3928c37.
+Solutions SHA-256: 5b38572aea336033e1027839307081bee4837c2f97f8aa6e3f403e7774fba118.

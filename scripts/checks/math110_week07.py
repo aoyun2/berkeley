@@ -92,3 +92,43 @@ eig(A,[1,4],69); eig(A,[7,5],46)
 assert s.Matrix([[1,7],[4,5]]).det()==-23
 assert s.diag(8,5,5).eigenvals()=={8:1,5:2}
 print('Week 7 exact matrix relations, eigenpairs, powers, stochastic formulas, Fibonacci, minimal polynomials, inverse and interpolation checks passed.')
+
+# Restored computations, actual source questions and figure values.
+A=s.Matrix([[2,0,0],[1,2,0],[0,0,3]])
+expectmp(A,(x-2)**2*(x-3))
+assert (A-2*s.eye(3))*s.eye(3)[:,0]==s.eye(3)[:,1]
+assert (A-2*s.eye(3))*s.eye(3)[:,1]==s.zeros(3,1)
+B=s.Matrix([[3,1,1],[0,3,-1],[0,0,1]])
+expectmp(B,(x-3)**2*(x-1));eig(B,[-3,2,4],1);eig(B,[1,0,0],3)
+assert (B-3*s.eye(3))*(B-s.eye(3))==s.Matrix([[0,2,-1],[0,0,0],[0,0,0]])
+a,b,c,d=s.symbols('a b c d');A=s.Matrix([[a,b],[c,d]])
+assert (A*A-(a+d)*A+(a*d-b*c)*s.eye(2)).applyfunc(s.expand)==s.zeros(2)
+u=s.Matrix([1,2]);v=s.Matrix([3,0]);A=u*v.T
+assert A*A==3*A;expectmp(A,x*(x-3))
+A=s.Matrix([[2,1],[1,2]])
+for k in range(10):assert A**k==s.Rational(3**k-1,2)*A+s.Rational(3-3**k,2)*s.eye(2)
+assert A**4==s.Matrix([[41,40],[40,41]])
+B=s.Matrix([[2,1],[0,3]])
+assert B*B-5*B+6*s.eye(2)==s.zeros(2)
+assert (5*s.eye(2)-B)/6==B.inv()==s.Matrix([[s.Rational(1,2),-s.Rational(1,6)],[0,s.Rational(1,3)]])
+ps=[(x-2)*(x-3)/2,-(x-1)*(x-3),(x-1)*(x-2)/2]
+assert s.expand(sum(ps))==1
+for j,p in enumerate(ps):assert [p.subs(x,k) for k in [1,2,3]]==[int(i==j) for i in range(3)]
+Q1=(3*s.eye(2)-A)/2;Q3=(A-s.eye(2))/2
+assert Q1*s.Matrix([2,0])==s.Matrix([1,-1]) and Q3*s.Matrix([2,0])==s.Matrix([1,1])
+assert Q1*Q1==Q1 and Q3*Q3==Q3 and Q1*Q3==s.zeros(2) and Q1+Q3==s.eye(2)
+p=x**3-3*x+2;dp=s.diff(p,x);rem=-2*x+2
+assert s.expand(p-x*dp/3-rem)==0
+assert s.expand(dp+s.Rational(3,2)*(x+1)*rem)==0 and s.gcd(p,dp)==x-1
+A=s.Matrix([[2,1,0],[0,2,0],[0,0,-1]])
+expectmp(A,(x-2)**2*(x+1))
+assert s.expand((x-2)**2*(x+1))==x**3-3*x*x+4
+assert (A-2*s.eye(3))*(A+s.eye(3))==s.Matrix([[0,3,0],[0,0,0],[0,0,0]])
+assert (A-2*s.eye(3))**2*(A+s.eye(3))==s.zeros(3)
+R=s.Matrix([[0,1],[-1,0]]);eig(R,[1,I],I);eig(R,[1,-I],-I)
+Dfun=s.Matrix([[0,0,0,0,0],[0,0,-1,0,0],[0,1,0,0,0],[0,0,0,0,-2],[0,0,0,2,0]])
+assert Dfun.nullspace()==[s.Matrix([1,0,0,0,0])]
+assert set(Dfun.eigenvals())=={0,I,-I,2*I,-2*I}
+roots=[complex(r) for r in s.nroots(x**5-6*x+3)]
+for r in [-1.67,.51,1.40,-.12+1.59j,-.12-1.59j]:assert min(abs(z-r) for z in roots)<.008
+print('Week7 restored source, block/vector/remainder/inverse/gcd, figure, and actual exam checks passed.')
