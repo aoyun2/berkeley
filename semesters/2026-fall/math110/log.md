@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Regenerated week of 2026-09-21 (Notes Ch. 7–8, HW4): 14-page handout and 3-page solutions following the supplied PDF. Concrete inverse/change-of-basis proofs, restored textbook examples, interpolation/basis/product/coset illustrations, all homework including corrected optional wording and actual exam/review problems. Exact checks, fresh independent source/reference review and every-page inspection passed.
+
 - 2026-11-06: Regenerated week of 2026-09-14 (Notes Ch. 5–6, HW3): 14-page handout and 2-page solutions following the supplied PDF. Concrete proof motivations, restored actual textbook examples and intermediate calculations, compact kernel/range, matrix-column and transition figures; all homework including optional and real exam Q2. Exact checks, fresh independent source/reference review and every-page inspection passed.
 
 - 2026-11-06: Regenerated week of 2026-09-07 (Notes Ch. 3–4, HW2): 13-page handout and 2-page solutions following the supplied PDF. Explicit basis algorithms and textbook examples, compact static illustrations, complete dimension bound/directness criterion, and all six HW problems plus real exam Q1. Exact checks, fresh independent source/reference review and all-page inspection passed after corrections.

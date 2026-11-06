@@ -36,4 +36,21 @@ assert s.expand(s.integrate(s.diff(q,x).subs(x,t-1),(t,0,x+1))-q)==0
 Jp=s.integrate(p.subs(x,t),(t,-1,x))
 assert s.expand(s.diff(Jp,x).subs(x,x-1)-p.subs(x,x-1))==0
 assert s.expand(s.integrate(s.diff(p,x).subs(x,t),(t,0,x))-(p-p.subs(x,0)))==0
+# Actual restored textbook examples and figure coordinates.
+assert s.Matrix([2,-7,0,5,1]).dot(s.Matrix([1,x,x*x,x**3,x**4])) == 2-7*x+5*x**3+x**4
+p=5-6*x+4*x*x;q=x+9*x**5
+assert s.expand(p+q)==5-5*x+4*x*x+9*x**5
+assert s.expand(2*p)==10-12*x+8*x*x
+assert s.Matrix([3,8,7])+s.Matrix([2,2,2])==s.Matrix([5,10,9])
+assert 2*s.Matrix([3,8,7])==s.Matrix([6,16,14])
+assert Q*s.Matrix([-1,1])==s.Matrix([1,1])
+assert s.expand((20+2*t)-(2*(17+t)-14))==0
+assert s.Matrix([1,4])-s.Matrix([1,2])==s.Matrix([0,2])
+assert all((1+x*x).subs(x,k)==v for k,v in [(0,1),(1,2),(2,5)])
+assert (1+x)+x==1+2*x
+assert s.Matrix([2,3])+s.Matrix([1,-1])==s.Matrix([3,2])
+assert s.Matrix([[1,1],[0,1]])*s.diag(2,1)==s.Matrix([[2,1],[0,1]])
+# Left inverse example in actual exam solution.
+T=s.Matrix([1,0]);S=s.Matrix([[1,0]])
+assert S*T==s.eye(1) and T*S==s.diag(1,0)
 print('Week4 exact inverse, coordinate, polynomial, finite-field, and coset checks passed.')
