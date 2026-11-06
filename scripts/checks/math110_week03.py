@@ -44,4 +44,27 @@ sols=[v for v in product(range(2),repeat=4) if sum(v)%2==1 and (v[0]+v[2])%2==0]
 assert sols==[(0,0,0,1),(0,1,0,0),(1,0,1,1),(1,1,1,0)]
 T4=s.Matrix([[0,0,1,0],[0,0,0,1],[0,0,0,0],[0,0,0,0]])
 assert T4.columnspace()==T4.nullspace()
-print('Week3 exact matrix, polynomial, probability, and finite-field checks passed.')
+
+
+# Additional literal textbook examples and compact-figure coordinates.
+assert s.integrate(1+2*x,(x,0,1)) == 2
+assert s.expand(s.diff(x*x*f,x)-x*x*s.diff(f,x)-2*x*f) == 0
+ss,tt,U,V=s.symbols('ss tt U V')
+phi=s.Matrix([[1,2,3]])
+assert phi*s.Matrix([-2*ss-3*tt,ss,tt]) == s.zeros(1,1)
+assert s.Matrix([[2,0],[0,5],[1,1]])*s.Matrix([U/2,V/5]) == s.Matrix([U,V,U/2+V/5])
+Brect=s.Matrix([[1,3],[2,5],[7,9]])
+assert Brect[:,0] == s.Matrix([1,2,7]) and Brect[:,1] == s.Matrix([3,5,9])
+Acol=s.Matrix([[1,2],[3,4],[5,6]])
+assert Acol*s.Matrix([5,1]) == 5*Acol[:,0]+Acol[:,1] == s.Matrix([7,19,31])
+Arank=s.Matrix([[4,7,1,8],[3,5,2,9]])
+assert Arank.rank()==2 and Arank[:,:2].det()==-1
+assert s.Matrix([[5,-7],[3,8],[-4,2]]).T == s.Matrix([[5,3,-4],[-7,8,2]])
+assert s.Matrix([[1,0,1],[0,1,-1]])*s.Matrix([2,3,1]) == s.Matrix([3,2])
+assert s.Matrix([[0,0],[0,1]])*s.Matrix([1,2]) == s.Matrix([0,2])
+assert N*s.Matrix([1,2]) == s.Matrix([2,0])
+for k in range(7):
+ assert s.diff(x**(k+1)/s.Integer(k+1),x) == x**k
+assert all(sum(P[:,j])==1 for j in range(3)) and all(z>=0 for z in P)
+assert s.Matrix([[1,2]])*s.Matrix([3,4]) == s.Matrix([11])
+print('Week3 exact matrix, polynomial, probability, textbook and finite-field checks passed.')

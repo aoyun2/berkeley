@@ -1,0 +1,53 @@
+\usetikzlibrary{matrix}
+\newcommand{\KernelRangeFigure}{%
+\begin{tikzpicture}[>=Stealth,font=\small,x=1cm,y=1cm]
+\foreach \dx/\kind in {0/1,6/2}{
+\begin{scope}[xshift=\dx cm]
+ \draw[->,gray](-.5,0)--(2.8,0)node[right,text=black]{$x$};
+ \draw[->,gray](0,-.4)--(0,2.65)node[above,text=black]{$y$};
+ \draw[blue](-.45,0)--(2.65,0);
+ \draw[->,gray](0,0)--(1,2);
+ \fill (1,2)circle(1.5pt)node[above right]{$v=(1,2)$};
+ \ifnum\kind=1
+  \node at (1.15,3.3) {$P(x,y)=(0,y)$};
+  \draw[red] (0,-.35)--(0,2.5);
+  \draw[red,thick,->](0,0)--(0,2)node[left]{$Pv$};
+  \draw[dashed,gray](1,2)--(0,2);
+  \node[below,text=blue]at(1.5,-.1){$\ker P$};
+  \node[left,text=red]at(0,1){$\im P$};
+ \else
+  \node at (1.15,3.3) {$N(x,y)=(y,0)$};
+  \draw[red,dashed](-.45,0)--(2.65,0);
+  \draw[red,thick,->](0,0)--(2,0)node[below]{$Nv$};
+  \draw[dashed,gray,->](1,2)--(2,0);
+  \node[below]at(1.15,-.65){$\ker N=\im N=\mathbb Re_1$};
+ \fi
+\end{scope}}
+\end{tikzpicture}}
+
+\newcommand{\EvaluationColumnsFigure}{%
+\begin{tikzpicture}[font=\small]
+\matrix (a) [matrix of math nodes,ampersand replacement=\&,left delimiter=(,right delimiter=),
+ nodes={minimum width=9mm,minimum height=5mm,inner sep=1pt},
+ column 1/.style={nodes={text=blue}},column 2/.style={nodes={text=red}},
+ column 3/.style={nodes={text=green!50!black}}]
+ {1\&1\&1\&1\\1\&i\&-1\&-i\\1\&-1\&1\&-1\\1\&-i\&-1\&i\\};
+\node[left=5mm of a] {$A=M(T)=$};
+\foreach \j/\label in {1/{T1},2/{Tx},3/{Tx^2},4/{Tx^3}}
+ \node[above=3mm of a-1-\j] {$\label$};
+\end{tikzpicture}}
+
+\newcommand{\MarkovTransitionFigure}{%
+\begin{tikzpicture}[>=Stealth,font=\small,
+ state/.style={draw,circle,minimum size=7mm}]
+\node[state](a) at (0,0){$A$};
+\node[state](b) at (3,0){$B$};
+\node[state](c) at (6,0){$C$};
+\path[->] (a)edge[loop above]node{$1/2$}(a)
+ (b)edge[loop above]node{$1/2$}(b)
+ (c)edge[loop above]node{$1/2$}(c)
+ (a)edge[bend left=20]node[above]{$1/2$}(b)
+ (b)edge[bend left=20]node[below]{$1/4$}(a)
+ (b)edge[bend left=20]node[above]{$1/4$}(c)
+ (c)edge[bend left=20]node[below]{$1/2$}(b);
+\end{tikzpicture}}

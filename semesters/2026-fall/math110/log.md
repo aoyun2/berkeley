@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Regenerated week of 2026-09-14 (Notes Ch. 5–6, HW3): 14-page handout and 2-page solutions following the supplied PDF. Concrete proof motivations, restored actual textbook examples and intermediate calculations, compact kernel/range, matrix-column and transition figures; all homework including optional and real exam Q2. Exact checks, fresh independent source/reference review and every-page inspection passed.
+
 - 2026-11-06: Regenerated week of 2026-09-07 (Notes Ch. 3–4, HW2): 13-page handout and 2-page solutions following the supplied PDF. Explicit basis algorithms and textbook examples, compact static illustrations, complete dimension bound/directness criterion, and all six HW problems plus real exam Q1. Exact checks, fresh independent source/reference review and all-page inspection passed after corrections.
 
 - 2026-11-06: Followed Aaron's correction to use the supplied PDF directly. Replaced the staged figures with compact static illustrations, removed the interactive supplement, shortened proof motivations, and completed exact textbook examples/domains. Current Week 1 is a 15-page handout and 4-page solutions. Fresh independent source/reference review, exact checks and all-page inspection passed after corrections. Earlier Week 1 visual approvals are superseded; Weeks 2–10 remain unfinished.
