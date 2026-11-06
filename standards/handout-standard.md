@@ -10,6 +10,7 @@ Every handout, review packet and solutions file, in every course, follows this. 
 ## Writing
 - No intro or overview paragraph, no "how to use this handout", no meta sections. Start with content.
 - Plain, literal language. No metaphors or mannered phrasing ("kills", "dies", "shadow", "earns its keep"). If a shorthand helps, define it once in plain words.
+- **No forward references.** Never use a term, notation or result before the handout defines or proves it (e.g. no "largest Jordan block" in the minimal polynomial section when Jordan form comes later). A fact that needs later material goes in the later section, where everything it uses is already defined. This also applies to a cut-down handout: anything referring to a section that was cut is removed or rewritten.
 - Every claim derivable from first principles. Any fact used is proved in the handout or in a "Tools" list with its own reason. Deep results that need outside machinery (e.g. the fundamental theorem of algebra) are marked as cited.
 
 ## Every result
