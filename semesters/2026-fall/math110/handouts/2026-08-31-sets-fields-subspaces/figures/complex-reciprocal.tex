@@ -1,0 +1,126 @@
+% Full-width discovery figure; requires amsmath, amssymb, TikZ,
+% and TikZ libraries arrows.meta and calc. Natural width: 16.5 cm.
+\definecolor{crBlue}{HTML}{2463AD}
+\definecolor{crGold}{HTML}{A46900}
+\definecolor{crRed}{HTML}{B63B40}
+\definecolor{crGreen}{HTML}{23734F}
+\definecolor{crInk}{HTML}{202B35}
+\definecolor{crMute}{HTML}{89929B}
+\definecolor{crFaint}{HTML}{E1E6EA}
+\newcommand{\ComplexReciprocalDiscoveryFigureVThree}{%
+\begin{tikzpicture}[x=1cm,y=1cm,text=crInk,
+  font=\fontsize{11}{14}\selectfont,
+  cr heading/.style={anchor=west,font=\sffamily\bfseries\fontsize{12.5}{15}\selectfont},
+  cr label/.style={fill=white,inner sep=2pt},
+  cr step/.style={-{Latex[length=2.8mm,width=1.8mm]},line width=1.5pt},
+  cr axis/.style={-{Latex[length=1.8mm,width=1.2mm]},draw=crMute,line width=.55pt}]
+  \path[use as bounding box] (0,0) rectangle (16.5,22.5);
+  \node[anchor=west,font=\sffamily\bfseries\fontsize{17}{20}\selectfont]
+    at (0,22.10) {Find $w$ such that $(3+4i)w=1$.};
+  \node[anchor=west,font=\fontsize{12}{16}\selectfont] at (0,21.10)
+    {For $w=c+di$,\quad
+      $(3+4i)w=\underbrace{(3c-4d)}_{\textcolor{crBlue}{\text{must be }1}}
+      +\underbrace{(3d+4c)}_{\textcolor{crRed}{\text{must be }0}}i$.};
+  \draw[crFaint,line width=.5pt] (0,15.05)--(16.5,15.05);
+  \draw[crFaint,line width=.5pt] (0,7.85)--(16.5,7.85);
+
+  % First trial: the real coordinate is correct, the imaginary one is not.
+  \node[cr heading] at (0,19.70) {1\quad Try $w=1/3$: the imaginary part remains.};
+  \node[anchor=west,text=crGold,font=\fontsize{14}{17}\selectfont]
+    at (.35,18.62) {$w=\dfrac13$};
+  \node[anchor=west,align=left,font=\fontsize{12}{17}\selectfont] at (.35,17.35)
+    {$(3+4i)\dfrac13=\textcolor{crBlue}{1}+\textcolor{crRed}{\dfrac43i}$\\[8pt]
+     The real part is $1$, but $\textcolor{crRed}{4/3\ne0}$.};
+  \begin{scope}[shift={(10.00,16.25)},x=1.7cm,y=1.7cm]
+    \draw[cr axis] (-.3,0)--(2.7,0) node[right,font=\small] {real};
+    \draw[cr axis] (0,-.18)--(0,1.65) node[above,font=\small] {imaginary};
+    \node[below left,text=crMute,font=\small] at (0,0) {$0$};
+    \draw[cr step,crBlue] (0,0)--(1,0);
+    \node[cr label,text=crBlue,below] at (.5,0) {$1$};
+    \draw[cr step,crRed] (1,0)--(1,1.33333);
+    \node[cr label,text=crRed,anchor=west] at (1.08,.67) {$+\dfrac43i$};
+    \fill[crGreen] (1,0) circle[radius=2.5pt];
+    \node[cr label,text=crGreen,anchor=north west] at (1.03,-.15) {wanted: $1$};
+    \fill[crRed] (1,1.33333) circle[radius=2.5pt];
+    \node[cr label,text=crRed,anchor=south] at (1,1.42) {$1+\dfrac43i$};
+  \end{scope}
+
+  % Second trial: choose equal and opposite cross terms before normalizing.
+  \node[cr heading] at (0,14.50) {2\quad Choose $c,d$ so $3d+4c=0$.};
+  \node[anchor=west,font=\fontsize{12}{16}\selectfont]
+    at (.35,13.67) {Set $c=3$: $3d+12=0$, so $d=-4$.};
+  \node[anchor=west,text=crGold,font=\fontsize{13}{16}\selectfont]
+    at (.35,13.00) {$w=3-4i=\overline{(3+4i)}$};
+  \node[anchor=west,font=\fontsize{10.5}{13}\selectfont] at (.35,12.40)
+    {Multiply each row term by each column term:};
+  \begin{scope}[shift={(.75,8.82)}]
+    \fill[crBlue!7] (1.0,1.50) rectangle (3.05,2.60);
+    \fill[crRed!7] (3.05,1.50) rectangle (5.10,2.60);
+    \fill[crRed!7] (1.0,.40) rectangle (3.05,1.50);
+    \fill[crBlue!7] (3.05,.40) rectangle (5.10,1.50);
+    \draw[crFaint,line width=.65pt] (1,.4) rectangle (5.1,2.6);
+    \draw[crFaint,line width=.65pt] (3.05,.4)--(3.05,2.6);
+    \draw[crFaint,line width=.65pt] (1,1.5)--(5.1,1.5);
+    \node[text=crGold,font=\fontsize{13}{16}\selectfont] at (2.025,2.99) {$3$};
+    \node[text=crGold,font=\fontsize{13}{16}\selectfont] at (4.075,2.99) {$-4i$};
+    \node[text=crBlue,font=\fontsize{13}{16}\selectfont] at (.45,2.05) {$3$};
+    \node[text=crBlue,font=\fontsize{13}{16}\selectfont] at (.45,.95) {$4i$};
+    \node[text=crBlue,font=\fontsize{13}{16}\selectfont] at (2.025,2.05) {$9$};
+    \node[text=crRed,font=\fontsize{13}{16}\selectfont] at (4.075,2.05) {$-12i$};
+    \node[text=crRed,font=\fontsize{13}{16}\selectfont] at (2.025,.95) {$+12i$};
+    \node[text=crBlue,align=center,font=\fontsize{11}{14}\selectfont]
+      at (4.075,.95) {$-16i^2$\\$=+16$};
+  \end{scope}
+  \node[anchor=west,text=crRed,font=\fontsize{12}{15}\selectfont] at (.35,8.55)
+    {$3(-4)+4(3)=-12+12=0$.};
+  \begin{scope}[shift={(9.30,12.25)},x=.2cm,y=.2cm]
+    \draw[cr axis] (-1,0)--(28.5,0) node[right,font=\small] {real};
+    \draw[cr axis] (0,-14.0)--(0,3.0) node[above,font=\small] {imaginary};
+    \node[below left,text=crMute,font=\small] at (0,0) {$0$};
+    \draw[cr step,crBlue] (0,0)--(9,0);
+    \node[cr label,text=crBlue,above] at (4.5,0) {$+9$};
+    \draw[cr step,crRed] (9,0)--(9,-12);
+    \node[cr label,text=crRed,anchor=east] at (8.2,-6) {$-12i$};
+    \draw[cr step,crBlue] (9,-12)--(25,-12);
+    \node[cr label,text=crBlue,below] at (17,-12) {$+16$};
+    \draw[cr step,crRed] (25,-12)--(25,0);
+    \node[cr label,text=crRed,anchor=west] at (25.8,-6) {$+12i$};
+    \fill[crGold] (25,0) circle[radius=2.7pt];
+    \node[cr label,text=crGold,anchor=south] at (25,1.0) {$25=9+16$};
+    \draw[crMute,densely dashed,line width=.65pt] (9,-12)--(25,-12);
+    \node[anchor=north,align=center,font=\fontsize{11}{14}\selectfont]
+      at (13.5,-15.5) {Equal vertical steps cancel.\\The product lies on the real axis.};
+  \end{scope}
+
+  % Third trial: divide every product contribution by 25. The shape persists,
+  % and the axis labels explicitly show the changed scale.
+  \node[cr heading] at (0,7.28) {3\quad The product is $25$, so divide the candidate by $25$.};
+  \node[anchor=west,text=crGold,font=\fontsize{14}{18}\selectfont] at (.35,6.15)
+    {$w=\dfrac{3-4i}{25}=\dfrac3{25}-\dfrac4{25}i$};
+  \node[anchor=west,align=left,font=\fontsize{12}{17}\selectfont] at (.35,4.68)
+    {Every contribution to the product\\is now divided by $25$.};
+  \node[anchor=west,align=left,font=\fontsize{12}{17}\selectfont] at (.35,3.10)
+    {$\textcolor{crBlue}{\dfrac9{25}+\dfrac{16}{25}=1}$\\[8pt]
+     $\textcolor{crRed}{-\dfrac{12}{25}+\dfrac{12}{25}=0}$};
+  \node[anchor=west,text=crInk,font=\fontsize{11}{14}\selectfont]
+    at (9.0,6.68) {$25\times$ the scale in panel 2.};
+  \begin{scope}[shift={(9.30,5.55)},x=5cm,y=5cm]
+    \draw[cr axis] (-.04,0)--(1.14,0) node[right,font=\small] {real};
+    \draw[cr axis] (0,-.56)--(0,.12) node[anchor=south east,font=\small] {imaginary};
+    \node[below left,text=crMute,font=\small] at (0,0) {$0$};
+    \draw[cr step,crBlue] (0,0)--(.36,0);
+    \node[cr label,text=crBlue,above] at (.18,0) {$+\dfrac9{25}$};
+    \draw[cr step,crRed] (.36,0)--(.36,-.48);
+    \node[cr label,text=crRed,anchor=east] at (.325,-.24) {$-\dfrac{12}{25}i$};
+    \draw[cr step,crBlue] (.36,-.48)--(1,-.48);
+    \node[cr label,text=crBlue,below] at (.68,-.48) {$+\dfrac{16}{25}$};
+    \draw[cr step,crRed] (1,-.48)--(1,0);
+    \node[cr label,text=crRed,anchor=west] at (1.035,-.24) {$+\dfrac{12}{25}i$};
+    \fill[crGreen] (1,0) circle[radius=2.7pt];
+    \node[cr label,text=crGreen,anchor=south] at (1,.04) {$1$};
+  \end{scope}
+  \node[anchor=west,text=crGreen,font=\fontsize{13}{17}\selectfont] at (.35,.72)
+    {$\displaystyle (3+4i)\left(\frac3{25}-\frac4{25}i\right)
+      =\frac{9+16}{25}+\frac{-12+12}{25}i=1$.};
+\end{tikzpicture}%
+}

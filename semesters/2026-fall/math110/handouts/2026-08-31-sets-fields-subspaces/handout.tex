@@ -6,6 +6,12 @@
 \title{MATH 110 --- Week 1}
 \subtitle{Notes Chapters 1--2; Homework 1}
 \author{}\date{}\ihead{}
+\usetikzlibrary{calc}
+\input{figures/image-preimage.tex}
+\input{figures/direct-sum.tex}
+\input{figures/union-sum.tex}
+\input{figures/three-lines.tex}
+\input{figures/complex-reciprocal.tex}
 \begin{document}
 \maketitle
 \section{Sets and functions}
@@ -66,24 +72,6 @@ f(a)=p,\qquad f(b)=p,\qquad f(c)=q,\qquad f(d)=q.
 \ii Starting with $U$ instead, $f^{-1}(f(U))=f^{-1}(\{p,q\})=X$. It also contains $b,d$, because they share outputs with $a,c$.
 \end{steps}
 \end{prob}
-\begin{fig}
-\begin{tikzpicture}[x=1cm,y=.68cm,>=Stealth]
-\node at (0,4.9) {$X$};\node at (4,4.9) {$Y$};
-\draw[rounded corners](-.55,.4) rectangle (.55,4.5);
-\draw[rounded corners](3.4,.4) rectangle (4.6,4.5);
-\fill[blue!10] (3.45,.45) rectangle (4.55,3.2);
-\node[blue] at (5.7,2.1) {$V=\{q,r\}$};
-\node (a) at (0,4) {$a$};\node (b) at (0,3) {$b$};
-\node[blue] (c) at (0,2) {$c$};\node[blue] (d) at (0,1) {$d$};
-\node (p) at (4,4) {$p$};\node[blue] (q) at (4,2.6) {$q$};\node[blue] (r) at (4,1) {$r$};
-\draw[->](a)--(p);\draw[->](b)--(p);
-\draw[->,blue,thick](c)--(q);\draw[->,blue,thick](d)--(q);
-\draw[blue,decorate,decoration={brace,mirror,amplitude=4pt}](-.8,2.3)--(-.8,.7);
-\node[blue,anchor=east] at (-.95,1.5) {$f^{-1}(V)$};
-\node[anchor=west] at (5,1) {no arrow ends at $r$};
-\end{tikzpicture}
-\figcap{Inverse image means collecting arrow \emph{starting points}. Both $c$ and $d$ are selected because their output is $q\in V$. The unattained output $r$ contributes no input.}
-\end{fig}
 \begin{shortcuts}
 \ii To disprove injectivity, give two different inputs with the same output; this negates its defining implication.
 \ii To disprove surjectivity, give one codomain element with no preimage; a missing output suffices.
@@ -93,6 +81,8 @@ f(a)=p,\qquad f(b)=p,\qquad f(c)=q,\qquad f(d)=q.
 \ii Equal images need not mean equal inputs: for $f(x)=x^2$ on $\mathbb R$, $f(1)=f(-1)$.
 \ii The codomain matters: $x\mapsto x^2$ from $\mathbb R$ to $\mathbb R$ is not onto, but the same rule with codomain $[0,\infty)$ is onto.
 \end{trapbox}
+
+\begin{fig}\ImagePreimageDiscoveryFigureVTwo\end{fig}
 
 \section{Fields and complex arithmetic}
 \begin{qbox}Solve $2x=1$ using an allowed number system. There is no integer solution, but $x=1/2$ works in $\mathbb Q$. Which laws guarantee that $ax=b$ can be solved whenever $a\ne0$?\end{qbox}
@@ -183,27 +173,7 @@ which are the sums of the coordinates of $(a+bi)(c+di)$ and $(a+bi)(e+fi)$.
 \]
 \end{steps}
 \end{prob}
-\begin{fig}
-\begin{tikzpicture}[>=Stealth]
-\begin{scope}[scale=.43]
-\draw[->](-.5,0)--(5,0) node[right]{real};\draw[->](0,-5)--(0,5) node[above]{imaginary};
-\draw[->,thick,blue](0,0)--(3,4);\node[blue,right] at (3,4){$z=3+4i$};
-\draw[->,thick,red](0,0)--(3,-4);\node[red,right] at (3,-4){$\overline z=3-4i$};
-\draw[dashed](3,-4)--(3,4);\draw (3,.15)--(3,-.15)node[below left]{$3$};
-\draw[<->](-.35,0)--(-.35,4)node[midway,left]{$4$};
-\draw[<->](-.35,0)--(-.35,-4)node[midway,left]{$4$};
-\end{scope}
-\begin{scope}[xshift=6cm,yshift=.7cm,x=12cm,y=12cm]
-\draw[->](-.025,0)--(.21,0)node[right]{real};
-\draw[->](0,-.2)--(0,.065)node[above]{imaginary};
-\draw[->,thick,red](0,0)--(.12,-.16)node[below right]{$z^{-1}$};
-\draw[dashed](.12,0)--(.12,-.16)--(0,-.16);
-\node[above] at (.12,0) {$\frac3{25}$};\node[left] at (0,-.16){$-\frac4{25}$};
-\node[above] at (.10,.09){$z^{-1}=\dfrac{\overline z}{25}$};
-\end{scope}
-\end{tikzpicture}
-\figcap{Left: conjugation reflects $(3,4)$ to $(3,-4)$. Right: dividing both coordinates by $25=3^2+4^2$ gives the reciprocal $(3/25,-4/25)$. The right plot is enlarged so these coordinates are visible.}
-\end{fig}
+\begin{fig}\ComplexReciprocalDiscoveryFigureVThree\end{fig}
 \begin{prob}
 \method{A real answer obtained from complex intermediate values: the notes' cubic}
 \begin{steps}
@@ -418,29 +388,7 @@ $U+W$ is a subspace and is the smallest subspace containing $U\cup W$.
 \ii Any subspace $X$ containing $U\cup W$ contains every $u+w$ by addition closure; hence $U+W\subseteq X$.
 \ii For $m$ subspaces, $0=0+\cdots+0$ is in the sum. Also $a(u_1+\cdots+u_m)+(v_1+\cdots+v_m)=(au_1+v_1)+\cdots+(au_m+v_m)$, with $au_j+v_j\in U_j$ by closure in $U_j$. Thus the same test proves $U_1+\cdots+U_m$ is a subspace.
 \end{steps}\end{proof}\end{prob}
-\begin{fig}
-\begin{tikzpicture}[scale=1,>=Stealth]
-\begin{scope}
-\draw[blue,thick,->](-.5,0)--(2.5,0)node[right]{$U$};
-\draw[red,thick,->](0,-.4)--(0,2)node[above]{$W$};
-\fill[blue](1.5,0)circle(2pt)node[below]{$(1,0)$};
-\fill[red](0,1.5)circle(2pt)node[left]{$(0,1)$};
-\draw[dashed](1.5,0)--(1.5,1.5)--(0,1.5);
-\draw (1.42,1.42)--(1.58,1.58);\draw (1.42,1.58)--(1.58,1.42);
-\node[above right] at (1.5,1.5) {$(1,1)\notin U\cup W$};
-\node at (1,-.85) {The union contains only the axes.};
-\end{scope}
-\begin{scope}[xshift=6cm]
-\fill[blue!7](-.5,-.4)rectangle(2.5,2);
-\draw[->](-.5,0)--(2.5,0);\draw[->](0,-.4)--(0,2);
-\draw[blue,thick,->](0,0)--(1.5,0)node[midway,below]{$u$};
-\draw[red,thick,->](1.5,0)--(1.5,1.5)node[midway,right]{$w$};
-\draw[thick,->](0,0)--(1.5,1.5)node[above]{$(1,1)$};
-\node at (1,-.85) {$U+W=\mathbb R^2$: $(x,y)=(x,0)+(0,y)$.};
-\end{scope}
-\end{tikzpicture}
-\figcap{The sum must contain the missing sum $(1,1)$. More generally it contains every $(x,y)$, because $(x,0)$ is on one axis and $(0,y)$ is on the other.}
-\end{fig}
+\begin{fig}\UnionSumDiscoveryFigure\end{fig}
 \begin{prob}
 \method{Computing a sum from coordinate conditions: LADR Example 1.38 and equation 1.39}
 Let
@@ -514,17 +462,8 @@ These values exist and are forced, so $\mathbb R^2=U\oplus W$ by Proposition 7.
 \ii For $(x,y)=(4,2)$, $2t=6$ and $2s=2$, so $(4,2)=(3,3)+(1,-1)$.
 \end{steps}
 
-\end{prob}\begin{fig}\begin{tikzpicture}[scale=.7,>=Stealth]
-\draw[->](-1,0)--(5.5,0)node[right]{$x$};\draw[->](0,-2.4)--(0,4.3)node[above]{$y$};
-\draw[blue](-1,-1)--(4,4)node[above]{$U:\ y=x$};
-\draw[red](-1,1)--(2.3,-2.3)node[right]{$W:\ y=-x$};
-\draw[->,thick,blue](0,0)--(3,3)node[above left]{$(3,3)$};
-\draw[->,thick,red](0,0)--(1,-1)node[below left]{$(1,-1)$};
-\draw[->,thick,red](3,3)--(4,2)node[midway,above right]{$+(1,-1)$};
-\draw[dashed,blue](1,-1)--(4,2);
-\draw[->,thick](0,0)--(4,2)node[right]{$(4,2)$};
-\node[anchor=west,align=left]at(6,2.3){$U\cap W=\{(0,0)\}$\\[3pt]$u+w=u'+w'$ implies\\$u-u'=w'-w=0$.};
-\end{tikzpicture}\figcap{The red arrows both represent the vector $(1,-1)$; translating an arrow does not change its coordinate difference. The endpoint of the blue arrow followed by the red arrow is $(4,2)$.}\end{fig}
+\end{prob}
+\begin{fig}\DirectSumDiscoveryFigureVThree\end{fig}
 \begin{prob}
 \method{Why pairwise intersections do not decide a sum of three subspaces}
 Set $U_1=\{(t,0)\}$, $U_2=\{(0,t)\}$, $U_3=\{(t,t)\}$, with all parameters real. Each is a subspace by the same parameter calculation used above.
@@ -542,15 +481,6 @@ U_1\cap(U_2+U_3)=U_1,\qquad (U_1\cap U_2)+(U_1\cap U_3)=\{0\}.
 \]
 For example $(1,0)$ belongs to the left side but not the right. Intersection does not distribute over subspace sum.
 \end{steps}\end{prob}
-\begin{fig}\begin{tikzpicture}[scale=.9,>=Stealth]
-\draw[blue,thick,->](-.5,0)--(3.6,0)node[right]{$U_1$};
-\draw[red,thick,->](0,-.5)--(0,3.1)node[above]{$U_2$};
-\draw[OliveGreen,thick](-.5,-.5)--(2.7,2.7)node[above right]{$U_3$};
-\draw[->,very thick,blue](0,0)--(2,0)node[midway,below]{$(1,0)$};
-\draw[->,very thick,red](2,0)--(2,2)node[midway,right]{$+(0,1)$};
-\draw[->,very thick,OliveGreen](0,0)--(2,2);\fill (2,2)circle(2pt);
-\node[anchor=west,align=left]at(4.2,1.8){Two expressions for $(1,1)$:\\[4pt]one summand from each axis,\\or one summand from $U_3$.\\[4pt]Subtracting gives\\$(1,0)+(0,1)+(-1,-1)=0$.};
-\end{tikzpicture}\figcap{All three lines meet pairwise only at zero. Yet the nonzero diagonal vector is already a sum from the first two lines, so adding $U_3$ makes representations nonunique.}\end{fig}
 \begin{shortcuts}
 \ii To disprove the subspace property, first test zero. The set $x+y=1$ fails immediately.
 \ii A homogeneous equation $c_1x_1+\cdots+c_nx_n=0$ (right-hand side zero) with fixed field coefficients passes the test: zero satisfies it and $\sum_j c_j(au_j+v_j)=a\sum_jc_ju_j+\sum_jc_jv_j=a0+0=0$. For example, $x-2y=0$ is preserved because $a(2r,r)+(2s,s)=(2(ar+s),ar+s)$.
@@ -561,6 +491,8 @@ For example $(1,0)$ belongs to the left side but not the right. Intersection doe
 \ii Let $U_1=\{(t,0)\}$, $U_2=\{(0,t)\}$, $U_3=\{(t,t)\}$ (all parameters real). Their pairwise intersections are zero, but $(1,0)+(0,1)+(-1,-1)=0$, so their sum is not direct.
 \ii For these same lines, $U_1\cap(U_2+U_3)=U_1$, while $(U_1\cap U_2)+(U_1\cap U_3)=\{0\}$. Intersection does not distribute over subspace sum.
 \end{trapbox}
+
+\begin{fig}\ThreeLineNonuniquenessFigureVThree\end{fig}
 
 \section{Problem set}
 \begin{prob}\textbf{HW1 P1.} For $f:X\to Y$, $U\subseteq X$, $V\subseteq Y$, prove (a) $f(f^{-1}(V))\subseteq V$, (b) $U\subseteq f^{-1}(f(U))$. (c) Give strict-inclusion examples and determine exactly when equality holds in each.\\\emph{Hint:} Use the image and inverse-image definitions; distinguish a fixed subset from a statement for every subset.\end{prob}

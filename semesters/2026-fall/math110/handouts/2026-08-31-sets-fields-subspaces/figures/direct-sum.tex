@@ -1,0 +1,171 @@
+% Reusable full-width figure. Requires amsmath, amssymb, TikZ,
+% and TikZ libraries arrows.meta and calc. Natural width: 16.5 cm.
+% All geometry uses the same coordinates and scale in all four panels.
+\definecolor{dsBlue}{HTML}{2463AD}
+\definecolor{dsGreen}{HTML}{23734F}
+\definecolor{dsGold}{HTML}{A46900}
+\definecolor{dsRed}{HTML}{B63B40}
+\definecolor{dsInk}{HTML}{202B35}
+\definecolor{dsMute}{HTML}{77828C}
+\definecolor{dsGrid}{HTML}{E7EBEE}
+\newcommand{\DirectSumDiscoveryFigureVThree}{%
+\begin{tikzpicture}[x=1cm,y=1cm,
+  font=\fontsize{10.5}{13}\selectfont,text=dsInk,
+  >=Latex,
+  ds vector/.style={-{Latex[length=2.8mm,width=1.8mm]},line cap=round},
+  ds u/.style={ds vector,draw=dsBlue,line width=1.5pt},
+  ds v/.style={ds vector,draw=dsGreen,line width=1.05pt},
+  ds residual/.style={ds vector,line width=1.6pt},
+  ds guide/.style={draw=dsGold,line width=.85pt,dash pattern=on 3pt off 2.5pt},
+  ds label/.style={fill=white,inner sep=1.8pt},
+  ds heading/.style={anchor=west,font=\sffamily\bfseries\fontsize{12}{14}\selectfont},
+  ds foot/.style={anchor=north west,align=left,font=\fontsize{11}{14}\selectfont}]
+  \path[use as bounding box] (0,0) rectangle (16.5,22.3);
+  \node[anchor=west,font=\sffamily\bfseries\fontsize{17}{20}\selectfont] at (0,21.95)
+    {Find the two summands of $v=(4,2)$.};
+  \node[anchor=west,font=\fontsize{12}{15}\selectfont] at (0,21.24)
+    {$\textcolor{dsBlue}{U=\{(t,t):t\in\mathbb R\}}\qquad
+      \textcolor{dsGold}{W=\{(s,-s):s\in\mathbb R\}}$};
+  \node[anchor=west,font=\fontsize{11}{14}\selectfont] at (0,20.60)
+    {Every $w=(s,-s)\in W$ has coordinate sum $s+(-s)=0$.};
+  \node[anchor=west,font=\fontsize{11}{14}\selectfont] at (0,20.00)
+    {From $u=(t,t)$, every possible endpoint $u+w$ has $x+y=2t$.};
+  \node[anchor=west,font=\fontsize{11}{14}\selectfont] at (0,19.40)
+    {This line passes through $u$ and is parallel to $W$.};
+  \draw[dsGrid,line width=.5pt] (8.25,.35)--(8.25,18.77);
+  \draw[dsGrid,line width=.5pt] (0,9.56)--(16.5,9.56);
+
+  % Panels have identical plot origins, cameras, and scale.
+  \foreach \px/\py/\step/\heading/\t/\rescolor in {
+    0/10.0/1/{Try $u=(1,1)$.}/1/dsRed,
+    8.6/10.0/2/{Move to $u=(2,2)$.}/2/dsRed,
+    0/0.0/3/{Move to $u=(3,3)$.}/3/dsGold,
+    8.6/0.0/4/{Why is this the only choice?}/3/dsGold}{
+    \begin{scope}[shift={(\px,\py)}]
+      \node[ds heading] at (0,8.52) {\step\quad\heading};
+      \pgfmathtruncatemacro{\sumvalue}{2*\t}
+      \ifnum\step<4
+        \node[anchor=west,text=dsGold] at (0,7.93)
+          {Possible endpoints after adding $w$: $x+y=\sumvalue$};
+      \else
+        \node[anchor=west,text=dsGold,align=left,font=\fontsize{10.5}{11}\selectfont] at (0,8.00)
+          {To reach $v$, $u$ must have $x+y=6$.};
+      \fi
+      \begin{scope}[shift={(1.0,2.94)},x=1.04cm,y=1.04cm]
+        % Fine grid provides a fixed coordinate reference without competing.
+        \draw[dsGrid,line width=.35pt,step=1.04cm] (-.55,-1.5) grid (4.95,4.5);
+        \draw[-{Latex[length=1.8mm]},draw=dsMute,line width=.55pt]
+          (-.65,0)--(5.03,0) node[right,font=\small] {$x$};
+        \draw[-{Latex[length=1.8mm]},draw=dsMute,line width=.55pt]
+          (0,-1.6)--(0,4.55) node[left,font=\small] {$y$};
+        \node[below left,inner sep=2pt,text=dsMute,font=\small] at (0,0) {$0$};
+        \foreach \q in {1,2,3,4}{
+          \draw[draw=dsMute,line width=.4pt] (\q,.055)--(\q,-.055);
+          \node[below,inner sep=3pt,text=dsMute,font=\fontsize{8.5}{10}\selectfont] at (\q,0) {$\q$};
+          \draw[draw=dsMute,line width=.4pt] (.055,\q)--(-.055,\q);
+        }
+        % Both allowed subspaces stay fixed throughout the story.
+        \ifnum\step<4
+          \draw[dsBlue!38,line width=1.05pt] (-.5,-.5)--(4.25,4.25);
+        \else
+          \draw[dsBlue,line width=1.4pt] (-.5,-.5)--(4.25,4.25);
+        \fi
+        \node[ds label,text=dsBlue,anchor=west] at (3.9,4.21) {$U$};
+        \ifnum\step<4
+        \draw[dsGold!55,line width=1.05pt] (-.62,.62)--(1.55,-1.55);
+        \draw[ds vector,dsGold,line width=1.2pt] (0,0)--(1,-1);
+        \node[ds label,text=dsGold,anchor=west] at (1.48,-1.45) {$W$};
+        \fi
+        % The target stays at exactly the same location, including its label.
+        \ifnum\step<4
+          \draw[ds v] (0,0)--(4,2);
+        \fi
+        \fill[dsGreen] (4,2) circle[radius=2.2pt];
+        \node[ds label,text=dsGreen,anchor=west] at (4.13,2.01) {$v=(4,2)$};
+        % A gold line contains all endpoints obtainable from this u
+        % by adding a vector (s,-s); its equation is x+y=2t.
+        \begin{scope}
+          \clip (-.55,-1.5) rectangle (4.95,4.5);
+          \ifnum\step<4
+            \draw[ds guide,line width=1.05pt] (-1,{2*\t+1})--(6,{2*\t-6});
+          \else
+            \draw[dsGold,line width=1.5pt] (-1,7)--(6,0);
+          \fi
+        \end{scope}
+        \ifnum\step<4
+          \draw[ds u] (0,0)--(\t,\t);
+          \fill[dsBlue] (\t,\t) circle[radius=2.2pt];
+          \draw[ds residual,draw=\rescolor] (\t,\t)--(4,2);
+          \node[ds label,text=dsBlue,anchor=south east] at ({\t-.07},{\t+.06})
+            {$u=(\t,\t)$};
+          % This label is attached directly to the translated gold line.
+          \ifnum\step=1
+            \node[ds label,text=dsGold,anchor=west,align=left,
+               font=\fontsize{9.5}{11.5}\selectfont] at (.15,3.40)
+               {possible endpoints\\from this $u$};
+            \draw[dsGold,line width=.6pt] (.70,3.05)--(.30,1.70);
+          \fi
+          \ifnum\step=2
+            \node[ds label,text=dsGold,anchor=west,align=left,
+               font=\fontsize{9.5}{11.5}\selectfont] at (.15,3.45)
+               {possible endpoints\\from this $u$};
+            \draw[dsGold,line width=.6pt] (1.38,3.13)--(1.63,2.37);
+          \fi
+          \ifnum\step=3
+            \node[ds label,text=dsGold,anchor=west,align=left,
+               font=\fontsize{9.5}{11.5}\selectfont] at (.15,4.00)
+               {possible endpoints\\from this $u$};
+            \draw[dsGold,line width=.6pt] (1.70,3.68)--(2.50,3.50);
+          \fi
+          \ifnum\step=1
+            \node[ds label,text=dsRed] at (2.37,1.87) {$v-u$};
+          \fi
+          \ifnum\step=2
+            \node[ds label,text=dsRed,anchor=south] at (3.02,2.05) {$v-u$};
+          \fi
+          \ifnum\step=3
+            \node[ds label,text=dsGold,anchor=west] at (3.69,3.00) {$v-u$};
+            \draw[draw=dsGold,line width=.6pt] (3.90,2.90)--(3.63,2.48);
+          \fi
+        \else
+          % The fourth frame derives the starting point instead of repeating
+          % the already found vector addition.
+          \draw[dsBlue!35,densely dashed,line width=.7pt] (0,3)--(3,3)--(3,0);
+          \node[ds label,text=dsBlue,anchor=east] at (-.08,3) {$3$};
+          \node[below,inner sep=3pt,fill=white,text=dsBlue,
+             font=\fontsize{8.5}{10}\selectfont] at (3,0) {$3$};
+          \fill[white] (3,3) circle[radius=4.4pt];
+          \draw[dsBlue,line width=1.15pt] (3,3) circle[radius=4.4pt];
+          \fill[dsBlue] (3,3) circle[radius=2pt];
+          \node[ds label,anchor=east,align=right,font=\fontsize{12}{15}\selectfont]
+             at (1.92,3.95) {$2t=6$\\$\Longrightarrow\ t=3$};
+          \draw[dsInk,line width=.7pt] (1.90,3.58)--(2.84,3.10);
+          \node[ds label,text=dsGreen,anchor=west,font=\sffamily\bfseries\fontsize{12}{15}\selectfont]
+             at (4.13,1.56) {$4+2=6$};
+          \node[ds label,text=dsGold,anchor=west] at (3.75,.89) {$x+y=6$};
+        \fi
+      \end{scope}
+      \ifnum\step=1
+        \node[ds foot] at (0,1.04)
+          {$v-u=(4,2)-(1,1)=\textcolor{dsRed}{(3,1)}$.\\[3pt]
+           \textcolor{dsRed}{$3+1\ne0$, so $(3,1)\notin W$.}};
+      \fi
+      \ifnum\step=2
+        \node[ds foot] at (0,1.04)
+          {$v-u=(4,2)-(2,2)=\textcolor{dsRed}{(2,0)}$.\\[3pt]
+           \textcolor{dsRed}{$2+0\ne0$, so $(2,0)\notin W$.}};
+      \fi
+      \ifnum\step=3
+        \node[ds foot] at (0,1.04)
+          {$v-u=(4,2)-(3,3)=\textcolor{dsGold}{(1,-1)\in W}$.\\[3pt]
+           $\textcolor{dsGreen}{(4,2)}=\textcolor{dsBlue}{(3,3)}+\textcolor{dsGold}{(1,-1)}$.};
+      \fi
+      \ifnum\step=4
+        \node[ds foot] at (0,1.04)
+          {The two lines meet only once: $u=(3,3)$.\\[4pt]
+           $t+s=4,\quad t-s=2\quad\Longrightarrow\quad t=3,\ s=1$.};
+      \fi
+    \end{scope}
+  }
+\end{tikzpicture}%
+}

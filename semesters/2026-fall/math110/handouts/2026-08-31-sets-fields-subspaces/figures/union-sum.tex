@@ -1,0 +1,89 @@
+\definecolor{usBlue}{HTML}{2463AD}
+\definecolor{usGold}{HTML}{A46900}
+\definecolor{usRed}{HTML}{B63B40}
+\definecolor{usGreen}{HTML}{23734F}
+\definecolor{usInk}{HTML}{202B35}
+\newcommand{\UnionSumDiscoveryFigure}{%
+\begin{tikzpicture}[x=1cm,y=1cm,text=usInk,font=\fontsize{11}{14}\selectfont,
+  us arrow/.style={-{Latex[length=2.8mm,width=1.8mm]},line width=1.5pt},
+  us heading/.style={anchor=west,font=\sffamily\bfseries\fontsize{12}{15}\selectfont},
+  us label/.style={fill=white,inner sep=1.5pt}]
+\path[use as bounding box] (0,0) rectangle (16.5,19.5);
+\node[anchor=west,font=\sffamily\bfseries\fontsize{17}{20}\selectfont] at (0,19.1)
+  {Why do we need the sum instead of the union?};
+\node[anchor=west] at (0,18.4)
+  {$\textcolor{usBlue}{U=\{(x,0):x\in\mathbb R\}}\qquad
+    \textcolor{usGold}{W=\{(0,y):y\in\mathbb R\}}$};
+\draw[black!12] (8.25,.2)--(8.25,17.8);
+\draw[black!12] (0,8.8)--(16.5,8.8);
+\foreach \px/\py/\k/\heading in {
+ 0/9.0/1/{Choose two vectors in the union.},
+ 8.6/9.0/2/{Add them: translate the gold arrow.},
+ 0/0/3/{The sum is outside the union.},
+ 8.6/0/4/{Allow sums: reach any target.}}{
+\begin{scope}[shift={(\px,\py)}]
+ \node[us heading] at (0,8.2) {\k\quad\heading};
+ \begin{scope}[shift={(2.25,4.0)},x=2.2cm,y=2.2cm]
+  \ifnum\k=4
+   \fill[usGreen!5] (-.8,-.85) rectangle (1.9,1.55);
+  \fi
+  \draw[black!8,step=1.1cm] (-.8,-.85) grid (1.9,1.55);
+  \draw[usBlue!55,line width=1pt,->] (-.85,0)--(1.95,0)
+   node[right,text=usBlue] {$U$};
+  \draw[usGold!55,line width=1pt,->] (0,-.9)--(0,1.6)
+   node[above,text=usGold] {$W$};
+  \node[below left,font=\small] at (0,0) {$0$};
+  \ifnum\k<4
+   \draw[us arrow,usBlue] (0,0)--(1,0);
+   \ifnum\k=3
+    \node[below,us label,text=usRed] at (1,0) {$1\ne0$};
+   \else
+    \node[below,us label,text=usBlue] at (1,0) {$(1,0)$};
+   \fi
+   \ifnum\k=1
+    \draw[us arrow,usGold] (0,0)--(0,1);
+    \node[left,us label,text=usGold] at (0,1) {$(0,1)$};
+   \else
+    \draw[usGold!35,line width=1pt,dashed,->] (0,0)--(0,1);
+    \draw[us arrow,usGold] (1,0)--(1,1);
+    \node[right,us label,text=usGold] at (1,.5) {$(0,1)$};
+    \draw[usGold!45,dashed,->] (.05,1.1)--(.95,1.1);
+    \draw[us arrow,usRed] (0,0)--(1,1);
+    \node[above right,us label,text=usRed] at (1.08,1.08) {$(1,1)$};
+   \fi
+   \ifnum\k=3
+    \draw[usRed,dashed,line width=.9pt] (0,1)--(1,1)--(1,0);
+    \draw[usRed,line width=1pt] (1,1) circle[radius=2.6mm];
+    \node[left,text=usRed] at (0,1) {$1\ne0$};
+   \fi
+  \else
+   \coordinate (P) at (1.35,-.65);
+   \draw[us arrow,usBlue] (0,0)--(1.35,0);
+   \draw[us arrow,usGold] (1.35,0)--(P);
+   \draw[us arrow,usGreen] (0,0)--(P);
+   \fill[usGreen] (P) circle[radius=2pt];
+   \node[right,us label,text=usGreen] at (P) {$(x,y)$};
+   \node[above,us label,text=usBlue] at (1.25,0) {$(x,0)$};
+   \node[left,us label,text=usGold] at (0,-.65) {$(0,y)$};
+   \draw[usGold!45,dashed] (0,-.65)--(P);
+   \node[right,us label,text=usGold] at (1.35,-.3) {$(0,y)$};
+  \fi
+ \end{scope}
+ \ifnum\k=1
+  \node[anchor=north west,align=left] at (0,1.4)
+   {The union contains vectors on either axis.\\Both chosen vectors belong to $U\cup W$.};
+ \fi
+ \ifnum\k=2
+  \node[anchor=north west,align=left] at (0,1.4)
+   {Translation keeps the gold vector $(0,1)$.\\The endpoint is $(1,0)+(0,1)=(1,1)$.};
+ \fi
+ \ifnum\k=3
+  \node[anchor=north west,align=left] at (0,1.4)
+   {Both coordinates are nonzero.\\The sum lies on neither axis, so\\$U\cup W$ is not closed under addition.};
+ \fi
+ \ifnum\k=4
+  \node[anchor=north west,align=left] at (0,1.4)
+   {$\textcolor{usGreen}{(x,y)}=\textcolor{usBlue}{(x,0)}+\textcolor{usGold}{(0,y)}$ for any real $x,y$.\\Every target is a sum: $U+W=\mathbb R^2$.};
+ \fi
+\end{scope}}
+\end{tikzpicture}}

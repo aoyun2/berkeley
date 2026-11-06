@@ -1,0 +1,136 @@
+% Reusable 16.5 cm wide TikZ figure. Requires amsmath, amssymb,
+% TikZ, and the TikZ libraries arrows.meta and calc.
+\definecolor{ipBlue}{HTML}{2463AD}
+\definecolor{ipGold}{HTML}{A46900}
+\definecolor{ipPink}{HTML}{9D3D86}
+\definecolor{ipInk}{HTML}{202B35}
+\definecolor{ipMute}{HTML}{89929B}
+\definecolor{ipFaint}{HTML}{DDE2E6}
+\newcommand{\ImagePreimageDiscoveryFigureVTwo}{%
+\begin{tikzpicture}[x=1cm,y=1cm,text=ipInk,
+  font=\fontsize{11}{14}\selectfont,
+  ip title/.style={anchor=west,font=\sffamily\bfseries\fontsize{12}{15}\selectfont},
+  ip foot/.style={anchor=north west,align=left,font=\fontsize{11}{15}\selectfont},
+  ip node/.style={circle,minimum size=7.6mm,inner sep=0pt,line width=1pt,
+    font=\fontsize{13}{16}\selectfont},
+  ip arrow/.style={-{Latex[length=2.7mm,width=1.8mm]},line width=1.1pt},
+  ip quiet/.style={-{Latex[length=2.1mm,width=1.3mm]},line width=.65pt,draw=ipFaint}]
+  \path[use as bounding box] (0,0) rectangle (16.5,21.8);
+  \node[anchor=west,font=\sffamily\bfseries\fontsize{16}{19}\selectfont,align=left] at (0,21.26)
+    {Do we recover the original selected set\\after both operations?};
+  \node[anchor=west] at (0,20.25)
+    {$f:X\to Y,\qquad X=\{a,b,c,d\},\qquad Y=\{p,q,r\}$};
+  \node[anchor=west] at (0,19.66)
+    {All arrows show $f$: $a,b$ go to $p$; $c,d$ go to $q$; no input goes to $r$.};
+  \node[anchor=west,font=\sffamily\bfseries\fontsize{12}{15}\selectfont] at (0,18.90)
+    {Starting with inputs: collecting all starting points can add inputs.};
+  \draw[ipFaint,line width=.5pt] (8.25,.4)--(8.25,18.40);
+  \draw[ipFaint,line width=.5pt] (0,9.47)--(16.5,9.47);
+  \foreach \px/\py/\step/\heading in {
+    0/9.5/1/{Follow the chosen inputs.},
+    8.6/9.5/2/{Collect all starting points.},
+    0/0/3/{Collect all starting points.},
+    8.6/0/4/{Send those inputs forward.}}{
+    \begin{scope}[shift={(\px,\py)}]
+      \node[ip title] at (0,8.42) {\step\quad\heading};
+      \ifnum\step=1
+        \node[anchor=west,text=ipBlue] at (0,7.75) {Choose $U=\{a,c\}\subseteq X$.};
+      \fi
+      \ifnum\step=2
+        \node[anchor=west,text=ipGold] at (0,7.75) {Keep the outputs $f(U)=\{p,q\}$.};
+      \fi
+      \ifnum\step=3
+        \node[anchor=west,text=ipGold] at (0,7.75) {Choose $V=\{q,r\}\subseteq Y$.};
+      \fi
+      \ifnum\step=4
+        \node[anchor=west,text=ipBlue] at (0,7.75) {Keep the inputs $f^{-1}(V)=\{c,d\}$.};
+      \fi
+      \node[font=\fontsize{13}{16}\selectfont] at (1.50,6.87) {$X$};
+      \node[font=\fontsize{13}{16}\selectfont] at (5.35,6.87) {$Y$};
+      \node[text=ipMute] at (3.27,6.87) {$f$};
+      % Node positions and all four function arrows persist in every frame.
+      \coordinate (a) at (1.50,5.92);
+      \coordinate (b) at (1.50,4.95);
+      \coordinate (c) at (1.50,3.98);
+      \coordinate (d) at (1.50,3.01);
+      \coordinate (p) at (5.35,5.43);
+      \coordinate (q) at (5.35,3.49);
+      \coordinate (r) at (5.35,2.05);
+      \foreach \src/\dst in {a/p,b/p,c/q,d/q}{
+        \draw[ip quiet,shorten <=4.2mm,shorten >=4.2mm] (\src)--(\dst);
+      }
+      % Reaching selected outputs never reverses the function arrows.
+      \ifnum\step<3
+        \foreach \src/\dst in {a/p,c/q}{
+          \draw[ip arrow,ipBlue,shorten <=4.2mm,shorten >=4.2mm] (\src)--(\dst);
+        }
+      \else
+        \foreach \src/\dst in {c/q,d/q}{
+          \draw[ip arrow,ipBlue,shorten <=4.2mm,shorten >=4.2mm] (\src)--(\dst);
+        }
+      \fi
+      \ifnum\step=2
+        \foreach \src/\dst in {b/p,d/q}{
+          \draw[ip arrow,ipPink,shorten <=4.2mm,shorten >=4.2mm] (\src)--(\dst);
+        }
+      \fi
+      \foreach \name in {a,b,c,d,p,q,r}{
+        \node[ip node,draw=ipFaint,fill=white,text=ipMute] at (\name) {$\name$};
+      }
+      \ifnum\step<3
+        \foreach \name in {a,c}{
+          \node[ip node,draw=ipBlue,fill=ipBlue!9,text=ipBlue] at (\name) {$\name$};
+        }
+        \foreach \name in {p,q}{
+          \node[ip node,draw=ipGold,fill=ipGold!11,text=ipGold] at (\name) {$\name$};
+        }
+      \else
+        \foreach \name in {c,d}{
+          \node[ip node,draw=ipBlue,fill=ipBlue!9,text=ipBlue] at (\name) {$\name$};
+        }
+        \node[ip node,draw=ipGold,fill=ipGold!11,text=ipGold] at (q) {$q$};
+      \fi
+      \ifnum\step=2
+        \foreach \name in {b,d}{
+          \node[ip node,draw=ipPink,fill=ipPink!10,text=ipPink] at (\name) {$\name$};
+          \node[anchor=east,text=ipPink,font=\fontsize{10.5}{13}\selectfont] at ($ (\name)+(-.53,0) $)
+            {extra};
+        }
+      \fi
+      \ifnum\step=3
+        \node[ip node,draw=ipGold,fill=ipGold!11,text=ipGold] at (r) {$r$};
+        \node[anchor=west,align=left,text=ipGold,font=\fontsize{10.5}{13}\selectfont]
+          at (5.93,2.05) {no input\\maps to $r$};
+      \fi
+      \ifnum\step=4
+        \node[ip node,draw=ipMute,dashed,fill=white,text=ipMute] at (r) {$r$};
+        \node[anchor=west,align=left,text=ipMute,font=\fontsize{10.5}{13}\selectfont]
+          at (5.93,2.05) {not returned};
+      \fi
+      \ifnum\step=1
+        \node[ip foot] at (0,1.15)
+          {$f(U)=\textcolor{ipGold}{\{p,q\}}$.\\[4pt]
+           Only arrows from $a,c$ select outputs.};
+      \fi
+      \ifnum\step=2
+        \node[ip foot] at (0,1.15)
+          {$f^{-1}(f(U))=\{a,b,c,d\}\supsetneq\textcolor{ipBlue}{U}$.\\[4pt]
+           \textcolor{ipPink}{$b,d$: extra inputs with the same outputs.}};
+      \fi
+      \ifnum\step=3
+        \node[ip foot] at (0,1.15)
+          {$f^{-1}(V)=\textcolor{ipBlue}{\{c,d\}}$.\\[4pt]
+           Collect every input reaching $q$ or $r$.};
+      \fi
+      \ifnum\step=4
+        \node[ip foot] at (0,1.15)
+          {$f(f^{-1}(V))=\textcolor{ipGold}{\{q\}}\subsetneq\textcolor{ipGold}{\{q,r\}}=V$.\\[4pt]
+           $q$ returns; $r$ is not reached by any input.};
+      \fi
+    \end{scope}
+  }
+  % A heading separates the second two-step operation from the first.
+  \node[anchor=west,font=\sffamily\bfseries\fontsize{12}{15}\selectfont] at (0,8.98)
+    {Starting with outputs: sending the collected inputs can lose outputs.};
+\end{tikzpicture}%
+}

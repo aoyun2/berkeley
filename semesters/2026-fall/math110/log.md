@@ -2,6 +2,10 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Replaced all five Week 1 figures after Aaron's further feedback: changing image/preimage selections, reciprocal selection/cancellation/normalization, union closure failure, direct-sum trials and uniqueness, and changing three-line decompositions. Current handout is 19 pages; solutions remain 4 pages. Added the offline direct-sum explorer. Independent visual review, exact checks, 81-state browser tests and inspection of all final pages passed after explanatory and layout corrections. This is the revised Week 1 only; Weeks 2–10 remain unfinished.
+
+- 2026-11-06: Aaron rejected the regenerated Week1 figures as still insufficiently clear and requested 3Blue1Brown-level visual explanations. Prior visual approval was superseded; this triggered the visual redesign recorded above and paused Week 2 production.
+
 - 2026-11-06: Aaron rejected the previous backfill for unclear prose, insufficient explanatory figures and vague claims. All ten previous weeks require revision/regeneration and fresh teaching-quality approval under standards/teaching-quality.md. Week 1 was rewritten first; the individual release record below identifies the regenerated version. The remaining old weeks have no new approval.
 
 - 2026-11-06: Regenerated week of 2026-08-31 against Aaron's reference: 14-page handout and 4-page solutions, five explanatory diagrams, explicit proof choices and intermediate calculations. Fresh review initially withheld release for textbook omissions and unclear wording; all findings corrected and independently rechecked. Root read the final packet, inspected every final page, and reran exact checks. Weeks 2–10 remain queued for revision.
