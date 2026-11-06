@@ -1,0 +1,1732 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing}
+\usepackage{needspace}
+\usepackage[letterpaper,margin=0.75in,headsep=0.25in]{geometry}
+\mdfdefinestyle{mdbluebox}{roundcorner=6pt,linewidth=0.8pt,skipabove=7pt,skipbelow=2pt,innertopmargin=5pt,innerbottommargin=5pt,linecolor=blue,nobreak=true,backgroundcolor=TealBlue!5}
+\mdfdefinestyle{mdredbox}{linewidth=0.5pt,skipabove=7pt,skipbelow=2pt,innertopmargin=3pt,innerbottommargin=5pt,nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna}
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt}
+
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}
+\newcommand{\PP}{\mathcal P}
+\newcommand{\MM}{\mathcal M}
+\newcommand{\traps}{\par\medskip\noindent\textbf{\color{RawSienna}Traps.}\ }
+\newcommand{\idea}{\par\noindent\textbf{\color{MidnightBlue}The idea.}\ }
+\newcommand{\inwords}{\par\noindent\textit{In words:}\ }
+\newcommand{\figcap}[1]{\par\smallskip{\small #1}\par}
+\setlength{\emergencystretch}{3em}
+
+\title{Math 110 Midterm 2 Prep}
+\subtitle{Notes Ch.~8--13, HW4--7}
+\author{}
+\date{}
+
+\ihead{}
+\begin{document}
+\maketitle
+
+\section{Review}
+
+Results are labelled with their numbers in the lecture notes (``Prop.~53'') and in Axler's book (``LADR 5.19'').
+
+\subsection{Background from midterm 1}\label{sec:background}
+
+\textbf{Null space, range, rank--nullity.} A linear map from a space to itself is an \vocab{operator}, and $\LL(V)=\LL(V,V)$. For $T\in\LL(V,W)$,
+\[ \dim V=\dim\nul T+\dim\range T. \]
+$T$ is injective iff $\nul T=\{0\}$. For an \emph{operator} on a finite-dimensional space, rank--nullity gives:
+\[ T\text{ injective}\iff T\text{ surjective}\iff T\text{ invertible}. \]
+This is used constantly below. For example, ``$T-\lambda I$ is not injective'' and ``$T-\lambda I$ is not invertible'' mean the same thing.
+
+\textbf{Direct sums.} $V=U\oplus W$ means every $v\in V$ can be written as $v=u+w$ with $u\in U$, $w\in W$, in exactly one way. To check it, show either
+\begin{itemize}
+  \ii $U+W=V$ and $U\cap W=\{0\}$, or
+  \ii $U\cap W=\{0\}$ and $\dim U+\dim W=\dim V$, or
+  \ii $U+W=V$ and $\dim U+\dim W=\dim V$
+\end{itemize}
+(the last two work because $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$).
+For several subspaces, $V=U_1\oplus\cdots\oplus U_m$ means each $v$ is $u_1+\dots+u_m$ ($u_i\in U_i$) in exactly one way. Then putting together a basis of each $U_i$ gives a basis of $V$, and $\dim V=\dim U_1+\dots+\dim U_m$. To check that a sum $U_1+\dots+U_m$ is direct, it is enough to show that $0=u_1+\dots+u_m$ with $u_i\in U_i$ forces every $u_i=0$.
+
+\textbf{Matrices of linear maps.} If $v_1,\dots,v_n$ is a basis of $V$ and $w_1,\dots,w_m$ a basis of $W$, then column $j$ of $\MM(T)$ is the list of coefficients of $Tv_j$ in the basis $w_1,\dots,w_m$. Change of basis: let $A$ be the matrix of an operator in the standard basis of $\FF^n$, and let the columns of an invertible matrix $S$ be another basis $s_1,\dots,s_n$. Then the matrix of the same operator in the basis $s_1,\dots,s_n$ is $S^{-1}AS$. Two matrices $A$ and $B=S^{-1}AS$ are called \vocab{similar}: they describe the same operator in two different bases.
+
+\textbf{Polynomials.} These words are used constantly from Section~\ref{sec:eigen} on.
+\begin{itemize}
+  \ii The \vocab{degree} of $p(x)=a_mx^m+\dots+a_1x+a_0$ with $a_m\ne0$ is $m$; $a_m$ is the \vocab{leading coefficient}. $p$ is \vocab{monic} if its leading coefficient is $1$.
+  \ii $\lambda$ is a \vocab{root} (or \vocab{zero}) of $p$ if $p(\lambda)=0$.
+  \ii $q$ \vocab{divides} $p$ if $p=qr$ for some polynomial $r$. Example: $x-1$ divides $x^2-1=(x-1)(x+1)$.
+  \ii \vocab{Division with remainder}: for $q\ne0$, every $p$ can be written $p=qr+s$ with $s=0$ or $\deg s<\deg q$ (long division). In particular $\lambda$ is a root of $p$ iff $(x-\lambda)$ divides $p$.
+  \ii $p$ \vocab{splits} over $\FF$ if it is a product of degree-$1$ factors with roots in $\FF$: $p=c(x-\lambda_1)\cdots(x-\lambda_m)$, $\lambda_i\in\FF$. A root is \vocab{repeated} if it appears more than once in this list.
+  \ii A nonzero polynomial of degree $m$ has at most $m$ roots (each root $\lambda$ splits off a factor $x-\lambda$, lowering the degree by one).
+  \ii \textbf{Fundamental Theorem of Algebra (Prop.~52).} Every nonconstant polynomial with complex coefficients has a complex root. Hence every polynomial splits over $\CC$.
+  \ii Over $\RR$ this fails: $x^2+1$ has no real root. A real quadratic $x^2+bx+c$ with no real root ($b^2-4c<0$) is called \vocab{irreducible}. Every nonconstant real polynomial is a constant times a product of factors $x-\lambda$ and irreducible quadratics $x^2+bx+c$.
+  \ii $p$ has a repeated root (in $\CC$) iff $p$ and its derivative $p'$ have a common root. Example: $x^2-2x+1=(x-1)^2$ and $2x-2$ share the root $1$.
+\end{itemize}
+
+\textbf{Determinants.} For $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, $\det A=ad-bc$, and $A$ is invertible iff $\det A\ne0$ (HW4 P1).
+
+\textbf{Eigenvalues of a matrix.} An eigenvalue or eigenvector of an $n\times n$ matrix $A$ means one of the operator $x\mapsto Ax$ on $\FF^n$ (Section~\ref{sec:eigen}).
+
+\subsection{Products of vector spaces}\label{sec:products}
+\idea A product puts several spaces side by side. An element of $V_1\times\cdots\times V_m$ is a list $(v_1,\dots,v_m)$ with one entry from each space, and you add and scale entry by entry. $\RR^n=\RR\times\cdots\times\RR$ is the basic example.
+
+\begin{proposition*}[Prop.~34 / LADR 3.87, 3.89]
+  For vector spaces $V_1,\dots,V_m$, the product $V_1\times\cdots\times V_m=\{(v_1,\dots,v_m):v_i\in V_i\}$ is a vector space with
+  \[ (v_1,\dots,v_m)+(w_1,\dots,w_m)=(v_1+w_1,\dots,v_m+w_m),\qquad\lambda(v_1,\dots,v_m)=(\lambda v_1,\dots,\lambda v_m). \]
+\end{proposition*}
+Each axiom holds because it holds in each entry. The zero vector is $(0,\dots,0)$ and the negative of $(v_1,\dots,v_m)$ is $(-v_1,\dots,-v_m)$.
+
+\begin{example*}[Ex.~39, 40]
+  $\RR^n$ is $\RR\times\cdots\times\RR$ ($n$ factors). $\RR^m\times\RR^n$ is identified with $\RR^{m+n}$ by $\big((x_1,\dots,x_m),(y_1,\dots,y_n)\big)\mapsto(x_1,\dots,x_m,y_1,\dots,y_n)$. An element of $\PP_1(\RR)\times\RR^2$ is a pair such as $\big(2+3x,\ (1,-1)\big)$, and $\big(2+3x,(1,-1)\big)+\big(x,(0,5)\big)=\big(2+4x,(1,4)\big)$.
+\end{example*}
+
+\begin{proposition*}[Prop.~35, 36 / LADR 3.76, HW4 P5]
+  Let $V_{(i)}=\{(0,\dots,0,v_i,0,\dots,0):v_i\in V_i\}$ (entry $v_i$ in position $i$, zeros elsewhere); $V_{(i)}$ is a copy of $V_i$. Then
+  \[ V_1\times\cdots\times V_m=V_{(1)}\oplus\cdots\oplus V_{(m)}, \]
+  and if each $V_i$ is finite-dimensional, $\dim(V_1\times\cdots\times V_m)=\dim V_1+\dots+\dim V_m$.
+\end{proposition*}
+\begin{proof}
+  $(v_1,\dots,v_m)=(v_1,0,\dots,0)+\dots+(0,\dots,0,v_m)$, and this is the only way to write it as a sum of one vector from each $V_{(i)}$, because the entries determine the pieces. For the dimension, take two spaces: if $v_1,\dots,v_k$ is a basis of $V$ and $w_1,\dots,w_l$ a basis of $W$, then
+  \[ (v_1,0),\dots,(v_k,0),\ (0,w_1),\dots,(0,w_l) \]
+  is a basis of $V\times W$. It spans, since $(v,w)=(v,0)+(0,w)$ and each part is a combination of the listed vectors. It is independent, since $\sum a_i(v_i,0)+\sum b_j(0,w_j)=\big(\sum a_iv_i,\sum b_jw_j\big)=(0,0)$ forces all $a_i=0$ and all $b_j=0$. So $\dim(V\times W)=k+l$; repeat for more factors.
+\end{proof}
+Because of this, the product is also called the \vocab{external direct sum}. The dimension of a product is the \emph{sum} of the dimensions (compare $\dim\LL(V,W)=(\dim V)(\dim W)$).
+
+\begin{proposition*}[Prop.~37 / LADR 3.93]
+  For subspaces $U_1,\dots,U_m$ of $V$, the map
+  \[ \Gamma\colon U_1\times\cdots\times U_m\to U_1+\dots+U_m,\qquad\Gamma(u_1,\dots,u_m)=u_1+\dots+u_m \]
+  is linear and surjective, and it is injective iff the sum $U_1+\dots+U_m$ is direct. Consequently $\dim(U_1+\dots+U_m)\le\dim U_1+\dots+\dim U_m$, with equality iff the sum is direct.
+\end{proposition*}
+\begin{proof}
+  Surjective: every element of $U_1+\dots+U_m$ is some $u_1+\dots+u_m$. Injective means $u_1+\dots+u_m=0$ only when every $u_i=0$, which is the test for a direct sum (Section~\ref{sec:background}). For the dimensions, rank--nullity gives $\dim(U_1+\dots+U_m)=\dim(U_1\times\cdots\times U_m)-\dim\nul\Gamma$, and $\dim(U_1\times\cdots\times U_m)=\sum\dim U_i$.
+\end{proof}
+For two subspaces, $\nul\Gamma=\{(u,-u):u\in U\cap W\}$, a copy of $U\cap W$. Rank--nullity then gives the formula $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+
+\begin{example*}
+  In $\RR^3$ let $U=\spn(e_1,e_2)$ and $W=\spn(e_2,e_3)$. $\Gamma\colon U\times W\to\RR^3$ is surjective, and $\nul\Gamma=\{(te_2,-te_2):t\in\RR\}$ has dimension $1$. So $\dim(U+W)=4-1=3$, and the sum is not direct.
+\end{example*}
+
+\traps
+\begin{itemize}
+  \ii $V\times W$ is a new space of pairs. It is not $V\cup W$, and it is not $V+W$ (which only makes sense when $V$ and $W$ sit inside one larger space).
+  \ii $\dim(V\times W)=\dim V+\dim W$, not $(\dim V)(\dim W)$.
+\end{itemize}
+
+\subsection{Affine subsets and quotient spaces}\label{sec:quotient}
+\idea The solutions of $Tx=b$ with $b\ne0$ do not form a subspace (they do not contain $0$), but they form a subspace shifted away from $0$. Such shifted subspaces are called affine subsets. If we fix one subspace $U$ and collect all of its shifts, these shifts can themselves be added and scaled: that is the quotient space $V/U$. In $V/U$ we stop distinguishing two vectors whose difference lies in $U$.
+
+\begin{definition*}[Def.~22, 23 / LADR 3.95, 3.97]
+  For a subspace $U\subseteq V$ and $v\in V$, the \vocab{translate} $v+U=\{v+u:u\in U\}$ is an \vocab{affine subset} of $V$, and it is \vocab{parallel} to $U$. Two affine subsets are parallel if they are parallel to the same subspace.
+\end{definition*}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+  \begin{scope}
+    \clip (-2,-1.5) rectangle (3.2,2.8);
+    \draw[very thick,MidnightBlue] (-3,3)--(3,-3);
+    \draw[thick,RawSienna] (-3,4)--(4,-3);
+    \draw[thick,RawSienna,dashed] (-3,5)--(5,-3);
+  \end{scope}
+  \draw[->,gray] (-2,0)--(3.2,0) node[right,black]{$x$}; \draw[->,gray] (0,-1.5)--(0,2.8) node[above,black]{$y$};
+  \node[MidnightBlue,below left] at (-1.6,1.6) {$U$};
+  \node[RawSienna,right] at (2.6,-1.6) {$(1,0)+U$};
+  \node[RawSienna,right] at (2.6,-0.6) {$(0,2)+U$};
+  \fill (1,0) circle (2pt) node[below right,fill=white,inner sep=1pt,font=\small]{$(1,0)$};
+  \fill (0,1) circle (2pt) node[right,fill=white,inner sep=1pt,font=\small,xshift=2pt]{$(0,1)$};
+  \fill (0,2) circle (2pt) node[right,fill=white,inner sep=1pt,font=\small,xshift=2pt]{$(0,2)$};
+\end{tikzpicture}
+\figcap{$U=\spn\big((-1,1)\big)$ is the line $x+y=0$. The line $x+y=1$ is the affine subset $(1,0)+U$ (Ex.~41); it is also $(0,1)+U$, because $(1,0)-(0,1)=(1,-1)\in U$. The dashed line $x+y=2$ is $(0,2)+U$. Each of these lines is one element of the quotient space $\RR^2/U$.}
+\end{center}
+
+\begin{example*}[Ex.~41, 42; solution sets]
+  \leavevmode
+  \begin{itemize}
+    \ii The line $\{(x,y):x+y=1\}$ in $\RR^2$ is $(1,0)+\spn\big((-1,1)\big)$.
+    \ii Indefinite integrals: $\int x^2\,dx=\tfrac13x^3+C$ is the affine subset $\tfrac13x^3+\RR$ of $\PP(\RR)$, parallel to the subspace $\RR$ of constant polynomials.
+    \ii If $Tx_0=b$, then $\{x:Tx=b\}=x_0+\nul T$: indeed $Tx=b$ iff $T(x-x_0)=0$ iff $x-x_0\in\nul T$.
+  \end{itemize}
+\end{example*}
+
+\begin{proposition*}[Prop.~38]
+  An affine subset is parallel to only one subspace: if $v+U=x+W$, then $U=W$.
+\end{proposition*}
+\begin{proof}
+  Since $v\in x+W$, write $v=x+w_0$ with $w_0\in W$. For $u\in U$, $v+u\in x+W$, so $v+u=x+w$ for some $w\in W$, and $u=w-w_0\in W$. So $U\subseteq W$; the same argument with the roles switched gives $W\subseteq U$.
+\end{proof}
+
+\begin{proposition*}[Prop.~39 / LADR 3.101, HW4 P6]
+  For a subspace $U$ and $v,w\in V$, these are equivalent:
+  \begin{enumerate}
+    \ii $v-w\in U$;
+    \ii $v+U=w+U$;
+    \ii $(v+U)\cap(w+U)\ne\varnothing$.
+  \end{enumerate}
+  Also, $v+U$ is a subspace iff $v\in U$, and then $v+U=U$.
+\end{proposition*}
+\begin{proof}
+  (1)$\Rightarrow$(2): for $u\in U$, $v+u=w+\big((v-w)+u\big)\in w+U$, so $v+U\subseteq w+U$; the same argument gives the other inclusion. (2)$\Rightarrow$(3): $v=v+0$ lies in both. (3)$\Rightarrow$(1): if $v+u_1=w+u_2$, then $v-w=u_2-u_1\in U$.
+  For the last statement: if $v+U$ is a subspace it contains $0$, so $0=v+u$ for some $u\in U$ and $v=-u\in U$. If $v\in U$, then $v-0\in U$, so $v+U=0+U=U$ by (1)$\Rightarrow$(2).
+\end{proof}
+So two translates are either equal or disjoint, like the parallel lines in the figure.
+
+\begin{definition*}[Def.~24]
+  The \vocab{quotient space} $V/U$ is the set of all affine subsets of $V$ parallel to $U$, with
+  \[ (v+U)+(w+U)=(v+w)+U,\qquad\lambda(v+U)=(\lambda v)+U. \]
+  Its zero is $0+U=U$.
+\end{definition*}
+\textbf{Why these operations make sense (``well-defined'').} The same translate has many names: $v+U=v'+U$ whenever $v-v'\in U$. The formulas above use a name $v$, so we must check that the answer does not depend on which name we use. If $v_1+U=v_2+U$ and $w_1+U=w_2+U$, then $v_1-v_2\in U$ and $w_1-w_2\in U$, so $(v_1+w_1)-(v_2+w_2)\in U$ and the two sums are the same translate. Similarly $\lambda v_1-\lambda v_2=\lambda(v_1-v_2)\in U$. This kind of check is needed every time a map out of $V/U$ is defined by a formula in $v$.
+
+\begin{example*}
+  In $\RR^2$ with $U=\spn(e_2)$ (the $y$-axis), each element of $\RR^2/U$ is a vertical line $\{x=c\}$. $(1,2)+U=(1,4)+U$ because $(0,-2)\in U$: in $\RR^2/U$ only the $x$-coordinate is remembered.
+\end{example*}
+
+\begin{proposition*}[Basis of a quotient]
+  Let $u_1,\dots,u_m$ be a basis of $U$, extended to a basis $u_1,\dots,u_m,v_1,\dots,v_k$ of $V$. Then $v_1+U,\dots,v_k+U$ is a basis of $V/U$. In particular $\dim V/U=\dim V-\dim U$.
+\end{proposition*}
+\begin{proof}
+  Spanning: write $v=\sum a_iu_i+\sum b_jv_j$; then $v+U=\sum b_j(v_j+U)$, since $\sum a_iu_i\in U$. Independence: if $\sum b_j(v_j+U)=0+U$, then $\sum b_jv_j\in U$, so $\sum b_jv_j=\sum c_iu_i$ for some $c_i$. The whole list $u_1,\dots,u_m,v_1,\dots,v_k$ is independent, so all $b_j=0$.
+\end{proof}
+
+\traps
+\begin{itemize}
+  \ii An element of $V/U$ is a set $v+U$, not a vector of $V$. $V/U$ is not a subspace of $V$.
+  \ii $v+U=w+U$ does not mean $v=w$; it means $v-w\in U$.
+  \ii Every formula on $V/U$ written in terms of $v$ needs a well-definedness check.
+\end{itemize}
+
+\subsection{Quotient maps and the isomorphism theorems}\label{sec:iso}
+\idea Every surjective linear map $T\colon V\to W$ makes $W$ look like a quotient of $V$: two vectors have the same image exactly when their difference is in $\nul T$, so $W$ ``is'' $V/\nul T$. The isomorphism theorems make this precise, and they are the standard way to identify a quotient space with a familiar space.
+
+\begin{definition*}[Def.~25 / LADR 3.104]
+  The \vocab{quotient map} is $\pi\colon V\to V/U$, $\pi(v)=v+U$. It is linear and surjective, and $\nul\pi=U$, since $v+U=0+U$ iff $v\in U$.
+\end{definition*}
+
+\begin{proposition*}[Prop.~40 / LADR 3.105]
+  If $V$ is finite-dimensional, $\dim V/U=\dim V-\dim U$.
+\end{proposition*}
+\begin{proof}
+  Rank--nullity for $\pi$: $\dim V=\dim\nul\pi+\dim\range\pi=\dim U+\dim V/U$.
+\end{proof}
+
+\begin{theorem*}[Prop.~41 / LADR 3.107: first isomorphism theorem]
+  For $T\in\LL(V,W)$, the map
+  \[ \bar T\colon V/\nul T\to\range T,\qquad\bar T(v+\nul T)=Tv \]
+  is a well-defined isomorphism, and $T=\iota\circ\bar T\circ\pi$, where $\pi\colon V\to V/\nul T$ is the quotient map and $\iota\colon\range T\to W$ is the inclusion $\iota(w)=w$.
+\end{theorem*}
+\begin{center}
+\begin{tikzcd}[column sep=large,row sep=large]
+  V \arrow[r,"T"] \arrow[d,"\pi"'] & W \\
+  V/\nul T \arrow[r,"\bar T"] & \range T \arrow[u,"\iota"']
+\end{tikzcd}
+\end{center}
+\begin{proof}
+  Well defined: if $v+\nul T=v'+\nul T$, then $v-v'\in\nul T$, so $Tv=Tv'$. Linear: from linearity of $T$. Injective: $\bar T(v+\nul T)=0$ means $Tv=0$, so $v\in\nul T$ and $v+\nul T$ is the zero of $V/\nul T$. Surjective: every element of $\range T$ is some $Tv=\bar T(v+\nul T)$.
+\end{proof}
+\textbf{How to use it.} To show $V/U\cong W$, find a linear map $T\colon V\to W$ that is surjective and has $\nul T=U$ exactly. Then $v+U\mapsto Tv$ is the isomorphism.
+
+\begin{example*}[Ex.~43]
+  Differentiation $D\colon\PP(\RR)\to\PP(\RR)$ is surjective with $\nul D=\RR$ (the constants). So $\PP(\RR)/\RR\cong\PP(\RR)$ by $p+\RR\mapsto p'$; the inverse sends $p$ to its indefinite integral $\int p\,dx$, an element of $\PP(\RR)/\RR$.
+\end{example*}
+
+\begin{example*}[A quotient of $\PP_3(\RR)$]
+  Let $T\colon\PP_3(\RR)\to\RR^2$, $T(p)=\big(p(1),p'(1)\big)$. It is surjective: $T(1)=(1,0)$ and $T(x-1)=(0,1)$. So $\dim\nul T=4-2=2$, and $\nul T=\{p:p(1)=p'(1)=0\}=\spn\big((x-1)^2,\ x(x-1)^2\big)$ (both are in it, and they are independent). By the first isomorphism theorem, $\PP_3(\RR)/\nul T\cong\RR^2$ via $p+\nul T\mapsto\big(p(1),p'(1)\big)$. A basis of the quotient is $1+\nul T,\ (x-1)+\nul T$, the preimages of $(1,0)$ and $(0,1)$.
+\end{example*}
+
+\begin{proposition*}[Prop.~42; HW5 P2: induced maps]
+  Let $T\in\LL(V,W)$, and let $U_1\subseteq V$, $U_2\subseteq W$ be subspaces with $T(U_1)\subseteq U_2$. Then
+  \[ \bar T\colon V/U_1\to W/U_2,\qquad\bar T(v+U_1)=Tv+U_2 \]
+  is a well-defined linear map. In particular (take $U_2=\{0\}$): if $U\subseteq\nul T$, there is exactly one linear $\tilde T\colon V/U\to W$ with $\tilde T(v+U)=Tv$, that is $T=\tilde T\circ\pi$, and $\nul\tilde T=\{v+U:v\in\nul T\}=(\nul T)/U$.
+\end{proposition*}
+\begin{proof}
+  Well defined: if $v+U_1=v'+U_1$, then $v-v'\in U_1$, so $Tv-Tv'=T(v-v')\in U_2$ and $Tv+U_2=Tv'+U_2$. Linearity comes from $T$. For $\tilde T$: it is unique because its value on every $v+U$ is forced to be $Tv$. And $\tilde T(v+U)=0$ iff $Tv=0$ iff $v\in\nul T$.
+\end{proof}
+The quotient operator $T/U$ of Section~\ref{sec:invariant} is the case $V=W$ and $U_1=U_2=U$.
+
+\begin{theorem*}[Prop.~43: second isomorphism theorem]
+  For subspaces $U,W$ of $V$: $U/(U\cap W)\cong(U+W)/W$, via $u+(U\cap W)\mapsto u+W$. In finite dimensions this gives $\dim U-\dim(U\cap W)=\dim(U+W)-\dim W$.
+\end{theorem*}
+\begin{proof}
+  The map $S\colon U\to(U+W)/W$, $S(u)=u+W$, is linear. It is surjective: an element $u+w+W$ of $(U+W)/W$ equals $u+W$, since $(u+w)-u\in W$. Its null space: $u+W=0+W$ iff $u\in W$, so $\nul S=U\cap W$. Apply the first isomorphism theorem to $S$.
+\end{proof}
+
+\begin{theorem*}[Prop.~44: third isomorphism theorem]
+  For subspaces $W\subseteq U\subseteq V$: $(V/W)/(U/W)\cong V/U$, via $(v+W)+U/W\mapsto v+U$. (Here $U/W=\{u+W:u\in U\}$, a subspace of $V/W$.)
+\end{theorem*}
+\begin{proof}
+  The identity map of $V$ sends $W$ into $U$, so by Prop.~42 it induces $S\colon V/W\to V/U$, $S(v+W)=v+U$. $S$ is surjective, and $S(v+W)=0+U$ iff $v\in U$ iff $v+W\in U/W$. So $\nul S=U/W$; apply the first isomorphism theorem.
+\end{proof}
+These are used in proofs by induction on dimension: if $W\ne\{0\}$, then $V/W$ is smaller than $V$, and the third isomorphism theorem relates quotients of $V/W$ to quotients of $V$.
+
+\traps
+\begin{itemize}
+  \ii The first isomorphism theorem gives $V/\nul T\cong\range T$, which is $W$ only when $T$ is surjective.
+  \ii To prove $V/U\cong W$ with it, you need $\nul T=U$ exactly, not just $U\subseteq\nul T$.
+  \ii A map out of a quotient defined by ``$v+U\mapsto$ (formula in $v$)'' is only a map after the well-definedness check.
+\end{itemize}
+
+\subsection{Linear functionals and the dual space}
+\idea Often we want one number from a vector: its second coordinate, the value of a polynomial at $2$, the integral of a function from $0$ to $1$. When that number depends linearly on the vector, the rule is called a linear functional. The dual space is the set of all such rules. Studying it gives a second view of subspaces and linear maps, and it explains why transposes appear.
+
+\textbf{Notation on the exam.} The notes write $V'$ and $T'$ for the dual space and the dual map. Hammond's practice midterm writes $V^*$ and $T^*$ for the same things; they mean exactly the same.
+
+\begin{definition*}[Def.~26]
+  A \vocab{linear functional} on $V$ is a linear map $\varphi\colon V\to\FF$. The \vocab{dual space} of $V$ is
+  \[ V'=\LL(V,\FF)=\{\text{all linear functionals on }V\}. \]
+  It is a vector space with $(\varphi+\psi)(v)=\varphi(v)+\psi(v)$ and $(c\varphi)(v)=c\,\varphi(v)$.
+\end{definition*}
+The prime in $V'$ has nothing to do with derivatives. Functionals are usually written with Greek letters: $\varphi$ (phi), $\psi$ (psi).
+
+\begin{example*}
+  \leavevmode
+  \begin{itemize}
+    \ii On $\RR^3$: $\varphi(x,y,z)=2x-y+3z$.
+    \ii On $\PP_2(\RR)$: $p\mapsto p(2)$, \ $p\mapsto p'(0)$, \ $p\mapsto\int_0^1p(x)\,dx$. Each is linear in $p$.
+    \ii Not functionals: $(x,y)\mapsto x+1$ (it sends $0$ to $1$, and a linear map sends $0$ to $0$); $p\mapsto p(2)^2$ (doubling $p$ multiplies the output by $4$).
+  \end{itemize}
+\end{example*}
+
+\textbf{Functionals on $\FF^n$ are row vectors (Ex.~44).} If $\varphi\in(\FF^n)'$ and $a_j=\varphi(e_j)$, then for $x=(x_1,\dots,x_n)$, linearity gives
+\[ \varphi(x)=\varphi(x_1e_1+\dots+x_ne_n)=a_1x_1+\dots+a_nx_n=\begin{pmatrix}a_1&\cdots&a_n\end{pmatrix}\begin{pmatrix}x_1\\\vdots\\x_n\end{pmatrix}. \]
+So a functional on $\FF^n$ is the same thing as a row vector, and applying it is multiplying the row by the column. The dual basis of $e_1,\dots,e_n$ (defined below) is the list of rows $(1\ 0\ \cdots\ 0),\ \dots,\ (0\ \cdots\ 0\ 1)$.
+
+\textbf{A picture of a functional.} In $\RR^2$, the vectors where $\varphi$ takes a fixed value $c$ form a line, and different values give parallel, evenly spaced lines. $\varphi(v)$ tells you which of these lines $v$ ends on.
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+  \begin{scope}
+    \clip (-1,-1) rectangle (4.2,3.4);
+    \foreach \c in {0,1,2,3} \draw[MidnightBlue,dashed] (\c+1,-1)--(\c-4,4);
+  \end{scope}
+  \draw[->,gray] (-1,0)--(4.2,0) node[right,black]{$x$};
+  \draw[->,gray] (0,-1)--(0,3.4) node[above,black]{$y$};
+  \foreach \c in {0,1,2,3} \node[MidnightBlue,below,font=\small] at (\c+1,-1) {$\c$};
+  \node[MidnightBlue,below left,font=\small] at (0.6,-1) {value of $\varphi$:};
+  \draw[->,thick,RawSienna] (0,0)--(2,1) node[right]{$v=(2,1)$};
+\end{tikzpicture}
+\figcap{$\varphi(x,y)=x+y$. Each dashed line is where $\varphi$ takes one value. $v=(2,1)$ ends on the line $\varphi=3$, so $\varphi(v)=3$. The line $\varphi=0$ is $\nul\varphi$.}
+\end{center}
+
+\begin{proposition*}[HW5 P3]
+  Every functional $\varphi\in V'$ is either the zero functional or surjective onto $\FF$. So if $\varphi\ne0$, then $\dim\nul\varphi=\dim V-1$.
+\end{proposition*}
+\begin{proof}
+  $\range\varphi$ is a subspace of $\FF$, and $\dim\FF=1$, so the range is $\{0\}$ or all of $\FF$. If $\varphi\ne0$, the range is $\FF$, which has dimension $1$, so rank--nullity gives $\dim\nul\varphi=\dim V-1$.
+\end{proof}
+
+\subsection{The dual basis}
+\idea A basis $v_1,\dots,v_n$ lets you write each vector as $v=a_1v_1+\dots+a_nv_n$. The rule ``$v\mapsto a_j$'' (read off the $j$th coefficient) is a linear functional. These $n$ functionals form the dual basis.
+
+\begin{definition*}[Def.~27]
+  Let $v_1,\dots,v_n$ be a basis of $V$. The \vocab{dual basis} is the list $\varphi_1,\dots,\varphi_n\in V'$ defined by
+  \[ \varphi_j(v_k)=\begin{cases}1&\text{if }j=k,\\0&\text{if }j\ne k.\end{cases} \]
+  (A linear map is determined by its values on a basis, so these conditions define each $\varphi_j$.)
+\end{definition*}
+Why this is ``the $j$th coefficient'': if $v=a_1v_1+\dots+a_nv_n$, then $\varphi_j(v)=a_1\varphi_j(v_1)+\dots+a_n\varphi_j(v_n)=a_j$, because only the $k=j$ term survives.
+
+\begin{proposition*}[Prop.~45 / LADR 3.116, HW5 P4]
+  The dual basis is a basis of $V'$, so $\dim V'=\dim V$. For every $v\in V$ and every $\psi\in V'$:
+  \[ v=\sum_{j=1}^n\varphi_j(v)\,v_j,\qquad \psi=\sum_{j=1}^n\psi(v_j)\,\varphi_j. \]
+\end{proposition*}
+\begin{proof}
+  $\dim V'=\dim\LL(V,\FF)=(\dim V)(\dim\FF)=n$, so it is enough to show $\varphi_1,\dots,\varphi_n$ is linearly independent. Suppose $c_1\varphi_1+\dots+c_n\varphi_n=0$ (the zero functional). Apply both sides to $v_k$: the left side is $c_k$ and the right side is $0$. So every $c_k=0$.
+  The first formula is the ``$j$th coefficient'' fact above. For the second, both sides are linear functionals, and at each basis vector $v_k$ both give $\psi(v_k)$. Two linear maps that agree on a basis are equal.
+\end{proof}
+The second formula is how you write a given functional in the dual basis: \emph{evaluate it on the original basis vectors}.
+
+\textbf{How to compute a dual basis in $\FF^n$.} Put $v_1,\dots,v_n$ as the columns of a matrix $B$. Then the dual basis is the list of rows of $B^{-1}$. Reason: the entry in row $j$, column $k$ of $B^{-1}B$ is (row $j$ of $B^{-1}$) times (column $k$ of $B$), which is $\varphi_j(v_k)$. And $B^{-1}B=I$ says exactly that this is $1$ when $j=k$ and $0$ otherwise.
+
+\begin{example*}[A dual basis in $\RR^2$]
+  Take $v_1=(1,0)$ and $v_2=(1,1)$. Then
+  \[ B=\begin{pmatrix}1&1\\0&1\end{pmatrix},\qquad B^{-1}=\begin{pmatrix}1&-1\\0&1\end{pmatrix}, \]
+  so $\varphi_1(x,y)=x-y$ and $\varphi_2(x,y)=y$. Check: $\varphi_1(v_1)=1$, $\varphi_1(v_2)=0$, $\varphi_2(v_1)=0$, $\varphi_2(v_2)=1$.
+\end{example*}
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+  \begin{scope}
+    \clip (-1.2,-1) rectangle (2.6,2.4);
+    \foreach \c in {-1,0,1,2} \draw[MidnightBlue,dashed] (\c-2,-2)--(\c+3,3);
+  \end{scope}
+  \draw[->,gray] (-1.2,0)--(2.6,0); \draw[->,gray] (0,-1)--(0,2.4);
+  \draw[->,thick,RawSienna] (0,0)--(1,0) node[below right]{$v_1$};
+  \draw[->,thick,RawSienna] (0,0)--(1,1) node[above left]{$v_2$};
+  \node[MidnightBlue,font=\small,above right] at (2.4,2.4) {$\varphi_1=0$};
+  \node[MidnightBlue,font=\small,right] at (2.6,1.6) {$\varphi_1=1$};
+  \node at (0.7,-1.45) {level lines of $\varphi_1=x-y$};
+\end{tikzpicture}
+\qquad
+\begin{tikzpicture}[scale=0.85]
+  \foreach \c in {-1,0,1,2} \draw[MidnightBlue,dashed] (-1.2,\c)--(2.6,\c);
+  \draw[->,gray] (-1.2,0)--(2.6,0); \draw[->,gray] (0,-1)--(0,2.4);
+  \draw[->,thick,RawSienna] (0,0)--(1,0) node[below right]{$v_1$};
+  \draw[->,thick,RawSienna] (0,0)--(1,1) node[above left]{$v_2$};
+  \node[MidnightBlue,font=\small,right] at (2.6,0) {$\varphi_2=0$};
+  \node[MidnightBlue,font=\small,right] at (2.6,1) {$\varphi_2=1$};
+  \node at (0.7,-1.45) {level lines of $\varphi_2=y$};
+\end{tikzpicture}
+\figcap{$\varphi_1$ is $0$ on the line through $v_2$ and $1$ on the parallel line through $v_1$. $\varphi_2$ is $0$ on the line through $v_1$ and $1$ on the parallel line through $v_2$. The direction of the level lines of $\varphi_1$ is set by $v_2$: changing $v_2$ changes $\varphi_1$, even though $v_1$ stays the same.}
+\end{center}
+
+\begin{example*}[A dual basis in $\RR^3$]
+  For $v_1=(1,0,0)$, $v_2=(1,1,0)$, $v_3=(1,1,1)$:
+  \[ B=\begin{pmatrix}1&1&1\\0&1&1\\0&0&1\end{pmatrix},\qquad B^{-1}=\begin{pmatrix}1&-1&0\\0&1&-1\\0&0&1\end{pmatrix}, \]
+  so the dual basis is $\varphi_1=x-y$, $\varphi_2=y-z$, $\varphi_3=z$. To write $\psi(x,y,z)=x+y+z$ in this basis, evaluate $\psi$ on $v_1,v_2,v_3$: the values are $1,2,3$, so $\psi=\varphi_1+2\varphi_2+3\varphi_3$. Check: $(x-y)+2(y-z)+3z=x+y+z$.
+\end{example*}
+
+\begin{example*}[A dual basis of polynomials]
+  For the basis $1,x,x^2$ of $\PP_2(\RR)$, the dual basis is
+  \[ \varphi_1(p)=p(0),\qquad \varphi_2(p)=p'(0),\qquad \varphi_3(p)=\tfrac12p''(0). \]
+  Check: for $p=a+bx+cx^2$, these give $a$, $b$, $c$, the three coefficients.
+\end{example*}
+
+\traps
+\begin{itemize}
+  \ii $\varphi_j$ depends on the \emph{whole} basis, not only on $v_j$. In the $\RR^3$ example, $\varphi_1=x-y$, not ``the $x$-coordinate''.
+  \ii $V$ and $V'$ have the same dimension, so they are isomorphic. But there is no preferred isomorphism: $v_j\mapsto\varphi_j$ depends on which basis you chose.
+\end{itemize}
+
+\subsection{The dual map}
+\idea A linear map $T\colon V\to W$ turns each functional on $W$ into a functional on $V$: to evaluate it at $v$, first move $v$ to $Tv$, then apply the functional on $W$.
+\begin{center}
+\begin{tikzcd}[column sep=large]
+  V \arrow[r,"T"] \arrow[rr,bend right=30,"T'(\psi)\,=\,\psi\circ T"'] & W \arrow[r,"\psi"] & \FF
+\end{tikzcd}
+\end{center}
+
+\begin{definition*}[Def.~28]
+  For $T\in\LL(V,W)$, the \vocab{dual map} is $T'\colon W'\to V'$, \ $T'(\psi)=\psi\circ T$. That is, $\big(T'(\psi)\big)(v)=\psi(Tv)$.
+\end{definition*}
+The direction reverses: $T$ goes from $V$ to $W$, and $T'$ goes from $W'$ to $V'$. Two linearity facts: $T'(\psi)=\psi\circ T$ is a linear functional on $V$ (a composition of linear maps), and $T'$ itself is linear, since $T'(\psi_1+c\psi_2)=(\psi_1+c\psi_2)\circ T=T'(\psi_1)+c\,T'(\psi_2)$ (evaluate both sides at any $v$).
+
+\begin{example*}[Ex.~45]
+  $T\colon\PP(\RR)\to\PP(\RR)$, $Tp=xp$, and $\varphi(p)=p(2)$. Then $\big(T'(\varphi)\big)(p)=\varphi(xp)=2p(2)$. So $T'(\varphi)=2\varphi$.
+\end{example*}
+
+\begin{example*}[Computing $T'$ in a basis]
+  Let $T(x,y)=(x+2y,\ 3x+4y)$ on $\RR^2$, so $\MM(T)=\begin{psmallmatrix}1&2\\3&4\end{psmallmatrix}$, and let $\varphi_1(x,y)=x$, $\varphi_2(x,y)=y$ (the dual basis of $e_1,e_2$). Then
+  \[ T'(\varphi_1)(x,y)=\varphi_1\big(T(x,y)\big)=x+2y,\quad\text{so }T'(\varphi_1)=\varphi_1+2\varphi_2; \]
+  \[ T'(\varphi_2)(x,y)=3x+4y,\quad\text{so }T'(\varphi_2)=3\varphi_1+4\varphi_2. \]
+  The columns of $\MM(T')$ are $(1,2)$ and $(3,4)$: $\MM(T')=\begin{psmallmatrix}1&3\\2&4\end{psmallmatrix}$, the transpose of $\MM(T)$.
+\end{example*}
+
+\begin{example*}[Ex.~46]
+  For $A=\begin{psmallmatrix}1&2&3\\4&5&6\end{psmallmatrix}\colon\RR^3\to\RR^2$, write functionals as rows. Then $A'$ sends the row $(x\ \ y)$ to the row $(x\ \ y)A$: first multiply by $A$, then by the row.
+\end{example*}
+
+\begin{proposition*}[Prop.~47 / LADR 3.118, 3.120]
+  The map $T\mapsto T'$ is linear: $(S+T)'=S'+T'$ and $(cT)'=cT'$. It reverses products: $(ST)'=T'S'$.
+\end{proposition*}
+\begin{proof}
+  Linearity: $\big((S+T)'\psi\big)(v)=\psi(Sv+Tv)=\psi(Sv)+\psi(Tv)$; scalars are the same. Products: $(ST)'\psi=\psi\circ S\circ T=(S'\psi)\circ T=T'(S'\psi)$.
+\end{proof}
+
+\begin{proposition*}[Prop.~49 / LADR 3.132]
+  Choose bases $v_1,\dots,v_n$ of $V$ and $w_1,\dots,w_m$ of $W$, and use their dual bases for $V'$ and $W'$. Then $\MM(T')=\MM(T)^T$, the transpose ($(A^T)_{ij}=A_{ji}$: rows become columns).
+\end{proposition*}
+\begin{proof}
+  Let $\MM(T)=(a_{ij})$, so $Tv_k=\sum_la_{lk}w_l$. Write $\psi_1,\dots,\psi_m$ for the dual basis of $w_1,\dots,w_m$ and $\varphi_1,\dots,\varphi_n$ for the dual basis of $v_1,\dots,v_n$. Then $\big(T'(\psi_j)\big)(v_k)=\psi_j(Tv_k)=a_{jk}$. By the formula $\psi=\sum_k\psi(v_k)\varphi_k$, $T'(\psi_j)=\sum_ka_{jk}\varphi_k$. So column $j$ of $\MM(T')$ is $(a_{j1},\dots,a_{jn})$, which is row $j$ of $\MM(T)$.
+\end{proof}
+Together with $(ST)'=T'S'$ this gives $(AB)^T=B^TA^T$ for matrices.
+
+\traps
+\begin{itemize}
+  \ii $T'$ goes from $W'$ to $V'$, not from $V'$ to $W'$.
+  \ii The matrix of $T'$ is the transpose only when you use the \emph{dual} bases of the bases you used for $T$.
+  \ii To compute $T'(\psi)$, apply $T$ first and $\psi$ second: $T'(\psi)(v)=\psi(Tv)$.
+\end{itemize}
+
+\subsection{The double dual}
+\idea $V''=(V')'$ is the set of linear functionals on $V'$. Each vector $v$ gives one without any choices: ``take a functional $\varphi$ and evaluate it at $v$''.
+
+\begin{proposition*}[Prop.~46, 48 / LADR 3F]
+  Define $j_V\colon V\to V''$ by $j_V(v)(\varphi)=\varphi(v)$. Then $j_V$ is linear and injective, and if $V$ is finite-dimensional it is an isomorphism. For every $T\in\LL(V,W)$, $T''\circ j_V=j_W\circ T$, where $T''=(T')'\colon V''\to W''$.
+\end{proposition*}
+\begin{proof}
+  Injective: suppose $v\ne0$. Extend $v$ to a basis $v,v_2,\dots$ of $V$, and let $\varphi$ be the functional with $\varphi(v)=1$ and $\varphi=0$ on the other basis vectors. Then $j_V(v)(\varphi)=1\ne0$, so $j_V(v)\ne0$. If $V$ is finite-dimensional, $\dim V''=\dim V'=\dim V$, and an injective linear map between spaces of the same finite dimension is invertible.
+  Compatibility: for $\psi\in W'$, $\big(T''(j_Vv)\big)(\psi)=j_V(v)(T'\psi)=(T'\psi)(v)=\psi(Tv)=j_W(Tv)(\psi)$.
+\end{proof}
+The notes call $j_V$ \vocab{canonical}: it is defined by the same formula for every space, without choosing a basis, and it satisfies $T''\circ j_V=j_W\circ T$ for every linear map $T$. Contrast this with $V\cong V'$, which needs a basis.
+
+Consequence used often: if $\varphi(v)=0$ for every $\varphi\in V'$, then $v=0$. Equivalently, if $\varphi(v)=\varphi(w)$ for every $\varphi$, then $v=w$.
+
+\subsection{Annihilators}\label{sec:annih}
+Throughout this subsection, $V$ and $W$ are finite-dimensional.
+
+\idea Given a subspace $U$ of $V$, ask which functionals are $0$ on every vector of $U$. They form a subspace of $V'$, the annihilator. Many statements about subspaces of $V$ become statements about subspaces of $V'$ this way.
+
+\begin{definition*}[Def.~29]
+  For a subspace $U\subseteq V$, the \vocab{annihilator} of $U$ is
+  \[ U^0=\{\varphi\in V':\varphi(u)=0\text{ for every }u\in U\}. \]
+\end{definition*}
+$U^0$ is a subspace of $V'$: if $\varphi$ and $\psi$ are $0$ on $U$, so are $\varphi+\psi$ and $c\varphi$.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+  \begin{scope}
+    \clip (-2.5,-2) rectangle (2.5,2.5);
+    \foreach \c in {-2,-1,1,2} \draw[MidnightBlue,dashed] ({(\c-2)/2},-2)--({(\c+2.5)/2},2.5);
+    \draw[very thick,RawSienna] (-1,-2)--(1.25,2.5);
+  \end{scope}
+  \draw[->,gray] (-2.5,0)--(2.5,0); \draw[->,gray] (0,-2)--(0,2.5);
+  \node[RawSienna,above] at (1.25,2.5) {$U=\nul\varphi$};
+\end{tikzpicture}
+\figcap{$U=\spn\big((1,2)\big)$ in $\RR^2$. A functional is $0$ on $U$ exactly when its zero line is $U$ (or it is the zero functional). The functional $\varphi(x,y)=2x-y$ has zero line $U$; its other level lines (dashed) are parallel to $U$. So $U^0=\spn(\varphi)$, and $\dim U^0=2-1=1$.}
+\end{center}
+
+\begin{example*}[Ex.~47, HW5 P6]
+  $U=\spn\big((1,1,0),(0,1,1)\big)\subseteq\RR^3$. Write a functional as a row $(a,b,c)$, meaning $\varphi(x,y,z)=ax+by+cz$. It is $0$ on $U$ iff it is $0$ on both spanning vectors:
+  \[ a+b=0,\qquad b+c=0. \]
+  So $b=-a$, $c=a$, and $U^0=\spn\big((1,-1,1)\big)$, the functional $x-y+z$.
+\end{example*}
+\textbf{Recipe in $\FF^n$.} Write a basis of $U$ as the rows of a matrix $M$. Then $U^0$ is the null space of $M$, with each solution read as a row vector.
+
+\begin{example*}
+  In $\PP_2(\RR)$ let $U=\spn(1,x)=\PP_1(\RR)$. A functional $\psi$ is $0$ on $U$ iff $\psi(1)=\psi(x)=0$. In the dual basis $\varphi_1,\varphi_2,\varphi_3$ of $1,x,x^2$, $\psi=\psi(1)\varphi_1+\psi(x)\varphi_2+\psi(x^2)\varphi_3$, so $U^0=\spn(\varphi_3)$: the functional ``coefficient of $x^2$''.
+\end{example*}
+
+\begin{proposition*}[LADR 3.125]
+  $\dim U^0=\dim V-\dim U$.
+\end{proposition*}
+\begin{proof}
+  Extend a basis $u_1,\dots,u_m$ of $U$ to a basis $u_1,\dots,u_m,v_{m+1},\dots,v_n$ of $V$, and let $\varphi_1,\dots,\varphi_n$ be the dual basis. Any $\psi\in V'$ is $\psi=\sum_jc_j\varphi_j$ with $c_j=\psi(\text{$j$th basis vector})$. It is $0$ on $U$ iff it is $0$ on $u_1,\dots,u_m$, that is, iff $c_1=\dots=c_m=0$. So $U^0=\spn(\varphi_{m+1},\dots,\varphi_n)$, which has dimension $n-m$.
+\end{proof}
+Each of the $\dim U$ independent vectors of $U$ imposes one condition on $\psi$, and each condition lowers the dimension by one.
+
+\textbf{Extending functionals.} Every functional on a subspace $U$ extends to a functional on $V$: extend a basis of $U$ to a basis of $V$ and let the functional be $0$ on the added vectors. So the restriction map $V'\to U'$, $\varphi\mapsto\varphi|_U$, is surjective. Its null space is $U^0$, so rank--nullity gives $\dim V'=\dim U^0+\dim U'$, which is again $\dim U^0=\dim V-\dim U$.
+
+\begin{proposition*}[Prop.~50 / LADR 3.128(a), 3.130(b)]
+  For $T\in\LL(V,W)$:
+  \begin{enumerate}
+    \ii $\nul T'=(\range T)^0$;
+    \ii $\range T'=(\nul T)^0$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (1) $T'\psi=0$ means $\psi(Tv)=0$ for every $v\in V$, which says exactly that $\psi$ is $0$ on every vector of $\range T$.
+  (2) ``$\subseteq$'': if $\varphi=T'\psi$ and $v\in\nul T$, then $\varphi(v)=\psi(Tv)=\psi(0)=0$.
+  ``$\supseteq$'': let $\varphi$ be $0$ on $\nul T$. We need $\psi\in W'$ with $\psi\circ T=\varphi$. Define $\psi$ on $\range T$ by $\psi(Tv)=\varphi(v)$. This does not depend on which $v$ we use: if $Tv=Tv'$, then $v-v'\in\nul T$, so $\varphi(v)=\varphi(v')$. Extend a basis of $\range T$ to a basis of $W$ and let $\psi$ be $0$ on the added vectors. Then $\psi(Tv)=\varphi(v)$ for all $v$, so $T'\psi=\varphi$.
+\end{proof}
+
+\begin{corollary*}[Prop.~51 / LADR 3.129--3.133]
+  $T$ is injective iff $T'$ is surjective, and $T$ is surjective iff $T'$ is injective. Also $\rank T'=\rank T$. For matrices: $\rank A^T=\rank A$, so the number of independent rows equals the number of independent columns.
+\end{corollary*}
+\begin{proof}
+  $T$ surjective $\iff\range T=W\iff(\range T)^0=\{0\}\iff\nul T'=\{0\}$. \ $T$ injective $\iff\nul T=\{0\}\iff(\nul T)^0=V'\iff\range T'=V'$.
+  Rank: $\dim\range T'=\dim(\nul T)^0=\dim V-\dim\nul T=\dim\range T$.
+\end{proof}
+
+\begin{corollary*}[LADR 3.128(b)]
+  For $T\in\LL(V,W)$: $\dim\nul T'=\dim\nul T+\dim W-\dim V$.
+\end{corollary*}
+\begin{proof}
+  $\dim\nul T'=\dim(\range T)^0=\dim W-\dim\range T=\dim W-(\dim V-\dim\nul T)$.
+\end{proof}
+
+\begin{proposition*}[Separating functional]
+  If $W\subseteq V$ is a subspace and $v\notin W$, there is $\varphi\in V'$ with $\varphi=0$ on $W$ and $\varphi(v)=1$. In particular, if $W\ne V$ then $W^0\ne\{0\}$.
+\end{proposition*}
+\begin{proof}
+  Since $v\notin W$, a basis of $W$ followed by $v$ is linearly independent. Extend it to a basis of $V$, and let $\varphi$ be $1$ on $v$ and $0$ on every other basis vector.
+\end{proof}
+
+\begin{proposition*}[Rules for annihilators]
+  For subspaces $U,W$ of $V$:
+  \begin{enumerate}
+    \ii $U^0=V'$ iff $U=\{0\}$, and $U^0=\{0\}$ iff $U=V$.
+    \ii $U\subseteq W$ iff $W^0\subseteq U^0$ (bigger subspace, smaller annihilator).
+    \ii $(U+W)^0=U^0\cap W^0$ and $(U\cap W)^0=U^0+W^0$.
+    \ii $(V/U)'\cong U^0$.
+    \ii $U=\{v\in V:\varphi(v)=0\text{ for every }\varphi\in U^0\}$: a subspace is determined by its annihilator.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (1) From $\dim U^0=\dim V-\dim U$.
+  (2) If $U\subseteq W$, a functional that is $0$ on $W$ is $0$ on $U$. Conversely, if $u\in U$ but $u\notin W$, the separating functional is in $W^0$ but not in $U^0$.
+  (3) A functional is $0$ on every $u+w$ iff it is $0$ on $U$ and on $W$. For the second identity, $U^0+W^0\subseteq(U\cap W)^0$ is clear (a sum of a functional that is $0$ on $U$ and one that is $0$ on $W$ is $0$ on $U\cap W$), and with $n=\dim V$ the dimensions agree:
+  \begin{align*}
+    \dim(U^0+W^0)&=\dim U^0+\dim W^0-\dim(U^0\cap W^0)\\
+    &=(n-\dim U)+(n-\dim W)-\big(n-\dim(U+W)\big)=n-\dim(U\cap W).
+  \end{align*}
+  (4) For $\varphi\in U^0$ put $\tilde\varphi(v+U)=\varphi(v)$. This does not depend on the choice of $v$, because $\varphi$ is $0$ on $U$. The map $\varphi\mapsto\tilde\varphi$ from $U^0$ to $(V/U)'$ is linear and injective, and both spaces have dimension $\dim V-\dim U$, so it is an isomorphism.
+  (5) Every $u\in U$ satisfies $\varphi(u)=0$ for $\varphi\in U^0$. If $v\notin U$, the separating functional is in $U^0$ and is $1$ at $v$.
+\end{proof}
+
+\traps
+\begin{itemize}
+  \ii $U^0$ is a set of functionals, a subspace of $V'$, not a subspace of $V$. Its basis is a list of functionals, not vectors.
+  \ii $U^0$ is not the ``orthogonal complement''. That notion needs an inner product, which comes after this midterm.
+  \ii $(V/U)'\cong U^0$, not $U'$.
+\end{itemize}
+
+\subsection{Invariant subspaces}\label{sec:invariant}
+\idea To understand an operator $T\in\LL(V)$, look for pieces of $V$ that $T$ maps into themselves. Then $T$ can be studied one piece at a time, and each piece is smaller than $V$. Almost every proof from here to the end of the midterm material works this way.
+
+\begin{definition*}[Def.~30 / LADR 5.2]
+  A subspace $U\subseteq V$ is \vocab{invariant} under $T$ if $T(U)\subseteq U$, that is, $Tu\in U$ for every $u\in U$.
+\end{definition*}
+When $U$ is invariant, two new operators are defined:
+\begin{itemize}
+  \ii the \vocab{restriction} $T|_U\in\LL(U)$, which is $T$ used only on vectors of $U$ (it needs $Tu\in U$ to be an operator on $U$);
+  \ii the \vocab{quotient operator} $T/U\in\LL(V/U)$, given by $(T/U)(v+U)=Tv+U$.
+\end{itemize}
+
+\begin{proposition*}[Quotient operator]
+  If $U$ is invariant under $T$, the formula $(T/U)(v+U)=Tv+U$ gives a well-defined operator on $V/U$.
+\end{proposition*}
+\begin{proof}
+  ``Well-defined'' means the answer does not depend on which vector $v$ we use to name the translate $v+U$. If $v+U=v'+U$, then $v-v'\in U$, so $Tv-Tv'=T(v-v')\in U$ because $U$ is invariant. Hence $Tv+U=Tv'+U$. Linearity comes from linearity of $T$.
+\end{proof}
+Applying the formula $k$ times gives $(T/U)^k(v+U)=T^kv+U$, so for every polynomial $p$ (Section~\ref{sec:eigen}),
+\[ p(T/U)(v+U)=p(T)v+U,\qquad p(T|_U)u=p(T)u\ \ (u\in U). \]
+
+\begin{example*}[Ex.~48]
+  $\{0\}$ and $V$ are always invariant. $\nul T$ is invariant: if $Tv=0$ then $T(Tv)=T0=0$. $\range T$ is invariant: $T$ of anything is in $\range T$.
+\end{example*}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+  % panel 1: diag(1,2)
+  \begin{scope}
+    \fill[MidnightBlue!15] (-1.3,-0.1) rectangle (2.3,0.1);
+    \fill[MidnightBlue!15] (-0.1,-1.3) rectangle (0.1,2.4);
+    \draw[->,gray] (-1.3,0)--(2.3,0); \draw[->,gray] (0,-1.3)--(0,2.4);
+    \draw[->,gray,dashed,thick] (0,0)--(1,1);
+    \draw[->,RawSienna,thick] (0,0)--(1,2) node[right]{\small$T(1,1)$};
+    \draw[->,RawSienna,thick] (0,0)--(0,2) node[left]{\small$Te_2$};
+    \draw[->,RawSienna,thick] (0,0)--(1,0) node[below right]{\small$Te_1$};
+    \node at (0.5,-2) {$\begin{psmallmatrix}1&0\\0&2\end{psmallmatrix}$};
+  \end{scope}
+  % panel 2: rotation
+  \begin{scope}[xshift=5.2cm]
+    \draw[->,gray] (-1.3,0)--(2.3,0); \draw[->,gray] (0,-1.3)--(0,2.4);
+    \draw[->,gray,dashed,thick] (0,0)--(1,0);
+    \draw[->,gray,dashed,thick] (0,0)--(1,1);
+    \draw[->,RawSienna,thick] (0,0)--(0,1) node[above right]{\small$Te_1$};
+    \draw[->,RawSienna,thick] (0,0)--(-1,1) node[left]{\small$T(1,1)$};
+    \node at (0.5,-2) {$\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$};
+  \end{scope}
+  % panel 3: N
+  \begin{scope}[xshift=10.4cm]
+    \fill[MidnightBlue!15] (-1.3,-0.1) rectangle (2.3,0.1);
+    \draw[->,gray] (-1.3,0)--(2.3,0); \draw[->,gray] (0,-1.3)--(0,2.4);
+    \draw[->,gray,dashed,thick] (0,0)--(0,1) node[left,black]{\small$e_2$};
+    \draw[->,gray,dashed,thick] (0,0)--(1,1);
+    \draw[->,RawSienna,thick] (0,0)--(1,0) node[below right]{\small$Ne_2=N(1,1)$};
+    \node at (0.5,-2) {$N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Ex.~49. Dashed gray: some vectors. Solid: their images. Shaded: the invariant lines. Left: $\operatorname{diag}(1,2)$ sends $e_1\mapsto e_1$ and $e_2\mapsto2e_2$, so it keeps each axis, but it sends $(1,1)$ to $(1,2)$, off its line. Middle: rotation by $90^\circ$ moves every line, so its only invariant subspaces are $\{0\}$ and $\RR^2$. Right: $N$ sends both $e_2$ and $(1,1)$ to $e_1$, and $e_1\mapsto0$. Its only invariant line is the $x$-axis: if $v$ is not on the $x$-axis, $Nv$ is a nonzero vector on the $x$-axis, so not a multiple of $v$.}
+\end{center}
+
+\subsection{Eigenvalues and eigenvectors}\label{sec:eigen}
+\idea The smallest invariant subspaces are lines through $0$. If the line $\spn(v)$ is invariant, then $Tv$ is a multiple of $v$: $T$ only stretches $v$ (or shrinks it, flips it, or sends it to $0$).
+
+\begin{definition*}[Def.~31, 32 / LADR 5.5, 5.8, 5.52]
+  A scalar $\lambda\in\FF$ is an \vocab{eigenvalue} of $T$ if there is a vector $v\ne0$ with $Tv=\lambda v$. Such a $v$ is an \vocab{eigenvector} for $\lambda$.
+  The \vocab{eigenspace} of $\lambda$ is
+  \[ E(\lambda,T)=\nul(T-\lambda I)=\{0\}\cup\{\text{eigenvectors for }\lambda\}, \]
+  and its dimension is the \vocab{geometric multiplicity} of $\lambda$.
+\end{definition*}
+Why the null space: $Tv=\lambda v\iff Tv-\lambda v=0\iff(T-\lambda I)v=0$. So
+\[ \lambda\text{ is an eigenvalue}\iff T-\lambda I\text{ is not injective}\iff T-\lambda I\text{ is not invertible}, \]
+where the last step uses that $V$ is finite-dimensional.
+$E(\lambda,T)$ is invariant: if $Tv=\lambda v$ then $T(Tv)=\lambda Tv$.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+  \draw[->,gray] (-3,0)--(3,0); \draw[->,gray] (0,-2.4)--(0,2.6);
+  \draw[gray,dashed] (0,0) circle (1);
+  \draw[RawSienna!70] [rotate=45] (0,0) ellipse (3 and 1);
+  \draw[->,thick,MidnightBlue] (0,0)--(2.121,2.121) node[above right]{$Au_1=3u_1$};
+  \draw[->,thick,gray] (0,0)--(0.707,0.707);
+  \draw[->,thick,ForestGreen] (0,0)--(0.707,-0.707) node[below right]{$Au_2=u_2$};
+  \draw[->,thick,gray] (0,0)--(1,0);
+  \draw[->,thick,black] (0,0)--(2,1) node[right]{$Ae_1=(2,1)$};
+\end{tikzpicture}
+\figcap{$A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ sends the unit circle (dashed) to the ellipse. With $u_1=\tfrac1{\sqrt2}(1,1)$ and $u_2=\tfrac1{\sqrt2}(1,-1)$ (unit vectors; the short gray arrows are $u_1$ and $e_1$, and $u_2$ is hidden under $Au_2$): along $u_1$ it stretches by $3$; along $u_2$ it stretches by $1$. These are the eigenvectors, with eigenvalues $3$ and $1$. The vector $e_1$ is not an eigenvector: $Ae_1=(2,1)$ points in a different direction.}
+\end{center}
+
+\needspace{8\baselineskip}\noindent\textbf{Finding eigenvalues and eigenvectors.}
+\begin{proposition*}[Prop.~56]
+  If $v_1,\dots,v_n$ is a basis, then $\lambda$ is an eigenvalue of $T$ iff it is an eigenvalue of the matrix $\MM(T)$, and $v$ is an eigenvector of $T$ iff its coordinate vector is an eigenvector of $\MM(T)$. For a $2\times2$ matrix $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, the eigenvalues are the roots of the \vocab{characteristic polynomial}
+  \[ \chi_A(t)=\det(tI-A)=t^2-(a+d)\,t+(ad-bc). \]
+\end{proposition*}
+\begin{proof}
+  $Tv=\lambda v$ is the same equation as $\MM(T)\MM(v)=\lambda\MM(v)$ in coordinates. For $2\times2$: $\lambda$ is an eigenvalue iff $\lambda I-A$ is not invertible iff $\det(\lambda I-A)=0$, and $\det\begin{psmallmatrix}t-a&-b\\-c&t-d\end{psmallmatrix}=(t-a)(t-d)-bc$.
+\end{proof}
+
+\begin{example*}[Eigenvalues and eigenvectors of a $2\times2$ matrix]
+  $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$: $\chi_A(t)=t^2-4t+3=(t-1)(t-3)$, so the eigenvalues are $1$ and $3$.
+  For $\lambda=3$: $A-3I=\begin{psmallmatrix}-1&1\\1&-1\end{psmallmatrix}$, whose null space is $\spn\big((1,1)\big)$. For $\lambda=1$: $A-I=\begin{psmallmatrix}1&1\\1&1\end{psmallmatrix}$, whose null space is $\spn\big((1,-1)\big)$.
+\end{example*}
+
+\begin{example*}[Ex.~51: rotation]
+  $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ (rotation by $90^\circ$): $\chi_R(t)=t^2+1$. On $\RR^2$ there are no eigenvalues. On $\CC^2$ the eigenvalues are $i$ and $-i$.
+\end{example*}
+
+\textbf{Polynomials applied to an operator.} For $p(x)=a_mx^m+\dots+a_1x+a_0$, define (Def.~35)
+\[ p(T)=a_mT^m+\dots+a_1T+a_0I. \]
+For example, if $p(x)=x^2-3x+2$ then $p(T)=T^2-3T+2I$. The usual algebra works: $(p+q)(T)=p(T)+q(T)$ and $(pq)(T)=p(T)\,q(T)$. Since $T^jT^k=T^kT^j$, any two polynomials in $T$ commute: $p(T)q(T)=q(T)p(T)$. For example $(T-I)(T-2I)=T^2-3T+2I=(T-2I)(T-I)$.
+
+\begin{proposition*}[Eigenvalues through polynomials]
+  If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$. Hence, if $p(T)=0$, every eigenvalue of $T$ is a root of $p$.
+\end{proposition*}
+\begin{proof}
+  $T^2v=T(\lambda v)=\lambda^2v$, and in the same way $T^kv=\lambda^kv$ for every $k$. Combine these with the coefficients of $p$. If $p(T)=0$ and $v$ is an eigenvector, then $0=p(T)v=p(\lambda)v$ with $v\ne0$, so $p(\lambda)=0$.
+\end{proof}
+
+\begin{example*}[Ex.~52]
+  $T\colon\CC^{2,2}\to\CC^{2,2}$, $T(A)=A^T$. Since $T^2=I$, every eigenvalue satisfies $\lambda^2=1$, so $\lambda=\pm1$. Both occur: symmetric matrices ($A^T=A$) form $E(1,T)$, of dimension $3$, and $\begin{psmallmatrix}0&1\\-1&0\end{psmallmatrix}$ spans $E(-1,T)$. No determinant was needed.
+\end{example*}
+
+More invariant subspaces: for every polynomial $p$, $\nul p(T)$ and $\range p(T)$ are invariant under $T$, because $T$ commutes with $p(T)$. For example, if $p(T)v=0$ then $p(T)(Tv)=T\,p(T)v=0$.
+
+\begin{theorem*}[Prop.~53 / LADR 5.19]
+  Every operator on a nonzero finite-dimensional \emph{complex} vector space has an eigenvalue.
+\end{theorem*}
+\begin{proof}
+  Let $n=\dim V$ and pick any $v\ne0$. The $n+1$ vectors $v,Tv,\dots,T^nv$ are linearly dependent, so some combination $a_0v+a_1Tv+\dots+a_mT^mv=0$ with $a_m\ne0$. Choose such a relation with $m$ as small as possible and let $p(x)=a_0+a_1x+\dots+a_mx^m$, so $p(T)v=0$. Here $m\ge1$, since $a_0v=0$ with $v\ne0$ would force $a_0=0$.
+  Over $\CC$, $p$ has a root $\lambda$, so $p(x)=(x-\lambda)q(x)$ with $\deg q=m-1$. Put $w=q(T)v$. Then $w\ne0$, because $q(T)v=0$ would be a shorter relation. And $(T-\lambda I)w=(T-\lambda I)q(T)v=p(T)v=0$. So $w$ is an eigenvector with eigenvalue $\lambda$.
+\end{proof}
+Both hypotheses are needed. The rotation $R$ on $\RR^2$ has no eigenvalue (not complex). The operator $p\mapsto xp$ on $\PP(\CC)$ has no eigenvector, since $xp$ has larger degree than $p$ (not finite-dimensional).
+
+\begin{proposition*}[Prop.~54, 55 / LADR 5.11, 5.12]
+  Eigenvectors for distinct eigenvalues are linearly independent. Hence $T$ has at most $\dim V$ distinct eigenvalues.
+\end{proposition*}
+\begin{proof}
+  Let $v_1,\dots,v_m$ be eigenvectors with distinct eigenvalues $\lambda_1,\dots,\lambda_m$, and suppose they are dependent. Let $k$ be the smallest index with $v_k\in\spn(v_1,\dots,v_{k-1})$, and write $v_k=a_1v_1+\dots+a_{k-1}v_{k-1}$. Apply $T-\lambda_kI$ to both sides. The left side becomes $0$. The right side becomes $a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}$. The vectors $v_1,\dots,v_{k-1}$ are independent (by the choice of $k$) and each $\lambda_i-\lambda_k\ne0$, so every $a_i=0$. Then $v_k=0$, but eigenvectors are nonzero. Contradiction.
+  The second statement: $m$ independent vectors in $V$ means $m\le\dim V$.
+\end{proof}
+Example (Ex.~50): $\sin x,\sin2x,\dots,\sin Nx$ are linearly independent, because they are eigenvectors of $f\mapsto f''$ with the distinct eigenvalues $-1,-4,\dots,-N^2$.
+
+\begin{proposition*}[HW6 P3: similar matrices]
+  If $S$ is invertible and $R=S^{-1}TS$, then $T$ and $R$ have the same eigenvalues, and $E(\lambda,R)=S^{-1}\big(E(\lambda,T)\big)$.
+\end{proposition*}
+\begin{proof}
+  $Rv=\lambda v\iff S^{-1}TSv=\lambda v\iff T(Sv)=\lambda(Sv)$. So $v$ is an eigenvector of $R$ iff $Sv$ is an eigenvector of $T$, with the same $\lambda$.
+\end{proof}
+
+\begin{proposition*}[Eigenvalues of the dual map]
+  In finite dimensions, $T$ and $T'$ have the same eigenvalues, and $\dim E(\lambda,T)=\dim E(\lambda,T')$.
+\end{proposition*}
+\begin{proof}
+  $(T-\lambda I)'=T'-\lambda I$ (the dual of the identity of $V$ is the identity of $V'$). A map and its dual have the same rank, and $V$, $V'$ have the same dimension, so by rank--nullity $T-\lambda I$ and $T'-\lambda I$ have null spaces of the same dimension.
+\end{proof}
+
+\textbf{Stochastic matrices and PageRank (Prop.~57, 58).} A \vocab{probability vector} has nonnegative entries that add up to $1$. A matrix $P$ is \vocab{(column-)stochastic} if its entries are nonnegative and each column adds up to $1$. Think of a walker moving among $n$ states (for example, web pages). If entry $j$ of $x$ is the probability of being at state $j$ today, and $P_{ij}$ is the probability of moving from state $j$ to state $i$, then $Px$ lists the probabilities for tomorrow. A \vocab{stationary distribution} is a probability vector $\pi$ with $P\pi=\pi$: an eigenvector for eigenvalue $1$, scaled so its entries add to $1$. Example from the notes: $P=\begin{psmallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{psmallmatrix}$ has $\pi=(\tfrac14,\tfrac12,\tfrac14)$.
+\begin{proposition*}[Prop.~57]
+  Every eigenvalue $\lambda$ of a stochastic matrix $P$ satisfies $|\lambda|\le1$.
+\end{proposition*}
+\begin{proof}
+  Write $\|x\|_1=|x_1|+\dots+|x_n|$. Since the entries are nonnegative and each column sums to $1$, $\|Px\|_1\le\sum_i\sum_jP_{ij}|x_j|=\sum_j|x_j|=\|x\|_1$. If $Px=\lambda x$ with $x\ne0$, then $|\lambda|\,\|x\|_1=\|Px\|_1\le\|x\|_1$, so $|\lambda|\le1$.
+\end{proof}
+PageRank changes the walk: at each step, with probability $\alpha$ the walker follows a link (moves by $P$), and otherwise jumps to a page chosen with the probabilities in a fixed probability vector $v$. One step sends $x$ to $\alpha Px+(1-\alpha)v$, and the PageRank vector $r$ is the probability vector that this step leaves unchanged.
+\begin{proposition*}[Prop.~58: PageRank exists and is unique]
+  Let $P$ be stochastic, $v$ a probability vector, and $0<\alpha<1$. Then $r=\alpha Pr+(1-\alpha)v$ has exactly one solution $r$, and $r$ is a probability vector.
+\end{proposition*}
+\begin{proof}[Proof outline]
+  The equation is $(I-\alpha P)r=(1-\alpha)v$. If $(I-\alpha P)x=0$ with $x\ne0$, then $Px=\tfrac1\alpha x$, so $\tfrac1\alpha>1$ would be an eigenvalue, contradicting Prop.~57. So $I-\alpha P$ is injective, hence invertible, and the solution exists and is unique. It equals $(1-\alpha)\sum_{k\ge0}\alpha^kP^kv$: multiplying out, $(I-\alpha P)\sum_{k=0}^K\alpha^kP^kv=v-\alpha^{K+1}P^{K+1}v$ because the middle terms cancel, and $\alpha^{K+1}P^{K+1}v\to0$. This series converges, since each $P^kv$ is a probability vector and $\sum\alpha^k<\infty$. Every term is nonnegative, and the entries of the sum add up to $(1-\alpha)\sum_k\alpha^k=1$. So $r$ is a probability vector.
+\end{proof}
+\textbf{The Google matrix.} Let $\mathbf 1=(1,\dots,1)$ and $G=\alpha P+(1-\alpha)v\mathbf 1^T$. Since $\mathbf 1^Tx=1$ for a probability vector $x$, $Gx=\alpha Px+(1-\alpha)v$, so the PageRank equation is the eigenvector equation $Gr=r$. The subspace $H=\{x:x_1+\dots+x_n=0\}$ is invariant under $P$ (which preserves the sum of the entries) and under $G$, where $Gx=\alpha Px$ for $x\in H$. Since $\mathbf 1^Tr=1\ne0$, $r\notin H$, so $\RR^n=\spn(r)\oplus H$: $G$ fixes the PageRank direction, and on $H$ it acts as $\alpha P$, so every eigenvalue of $G$ coming from $H$ has absolute value at most $\alpha$ (Prop.~57).
+
+The iteration $r_{k+1}=\alpha Pr_k+(1-\alpha)v$ converges to $r$ from any starting probability vector $r_0$: $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1$, because $r_{k+1}-r=\alpha P(r_k-r)$ and $P$ does not increase $\|\cdot\|_1$.
+
+\traps
+\begin{itemize}
+  \ii Eigenvectors are nonzero by definition. Eigenvalues may be $0$: $\lambda=0$ is an eigenvalue iff $T$ is not injective.
+  \ii ``$p(T)=0$ and $p(\lambda)=0$'' does \emph{not} make $\lambda$ an eigenvalue. $T=I$ satisfies $(T-I)(T-2I)=0$, but $2$ is not an eigenvalue of $I$.
+  \ii Eigenvalues depend on the field: the rotation $R$ has none over $\RR$ and two over $\CC$.
+\end{itemize}
+
+\subsection{Upper-triangular matrices}
+\idea Many operators (for example the shear $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$) have no basis of eigenvectors. But over $\CC$ every operator has a basis in which its matrix is upper-triangular, and that is almost as useful: the eigenvalues can still be read off the diagonal.
+
+\begin{definition*}[Def.~33]
+  A square matrix $A=(a_{ij})$ is \vocab{upper-triangular} if every entry below the diagonal is $0$: $a_{ij}=0$ whenever $i>j$. The \vocab{diagonal} is $a_{11},\dots,a_{nn}$. $A$ is \vocab{diagonal} if every entry off the diagonal is $0$.
+\end{definition*}
+Example (Ex.~53): $\begin{psmallmatrix}1&2&3&4\\0&5&6&7\\0&0&8&9\\0&0&0&10\end{psmallmatrix}$ is upper-triangular with diagonal $1,5,8,10$.
+
+\textbf{What upper-triangular means for $T$.} Column $j$ of $\MM(T)$ holds the coefficients of $Tv_j$. Zeros below the diagonal in column $j$ mean $Tv_j$ uses only $v_1,\dots,v_j$:
+\[
+\MM(T)=\begin{pmatrix}
+\lambda_1&*&\cdots&*\\
+0&\lambda_2&\cdots&*\\
+\vdots&&\ddots&\vdots\\
+0&\cdots&0&\lambda_n
+\end{pmatrix},
+\qquad
+\begin{aligned}
+Tv_1&=\lambda_1v_1,\\
+Tv_2&=*\,v_1+\lambda_2v_2,\\
+&\ \,\vdots\\
+Tv_n&=*\,v_1+\dots+*\,v_{n-1}+\lambda_nv_n.
+\end{aligned}
+\]
+So $Tv_j$ is $\lambda_jv_j$ plus a combination of $v_1,\dots,v_{j-1}$; no later basis vector appears. In particular $v_1$ is an eigenvector.
+
+\begin{proposition*}[Prop.~59 / LADR 5.39]
+  For a basis $v_1,\dots,v_n$ of $V$, these are equivalent:
+  \begin{enumerate}
+    \ii $\MM(T)$ is upper-triangular;
+    \ii $Tv_j\in\spn(v_1,\dots,v_j)$ for each $j$;
+    \ii $\spn(v_1,\dots,v_j)$ is invariant under $T$ for each $j$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (1)$\Leftrightarrow$(2) is the column description above. (2)$\Rightarrow$(3): for $i\le j$, $Tv_i\in\spn(v_1,\dots,v_i)\subseteq\spn(v_1,\dots,v_j)$, so $T$ maps the spanning list of $\spn(v_1,\dots,v_j)$ into it. (3)$\Rightarrow$(2): $v_j\in\spn(v_1,\dots,v_j)$ and that span is invariant.
+\end{proof}
+So an upper-triangular matrix is the same as a growing chain of invariant subspaces $\spn(v_1)\subseteq\spn(v_1,v_2)\subseteq\cdots\subseteq V$, gaining one dimension at each step.
+
+\begin{proposition*}[Prop.~60 / LADR 5.41]
+  If $\MM(T)$ is upper-triangular, the eigenvalues of $T$ are exactly its diagonal entries. In particular, $T$ is invertible iff no diagonal entry is $0$.
+\end{proposition*}
+\begin{proof}
+  $\MM(T-\lambda I)$ is upper-triangular with diagonal $\lambda_1-\lambda,\dots,\lambda_n-\lambda$.
+  If $\lambda$ is not on the diagonal, all these are nonzero. Solve $(T-\lambda I)x=0$ from the bottom row up: the last row says $(\lambda_n-\lambda)x_n=0$, so $x_n=0$; then the next row gives $x_{n-1}=0$; and so on (``back-substitution''). So $T-\lambda I$ is injective, and $\lambda$ is not an eigenvalue.
+  If $\lambda=\lambda_k$, the first $k$ columns of $\MM(T-\lambda I)$ have zeros in rows $k,\dots,n$, so they are $k$ vectors in a space of dimension $k-1$. They are dependent, so $T-\lambda I$ is not injective.
+\end{proof}
+
+\begin{example*}[Ex.~54]
+  Differentiation $D$ on $\PP_3(\RR)$ in the basis $1,x,x^2,x^3$ has matrix
+  \[ \begin{pmatrix}0&1&0&0\\0&0&2&0\\0&0&0&3\\0&0&0&0\end{pmatrix}. \]
+  It is upper-triangular with diagonal $0,0,0,0$, so the only eigenvalue is $0$. In words: $x^3\mapsto3x^2\mapsto6x\mapsto6\mapsto0$, each basis vector sent to a multiple of the previous one.
+\end{example*}
+
+\begin{theorem*}[Prop.~61 / LADR 5.47]
+  If $V$ is a finite-dimensional complex vector space, every $T\in\LL(V)$ has an upper-triangular matrix in some basis.
+\end{theorem*}
+\begin{proof}
+  Induction on $\dim V$; dimension $1$ is clear. Take an eigenvalue $\lambda$ (Prop.~53) and let $U=\range(T-\lambda I)$.
+  \begin{itemize}
+    \ii $U$ is invariant: $T(T-\lambda I)v=(T-\lambda I)(Tv)\in U$.
+    \ii $\dim U<\dim V$: $T-\lambda I$ is not injective, so it is not surjective.
+  \end{itemize}
+  By induction, $U$ has a basis $u_1,\dots,u_m$ in which $T|_U$ is upper-triangular. Extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_k$ of $V$. Then
+  \[ Tv_j=\underbrace{(T-\lambda I)v_j}_{\in U}+\lambda v_j\in\spn(u_1,\dots,u_m,v_j), \]
+  so condition (2) of Prop.~59 holds for the $v_j$. It holds for the $u_i$ because $T|_U$ is upper-triangular in $u_1,\dots,u_m$.
+\end{proof}
+
+\begin{example*}[Triangularizing a matrix that cannot be diagonalized]
+  $A=\begin{psmallmatrix}4&1\\-1&2\end{psmallmatrix}$: $\chi_A(t)=t^2-6t+9=(t-3)^2$, and $A-3I=\begin{psmallmatrix}1&1\\-1&-1\end{psmallmatrix}$ has null space $\spn\big((1,-1)\big)$. Take $s_1=(1,-1)$ and extend by $s_2=e_1$. Then $As_1=3s_1$ and $As_2=(4,-1)=1\cdot s_1+3\cdot s_2$. So in the basis $s_1,s_2$ the matrix is $\begin{psmallmatrix}3&1\\0&3\end{psmallmatrix}$. (Equivalently $S^{-1}AS$ with $S=\begin{psmallmatrix}1&1\\-1&0\end{psmallmatrix}$.)
+\end{example*}
+
+\begin{proposition*}[LADR 5.40]
+  If $\MM(T)$ is upper-triangular with diagonal $\lambda_1,\dots,\lambda_n$, then $(T-\lambda_1I)(T-\lambda_2I)\cdots(T-\lambda_nI)=0$.
+\end{proposition*}
+\begin{proof}
+  Upper-triangular means $(T-\lambda_kI)v_k\in\spn(v_1,\dots,v_{k-1})$. We show by induction on $k$ that $(T-\lambda_1I)\cdots(T-\lambda_kI)$ sends $v_1,\dots,v_k$ to $0$. The factors commute, so apply $T-\lambda_kI$ first: it sends $v_k$ into $\spn(v_1,\dots,v_{k-1})$, which the remaining product sends to $0$ by induction; and $v_1,\dots,v_{k-1}$ are already sent to $0$ by the remaining product. At $k=n$ the product sends a basis to $0$.
+\end{proof}
+Over $\RR$, which operators can be made upper-triangular is answered in Section~\ref{sec:minpoly} (LADR 5.44).
+
+\traps
+\begin{itemize}
+  \ii A triangular matrix (upper or lower) shows its eigenvalues on the diagonal. For a general matrix the diagonal entries need not be eigenvalues: $\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}$ has zeros on the diagonal and eigenvalues $\pm1$.
+  \ii Over $\RR$ upper-triangular form can fail: the rotation $R$ has no eigenvalue, so no first basis vector $v_1$ can be an eigenvector.
+  \ii Upper-triangular is not unique: different bases give different entries above the diagonal, and the diagonal entries can appear in a different order.
+\end{itemize}
+
+\subsection{Diagonalizability}\label{sec:diag}
+\idea The best case is a basis made of eigenvectors. In that basis the matrix is diagonal: $T$ just multiplies each coordinate by its own number. Then everything is easy to compute, especially powers: $T^k$ multiplies each coordinate by $\lambda^k$.
+
+\begin{definition*}[Def.~34 / LADR 5.50]
+  $T$ is \vocab{diagonalizable} if $\MM(T)$ is diagonal for some basis of $V$. A basis of $V$ consisting of eigenvectors of $T$ is an \vocab{eigenbasis}.
+\end{definition*}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \draw[->,gray] (-0.5,0)--(2.6,0); \draw[->,gray] (0,-0.5)--(0,1.6);
+  \draw[gray,dashed] (0,0) rectangle (1,1);
+  \fill[MidnightBlue!15] (0,0) rectangle (2,0.5); \draw[MidnightBlue,thick] (0,0) rectangle (2,0.5);
+  \node at (1.1,-0.9) {$\operatorname{diag}(2,\tfrac12)$};
+\end{tikzpicture}
+\qquad\qquad
+\begin{tikzpicture}[scale=0.9]
+  \draw[->,gray] (-0.5,0)--(2.6,0); \draw[->,gray] (0,-0.5)--(0,1.6);
+  \draw[gray,dashed] (0,0) rectangle (1,1);
+  \fill[RawSienna!15] (0,0)--(1,0)--(2,1)--(1,1)--cycle; \draw[RawSienna,thick] (0,0)--(1,0)--(2,1)--(1,1)--cycle;
+  \node at (1.1,-0.9) {shear $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$};
+\end{tikzpicture}
+\figcap{What each matrix does to the unit square (dashed). Left: diagonal, so the square is stretched along the two eigenvector directions $e_1$ and $e_2$. Right: the shear slides each horizontal line sideways by its height. Only vectors on the $x$-axis keep their direction, so there is just one line of eigenvectors, too few for an eigenbasis of $\RR^2$. The shear is not diagonalizable.}
+\end{center}
+
+\begin{theorem*}[Prop.~62 / LADR 5.55]
+  Let $\lambda_1,\dots,\lambda_m$ be the distinct eigenvalues of $T$. These are equivalent:
+  \begin{enumerate}
+    \ii $T$ is diagonalizable;
+    \ii $V$ has a basis of eigenvectors of $T$;
+    \ii $V=E(\lambda_1,T)\oplus\cdots\oplus E(\lambda_m,T)$;
+    \ii $\dim V=\dim E(\lambda_1,T)+\dots+\dim E(\lambda_m,T)$.
+  \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  (1)$\Leftrightarrow$(2): a matrix is diagonal exactly when each basis vector is sent to a multiple of itself, that is, each basis vector is an eigenvector.
+  The sum $E(\lambda_1,T)+\dots+E(\lambda_m,T)$ is always direct: a vector $0=w_1+\dots+w_m$ with $w_i\in E(\lambda_i,T)$ forces every $w_i=0$, because nonzero eigenvectors for distinct eigenvalues are independent (Prop.~54).
+  (2)$\Rightarrow$(3): the eigenbasis lies in the sum, so the sum is all of $V$. (3)$\Rightarrow$(4): dimensions add in a direct sum. (4)$\Rightarrow$(3): the direct sum has dimension $\dim V$, so it is $V$. (3)$\Rightarrow$(2): put together a basis of each eigenspace.
+\end{proof}
+\textbf{The practical test is (4).} For each eigenvalue compute $\dim E(\lambda,T)=\dim V-\rank(T-\lambda I)$, add them, and compare with $\dim V$.
+
+\begin{example*}[Diagonalizing a matrix]
+  $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ has eigenvectors $(1,1)$ for $3$ and $(1,-1)$ for $1$. Put them as the columns of $P$:
+  \[ P=\begin{pmatrix}1&1\\1&-1\end{pmatrix},\qquad D=\begin{pmatrix}3&0\\0&1\end{pmatrix},\qquad A=PDP^{-1}. \]
+  ($D$ is the matrix of the same operator in the eigenbasis; this is the change-of-basis formula in Section~\ref{sec:background}.) Then $A^k=PD^kP^{-1}$, which works out to $\tfrac12\begin{psmallmatrix}3^k+1&3^k-1\\3^k-1&3^k+1\end{psmallmatrix}$.
+\end{example*}
+
+\begin{example*}[Not diagonalizable]
+  $A=\begin{psmallmatrix}1&1&1\\0&1&1\\0&0&3\end{psmallmatrix}$ is upper-triangular, so its eigenvalues are $1$ and $3$. $\rank(A-I)=2$ and $\rank(A-3I)=2$, so $\dim E(1,A)=1$ and $\dim E(3,A)=1$. Since $1+1=2<3$, $A$ is not diagonalizable.
+\end{example*}
+
+\begin{proposition*}[Prop.~63 / LADR 5.58]
+  If $T$ has $\dim V$ distinct eigenvalues, it is diagonalizable.
+\end{proposition*}
+\begin{proof}
+  One eigenvector for each eigenvalue gives $\dim V$ independent vectors (Prop.~54), which is a basis.
+\end{proof}
+The converse is false: $I$ is diagonal and has only one eigenvalue.
+
+Example (Ex.~55): for $n\ge2$, the shift $Tv_1=0$, $Tv_k=v_{k-1}$ has upper-triangular matrix with zero diagonal, so its only eigenvalue is $0$, and $\dim E(0,T)=\dim\nul T=1<n$. So it is not diagonalizable: every space of dimension at least $2$ has non-diagonalizable operators.
+
+Diagonalizability depends on the field (Ex.~56). $\begin{psmallmatrix}1&2\\2&3\end{psmallmatrix}$ has the distinct eigenvalues $2\pm\sqrt5$, so it is diagonalizable over $\RR$, but over the rational numbers $\mathbb Q$ it has no eigenvalues at all. The rotation $R$ is diagonalizable over $\CC$ (eigenvalues $\pm i$, distinct) but not over $\RR$ (no eigenvalues at all).
+
+\begin{proposition*}[Prop.~64: powers in an eigenbasis]
+  If $Tv_j=\lambda_jv_j$ for a basis $v_1,\dots,v_n$ and $v=a_1v_1+\dots+a_nv_n$, then for every $k\ge0$
+  \[ T^kv=a_1\lambda_1^kv_1+\dots+a_n\lambda_n^kv_n. \]
+  For matrices: if $A=PDP^{-1}$ with $D$ diagonal, then $A^k=PD^kP^{-1}$, and $D^k$ is $D$ with each diagonal entry raised to the $k$th power.
+\end{proposition*}
+\begin{proof}
+  $T^kv_j=\lambda_j^kv_j$; apply linearity. For matrices, in $(PDP^{-1})(PDP^{-1})\cdots(PDP^{-1})$ each inner $P^{-1}P$ cancels, leaving $PD^kP^{-1}$.
+\end{proof}
+
+\begin{example*}[A Markov chain from the notes]
+  $P=\begin{psmallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{psmallmatrix}$ has the eigenbasis
+  \[ \pi=\begin{pmatrix}1/4\\1/2\\1/4\end{pmatrix}\ (\lambda=1),\qquad u=\begin{pmatrix}-1\\0\\1\end{pmatrix}\ (\lambda=\tfrac12),\qquad w=\begin{pmatrix}1\\-2\\1\end{pmatrix}\ (\lambda=0). \]
+  The starting distribution $p_0=(1,0,0)$ is $\pi-\tfrac12u+\tfrac14w$. By Prop.~64, for $k\ge1$,
+  \[ P^kp_0=\pi-\tfrac12\big(\tfrac12\big)^ku+0=\pi-2^{-(k+1)}u. \]
+  The $w$ part disappears after one step, the $u$ part halves at every step, and $P^kp_0\to\pi$.
+\end{example*}
+
+\begin{example*}[Spectral gap]
+  For $0<\varepsilon<\tfrac12$, $P_\varepsilon=\begin{psmallmatrix}1-\varepsilon&\varepsilon\\\varepsilon&1-\varepsilon\end{psmallmatrix}$ has eigenvectors $(1,1)$ for eigenvalue $1$ and $(1,-1)$ for $1-2\varepsilon$, so $P_\varepsilon^k(1,-1)=(1-2\varepsilon)^k(1,-1)$. When $\varepsilon$ is small (the walk rarely switches states), $1-2\varepsilon$ is close to $1$ and the starting state is forgotten slowly. The difference $1-(1-2\varepsilon)=2\varepsilon$ is called the \vocab{spectral gap}.
+\end{example*}
+
+\begin{proposition*}[HW6 P1: projections]
+  If $P^2=P$, then every eigenvalue of $P$ is $0$ or $1$, $V=\nul P\oplus\range P$, and $\range P=E(1,P)$. So $P$ is diagonalizable.
+\end{proposition*}
+\begin{proof}
+  Any $v$ is $(v-Pv)+Pv$, with $P(v-Pv)=Pv-P^2v=0$ and $P(Pv)=Pv$. So $V=\nul P+E(1,P)$, and $\range P\subseteq E(1,P)\subseteq\range P$. The sum is direct: if $v=Pw$ and $Pv=0$, then $v=Pw=P^2w=Pv=0$.
+\end{proof}
+
+\traps
+\begin{itemize}
+  \ii Repeated eigenvalues do not rule out diagonalizability ($I$ is diagonal); they only mean you must check the dimensions in test (4).
+  \ii ``Diagonalizable'' and ``invertible'' are unrelated. The zero operator is diagonalizable and not invertible. The shear $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ is invertible and not diagonalizable.
+  \ii In $A=PDP^{-1}$ the eigenvectors are the \emph{columns} of $P$, in the same order as the eigenvalues in $D$.
+\end{itemize}
+
+\subsection{The minimal polynomial}\label{sec:minpoly}
+\idea If $\dim V=n$, then $\LL(V)$ has dimension $n^2$, so the list $I,T,T^2,T^3,\dots$ must become linearly dependent. A dependence $a_0I+a_1T+\dots+a_kT^k=0$ says $p(T)=0$ for the polynomial $p=a_0+a_1x+\dots+a_kx^k$. The shortest such equation is the minimal polynomial. Its roots are exactly the eigenvalues, and whether it has repeated roots decides whether $T$ is diagonalizable.
+
+\begin{definition*}[Def.~36 / LADR 5.22, 5.24]
+  Let $k$ be the smallest number such that $T^k\in\spn(I,T,\dots,T^{k-1})$, and write $T^k=a_{k-1}T^{k-1}+\dots+a_1T+a_0I$. The \vocab{minimal polynomial} of $T$ is
+  \[ m_T(x)=x^k-a_{k-1}x^{k-1}-\dots-a_1x-a_0. \]
+  Equivalently: $m_T$ is monic, $m_T(T)=0$, and no nonzero polynomial $q$ of smaller degree has $q(T)=0$.
+\end{definition*}
+
+\begin{example*}[Ex.~57, 58]
+  \leavevmode
+  \begin{itemize}
+    \ii On $V\ne\{0\}$ (of any finite dimension): $m_I=x-1$, since $I-I=0$; and $m_0=x$.
+    \ii $T=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$. $I$ and $T$ are independent ($T$ is not a multiple of $I$). Compute $T^2=\begin{psmallmatrix}5&4\\4&5\end{psmallmatrix}$ and solve $T^2=aT+bI$: the off-diagonal entries give $4=a$, the diagonal gives $5=2a+b$, so $b=-3$. Hence $T^2=4T-3I$ and $m_T=x^2-4x+3=(x-1)(x-3)$.
+    \ii Rotation: $R^2=-I$ and $R$ is not a multiple of $I$, so $m_R=x^2+1$.
+    \ii The $n\times n$ shift $N$ ($Ne_1=0$, $Ne_j=e_{j-1}$) has $N^n=0$, so (by Prop.~65 below) $m_N$ divides $x^n$, that is, $m_N=x^j$ with $j\le n$. Since $N^{n-1}\ne0$, $j=n$: $m_N=x^n$.
+  \end{itemize}
+\end{example*}
+
+\begin{proposition*}[Prop.~65 / LADR 5.29]
+  For a polynomial $q$: $q(T)=0$ iff $m_T$ divides $q$.
+\end{proposition*}
+\begin{proof}
+  If $q=m_Tr$, then $q(T)=m_T(T)r(T)=0$. Conversely, suppose $q(T)=0$. Divide with remainder: $q=m_Tr+s$ with $s=0$ or $\deg s<\deg m_T$. Then $s(T)=q(T)-m_T(T)r(T)=0$. A nonzero $s$ would be a polynomial of smaller degree than $m_T$ with $s(T)=0$, which is impossible. So $s=0$ and $m_T$ divides $q$.
+\end{proof}
+So the minimal polynomial is a factor of \emph{every} polynomial $q$ with $q(T)=0$. If you find one such polynomial, $m_T$ is among its monic factors.
+
+\begin{proposition*}[Prop.~66 / LADR 5.27]
+  The eigenvalues of $T$ are exactly the roots of $m_T$ that lie in $\FF$.
+\end{proposition*}
+\begin{proof}
+  If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$, so $m_T(\lambda)=0$.
+  Conversely, let $m_T(\lambda)=0$, so $m_T=(x-\lambda)q$ with $\deg q<\deg m_T$. If $\lambda$ were not an eigenvalue, $T-\lambda I$ would be invertible, and $0=m_T(T)=(T-\lambda I)q(T)$ would give $q(T)=0$, contradicting minimality.
+\end{proof}
+
+\begin{proposition*}[Prop.~67 / LADR 5.22]
+  $\deg m_T\le\dim V$.
+\end{proposition*}
+\begin{proof}[Proof outline]
+  Induction on $\dim V$. Pick $v\ne0$; the $n+1$ vectors $v,\dots,T^nv$ are dependent, so $q(T)v=0$ for some nonzero $q$ of degree at most $n$. If $q(T)=0$, then $\deg m_T\le\deg q\le n$. Otherwise $U=\nul q(T)$ is invariant, contains $v$, and is not $V$. By induction $\deg m_{T|_U}\le\dim U$ and $\deg m_{T/U}\le\dim V/U$. The product $r=m_{T|_U}m_{T/U}$ has $r(T)=0$: since $m_{T/U}(T/U)=0$, the formula $p(T/U)(v+U)=p(T)v+U$ (Section~\ref{sec:invariant}) gives $m_{T/U}(T)v\in U$ for every $v$, and then $m_{T|_U}(T)$ sends that vector of $U$ to $0$. So $m_T$ divides $r$ (Prop.~65), and $\deg m_T\le\deg r\le\dim U+\dim V/U=\dim V$.
+\end{proof}
+
+\begin{theorem*}[Prop.~68 / LADR 5.62]
+  $T$ is diagonalizable iff $m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ with $\lambda_1,\dots,\lambda_m\in\FF$ all different (``$m_T$ splits with no repeated root'').
+\end{theorem*}
+\begin{proof}
+  ($\Rightarrow$) Let $\lambda_1,\dots,\lambda_m$ be the distinct eigenvalues, so $V=E(\lambda_1,T)\oplus\cdots\oplus E(\lambda_m,T)$. The product $(T-\lambda_1I)\cdots(T-\lambda_mI)$ sends each $E(\lambda_i,T)$ to $0$ (the factors commute, so apply $T-\lambda_iI$ first), hence sends all of $V$ to $0$. So $m_T$ divides $(x-\lambda_1)\cdots(x-\lambda_m)$, and it has every $\lambda_i$ as a root (Prop.~66), so it equals this product.
+
+  ($\Leftarrow$) Induction on $\dim V$. If $m=1$, $T=\lambda_1I$. Otherwise, the key step is
+  \[ V=\nul(T-\lambda_1I)\oplus\range(T-\lambda_1I). \]
+  Divide $g(x)=(x-\lambda_2)\cdots(x-\lambda_m)$ by $x-\lambda_1$: $g=(x-\lambda_1)q+s$ with $s$ a constant, and $s=g(\lambda_1)\ne0$ since the roots are different. For $v\in V$ let $u=\tfrac1sg(T)v$. Then $(T-\lambda_1I)u=\tfrac1sm_T(T)v=0$, so $u\in\nul(T-\lambda_1I)$, and $v-u=-\tfrac1s(T-\lambda_1I)q(T)v\in\range(T-\lambda_1I)$. So $V$ is the sum of the two spaces, and their dimensions add up to $\dim V$ by rank--nullity, so the sum is direct (Section~\ref{sec:background}). The range $U=\range(T-\lambda_1I)$ is invariant, and smaller than $V$ because $\lambda_1$ is a root of $m_T$, hence an eigenvalue (Prop.~66), so $\nul(T-\lambda_1I)\ne\{0\}$. Also $m_{T|_U}$ divides $m_T$ (item 3 of the corollary below: $m_T(T|_U)=0$, then Prop.~65), so it also has distinct roots; by induction $T|_U$ has an eigenbasis. Together with a basis of $\nul(T-\lambda_1I)$, this is an eigenbasis of $V$.
+\end{proof}
+Over $\CC$ you can test ``no repeated root'' without finding the roots: $p$ has a repeated root iff $p$ and $p'$ have a common root, and that can be checked by computing the greatest common divisor of $p$ and $p'$ with repeated division with remainder (the Euclidean algorithm): there is a common root iff this divisor is not a constant.
+
+\begin{proposition*}[LADR 5.44]
+  Over any $\FF$: $T$ has an upper-triangular matrix in some basis iff $m_T$ splits over $\FF$.
+\end{proposition*}
+\begin{proof}
+  ($\Rightarrow$) If $\MM(T)$ is upper-triangular with diagonal $\lambda_1,\dots,\lambda_n$, then $(T-\lambda_1I)\cdots(T-\lambda_nI)=0$ (LADR 5.40), so by Prop.~65 $m_T$ divides this product and splits. ($\Leftarrow$) Repeat the proof of Prop.~61. An eigenvalue exists because $m_T$ splits and its roots are eigenvalues (Prop.~66). For the invariant $U=\range(T-\lambda I)$, $m_{T|_U}$ divides $m_T$ (see below), so it also splits and the induction applies to $T|_U$.
+\end{proof}
+So over $\RR$, an operator can be made upper-triangular exactly when $m_T$ has no irreducible quadratic factor.
+
+\begin{corollary*}[Consequences used often]
+  \begin{enumerate}
+    \ii (Ex.~59) Over $\CC$, if $T^n=I$ then $T$ is diagonalizable: $m_T$ divides $x^n-1$, whose roots are distinct (it shares no root with $nx^{n-1}$).
+    \ii If $p(T)=0$ for some $p$ that splits with no repeated root, then $T$ is diagonalizable: $m_T$ divides $p$, so $m_T$ also splits with no repeated root. You do not need $p$ to be the minimal polynomial.
+    \ii If $U$ is invariant, then $m_{T|_U}$ and $m_{T/U}$ divide $m_T$. Reason: $m_T(T)=0$ gives $m_T(T|_U)=0$ and $m_T(T/U)=0$ (by $p(T/U)(v+U)=p(T)v+U$), so Prop.~65 applies. (This is item (1) of technique T5, Section~\ref{sec:T5}.)
+    \ii (Ex.~60) If $T$ is diagonalizable and $U$ is invariant, then $T|_U$ and $T/U$ are diagonalizable, because $m_{T|_U}$ and $m_{T/U}$ divide $m_T$.
+    \ii (HW7 P3) $T$ is invertible iff $m_T(0)\ne0$ (iff $0$ is not an eigenvalue). Then $T^{-1}$ is a polynomial in $T$: writing $m_T=x^d+a_{d-1}x^{d-1}+\dots+a_1x+a_0$ (so $a_0=m_T(0)\ne0$), from $m_T(T)=0$:
+    \[ T^{-1}=-\tfrac1{a_0}\big(T^{d-1}+a_{d-1}T^{d-2}+\dots+a_2T+a_1I\big). \]
+    \ii (HW7 P4) $m_{T-\lambda I}(x)=m_T(x+\lambda)$, and for $c\ne0$, $m_{cT}(x)=c^dm_T(x/c)$ where $d=\deg m_T$.
+    \ii (HW7 P5) A $2\times2$ complex matrix $A$ whose only eigenvalue is $\lambda$ has $m_A=x-\lambda$ (and then $A=\lambda I$) or $m_A=(x-\lambda)^2$ (and then $A$ is not diagonalizable).
+  \end{enumerate}
+\end{corollary*}
+
+\textbf{How to compute $m_T$.}
+\begin{itemize}
+  \ii When $m_T$ splits (always over $\CC$): $m_T=\prod_i(x-\lambda_i)^{k_i}$ over the distinct eigenvalues, with each $k_i\ge1$ and $\sum k_i\le\dim V$. Test candidate products in order of increasing degree; the first one that gives $0$ is $m_T$.
+  \ii When it may not split (over $\RR$): use the definition (find the first $k$ with $T^k\in\spn(I,\dots,T^{k-1})$). Or, if for some $v$ the list $v,Tv,\dots,T^{n-1}v$ is a basis ($n=\dim V$; such $v$ is called a cyclic vector; see technique T6, Section~\ref{sec:T6}), write $T^nv=c_0v+\dots+c_{n-1}T^{n-1}v$; then $m_T=x^n-c_{n-1}x^{n-1}-\dots-c_0$ (Practice Midterm C, Q3).
+\end{itemize}
+
+\begin{example*}[Computing $m_T$ for a $3\times3$ matrix]
+  $A=\begin{psmallmatrix}1&1&1\\0&1&1\\0&0&3\end{psmallmatrix}$. Eigenvalues (diagonal): $1,3$. So $(x-1)(x-3)$ divides $m_A$. Test it:
+  \[ (A-I)(A-3I)=\begin{pmatrix}0&1&1\\0&0&1\\0&0&2\end{pmatrix}\begin{pmatrix}-2&1&1\\0&-2&1\\0&0&0\end{pmatrix}=\begin{pmatrix}0&-2&1\\0&0&0\\0&0&0\end{pmatrix}\ne0. \]
+  Next test $(x-1)^2(x-3)$: multiply the result by $A-I$ on the left to get $0$. So $m_A$ divides $(x-1)^2(x-3)$, has both roots, and is not $(x-1)(x-3)$; hence $m_A=(x-1)^2(x-3)$. It has a repeated root, so $A$ is not diagonalizable (matching the dimension count in Section~\ref{sec:diag}).
+\end{example*}
+
+\begin{proposition*}[Real operators]
+  Let $V$ be a nonzero finite-dimensional real vector space and $T\in\LL(V)$.
+  \begin{enumerate}
+    \ii $T$ has an invariant subspace of dimension $1$ or $2$.
+    \ii If $\dim V$ is odd, $T$ has an eigenvalue.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (1) Factor $m_T$ over $\RR$ into degree-$1$ factors and irreducible quadratics. If there is a degree-$1$ factor $x-\lambda$, then $\lambda$ is an eigenvalue (Prop.~66) and an eigenvector spans an invariant line. Otherwise write $m_T=(x^2+bx+c)q$. By minimality $q(T)\ne0$, so pick $v$ with $w=q(T)v\ne0$. Then $(T^2+bT+cI)w=m_T(T)v=0$, so $T(Tw)=-bTw-cw$, and $\spn(w,Tw)$ is invariant, of dimension $1$ or $2$.
+  (2) Induction on $\dim V$; dimension $1$ is clear. Suppose $\dim V\ge3$ is odd and $T$ has no eigenvalue. By (1) there is an invariant $U$ of dimension $1$ or $2$; dimension $1$ would give an eigenvector, so $\dim U=2$. Then $\dim V/U=\dim V-2$ is odd and smaller, so by induction $T/U$ has an eigenvalue $\lambda$, which is a root of $m_{T/U}$. Since $m_{T/U}$ divides $m_T$, $\lambda$ is a root of $m_T$, hence an eigenvalue of $T$ (Prop.~66). Contradiction.
+\end{proof}
+
+\traps
+\begin{itemize}
+  \ii Do not confuse $m_A$ with the $2\times2$ characteristic polynomial $\chi_A(t)=t^2-(a+d)t+(ad-bc)$. For a $2\times2$ matrix, $A^2-(a+d)A+(ad-bc)I=0$ (multiply it out), so $m_A$ divides $\chi_A$; and $m_A=\chi_A$ unless $A=\lambda I$, in which case $m_A=x-\lambda$.
+  \ii Over $\RR$, $m_T$ can have an irreducible quadratic factor ($x^2+1$ for the rotation). Then $T$ is not diagonalizable over $\RR$, even if the roots in $\CC$ are distinct.
+  \ii A root of some $p$ with $p(T)=0$ need not be an eigenvalue; a root of $m_T$ always is.
+\end{itemize}
+
+\clearpage
+\section{Techniques}
+
+Each technique is a statement you may use, the reason it is true, and problems that are slow without it and fast with it. Solutions are in Section~\ref{sec:sol}. Exam time is about $1.25$ minutes per point. T$n$(1), T$n$(2), \dots\ refer to items of the statement of T$n$; T$n$(a), T$n$(b), \dots\ refer to its problems.
+
+\newcommand{\why}{\par\noindent\textbf{Why.}\ }
+\newcommand{\probs}{\par\medskip\noindent\textbf{Problems.}}
+
+\subsection{A polynomial equation limits the eigenvalues}
+\begin{theorem*}[T1]
+  Suppose $p(T)=0$ for a nonzero polynomial $p$.
+  \begin{enumerate}
+    \ii Every eigenvalue of $T$ is a root of $p$.
+    \ii If $V\ne\{0\}$ and $p=c(x-\mu_1)\cdots(x-\mu_k)$ splits over $\FF$, then at least one $\mu_i$ is an eigenvalue.
+    \ii A root $\mu$ of $p$ that is not an eigenvalue can be removed: if $p=(x-\mu)q$ and $\mu$ is not an eigenvalue, then $q(T)=0$.
+  \end{enumerate}
+\end{theorem*}
+\why (1) If $Tv=\lambda v$ with $v\ne0$, then $0=p(T)v=p(\lambda)v$, so $p(\lambda)=0$.
+(2) The product $(T-\mu_1I)\cdots(T-\mu_kI)$ equals $\frac1cp(T)=0$, which is not injective on $V\ne\{0\}$. A product of injective maps is injective, so at least one factor $T-\mu_iI$ is not injective, and $\mu_i$ is an eigenvalue.
+(3) For every $v$, $(T-\mu I)\big(q(T)v\big)=p(T)v=0$. Since $\mu$ is not an eigenvalue, $T-\mu I$ is injective, so $q(T)v=0$.
+
+Past Berkeley exams ask this as $T^3=T$, $(T-aI)(T-bI)=0$, $T^2=T$, $T^4=-T^2$.
+\probs
+\begin{enumerate}[(a)]
+  \ii $V$ is a nonzero real vector space and $T^3=T$. Prove that the eigenvalues of $T$ lie in $\{0,1,-1\}$ and that at least one of them is an eigenvalue.
+  \ii $(T-aI)(T-bI)=0$ and $T$ is not a scalar multiple of $I$. Prove that $a$ and $b$ are both eigenvalues. (Ribet, Spring 2014.)
+  \ii $T\in\LL(\CC^2)$ satisfies $T^4=-T^2$. Which values can be eigenvalues? Can one $T$ have all of them? Give a $T$ for each pair that can occur together.
+  \ii Is this true: ``if $f(T)=0$ for a real polynomial $f$ of odd degree, then $T$ has a real eigenvalue''? (Ribet, Spring 2014.)
+\end{enumerate}
+
+\subsection{Distinct roots give diagonalizability, with explicit formulas}
+\begin{theorem*}[T2]
+  If $p(T)=0$ where $p=(x-\lambda_1)\cdots(x-\lambda_m)$ with $\lambda_1,\dots,\lambda_m\in\FF$ all different, then $T$ is diagonalizable. Explicitly, define the \vocab{Lagrange polynomials}
+  \[ p_j(x)=\prod_{k\ne j}\frac{x-\lambda_k}{\lambda_j-\lambda_k}\qquad(j=1,\dots,m). \]
+  Then every $v$ can be written as $v=\sum_jp_j(T)v$, with $p_j(T)v\in E(\lambda_j,T)$.
+\end{theorem*}
+\why Each $p_j$ has degree $m-1$, equals $1$ at $\lambda_j$, and equals $0$ at every other $\lambda_k$. So $p_1+\dots+p_m-1$ is a polynomial of degree less than $m$ with the $m$ roots $\lambda_1,\dots,\lambda_m$, which forces it to be the zero polynomial: $\sum_jp_j=1$, hence $\sum_jp_j(T)=I$ and $v=\sum_jp_j(T)v$. Also $(x-\lambda_j)p_j(x)$ is a constant times $p(x)$, so $(T-\lambda_jI)p_j(T)v=0$, which says $p_j(T)v\in E(\lambda_j,T)$. So every vector is a sum of eigenvectors. (HW7 P7.)
+
+When a problem only asks whether $T$ is diagonalizable, cite LADR 5.62 (Prop.~68). Use the formula when a problem asks you to \emph{write out} the decomposition.
+\probs
+\begin{enumerate}[(a)]
+  \ii $T^2=T+2I$. Prove $T$ is diagonalizable and write $v$ explicitly as a sum of eigenvectors.
+  \ii $T^3=T$ on a real space. Prove $V=\nul T\oplus E(1,T)\oplus E(-1,T)$, with explicit formulas for the three components of $v$.
+  \ii Prove that over $\CC$, $T^n=I$ implies $T$ diagonalizable. Give a real operator with $T^4=I$ that is not diagonalizable over $\RR$.
+  \ii Suppose $p(T)=0$ with $p$ having distinct roots in $\FF$, and $U$ is $T$-invariant. Prove $T|_U$ is diagonalizable in one line.
+\end{enumerate}
+
+\subsection{Commuting operators share invariant subspaces}
+\begin{theorem*}[T3]
+  If $ST=TS$, then $S$ maps each of these subspaces into itself: $E(\lambda,T)$, $\nul p(T)$, $\range p(T)$.
+  Consequently, on a nonzero finite-dimensional complex space, commuting operators have a common eigenvector. Two commuting diagonalizable operators (over any $\FF$) have a common eigenbasis. Commuting operators on a complex space can also be made upper-triangular in one common basis (Problem~8).
+\end{theorem*}
+\why If $Tv=\lambda v$, then $T(Sv)=S(Tv)=\lambda Sv$, so $Sv\in E(\lambda,T)$. In the same way, $S$ commutes with every $p(T)$: if $p(T)v=0$ then $p(T)Sv=Sp(T)v=0$, and $S\,p(T)w=p(T)\,Sw\in\range p(T)$.
+Common eigenvector: pick an eigenvalue $\lambda$ of $T$. $S$ maps $E(\lambda,T)\ne\{0\}$ into itself, so $S|_{E(\lambda,T)}$ is an operator on a nonzero complex space and has an eigenvector $w$. Then $Sw=\mu w$, and $Tw=\lambda w$ because $w\in E(\lambda,T)$.
+Common eigenbasis: $V=\bigoplus_\lambda E(\lambda,T)$. On each piece, $S$ restricted to it is diagonalizable (restrictions of diagonalizable operators are diagonalizable, Section~\ref{sec:minpoly}). An eigenbasis of $S$ inside each $E(\lambda,T)$ consists of eigenvectors of both.
+\probs
+\begin{enumerate}[(a)]
+  \ii $T\in\LL(\CC^3)$ has three distinct eigenvalues and $ST=TS$. Prove that every eigenvector of $T$ is an eigenvector of $S$, so $S$ is diagonal in $T$'s eigenbasis.
+  \ii $S^2=I$ and $ST=TS$ on a real space. Prove $V=E(1,S)\oplus E(-1,S)$ and that both pieces are $T$-invariant. What does $\MM(T)$ look like in a basis adapted to this decomposition?
+  \ii Show that $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ commutes only with matrices of the form $\begin{psmallmatrix}a&b\\0&a\end{psmallmatrix}$.
+\end{enumerate}
+
+\subsection{Identifying a quotient space}
+\begin{theorem*}[T4]
+  Let $U\subseteq V$ be a subspace.
+  \begin{enumerate}
+    \ii To identify $V/U$ with a familiar space $W$: find a linear $T\colon V\to W$ that is surjective with $\nul T=U$ exactly. Then $v+U\mapsto Tv$ is an isomorphism $V/U\to W$.
+    \ii For a linear $F\colon V\to W$, the rule $v+U\mapsto F(v)$ is a well-defined map on $V/U$ iff $F(u)=0$ for every $u\in U$.
+    \ii If $T$ is as in (1), then $v_1+U,\dots,v_k+U$ is a basis of $V/U$ iff $Tv_1,\dots,Tv_k$ is a basis of $W$. Also: extending a basis of $U$ by $v_1,\dots,v_k$ to a basis of $V$ gives the basis $v_1+U,\dots,v_k+U$ of $V/U$.
+  \end{enumerate}
+\end{theorem*}
+\why (1) is the first isomorphism theorem (Prop.~41). (2) The rule is well defined iff $F(v)=F(v')$ whenever $v-v'\in U$, which for linear $F$ says $F(u)=0$ for $u\in U$ (Prop.~42 with $U_2=\{0\}$). (3) An isomorphism sends bases to bases; the second sentence is the basis-of-a-quotient proposition in Section~\ref{sec:quotient}.
+
+When an exam asks you to ``describe the isomorphism given by the first isomorphism theorem'', write the formula $v+\nul T\mapsto Tv$, say what $\nul T$ is, and check surjectivity.
+\probs
+\begin{enumerate}[(a)]
+  \ii Let $V=\RR^{2,2}$ and $U=\{A:A^T=A\}$. Prove $V/U\cong\RR$, give the isomorphism, and find a basis of $V/U$.
+  \ii Let $U=\spn\big((1,1,1)\big)\subseteq\RR^3$. Give an explicit isomorphism $\RR^3/U\to\RR^2$ and a basis of $\RR^3/U$.
+  \ii With the same $U$, which of these rules define maps $\RR^3/U\to\RR$: (i) $(x,y,z)+U\mapsto x$; (ii) $(x,y,z)+U\mapsto x+y-2z$; (iii) $(x,y,z)+U\mapsto(x-y)^2$?
+  \ii $T\colon V\to W$ is linear and $U\subseteq\nul T$. Prove $\dim\range T\le\dim V-\dim U$, with equality iff $U=\nul T$.
+\end{enumerate}
+
+\subsection{Splitting into an invariant subspace and the quotient}\label{sec:T5}
+\begin{theorem*}[T5]
+  Let $U$ be $T$-invariant, with $V$ finite-dimensional. Then:
+  \begin{enumerate}
+    \ii $m_{T|_U}$ and $m_{T/U}$ both divide $m_T$, and $m_T$ divides the product $m_{T|_U}\,m_{T/U}$.
+    \ii The eigenvalues of $T$ are exactly the eigenvalues of $T|_U$ together with the eigenvalues of $T/U$.
+    \ii In a basis $u_1,\dots,u_k,v_1,\dots,v_l$ (a basis of $U$, then extended to $V$), $\MM(T)=\begin{psmallmatrix}\MM(T|_U)&*\\0&\MM(T/U)\end{psmallmatrix}$, where $\MM(T/U)$ uses the basis $v_1+U,\dots,v_l+U$.
+  \end{enumerate}
+\end{theorem*}
+\why (1) For any polynomial $p$: $p(T|_U)$ is $p(T)$ used on $U$, and $p(T/U)(v+U)=p(T)v+U$. So $m_T(T)=0$ gives $m_T(T|_U)=0$ and $m_T(T/U)=0$, and Prop.~65 says both minimal polynomials divide $m_T$. For the product: $m_{T/U}(T/U)=0$ means $m_{T/U}(T)v\in U$ for every $v$, and then $m_{T|_U}(T)$ sends that vector of $U$ to $0$. So $m_{T|_U}(T)\,m_{T/U}(T)=0$.
+(2) Let $Tv=\lambda v$ with $v\ne0$. If $v\in U$, $\lambda$ is an eigenvalue of $T|_U$. If $v\notin U$, then $v+U\ne0+U$ and $(T/U)(v+U)=\lambda(v+U)$, so $\lambda$ is an eigenvalue of $T/U$. Conversely, an eigenvalue of $T|_U$ is clearly one of $T$. Suppose $\lambda$ is an eigenvalue of $T/U$ but not of $T$. Then $T-\lambda I$ is invertible on $V$; it maps $U$ into $U$ injectively, so onto $U$ (same finite dimension). Now if $(T-\lambda I)v\in U$, write $(T-\lambda I)v=(T-\lambda I)u$ with $u\in U$; then $v=u\in U$. So $(T/U)-\lambda I$, which sends $v+U$ to $(T-\lambda I)v+U$, is injective on $V/U$, contradicting that $\lambda$ is an eigenvalue of $T/U$.
+(3) $Tu_i\in U$, so the first $k$ columns have zeros below row $k$. The coefficients of $Tv_j$ on $v_1,\dots,v_l$ are the coefficients of $(T/U)(v_j+U)$ on $v_1+U,\dots,v_l+U$.
+
+Proofs by induction on $\dim V$ use this: apply the induction hypothesis to $T|_U$ and $T/U$, which act on smaller spaces.
+\probs
+\begin{enumerate}[(a)]
+  \ii (Ribet, Fall 2008) $T$ is invertible and $U$ is $T$-invariant. If $Tv\in U$, prove $v\in U$.
+  \ii Give an operator $T$ and invariant $U$ such that $T|_U$ and $T/U$ are both diagonalizable but $T$ is not. Why does this not contradict (1)?
+  \ii (Ribet, Spring 2020) $U$ is $T$-invariant and $Tv_j=\lambda_jv_j$ for distinct $\lambda_1,\dots,\lambda_k$. If $\sum_j(v_j+U)=0+U$, prove each $v_j\in U$.
+\end{enumerate}
+
+\subsection{Cyclic subspaces}\label{sec:T6}
+\begin{theorem*}[T6]
+  For $v\ne0$, let $k$ be the largest number such that $v,Tv,\dots,T^{k-1}v$ is linearly independent, and let $W=\spn(v,\dots,T^{k-1}v)$. Then $W$ is $T$-invariant, it is the smallest $T$-invariant subspace containing $v$, and the minimal polynomial of $T|_W$ has degree exactly $k$.
+  If some $v$ has $W=V$, $v$ is called a \vocab{cyclic vector}; then $\deg m_T=\dim V$.
+\end{theorem*}
+\why By the choice of $k$, $T^kv\in W$, so $T$ maps each of $v,\dots,T^{k-1}v$ into $W$; hence $W$ is invariant. Any invariant subspace containing $v$ contains $Tv$, $T^2v$, and so on, so it contains $W$. If $q(T|_W)=0$ with $\deg q<k$, then $q(T)v=0$ is a dependence among $v,\dots,T^{k-1}v$, which is impossible; so $\deg m_{T|_W}\ge k$. And $\deg m_{T|_W}\le\dim W=k$ by Prop.~67.
+\probs
+\begin{enumerate}[(a)]
+  \ii (Ribet, Fall 2003) $T^mv=0$ but $T^{m-1}v\ne0$. Prove $v,Tv,\dots,T^{m-1}v$ is independent.
+  \ii $T$ is diagonalizable and has a cyclic vector. Prove that $T$ has $\dim V$ distinct eigenvalues.
+  \ii Find a cyclic vector for $\operatorname{diag}(1,2,3)$, and prove that $I_2$ on $\FF^2$ has none.
+\end{enumerate}
+
+\subsection{Products, sums and graphs}
+\begin{theorem*}[T7]
+  \begin{enumerate}
+    \ii $\dim(V_1\times\cdots\times V_m)=\dim V_1+\dots+\dim V_m$; a basis is obtained by putting a basis of each $V_i$ in its own slot, with zeros in the other slots.
+    \ii For subspaces $U_1,\dots,U_m$, $\Gamma(u_1,\dots,u_m)=u_1+\dots+u_m$ maps $U_1\times\cdots\times U_m$ onto $U_1+\dots+U_m$, and it is injective iff the sum is direct. So the sum is direct iff $\dim(U_1+\dots+U_m)=\dim U_1+\dots+\dim U_m$.
+    \ii For two subspaces, $\nul\Gamma=\{(u,-u):u\in U\cap W\}$, which is isomorphic to $U\cap W$.
+    \ii A map into a product, $v\mapsto(T_1v,\dots,T_mv)$, is linear iff each $T_i$ is linear.
+  \end{enumerate}
+\end{theorem*}
+\why (1)--(3) are in Section~\ref{sec:products}. (4) Addition and scaling in a product are done entry by entry.
+\probs
+\begin{enumerate}[(a)]
+  \ii In $\PP_2(\RR)$ let $U=\{p:p(1)=0\}$ and $W=\{p:p(-1)=0\}$. Find a basis of $U\cap W$, and use $\Gamma$ to find $\dim(U+W)$.
+  \ii Prove: in finite dimensions, $U_1+\dots+U_m$ is a direct sum iff $\dim(U_1+\dots+U_m)=\dim U_1+\dots+\dim U_m$.
+  \ii $T\in\LL(V,W)$. Prove that the graph $G=\{(v,Tv):v\in V\}$ is a subspace of $V\times W$, that $\dim G=\dim V$, and that $(V\times W)/G\cong W$.
+  \ii Prove $\LL(V_1\times V_2,W)\cong\LL(V_1,W)\times\LL(V_2,W)$.
+\end{enumerate}
+
+\subsection{Duality facts}
+\begin{theorem*}[T8]
+  In finite dimensions:
+  \begin{enumerate}
+    \ii $\dim U^0=\dim V-\dim U$; $U\subseteq W\iff W^0\subseteq U^0$; $U^0=\{0\}\iff U=V$.
+    \ii $(U+W)^0=U^0\cap W^0$ and $(U\cap W)^0=U^0+W^0$.
+    \ii $\nul T'=(\range T)^0$, $\range T'=(\nul T)^0$, $\rank T'=\rank T$.
+    \ii $U$ is $T$-invariant iff $U^0$ is $T'$-invariant.
+    \ii $T$ and $T'$ have the same eigenvalues with the same geometric multiplicities.
+  \end{enumerate}
+\end{theorem*}
+\why (1), (2) and (3) are proved in Section~\ref{sec:annih}; (5) is in Section~\ref{sec:eigen} (eigenvalues of the dual map). Problem (a) asks you to reproduce the proof of the second half of (2).
+(4): if $U$ is invariant and $\varphi\in U^0$, then for $u\in U$, $(T'\varphi)(u)=\varphi(Tu)=0$ because $Tu\in U$; so $T'\varphi\in U^0$. The converse is problem (b).
+\probs
+\begin{enumerate}[(a)]
+  \ii Prove $(U\cap W)^0=U^0+W^0$ in full.
+  \ii Prove (4), including the converse.
+  \ii (Ribet, Spring 2014) $U\subsetneq\FF^n$ is a proper subspace. Prove there are $c_1,\dots,c_n$, not all $0$, with $\sum c_ia_i=0$ for every $(a_1,\dots,a_n)\in U$.
+  \ii $\varphi_1,\dots,\varphi_m\in V'$. Prove $\dim\bigcap_i\nul\varphi_i\ge\dim V-m$, with equality iff the $\varphi_i$ are independent.
+\end{enumerate}
+
+\subsection{Computing powers}
+\begin{theorem*}[T9]
+  If $A=PDP^{-1}$ with $D$ diagonal, then $A^k=PD^kP^{-1}$. If $A=\lambda I+N$ with $N^r=0$, then $A^k=\sum_{j=0}^{\min(k,r-1)}\binom kj\lambda^{k-j}N^j$. In particular, if $N^2=0$: $A^k=\lambda^kI+k\lambda^{k-1}N$.
+\end{theorem*}
+\why In $(PDP^{-1})(PDP^{-1})\cdots(PDP^{-1})$ each inner $P^{-1}P$ cancels. The binomial theorem works for $(\lambda I+N)^k$ because $\lambda I$ and $N$ commute, and the terms with $N^j$, $j\ge r$, are $0$.
+\probs
+\begin{enumerate}[(a)]
+  \ii $A=\begin{psmallmatrix}3&1\\-1&1\end{psmallmatrix}$. Find $A^k$. ($A$ is not diagonalizable.)
+  \ii Using $\begin{psmallmatrix}0&1\\1&1\end{psmallmatrix}$, derive $F_n=\frac{g_+^n-g_-^n}{\sqrt5}$ for the Fibonacci numbers ($F_0=0$, $F_1=1$), where $g_\pm=\frac{1\pm\sqrt5}2$.
+  \ii For which $\lambda$ does $\begin{psmallmatrix}\lambda&1\\0&\lambda\end{psmallmatrix}^k\to0$ as $k\to\infty$? Compare with $\operatorname{diag}(\lambda,\lambda)$.
+\end{enumerate}
+
+\subsection{Standard counterexamples}
+\noindent\textbf{T10.} Most false statements in this material are refuted by one of these:
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.34\textwidth}p{0.6\textwidth}}
+\hline
+Rotation $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ & no real eigenvalue; $m_R=x^2+1$; diagonalizable over $\CC$, not over $\RR$; $R^4=I$. \\
+$N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ & only eigenvalue $0$ but $N\ne0$; not diagonalizable; $\nul N=\range N$, so $V\ne\nul N\oplus\range N$; same $\chi$ as the zero matrix; $N^2=0$ is diagonalizable but $N$ is not. \\
+$\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ versus $I_2$ & same eigenvalues and $\chi$, not similar; the first is invertible but not diagonalizable. \\
+$p\mapsto xp$ on $\PP(\CC)$ & no eigenvalue: existence of eigenvalues needs finite dimension. \\
+Backward shift $(a_1,a_2,a_3,\dots)\mapsto(a_2,a_3,\dots)$ on infinite sequences & every scalar $\lambda$ is an eigenvalue, with eigenvector $(1,\lambda,\lambda^2,\dots)$: ``at most $\dim V$ eigenvalues'' needs finite dimension. \\
+$\operatorname{diag}(1,-1)$ & $T^2=I$ with $T\ne\pm I$. \\
+$v+U$ with $v\notin U$ & an affine subset that is not a subspace (it does not contain $0$). \\
+$V=\{0\}$ & $T^3=T$ but no eigenvalue at all: watch for ``$V\ne\{0\}$''. \\
+\hline
+\end{tabular}
+\end{center}
+\probs
+\begin{enumerate}[(a)]
+  \ii True or false, naming a counterexample if false: (i) if $0$ is the only eigenvalue of $T$, then $T=0$; (ii) if $T^2$ is diagonalizable then $T$ is; (iii) if $U$ is $T$-invariant and $T|_U$ and $T/U$ are diagonalizable, then $T$ is; (iv) every operator on a real space has an invariant subspace of dimension $1$; (v) every affine subset of $V$ is a subspace.
+\end{enumerate}
+
+\subsection{Facts you may quote}
+\begin{itemize}
+  \ii Eigenvectors for distinct eigenvalues are independent; there are at most $\dim V$ eigenvalues.
+  \ii $V/U$: $v+U=w+U\iff v-w\in U$; $\dim V/U=\dim V-\dim U$; first isomorphism theorem $V/\nul T\cong\range T$; second and third isomorphism theorems; $\dim(V_1\times\cdots\times V_m)=\sum\dim V_i$.
+  \ii Over $\CC$, every operator on a nonzero finite-dimensional space has an eigenvalue and an upper-triangular matrix.
+  \ii Upper-triangular matrix: the eigenvalues are the diagonal entries.
+  \ii $T$ diagonalizable $\iff\sum_\lambda\dim E(\lambda,T)=\dim V\iff m_T$ splits with no repeated root. $\dim V$ distinct eigenvalues $\Rightarrow$ diagonalizable.
+  \ii $q(T)=0\iff m_T$ divides $q$; the roots of $m_T$ that lie in $\FF$ are exactly the eigenvalues; $\deg m_T\le\dim V$.
+  \ii $\dim U^0=\dim V-\dim U$; $\nul T'=(\range T)^0$; $\range T'=(\nul T)^0$; $\MM(T')=\MM(T)^T$.
+\end{itemize}
+\section{Practice midterms}
+
+Three exams in the format of Hammond's practice midterm 2: 4 questions, 40 points, 50 minutes, points per part in parentheses. You may quote results from the notes if you state them, unless the problem asks you to prove them. A is at the level of the practice midterm; B and C are harder, and none of them repeats its questions. Solutions are in Section~\ref{sec:sol}.
+
+\clearpage\begingroup\subsection{Practice Midterm A}
+
+\medskip\noindent\textbf{1. A dual basis and an annihilator.} In $\RR^3$, identify functionals with row vectors.
+\begin{enumerate}[a)]
+  \ii (3) Let $U=\spn\big((1,2,0),(0,1,1)\big)$. Find a basis of $U^0$.
+  \ii (3) Find the dual basis $\varphi_1,\varphi_2,\varphi_3$ of $v_1=(1,1,0)$, $v_2=(0,1,1)$, $v_3=(1,0,1)$.
+  \ii (2) Write $\psi(x,y,z)=x-2y+3z$ as a combination of $\varphi_1,\varphi_2,\varphi_3$.
+\end{enumerate}
+
+\medskip\noindent\textbf{2. An operator with $T^3=T$.} Let $V$ be a finite-dimensional real vector space and $T\in\LL(V)$ with $T^3=T$.
+\begin{enumerate}[a)]
+  \ii (2) Prove that every eigenvalue of $T$ lies in $\{0,1,-1\}$.
+  \ii (3) For $v\in V$, put $a=v-T^2v$, $b=\tfrac12(T^2v+Tv)$, $c=\tfrac12(T^2v-Tv)$. Prove $v=a+b+c$ with $Ta=0$, $Tb=b$, $Tc=-c$.
+  \ii (3) Deduce that $T$ is diagonalizable.
+  \ii (2) Let $T(x,y,z)=(0,z,y)$ on $\RR^3$. Verify $T^3=T$, find the three eigenspaces, and find $m_T$.
+\end{enumerate}
+
+\medskip\noindent\textbf{3. Minimal polynomial of a $3\times3$ matrix.} Let
+\[ A=\begin{pmatrix}1&1&0\\-1&3&0\\0&0&2\end{pmatrix}. \]
+\begin{enumerate}[a)]
+  \ii (3) Find the eigenvalues of $A$ and the dimension of each eigenspace.
+  \ii (3) Find the minimal polynomial of $A$. Is $A$ diagonalizable?
+  \ii (4) Find a formula for $A^k$, $k\ge1$.
+\end{enumerate}
+
+\medskip\noindent\textbf{4. Restriction and quotient.} Let $V$ be finite-dimensional, $T\in\LL(V)$, and $U$ a $T$-invariant subspace. Write $T|_U\in\LL(U)$ and $T/U\in\LL(V/U)$.
+\begin{enumerate}[a)]
+  \ii (3) Prove that $T/U$, $(T/U)(v+U)=Tv+U$, is well defined and linear.
+  \ii (3) Prove that $m_{T|_U}$ and $m_{T/U}$ both divide $m_T$.
+  \ii (3) Prove that $m_T$ divides $m_{T|_U}\cdot m_{T/U}$.
+  \ii (3) Deduce that if $T$ is diagonalizable then so is $T|_U$. Then give $T$ and $U$ with $T|_U$ and $T/U$ both diagonalizable but $T$ not.
+\end{enumerate}
+
+\endgroup
+\clearpage\begingroup\subsection{Practice Midterm B}
+
+\medskip\noindent\textbf{1. A dual map.} Define $T\colon\PP_2(\RR)\to\RR^2$ by $T(p)=\big(p(0),\,p'(1)\big)$.
+\begin{enumerate}[a)]
+  \ii (3) Find $\MM(T)$ with respect to $1,x,x^2$ and the standard basis $e_1,e_2$.
+  \ii (3) Let $\psi_1,\psi_2$ be the dual basis of $e_1,e_2$ and $\varphi_0,\varphi_1,\varphi_2$ the dual basis of $1,x,x^2$. Compute $T'(\psi_1)$ and $T'(\psi_2)$ in terms of the $\varphi_j$.
+  \ii (2) Find $\nul T'$, and a basis of $\nul T$. Check that $\range T'=(\nul T)^0$ has the right dimension.
+\end{enumerate}
+
+\medskip\noindent\textbf{2. Commuting operators.} Let $V$ be a nonzero finite-dimensional complex vector space and $S,T\in\LL(V)$ with $ST=TS$.
+\begin{enumerate}[a)]
+  \ii (2) Prove that each eigenspace $E(\lambda,T)$ is $S$-invariant.
+  \ii (3) Prove that $S$ and $T$ have a common eigenvector.
+  \ii (3) Assume $S$ and $T$ are diagonalizable. Prove there is a basis of $V$ of common eigenvectors. (You may quote: the restriction of a diagonalizable operator to an invariant subspace is diagonalizable.)
+  \ii (2) Let $T=\operatorname{diag}(1,2,3)$ on $\CC^3$. Prove that every $S$ commuting with $T$ is diagonal.
+\end{enumerate}
+
+\medskip\noindent\textbf{3. A quotient of matrices.} Let $V=\RR^{2,2}$ and $T\colon V\to\RR^2$, $T(A)=A\begin{psmallmatrix}1\\-1\end{psmallmatrix}$. Let $N=\nul T$.
+\begin{enumerate}[a)]
+  \ii (3) Prove $T$ is linear and surjective, and find a basis of $N$.
+  \ii (3) Write down the isomorphism $V/N\to\RR^2$ given by the first isomorphism theorem, and find a basis of $V/N$.
+  \ii (4) Fix $B\in\RR^{2,2}$ and let $L\in\LL(V)$, $L(A)=BA$. Prove $N$ is $L$-invariant, and that under the isomorphism of (b), $L/N$ corresponds to $x\mapsto Bx$ on $\RR^2$. Find the eigenvalues of $L/N$ when $B=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$.
+\end{enumerate}
+
+\medskip\noindent\textbf{4. Minimal polynomials.} Let $V$ be finite-dimensional and $T\in\LL(V)$.
+\begin{enumerate}[a)]
+  \ii (4) Prove that $\lambda\in\FF$ is an eigenvalue of $T$ iff $m_T(\lambda)=0$.
+  \ii (4) Prove that $m_{T-\lambda I}(x)=m_T(x+\lambda)$ for every $\lambda\in\FF$.
+  \ii (4) $T\in\LL(\CC^4)$ satisfies $T^2-3T+2I=0$, and $T\ne I$, $T\ne2I$. Prove $T$ is diagonalizable, find $m_T$, and list all possible pairs $\big(\dim E(1,T),\dim E(2,T)\big)$.
+\end{enumerate}
+
+\endgroup
+\clearpage\begingroup\subsection{Practice Midterm C}
+
+\medskip\noindent\textbf{1. Eigenvectors of a differential operator.} Define $T\colon\PP_2(\RR)\to\PP_2(\RR)$ by $(Tp)(x)=(x+1)p'(x)$.
+\begin{enumerate}[a)]
+  \ii (3) Find $\MM(T)$ with respect to $1,x,x^2$, and the eigenvalues of $T$.
+  \ii (3) Find an eigenbasis of $T$.
+  \ii (2) Compute $T^k(x^2)$ for $k\ge1$.
+\end{enumerate}
+
+\medskip\noindent\textbf{2. Products and sums.} Let $V,W$ be finite-dimensional, and $U_1,U_2,U_3$ subspaces of $V$.
+\begin{enumerate}[a)]
+  \ii (3) Prove $\dim(V\times W)=\dim V+\dim W$ by giving a basis of $V\times W$.
+  \ii (3) Let $\Gamma\colon U_1\times U_2\to V$, $\Gamma(u_1,u_2)=u_1+u_2$. Find $\nul\Gamma$ and deduce $\dim(U_1+U_2)=\dim U_1+\dim U_2-\dim(U_1\cap U_2)$.
+  \ii (4) Give three subspaces of $\RR^2$ with $U_1\cap U_2=U_1\cap U_3=U_2\cap U_3=\{0\}$ whose sum is not direct. For your example, find a nonzero vector in the null space of $\Gamma\colon U_1\times U_2\times U_3\to\RR^2$, $\Gamma(u_1,u_2,u_3)=u_1+u_2+u_3$.
+\end{enumerate}
+
+\medskip\noindent\textbf{3. A minimal polynomial.} Let
+\[ A=\begin{pmatrix}0&0&2\\1&0&-1\\0&1&2\end{pmatrix}. \]
+\begin{enumerate}[a)]
+  \ii (3) Compute $Ae_1$, $A^2e_1$, $A^3e_1$. Deduce the minimal polynomial of $A$.
+  \ii (3) Find the eigenvalues of $A$ over $\RR$ and over $\CC$. Is $A$ diagonalizable over $\RR$? Over $\CC$?
+  \ii (4) Prove $A$ is invertible and write $A^{-1}$ as a polynomial in $A$.
+\end{enumerate}
+
+\medskip\noindent\textbf{4. Annihilators.} Let $V$ be finite-dimensional and $U,W$ subspaces.
+\begin{enumerate}[a)]
+  \ii (3) Prove $\dim U^0=\dim V-\dim U$, using the restriction map $V'\to U'$, $\varphi\mapsto\varphi|_U$. (You may use that it is surjective.)
+  \ii (3) Prove $(U+W)^0=U^0\cap W^0$.
+  \ii (3) Let $T\in\LL(V,X)$. Prove $\dim\nul T'=\dim\nul T+\dim X-\dim V$.
+  \ii (3) Let $\varphi\in V'$ be nonzero and $U=\nul\varphi$. Prove $U^0=\spn(\varphi)$. Find a basis of $U^0$ for $U=\{p\in\PP_2(\RR):p(1)=0\}$.
+\end{enumerate}
+
+\endgroup
+\clearpage
+\section{Problem bank}
+Harder multi-part problems in homework style, several adapted from past Berkeley Math 110 second midterms and finals (source in brackets). Starred problems are the most likely exam material.
+
+\begin{problem}[$\star$ Two roots (Ribet, Spring 2014)]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii $(T-aI)(T-bI)=0$ and $T$ is not a scalar multiple of $I$. Prove that $T$ is diagonalizable if and only if $a\ne b$.
+    \ii With the same hypotheses on $\CC^n$ and $a\ne b$, prove $\CC^n=E(a,T)\oplus E(b,T)$ and $1\le\dim E(a,T)\le n-1$.
+    \ii Now suppose only $(T-aI)^2=0$. Must $T$ be diagonalizable? Determine exactly when it is.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Eigenvalues of the dual map (Holtz, Fall 2015)]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Prove $(T-\lambda I)'=T'-\lambda I$.
+    \ii Prove $E(\lambda,T')=\big(\range(T-\lambda I)\big)^0$.
+    \ii For $T(x,y)=(x+y,y)$ on $\RR^2$, find $E(1,T')$ in terms of the dual basis $\varphi_1,\varphi_2$ of $e_1,e_2$, and check it against (b).
+    \ii Prove $T$ is diagonalizable iff $T'$ is.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Cyclic vectors (Ribet, Spring 2020, extended)]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Let $A=\begin{psmallmatrix}1&1&0\\0&1&0\\0&0&2\end{psmallmatrix}$ on $\RR^3$. Find the smallest $A$-invariant subspace containing $v=(1,0,1)$ and the minimal polynomial of $A$ restricted to it. Then show $(1,1,1)$ is a cyclic vector and deduce $m_A$.
+    \ii Suppose $T\in\LL(V)$ has a cyclic vector $v$. Prove that every $S\in\LL(V)$ with $ST=TS$ is a polynomial in $T$.
+    \ii Show that (b) fails for $T=I$ on $\FF^2$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Diagonalizing a differential operator (Persson, Fall 2010)]
+  Let $T\colon\PP_3(\RR)\to\PP_3(\RR)$, $Tp=(x^2+1)p''$.
+  \begin{enumerate}[(a)]
+    \ii Find $\MM(T)$ in the basis $1,x,x^2,x^3$ and the eigenvalues of $T$.
+    \ii Decide whether $T$ is diagonalizable, and if so find an eigenbasis.
+    \ii Find the minimal polynomial of $T$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ A quotient of $\PP_3(\RR)$ (HW5 P1 style)]
+  Let $U=\{p\in\PP_3(\RR):p(1)=p(-1)=0\}$ and $W=\{p\in\PP_3(\RR):p(1)=0\}$.
+  \begin{enumerate}[(a)]
+    \ii Find a basis of $U$, an explicit isomorphism $\PP_3(\RR)/U\to\RR^2$, and a basis of $\PP_3(\RR)/U$.
+    \ii Let $D$ be differentiation. Is $U$ invariant under $D$? Does $p+U\mapsto p'+U$ define a map $\PP_3(\RR)/U\to\PP_3(\RR)/U$?
+    \ii Show $U\subseteq W$, and use the third isomorphism theorem to identify $(\PP_3(\RR)/U)/(W/U)$ with a familiar space.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Eigenbasis from a null space test (Ribet, Spring 2020 final)]
+  Let $V$ be a finite-dimensional complex vector space.
+  \begin{enumerate}[(a)]
+    \ii Prove: if $\nul(T-\alpha I)^2=\nul(T-\alpha I)$ for every $\alpha\in\CC$, then $T$ is diagonalizable.
+    \ii Prove the converse.
+    \ii Show that in (a) it is enough to check the eigenvalues $\alpha$ of $T$, and give a non-diagonalizable $T$ and an $\alpha$ for which $\nul(T-\alpha I)^2\ne\nul(T-\alpha I)$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Square roots and diagonalizability]
+  Let $V$ be a finite-dimensional complex vector space.
+  \begin{enumerate}[(a)]
+    \ii Prove: if $T$ is invertible and $T^2$ is diagonalizable, then $T$ is diagonalizable.
+    \ii Show that ``invertible'' cannot be dropped.
+    \ii Prove: if $T$ is diagonalizable, then $T=S^2$ for some diagonalizable $S$.
+    \ii Prove that $\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ has no square root (no $S$ with $S^2$ equal to it).
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Commuting operators (LADR 5.80, 5.81)]
+  Let $V$ be a nonzero finite-dimensional complex vector space and $S,T\in\LL(V)$ with $ST=TS$.
+  \begin{enumerate}[(a)]
+    \ii Prove there is one basis in which $\MM(S)$ and $\MM(T)$ are both upper-triangular.
+    \ii Prove every eigenvalue of $S+T$ has the form $\alpha+\beta$, and every eigenvalue of $ST$ the form $\alpha\beta$, with $\alpha$ an eigenvalue of $S$ and $\beta$ an eigenvalue of $T$.
+    \ii Show that (b) fails for $S=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $T=\begin{psmallmatrix}0&0\\1&0\end{psmallmatrix}$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Using the isomorphism theorems]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii In $\PP_3(\RR)$ let $U=\{p:p(0)=0\}$ and $W=\{p:p(1)=0\}$. Find $U\cap W$ and $U+W$, write down the isomorphism $U/(U\cap W)\to(U+W)/W$ of the second isomorphism theorem, and identify both spaces with $\RR$.
+    \ii Prove: if $V=U\oplus W$, then $V/U\cong W$.
+    \ii Let $T\in\LL(V,W)$ and let $U$ be a subspace of $V$. Prove $T(U)\cong U/(U\cap\nul T)$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Functionals separating vectors (Ribet, Spring 2010, Spring 2014)]
+  Let $V$ be finite-dimensional.
+  \begin{enumerate}[(a)]
+    \ii If $v_1,\dots,v_m$ are linearly independent, prove there are $\varphi_1,\dots,\varphi_m\in V'$ with $\varphi_i(v_j)=1$ if $i=j$ and $0$ otherwise.
+    \ii Prove $W=\{v\in V:\varphi(v)=0\text{ for all }\varphi\in W^0\}$.
+    \ii Prove $U\subseteq W$ iff $W^0\subseteq U^0$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Counting invariant subspaces]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Find all invariant subspaces of $T=\operatorname{diag}(1,2,3)$ on $\CC^3$.
+    \ii Find all invariant subspaces of $N$ on $\CC^3$, where $Ne_1=0$, $Ne_2=e_1$, $Ne_3=e_2$.
+    \ii Find all invariant subspaces of $I$ on $\CC^2$. How many are there?
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Polynomial identities]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii $T\in\LL(\CC^3)$ satisfies $T^2=2T-I$. Prove that $1$ is the only eigenvalue of $T$, and that $T$ is diagonalizable iff $T=I$.
+    \ii (Ribet, Spring 2005) If $(A-2I)(A-3I)(A-4I)(A-5I)=0$ for a real $n\times n$ matrix $A$ with $n\ge1$, prove at least one of $2,3,4,5$ is an eigenvalue, and that $A$ is diagonalizable.
+    \ii $T$ is invertible with minimal polynomial $x^3-2x+5$. Write $T^{-1}$ as a polynomial in $T$, and find the minimal polynomial of $T^{-1}$.
+  \end{enumerate}
+\end{problem}
+
+\section{True or false}
+Give a one-line reason or counterexample. Spaces are finite-dimensional unless stated otherwise.
+\begin{enumerate}
+  \ii Every operator on a nonzero real vector space has an eigenvalue.
+  \ii If $S$ and $T$ are diagonalizable, so is $S+T$.
+  \ii If $T^2=I$ on a real space, then $T$ is diagonalizable.
+  \ii If $T^2=0$, then $T$ is diagonalizable.
+  \ii If $T$ has $\dim V$ distinct eigenvalues, then $T$ has a cyclic vector.
+  \ii If $v+U=w+U$, then $v=w$.
+  \ii If $U\subseteq\nul T$ for $T\in\LL(V,W)$, then $v+U\mapsto Tv$ is a well-defined linear map $V/U\to W$.
+  \ii If $v_1,v_2$ and $v_1+v_2$ are eigenvectors of $T$, then all three have the same eigenvalue. (Ribet, Spring 2014)
+  \ii If $A$ and $B$ have the same eigenvalues, they are similar.
+  \ii $\dim(V\times W)=(\dim V)(\dim W)$.
+  \ii If $\varphi_1,\varphi_2\in V'$ have the same null space, then $\varphi_1=c\varphi_2$ for some scalar $c$.
+  \ii $T$ is injective iff $T'$ is injective.
+  \ii An upper-triangular matrix with distinct diagonal entries is diagonalizable. (Ribet, Spring 2005)
+  \ii If $U$ is $T$-invariant and $T$ is invertible, then $T|_U$ is invertible.
+  \ii If $A$ is a real $5\times5$ matrix, then $A$ has a real eigenvector. (Persson, Fall 2010)
+\end{enumerate}
+
+\clearpage
+\section{Solutions}\label{sec:sol}
+
+\subsection*{Techniques}
+
+\textbf{T1.}
+\begin{enumerate}[(a)]
+  \ii If $Tv=\lambda v$, $v\ne0$, then $0=(T^3-T)v=(\lambda^3-\lambda)v$, so $\lambda\in\{0,1,-1\}$. Since $T^3-T=T(T-I)(T+I)=0$ on $V\ne\{0\}$, one of the three factors is not injective, and that gives an eigenvalue.
+  \ii If $T-aI$ were injective, then $(T-aI)(T-bI)v=0$ would give $(T-bI)v=0$ for every $v$, so $T=bI$, which is excluded. So $T-aI$ is not injective: $a$ is an eigenvalue. The factors commute, so the same argument gives $b$.
+  \ii Eigenvalues are roots of $x^4+x^2=x^2(x^2+1)$: $0,i,-i$. On $\CC^2$ there are at most $2$ eigenvalues, so not all three. Each pair occurs: $\operatorname{diag}(0,i)$, $\operatorname{diag}(0,-i)$, $\operatorname{diag}(i,-i)$ satisfy $T^4=-T^2$, since $\mu^4=-\mu^2$ for $\mu\in\{0,\pm i\}$.
+  \ii False. On $V=\{0\}$ every polynomial $f$ has $f(T)=0$ (the only vector is $0$), and there is no eigenvalue. Even with $V\ne\{0\}$: rotation $R$ on $\RR^2$ satisfies $f(R)=0$ for $f=x(x^2+1)$ (odd degree), since $R^2+I=0$, but $R$ has no real eigenvalue. T1(2) needs $f$ to split into linear factors.
+\end{enumerate}
+
+\textbf{T2.}
+\begin{enumerate}[(a)]
+  \ii $T^2-T-2I=(T-2I)(T+I)=0$, distinct roots, so $T$ is diagonalizable. Lagrange: $p_2=\frac{x+1}{3}$, $p_{-1}=\frac{x-2}{-3}$, and $p_2+p_{-1}=1$. So
+  \[ v=\tfrac13(T+I)v-\tfrac13(T-2I)v, \]
+  with $(T-2I)\tfrac13(T+I)v=0$ and $(T+I)\tfrac13(T-2I)v=0$.
+  \ii Roots $0,1,-1$: $p_0=\frac{(x-1)(x+1)}{(0-1)(0+1)}=1-x^2$, $p_1=\frac{x(x+1)}{2}$, $p_{-1}=\frac{x(x-1)}{2}$. So $v=(v-T^2v)+\tfrac12(T^2v+Tv)+\tfrac12(T^2v-Tv)$, exactly Practice Midterm A Q2.
+  \ii $m_T$ divides $x^n-1$, whose roots $e^{2\pi ik/n}$ are distinct, so T2 applies. Over $\RR$: rotation $R$ by $90^\circ$ has $R^4=I$ and no real eigenvalue.
+  \ii $p(T|_U)=p(T)|_U=0$, and $p$ has distinct roots in $\FF$, so T2 applies to $T|_U$.
+\end{enumerate}
+
+\textbf{T3.}
+\begin{enumerate}[(a)]
+  \ii Each $E(\lambda_i,T)$ is $1$-dimensional (three distinct eigenvalues in dimension $3$) and $S$-invariant, so $S$ maps the eigenvector $v_i$ to a multiple of itself.
+  \ii $S^2-I=(S-I)(S+I)=0$ has distinct roots, so $V=E(1,S)\oplus E(-1,S)$ (T2). Each is $T$-invariant (T3). In a basis that lists a basis of $E(1,S)$ then one of $E(-1,S)$, $\MM(T)$ is block diagonal.
+  \ii $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}=I+N$; commuting with it is commuting with $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$. For $X=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$: $XN=\begin{psmallmatrix}0&a\\0&c\end{psmallmatrix}$, $NX=\begin{psmallmatrix}c&d\\0&0\end{psmallmatrix}$. Equal iff $c=0$ and $a=d$.
+\end{enumerate}
+
+\textbf{T4.}
+\begin{enumerate}[(a)]
+  \ii $T\colon\RR^{2,2}\to\RR$, $T(A)=a_{12}-a_{21}$, is linear and surjective ($T(E_{12})=1$, where $E_{12}$ has a $1$ in entry $(1,2)$ and zeros elsewhere). $\nul T=\{A:a_{12}=a_{21}\}=U$. So $A+U\mapsto a_{12}-a_{21}$ is an isomorphism $V/U\to\RR$, and $E_{12}+U$ is a basis of $V/U$ (it maps to the basis $1$ of $\RR$). Check: $\dim V/U=4-3=1$.
+  \ii $T(x,y,z)=(x-y,\ y-z)$ is linear with $\nul T=\{x=y=z\}=U$, so $\rank T=3-1=2$ and $T$ is surjective. The isomorphism is $(x,y,z)+U\mapsto(x-y,y-z)$. Since $Te_1=(1,0)$ and $Te_3=(0,-1)$ form a basis of $\RR^2$, $e_1+U,\ e_3+U$ is a basis of $\RR^3/U$.
+  \ii (i) Not well defined: $(0,0,0)+U=(1,1,1)+U$, but the rule gives $0$ and $1$. (ii) Well defined: $x+y-2z$ is linear and is $0$ at $(1,1,1)$ (T4(2)). (iii) Well defined, because adding $t(1,1,1)$ does not change $x-y$; but it is not linear, so it is not a linear map.
+  \ii $\dim\range T=\dim V-\dim\nul T\le\dim V-\dim U$ because $U\subseteq\nul T$, with equality iff $\dim\nul T=\dim U$, iff $\nul T=U$. In quotient language: $T$ induces $\tilde T\colon V/U\to W$ with the same range (Prop.~42), and $\tilde T$ is injective iff $\nul T=U$.
+\end{enumerate}
+
+\textbf{T5.}
+\begin{enumerate}[(a)]
+  \ii $T|_U$ is injective (restriction of injective), so it is invertible on $U$ (finite dimension): $T(U)=U$. If $Tv\in U$, then $Tv=Tu$ for some $u\in U$, and injectivity gives $v=u\in U$.
+  \ii $T=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $U=\spn(e_1)$: $T|_U=0$ and $T/U=0$ are diagonalizable, $T$ is not. No contradiction: (1) says $m_T$ divides $m_{T|_U}m_{T/U}=x\cdot x$, and indeed $m_T=x^2$, which has a repeated root.
+  \ii Apply $\prod_{i<k}(T-\lambda_iI)$ to $\sum_j v_j\in U$ (invariance keeps it in $U$): all terms with $j<k$ die, leaving $\prod_{i<k}(\lambda_k-\lambda_i)v_k\in U$, so $v_k\in U$. For any other $j$, apply $\prod_{i\ne j}(T-\lambda_iI)$ instead: every term except $v_j$ dies, leaving $\prod_{i\ne j}(\lambda_j-\lambda_i)v_j\in U$, so $v_j\in U$.
+\end{enumerate}
+
+\textbf{T6.}
+\begin{enumerate}[(a)]
+  \ii If $\sum_{j<m}a_jT^jv=0$ with not all $a_j=0$, let $i$ be the smallest index with $a_i\ne0$, and apply $T^{m-1-i}$: every term with $j>i$ becomes $T^{m-1-i+j}v=0$, leaving $a_iT^{m-1}v=0$, so $a_i=0$: contradiction.
+  \ii Let $v$ be cyclic and $v=\sum w_i$ with $w_i\in E(\lambda_i,T)$, $\lambda_i$ distinct, $m$ of them. Then $T^jv=\sum\lambda_i^jw_i\in\spn(w_1,\dots,w_m)$, so $\dim V=\dim\spn(v,Tv,\dots)\le m$. And $m\le\dim V$ always.
+  \ii $v=(1,1,1)$: $v,Tv,T^2v$ have coordinates $(1,1,1),(1,2,3),(1,4,9)$, independent (row reduce the $3\times3$ matrix with these rows: it has rank $3$). For $I_2$: $Iv=v$, so $\spn(v,Iv,\dots)$ has dimension $1<2$.
+\end{enumerate}
+
+\textbf{T7.}
+\begin{enumerate}[(a)]
+  \ii $U$ has basis $x-1,\ x^2-1$ and $W$ has basis $x+1,\ x^2-1$ (each is the null space of a nonzero functional on $\PP_2(\RR)$, so has dimension $2$). $p\in U\cap W$ iff $p(1)=p(-1)=0$ iff $p=c(x-1)(x+1)$, so $U\cap W=\spn(x^2-1)$. $\nul\Gamma\cong U\cap W$ has dimension $1$, so $\dim(U+W)=\dim(U\times W)-1=4-1=3$, and $U+W=\PP_2(\RR)$.
+  \ii $\Gamma$ maps onto the sum, so by rank--nullity $\dim(U_1+\dots+U_m)=\sum\dim U_i-\dim\nul\Gamma$. The sum is direct iff $\Gamma$ is injective iff $\dim\nul\Gamma=0$ iff the dimensions are equal.
+  \ii $(0,T0)=(0,0)\in G$; $(v,Tv)+(v',Tv')=(v+v',T(v+v'))$; $\lambda(v,Tv)=(\lambda v,T(\lambda v))$. So $G$ is a subspace. The map $v\mapsto(v,Tv)$ is linear, injective (look at the first entry) and onto $G$, so $\dim G=\dim V$. For the quotient, $S\colon V\times W\to W$, $S(v,w)=w-Tv$, is linear, surjective ($S(0,w)=w$), and $\nul S=\{(v,w):w=Tv\}=G$. By the first isomorphism theorem, $(V\times W)/G\cong W$.
+  \ii Send $S\in\LL(V_1\times V_2,W)$ to the pair $(S_1,S_2)$ with $S_1v_1=S(v_1,0)$ and $S_2v_2=S(0,v_2)$; this is linear in $S$. Its inverse sends $(S_1,S_2)$ to the map $(v_1,v_2)\mapsto S_1v_1+S_2v_2$. Check: $S(v_1,v_2)=S(v_1,0)+S(0,v_2)$, and starting from $(S_1,S_2)$ you get back $S_1$ and $S_2$. So the map is an isomorphism.
+\end{enumerate}
+
+\textbf{T8.}
+\begin{enumerate}[(a)]
+  \ii ``$\supseteq$'': if $\varphi\in U^0$ and $\psi\in W^0$, then $\varphi+\psi$ is $0$ on $U\cap W$. Dimensions: $\dim(U^0+W^0)=\dim U^0+\dim W^0-\dim(U^0\cap W^0)=(n-u)+(n-w)-\dim(U+W)^0=(n-u)+(n-w)-(n-\dim(U+W))=n-\dim(U\cap W)$, which is $\dim(U\cap W)^0$.
+  \ii ($\Rightarrow$) shown in T8's why. ($\Leftarrow$) Suppose $U^0$ is $T'$-invariant but $Tu\notin U$ for some $u\in U$. By the separating functional, there is $\varphi\in U^0$ with $\varphi(Tu)=1$. Then $(T'\varphi)(u)=1$, so $T'\varphi\notin U^0$: contradiction.
+  \ii $U\ne\FF^n$, so $U^0\ne\{0\}$ ($\dim U^0=n-\dim U>0$). Any nonzero $\varphi=(c_1,\dots,c_n)\in U^0$ works.
+  \ii $S\colon V\to\FF^m$, $S(v)=(\varphi_1(v),\dots,\varphi_m(v))$, has null space $\bigcap\nul\varphi_i$ and rank $\le m$. So $\dim\bigcap\nul\varphi_i\ge n-m$. Equality iff $\rank S=m$ iff $S$ is surjective iff $S'$ is injective; $S'$ sends $\psi_i$ (the $i$th coordinate functional on $\FF^m$, the dual basis of $e_1,\dots,e_m$) to $\psi_i\circ S=\varphi_i$, so $S'$ injective iff the $\varphi_i$ are independent.
+\end{enumerate}
+
+\textbf{T9.}
+\begin{enumerate}[(a)]
+  \ii $\chi_A=t^2-4t+4=(t-2)^2$, so $N=A-2I=\begin{psmallmatrix}1&1\\-1&-1\end{psmallmatrix}$ has $N^2=0$ (multiply it out). $A^k=2^kI+k2^{k-1}N=\begin{psmallmatrix}2^k+k2^{k-1}&k2^{k-1}\\-k2^{k-1}&2^k-k2^{k-1}\end{psmallmatrix}$.
+  \ii $A=\begin{psmallmatrix}0&1\\1&1\end{psmallmatrix}$ sends $(F_n,F_{n+1})$ to $(F_{n+1},F_{n+2})$. Its eigenvalues are $g_+,g_-$ (roots of $t^2-t-1$), with eigenvectors $(1,g_+),(1,g_-)$. $(0,1)=\frac1{\sqrt5}\big((1,g_+)-(1,g_-)\big)$, so $A^n(0,1)=\frac1{\sqrt5}\big(g_+^n(1,g_+)-g_-^n(1,g_-)\big)$; the first coordinate is $F_n$.
+  \ii By T9 with $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, the $k$th power is $\begin{psmallmatrix}\lambda^k&k\lambda^{k-1}\\0&\lambda^k\end{psmallmatrix}$, which tends to $0$ iff $|\lambda|<1$ (then $k|\lambda|^{k-1}\to0$ as well). Same condition as for the diagonal matrix; only the rate differs.
+\end{enumerate}
+
+\textbf{T10.} (i) False: $N$. (ii) False: $N^2=0$ is diagonalizable, $N$ is not. (iii) False: $N$ with $U=\spn(e_1)$ (T5(b)). (iv) False: rotation $R$ on $\RR^2$ has no invariant line. (v) False: $(1,0)+\spn\big((-1,1)\big)$ in $\RR^2$ does not contain $0$.
+
+\subsection*{Practice Midterm A}
+\textbf{1.}
+\begin{enumerate}[a)]
+  \ii $(a,b,c)$ is $0$ on $U$ iff $a+2b=0$ and $b+c=0$, so $(a,b,c)=c(2,-1,1)$. Basis of $U^0$: $(2,-1,1)$. (Check: $\dim U^0=3-2=1$.)
+  \ii Put $v_1,v_2,v_3$ as columns of $B=\begin{psmallmatrix}1&0&1\\1&1&0\\0&1&1\end{psmallmatrix}$. The dual basis is the rows of $B^{-1}=\tfrac12\begin{psmallmatrix}1&1&-1\\-1&1&1\\1&-1&1\end{psmallmatrix}$: $\varphi_1=\tfrac12(x+y-z)$, $\varphi_2=\tfrac12(-x+y+z)$, $\varphi_3=\tfrac12(x-y+z)$. Check one: $\varphi_1(v_1)=1$, $\varphi_1(v_2)=0$, $\varphi_1(v_3)=0$.
+  \ii $\psi=\sum\psi(v_j)\varphi_j$ with $\psi(v_1)=-1$, $\psi(v_2)=1$, $\psi(v_3)=4$: $\psi=-\varphi_1+\varphi_2+4\varphi_3$. Check: $\tfrac12\big(-(x+y-z)+(-x+y+z)+4(x-y+z)\big)=x-2y+3z$.
+\end{enumerate}
+\textbf{2.}
+\begin{enumerate}[a)]
+  \ii $Tv=\lambda v$, $v\ne0$: $0=(T^3-T)v=(\lambda^3-\lambda)v$, so $\lambda(\lambda-1)(\lambda+1)=0$.
+  \ii $a+b+c=v-T^2v+T^2v=v$. $Ta=Tv-T^3v=0$. $Tb=\tfrac12(T^3v+T^2v)=\tfrac12(Tv+T^2v)=b$. $Tc=\tfrac12(T^3v-T^2v)=\tfrac12(Tv-T^2v)=-c$.
+  \ii By (b), $V=\nul T+E(1,T)+E(-1,T)$. Eigenspaces for distinct eigenvalues form a direct sum, so $V$ is their direct sum and $T$ is diagonalizable (LADR 5.55).
+  \ii $T^2(x,y,z)=T(0,z,y)=(0,y,z)$ and $T^3(x,y,z)=(0,z,y)=T(x,y,z)$. $\nul T=\spn(e_1)$; $E(1,T)=\spn((0,1,1))$; $E(-1,T)=\spn((0,1,-1))$. All three eigenvalues occur and $T$ is diagonalizable, so $m_T=x(x-1)(x+1)$.
+\end{enumerate}
+\textbf{3.}
+\begin{enumerate}[a)]
+  \ii Block form: the top-left block $\begin{psmallmatrix}1&1\\-1&3\end{psmallmatrix}$ has $\chi=t^2-4t+4=(t-2)^2$, and the last entry is $2$. Only eigenvalue $2$. $A-2I=\begin{psmallmatrix}-1&1&0\\-1&1&0\\0&0&0\end{psmallmatrix}$ has rank $1$, so $\dim E(2,A)=2$.
+  \ii $(A-2I)^2=0$ (direct multiplication; the top-left block $\begin{psmallmatrix}-1&1\\-1&1\end{psmallmatrix}$ squares to $0$), and $A-2I\ne0$, so $m_A=(x-2)^2$. Not diagonalizable (repeated root, or $2<3$ in the dimension test).
+  \ii $A=2I+N$ with $N=A-2I$, $N^2=0$, and $2I$ commuting with $N$. So $A^k=2^kI+k2^{k-1}N$:
+  \[ A^k=\begin{pmatrix}2^k-k2^{k-1}&k2^{k-1}&0\\-k2^{k-1}&2^k+k2^{k-1}&0\\0&0&2^k\end{pmatrix}. \]
+\end{enumerate}
+\textbf{4.}
+\begin{enumerate}[a)]
+  \ii If $v-v'\in U$, then $Tv-Tv'=T(v-v')\in U$ by invariance, so $Tv+U=Tv'+U$. Linearity is inherited from $T$.
+  \ii $m_T(T|_U)=m_T(T)|_U=0$, and $m_T(T/U)(v+U)=m_T(T)v+U=0+U$. So both minimal polynomials divide $m_T$ (Prop.~65).
+  \ii Write $r=m_{T|_U}$, $s=m_{T/U}$. $s(T/U)=0$ means $s(T)v\in U$ for every $v$. Then $r(T)s(T)v=r(T|_U)\big(s(T)v\big)=0$. So $(rs)(T)=0$ and $m_T$ divides $rs$.
+  \ii If $T$ is diagonalizable, $m_T$ is a product of distinct linear factors, and so is its divisor $m_{T|_U}$; hence $T|_U$ is diagonalizable. Example: $T=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $U=\spn(e_1)$: $T|_U=0$ and $T/U=0$, but $T$ is not diagonalizable.
+\end{enumerate}
+
+\subsection*{Practice Midterm B}
+\textbf{1.}
+\begin{enumerate}[a)]
+  \ii $T(1)=(1,0)$, $T(x)=(0,1)$, $T(x^2)=(0,2)$. $\MM(T)=\begin{psmallmatrix}1&0&0\\0&1&2\end{psmallmatrix}$.
+  \ii $\MM(T')=\MM(T)^T=\begin{psmallmatrix}1&0\\0&1\\0&2\end{psmallmatrix}$, so $T'(\psi_1)=\varphi_0$ and $T'(\psi_2)=\varphi_1+2\varphi_2$. Directly: $T'(\psi_2)(p)=p'(1)=a_1+2a_2$ for $p=a_0+a_1x+a_2x^2$.
+  \ii $T$ is surjective ($T(1)=e_1$, $T(x)=e_2$), so $T'$ is injective: $\nul T'=\{0\}$. $\nul T$: $a_0=0$ and $a_1+2a_2=0$, basis $x^2-2x$. $\dim(\nul T)^0=3-1=2=\rank T'$. Consistent.
+\end{enumerate}
+\textbf{2.}
+\begin{enumerate}[a)]
+  \ii $Tv=\lambda v\Rightarrow T(Sv)=STv=\lambda Sv$.
+  \ii $T$ has an eigenvalue $\lambda$ (complex, $V\ne\{0\}$). $E(\lambda,T)\ne\{0\}$ is $S$-invariant, so $S|_{E(\lambda,T)}$ has an eigenvector $w$. Then $Sw=\mu w$ and $Tw=\lambda w$.
+  \ii $V=\bigoplus_iE(\lambda_i,T)$. Each $E(\lambda_i,T)$ is $S$-invariant, and $S$ restricted to it is diagonalizable. Choose an eigenbasis of $S|_{E(\lambda_i,T)}$ in each; every vector in it is an eigenvector of both. Together they form a basis of $V$.
+  \ii For $j=1,2,3$, $E(j,T)=\spn(e_j)$ is $1$-dimensional and $S$-invariant, so $Se_j\in\spn(e_j)$ for each $j$: $S$ is diagonal.
+\end{enumerate}
+\textbf{3.}
+\begin{enumerate}[a)]
+  \ii $T(A+cB)=(A+cB)x_0=Ax_0+cBx_0$ with $x_0=(1,-1)$, so $T$ is linear. $T(A)=(a_{11}-a_{12},\ a_{21}-a_{22})$; $T(E_{11})=e_1$ and $T(E_{21})=e_2$, so $T$ is surjective. $N=\{a_{11}=a_{12},\ a_{21}=a_{22}\}$, with basis $\begin{psmallmatrix}1&1\\0&0\end{psmallmatrix},\begin{psmallmatrix}0&0\\1&1\end{psmallmatrix}$ (dimension $4-2=2$).
+  \ii $A+N\mapsto A\begin{psmallmatrix}1\\-1\end{psmallmatrix}$. Basis of $V/N$: $E_{11}+N,\ E_{21}+N$, which map to $e_1,e_2$.
+  \ii If $A\in N$, then $(BA)x_0=B(Ax_0)=B0=0$, so $BA\in N$. Write $\Phi\colon V/N\to\RR^2$ for the isomorphism of (b). Then $\Phi\big((L/N)(A+N)\big)=\Phi(BA+N)=BAx_0=B\,\Phi(A+N)$. So $\Phi\circ(L/N)\circ\Phi^{-1}$ is $x\mapsto Bx$, and $L/N$ has the same eigenvalues as $B$: $2$ and $3$ (triangular).
+\end{enumerate}
+\textbf{4.}
+\begin{enumerate}[a)]
+  \ii If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$, so $m_T(\lambda)=0$. Conversely, if $m_T(\lambda)=0$, write $m_T=(x-\lambda)q$ with $\deg q<\deg m_T$, so $q(T)\ne0$ by minimality: pick $v$ with $w=q(T)v\ne0$. Then $(T-\lambda I)w=m_T(T)v=0$, so $w$ is an eigenvector for $\lambda$.
+  \ii Let $q(x)=m_T(x+\lambda)$; it is monic of degree $\deg m_T$, and $q(T-\lambda I)=m_T\big((T-\lambda I)+\lambda I\big)=m_T(T)=0$. If some nonzero $p$ of smaller degree had $p(T-\lambda I)=0$, then $r(x)=p(x-\lambda)$ would have $r(T)=p(T-\lambda I)=0$ and $\deg r=\deg p<\deg m_T$, which is impossible. So $m_{T-\lambda I}=q$.
+  \ii $(x-1)(x-2)$ has distinct roots and sends $T$ to $0$, so $T$ is diagonalizable (T2), and $m_T$ divides $(x-1)(x-2)$. $m_T$ is not $x-1$ or $x-2$ (since $T\ne I,2I$), so $m_T=(x-1)(x-2)$, and both $1$ and $2$ are eigenvalues (Prop.~66). With $a=\dim E(1,T)\ge1$, $b=\dim E(2,T)\ge1$ and $a+b=4$: $(a,b)\in\{(1,3),(2,2),(3,1)\}$, and each occurs ($\operatorname{diag}$ matrices).
+\end{enumerate}
+
+\subsection*{Practice Midterm C}
+\textbf{1.}
+\begin{enumerate}[a)]
+  \ii $T(1)=0$, $T(x)=x+1$, $T(x^2)=2x(x+1)=2x^2+2x$. $\MM(T)=\begin{psmallmatrix}0&1&0\\0&1&2\\0&0&2\end{psmallmatrix}$, upper-triangular: eigenvalues $0,1,2$.
+  \ii Three distinct eigenvalues on a $3$-dimensional space, so diagonalizable. Eigenvectors: $T(1)=0$; $T(x+1)=x+1$; $T\big((x+1)^2\big)=(x+1)\cdot2(x+1)=2(x+1)^2$. Eigenbasis $1,\ x+1,\ (x+1)^2$.
+  \ii $x^2=(x+1)^2-2(x+1)+1$. For $k\ge1$: $T^k(x^2)=2^k(x+1)^2-2(x+1)$ (the eigenvalue-$0$ part dies).
+\end{enumerate}
+\textbf{2.}
+\begin{enumerate}[a)]
+  \ii With bases $v_1,\dots,v_k$ of $V$ and $w_1,\dots,w_l$ of $W$, the list $(v_1,0),\dots,(v_k,0),(0,w_1),\dots,(0,w_l)$ spans ($(v,w)=(v,0)+(0,w)$) and is independent ($\big(\sum a_iv_i,\sum b_jw_j\big)=(0,0)$ forces all coefficients $0$). So $\dim(V\times W)=k+l$.
+  \ii $\Gamma(u_1,u_2)=0$ iff $u_2=-u_1$, which forces $u_1\in U_1\cap U_2$. So $\nul\Gamma=\{(u,-u):u\in U_1\cap U_2\}$, and $u\mapsto(u,-u)$ is an isomorphism $U_1\cap U_2\to\nul\Gamma$. $\Gamma$ maps onto $U_1+U_2$, so rank--nullity gives $\dim(U_1+U_2)=\dim U_1+\dim U_2-\dim(U_1\cap U_2)$.
+  \ii $U_1=\spn(e_1)$, $U_2=\spn(e_2)$, $U_3=\spn(e_1+e_2)$: distinct lines, so they meet pairwise in $\{0\}$. $\big(e_1,\ e_2,\ -(e_1+e_2)\big)$ is a nonzero vector in $\nul\Gamma$, so $\Gamma$ is not injective and the sum is not direct ($\dim(U_1+U_2+U_3)=2<3$).
+\end{enumerate}
+\textbf{3.}
+\begin{enumerate}[a)]
+  \ii $Ae_1=e_2$, $A^2e_1=e_3$, $A^3e_1=Ae_3=(2,-1,2)=2e_1-e_2+2e_3$. So $(A^3-2A^2+A-2I)e_1=0$. $e_1$ is a cyclic vector ($e_1,Ae_1,A^2e_1$ is a basis), so $\deg m_A=3$ and $p(A)$ sends each basis vector $e_1,Ae_1,A^2e_1$ to $0$, where $p(x)=x^3-2x^2+x-2$ (since $p(A)A^je_1=A^jp(A)e_1=0$). So $p(A)=0$. Hence $m_A=x^3-2x^2+x-2=(x-2)(x^2+1)$.
+  \ii Over $\RR$: only $2$ (the roots of $x^2+1$ are not real). Over $\CC$: $2,i,-i$. Not diagonalizable over $\RR$ ($m_A$ does not split); diagonalizable over $\CC$ (distinct roots).
+  \ii Constant term $-2\ne0$, so $A$ is invertible. $A^3-2A^2+A=2I$, i.e.\ $A(A^2-2A+I)=2I$, so $A^{-1}=\tfrac12(A^2-2A+I)$.
+\end{enumerate}
+\textbf{4.}
+\begin{enumerate}[a)]
+  \ii $R\colon V'\to U'$, $\varphi\mapsto\varphi|_U$, is linear and surjective, with $\nul R=U^0$. Rank--nullity: $\dim V'=\dim U^0+\dim U'$, i.e.\ $\dim U^0=\dim V-\dim U$.
+  \ii $\varphi$ is $0$ on $U+W$ iff it is $0$ on every $u+w$ iff it is $0$ on $U$ and on $W$ (take $w=0$ or $u=0$; conversely add).
+  \ii $\dim\nul T'=\dim(\range T)^0=\dim X-\dim\range T=\dim X-(\dim V-\dim\nul T)$, using Prop.~50, the annihilator dimension formula, and rank--nullity.
+  \ii $\varphi$ is $0$ on its own null space, so $\spn(\varphi)\subseteq U^0$. Since $\varphi\ne0$, $\range\varphi=\FF$, so $\dim U=\dim V-1$ and $\dim U^0=1$. A $1$-dimensional space containing the line $\spn(\varphi)$ equals it. For $U=\{p:p(1)=0\}=\nul\varphi$ with $\varphi(p)=p(1)$: basis of $U^0$ is $\varphi$, ``evaluate at $1$''.
+\end{enumerate}
+
+\subsection*{Problem 1}
+\begin{enumerate}[(a)]
+  \ii If $a\ne b$, the polynomial $(x-a)(x-b)$ has distinct roots and $(T-aI)(T-bI)=0$, so $T$ is diagonalizable (T2). If $a=b$ and $T$ were diagonalizable, its only eigenvalue would be $a$, so $T=aI$ in an eigenbasis, which is excluded. So $T$ is diagonalizable iff $a\ne b$.
+  \ii By (a), $T$ is diagonalizable, and its only possible eigenvalues are $a,b$ (T1). So $\CC^n=E(a,T)\oplus E(b,T)$ (Prop.~62). Both $a$ and $b$ are eigenvalues (T1(b)), so both eigenspaces are nonzero, and $1\le\dim E(a,T)=n-\dim E(b,T)\le n-1$.
+  \ii Not necessarily: $T=aI+N$ on $\FF^2$, with $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, has $(T-aI)^2=N^2=0$ but is not diagonalizable. In general $T$ is diagonalizable iff $T=aI$ (then $m_T=x-a$); otherwise $m_T=(x-a)^2$ has a repeated root.
+\end{enumerate}
+
+\subsection*{Problem 2}
+\begin{enumerate}[(a)]
+  \ii $(T-\lambda I)'\varphi=\varphi\circ(T-\lambda I)=\varphi\circ T-\lambda\varphi=(T'-\lambda I)\varphi$.
+  \ii $E(\lambda,T')=\nul(T'-\lambda I)=\nul(T-\lambda I)'=(\range(T-\lambda I))^0$ by (a) and Prop.~50.
+  \ii $T'\varphi_1=\varphi_1\circ T=(x,y)\mapsto x+y$, so $T'\varphi_1=\varphi_1+\varphi_2$; $T'\varphi_2=\varphi_2$. So $(T'-I)\varphi_1=\varphi_2$, $(T'-I)\varphi_2=0$, and $E(1,T')=\spn(\varphi_2)$. Check: $(T-I)(x,y)=(y,0)$, so $\range(T-I)=\spn(e_1)$, whose annihilator is $\spn(\varphi_2)$.
+  \ii $\dim E(\lambda,T)=\dim E(\lambda,T')$ for every $\lambda$ (Section 1, eigenvalues of the dual map), and $\dim V=\dim V'$. So the dimension test for diagonalizability gives the same answer for both.
+\end{enumerate}
+
+\subsection*{Problem 3}
+\begin{enumerate}[(a)]
+  \ii $Av=(1,0,2)$, $A^2v=(1,0,4)=3Av-2v$, and $v,Av$ are independent. By T6 the smallest invariant subspace is $W=\spn(v,Av)=\spn(e_1,e_3)$, and the restriction has minimal polynomial $x^2-3x+2=(x-1)(x-2)$.
+  For $u=(1,1,1)$: $Au=(2,1,2)$, $A^2u=(3,1,4)$, and the matrix with columns $u,Au,A^2u$ row-reduces to rank $3$, so $u$ is cyclic and $\deg m_A=3$ (T6). $A$ is upper-triangular with diagonal $1,1,2$, so $m_A$ has roots exactly $1,2$, and it is $(x-1)^2(x-2)$ or $(x-1)(x-2)^2$. Compute $(A-I)^2=\operatorname{diag}(0,0,1)$ and $(A-I)^2(A-2I)=0$ (the last row of $A-2I$ is $0$). So $m_A=(x-1)^2(x-2)$.
+  \ii $v,Tv,\dots,T^{n-1}v$ is a basis, so $Sv=p(T)v$ for some polynomial $p$. For each $j$, $S(T^jv)=T^jSv=T^jp(T)v=p(T)(T^jv)$. So $S$ and $p(T)$ agree on a basis: $S=p(T)$.
+  \ii $I$ has no cyclic vector ($\spn(v,Iv)$ is a line), and $S=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ commutes with $I$ but is not a polynomial in $I$ (those are the multiples $cI$).
+\end{enumerate}
+
+\subsection*{Problem 4}
+\begin{enumerate}[(a)]
+  \ii $T(1)=0$, $T(x)=0$, $T(x^2)=2x^2+2$, $T(x^3)=6x^3+6x$. $\MM(T)=\begin{psmallmatrix}0&0&2&0\\0&0&0&6\\0&0&2&0\\0&0&0&6\end{psmallmatrix}$, upper-triangular with diagonal $0,0,2,6$. Eigenvalues $0,2,6$.
+  \ii $\nul T=\spn(1,x)$ has dimension $2$; $E(2)$ and $E(6)$ have dimension $\ge1$. $2+1+1=4$, so diagonalizable. Eigenbasis: $1,\ x,\ x^2+1,\ x^3+x$ (check: $T(x^2+1)=2x^2+2$; $T(x^3+x)=6x^3+6x$).
+  \ii $m_T=x(x-2)(x-6)$.
+\end{enumerate}
+
+\subsection*{Problem 5}
+\begin{enumerate}[(a)]
+  \ii $T\colon\PP_3(\RR)\to\RR^2$, $T(p)=\big(p(1),p(-1)\big)$, is linear and surjective ($T(1)=(1,1)$, $T(x)=(1,-1)$, independent). So $\dim U=\dim\nul T=4-2=2$. Basis of $U$: $x^2-1,\ x^3-x$ (both vanish at $\pm1$, independent). Isomorphism: $p+U\mapsto\big(p(1),p(-1)\big)$. Basis of the quotient: $1+U,\ x+U$ (they map to the basis $(1,1),(1,-1)$).
+  \ii No: $D(x^2-1)=2x$, and $2x$ is not $0$ at $1$. The rule is not well defined: $(x^2-1)+U=0+U$, but the rule sends these to $2x+U$ and $0+U$, which differ because $2x\notin U$.
+  \ii $p(1)=p(-1)=0$ implies $p(1)=0$, so $U\subseteq W$. By the third isomorphism theorem, $(\PP_3(\RR)/U)/(W/U)\cong\PP_3(\RR)/W$, and $\PP_3(\RR)/W\cong\RR$ via $p+W\mapsto p(1)$ (surjective, null space $W$). Dimension check: $2-1=1$.
+\end{enumerate}
+
+\subsection*{Problem 6}
+\begin{enumerate}[(a)]
+  \ii Over $\CC$, $m_T$ splits. Suppose some root $\lambda$ is repeated: $m_T=(x-\lambda)^2q$. Since $(x-\lambda)q$ has smaller degree than $m_T$, there is $v$ with $(T-\lambda I)q(T)v\ne0$. Put $u=q(T)v$. Then $(T-\lambda I)^2u=m_T(T)v=0$, so $u\in\nul(T-\lambda I)^2=\nul(T-\lambda I)$, so $(T-\lambda I)u=0$: contradiction. So $m_T$ has no repeated root, and $T$ is diagonalizable (Prop.~68).
+  \ii If $T$ is diagonalizable, $T-\alpha I$ is diagonal in an eigenbasis, and a diagonal matrix and its square have the same zero diagonal entries, so the same null space.
+  \ii For $\alpha$ not an eigenvalue both null spaces are $\{0\}$. Example: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $\alpha=0$: $\nul N=\spn(e_1)$, $\nul N^2=\CC^2$.
+\end{enumerate}
+
+\subsection*{Problem 7}
+\begin{enumerate}[(a)]
+  \ii $m_{T^2}=\prod(y-\mu_i)$ with $\mu_i$ distinct and nonzero ($T^2$ invertible). Then $q(x)=\prod(x^2-\mu_i)$ satisfies $q(T)=m_{T^2}(T^2)=0$, and its roots $\pm\sqrt{\mu_i}$ are distinct: $\sqrt{\mu_i}\ne-\sqrt{\mu_i}$ since $\mu_i\ne0$, and different $\mu_i$ give different squares. So $T$ is diagonalizable.
+  \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $N^2=0$ is diagonalizable, $N$ is not.
+  \ii In an eigenbasis $T=\operatorname{diag}(\lambda_i)$; let $S=\operatorname{diag}(\sqrt{\lambda_i})$ for any complex square roots.
+  \ii Suppose $S^2=N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$. Then $SN=S^3=NS$, so $S$ commutes with $N$, hence with $I+N$, so $S=\begin{psmallmatrix}a&b\\0&a\end{psmallmatrix}$ (T3(c)). Then $S^2=\begin{psmallmatrix}a^2&2ab\\0&a^2\end{psmallmatrix}=N$ forces $a=0$, and then $S^2=0\ne N$. Contradiction.
+\end{enumerate}
+
+\subsection*{Problem 8}
+\begin{enumerate}[(a)]
+  \ii Induction on $\dim V$; $\dim V=1$ is clear. By T3, $S$ and $T$ have a common eigenvector $v$. $U=\spn(v)$ is invariant under both, and $S/U$, $T/U$ commute: $(S/U)(T/U)(w+U)=STw+U=TSw+U$. By induction (applied to $V/U$, of smaller dimension, when it is nonzero), some basis $v_2+U,\dots,v_n+U$ of $V/U$ makes both quotient operators upper-triangular. Then $v,v_2,\dots,v_n$ is a basis of $V$, and $Tv_j\in\spn(v,v_2,\dots,v_j)$ because $Tv_j+U\in\spn(v_2+U,\dots,v_j+U)$. Same for $S$.
+  \ii In that basis, $\MM(S+T)=\MM(S)+\MM(T)$ and $\MM(ST)=\MM(S)\MM(T)$ are upper-triangular with diagonals $\alpha_i+\beta_i$ and $\alpha_i\beta_i$, where $\alpha_i,\beta_i$ are the diagonal entries of $\MM(S),\MM(T)$, which are eigenvalues of $S,T$. The eigenvalues of an upper-triangular matrix are its diagonal entries.
+  \ii $S$ and $T$ are triangular with zero diagonal, so their only eigenvalue is $0$. But $S+T=\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}$ has eigenvalues $\pm1$, and $ST=\begin{psmallmatrix}1&0\\0&0\end{psmallmatrix}$ has eigenvalue $1$. ($ST\ne TS$.)
+\end{enumerate}
+
+\subsection*{Problem 9}
+\begin{enumerate}[(a)]
+  \ii $U\cap W=\{p:p(0)=p(1)=0\}$ has dimension $2$ (basis $x^2-x,\ x^3-x$). $\dim(U+W)=3+3-2=4$, so $U+W=\PP_3(\RR)$. The isomorphism is $p+(U\cap W)\mapsto p+W$ for $p\in U$. Both spaces are $1$-dimensional: $U/(U\cap W)\cong\RR$ via $p+(U\cap W)\mapsto p(1)$, and $\PP_3(\RR)/W\cong\RR$ via $p+W\mapsto p(1)$. Basis: $x+(U\cap W)$, which maps to $x+W$ and then to $1$.
+  \ii The map $W\to V/U$, $w\mapsto w+U$, is linear. Injective: $w+U=0+U$ means $w\in U\cap W=\{0\}$. Surjective: write $v=u+w$; then $v+U=w+U$. (Or: second isomorphism theorem, $(U+W)/U\cong W/(U\cap W)=W/\{0\}\cong W$.)
+  \ii Apply the first isomorphism theorem to $T|_U\colon U\to W$: its range is $T(U)$ and its null space is $U\cap\nul T$.
+\end{enumerate}
+
+\subsection*{Problem 10}
+\begin{enumerate}[(a)]
+  \ii Extend to a basis $v_1,\dots,v_n$ of $V$ and take the first $m$ functionals of the dual basis.
+  \ii ``$\subseteq$'' is clear. If $v\notin W$, the separating functional (Section 1, Annihilators) gives $\varphi\in W^0$ with $\varphi(v)=1\ne0$.
+  \ii ($\Rightarrow$) clear. ($\Leftarrow$) If $W^0\subseteq U^0$ and $u\in U$, then every $\varphi\in W^0$ is $0$ at $u$, so $u\in W$ by (b).
+\end{enumerate}
+
+\subsection*{Problem 11}
+\begin{enumerate}[(a)]
+  \ii If $U$ is invariant, $T|_U$ is diagonalizable (restrictions of diagonalizable operators are, Section~\ref{sec:minpoly}), so $U$ has a basis of eigenvectors of $T$. The eigenspaces of $T$ are the three coordinate lines, so each of these eigenvectors is a multiple of some $e_j$. Hence $U$ is the span of a subset of $\{e_1,e_2,e_3\}$: $8$ invariant subspaces.
+  \ii $\{0\}$, $\spn(e_1)$, $\spn(e_1,e_2)$, $\CC^3$. These are invariant since $Ne_1=0$, $Ne_2=e_1$, $Ne_3=e_2$. Conversely, a nonzero invariant $U$ contains an eigenvector of $N|_U$, which lies in $\nul N=\spn(e_1)$, so $e_1\in U$. If $U$ also contains $v=ae_1+be_2+ce_3$ with $c\ne0$, then $N^2v=ce_1$, $Nv=be_1+ce_2$ give $e_2\in U$, and then $e_3\in U$: $U=\CC^3$. Otherwise every vector of $U$ has $c=0$; if some has $b\ne0$, then $U=\spn(e_1,e_2)$, and if none does, $U=\spn(e_1)$.
+  \ii Every subspace: $\{0\}$, $\CC^2$, and every line (infinitely many).
+\end{enumerate}
+
+\subsection*{Problem 12}
+\begin{enumerate}[(a)]
+  \ii $(T-I)^2=0$, so every eigenvalue is a root of $(x-1)^2$, and $1$ is an eigenvalue because $V\ne\{0\}$ (T1). $m_T$ divides $(x-1)^2$, so $m_T=x-1$ (then $T=I$, diagonal) or $m_T=(x-1)^2$ (repeated root, not diagonalizable, Prop.~68).
+  \ii $V\ne\{0\}$ and the polynomial splits over $\RR$, so some factor is not injective (T1); distinct roots, so diagonalizable (T2).
+  \ii $T(T^2-2I)=-5I$, so $T^{-1}=-\tfrac15(T^2-2I)=\tfrac15(2I-T^2)$. Dividing $T^3-2T+5I=0$ by $T^3$: $I-2T^{-2}+5T^{-3}=0$, so $T^{-1}$ satisfies $y^3-\tfrac25y^2+\tfrac15$. It has degree $3$; a smaller relation for $T^{-1}$ would give one for $T$ of degree $<3$ (multiply by a power of $T$), so this is $m_{T^{-1}}$.
+\end{enumerate}
+
+\subsection*{True or false}
+\begin{enumerate}
+  \ii False: rotation $R$ on $\RR^2$.
+  \ii False: $S=\begin{psmallmatrix}1&1\\0&0\end{psmallmatrix}$ (eigenvalues $1,0$) and $T=\begin{psmallmatrix}-1&0\\0&0\end{psmallmatrix}$; $S+T=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$.
+  \ii True: $x^2-1=(x-1)(x+1)$ has distinct real roots.
+  \ii False: $N$. (True only for $T=0$.)
+  \ii True. Let $v=w_1+\dots+w_n$ with $w_i$ an eigenvector for $\lambda_i$ (all different). If $\sum_{j<n}c_jT^jv=0$, put $q=\sum_jc_jx^j$; then $0=q(T)v=\sum_iq(\lambda_i)w_i$, so $q(\lambda_i)=0$ for all $n$ values $\lambda_i$. A polynomial of degree less than $n$ with $n$ roots is $0$, so all $c_j=0$. Hence $v,Tv,\dots,T^{n-1}v$ is a basis.
+  \ii False: it means $v-w\in U$. Example: $U=\spn(e_1)$, $v=e_1$, $w=0$.
+  \ii True: Prop.~42 with $U_2=\{0\}$; if $v-v'\in U\subseteq\nul T$ then $Tv=Tv'$.
+  \ii True. Let $Tv_i=\lambda_iv_i$ and $T(v_1+v_2)=\mu(v_1+v_2)$. If $\lambda_1\ne\lambda_2$, then $v_1,v_2$ are independent, and $\lambda_1v_1+\lambda_2v_2=\mu v_1+\mu v_2$ gives $\lambda_1=\mu=\lambda_2$, a contradiction. So $\lambda_1=\lambda_2=\lambda$, and $T(v_1+v_2)=\lambda(v_1+v_2)$ with $v_1+v_2\ne0$, so $\mu=\lambda$.
+  \ii False: $N$ and $0$.
+  \ii False: $\dim(V\times W)=\dim V+\dim W$ (Prop.~36).
+  \ii True: if $\varphi_2=0$ then $\varphi_1=0$. Otherwise pick $v$ with $\varphi_2(v)=1$ and set $c=\varphi_1(v)$; $\varphi_1-c\varphi_2$ is $0$ on $\nul\varphi_2$ and at $v$, which together span $V$.
+  \ii False: $T$ injective iff $T'$ \emph{surjective}. The inclusion $\FF\to\FF^2$ is injective; its dual $(\FF^2)'\to\FF'$ is not.
+  \ii True: distinct eigenvalues, as many as the dimension.
+  \ii True: $T|_U$ is injective on the finite-dimensional $U$.
+  \ii True: $x\mapsto Ax$ is an operator on the odd-dimensional real space $\RR^5$, so it has a real eigenvalue (Real operators (2), Section~\ref{sec:minpoly}), and hence a real eigenvector.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,50 @@
+% Shared style for every handout and solutions file. Load after evan.sty:
+%   \documentclass[10pt]{scrartcl}
+%   \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+%   \usepackage{handout}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{handout}
+\RequirePackage[letterpaper,margin=0.75in,headsep=0.25in]{geometry}
+\RequirePackage{needspace}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{arrows.meta,positioning}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlength{\emergencystretch}{3em}
+% Theorem-type boxes never split across pages.
+\mdfdefinestyle{mdbluebox}{roundcorner=6pt,linewidth=0.8pt,skipabove=7pt,skipbelow=2pt,innertopmargin=5pt,innerbottommargin=5pt,linecolor=blue,nobreak=true,backgroundcolor=TealBlue!5}
+\mdfdefinestyle{mdredbox}{linewidth=0.5pt,skipabove=7pt,skipbelow=2pt,innertopmargin=3pt,innerbottommargin=5pt,nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna}
+% "The question." box at the start of a section: what problem the section solves.
+\mdfdefinestyle{qboxstyle}{nobreak=true,linewidth=0pt,backgroundcolor=black!5,innertopmargin=6pt,innerbottommargin=6pt,skipabove=4pt,skipbelow=8pt}
+\newenvironment{qbox}{\begin{mdframed}[style=qboxstyle]\textbf{The question.}\ }{\end{mdframed}}
+% "Where the proof comes from" box. Use \ii[Want.] \ii[Know.] \ii[First try.] \ii[Key step.] \ii[Example.]
+\mdfdefinestyle{thinkbox}{nobreak=true,linewidth=2pt,linecolor=OliveGreen!60,topline=false,bottomline=false,rightline=false,leftline=true,backgroundcolor=OliveGreen!5,innerleftmargin=8pt,innerrightmargin=6pt,innertopmargin=4pt,innerbottommargin=5pt,skipabove=6pt,skipbelow=4pt}
+\newenvironment{motive}{\begin{mdframed}[style=thinkbox]\textbf{\color{OliveGreen!75!black}Where the proof comes from}\begin{description}[leftmargin=0.9em,labelindent=0pt,itemsep=2pt,topsep=2pt,font=\normalfont\bfseries\color{OliveGreen!70!black}]}{\end{description}\end{mdframed}}
+% Shortcuts and Traps boxes.
+\mdfdefinestyle{fastboxstyle}{nobreak=true,linewidth=2pt,linecolor=NavyBlue!55,topline=false,bottomline=false,rightline=false,leftline=true,backgroundcolor=NavyBlue!4,innerleftmargin=8pt,innerrightmargin=6pt,innertopmargin=4pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{shortcuts}{\begin{mdframed}[style=fastboxstyle]\textbf{\color{NavyBlue}Shortcuts}\begin{itemize}[itemsep=2pt,topsep=2pt]}{\end{itemize}\end{mdframed}}
+\mdfdefinestyle{trapstyle}{nobreak=true,linewidth=0.6pt,linecolor=RawSienna,backgroundcolor=Salmon!6,skipabove=8pt,skipbelow=6pt,innertopmargin=4pt,innerbottommargin=5pt}
+\newenvironment{trapbox}{\begin{mdframed}[style=trapstyle]\textbf{\color{RawSienna}Traps}\begin{itemize}[itemsep=1pt,topsep=1pt]}{\end{itemize}\end{mdframed}}
+% Numbered proof steps.
+\newenvironment{steps}{\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]}{\end{enumerate}}
+% Short reason after a fact; for more than one sentence put a steps list inside.
+\newcommand{\tool}[1]{\textbf{#1}}
+\newcommand{\why}[1]{\par\vspace{2pt}{\color{OliveGreen!70!black}\textbf{Why.}}\ #1\par}
+% Headed method paragraph (computing techniques).
+\newcommand{\method}[1]{\par\needspace{5\baselineskip}\medskip\noindent{\color{NavyBlue}\textbf{#1}}\ }
+% Figures: \begin{fig} tikz \figcap{caption} \end{fig}
+\newenvironment{fig}{\par\needspace{9\baselineskip}\medskip\begin{center}}{\end{center}\medskip}
+\newcommand{\figcap}[1]{\par\vspace{3pt}\begin{minipage}{0.86\linewidth}\small\centering #1\end{minipage}}
+% A problem (or solution) that cannot split across pages:
+%   \begin{prob}\textbf{HW11 P2.}\ statement...\end{prob}
+\newenvironment{prob}{\par\bigskip\noindent\begin{minipage}{\linewidth}\setlength{\parskip}{4pt}}{\end{minipage}\par}
+% Solutions: first line of each solution.
+\newcommand{\idea}[1]{{\color{OliveGreen!75!black}\textbf{Idea.}}\ #1\par}
+% Keep headings with what follows them.
+\let\oldsubsection\subsection
+\renewcommand{\subsection}{\needspace{14\baselineskip}\oldsubsection}
+\let\oldsection\section
+\renewcommand{\section}{\needspace{16\baselineskip}\oldsection}
+\endinput

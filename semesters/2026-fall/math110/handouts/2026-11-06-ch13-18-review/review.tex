@@ -1,0 +1,1706 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage[letterpaper,margin=0.75in,headsep=0.25in]{geometry}
+\usepackage{needspace}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{arrows.meta,positioning}
+\newenvironment{fig}{\par\needspace{9\baselineskip}\medskip\begin{center}}{\end{center}\medskip}
+\newcommand{\figcap}[1]{\par\vspace{3pt}\begin{minipage}{0.86\linewidth}\small\centering #1\end{minipage}}
+\mdfdefinestyle{mdbluebox}{roundcorner=6pt,linewidth=0.8pt,skipabove=7pt,skipbelow=2pt,innertopmargin=5pt,innerbottommargin=5pt,linecolor=blue,nobreak=true,backgroundcolor=TealBlue!5}
+\mdfdefinestyle{mdredbox}{linewidth=0.5pt,skipabove=7pt,skipbelow=2pt,innertopmargin=3pt,innerbottommargin=5pt,nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\LL}{\mathcal L}
+\newcommand{\PP}{\mathcal P}
+\newcommand{\MM}{\mathcal M}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\traps}{\par\needspace{4\baselineskip}\medskip\noindent\textbf{\color{RawSienna}Traps.}\ }
+\setlength{\parskip}{4pt}
+\newcommand{\tool}[1]{\textbf{#1}}
+\newcommand{\why}[1]{\par\vspace{2pt}{\color{OliveGreen!70!black}\textbf{Why.}}\ #1\par}
+\mdfdefinestyle{thinkbox}{nobreak=true,linewidth=2pt,linecolor=OliveGreen!60,topline=false,bottomline=false,rightline=false,leftline=true,backgroundcolor=OliveGreen!5,innerleftmargin=8pt,innerrightmargin=6pt,innertopmargin=4pt,innerbottommargin=5pt,skipabove=6pt,skipbelow=4pt}
+\newenvironment{think}{\begin{mdframed}[style=thinkbox]\textbf{\color{OliveGreen!75!black}Where the proof comes from}\begin{itemize}[itemsep=1pt,topsep=1pt]}{\end{itemize}\end{mdframed}}
+\newenvironment{motive}{\begin{mdframed}[style=thinkbox]\textbf{\color{OliveGreen!75!black}Where the proof comes from}\begin{description}[leftmargin=0.9em,labelindent=0pt,itemsep=2pt,topsep=2pt,font=\normalfont\bfseries\color{OliveGreen!70!black}]}{\end{description}\end{mdframed}}
+\mdfdefinestyle{fastboxstyle}{nobreak=true,linewidth=2pt,linecolor=NavyBlue!55,topline=false,bottomline=false,rightline=false,leftline=true,backgroundcolor=NavyBlue!4,innerleftmargin=8pt,innerrightmargin=6pt,innertopmargin=4pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{shortcuts}{\begin{mdframed}[style=fastboxstyle]\textbf{\color{NavyBlue}Shortcuts}\begin{itemize}[itemsep=2pt,topsep=2pt]}{\end{itemize}\end{mdframed}}
+\mdfdefinestyle{qboxstyle}{nobreak=true,linewidth=0pt,backgroundcolor=black!5,innertopmargin=6pt,innerbottommargin=6pt,skipabove=4pt,skipbelow=8pt}
+\newenvironment{qbox}{\begin{mdframed}[style=qboxstyle]\textbf{The question.}\ }{\end{mdframed}}
+\mdfdefinestyle{trapstyle}{nobreak=true,linewidth=0.6pt,linecolor=RawSienna,backgroundcolor=Salmon!6,skipabove=8pt,skipbelow=6pt,innertopmargin=4pt,innerbottommargin=5pt}
+\newenvironment{trapbox}{\begin{mdframed}[style=trapstyle]\textbf{\color{RawSienna}Traps}\begin{itemize}[itemsep=1pt,topsep=1pt]}{\end{itemize}\end{mdframed}}
+\newenvironment{steps}{\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]}{\end{enumerate}}
+\newcommand{\method}[1]{\par\needspace{5\baselineskip}\medskip\noindent{\color{NavyBlue}\textbf{#1}}\ }
+\newcommand{\Q}[2]{\par\needspace{4\baselineskip}\bigskip\noindent\textbf{#1. #2}\ }
+\newenvironment{prob}{\par\bigskip\noindent\begin{minipage}{\linewidth}\setlength{\parskip}{4pt}}{\end{minipage}\par}
+\title{Math 110 Review}
+\subtitle{Notes Ch.~13--18, HW7--10}
+\author{}
+\date{}
+\ihead{}
+\begin{document}
+\maketitle
+
+\section{Review}
+
+\needspace{14\baselineskip}
+\subsection{Tools from earlier chapters}
+
+$V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Every proof below uses only these facts. Each has its reason, except the fundamental theorem of algebra (it needs analysis).
+
+\begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
+  \ii \tool{Rank--nullity.} For linear $T\colon V\to W$: $\dim V=\dim\nul T+\dim\range T$.
+  \why{\begin{steps}
+    \ii Extend a basis $u_1,\dots,u_k$ of $\nul T$ to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. It suffices to show $Tv_1,\dots,Tv_r$ is a basis of $\range T$.
+    \ii Spanning: $T$ of any vector is a combination of the $Tu_i$ (which are $0$) and the $Tv_j$.
+    \ii Independent: if $\sum c_jTv_j=0$, then $\sum c_jv_j\in\nul T$ is a combination of the $u_i$, and independence of the basis of $V$ gives all $c_j=0$.
+  \end{steps}}
+  \ii \tool{For operators, injective $\iff$ surjective $\iff$ invertible.}
+  \why{$\nul T=0\iff\dim\range T=n$ (T1) $\iff\range T=V$ (T3).}
+  \ii \tool{Dimension shortcuts.}
+  \begin{enumerate}[(a)]
+    \ii An independent list of $n$ vectors is a basis.
+    \ii A subspace of dimension $n$ is all of $V$.
+    \ii If $U\cap W=\{0\}$ and $\dim U+\dim W=n$, then $V=U\oplus W$.
+    \ii $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a), (b): an independent list extends to a basis, and every basis has length $n$.
+    \ii (c): a basis of $U$ followed by a basis of $W$ is independent (a relation gives $u=-w\in U\cap W=\{0\}$) and has length $n$, so it is a basis by (a).
+    \ii (d): extend a basis $x_1,\dots,x_k$ of $U\cap W$ to a basis $x_i,u_j$ of $U$ and, separately, to a basis $x_i,w_l$ of $W$. Together the $x_i,u_j,w_l$ span $U+W$; it remains to show they are independent.
+    \ii If $x+u+w=0$ ($x,u,w$ combinations of the $x_i$, $u_j$, $w_l$), then $w=-x-u\in U\cap W$, so $w$ is a combination of the $x_i$. The basis $x_i,w_l$ of $W$ is independent, so $w=0$. Then $x+u=0$, and independence of $x_i,u_j$ gives $x=u=0$.
+  \end{steps}}
+  \ii \tool{Products of operators.} If $S,T$ are injective, so is $ST$. So if a product sends some $v\ne0$ to $0$, some factor is not injective.
+  \why{$STv=0\Rightarrow Tv=0\Rightarrow v=0$.}
+  \ii \tool{Polynomials in $T$ commute.} $p(T)q(T)=q(T)p(T)$. Hence $\nul p(T)$ and $\range p(T)$ are $T$-invariant.
+  \why{Both products equal $(pq)(T)$. If $p(T)v=0$, then $p(T)(Tv)=T\,p(T)v=0$. And $T\bigl(p(T)u\bigr)=p(T)(Tu)\in\range p(T)$.}
+  \ii \tool{Fundamental theorem of algebra.} A nonconstant $p\in\PP(\CC)$ factors as $c(z-\lambda_1)\cdots(z-\lambda_m)$ (cited). Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$.
+  \why{Divide $p$ by $z-\lambda$: the remainder is a constant, and evaluating at $\lambda$ shows it equals $p(\lambda)$.}
+  \ii \tool{Eigenvalues.}
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is an eigenvalue $\iff T-\lambda I$ is not injective.
+    \ii If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$.
+    \ii Eigenvectors for distinct eigenvalues are independent (Prop.~54; also a special case of Prop.~72).
+    \ii Over $\CC$ with $V\ne0$, every operator has an eigenvalue.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a) is the definition: $Tv=\lambda v$ with $v\ne0$ means $(T-\lambda I)v=0$ with $v\ne0$.
+    \ii (b): $T^kv=\lambda^kv$ by induction; add up the terms of $p$.
+    \ii (d): take $v\ne0$. The $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $p(T)v=0$ for some $p\ne0$; $p$ is not constant since $v\ne0$.
+    \ii Factor $p=c(z-\lambda_1)\cdots(z-\lambda_m)$ (T6). The product $c(T-\lambda_1I)\cdots(T-\lambda_mI)$ sends $v\ne0$ to $0$, so some $T-\lambda_jI$ is not injective (T4).
+  \end{steps}}
+  \ii \tool{Upper-triangular matrices.} $\MM(T)$ is upper-triangular in $v_1,\dots,v_n$ $\iff$ every $\spn(v_1,\dots,v_j)$ is invariant. Then the eigenvalues of $T$ are the diagonal entries. Over $\CC$ every operator has an upper-triangular matrix.
+  \why{\begin{steps}
+    \ii Column $j$ holds the coordinates of $Tv_j$, so ``upper-triangular'' means $Tv_j\in\spn(v_1,\dots,v_j)$ for every $j$.
+    \ii If $a_{jj}=\lambda$: $T-\lambda I$ maps $\spn(v_1,\dots,v_j)$ into $\spn(v_1,\dots,v_{j-1})$, a smaller space, so it is not injective (T1). So $\lambda$ is an eigenvalue.
+    \ii If no $a_{jj}$ equals $\lambda$: $\MM(T-\lambda I)$ is triangular with nonzero diagonal. Its columns are independent: in a relation, the right-most column used is the only one with a nonzero entry in its own diagonal row. So $T-\lambda I$ is injective.
+    \ii Existence: a Jordan form (Prop.~76) is upper-triangular. (Props.~69--76 do not use this item, so there is no circularity.)
+  \end{steps}}
+  \ii \tool{Minimal polynomial.} $q(T)=0\iff m_T\mid q$. Its roots in $\FF$ are exactly the eigenvalues. $T$ is diagonalizable $\iff m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ with distinct $\lambda_i\in\FF$.
+  \why{Props.~65, 66, 68 in the next section.}
+  \ii \tool{Block diagonal matrices.} If $V=U\oplus W$ with both $T$-invariant, then in a basis of $U$ followed by one of $W$, $\MM(T)=\begin{psmallmatrix}A&0\\0&B\end{psmallmatrix}$, and $\nul T=\nul T|_U\oplus\nul T|_W$.
+  \why{$Tu\in U$ is a combination of the $U$-basis only, so its column is $0$ in the $W$-rows (same for $W$). If $T(u+w)=0$, then $Tu=-Tw\in U\cap W=\{0\}$.}
+  \ii \tool{Change of basis.} If column $j$ of $S$ holds the $B$-coordinates of the $j$-th vector of $B'$, then $\MM_{B'}(T)=S^{-1}\MM_B(T)S$. So similar matrices are exactly the matrices of one operator in two bases.
+  \why{$S$ converts $B'$-coordinates to $B$-coordinates: apply $S$, then $\MM_B(T)$, then convert back with $S^{-1}$. Every invertible $S$ arises this way, since its columns form a basis.}
+  \ii \tool{Quotient operator.} If $U$ is $T$-invariant, then $(T/U)(v+U)=Tv+U$ is a well-defined operator on $V/U$, $\dim V/U=\dim V-\dim U$, and $p(T/U)(v+U)=p(T)v+U$.
+  \why{\begin{steps}
+    \ii Well defined: if $v+U=v'+U$, then $v-v'\in U$, so $Tv-Tv'\in U$ ($U$ is invariant).
+    \ii Dimension: $v\mapsto v+U$ maps $V$ onto $V/U$ with null space $U$; apply (T1).
+    \ii $(T/U)^k(v+U)=T^kv+U$ by induction; add up the terms of $p$.
+  \end{steps}}
+\end{enumerate}
+
+\needspace{14\baselineskip}
+\subsection{Minimal polynomial (Ch.~13)}
+
+\begin{qbox}
+  Powers of $T$ cannot stay independent forever, so some nonzero polynomial kills $T$. The one of smallest degree tells you the eigenvalues of $T$ and whether $T$ is diagonalizable.
+  \begin{itemize}
+    \ii $T=\begin{psmallmatrix}2&0\\0&3\end{psmallmatrix}$: $(T-2I)(T-3I)=0$, and no polynomial of degree $1$ kills $T$, since $T$ is not a multiple of $I$. The roots $2,3$ are the eigenvalues.
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $N^2=0$ but $N\ne0$, so the smallest polynomial is $x^2$. Its repeated root is what stops $N$ from being diagonalizable.
+  \end{itemize}
+\end{qbox}
+
+\begin{definition*}[Def.~35, 36 / LADR 5.14, 5.22, 5.24]
+  For $p(x)=a_mx^m+\dots+a_1x+a_0$, $p(T)=a_mT^m+\dots+a_1T+a_0I$. Let $k$ be the smallest index with $T^k\in\spn(I,T,\dots,T^{k-1})$, and write $T^k=a_{k-1}T^{k-1}+\dots+a_0I$. The \vocab{minimal polynomial} of $T$ is $m_T(x)=x^k-a_{k-1}x^{k-1}-\dots-a_0$. (The notes call it $p$.)
+\end{definition*}
+\begin{itemize}
+  \ii $k$ exists: $\LL(V)$ has dimension $n^2$ (operators are $n\times n$ matrices), so the $n^2+1$ operators $I,T,\dots,T^{n^2}$ are dependent. Solving a dependence for the highest power with a nonzero coefficient puts that power in the span of the lower ones.
+  \ii $I,T,\dots,T^{k-1}$ are independent, by the same argument: a dependence among them would put some $T^j$ with $j<k$ in the span of lower powers. So the $a_i$ are unique.
+  \ii Shorthand used below: $q$ \emph{kills} $T$ means $q(T)=0$; an operator $S$ \emph{kills} $v$ means $Sv=0$.
+  \ii $m_T$ is monic and $m_T(T)=0$. No nonzero polynomial of degree $<k$ kills $T$, since it would be a dependence among $I,\dots,T^{k-1}$. So $m_T$ is the unique monic polynomial of least degree that kills $T$ (two of them would differ by a nonzero polynomial of lower degree that kills $T$).
+  \ii Ex.~57: $m_I=x-1$. For $T=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$, $I,T$ are independent and $T^2=\begin{psmallmatrix}5&4\\4&5\end{psmallmatrix}=4T-3I$, so $m_T=x^2-4x+3=(x-1)(x-3)$.
+\end{itemize}
+
+\begin{proposition*}[Prop.~65 / LADR 5.29]
+  For $q\in\PP(\FF)$: $q(T)=0\iff m_T\mid q$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Every polynomial that kills $T$ is a multiple of $m_T$.
+  \ii[Know.] $m_T$ has the smallest degree among nonzero polynomials that kill $T$. Polynomials can be divided with remainder, and the remainder has smaller degree than the divisor.
+  \ii[Key step.] Divide $q$ by $m_T$. The remainder kills $T$ too, and its degree is too small for it to be nonzero.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $q=m_Tr$, then $q(T)=m_T(T)r(T)=0$ (T5).
+    \ii If $q(T)=0$, divide: $q=m_Tr+s$ with $s=0$ or $\deg s<\deg m_T$. Then $s(T)=q(T)-m_T(T)r(T)=0$.
+    \ii A nonzero $s$ of degree $<\deg m_T$ cannot kill $T$. So $s=0$ and $m_T\mid q$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~66 / LADR 5.27]
+  The eigenvalues of $T$ are exactly the roots of $m_T$ in $\FF$. If $m_T=(x-\lambda)s$, then $s(T)\ne0$, and every nonzero vector $s(T)w$ is an eigenvector for $\lambda$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want ($\Rightarrow$).] $m_T(\lambda)=0$ for each eigenvalue $\lambda$.
+  \ii[Know.] On an eigenvector, a polynomial in $T$ acts as the number $p(\lambda)$ (T7). Apply this to $m_T$, which is $0$ as an operator.
+  \ii[Want ($\Leftarrow$).] An eigenvector for a root $\lambda$, i.e.\ a nonzero vector killed by $T-\lambda I$.
+  \ii[Key step.] Factor $m_T=(x-\lambda)s$. Then $(T-\lambda I)s(T)=m_T(T)=0$, so $T-\lambda I$ kills every vector of the form $s(T)w$. Such a vector can be chosen nonzero because $s$ has smaller degree than $m_T$, so $s(T)\ne0$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$, so $m_T(\lambda)=0$.
+    \ii If $m_T(\lambda)=0$, write $m_T=(x-\lambda)s$ (T6). Since $\deg s<\deg m_T$, $s(T)\ne0$; pick $w$ with $s(T)w\ne0$.
+    \ii $(T-\lambda I)\bigl(s(T)w\bigr)=m_T(T)w=0$, so $s(T)w$ is an eigenvector for $\lambda$.
+  \end{steps}
+  The notes argue the second half by contradiction: if $T-\lambda I$ were invertible, multiplying $0=s(T)(T-\lambda I)$ by $(T-\lambda I)^{-1}$ would give $s(T)=0$.
+\end{proof}
+
+\begin{proposition*}[Prop.~67 / LADR 5.22]
+  $\deg m_T\le n$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Some polynomial of degree $\le n$ that kills $T$. Then $m_T$ divides it (Prop.~65).
+  \ii[Know.] For one vector $v\ne0$, the $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $q(T)v=0$ for some $q\ne0$ of degree $\le n$. This kills $v$, but not necessarily all of $V$.
+  \ii[First try.] Do this for each basis vector and multiply the $q$'s. The product kills $T$, but its degree can be about $n^2$.
+  \ii[Key step.] Induction on $\dim V$. $U=\nul q(T)$ is invariant and contains $v$. If $U\ne V$, both $U$ and $V/U$ are smaller than $V$. By induction, a polynomial $r$ of degree $\le\dim U$ kills $T$ on $U$, and a polynomial $p$ of degree $\le\dim V/U$ kills $T/U$, which means $p(T)$ sends $V$ into $U$. So $r(T)p(T)$ kills $V$, and its degree is $\le\dim U+\dim V/U=n$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $\dim V=1$, $T=cI$ and $m_T=x-c$. In general, fix $v\ne0$ and $q\ne0$ with $\deg q\le n$ and $q(T)v=0$. $U=\nul q(T)$ is invariant (T5).
+    \ii If $q(T)=0$, then $m_T\mid q$, so $\deg m_T\le n$.
+    \ii Otherwise $0<\dim U<n$. By induction, $r=m_{T|_U}$ has $\deg r\le\dim U$ and $p=m_{T/U}$ has $\deg p\le\dim V/U$ (T12).
+    \ii For $v\in V$: $p(T)v+U=p(T/U)(v+U)=0+U$, so $p(T)v\in U$, so $r(T)p(T)v=0$. Hence $m_T\mid rp$, and $\deg(rp)\le\dim U+\dim V/U=n$ (T12).
+  \end{steps}
+\end{proof}
+\needspace{7\baselineskip}\textbf{Second proof (LADR 5.22), without quotient spaces.} Same plan, with $\range q(T)$ in place of $V/U$. Induction on $n$.
+\begin{steps}
+  \ii Fix $v\ne0$ and let $q$ be the monic polynomial of least degree $d$ with $q(T)v=0$; $d\ge1$ since $v\ne0$.
+  \ii $v,Tv,\dots,T^{d-1}v$ are independent (a dependence would be a smaller polynomial killing $v$), and they lie in $\nul q(T)$, because $q(T)T^jv=T^jq(T)v=0$. So $\dim\nul q(T)\ge d$.
+  \ii $W=\range q(T)$ is invariant (T5) and $\dim W\le n-d<n$ (T1). By induction some $s$ of degree $\le n-d$ kills $T|_W$.
+  \ii For every $u$: $q(T)u\in W$, so $s(T)q(T)u=0$. So $sq$ kills $T$, and $\deg(sq)\le n$.
+\end{steps}
+\begin{itemize}
+  \ii Over $\CC$ the bound also follows from Cayley--Hamilton (Prop.~74): $m_T\mid\chi_T$ and $\deg\chi_T=n$.
+  \ii Ex.~58: every degree from $1$ to $n$ occurs.
+  \begin{itemize}
+    \ii $m_I=x-1$ in every dimension.
+    \ii The shift $N$ ($Ne_1=0$, $Ne_j=e_{j-1}$) has $m_N=x^n$, since $N^{n-1}e_n=e_1\ne0$ and $N^n=0$.
+    \ii Degree $k$, $1\le k\le n$: let $Ne_1=0$, $Ne_j=e_{j-1}$ for $2\le j\le k$, $Ne_j=0$ for $j>k$. Then $N^k=0$ and $N^{k-1}e_k=e_1\ne0$, so $m_N=x^k$.
+  \end{itemize}
+\end{itemize}
+
+\begin{proposition*}[Prop.~68 / LADR 5.62]
+  $T$ is diagonalizable $\iff m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ with $\lambda_1,\dots,\lambda_m\in\FF$ distinct.
+\end{proposition*}
+\begin{motive}
+  \ii[Want ($\Rightarrow$).] $\prod_i(T-\lambda_iI)=0$, where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues.
+  \ii[Key step.] On an eigenvector for $\lambda_j$, the factor $T-\lambda_jI$ gives $0$, and the factors commute, so let that factor act first. There is an eigenbasis, so the product kills $V$. Then $m_T$ divides $\prod(x-\lambda_i)$ and contains every $x-\lambda_i$ (Prop.~66), so it equals it.
+  \ii[Want ($\Leftarrow$).] Write every $v$ as a sum of eigenvectors.
+  \ii[Know.] $(T-\lambda_jI)\prod_{i\ne j}(T-\lambda_iI)=m_T(T)=0$. So every vector of the form $\prod_{i\ne j}(T-\lambda_iI)w$ is in $E(\lambda_j,T)$. This is how to produce eigenvectors.
+  \ii[Key step.] Scale these so that they add up to $v$. The polynomial $g_j(x)=\prod_{i\ne j}\frac{x-\lambda_i}{\lambda_j-\lambda_i}$ is $1$ at $\lambda_j$ and $0$ at the other $\lambda_i$. Then $\sum_jg_j-1$ has degree $<m$ and $m$ roots, so $\sum_jg_j=1$. Apply both sides to $v$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii ($\Rightarrow$) Let $v_1,\dots,v_n$ be an eigenbasis, $Tv_k=\mu v_k$ with $\mu$ one of the $\lambda_i$. Letting the factor $T-\mu I$ act first, $\prod_i(T-\lambda_iI)v_k=0$ for every $k$ (T5). So $m_T\mid\prod_i(x-\lambda_i)$ (Prop.~65). Each $\lambda_i$ is a root of $m_T$ (Prop.~66), so $m_T=\prod_i(x-\lambda_i)$.
+    \ii ($\Leftarrow$) Define $g_j$ as above. $\sum_jg_j-1$ has degree $\le m-1$ and vanishes at the $m$ points $\lambda_1,\dots,\lambda_m$. A nonzero polynomial of degree $\le m-1$ has at most $m-1$ roots (each root splits off a factor, T6), so $\sum_jg_j=1$.
+    \ii For $v\in V$: $v=\sum_jg_j(T)v$, and $(T-\lambda_jI)g_j(T)v=c_j\,m_T(T)v=0$, where $c_j=\prod_{i\ne j}(\lambda_j-\lambda_i)^{-1}$. So $g_j(T)v\in E(\lambda_j,T)$.
+    \ii So $V=E(\lambda_1,T)+\dots+E(\lambda_m,T)$. This sum is direct (T7), so bases of the eigenspaces together form an eigenbasis.
+  \end{steps}
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}
+\begin{axis}[width=8.6cm,height=5.2cm,xmin=0.6,xmax=3.4,ymin=-1.1,ymax=1.8,axis lines=left,
+  xtick={1,2,3},xticklabels={$\lambda_1=1$,$\lambda_2=2$,$\lambda_3=3$},ytick={0,1},
+  domain=0.6:3.4,samples=80,legend style={font=\small,draw=none,at={(1.03,1)},anchor=north west},legend cell align=left]
+  \addplot[blue,thick] {(x-2)*(x-3)/2}; \addlegendentry{$g_1$}
+  \addplot[red,thick] {-(x-1)*(x-3)}; \addlegendentry{$g_2$}
+  \addplot[OliveGreen,thick] {(x-1)*(x-2)/2}; \addlegendentry{$g_3$}
+  \addplot[black,dashed,thick] {1}; \addlegendentry{$g_1+g_2+g_3$}
+  \addplot[gray,thin] {0};
+  \addplot[only marks,mark=*,mark size=1.6pt,black] coordinates {(1,1) (2,1) (3,1) (1,0) (2,0) (3,0)};
+\end{axis}
+\end{tikzpicture}
+\figcap{$g_j$ is $1$ at $\lambda_j$ and $0$ at the other eigenvalues, and $g_1+g_2+g_3=1$. Applying $1=\sum g_j$ to $T$ writes $v=\sum g_j(T)v$, and each $g_j(T)v$ lies in $E(\lambda_j,T)$ (Prop.~68). The same $g_j(T)$ are the projections of F10.}
+\end{fig}
+\needspace{7\baselineskip}\textbf{Second proof of ($\Leftarrow$), the one in the notes.} Instead of splitting $v$ into all its eigenvector pieces at once, split off the $\lambda_1$-piece and use induction for the rest. Let $g=\prod_{i\ge2}(x-\lambda_i)$, so $m_T=(x-\lambda_1)g$ and $g(\lambda_1)\ne0$.
+\begin{steps}
+  \ii Dividing by $x-\lambda_1$ leaves the remainder $g(\lambda_1)$ (T6): $g=(x-\lambda_1)q+g(\lambda_1)$.
+  \ii For $v\in V$ let $u=g(T)v/g(\lambda_1)$. Then $(T-\lambda_1I)u=m_T(T)v/g(\lambda_1)=0$, so $u\in\nul(T-\lambda_1I)$, and $v-u=-(T-\lambda_1I)q(T)v/g(\lambda_1)\in\range(T-\lambda_1I)$.
+  \ii So $V=\nul(T-\lambda_1I)+\range(T-\lambda_1I)$. The two dimensions add up to $n$ (T1), so the intersection is $0$ (last item of T3) and the sum is direct.
+  \ii $\range(T-\lambda_1I)$ is invariant, smaller than $V$ (since $\nul(T-\lambda_1I)\ne0$: $\lambda_1$ is an eigenvalue by Prop.~66), and its minimal polynomial divides $m_T$ (F3), so it again has distinct linear factors. By induction $T$ restricted to it has an eigenbasis; add a basis of $E(\lambda_1,T)$.
+\end{steps}
+
+\needspace{14\baselineskip}
+\subsubsection*{More facts about $m_T$}
+Throughout, write $m_T=x^d+c_{d-1}x^{d-1}+\dots+c_1x+c_0$.
+
+\begin{proposition*}[F1: invertibility, HW7 P3]
+  $T$ is invertible $\iff c_0\ne0$. In that case $T^{-1}=-\dfrac1{c_0}\bigl(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I\bigr)$, a polynomial in $T$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $T^{-1}$ written with powers of $T$.
+  \ii[Know.] $m_T(T)=0$, and every term of $m_T(T)$ except $c_0I$ contains a factor $T$.
+  \ii[Key step.] Move $c_0I$ to the other side and factor out $T$. That gives $T\cdot(\text{something})=-c_0I$, so $\frac{-1}{c_0}(\text{something})$ is the inverse.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $c_0=m_T(0)$. By Prop.~66, $c_0=0\iff0$ is an eigenvalue $\iff T$ is not injective (T7) $\iff T$ is not invertible (T2).
+    \ii If $c_0\ne0$: $m_T(T)=0$ says $T^d+c_{d-1}T^{d-1}+\dots+c_1T=-c_0I$.
+    \ii Factor $T$ out of the left side: $T\bigl(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I\bigr)=-c_0I$. Divide by $-c_0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F2: degree one, M4]
+  If $V\ne\{0\}$: $\deg m_T=1\iff T=cI$ for some $c\in\FF$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii ($\Rightarrow$) $m_T=x-c$ and $m_T(T)=0$ say $T-cI=0$.
+    \ii ($\Leftarrow$) $x-c$ kills $cI$. No polynomial of degree $0$ does: a nonzero constant $a$ gives $aI\ne0$ since $V\ne\{0\}$. So $m_{cI}=x-c$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F3: restrictions and quotients, Ex.~60]
+  Let $U$ be $T$-invariant.
+  \begin{enumerate}[(a)]
+    \ii $m_{T|_U}\mid m_T$ and $m_{T/U}\mid m_T$.
+    \ii A monic divisor of a product $(x-\lambda_1)\cdots(x-\lambda_m)$ of distinct linear factors is the product of some of those factors.
+    \ii So if $T$ is diagonalizable, so are $T|_U$ and $T/U$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii For $u\in U$: $m_T(T|_U)u=m_T(T)u=0$. So $m_T$ kills $T|_U$, and $m_{T|_U}\mid m_T$ by Prop.~65 applied to $T|_U$.
+    \ii For $v+U\in V/U$: $m_T(T/U)(v+U)=m_T(T)v+U=0+U$ (T12). So $m_{T/U}\mid m_T$.
+  \end{steps}
+  (b) Let $s$ be the monic divisor, $st=\prod_{i=1}^m(x-\lambda_i)$.
+  \begin{steps}
+    \ii Each $\lambda_i$ makes the product $0$, so it is a root of $s$ or of $t$. Let $S$ be the set of $\lambda_i$ that are roots of $s$, and $R$ the remaining $\lambda_i$ (roots of $t$).
+    \ii Distinct roots split off one factor each (T6), so $\prod_{\lambda\in S}(x-\lambda)$ divides $s$ and $\prod_{\lambda\in R}(x-\lambda)$ divides $t$. Hence $\deg s\ge|S|$ and $\deg t\ge|R|$.
+    \ii But $\deg s+\deg t=m=|S|+|R|$, so both are equalities. A monic $s$ divisible by a monic polynomial of the same degree equals it: $s=\prod_{\lambda\in S}(x-\lambda)$.
+  \end{steps}
+  (c) $m_T$ is a product of distinct linear factors (Prop.~68). By (a) and (b), so are $m_{T|_U}$ and $m_{T/U}$. Apply Prop.~68 again.
+\end{proof}
+
+\begin{proposition*}[F4: direct sums, block diagonal matrices]
+  If $V=U_1\oplus\dots\oplus U_r$ with every $U_i$ invariant, then $m_T=\operatorname{lcm}\bigl(m_{T|_{U_1}},\dots,m_{T|_{U_r}}\bigr)$. For a block diagonal matrix, $m$ is the lcm of the minimal polynomials of the blocks.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Write $v=u_1+\dots+u_r$ with $u_i\in U_i$. Then $q(T)v=\sum_iq(T|_{U_i})u_i$, so $q(T)=0\iff q(T|_{U_i})=0$ for every $i$.
+    \ii By Prop.~65, that holds $\iff$ every $m_{T|_{U_i}}$ divides $q$.
+    \ii So $m_T$ is the monic polynomial of least degree divisible by all the $m_{T|_{U_i}}$: their lcm. The blocks of the matrix are the matrices of the $T|_{U_i}$ (T10).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F5: similarity, transpose, dual]
+  Similar matrices have the same minimal polynomial. Also $m_{A^{\mathsf T}}=m_A$ and $m_{T'}=m_T$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii $(S^{-1}AS)^k=S^{-1}A^kS$ (the inner factors $SS^{-1}$ cancel), so $p(S^{-1}AS)=S^{-1}p(A)S$. This is $0$ exactly when $p(A)=0$. So the same polynomials kill both, and the minimal polynomials agree.
+    \ii $(A^{\mathsf T})^k=(A^k)^{\mathsf T}$, so $p(A^{\mathsf T})=p(A)^{\mathsf T}$, which is $0$ exactly when $p(A)=0$.
+    \ii In dual bases, $\MM(T')=\MM(T)^{\mathsf T}$; apply step 2.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F6: shifts, scalings, inverses, HW7 P4, M5]
+  With $d=\deg m_T$:
+  \begin{enumerate}[(a)]
+    \ii $m_{T-\lambda I}(x)=m_T(x+\lambda)$;
+    \ii $m_{cT}(x)=c^d\,m_T(x/c)$ for $c\ne0$;
+    \ii if $T$ is invertible, $m_{T^{-1}}(x)=\frac1{c_0}x^dm_T(1/x)$, i.e.\ reverse the list of coefficients of $m_T$ and divide by $c_0$.
+  \end{enumerate}
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] The minimal polynomial of a new operator built from $T$.
+  \ii[Know.] A polynomial in the new operator is a polynomial in $T$ after a substitution: $q(T-\lambda I)$ is $r(T)$ with $r(x)=q(x-\lambda)$.
+  \ii[Key step.] The substitution can be undone and does not change degrees. So it matches the polynomials that kill the new operator with the polynomials that kill $T$, and the one of least degree goes to the one of least degree.
+\end{motive}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii For any $q$, $q(T-\lambda I)=r(T)$ with $r(x)=q(x-\lambda)$.
+    \ii So $q$ kills $T-\lambda I$ $\iff m_T(x)\mid q(x-\lambda)$ (Prop.~65) $\iff m_T(x+\lambda)\mid q(x)$ (replace $x$ by $x+\lambda$ throughout).
+    \ii $m_T(x+\lambda)$ is monic, so it is $m_{T-\lambda I}$.
+  \end{steps}
+  (b) The same three steps with $r(x)=q(cx)$: $q$ kills $cT\iff m_T(x/c)\mid q(x)$. Multiply $m_T(x/c)$ by $c^d$ to make it monic.
+
+  (c)
+  \begin{steps}
+    \ii Let $r(x)=\frac1{c_0}x^dm_T(1/x)=\frac1{c_0}\bigl(c_0x^d+c_1x^{d-1}+\dots+c_{d-1}x+1\bigr)$. It is monic of degree $d$ ($c_0\ne0$ by F1).
+    \ii $r(T^{-1})=\frac1{c_0}\bigl(c_0T^{-d}+c_1T^{-(d-1)}+\dots+I\bigr)=\frac1{c_0}T^{-d}m_T(T)=0$. So $m_{T^{-1}}\mid r$ and $\deg m_{T^{-1}}\le d$.
+    \ii The same argument with $T^{-1}$ in place of $T$ (its inverse is $T$) gives $d\le\deg m_{T^{-1}}$.
+    \ii So $m_{T^{-1}}$ divides $r$ and has the same degree; both are monic, so they are equal.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F7: one vector at a time]
+  For $v\in V$, let $p_v$ be the monic polynomial of least degree with $p_v(T)v=0$.
+  \begin{enumerate}[(a)]
+    \ii $q(T)v=0\iff p_v\mid q$. In particular $p_v\mid m_T$.
+    \ii For a basis $v_1,\dots,v_n$: $m_T=\operatorname{lcm}(p_{v_1},\dots,p_{v_n})$.
+    \ii If $v,Tv,\dots,T^{n-1}v$ is a basis ($v$ is a \vocab{cyclic vector}), then $m_T=p_v$, which has degree $n$.
+  \end{enumerate}
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $m_T$ from computations with single vectors, which are cheaper than powers of a matrix.
+  \ii[Know.] Polynomials that kill one vector behave like polynomials that kill $T$: the division argument of Prop.~65 works the same way. An operator that is $0$ on a basis is $0$.
+  \ii[Key step.] Killing $T$ means killing every basis vector, i.e.\ being divisible by every $p_{v_i}$. The least such polynomial is the lcm.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii (a) Divide: $q=p_vs+r$ with $\deg r<\deg p_v$ or $r=0$. If $q(T)v=0$, then $r(T)v=q(T)v-s(T)p_v(T)v=0$, so $r=0$ by minimality of $p_v$. Since $m_T(T)v=0$, $p_v\mid m_T$.
+    \ii (b) Let $L$ be the lcm. Each $p_{v_i}\mid L$, so $L(T)v_i=0$ by (a); $L(T)$ is $0$ on a basis, so $L(T)=0$ and $m_T\mid L$.
+    \ii Each $p_{v_i}\mid m_T$ by (a), so $L\mid m_T$. Both are monic, so $L=m_T$.
+    \ii (c) $v,\dots,T^{n-1}v$ are independent, so no nonzero polynomial of degree $<n$ kills $v$: $\deg p_v\ge n$. Also $p_v\mid m_T$ and $\deg m_T\le n$ (Prop.~67). So $m_T=p_v$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F8: the complex case, Prop.~74, M6]
+  Over $\CC$, let $\lambda_1,\dots,\lambda_m$ be the distinct eigenvalues and $d_i=\dim G(\lambda_i,T)$. Then $m_T=\prod_i(x-\lambda_i)^{s_i}$, where
+  \[ s_i=\text{the least }k\text{ with }\nul(T-\lambda_iI)^k=G(\lambda_i,T),\qquad 1\le s_i\le d_i. \]
+  So $m_T\mid\chi_T$, and $s_i$ is the size of the largest Jordan block for $\lambda_i$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] The exponent of each $x-\lambda_i$ in $m_T$.
+  \ii[Know.] $V$ splits into the invariant pieces $G(\lambda_i,T)$ (Prop.~73), and the minimal polynomial of a direct sum is the lcm of the pieces' minimal polynomials (F4).
+  \ii[Key step.] So compute $m$ on each piece separately. On $G(\lambda_i,T)$ the operator $T-\lambda_iI$ is nilpotent, so the minimal polynomial there is a power of $x-\lambda_i$, and the right power is the first one that is $0$ on the piece.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $(T-\lambda_iI)^n=0$ on $G(\lambda_i,T)$ (Prop.~70), so $m_{T|_{G(\lambda_i,T)}}$ divides $(x-\lambda_i)^n$. Its roots are roots of $(x-\lambda_i)^n$, so it is $(x-\lambda_i)^{s_i}$ for some $s_i$ (over $\CC$ it splits into linear factors, T6).
+    \ii $s_i$ is the least $k$ with $(T-\lambda_iI)^k=0$ on $G(\lambda_i,T)$, i.e.\ with $\nul(T-\lambda_iI)^k\supseteq G(\lambda_i,T)$. Since $\nul(T-\lambda_iI)^k\subseteq G(\lambda_i,T)$ always, this means equality.
+    \ii By Prop.~73 and F4, $m_T=\operatorname{lcm}_i(x-\lambda_i)^{s_i}=\prod_i(x-\lambda_i)^{s_i}$ (the $\lambda_i$ are distinct, so nothing is shared).
+    \ii $s_i\ge1$ since $G(\lambda_i,T)\ne0$, and $s_i\le d_i$ by Prop.~70 applied inside the $d_i$-dimensional $G(\lambda_i,T)$. The Jordan block statement is in ``Reading the Jordan form'' (Ch.~15).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F9: real versus complex]
+  For a real matrix $A$, $m_A$ is the same over $\RR$ and over $\CC$. So $A$ is diagonalizable over $\CC$ $\iff m_A$ has distinct roots, and diagonalizable over $\RR$ $\iff$ in addition every root is real. (Notes Ch.~23: $m_{T_\CC}=m_T$.)
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Computing over $\CC$ cannot give a different answer than over $\RR$.
+  \ii[Key step.] Def.~36 finds $m_A$ by solving linear equations whose coefficients are entries of powers of $A$, all real. Solving linear equations never leaves the real numbers.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii For each $k$, ``$A^k=a_{k-1}A^{k-1}+\dots+a_0I$'' is a system of $n^2$ linear equations in $a_0,\dots,a_{k-1}$ with real coefficients.
+    \ii Row reduction uses only $+,-,\times,\div$ of real numbers, so the system has a complex solution iff it has a real one.
+    \ii So the first solvable $k$ is the same over $\RR$ and $\CC$, and the solution is unique (Def.~36), hence real. So $m_A$ is the same.
+    \ii The consequences are Prop.~68 over each field: over $\RR$ the linear factors must have real roots.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F10: projections onto eigenspaces, HW7 P7]
+  If $m_T=\prod_{i=1}^m(x-\lambda_i)$ with distinct roots, then $g_j(T)$, with $g_j$ as in Prop.~68, is the projection onto $E(\lambda_j,T)$ along $\bigoplus_{i\ne j}E(\lambda_i,T)$.
+\end{proposition*}
+\begin{proof}
+  On $E(\lambda_i,T)$, $g_j(T)$ acts as the number $g_j(\lambda_i)$ (T7), which is $1$ for $i=j$ and $0$ for $i\ne j$. Since $V=\bigoplus_iE(\lambda_i,T)$, $g_j(T)(v_1+\dots+v_m)=v_j$.
+\end{proof}
+
+\begin{proposition*}[F11: repeated roots, Ex.~59]
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is a repeated root of $p$ $\iff p(\lambda)=p'(\lambda)=0$.
+    \ii The common roots of $p$ and $p'$ are the roots of $\gcd(p,p')$, which the Euclidean algorithm finds without factoring $p$.
+    \ii Over $\CC$, if $T^k=I$ for some $k\ge1$, then $T$ is diagonalizable.
+  \end{enumerate}
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] A test for repeated roots that does not need the roots.
+  \ii[Know.] From calculus: at a double root the graph touches the axis, so the value and the slope are both $0$.
+  \ii[Key step.] The product rule turns this into algebra: differentiating $(x-\lambda)^2q$ leaves a factor $x-\lambda$.
+\end{motive}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii If $p=(x-\lambda)^2q$, then $p'=2(x-\lambda)q+(x-\lambda)^2q'$, which is $0$ at $\lambda$.
+    \ii Conversely, if $p(\lambda)=0$, write $p=(x-\lambda)q$ (T6). Then $p'=q+(x-\lambda)q'$, so $p'(\lambda)=q(\lambda)$. If this is $0$, then $(x-\lambda)\mid q$, so $(x-\lambda)^2\mid p$.
+  \end{steps}
+  (b) Divide $p$ by $p'$, then $p'$ by the remainder, and so on. Each remainder is (previous dividend) $-$ (quotient)(previous divisor), so a common root of $p,p'$ is a root of every remainder, in particular of the last nonzero one, $g=\gcd(p,p')$. Conversely, $g$ divides $p$ and $p'$ (work back up the divisions).
+
+  Example: $p=x^3-3x+2$, $p'=3x^2-3$. Then $p=\frac x3\,p'+(-2x+2)$, and $p'=-\frac32(x+1)\cdot(-2x+2)$ with remainder $0$. So $g$ is a multiple of $x-1$, and $1$ is a double root: $p=(x-1)^2(x+2)$.
+
+  (c)
+  \begin{steps}
+    \ii $T^k=I$ means $x^k-1$ kills $T$, so $m_T\mid x^k-1$.
+    \ii $(x^k-1)'=kx^{k-1}$ has only the root $0$, which is not a root of $x^k-1$. By (a), $x^k-1$ has no repeated root, so it is a product of $k$ distinct linear factors.
+    \ii $m_T$ is a monic divisor of it, so it is a product of distinct linear factors (F3(b)). Prop.~68.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F12: odd dimension, LADR 5B]
+  Every operator on an odd-dimensional real vector space has an eigenvalue.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] A real eigenvalue, i.e.\ a real root of $m_T$ (Prop.~66).
+  \ii[Know.] Over $\RR$ there may be none: the rotation of $\RR^2$ has $m=x^2+1$. But $\RR^2$ has even dimension.
+  \ii[Plan.] Show that ``no real root'' forces the dimension to be even, in three steps. (A) A real polynomial with no real root is a product of quadratics $x^2+bx+c$ with $b^2<4c$. (B) For such a quadratic $p$, $\dim\nul p(T)$ is even: each nonzero $u$ in it comes with $Tu$, and $\spn(u,Tu)$ is $2$-dimensional. (C) Split off $\nul p(T)$ and use induction on the dimension.
+\end{motive}
+\needspace{7\baselineskip}\textbf{Step A: real polynomials.} A real polynomial is a product of real linear factors and real quadratics $x^2+bx+c$ with $b^2<4c$.
+\begin{steps}
+  \ii For real $p$, $p(\bar z)=\overline{p(z)}$, so if $z$ is a non-real root, so is $\bar z$.
+  \ii $q=(x-z)(x-\bar z)=x^2-2(\operatorname{Re}z)x+|z|^2$ is real, and $b^2-4c=-4(\operatorname{Im}z)^2<0$.
+  \ii Divide over $\RR$: $p=qs+r$ with $\deg r<2$. Then $r(z)=r(\bar z)=0$, and a polynomial of degree $<2$ with two roots is $0$. So $p=qs$ with $s$ real. Real roots split off real linear factors (T6). Repeat on $s$ (induction on the degree).
+\end{steps}
+\needspace{7\baselineskip}\textbf{Step B: if $b^2<4c$ and $p=x^2+bx+c$, then $\dim\nul p(T)$ is even.} Induction on $\dim\nul p(T)$; let $U=\nul p(T)$, which is invariant (T5).
+\begin{steps}
+  \ii $T|_U$ has no eigenvalue: $Tu=\lambda u$ with $u\in U$, $u\ne0$, gives $0=p(T)u=p(\lambda)u$, but $p(\lambda)=(\lambda+\frac b2)^2+c-\frac{b^2}4>0$.
+  \ii If $U=0$, its dimension $0$ is even. Otherwise pick $u\in U$, $u\ne0$, and let $W=\spn(u,Tu)$. It has dimension $2$, since $u$ is not an eigenvector. It is invariant, since $T(Tu)=-bTu-cu$.
+  \ii The quotient operator $S=T|_U/W$ on $U/W$ satisfies $p(S)=0$ (T12), so $\nul p(S)$ is all of $U/W$, of dimension $\dim U-2$. By induction this is even, so $\dim U$ is even.
+\end{steps}
+\needspace{7\baselineskip}\textbf{Step C: proof of F12.} Induction on the odd number $n=\dim V$; $n=1$ is clear.
+\begin{steps}
+  \ii Suppose $T$ has no eigenvalue. Then $m_T$ has no real root (Prop.~66), so by Step A, $m_T=ps$ with $p=x^2+bx+c$, $b^2<4c$.
+  \ii $s(T)\ne0$ (smaller degree than $m_T$), so some $w$ has $s(T)w\ne0$, and $p(T)\bigl(s(T)w\bigr)=0$. So $\nul p(T)\ne0$, and its dimension is even by Step B.
+  \ii $W=\range p(T)$ is invariant, and $\dim W=n-\dim\nul p(T)$ is odd and less than $n$ (T1). $T|_W$ has no eigenvalue, because an eigenvector of $T|_W$ is one of $T$. This contradicts the induction hypothesis.
+\end{steps}
+
+\needspace{14\baselineskip}
+\subsubsection*{Computing $m_T$}
+Over $\CC$, or whenever $\chi_T$ splits into linear factors, $m_T=\prod_i(x-\lambda_i)^{k_i}$ with $1\le k_i\le{}$(algebraic multiplicity of $\lambda_i$) (Prop.~66, F8). So the work is finding the eigenvalues and then the exponents. Use whichever method below needs the least computation.
+
+\method{Method 1: from the definition.} Compute $I,A,A^2,\dots$ and stop at the first power that is a combination of the earlier ones. Best for $2\times2$ matrices or when powers are easy.
+\begin{example*}
+  $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$ is not a multiple of $I$, so $I,A$ are independent. $A^2=\begin{psmallmatrix}4&5\\0&9\end{psmallmatrix}$. Solve $A^2=aA+bI$ entry by entry: entry $(1,2)$ gives $a=5$; entry $(1,1)$ gives $4=2a+b$, so $b=-6$; entry $(2,2)$ checks: $9=3a+b$. So $m_A=x^2-5x+6=(x-2)(x-3)$.
+\end{example*}
+
+\method{Method 2: eigenvalues, then test candidates.} Find the eigenvalues and their algebraic multiplicities $d_i$ (for a triangular matrix, read them off the diagonal, LADR 8.31). The candidates are $\prod_i(x-\lambda_i)^{k_i}$ with $1\le k_i\le d_i$. Test them in increasing degree; the first one that kills $A$ is $m_A$. Reason: $m_A$ is one of the candidates, and any candidate $q$ with $q(A)=0$ is a multiple of $m_A$ (Prop.~65), so $\deg q>\deg m_A$ unless $q=m_A$.
+\begin{example*}
+  $A=\begin{psmallmatrix}3&1&1\\0&3&1\\0&0&1\end{psmallmatrix}$ has eigenvalues $3,3,1$. Candidates: $(x-3)(x-1)$ and $(x-3)^2(x-1)$. $(A-3I)(A-I)=\begin{psmallmatrix}0&2&1\\0&0&0\\0&0&0\end{psmallmatrix}\ne0$, so $m_A=(x-3)^2(x-1)$, and $A$ is not diagonalizable.
+
+  $B=\begin{psmallmatrix}1&0&1\\0&1&0\\0&0&2\end{psmallmatrix}$ has eigenvalues $1,1,2$, and $(B-I)(B-2I)=0$. So $m_B=(x-1)(x-2)$, and $B$ is diagonalizable although it is not diagonal.
+\end{example*}
+
+\method{Method 3: blocks.} For a block diagonal matrix, $m$ is the lcm of the blocks' minimal polynomials (F4). For a block upper-triangular matrix $A=\begin{psmallmatrix}B&*\\0&C\end{psmallmatrix}$: $m_B\mid m_A$, $m_C\mid m_A$ and $m_A\mid m_Bm_C$. So if $m_B$ and $m_C$ have no common root, $m_A=m_Bm_C$.
+\why{\begin{steps}
+  \ii The first block of basis vectors spans an invariant subspace $U$ with $B=\MM(T|_U)$. $C$ is the matrix of $T/U$ in the cosets of the remaining basis vectors.
+  \ii $m_B\mid m_A$ and $m_C\mid m_A$ by F3(a). $m_A\mid m_Bm_C$ by step 4 of the proof of Prop.~67, which shows that $m_{T|_U}m_{T/U}$ kills $T$.
+  \ii ``No common root'' means no common root in $\CC$. Over $\CC$, $m_A=\prod(x-\lambda)^{e_\lambda}$, and each monic divisor of it is $\prod(x-\lambda)^{b_\lambda}$ with $b_\lambda\le e_\lambda$ (its roots are roots of $m_A$; divide out one factor at a time, T6).
+  \ii So $m_B$ and $m_C$ are such products over disjoint sets of $\lambda$'s, and their product divides $m_A$.
+\end{steps}}
+\begin{itemize}
+  \ii $A=\begin{psmallmatrix}1&-2&0&0\\1&-1&0&0\\0&0&2&0\\0&0&0&2\end{psmallmatrix}$: the first block $R$ has $R^2=-I$ and is not a multiple of $I$, so $m_R=x^2+1$; the block $2I$ has $m=x-2$. So $m_A=(x-2)(x^2+1)$. Over $\CC$ the roots $2,\pm i$ are distinct, so $A$ is diagonalizable over $\CC$; over $\RR$ it is not, since $\pm i\notin\RR$ (F9).
+  \ii The matrix $A$ of Method 2 is $\begin{psmallmatrix}B&*\\0&1\end{psmallmatrix}$ with $B=\begin{psmallmatrix}3&1\\0&3\end{psmallmatrix}$, $m_B=(x-3)^2$. The roots $3$ and $1$ differ, so $m_A=(x-3)^2(x-1)$ with no matrix multiplication.
+\end{itemize}
+
+\method{Method 4: follow one vector (F7).} Compute $v,Av,A^2v,\dots$ until the first dependence; it gives $p_v$, which divides $m_A$. If $\deg p_v=n$, then $m_A=p_v$. Otherwise repeat with more basis vectors and take the lcm.
+\begin{example*}
+  $A=\begin{psmallmatrix}0&0&2\\1&0&-1\\0&1&2\end{psmallmatrix}$: $Ae_1=e_2$, $Ae_2=e_3$, so $e_1,Ae_1,A^2e_1$ is a basis. $A^3e_1=Ae_3=(2,-1,2)=2e_1-Ae_1+2A^2e_1$. So $m_A=x^3-2x^2+x-2=(x-2)(x^2+1)$.
+
+  $A=\begin{psmallmatrix}2&0&0\\1&2&0\\0&0&3\end{psmallmatrix}$: $Ae_1=(2,1,0)$, $A^2e_1=(4,4,0)=4Ae_1-4e_1$, so $p_{e_1}=(x-2)^2$. $Ae_3=3e_3$, so $p_{e_3}=x-3$. The lcm $(x-2)^2(x-3)$ has degree $3=n$, so it is $m_A$; there is no need to compute $p_{e_2}$.
+\end{example*}
+The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and $Ae_n=a_0e_1+\dots+a_{n-1}e_n$, then $e_1$ is cyclic and $A^ne_1=Ae_n$, so $m_A=x^n-a_{n-1}x^{n-1}-\dots-a_0$. So every monic polynomial is the minimal polynomial of some matrix.
+
+\method{Method 5: spot a relation.} If you notice $p(A)=0$, then $m_A\mid p$; check which divisors work.
+\begin{itemize}
+  \ii Rank one, $A=uv^{\mathsf T}$ (all columns multiples of $u$): $A^2=u(v^{\mathsf T}u)v^{\mathsf T}=(\tr A)A$. For $n\ge2$, $A$ is not a multiple of $I$, so $m_A=x(x-\tr A)$ if $\tr A\ne0$ (diagonalizable) and $m_A=x^2$ if $\tr A=0$ (not diagonalizable). Example: $\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}^2=2\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}$, so $m=x(x-2)$.
+  \ii $A^2=A$: $m_A$ is $x$, $x-1$ or $x(x-1)$. $A^2=I$: $m_A$ is $x-1$, $x+1$ or $(x-1)(x+1)$. Both cases are diagonalizable. $A^k=0$: $m_A=x^j$ for the least $j$ with $A^j=0$.
+  \ii A permutation matrix satisfies $P^k=I$ for some $k\ge1$ (only finitely many permutations, so two powers agree), so it is diagonalizable over $\CC$ (F11).
+\end{itemize}
+
+\method{Method 6: $2\times2$ and $3\times3$ formulas.} For $2\times2$ $A$: $m_A=x^2-(\tr A)x+\det A$, unless $A=cI$ (then $m_A=x-c$).
+\begin{itemize}
+  \ii Why: for $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, $A^2-(a+d)A=\begin{psmallmatrix}bc-ad&0\\0&bc-ad\end{psmallmatrix}$, so $A^2-(\tr A)A+(\det A)I=0$. If $A\ne cI$, $\deg m_A=2$ and $m_A$ divides this monic quadratic, so they are equal.
+  \ii Example: $A=\begin{psmallmatrix}1&4\\-1&-3\end{psmallmatrix}$: $\tr A=-2$, $\det A=1$, so $m_A=(x+1)^2$; $A\ne-I$, so $A$ is not diagonalizable.
+  \ii For $3\times3$ $A$ (using $\chi_A=\det(xI-A)$, stated in the notes; determinants are Ch.~25): $\chi_A=x^3-(\tr A)x^2+c_2x-\det A$, where $c_2$ is the sum of the three $2\times2$ minors on the diagonal (rows and columns $\{1,2\},\{1,3\},\{2,3\}$). This gives the candidates for Method 2 when $A$ is not triangular.
+\end{itemize}
+
+\method{Method 7: null-space dimensions (F8).} For each eigenvalue $\lambda$, compute $d_k=\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$ for $k=1,2,\dots$. The first $k$ at which $d_k$ stops growing (equivalently, reaches the algebraic multiplicity) is the exponent of $x-\lambda$.
+\begin{example*}
+  $A=\begin{psmallmatrix}1&1&1\\0&1&1\\0&0&3\end{psmallmatrix}$ (Ex.~61). For $\lambda=1$: $d_1=1$ and $d_2=2$, which is the number of $1$s on the diagonal, so the exponent is $2$. $\lambda=3$ appears once, so its exponent is $1$. So $m_A=(x-1)^2(x-3)$.
+\end{example*}
+If you already know the Jordan form, the exponent is the size of the largest block for $\lambda$.
+
+\method{Method 8: operators on function spaces.} Work with the operator directly, or take its matrix in a basis.
+\begin{example*}
+  $D$ on $V=\spn(e^x,xe^x)$: $(D-I)e^x=0$, $(D-I)(xe^x)=e^x\ne0$, and $(D-I)^2(xe^x)=0$. So $(D-I)^2=0$ and $D\ne I$: $m_D=(x-1)^2$, and $D$ is not diagonalizable.
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Exponent $1$ test.} The exponent of $\lambda$ in $m$ is $1$ $\iff\dim E(\lambda)$ equals the algebraic multiplicity $\iff\operatorname{rank}(A-\lambda I)=n-d_\lambda$. One rank computation per eigenvalue settles diagonalizability.
+  \ii \textbf{No computation needed.} $n$ distinct eigenvalues (e.g.\ a triangular matrix with distinct diagonal entries) $\Rightarrow m=\chi=\prod(x-\lambda_i)$, diagonalizable. One eigenvalue $\lambda$ and $A\ne\lambda I$ $\Rightarrow$ not diagonalizable.
+  \ii \textbf{Never test $\chi$ itself}: it always works (Cayley--Hamilton). If every smaller candidate fails, $m=\chi$. One nonzero entry is enough to show a candidate fails.
+  \ii \textbf{Inverse} (F1). $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$: $A^2-5A+6I=0$, so $A(5I-A)=6I$ and $A^{-1}=\frac16(5I-A)$.
+  \ii \textbf{High powers.} Divide: $x^k=m(x)q(x)+r(x)$ with $\deg r<\deg m$; then $A^k=r(A)$. Find $r$ by putting each root $\lambda$ of $m$ into this identity: $r(\lambda)=\lambda^k$. For a double root, differentiate as well: $r'(\lambda)=k\lambda^{k-1}$ (the derivative of $(x-\lambda)^2q$ is $2(x-\lambda)q+(x-\lambda)^2q'$, which vanishes at $\lambda$).
+  \begin{itemize}
+    \ii $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$, $r=ax+b$: $2a+b=2^k$, $3a+b=3^k$, so $A^k=(3^k-2^k)A+(3\cdot2^k-2\cdot3^k)I$.
+    \ii $m=(x+1)^2$ (as for $\begin{psmallmatrix}1&4\\-1&-3\end{psmallmatrix}$): $r(-1)=(-1)^k$, $r'(-1)=k(-1)^{k-1}$, so $A^k=(-1)^kI+k(-1)^{k-1}(A+I)$.
+  \end{itemize}
+  \ii \textbf{Any polynomial} $p(A)$ equals $r(A)$, where $r$ is the remainder of $p$ divided by $m_A$. So every polynomial in $A$ is a combination of $I,A,\dots,A^{d-1}$.
+  \ii \textbf{Eigenvectors without solving} (Prop.~66). If $m=(x-\lambda)s$, the nonzero columns of $s(A)$ are eigenvectors for $\lambda$; if $A$ is diagonalizable, they span $E(\lambda)$ (on $E(\mu)$, $s(A)$ is the number $s(\mu)$, which is $0$ for $\mu\ne\lambda$ and nonzero for $\mu=\lambda$). For $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$ and $\lambda=3$: $s(A)=A-2I=\begin{psmallmatrix}0&1\\0&1\end{psmallmatrix}$, so $(1,1)$ is an eigenvector for $3$.
+  \ii \textbf{Diagonalizable without finding eigenvalues.} One polynomial that kills $T$ and has distinct roots in $\FF$ is enough, since $m_T$ divides it: $T^2=T$, $T^2=I$, $T^3=T$ (over $\RR$), $T^k=I$ (over $\CC$).
+  \ii \textbf{Not similar}: different minimal polynomials prove it (F5). Equal minimal polynomials do not prove similarity.
+  \ii \textbf{Lower bound}: if $v,Av,\dots,A^{j-1}v$ are independent, then $\deg m_A\ge j$ (F7).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii Only roots in $\FF$ are eigenvalues: over $\RR$, $m=x^2+1$ gives no eigenvalues.
+  \ii A polynomial that kills $T$ need not be $m_T$: $T^2=T$ allows $m_T=x$, $x-1$ or $x^2-x$. Check the divisors.
+  \ii Every eigenvalue is a root of $m_T$, so a candidate that leaves out an eigenvalue never works.
+  \ii The exponents in $m_T$ are bounded by the algebraic multiplicities. The exponent of $\lambda$ is the size of the largest Jordan block, not the number of blocks (that is $\dim E(\lambda)$).
+  \ii $p(T)v=0$ for one $v\ne0$ only gives $p_v\mid p$, not $m_T\mid p$. And $v$ need not be an eigenvector even when $p$ has distinct roots: $T=\operatorname{diag}(1,2)$, $v=(1,1)$, $p=(x-1)(x-2)$. What does follow, if $p$ splits into linear factors over $\FF$ (always true over $\CC$), is that some root of $p$ is an eigenvalue (T4, T6). Over $\RR$ not even that: $T=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$, $p=x^2+1$, $v=e_1$.
+  \ii Over $\RR$, $T^k=I$ does not imply diagonalizable: $R=\begin{psmallmatrix}1&-2\\1&-1\end{psmallmatrix}$ has $R^4=I$ but $m_R=x^2+1$.
+  \ii $m_{T^{-1}}(x)$ is not $m_T(1/x)$, which is not a polynomial. Reverse the coefficients and divide by $c_0$.
+  \ii $\deg m_T=n$ says nothing about diagonalizability: $\operatorname{diag}(1,2)$ and $J_2(0)$ both have degree $2$.
+\end{trapbox}
+
+\needspace{14\baselineskip}
+\subsection{Generalized eigenvectors (Ch.~14)}
+
+\begin{qbox}
+  We want the simplest matrix for every operator. With an eigenbasis it is diagonal, but often there are too few eigenvectors.
+  \begin{itemize}
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ has eigenvectors only on $\spn(e_1)$.
+    \ii But $Ne_2=e_1\ne0$ and $N^2e_2=0$: $e_2$ is sent to $0$ by $N^2$ but not by $N$.
+    \ii Idea of the chapter: allow $(T-\lambda I)^kv=0$ for some $k\ge1$ instead of only $k=1$. Over $\CC$ that gives enough vectors for a basis.
+  \end{itemize}
+\end{qbox}
+
+\begin{definition*}[Def.~37 / LADR 8.8, 8.19]
+  $v\ne0$ is a \vocab{generalized eigenvector} for $\lambda$ if $(T-\lambda I)^kv=0$ for some $k\ge1$. The \vocab{generalized eigenspace} is $G(\lambda,T)=\bigcup_{k\ge0}\nul(T-\lambda I)^k$.
+\end{definition*}
+\begin{itemize}
+  \ii $E(\lambda,T)\subseteq G(\lambda,T)$ (take $k=1$). In the example, $E(0,N)=\spn(e_1)$ but $G(0,N)=\FF^2$.
+  \ii A union over all $k$ is awkward. Props.~69--70 show it stops at a fixed power.
+\end{itemize}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,node distance=1.9cm]
+  \node (v) {$v$};
+  \node[right=of v] (v1) {$(T-\lambda I)v$};
+  \node[right=of v1] (d) {$\cdots$};
+  \node[right=of d] (w) {$w$};
+  \node[right=of w] (z) {$0$};
+  \foreach \a/\b in {v/v1,v1/d,d/w,w/z} \draw[->] (\a) -- node[above]{\scriptsize$T-\lambda I$} (\b);
+  \node[below=3pt of v,font=\small,align=center,blue] {generalized\\eigenvector};
+  \node[below=3pt of w,font=\small,align=center,OliveGreen!70!black] {last nonzero vector:\\an eigenvector};
+\end{tikzpicture}
+\figcap{Repeatedly applying $T-\lambda I$ to a generalized eigenvector reaches $0$. The last nonzero vector $w$ has $(T-\lambda I)w=0$, so it is an eigenvector (Prop.~71). Smallest case: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_2\mapsto e_1\mapsto0$.}
+\end{fig}
+
+\begin{proposition*}[Prop.~69 / LADR 8.1, 8.2: the null-space chain]
+  $\{0\}=\nul T^0\subseteq\nul T\subseteq\nul T^2\subseteq\cdots$. If $\nul T^m=\nul T^{m+1}$, then $\nul T^m=\nul T^{m+k}$ for all $k\ge0$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] (a) Each null space contains the one before. (b) Once two neighbours are equal, all later ones are equal.
+  \ii[(a)] A vector killed by $T^k$ stays killed by $T^{k+1}=T\cdot T^k$.
+  \ii[Know, for (b).] Only one equality, $\nul T^m=\nul T^{m+1}$. To use it on a vector $v\in\nul T^{m+k+1}$, we need some vector in $\nul T^{m+1}$ built from $v$.
+  \ii[Key step.] Split the power: $T^{m+k+1}v=T^{m+1}(T^kv)$. So $T^kv\in\nul T^{m+1}=\nul T^m$, which says $T^{m+k}v=0$. That is the equality one step higher; repeat.
+  \ii[Example.] The shift on $\FF^3$ ($e_3\mapsto e_2\mapsto e_1\mapsto0$) has $\dim\nul T^k=0,1,2,3,3,3,\dots$: it grows until two neighbours are equal, and after that all are equal.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $T^kv=0$, then $T^{k+1}v=T(0)=0$. So $\nul T^k\subseteq\nul T^{k+1}$.
+    \ii Suppose $\nul T^m=\nul T^{m+1}$ and $T^{m+k+1}v=0$. Then $T^kv\in\nul T^{m+1}=\nul T^m$.
+    \ii So $T^{m+k}v=T^m(T^kv)=0$. Hence $\nul T^{m+k+1}\subseteq\nul T^{m+k}$, and with step 1 they are equal. Induct on $k$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~70 / LADR 8.3, 8.20]
+  $\nul T^n=\nul T^{n+1}$. Hence $G(\lambda,T)=\nul(T-\lambda I)^n$, a $T$-invariant subspace.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] The chain has stopped by the power $n$.
+  \ii[Know.] Until it stops, each step raises the dimension by at least $1$ (a strictly larger subspace has larger dimension). Dimensions are at most $n$. Once it stops, it stays stopped (Prop.~69).
+  \ii[Key step.] Count: starting from dimension $0$, $n+1$ strict steps would reach dimension $n+1>n$. So one of the first $n+1$ steps is an equality, and from there on the chain is constant.
+  \ii[Why it matters.] The union defining $G(\lambda,T)$ is then the single null space $\nul(T-\lambda I)^n$. So it is a subspace, and it is invariant by (T5).
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose $\nul T^n\ne\nul T^{n+1}$. By Prop.~69 no earlier pair is equal either.
+    \ii Then $0=\dim\nul T^0<\dim\nul T^1<\dots<\dim\nul T^{n+1}\le n$: that is $n+2$ distinct integers in $\{0,\dots,n\}$. Impossible.
+    \ii So $\bigcup_k\nul(T-\lambda I)^k=\nul(T-\lambda I)^n$. It is invariant by (T5).
+  \end{steps}
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}[x=0.95cm,y=0.48cm,>=Stealth]
+  \draw[->] (0,0) -- (7.5,0) node[right] {$k$};
+  \draw[->] (0,0) -- (0,6.3) node[above] {$\dim\nul N^k$};
+  \foreach \k in {0,...,7} \draw (\k,0.12) -- (\k,-0.12) node[below] {\small$\k$};
+  \foreach \y in {1,...,5} \draw (0.1,\y) -- (-0.1,\y) node[left] {\small$\y$};
+  \draw[dashed,gray] (0,5) -- (7.3,5) node[right] {\small$n$};
+  \draw[thick,blue] (0,0) -- (1,2) -- (2,4) -- (3,5) -- (7,5);
+  \foreach \k/\d in {0/0,1/2,2/4,3/5,4/5,5/5,6/5,7/5} \fill[blue] (\k,\d) circle (2.3pt);
+  \node[font=\small,anchor=west] at (2.1,2.4) {rises by $\ge1$ per step};
+  \node[font=\small,anchor=south] at (5,5.1) {constant after the first repeat};
+\end{tikzpicture}
+\figcap{$N$ with blocks $J_3(0),J_2(0)$ on $\FF^5$: $\dim\nul N^k=0,2,4,5,5,\dots$ While the chain grows it gains at least $1$ per step, and it cannot pass $n$, so it has stopped by $k=n$ (Prop.~70). Once two neighbours agree, all later ones agree (Prop.~69).}
+\end{fig}
+
+\begin{proposition*}[LADR 8.4, 8.5: splitting off the nilpotent part]
+  $V=\nul T^n\oplus\range T^n$, and $T$ is injective on $\range T^n$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Split $V$ into a part where $T$ is nilpotent ($\nul T^n$) and a part where $T$ is invertible ($\range T^n$). Applied to $T-\lambda I$, this splits off $G(\lambda,T)$; that is the first step of Prop.~73.
+  \ii[Know.] $\dim\nul T^n+\dim\range T^n=n$ (T1). So by (T3) it is enough to show $\nul T^n\cap\range T^n=\{0\}$.
+  \ii[First try.] Power $1$: is $\nul T\cap\range T=\{0\}$? No. For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_1=Ne_2$ is in the range and $Ne_1=0$. A nonzero vector of $\range N$ can lie in $\nul N$.
+  \ii[Key step.] With the power $n$, $\range T^n$ meets $\nul T^n$ only in $0$, because the chain has stopped. If $v=T^nu$ and $T^nv=0$, then $T^{2n}u=0$, and $\nul T^{2n}=\nul T^n$ (Prop.~70) gives $T^nu=0$, i.e.\ $v=0$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Let $v=T^nu$ with $T^nv=0$. Then $T^{2n}u=0$, so $u\in\nul T^{2n}=\nul T^n$, so $v=0$.
+    \ii $\dim\nul T^n+\dim\range T^n=n$ (T1), so $V=\nul T^n\oplus\range T^n$ (T3).
+    \ii If $w\in\range T^n$ and $Tw=0$, then $w\in\nul T\subseteq\nul T^n$, so $w=0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~71]
+  $G(\lambda,T)\ne\{0\}\iff\lambda$ is an eigenvalue of $T$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] A nonzero generalized eigenvector for $\lambda$ forces an eigenvector for $\lambda$.
+  \ii[Key step.] Apply $T-\lambda I$ to $v$ repeatedly: $v\mapsto(T-\lambda I)v\mapsto\cdots\mapsto0$. The last nonzero vector in this list is sent to $0$ by $T-\lambda I$, so it is an eigenvector.
+\end{motive}
+\begin{proof}
+  If $\lambda$ is an eigenvalue, $\{0\}\ne E(\lambda,T)\subseteq G(\lambda,T)$. Conversely, let $v\in G(\lambda,T)$, $v\ne0$, and let $j\ge0$ be the largest exponent with $w=(T-\lambda I)^jv\ne0$ (it exists because $(T-\lambda I)^kv=0$ for some $k$). Then $(T-\lambda I)w=0$ and $w\ne0$.
+\end{proof}
+
+\begin{proposition*}[Prop.~72 / LADR 8.12]
+  Generalized eigenvectors $v_1,\dots,v_m$ for distinct eigenvalues $\lambda_1,\dots,\lambda_m$ are independent.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] From $\sum a_iv_i=0$, get each $a_k=0$.
+  \ii[Know.] How independence of eigenvectors is proved (Prop.~54): apply an operator that kills every term except the $k$-th and is nonzero on the $k$-th. What is left is $a_k\cdot(\text{nonzero vector})=0$.
+  \ii[First try.] $(T-\lambda_iI)^n$ kills $v_i$, so $S=\prod_{i\ne k}(T-\lambda_iI)^n$ kills every $v_i$ with $i\ne k$. But it is not clear what $S$ does to $v_k$, which is only a generalized eigenvector.
+  \ii[Key step.] On an actual eigenvector $w$ for $\lambda_k$, $S$ is easy: $Sw=\prod_{i\ne k}(\lambda_k-\lambda_i)^nw\ne0$ (T7). So first turn $v_k$ into an eigenvector by applying $(T-\lambda_kI)^N$, as in Prop.~71. The extra factor still gives $Sv_i=0$ for $i\ne k$, because all the factors commute.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Fix $k$. Let $N$ be the largest exponent with $w=(T-\lambda_kI)^Nv_k\ne0$. Then $Tw=\lambda_kw$, so $(T-\lambda_iI)^nw=(\lambda_k-\lambda_i)^nw$.
+    \ii Apply $S=\prod_{i\ne k}(T-\lambda_iI)^n\cdot(T-\lambda_kI)^N$ to $\sum a_iv_i=0$. The factors commute (T5) and $(T-\lambda_iI)^nv_i=0$ (Prop.~70), so $Sv_i=0$ for $i\ne k$.
+    \ii What is left: $0=a_k\prod_{i\ne k}(\lambda_k-\lambda_i)^n\,w$. The product and $w$ are nonzero, so $a_k=0$.
+  \end{steps}
+\end{proof}
+
+\needspace{7\baselineskip}\textbf{Two consequences.}
+\begin{itemize}
+  \ii $G(\lambda,T)\cap G(\mu,T)=\{0\}$ for $\lambda\ne\mu$: a nonzero $v$ in both would make the list $v,v$ independent (Prop.~72). So a generalized eigenvector belongs to only one eigenvalue.
+  \ii If $U$ is invariant, $G(\lambda,T|_U)=G(\lambda,T)\cap U$, since $(T|_U-\lambda I)^ku=(T-\lambda I)^ku$ for $u\in U$.
+\end{itemize}
+
+\begin{theorem*}[Prop.~73 / LADR 8.9, 8.22: generalized eigenspace decomposition]
+  Over $\CC$, if $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues of $T$, then $V=G(\lambda_1,T)\oplus\cdots\oplus G(\lambda_m,T)$. In particular $V$ has a basis of generalized eigenvectors of $T$.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] (a) The $G(\lambda_i,T)$ together span $V$. (b) The sum is direct.
+  \ii[(b)] is Prop.~72: a relation $u_1+\dots+u_m=0$ with $u_i\in G(\lambda_i,T)$ and some $u_i\ne0$ would be a dependence among generalized eigenvectors for distinct eigenvalues.
+  \ii[Know, for (a).] The splitting result for $T-\lambda_1I$: $V=G(\lambda_1,T)\oplus U$ with $U=\range(T-\lambda_1I)^n$ invariant. $U$ is smaller than $V$ because $G(\lambda_1,T)\ne0$.
+  \ii[Key step.] Induct on $\dim V$. The theorem for $T|_U$ writes $U$ as a sum of generalized eigenspaces of $T|_U$, and these lie inside those of $T$. The eigenvalue $\lambda_1$ does not come back in $U$, because $T-\lambda_1I$ is injective on $U$.
+  \ii[Why $\CC$.] We need an eigenvalue $\lambda_1$ to start (T7). Over $\RR$, the rotation $\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ has no eigenvalues, so all its generalized eigenspaces are $0$.
+  \ii[Example.] $A=\begin{psmallmatrix}1&1&1\\0&1&1\\0&0&3\end{psmallmatrix}$: $G(1,A)=\spn(e_1,e_2)$ (Ex.~61 below) and $G(3,A)=E(3,A)=\spn\bigl((3,2,4)\bigr)$. So $\CC^3=G(1,A)\oplus G(3,A)$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Induction on $n$; $n=1$ is clear. Take an eigenvalue $\lambda_1$ (T7).
+    \ii Splitting result for $T-\lambda_1I$: $V=G(\lambda_1,T)\oplus U$, $U=\range(T-\lambda_1I)^n$. $U$ is invariant (T5), and $\dim U<n$ since $G(\lambda_1,T)\ne0$ (Prop.~71).
+    \ii Eigenvalues of $T|_U$ are eigenvalues of $T$, but not $\lambda_1$ ($T-\lambda_1I$ is injective on $U$). By induction $U=\bigoplus_{i\ge2}G(\lambda_i,T|_U)$, and $G(\lambda_i,T|_U)\subseteq G(\lambda_i,T)$.
+    \ii So the $G(\lambda_i,T)$ span $V$. Direct: if $u_1+\dots+u_m=0$, $u_i\in G(\lambda_i,T)$, the nonzero $u_i$ would be independent (Prop.~72); so all are $0$.
+  \end{steps}
+\end{proof}
+On each $G(\lambda_i,T)$, $T=\lambda_iI+N_i$ with $N_i$ nilpotent. So everything reduces to nilpotent operators (Ch.~15).
+
+\begin{definition*}[Def.~38]
+  \vocab{Algebraic multiplicity} of $\lambda$: $\dim G(\lambda,T)$. \vocab{Geometric multiplicity}: $\dim E(\lambda,T)$.
+\end{definition*}
+\begin{itemize}
+  \ii geometric $\le$ algebraic, since $E\subseteq G$.
+  \ii Over $\CC$, the algebraic multiplicities add up to $n$ (Prop.~73).
+  \ii Over $\CC$, $T$ is diagonalizable $\iff$ geometric $=$ algebraic for every eigenvalue.
+  \why{The sum $\sum E(\lambda_i,T)$ is direct (T7), and $T$ is diagonalizable iff it is $V$, i.e.\ $\sum\dim E=n=\sum\dim G$. Since each $\dim E\le\dim G$, the sums agree iff every term agrees.}
+\end{itemize}
+
+\begin{theorem*}[Prop.~74 / LADR 8.26, 8.29: Cayley--Hamilton]
+  Over $\CC$, let $d_i=\dim G(\lambda_i,T)$ and $\chi_T(x)=\prod_i(x-\lambda_i)^{d_i}$ (the \vocab{characteristic polynomial}). Then $\chi_T(T)=0$, so $m_T\mid\chi_T$. Also $\deg\chi_T=\sum d_i=n$ (Prop.~73), so $\deg m_T\le n$.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] $\chi_T(T)v=0$ for every $v$.
+  \ii[Know.] $V=\bigoplus_iG(\lambda_i,T)$ (Prop.~73), so it is enough to take $v$ in one $G(\lambda_i,T)$. There, $T-\lambda_iI$ is nilpotent.
+  \ii[Key step 1.] Which power of $T-\lambda_iI$ kills $G(\lambda_i,T)$? Prop.~70, applied inside $G(\lambda_i,T)$, a space of dimension $d_i$, gives the power $d_i$. That is why the exponents in $\chi_T$ are the $d_i$.
+  \ii[Key step 2.] The factors of $\chi_T(T)$ commute, so for $v\in G(\lambda_i,T)$ let $(T-\lambda_iI)^{d_i}$ act first.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $N=(T-\lambda_iI)|_{G(\lambda_i,T)}$ has $G(0,N)=G(\lambda_i,T)$, so $N^{d_i}=0$ by Prop.~70 in that space.
+    \ii For $v\in G(\lambda_i,T)$: $\chi_T(T)v=\prod_{j\ne i}(T-\lambda_jI)^{d_j}\,(T-\lambda_iI)^{d_i}v=0$ (T5).
+    \ii The $G$'s span $V$, so $\chi_T(T)=0$; then $m_T\mid\chi_T$ (Prop.~65) and $\deg\chi_T=\sum d_i=n$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii For a matrix, $\chi_A(x)=\det(xI-A)$ (stated in the notes; needs determinants).
+  \ii $2\times2$: $\chi_A=x^2-(\tr A)x+\det A$.
+  \why{Multiplying out gives $A^2-(\tr A)A+(\det A)I=0$. If $A\ne cI$, $m_A$ has degree $2$ and divides both this polynomial and $\chi_A$, so all three agree. If $A=cI$, both are $(x-c)^2$.}
+  \ii $\chi_T$ and $m_T$ have the same roots; the exponents in $m_T$ can be smaller.
+\end{itemize}
+
+\begin{proposition*}[LADR 8.31: diagonal of a triangular matrix]
+  Over $\CC$, if $\MM(T)$ is upper-triangular, then $\dim G(\lambda,T)$ is the number of times $\lambda$ appears on the diagonal.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $\dim G(\lambda,T)=c_\lambda$, the number of times $\lambda$ appears on the diagonal.
+  \ii[Know.] $\dim G(\lambda,T)=\dim\nul(T-\lambda I)^n=n-\operatorname{rank}(T-\lambda I)^n$. The matrix of $(T-\lambda I)^n$ is upper-triangular with diagonal entries $(a_{jj}-\lambda)^n$, nonzero in exactly $n-c_\lambda$ places.
+  \ii[First try.] Compute the rank exactly. This is hard: columns with a $0$ on the diagonal can still be nonzero and add to the rank.
+  \ii[Key step.] Settle for an inequality. The $n-c_\lambda$ columns with nonzero diagonal entries are independent (T8), so $\operatorname{rank}\ge n-c_\lambda$, i.e.\ $\dim G(\lambda,T)\le c_\lambda$. Now add over all $\lambda$: both sides add up to $n$, so none of the inequalities can be strict.
+  \ii[Pattern.] ``Prove $\le$ for each term, then compare totals'' also proves the test ``diagonalizable $\iff$ geometric $=$ algebraic'' above.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Let $c_\lambda$ be the count. $\MM((T-\lambda I)^n)$ is triangular with diagonal $(a_{jj}-\lambda)^n$, nonzero in $n-c_\lambda$ places.
+    \ii Those columns are independent (T8), so $\operatorname{rank}\ge n-c_\lambda$ and $\dim G(\lambda,T)\le c_\lambda$ (Prop.~70, T1).
+    \ii $n=\sum_\lambda\dim G(\lambda,T)\le\sum_\lambda c_\lambda=n$ (Prop.~73), so every inequality is an equality.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Computing $G(\lambda,A)$ (Ex.~61)]
+  $A=\begin{psmallmatrix}1&1&1\\0&1&1\\0&0&3\end{psmallmatrix}$, $\lambda=1$.
+  \begin{steps}
+    \ii $\nul(A-I)=\spn(e_1)$, $\nul(A-I)^2=\spn(e_1,e_2)$, $\nul(A-I)^3=\spn(e_1,e_2)$.
+    \ii Two consecutive null spaces agree, so the chain has stopped: $G(1,A)=\spn(e_1,e_2)$.
+    \ii Shortcut: $1$ appears twice on the diagonal, so you can stop at dimension $2$.
+  \end{steps}
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Smaller power.} $G(\lambda,T)=\nul(T-\lambda I)^{d}$, $d$ the algebraic multiplicity, and even $\nul(T-\lambda I)^{k}$ with $k$ the exponent of $x-\lambda$ in $m_T$ (F8). Why: $T-\lambda I$ is nilpotent on the $d$-dimensional space $G(\lambda,T)$, so Prop.~70 inside it gives the power $d$.
+  \ii \textbf{Know the target dimension first.} For a triangular matrix, $\dim G(\lambda)$ is the number of $\lambda$'s on the diagonal (LADR 8.31); in general it is the multiplicity of $\lambda$ as a root of $\chi_A=\det(xI-A)$. Stop the chain $\dim\nul(A-\lambda I)^k$ as soon as it reaches that number.
+  \ii \textbf{Last one by subtraction.} The algebraic multiplicities add up to $n$, so the last one is $n$ minus the others. And if the $\dim G(\lambda_i)$ you found already add up to $n$, there are no other eigenvalues.
+  \ii \textbf{Multiplicity $1$.} If the algebraic multiplicity is $1$, then $G(\lambda)=E(\lambda)$ (since $1\le\dim E\le\dim G=1$).
+  \ii \textbf{One eigenvalue.} Over $\CC$, if $\lambda$ is the only eigenvalue, $G(\lambda,T)=V$ and $(T-\lambda I)^n=0$ with no computation.
+  \ii \textbf{Geometric multiplicity by rank.} $\dim E(\lambda)=n-\operatorname{rank}(A-\lambda I)$, and $\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$.
+  \ii \textbf{$G(\lambda)$ as a range.} Over $\CC$, $G(\lambda,T)=\range\prod_{\mu\ne\lambda}(T-\mu I)^{d_\mu}$, and $\bigoplus_{\mu\ne\lambda}G(\mu,T)$ is the null space of that product. Useful when the other eigenvalues are simple: for the $A$ of Ex.~61, $G(1,A)=\range(A-3I)=\spn(e_1,e_2)$. Why, with $P$ the product and $H=\bigoplus_{\mu\ne\lambda}G(\mu,T)$:
+  \begin{enumerate}[label=\arabic*.,itemsep=1pt]
+    \ii $P=0$ on each $G(\mu,T)$, $\mu\ne\lambda$: let $(T-\mu I)^{d_\mu}$ act first (Prop.~74, step 1).
+    \ii $P$ is injective on $G(\lambda,T)$: each $T-\mu I$ is, since a nonzero $v\in G(\lambda,T)$ with $Tv=\mu v$ would lie in $G(\lambda,T)\cap G(\mu,T)=0$.
+    \ii $G(\lambda,T)$ is invariant (T5), so $P$ maps it injectively into itself, hence onto itself (T2).
+    \ii $V=G(\lambda,T)\oplus H$ (Prop.~73) and $P=0$ on $H$, so $\range P=G(\lambda,T)$ and $\nul P=H$.
+  \end{enumerate}
+  \ii \textbf{Commuting operators.} If $ST=TS$, then $S$ maps $G(\lambda,T)$ into itself (G2): $(T-\lambda I)^nSv=S(T-\lambda I)^nv=0$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii $G(\lambda,T)$ can be strictly bigger than $E(\lambda,T)$. Over $\CC$ they agree for all $\lambda$ exactly when $T$ is diagonalizable.
+  \ii A sum of generalized eigenvectors for different eigenvalues is not a generalized eigenvector (Prop.~72 makes the pieces independent).
+  \ii Prop.~73 needs eigenvalues: true over $\CC$; over $\RR$ only when $m_T$ splits. (If $m_T$ splits, every $T|_U$ with $U\ne0$ invariant has an eigenvalue, because $m_{T|_U}\mid m_T$ (F3) and its roots are eigenvalues (Prop.~66); so the proof of Prop.~73 still works.)
+  \ii $V=\nul T\oplus\range T$ can fail: for $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $\nul N=\range N=\spn(e_1)$. The splitting needs the power $n$.
+  \ii The power $n$ always suffices; the chain often stops sooner.
+\end{trapbox}
+
+\needspace{14\baselineskip}
+\subsection{Nilpotent operators and Jordan form (Ch.~15)}
+
+\begin{qbox}
+  A complex operator is a direct sum of pieces $\lambda I+N$ with $N$ nilpotent (Prop.~73), and $\lambda I$ looks the same in every basis. So we only need a good basis for a nilpotent $N$.
+  \begin{itemize}
+    \ii Simplest nilpotent: a shift $v\mapsto Nv\mapsto\cdots\mapsto N^dv\mapsto0$. In the basis $N^dv,\dots,Nv,v$ its matrix has $1$s just above the diagonal.
+    \ii The hope: every nilpotent operator is a direct sum of shifts.
+    \ii A basis of generalized eigenvectors is not enough: $e_1,e_2,e_3$ are generalized eigenvectors for $1$ of $I$, $B=\begin{psmallmatrix}3&-1&-1\\2&0&-1\\2&-1&0\end{psmallmatrix}$ and $C=\begin{psmallmatrix}3&-2&0\\1&1&-1\\0&2&-1\end{psmallmatrix}$, yet $\dim E(1)=3,2,1$, so none are similar.
+  \end{itemize}
+\end{qbox}
+
+\begin{definition*}[Def.~39]
+  $N$ is \vocab{nilpotent} if $N^k=0$ for some $k$; the least such $k$ is the \vocab{nilpotency index}.
+\end{definition*}
+\begin{itemize}
+  \ii $N^n=0$: $V=G(0,N)=\nul N^n$ (Prop.~70). So $m_N=x^k$, $k\le n$.
+  \ii The only eigenvalue is $0$ (if $V\ne0$): $Nv=\lambda v\Rightarrow0=N^kv=\lambda^kv$. Over $\CC$, conversely, only eigenvalue $0$ $\Rightarrow$ $V=G(0,N)$ (Prop.~73).
+  \ii $\tr N=0$: by LADR 8.18 below, $N$ has a matrix with zero diagonal.
+  \ii $N\ne0$ is not diagonalizable: a diagonal matrix with all eigenvalues $0$ is $0$.
+  \ii Index $=\deg m_N=$ size of the largest Jordan block $\le n$. HW8 P1: $D$ on $\PP_n(\CC)$ has index $n+1$, one block $J_{n+1}(0)$ in the basis $1,x,\frac{x^2}{2!},\dots,\frac{x^n}{n!}$.
+  \ii $(I-N)^{-1}=I+N+\dots+N^{n-1}$: the product telescopes to $I-N^n=I$.
+\end{itemize}
+
+\begin{proposition*}[LADR 8.18: nilpotent operators are strictly upper-triangular]
+  If $N$ is nilpotent, then $V$ has a basis in which $\MM(N)$ is upper-triangular with every diagonal entry $0$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] A basis $v_1,\dots,v_n$ with $Nv_j\in\spn(v_1,\dots,v_{j-1})$ for every $j$. That is exactly an upper-triangular matrix with zero diagonal.
+  \ii[Know.] If $N^kv=0$, then $N^{k-1}(Nv)=0$. So $N$ maps $\nul N^k$ into $\nul N^{k-1}$.
+  \ii[Key step.] List vectors by the least power of $N$ that sends them to $0$: a basis of $\nul N$, extended to a basis of $\nul N^2$, and so on up to $\nul N^n=V$. A vector added at stage $k$ is sent into $\nul N^{k-1}$, which is spanned by vectors listed earlier.
+  \ii[Example.] $N=\begin{psmallmatrix}0&0\\1&0\end{psmallmatrix}$ ($Ne_1=e_2$, $Ne_2=0$): $\nul N=\spn(e_2)$, so list $e_2$ first. In the basis $e_2,e_1$ the matrix is $\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Choose a basis of $\nul N$, extend it to a basis of $\nul N^2$, and so on up to $\nul N^n=V$ (Props.~69, 70).
+    \ii If $v$ was added for $\nul N^k$, then $N^{k-1}(Nv)=N^kv=0$, so $Nv\in\nul N^{k-1}$, the span of the earlier layers (for $k=1$, $Nv=0$).
+    \ii So each basis vector is sent into the span of the vectors listed before it: column $j$ has nonzero entries only above the diagonal.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[LADR 8.37: block diagonal form]
+  Over $\CC$, let $\lambda_1,\dots,\lambda_m$ be the distinct eigenvalues of $T$ and $d_i=\dim G(\lambda_i,T)$. There is a basis in which $\MM(T)=\begin{psmallmatrix}A_1&&\\&\ddots&\\&&A_m\end{psmallmatrix}$, where each $A_i$ is a $d_i\times d_i$ upper-triangular matrix with every diagonal entry equal to $\lambda_i$.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] A block diagonal matrix whose $i$-th block is upper-triangular with every diagonal entry $\lambda_i$.
+  \ii[Know.] Prop.~73 splits $V$ into invariant pieces $G(\lambda_i,T)$, and invariant pieces give a block diagonal matrix (T10). So only the basis inside each piece is left to choose.
+  \ii[Key step.] On $G(\lambda_i,T)$, $T=\lambda_iI+N_i$ with $N_i$ nilpotent, and $\lambda_iI$ has the matrix $\lambda_iI$ in every basis. So choose the basis that makes $N_i$ strictly upper-triangular (LADR 8.18); adding $\lambda_iI$ puts $\lambda_i$ on the diagonal.
+  \ii[Compared with Jordan form.] Same first step. Jordan form also makes every entry above the diagonal $0$, except the entries directly above it, which are $0$ or $1$. That needs the chain construction of Prop.~75.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $N_i=(T-\lambda_iI)|_{G(\lambda_i,T)}$ is nilpotent, since $G(\lambda_i,T)=\nul(T-\lambda_iI)^n$ (Prop.~70). By LADR 8.18, $G(\lambda_i,T)$ has a basis in which $\MM(N_i)$ is upper-triangular with zero diagonal.
+    \ii In that basis $\MM(T|_{G(\lambda_i,T)})=\lambda_iI+\MM(N_i)$: upper-triangular, diagonal entries $\lambda_i$, size $d_i$.
+    \ii $V=\bigoplus_iG(\lambda_i,T)$ (Prop.~73) with each piece invariant, so concatenating the bases gives a block diagonal matrix (T10).
+  \end{steps}
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}
+  \node (M) {$\MM(T)=\left(\begin{array}{ccc|cc}
+    \lambda_1&*&*&0&0\\
+    0&\lambda_1&*&0&0\\
+    0&0&\lambda_1&0&0\\\hline
+    0&0&0&\lambda_2&*\\
+    0&0&0&0&\lambda_2
+  \end{array}\right)$};
+  \node[right=0.4cm of M,font=\small,align=left] {columns 1--3: a basis of $G(\lambda_1,T)$, $d_1=3$\\[2pt] columns 4--5: a basis of $G(\lambda_2,T)$, $d_2=2$};
+\end{tikzpicture}
+\figcap{The zero blocks come from splitting $V$ into invariant pieces (Prop.~73, T10). Each diagonal block is $\lambda_iI$ plus a strictly upper-triangular nilpotent part (LADR 8.18). Jordan form (Prop.~76) goes further: every $*$ becomes $0$, except the entries directly above the diagonal, which become $0$ or $1$.}
+\end{fig}
+
+\begin{proposition*}[Chain lemma]
+  If $N^dv\ne0$ and $N^{d+1}v=0$, then $v,Nv,\dots,N^dv$ are independent.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] From $\sum_{j=0}^dc_jN^jv=0$, get every $c_j=0$.
+  \ii[Know.] Applying $N$ moves every term one step down the chain, and a term that is moved past $N^dv$ becomes $0$.
+  \ii[Key step.] Apply $N^d$: every term except $c_0v$ is moved past $N^dv$ and becomes $0$, leaving $c_0N^dv=0$, so $c_0=0$. Then $N^{d-1}$ isolates $c_1$, and so on. Same idea as Prop.~72: kill every term but one.
+\end{motive}
+\begin{proof}
+  Apply $N^d$ to $\sum_jc_jN^jv=0$: get $c_0N^dv=0$, so $c_0=0$. Then apply $N^{d-1}$ to get $c_1=0$, and so on.
+\end{proof}
+
+\begin{theorem*}[Prop.~75 / LADR 8.45: nilpotent normal form]
+  A nilpotent $N$ has a basis made of chains $u,Nu,\dots,N^ku$ ($N^{k+1}u=0$). Listing each chain as $N^ku,\dots,u$, $\MM(N)$ has only $1$s and $0$s on the superdiagonal and $0$ elsewhere.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] A basis made of chains $u,Nu,\dots,N^ku$ with $N^{k+1}u=0$. In such a basis $N$ sends each basis vector to the next one in its chain or to $0$, which is the matrix described.
+  \ii[Know.] $N$ is not injective (its only eigenvalue is $0$), so it is not surjective (T2), and $U=\range N$ is a smaller invariant subspace. By induction, $U$ has a chain basis.
+  \ii[First try.] Is the chain basis of $U$ almost one for $V$? Two kinds of vectors are missing. Each chain of $U$ starts at some $v_i\in\range N$, so $v_i=Nu_i$ for some $u_i$: put $u_i$ on top to make the chain one longer. And vectors of $\nul N$ outside $U$ lie on no chain: add them as chains of length $1$.
+  \ii[Key step.] Count first, so that only independence is left (T3). Each of the $r$ chains gains one vector, and the bottoms of the chains are a basis of $\nul N\cap U$, so $\dim\nul N-r$ vectors of $\nul N$ are added. Total: $\dim U+\dim\nul N=n$ (T1). For independence, apply $N$ to a relation: $N$ sends the new list to the old chain basis of $U$ and zeros, so the coefficients of all vectors except the bottoms and the added vectors are $0$; those that remain form a basis of $\nul N$.
+  \ii[Example.] $Ne_3=e_2$, $Ne_2=0$, $Ne_1=0$ on $\FF^3$: $U=\spn(e_2)$ has the chain $e_2$. Put $e_3$ on top ($Ne_3=e_2$) and add $e_1\in\nul N$: chains $e_3,e_2$ and $e_1$.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $N=0$, any basis works. Otherwise $0<\dim U<n$, and $U$ has a chain basis $v_i,Nv_i,\dots,N^{d_i}v_i$ ($i\le r$), with $N^{d_i+1}v_i=0$.
+    \ii \emph{The bottoms $N^{d_i}v_i$ are a basis of $\nul N\cap U$.} They are independent and in $\nul N$. If $x=\sum c_{ij}N^jv_i$ and $Nx=0$, then $0=\sum_{j<d_i}c_{ij}N^{j+1}v_i$, a combination of distinct basis vectors of $U$, so $c_{ij}=0$ for $j<d_i$.
+    \ii Choose $u_i$ with $Nu_i=v_i$. Extend the bottoms by $w_1,\dots,w_l$ to a basis of $\nul N$, so $\dim\nul N=r+l$.
+    \ii New list: $u_i,Nu_i,\dots,N^{d_i+1}u_i$ and $w_1,\dots,w_l$. Length: $\sum(d_i+2)+l=\dim U+r+l=\dim\range N+\dim\nul N=n$.
+    \ii \emph{Independent.} Apply $N$ to a relation: the $w$'s and the bottoms go to $0$, leaving a relation among the basis of $U$, so those coefficients are $0$. What remains is a relation among the basis of $\nul N$, so it is trivial.
+  \end{steps}
+\end{proof}
+
+\begin{definition*}[Def.~40]
+  \vocab{Jordan block}: $J_k(\lambda)=\lambda I+N_k$ ($k\times k$, $1$s on the superdiagonal), so $Je_1=\lambda e_1$, $Je_j=\lambda e_j+e_{j-1}$. \vocab{Jordan normal form}: block diagonal with Jordan blocks. \vocab{Jordan basis}: a basis giving Jordan form.
+\end{definition*}
+
+\begin{theorem*}[Prop.~76 / LADR 8.46: Jordan normal form]
+  Every operator on a finite-dimensional complex space has a Jordan basis.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] A basis in which $T$ is block diagonal with Jordan blocks.
+  \ii[Know.] Prop.~73 splits $V$ into invariant pieces $G(\lambda_i,T)$, so the matrix is block diagonal (T10). On each piece $T=\lambda_iI+N_i$ with $N_i$ nilpotent, and $\lambda_iI$ has the same matrix in every basis.
+  \ii[Key step.] Use the chain basis of $N_i$ (Prop.~75) in each piece: $N_i$ becomes a sum of blocks $N_k$, so $T$ becomes a sum of blocks $\lambda_iI+N_k=J_k(\lambda_i)$. This is the proof of LADR 8.37 with the chain basis in place of the triangular one.
+\end{motive}
+\begin{proof}
+  On each invariant $G(\lambda_i,T)$, $N_i=(T-\lambda_iI)|_{G}$ is nilpotent. Prop.~75 gives a basis where $N_i$ is a sum of blocks $N_k$, so $T=\lambda_iI+N_i$ is a sum of blocks $J_k(\lambda_i)$. Concatenate the bases (T10).
+\end{proof}
+
+\begin{mdframed}[style=mdbluebox]
+\textbf{Reading the Jordan form.} For each eigenvalue $\lambda$:
+\begin{itemize}
+  \ii number of blocks for $\lambda$ $=$ geometric multiplicity $\dim E(\lambda,T)$;
+  \ii total size of those blocks $=$ algebraic multiplicity $\dim G(\lambda,T)$;
+  \ii largest block for $\lambda$ $=$ exponent of $(x-\lambda)$ in $m_T$;
+  \ii $\chi_T=\prod(x-\lambda)^{\text{alg.\ mult.}}$, $m_T=\prod(x-\lambda)^{\text{largest block}}$;
+  \ii diagonalizable $\iff$ all blocks $1\times1$ $\iff$ $m_T$ has no repeated root.
+\end{itemize}
+\why{\begin{steps}
+  \ii One block $J_k(\lambda)$: $J_k(\lambda)-\lambda I=N_k$ moves each basis vector one place ($e_j\mapsto e_{j-1}$, $e_1\mapsto0$), so $N_k^j$ moves it $j$ places and $\dim\nul N_k^j=\min(j,k)$. Hence $E=\spn(e_1)$ (one block, dimension $1$), $G$ is the whole block (size $k$), and $m=\chi=(x-\lambda)^k$.
+  \ii A block $J_j(\mu)$ with $\mu\ne\lambda$ adds nothing to $\nul(T-\lambda I)^k$: $(J_j(\mu)-\lambda I)=(\mu-\lambda)I+N_j$ is invertible (a nilpotent has only the eigenvalue $0$, so $N_jv=(\lambda-\mu)v$ forces $v=0$), and so are its powers.
+  \ii For the whole matrix, null spaces add over the blocks (T10) and $m$ is the lcm of the blocks' minimal polynomials (F4). Adding up gives each line of the box.
+\end{steps}}
+\end{mdframed}
+
+\begin{theorem*}[Prop.~77: counting blocks]
+  Over $\CC$, let $d_k=\dim\nul(T-\lambda I)^k$ ($d_0=0$). For $k\ge1$:
+  \begin{itemize}
+    \ii number of blocks for $\lambda$ of size $\ge k$ $=d_k-d_{k-1}$;
+    \ii number of size exactly $k$ $=2d_k-d_{k-1}-d_{k+1}$.
+  \end{itemize}
+  So the Jordan form is unique up to order, and two complex matrices are similar iff they have the same Jordan form.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] The block sizes in terms of numbers that do not depend on a basis. Then two Jordan bases must give the same blocks.
+  \ii[Know.] $d_k=\dim\nul(T-\lambda I)^k$ is defined from $T$ alone. In a Jordan basis the matrix is block diagonal, so null spaces split block by block (T10), and $d_k$ is a sum over the blocks.
+  \ii[Key step.] Compute one block. $J_j(\lambda)-\lambda I=N_j$ is a shift, so $\dim\nul N_j^k=\min(k,j)$: it goes up by $1$ at each step until $k=j$ and then stays at $j$. So from $k-1$ to $k$, exactly the blocks of size $\ge k$ add $1$. Blocks for other eigenvalues add $0$.
+  \ii[Example.] Blocks $J_3(0),J_1(0)$: $d_1,d_2,d_3=2,3,4$. So $2$ blocks of size $\ge1$, $1$ of size $\ge2$, $1$ of size $\ge3$.
+\end{motive}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,x=1.25cm,y=0.95cm]
+  \foreach \x/\h in {0/3,1/2,2/1} {
+    \foreach \y in {1,...,\h} \fill[blue] (\x,\y) circle (3pt);
+  }
+  \draw[->] (0,2.85) -- node[left]{\scriptsize$N$} (0,2.15);
+  \draw[->] (0,1.85) -- node[left]{\scriptsize$N$} (0,1.15);
+  \draw[->] (1,1.85) -- node[left]{\scriptsize$N$} (1,1.15);
+  \draw[->] (0,0.85) -- (0,0.3) node[below]{\scriptsize$0$};
+  \draw[->] (1,0.85) -- (1,0.3) node[below]{\scriptsize$0$};
+  \draw[->] (2,0.85) -- (2,0.3) node[below]{\scriptsize$0$};
+  \node[font=\small,anchor=west] at (2.7,1) {row 1: $3$ dots, $d_1=3$};
+  \node[font=\small,anchor=west] at (2.7,2) {row 2: $2$ dots, $d_2=3+2=5$};
+  \node[font=\small,anchor=west] at (2.7,3) {row 3: $1$ dot,\ \ $d_3=5+1=6$};
+  \node[font=\small] at (0,-0.35) {$J_3$};
+  \node[font=\small] at (1,-0.35) {$J_2$};
+  \node[font=\small] at (2,-0.35) {$J_1$};
+\end{tikzpicture}
+\figcap{A nilpotent $N$ with blocks $J_3(0),J_2(0),J_1(0)$. Each column is one chain, read downward; the bottom dot is an eigenvector. $N^k$ sends exactly the dots in the bottom $k$ rows to $0$, so $d_k$ is the number of dots in rows $1,\dots,k$, and $d_k-d_{k-1}$ is the number of dots in row $k$, i.e.\ the number of blocks of size $\ge k$.}
+\end{fig}
+\begin{proof}
+  \begin{steps}
+    \ii In a Jordan basis, $d_k=\sum_{\text{blocks}}\dim\nul(J-\lambda I)^k$. Blocks for $\mu\ne\lambda$ contribute $0$; $J_j(\lambda)$ contributes $\min(k,j)$.
+    \ii $\min(k,j)-\min(k-1,j)$ is $1$ if $j\ge k$, else $0$. Summing: $d_k-d_{k-1}=\#\{\text{blocks with }j\ge k\}$. Exactly $k$: $(d_k-d_{k-1})-(d_{k+1}-d_k)$.
+    \ii Similar matrices are one operator in two bases (T11), so they have the same $d_k$ and the same Jordan form. Conversely, matrices with the same Jordan form are both similar to it.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Jordan form from null-space dimensions (Ex.~63)]
+  $T\in\LL(\CC^8)$ with eigenvalues $1,2$. Method: list $d_0,d_1,\dots$, take differences, then differences of differences.
+  \begin{center}
+  \begin{tabular}{c|ccccc|l}
+    $\lambda$ & $d_0$ & $d_1$ & $d_2$ & $d_3$ & $d_4$ & blocks \\\hline
+    $1$ & $0$ & $2$ & $4$ & $4$ & & sizes $\ge1$: 2, $\ge2$: 2, $\ge3$: 0 $\Rightarrow J_2(1),J_2(1)$ \\
+    $2$ & $0$ & $2$ & $3$ & $4$ & $4$ & sizes $\ge1$: 2, $\ge2$: 1, $\ge3$: 1, $\ge4$: 0 $\Rightarrow J_3(2),J_1(2)$
+  \end{tabular}
+  \end{center}
+  ($d_4=4$ for $\lambda=2$ because $\dim G(2,T)=8-4$.) Answer: $J_2(1)\oplus J_2(1)\oplus J_3(2)\oplus J_1(2)$.
+\end{example*}
+
+\begin{example*}[Finding a Jordan basis (Ex.~62)]
+  $A=\begin{psmallmatrix}1&2&3\\0&1&2\\0&0&1\end{psmallmatrix}$: only eigenvalue $1$, $d_1,d_2,d_3=1,2,3$, so one block $J_3(1)$.
+  \begin{steps}
+    \ii Pick the top: $v_3\in\nul(A-I)^3$, $v_3\notin\nul(A-I)^2$. Here $v_3=e_3$.
+    \ii Go down: $v_2=(A-I)v_3=(3,2,0)$, $v_1=(A-I)v_2=(4,0,0)$ (an eigenvector).
+    \ii Check: $Av_1=v_1$, $Av_2=v_2+v_1$, $Av_3=v_3+v_2$. That is $J_3(1)$.
+  \end{steps}
+  Why start at the top: the top vector determines the whole chain, and a top outside $\nul(A-\lambda I)^{k-1}$ guarantees full length $k$ (chain lemma).
+
+  \emph{Several blocks:} get the block sizes first (Prop.~77). For each block of size $j$, largest first, pick a top $v\in\nul(A-\lambda I)^j\setminus\nul(A-\lambda I)^{j-1}$ and keep its chain only if its bottom $(A-\lambda I)^{j-1}v$ is independent of the bottoms already chosen. (Independent of the vectors so far is not enough: in $J_3(0)\oplus J_2(0)$ with chains $e_1,e_2,e_3$ and $f_1,f_2$, the top $f_1+e_2$ gives a chain ending at $e_1$ again.)
+\end{example*}
+
+\needspace{7\baselineskip}\textbf{Powers.} $J=\lambda I+N$ with $\lambda I$ and $N$ commuting, so the binomial theorem applies and $N^j=0$ for $j\ge k$:
+\[ J_k(\lambda)^m=\sum_{j=0}^{\min(m,k-1)}\binom mj\lambda^{m-j}N^j,\qquad J_3(\lambda)^m=\begin{pmatrix}\lambda^m&m\lambda^{m-1}&\binom m2\lambda^{m-2}\\0&\lambda^m&m\lambda^{m-1}\\0&0&\lambda^m\end{pmatrix}. \]
+\begin{itemize}
+  \ii Example: $J_3(1)^{100}$ has $100$ and $4950$ above the diagonal.
+  \ii Any Jordan matrix is $J=D+N$, $D$ diagonal, $N$ nilpotent, $DN=ND$ (on each block $D=\lambda I$); this is the Jordan--Chevalley decomposition. If $J$ is invertible, also $J=DU$ with $U=I+D^{-1}N$, $DU=UD$.
+  \ii \textbf{Square roots (LADR 8.39--8.41).} $I+N$ has a square root: choose $a_j$ with $(I+a_1N+\dots+a_{n-1}N^{n-1})^2=I+N$ by matching coefficients ($2a_1=1$, $2a_2+a_1^2=0$, \dots); powers $N^n$ and up vanish. This is the series $\sqrt{1+x}=1+\frac x2-\frac{x^2}8+\cdots$ cut off. Over $\CC$, every invertible operator has a square root (apply this to $\lambda_i(I+N_i/\lambda_i)$ on each $G(\lambda_i,T)$).
+\end{itemize}
+
+\begin{trapbox}
+  \ii $\chi_T$ and $m_T$ do not fix the Jordan form: $J_2(0)\oplus J_2(0)$ and $J_2(0)\oplus J_1(0)\oplus J_1(0)$ both have $\chi=x^4$, $m=x^2$.
+  \ii Adding the number of blocks is still not enough: $J_3\oplus J_3\oplus J_1$ and $J_3\oplus J_2\oplus J_2$ (all for $0$) agree in $\chi$, $m$ and block count, but $d_2=5$ vs.\ $6$. You need all the $d_k$.
+  \ii Order each chain from the bottom (the eigenvector) up; reversed, the $1$s go below the diagonal.
+  \ii Jordan form needs $\CC$ (or split $m_T$): the rotation of $\RR^2$ has none over $\RR$.
+\end{trapbox}
+
+\needspace{14\baselineskip}
+\subsection{Trace (Ch.~16)}
+
+\begin{qbox}
+  The matrix of an operator depends on the basis. Which numbers computed from it do not? The trace (sum of the diagonal) is one, and it equals the sum of the eigenvalues. It gives information about eigenvalues without computing them.
+\end{qbox}
+
+\begin{definition*}[Def.~41, 42 / LADR 8.47, 8.50, 8.51]
+  $\tr A=a_{11}+\dots+a_{nn}$. For $T\in\LL(V)$, $\tr T=\tr\MM(T)$ in any basis.
+\end{definition*}
+
+\begin{proposition*}[Prop.~78 / LADR 8.49]
+  For $A$ ($m\times n$) and $B$ ($n\times m$), $\tr(AB)=\tr(BA)$. Hence $\tr(S^{-1}AS)=\tr A$, and $\tr T$ is well defined.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $\tr(AB)=\tr(BA)$, although $AB\ne BA$ in general.
+  \ii[Key step.] Write out the diagonal: $(AB)_{ii}=\sum_ja_{ij}b_{ji}$. So $\tr(AB)$ is the sum of all products $a_{ij}b_{ji}$, and $\tr(BA)$ is the sum of the same products in a different order.
+  \ii[Similarity.] $S^{-1}AS$ is the product of $S^{-1}A$ and $S$; swap the two factors.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $\tr(AB)=\sum_i\sum_ja_{ij}b_{ji}=\sum_j\sum_ib_{ji}a_{ij}=\tr(BA)$.
+    \ii $\tr\big((S^{-1}A)S\big)=\tr\big(S(S^{-1}A)\big)=\tr A$. Matrices of one operator are similar (T11).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~79 / LADR 8.52]
+  Over $\CC$, $\tr T=\sum_id_i\lambda_i$ over the distinct eigenvalues, $d_i=\dim G(\lambda_i,T)$. Also $-\tr T$ is the coefficient of $x^{n-1}$ in $\chi_T$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $\tr T$ in terms of the eigenvalues.
+  \ii[Know.] $\tr T$ can be computed in any basis (Prop.~78). In a Jordan basis, or the triangular basis of LADR 8.37, the diagonal lists each $\lambda_i$ exactly $d_i$ times.
+  \ii[Key step.] Use that basis. For $\chi_T$: expanding $\prod(x-\lambda_i)^{d_i}$, the coefficient of $x^{n-1}$ takes $-\lambda_i$ from one factor and $x$ from all the others, giving $-\sum d_i\lambda_i$.
+\end{motive}
+\begin{proof}
+  In a Jordan basis the blocks for $\lambda_i$ have total size $d_i$. Expanding $\prod(x-\lambda_i)^{d_i}$, the $x^{n-1}$ coefficient is $-\sum d_i\lambda_i$.
+\end{proof}
+
+\begin{proposition*}[Prop.~80]
+  $\tr(ST-TS)=0$. So on $V\ne\{0\}$ finite-dimensional, there are no $S,T$ with $ST-TS=I$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] The equation $ST-TS=I$ has no solution.
+  \ii[Know.] A standard way to show an equation has no solution: apply a function that always gives the two sides different values.
+  \ii[Key step.] Use the trace. It is linear and does not see the order of a product, so $\tr(ST-TS)=0$ for all $S,T$, while $\tr I=\dim V\ne0$.
+\end{motive}
+\begin{proof}
+  $\tr(ST-TS)=\tr(ST)-\tr(TS)=0$ (linearity, Prop.~78), while $\tr I=\dim V>0$.
+\end{proof}
+
+\begin{itemize}
+  \ii \textbf{Linear:} $\tr(A+B)=\tr A+\tr B$, $\tr(cA)=c\tr A$ (diagonals add).
+  \ii \textbf{Cyclic:} $\tr(ABC)=\tr(BCA)=\tr(CAB)$ (Prop.~78 with $A$ and $BC$). Not every order: $A=E_{12},B=E_{21},C=E_{11}$ give $\tr(ABC)=1$, $\tr(BAC)=0$.
+  \ii \textbf{Projections:} $P^2=P\Rightarrow\tr P=\operatorname{rank}P$. In a basis for $\nul P\oplus\range P$ (Prop.~91), $\MM(P)=\operatorname{diag}(0,\dots,0,1,\dots,1)$.
+  \ii \textbf{Nilpotent:} $\tr N=0$, and $\tr N^k=0$. The converse fails: $\operatorname{diag}(1,-1)$.
+  \ii \textbf{Polynomials:} over $\CC$, $\tr p(T)=\sum_id_ip(\lambda_i)$ ($p(T)$ is triangular in a Jordan basis with diagonal $p(\lambda_i)$).
+  \ii \textbf{$2\times2$:} $\lambda_1+\lambda_2=\tr A$, $\lambda_1\lambda_2=\det A$. Ex.~64: $\tr\begin{psmallmatrix}1&1&1\\1&2&4\\1&3&9\end{psmallmatrix}=12$ is the sum of eigenvalues that are hard to find.
+  \ii \textbf{Detecting $0$:} if $\tr(ST)=0$ for all $S$, then $T=0$ (take $S=E_{ji}$: $\tr(E_{ji}\MM(T))=t_{ij}$).
+\end{itemize}
+
+\begin{trapbox}
+  \ii $\tr(AB)\ne\tr A\cdot\tr B$ ($A=B=I_2$: $2\ne4$).
+  \ii $\tr T=0$ does not make $T$ nilpotent.
+  \ii $ST-TS=I$ is possible in infinite dimensions: on $\PP(\RR)$, $D(xp)-xD(p)=p$.
+\end{trapbox}
+
+\needspace{14\baselineskip}
+\subsection{Inner products and norms (Ch.~17)}
+
+\begin{qbox}
+  So far vector spaces have no lengths or angles. In $\RR^n$ the dot product gives both. We want them in any vector space (polynomials, functions), so we take the properties of the dot product that proofs use as the definition.
+\end{qbox}
+
+$\FF$ is $\RR$ or $\CC$ (over $\RR$ ignore the bars). From here on $V$ may be infinite-dimensional; finite dimension is stated when needed.
+
+\begin{definition*}[Def.~43 / LADR 6.2]
+  An \vocab{inner product} $\ip--\colon V\times V\to\FF$ satisfies
+  \begin{enumerate}[(i)]
+    \ii positivity: $\ip vv>0$ for $v\ne0$;
+    \ii linearity in the first slot: $\ip{\lambda u+v}w=\lambda\ip uw+\ip vw$;
+    \ii conjugate symmetry: $\ip uv=\overline{\ip vu}$.
+  \end{enumerate}
+\end{definition*}
+\begin{itemize}
+  \ii \textbf{Why the conjugate:} without it, $(i,1)\cdot(i,1)=i^2+1=0$, a nonzero vector of length $0$. With $z\bar z=|z|^2\ge0$ lengths are positive, and symmetry must become conjugate symmetry.
+  \ii $\ip0v=0$: $\ip0v=\ip{0+0}v=2\ip0v$.
+  \ii Second slot: $\ip u{\lambda v+w}=\overline{\ip{\lambda v+w}u}=\bar\lambda\ip uv+\ip uw$ (conjugate-linear).
+  \ii $\ip vv$ is real (it equals its own conjugate).
+  \ii \textbf{Examples:} dot product $\sum w_j\bar z_j$ on $\FF^n$ (Ex.~65); $L^2$ product $\int_a^bf\bar g$ on continuous functions (Ex.~66); weighted $x_1y_1+2x_2y_2$.
+  \ii \textbf{Checking a candidate:} (ii) and (iii) are usually immediate. Test positivity: can $\ip vv\le0$ for some $v\ne0$? For integrals: $\int p^2=0$ forces the continuous $p^2\ge0$ to vanish on the interval, so $p$ has infinitely many roots and $p=0$.
+\end{itemize}
+
+\begin{definition*}[Def.~44 / Prop.~81 / LADR 6.7, 6.17]
+  A \vocab{norm}: $\|v\|>0$ for $v\ne0$; $\|\lambda v\|=|\lambda|\|v\|$; $\|u+v\|\le\|u\|+\|v\|$. An inner product gives $\|v\|=\sqrt{\ip vv}$.
+\end{definition*}
+\begin{itemize}
+  \ii Homogeneity: $\|\lambda v\|^2=\lambda\bar\lambda\ip vv=|\lambda|^2\|v\|^2$. The triangle inequality needs Cauchy--Schwarz.
+  \ii \textbf{Pythagoras:} if $\ip uv=0$, then $\|u+v\|^2=\|u\|^2+\|v\|^2$ (expand; the cross terms are $0$).
+  \ii The converse holds over $\RR$ but not over $\CC$ (the cross term is $2\operatorname{Re}\ip uv$): in $\CC$, $u=1$, $v=i$ give $|1+i|^2=1+1$ but $\ip uv=-i$.
+\end{itemize}
+
+\begin{proposition*}[LADR 6.13: orthogonal decomposition]
+  If $v\ne0$: $u=cv+w$ with $w\perp v$, where $c=\dfrac{\ip uv}{\|v\|^2}$. So the projection onto a line is $P_{\spn(v)}u=\dfrac{\ip uv}{\|v\|^2}v$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Write $u$ as a multiple of $v$ plus a vector perpendicular to $v$. In $\RR^2$ this is dropping a perpendicular from $u$ to the line through $v$.
+  \ii[Key step.] Write $u=cv+(u-cv)$; only $c$ is unknown, and it must make $u-cv\perp v$. Solve $0=\ip{u-cv}v=\ip uv-c\|v\|^2$.
+  \ii[Why it matters.] Cauchy--Schwarz, Gram--Schmidt, orthogonal projections and best approximation all use this computation.
+\end{motive}
+\begin{fig}
+\begin{tikzpicture}[scale=1.15,>=Stealth]
+  \draw[gray] (-0.4,0) -- (4.2,0);
+  \draw[->,thick] (0,0) -- (3.4,0) node[below right] {$v$};
+  \draw[->,very thick,red] (0,0) -- (2,0);
+  \node[red,below] at (1,0) {$cv$};
+  \draw[->,thick,blue] (0,0) -- (2,1.6) node[above left] {$u$};
+  \draw[->,thick,OliveGreen] (2,0) -- (2,1.6);
+  \node[OliveGreen!70!black,right] at (2,0.8) {$w=u-cv$};
+  \draw (1.82,0) -- (1.82,0.18) -- (2,0.18);
+\end{tikzpicture}
+\figcap{$c=\ip uv/\|v\|^2$ is the one value that makes $w\perp v$. Pythagoras gives $\|u\|^2=\|cv\|^2+\|w\|^2\ge\|cv\|^2=|\ip uv|^2/\|v\|^2$, which is Cauchy--Schwarz. Gram--Schmidt subtracts such a $cv$ for each earlier $e_k$.}
+\end{fig}
+
+\begin{theorem*}[Prop.~82 / LADR 6.14: Cauchy--Schwarz]
+  $|\ip uv|\le\|u\|\|v\|$, with equality iff one of $u,v$ is a multiple of the other.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] $|\ip uv|\le\|u\|\|v\|$.
+  \ii[Know.] In $\RR^2$, the projection of $u$ onto the line through $v$ is no longer than $u$, and its length is $|\ip uv|/\|v\|$. Pythagoras is the general tool for ``a perpendicular piece of a vector is no longer than the vector''.
+  \ii[Key step.] Decompose $u=cv+w$ with $w\perp v$ (LADR 6.13). Pythagoras: $\|u\|^2=|c|^2\|v\|^2+\|w\|^2\ge|c|^2\|v\|^2=|\ip uv|^2/\|v\|^2$. Equality iff $w=0$, i.e.\ $u$ is a multiple of $v$.
+  \ii[Notes' version.] The notes expand $\ip zz\ge0$ with $z=-w$; it is the same computation.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $v=0$, both sides are $0$ and $v=0\cdot u$.
+    \ii If $v\ne0$, write $u=cv+w$, $c=\ip uv/\|v\|^2$, $w\perp v$. Pythagoras: $\|u\|^2=|c|^2\|v\|^2+\|w\|^2\ge\dfrac{|\ip uv|^2}{\|v\|^2}$.
+    \ii Equality iff $w=0$, i.e.\ $u=cv$. Conversely $u=av$ gives $|\ip uv|=|a|\|v\|^2=\|u\|\|v\|$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~81(iii) / LADR 6.17: triangle inequality]
+  $\|u+v\|\le\|u\|+\|v\|$, with equality iff one is a nonnegative multiple of the other.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $\|u+v\|\le\|u\|+\|v\|$. Both sides are $\ge0$, so it is enough to compare squares.
+  \ii[Know.] $\|u+v\|^2=\|u\|^2+2\operatorname{Re}\ip uv+\|v\|^2$ and $(\|u\|+\|v\|)^2=\|u\|^2+2\|u\|\|v\|+\|v\|^2$. Only the middle terms differ.
+  \ii[Key step.] $\operatorname{Re}\ip uv\le|\ip uv|\le\|u\|\|v\|$ by Cauchy--Schwarz. Equality needs both of these to be equalities.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $\|u+v\|^2=\|u\|^2+2\operatorname{Re}\ip uv+\|v\|^2\le\|u\|^2+2|\ip uv|+\|v\|^2\le(\|u\|+\|v\|)^2$.
+    \ii Equality needs $\operatorname{Re}\ip uv=|\ip uv|=\|u\|\|v\|$: then $u=av$ (or $v=0$), and $\ip uv=a\|v\|^2\ge0$ forces $a\ge0$.
+    \ii Conversely, $u=av$ with $a\ge0$ gives $\|u+v\|=(1+a)\|v\|=\|u\|+\|v\|$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~83 / LADR 6.21, 6A.28: parallelogram law, polarization]
+  A norm comes from an inner product iff $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$. Then
+  \[ \ip uv=\tfrac14\big(\|u+v\|^2-\|u-v\|^2\big)\ (\RR),\qquad\ip uv=\tfrac14\big(\|u+v\|^2-\|u-v\|^2+i\|u+iv\|^2-i\|u-iv\|^2\big)\ (\CC). \]
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] (a) A relation among norms that every norm from an inner product satisfies. (b) A formula that recovers $\ip uv$ from norms.
+  \ii[Key step.] Expand $\|u+v\|^2$ and $\|u-v\|^2$: the cross term $2\operatorname{Re}\ip uv$ appears with opposite signs. Adding cancels it (the law); subtracting isolates it (polarization).
+  \ii[Over $\CC$.] Subtracting gives only $\operatorname{Re}\ip uv$. Since $\operatorname{Re}\ip u{iv}=\operatorname{Im}\ip uv$, do the same with $iv$ in place of $v$ to get the imaginary part.
+  \ii[Note.] The converse (the law forces an inner product) is not proved in the notes.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $\|u\pm v\|^2=\|u\|^2\pm2\operatorname{Re}\ip uv+\|v\|^2$. Add: the law. Subtract: $4\operatorname{Re}\ip uv$.
+    \ii $\operatorname{Re}\ip u{iv}=\operatorname{Re}(-i\ip uv)=\operatorname{Im}\ip uv$, so $\|u+iv\|^2-\|u-iv\|^2=4\operatorname{Im}\ip uv$.
+  \end{steps}
+\end{proof}
+Use: the max norm $\max(|x|,|y|)$ on $\RR^2$ fails the law ($u=e_1,v=e_2$: $1+1\ne2+2$), so it comes from no inner product.
+
+\begin{itemize}
+  \ii \textbf{Angle} (Def.~45 / LADR 6A.16, real spaces): for $u,v\ne0$, $\cos\theta=\frac{\ip uv}{\|u\|\|v\|}$, $\theta\in[0,\pi]$. Cauchy--Schwarz puts the quotient in $[-1,1]$. Ex.~68: $(1,0),(1,1)$ make angle $\pi/4$.
+  \ii \textbf{Using Cauchy--Schwarz:} write the quantity as $\ip uv$ with a clever second vector, usually all $1$s or the constant $1$.
+  \begin{itemize}
+    \ii $(a_1+\dots+a_n)^2\le n\sum a_i^2$, equality iff all $a_i$ equal.
+    \ii $\big(\int_0^1f\big)^2\le\int_0^1f^2$; $\int_0^\pi\sqrt{\sin x}\,dx\le\sqrt{2\pi}$ (Ex.~67).
+    \ii Weighted: $\big(\sum a_kb_k\big)^2\le\big(\sum ka_k^2\big)\big(\sum b_k^2/k\big)$, writing $a_kb_k=(\sqrt k\,a_k)(b_k/\sqrt k)$.
+  \end{itemize}
+  \ii \textbf{Reverse triangle inequality:} $\big|\|u\|-\|v\|\big|\le\|u-v\|$, since $\|u\|\le\|u-v\|+\|v\|$ and symmetrically.
+\end{itemize}
+
+\needspace{7\baselineskip}\textbf{Attention (notes Section 17.3, optional application).} Stored items have keys $k_j\in\RR^{d_k}$ and values $\nu_j\in\RR^{d_v}$; a query $q\in\RR^{d_k}$ is compared with the keys.
+\begin{itemize}
+  \ii Scores $s_j=\ip q{k_j}/\sqrt{d_k}$; weights by softmax, $a_j=e^{s_j}/\sum_\ell e^{s_\ell}$ (so $a_j>0$, $\sum a_j=1$); output $y=\sum_ja_j\nu_j$. Keys decide how much each item contributes; values are what is returned. $d_k$ and $d_v$ can differ.
+  \ii Ex.~69: $k_1=(2,0)$, $k_2=(0,1)$, $k_3=(-1,0)$, values $e_1,e_2,e_3\in\RR^3$, $q=(1,0)$, $d_k=2$. Scores $\sqrt2,0,-\frac1{\sqrt2}$; weights $\approx0.734,0.178,0.088$; $y\approx0.734e_1+0.178e_2+0.088e_3$.
+  \ii $\ip qk=\|q\|\|k\|\cos\theta$, so the score depends on lengths as well as the angle. Why $\sqrt{d_k}$: if the coordinates $q_r,k_r$ are independent with mean $0$ and variance $1$, then $\ip qk=\sum_{r=1}^{d_k}q_rk_r$ has variance $d_k$; dividing by $\sqrt{d_k}$ makes the variance $1$.
+  \ii Self-attention: $q_i=W_Qx_i$, $k_j=W_Kx_j$, $\nu_j=W_Vx_j$ for learned linear maps. With $Q,K,V_{\mathrm{val}}$ having columns $q_i,k_j,\nu_j$: score matrix $S=Q^{\mathsf T}K/\sqrt{d_k}$, softmax of each row gives $A=(a_{ij})$, which is row-stochastic, and $Y=V_{\mathrm{val}}A^{\mathsf T}$ has columns $y_i=\sum_ja_{ij}\nu_j$. For left-to-right generation, terms with $j>i$ are removed before softmax (masking). Because $A$ depends on the inputs and softmax is nonlinear, self-attention is not a linear map.
+\end{itemize}
+
+\begin{trapbox}
+  \ii Over $\CC$, scalars leave the second slot conjugated.
+  \ii $x_1y_1-x_2y_2$ and $(x_1+x_2)(y_1+y_2)$ are not inner products: $\ip{e_2}{e_2}=-1$, $\ip{(1,-1)}{(1,-1)}=0$.
+  \ii Cauchy--Schwarz equality: ``dependent''. Triangle equality: ``nonnegative multiple''.
+\end{trapbox}
+
+\needspace{14\baselineskip}
+\subsection{Orthogonality (Ch.~18)}
+
+\begin{qbox}
+  In a general basis, finding coordinates means solving a linear system. If the basis vectors are perpendicular unit vectors, each coordinate is one inner product. We want such bases, a way to build them, and to use them to split spaces into perpendicular pieces.
+\end{qbox}
+
+\begin{definition*}[Def.~46]
+  $u\perp v$ if $\ip uv=0$. $e_1,\dots,e_m$ is \vocab{orthonormal} if $\ip{e_i}{e_j}=\delta_{ij}$.
+\end{definition*}
+
+\begin{proposition*}[Prop.~84--86 / LADR 6.24, 6.25, 6.30]
+  For an orthonormal list: $\|\sum a_ie_i\|^2=\sum|a_i|^2$, and the list is independent. For an orthonormal basis:
+  \[ v=\sum_i\ip v{e_i}e_i,\qquad\|v\|^2=\sum_i|\ip v{e_i}|^2. \]
+\end{proposition*}
+\begin{motive}
+  \ii[Norm.] Pythagoras handles two perpendicular vectors, and $a_me_m$ is perpendicular to $a_1e_1+\dots+a_{m-1}e_{m-1}$. So add one term at a time.
+  \ii[Independence.] If $\sum a_ie_i=0$, its norm $\sqrt{\sum|a_i|^2}$ is $0$, so every $a_i=0$.
+  \ii[Coordinates.] To find $a_k$ in $v=\sum a_ie_i$, take the inner product with $e_k$: the terms with $i\ne k$ give $0$, and the $k$-th gives $a_k$. This is the reason to want orthonormal bases: coordinates without solving a linear system.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii $e_m\perp a_1e_1+\dots+a_{m-1}e_{m-1}$, so Pythagoras adds $|a_m|^2$; induct.
+    \ii $\sum a_ie_i=0\Rightarrow\sum|a_i|^2=0\Rightarrow$ all $a_i=0$.
+    \ii If $v=\sum a_ie_i$, then $\ip v{e_k}=\sum a_i\ip{e_i}{e_k}=a_k$.
+  \end{steps}
+\end{proof}
+\needspace{7\baselineskip}\textbf{Parseval} (infinite-dimensional version): for $f(x)=\sum c_ne^{2\pi inx}$ on $[0,1]$, $\sum|c_n|^2=\int_0^1|f|^2$. With $f(x)=x=\frac12-\frac1{2\pi i}\sum_{n\ne0}\frac1ne^{2\pi inx}$ this gives $\frac14+\frac1{4\pi^2}\sum_{n\ne0}\frac1{n^2}=\frac13$, so $\sum_{n\ge1}\frac1{n^2}=\frac{\pi^2}6$.
+
+\begin{theorem*}[Prop.~87 / LADR 6.32: Gram--Schmidt]
+  For independent $v_1,\dots,v_n$: $e_1=v_1/\|v_1\|$, and for $j\ge2$
+  \[ w_j=v_j-\sum_{k<j}\ip{v_j}{e_k}e_k,\qquad e_j=w_j/\|w_j\|. \]
+  Then $e_1,\dots,e_n$ is orthonormal and $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] Orthonormal $e_1,\dots,e_n$ with $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
+  \ii[Know.] For a unit vector $e$, $v-\ip ve\,e\perp e$ (LADR 6.13 with $\|e\|=1$). Subtracting a combination of $e_1,\dots,e_{j-1}$ from $v_j$ does not change the span of $e_1,\dots,e_{j-1},v_j$.
+  \ii[Key step.] Build one vector at a time: from $v_j$ subtract its component $\ip{v_j}{e_k}e_k$ along each earlier $e_k$. Since the earlier $e_k$ are perpendicular to each other, the subtraction for $e_k$ does not change the inner products with the other $e_i$. Then divide by the length.
+  \ii[Only risk.] $w_j=0$, which would put $v_j$ in $\spn(v_1,\dots,v_{j-1})$; independence rules it out.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii If $w_j=0$, then $v_j\in\spn(e_1,\dots,e_{j-1})=\spn(v_1,\dots,v_{j-1})$, contradicting independence.
+    \ii For $k<j$: $\ip{w_j}{e_k}=\ip{v_j}{e_k}-\ip{v_j}{e_k}=0$. And $\|e_j\|=1$.
+    \ii $e_j\in\spn(v_1,\dots,v_j)$, so the spans are nested; both have dimension $j$, so they are equal.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Every finite-dimensional inner product space has an orthonormal basis; every orthonormal list extends to one (extend to a basis, then Gram--Schmidt; the first vectors do not change) (LADR 6.35, 6.36).
+  \ii An orthonormal list of length $\dim V$ is an orthonormal basis (Prop.~85, T3).
+  \ii If the $v_j$ are dependent, $w_j=0$ exactly when $v_j\in\spn(v_1,\dots,v_{j-1})$: skip it and continue.
+  \ii \textbf{Schur (LADR 6.38):} over $\CC$, $T$ is upper-triangular in some \emph{orthonormal} basis. Take a triangular basis (T8) and apply Gram--Schmidt: it keeps the spans $\spn(v_1,\dots,v_j)$, which are invariant, so the matrix stays triangular.
+\end{itemize}
+
+\begin{example*}[Ex.~70: Gram--Schmidt on $\PP_2$, $\ip pq=\int_0^1p\bar q$]
+  \begin{steps}
+    \ii $\|1\|=1$: $e_1=1$.
+    \ii $w_2=x-\ip x1=x-\frac12$, $\|w_2\|^2=\frac1{12}$: $e_2=\sqrt3(2x-1)$.
+    \ii $w_3=x^2-\frac13-\frac12(2x-1)=x^2-x+\frac16$, $\|w_3\|=\frac1{6\sqrt5}$: $e_3=\sqrt5(6x^2-6x+1)$.
+  \end{steps}
+  Order of work: $w_j$, then $\|w_j\|^2$, then divide. Check $w_j\perp$ the earlier $e$'s. (These are the shifted Legendre polynomials; on $[-1,1]$, HW10 P1, the Legendre polynomials.)
+\end{example*}
+
+\begin{proposition*}[Prop.~88 / LADR 6.42, 6.58: Riesz representation]
+  For finite-dimensional $V$, every $\psi\in V'$ is $\psi(u)=\ip uv$ for a unique $v$. In an orthonormal basis, $v=\sum_j\overline{\psi(e_j)}e_j$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] A vector $v$ with $\psi(u)=\ip uv$ for all $u$.
+  \ii[Know.] On $\RR^n$ a functional is $\psi(u)=a\cdot u$ for a row vector $a$, so $v=a$. A linear functional is determined by its values on a basis.
+  \ii[Key step.] Write the unknown $v=\sum a_je_j$ in an orthonormal basis and test on $e_i$: $\ip{e_i}v=\bar a_i$ must equal $\psi(e_i)$. So $a_i=\overline{\psi(e_i)}$, and this $v$ works because both sides agree on a basis.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii With $v=\sum\overline{\psi(e_j)}e_j$: $\ip{e_i}v=\psi(e_i)$. Two linear functionals equal on a basis are equal.
+    \ii Unique: if $\ip uv=\ip u{v'}$ for all $u$, take $u=v-v'$ to get $\|v-v'\|^2=0$.
+  \end{steps}
+  (The notes use $\Gamma(v)=\ip-v$: real-linear, not complex-linear since $\Gamma(iv)=-i\Gamma(v)$, injective, and $\dim_\RR V=\dim_\RR V'$.)
+\end{proof}
+
+\begin{definition*}[Def.~47 / LADR 6.46, 6.47]
+  $U^\perp=\{v:\ip vu=0\text{ for all }u\in U\}$, a subspace (linearity in the first slot).
+\end{definition*}
+\begin{itemize}
+  \ii $\{0\}^\perp=V$; $V^\perp=\{0\}$; $U\cap U^\perp=\{0\}$ (a vector perpendicular to itself is $0$).
+  \ii $U\subseteq W\Rightarrow W^\perp\subseteq U^\perp$.
+  \ii $(U+W)^\perp=U^\perp\cap W^\perp$ (perpendicular to all $u+w$ iff to all $u$ and all $w$).
+  \ii $(U\cap W)^\perp=U^\perp+W^\perp$ (finite dim., HW10 P4): take $\perp$ of $(U^\perp+W^\perp)^\perp=U\cap W$ (Prop.~90).
+  \ii Finite dim.: $U^\perp=\{0\}\iff U=V$; $U^\perp=V\iff U=\{0\}$ (Prop.~89).
+  \ii \textbf{Computing $U^\perp$:} require $\ip v{u_i}=0$ for a spanning list of $U$ and solve the linear system. Under Riesz, $U^\perp$ matches the annihilator $U^0$.
+\end{itemize}
+
+\begin{theorem*}[Prop.~89 / LADR 6.49, 6.50]
+  If $U$ is finite-dimensional, $V=U\oplus U^\perp$. If $V$ is finite-dimensional, $\dim U^\perp=\dim V-\dim U$.
+\end{theorem*}
+\begin{motive}
+  \ii[Want.] Every $v$ is $u+w$ with $u\in U$ and $w\perp U$, in exactly one way.
+  \ii[Know.] For a line $U=\spn(e)$, $\|e\|=1$, this is LADR 6.13: $u=\ip ve\,e$.
+  \ii[Key step.] For a subspace, take an orthonormal basis $e_1,\dots,e_m$ of $U$ and use all the components: $u=\sum\ip v{e_k}e_k$. Then $\ip{v-u}{e_k}=0$ for every $k$, so $v-u\perp U$. Uniqueness: $U\cap U^\perp=0$, since a vector perpendicular to itself is $0$.
+  \ii[Dimension.] $\dim U^\perp=\dim V-\dim U$ then follows from the direct sum.
+\end{motive}
+\begin{proof}
+  \begin{steps}
+    \ii Direct: if $u\in U\cap U^\perp$, then $\ip uu=0$, so $u=0$.
+    \ii Take an orthonormal basis $e_1,\dots,e_m$ of $U$ (Gram--Schmidt). Set $u=\sum\ip v{e_k}e_k\in U$, $w=v-u$.
+    \ii $\ip w{e_k}=\ip v{e_k}-\ip v{e_k}=0$ for each $k$, so $w\perp U$, and $v=u+w$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~90 / LADR 6.52]
+  If $U$ is finite-dimensional, $(U^\perp)^\perp=U$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] $(U^\perp)^\perp=U$. The inclusion $U\subseteq(U^\perp)^\perp$ is immediate from the definitions; the work is showing that $(U^\perp)^\perp$ is not bigger.
+  \ii[Finite dimension.] Count: $\dim(U^\perp)^\perp=n-(n-\dim U)=\dim U$ (Prop.~89 twice), and a subspace of the same dimension is equal (T3).
+  \ii[Key step in general.] Take $v\in(U^\perp)^\perp$ and split $v=u+w$ (Prop.~89). Then $w\in U^\perp$, and also $w=v-u\in(U^\perp)^\perp$. So $w$ is perpendicular to itself, and $w=0$.
+\end{motive}
+\begin{proof}
+  $U\subseteq(U^\perp)^\perp$: every $u\in U$ is perpendicular to every element of $U^\perp$. Conversely let $v\in(U^\perp)^\perp$, $v=u+w$ ($u\in U$, $w\in U^\perp$). Then $w=v-u\in(U^\perp)^\perp$ and $w\in U^\perp$, so $\ip ww=0$ and $w=0$.
+\end{proof}
+
+\begin{definition*}[Def.~48 / LADR 6.55]
+  For finite-dimensional $U$, the \vocab{orthogonal projection} is $P_U(u+w)=u$ ($u\in U$, $w\in U^\perp$). It is the unique projector with $\range P=U$, $\nul P=U^\perp$.
+\end{definition*}
+\begin{itemize}
+  \ii \textbf{Uniqueness:} if $P^2=P$, $\range P=U$, $\nul P=U^\perp$, then $u=Px$ gives $Pu=P^2x=u$, so $P(u+w)=u$.
+  \ii \textbf{Properties} (LADR 6.57), all from $v=P_Uv+(v-P_Uv)$:
+  \begin{itemize}
+    \ii $P_U$ is linear; $P_U^2=P_U$; $\range P_U=U$; $\nul P_U=U^\perp$; $v-P_Uv\in U^\perp$.
+    \ii $\|P_Uv\|\le\|v\|$ (Pythagoras).
+    \ii $I-P_U=P_{U^\perp}$ if $V$ is finite-dimensional ($V=U^\perp\oplus U$).
+  \end{itemize}
+  \ii \textbf{Any projector} ($P^2=P$) has $V=\nul P\oplus\range P$ (Prop.~91). Idea: $Pv$ is the obvious range part, and $P(v-Pv)=Pv-P^2v=0$. If $w=Pv\in\nul P$, then $w=P^2v=Pw=0$.
+  \ii It is orthogonal only when $\nul P\perp\range P$: $P(x,y)=(0,y)$ is $P_{\spn(e_2)}$; $P(x,y)=(x+y,0)$ is not orthogonal.
+\end{itemize}
+
+\begin{proposition*}[Prop.~92 / LADR 6.57(i)]
+  If $e_1,\dots,e_m$ is an orthonormal basis of $U$: $P_Uv=\sum_k\ip v{e_k}e_k$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] The coordinates of $P_Uv$ in an orthonormal basis $e_1,\dots,e_m$ of $U$.
+  \ii[Know.] Coordinates in an orthonormal basis are inner products: $P_Uv=\sum\ip{P_Uv}{e_k}e_k$ (Prop.~86 in $U$).
+  \ii[Key step.] $v-P_Uv\perp e_k$, so $\ip v{e_k}=\ip{P_Uv}{e_k}$. The coordinates can be computed from $v$, without knowing $P_Uv$ first.
+\end{motive}
+\begin{proof}
+  $v=u+w$: $\ip v{e_k}=\ip u{e_k}$, so $P_Uv=u=\sum\ip u{e_k}e_k=\sum\ip v{e_k}e_k$ (Prop.~86 in $U$).
+\end{proof}
+
+\begin{proposition*}[HW10 P5, LADR 6.61: best approximation]
+  For $u\in U$: $\|v-P_Uv\|\le\|v-u\|$, equality only at $u=P_Uv$. So the distance from $v$ to $U$ is $\|v-P_Uv\|$.
+\end{proposition*}
+\begin{motive}
+  \ii[Want.] Among $u\in U$, $\|v-u\|$ is smallest at $u=P_Uv$.
+  \ii[Key step.] Split the error: $v-u=(v-P_Uv)+(P_Uv-u)$. The first part is in $U^\perp$ and does not depend on $u$; the second is in $U$. They are perpendicular, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$, which is smallest exactly when the second term is $0$.
+\end{motive}
+\begin{proof}
+  $v-u=(v-P_Uv)+(P_Uv-u)$ with pieces in $U^\perp$ and $U$, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$.
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}[scale=1.15,>=Stealth]
+  \draw[thick] (-0.6,0) -- (4.6,0) node[right] {$U$};
+  \fill (2,1.8) circle (1.8pt) node[above] {$v$};
+  \fill (2,0) circle (1.8pt) node[below] {$P_Uv$};
+  \fill (3.8,0) circle (1.8pt) node[below] {$u$};
+  \draw[OliveGreen,thick] (2,0) -- (2,1.8);
+  \node[OliveGreen!70!black,left] at (2,0.9) {$v-P_Uv\perp U$};
+  \draw[red,thick,dashed] (3.8,0) -- (2,1.8);
+  \node[red,right] at (2.95,1.0) {$v-u$};
+  \draw (2,0.18) -- (2.18,0.18) -- (2.18,0);
+\end{tikzpicture}
+\figcap{$v-u$ is the hypotenuse of a right triangle. One leg, $v-P_Uv$, does not depend on $u$; the other, $P_Uv-u$, lies in $U$ and is $0$ only when $u=P_Uv$.}
+\end{fig}
+
+\begin{itemize}
+  \ii \textbf{Bessel:} for any orthonormal $e_1,\dots,e_m$, $\sum|\ip v{e_k}|^2\le\|v\|^2$. The left side is $\|P_Uv\|^2$ with $U=\spn(e_k)$.
+  \ii \textbf{HW10 P7:} a projector is orthogonal iff $\|Pv\|\le\|v\|$ for all $v$. Idea for $\Leftarrow$: suppose $u\in\range P$ and $w\in\nul P$ are not perpendicular. The point of the line $u+tw$ closest to $0$ has $t=-\ip uw/\|w\|^2\ne0$ and is shorter than $u$. But $P(u+tw)=u$, so $\|P(u+tw)\|>\|u+tw\|$. (Details in the solutions.)
+  \ii \textbf{Computing $P_Uv$:} (1) Gram--Schmidt on $U$, then Prop.~92. (2) Or write $P_Uv=\sum c_iu_i$ for a basis $u_i$ and solve $\ip{v-\sum c_iu_i}{u_j}=0$ for all $j$. Check that $v-P_Uv\perp$ each $u_j$.
+\end{itemize}
+
+\begin{example*}[Ex.~71]
+  $P_U(x^3)$, $U=\spn(1,x)$, $\ip pq=\int_0^1pq$. With $e_1=1$, $e_2=\sqrt3(2x-1)$: $\ip{x^3}{e_1}=\frac14$, $\ip{x^3}{e_2}=\frac{3\sqrt3}{20}$, so $P_U(x^3)=\frac14+\frac9{20}(2x-1)=\frac9{10}x-\frac15$. Check: $x^3-\frac9{10}x+\frac15$ is perpendicular to $1$ and $x$.
+\end{example*}
+
+\begin{trapbox}
+  \ii Orthogonal vectors are independent only if nonzero.
+  \ii $P^2=P$ does not make $P$ orthogonal: $P(x,y)=(x+y,0)$ has $\|P(1,1)\|=2>\sqrt2$.
+  \ii $V=U\oplus U^\perp$ can fail for infinite-dimensional $U$: in $\ell^2$, the finitely supported sequences have $U^\perp=\{0\}$. Also $\ell^2$ has no orthonormal (Hamel) basis.
+  \ii Gram--Schmidt depends on the order and on the inner product; normalize only after subtracting.
+  \ii Riesz over $\CC$: the coefficients are conjugated.
+\end{trapbox}
+
+\clearpage
+\section{Problem set}
+
+\needspace{14\baselineskip}
+\subsection{Minimal polynomial (HW7)}
+
+\begin{prob}
+\textbf{HW7 P1. }\ Return to the matrices from Homework 6, $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ and $B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \ii Find the minimal polynomial of $A$ over $\RR$ and over $\CC$.
+  \ii Find the minimal polynomial of $B$ over $\RR$.
+  \ii Use the minimal-polynomial criterion for diagonalizability to recover the conclusions of Homework 6 about whether these operators are diagonalizable over the indicated fields.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P2. }\ Let $D\colon\PP_3(\RR)\to\PP_3(\RR)$ be differentiation.
+\begin{enumerate}[(a)]
+  \ii Find the minimal polynomial of $D$.
+  \ii Decide whether $D$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P3. }\ Let $T$ be an invertible operator on a finite-dimensional vector space, and let $m_T(x)=x^d+a_{d-1}x^{d-1}+\dots+a_1x+a_0$ be its minimal polynomial.
+\begin{enumerate}[(a)]
+  \ii Prove that $a_0\ne0$.
+  \ii Prove that $T^{-1}$ is a polynomial in $T$.
+  \ii Suppose now that $V$ is a complex vector space and that $m_T(x)=x^4+x^3-x^2-5x+4$. Express $T^{-1}$ explicitly as a polynomial in $T$, find the eigenvalues of $T$, and decide whether $T$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P4. (optional)}\ Let $m_T$ be the minimal polynomial of an operator $T$.
+\begin{enumerate}[(a)]
+  \ii Prove that the minimal polynomial of $T-\lambda I$ is $m_T(x+\lambda)$.
+  \ii If $c\ne0$ and $d=\deg m_T$, prove that the minimal polynomial of $cT$ is $c^dm_T(x/c)$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P5. }\ Let $A$ be a $2\times2$ complex matrix whose only eigenvalue is $\lambda$. Prove that its minimal polynomial is either $x-\lambda$ or $(x-\lambda)^2$. Show that the first case occurs exactly when $A=\lambda I$, and conclude that $A$ is diagonalizable if and only if $A=\lambda I$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P6. }\ Consider $C=\begin{pmatrix}2&1&0\\0&2&0\\0&0&3\end{pmatrix}$. Find its eigenvalues, eigenspaces, and minimal polynomial. Decide whether $C$ is diagonalizable.
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P7. (optional)}\ Let $T$ be an operator whose minimal polynomial splits as $m_T(x)=(x-\lambda_1)\cdots(x-\lambda_r)$ with distinct roots. For a fixed $j$, construct a polynomial $p_j$ such that $p_j(\lambda_j)=1$ and $p_j(\lambda_k)=0$ for $k\ne j$, and explain why $p_j(T)$ is the projection onto $E(\lambda_j,T)$ along the sum of the other eigenspaces.
+\end{prob}
+
+\begin{prob}
+\textbf{M1. Computing minimal polynomials.}\ Find the minimal polynomial and decide whether the matrix is diagonalizable.
+\begin{enumerate}[(a)]
+  \ii $A=\begin{pmatrix}1&1&1\\1&1&1\\1&1&1\end{pmatrix}$.
+  \ii $P=\begin{pmatrix}0&0&1\\1&0&0\\0&1&0\end{pmatrix}$, over $\RR$ and over $\CC$.
+  \ii $B=\begin{pmatrix}3&1&0&0\\0&3&0&0\\0&0&3&0\\0&0&0&5\end{pmatrix}$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{M2. Operators on polynomials.}\ Let $n\ge1$.
+\begin{enumerate}[(a)]
+  \ii Let $T\colon\PP_n(\RR)\to\PP_n(\RR)$, $T(p)=xp'$. Find $m_T$ and decide whether $T$ is diagonalizable.
+  \ii Let $S\colon\PP_n(\RR)\to\PP_n(\RR)$, $(Sp)(x)=p(x+1)$. Prove that $m_S=(x-1)^{n+1}$, and decide whether $S$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{M3. }\ Let $V$ be a finite-dimensional real vector space and $T\in\LL(V)$ with $T^3=T$. Prove that $T$ is diagonalizable and that every eigenvalue of $T$ is $-1$, $0$ or $1$.
+\end{prob}
+
+\begin{prob}
+\textbf{M4. }\ Let $V\ne\{0\}$ be finite-dimensional and $T\in\LL(V)$. Prove that $\deg m_T=1$ if and only if $T=cI$ for some $c\in\FF$.
+\end{prob}
+
+\begin{prob}
+\textbf{M5. Minimal polynomial of the inverse.}\ Let $T$ be invertible with $m_T(x)=x^d+a_{d-1}x^{d-1}+\dots+a_0$. Prove that $m_{T^{-1}}(x)=\frac1{a_0}x^dm_T(1/x)$.
+\end{prob}
+
+\begin{prob}
+\textbf{M6. Minimal polynomial and generalized eigenspaces.}\ Let $V$ be a finite-dimensional complex vector space and $m_T=(x-\lambda_1)^{k_1}\cdots(x-\lambda_m)^{k_m}$ with distinct $\lambda_i$. Prove that $k_i$ is the smallest $k$ with $\nul(T-\lambda_iI)^k=G(\lambda_i,T)$. (So $k_i$ is the size of the largest Jordan block for $\lambda_i$.)
+\end{prob}
+
+\begin{prob}
+\textbf{M7. }\ Let $T\in\LL(\CC^7)$ have only the eigenvalue $4$, with $\dim\nul(T-4I)^k=3,5,6,7$ for $k=1,2,3,4$. Find the Jordan form of $T$, $m_T$ and $\chi_T$.
+\end{prob}
+
+\begin{prob}
+\textbf{M8. }\ Let $T\in\LL(\CC^4)$ have $m_T=(x-1)^2(x+2)$ and $\dim E(1,T)=1$. Find the Jordan form of $T$, $\chi_T$ and $\tr T$.
+\end{prob}
+
+\begin{prob}
+\textbf{M9. Using the minimal polynomial to compute.}\ Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$. Find $m_A$, write $A^{-1}$ as a polynomial in $A$, and write $A^3$ as $aA+bI$.
+\end{prob}
+
+\needspace{14\baselineskip}
+\subsection{Generalized eigenvectors and Jordan form (HW8)}
+
+\begin{prob}
+\textbf{HW8 P1. }\ Let $D\colon\PP_n(\CC)\to\PP_n(\CC)$ be differentiation.
+\begin{enumerate}[(a)]
+  \ii Prove that $D$ is nilpotent and determine its nilpotency index.
+  \ii Determine the geometric and algebraic multiplicities of the eigenvalue $0$.
+  \ii Find a basis with respect to which the matrix of $D$ is a single Jordan block.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P2. }\ Construct explicit matrices having the following spectral data.
+\begin{enumerate}[(a)]
+  \ii Eigenvalue $2$ has algebraic multiplicity $3$ and geometric multiplicity $1$; eigenvalue $-1$ has algebraic multiplicity $2$ and geometric multiplicity $2$.
+  \ii The same algebraic multiplicities as in (a), but the geometric multiplicity of $2$ is $2$.
+\end{enumerate}
+For each matrix, give its minimal polynomial.
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P3. }\ Let $J=\begin{pmatrix}1&1&0\\0&1&1\\0&0&1\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \ii Compute $\nul(J-I)$, $\nul((J-I)^2)$, and $\nul((J-I)^3)$.
+  \ii Determine the generalized eigenspace $G(1,J)$ and the geometric and algebraic multiplicities of $1$.
+  \ii Compute $J^m$ for every positive integer $m$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P4. }\ Let $N$ be nilpotent with Jordan form consisting of one block of size $3$ and one block of size $2$.
+\begin{enumerate}[(a)]
+  \ii Compute $\dim\nul N^k$ for $k=0,1,2,3,4$.
+  \ii Suppose instead that you are only told $\dim\nul N=2$, $\dim\nul N^2=4$, $\dim\nul N^3=5$. Explain how these numbers force the same two block sizes.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P5. (optional)}\ Let $T\in\LL(\CC^6)$ have eigenvalues $1$ and $2$, and suppose
+\[ \dim\nul(T-I)=1,\quad\dim\nul((T-I)^2)=2,\quad\dim\nul((T-I)^3)=2, \]
+while
+\[ \dim\nul(T-2I)=2,\quad\dim\nul((T-2I)^2)=3,\quad\dim\nul((T-2I)^3)=4,\quad\dim\nul((T-2I)^4)=4. \]
+Determine the Jordan normal form of $T$, up to reordering of the blocks.
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P6. (optional)}\ Suppose an operator has Jordan blocks $J_3(4)$, $J_2(4)$, $J_1(-1)$. Determine:
+\begin{enumerate}[(a)]
+  \ii its characteristic polynomial;
+  \ii its minimal polynomial;
+  \ii the geometric and algebraic multiplicities of each eigenvalue;
+  \ii whether it is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW8 P7. (optional)}\ Prove that for a nilpotent operator $N$, $\dim\nul N^k-\dim\nul N^{k-1}$ is the number of Jordan blocks of size at least $k$.
+\end{prob}
+
+\needspace{10\baselineskip}
+
+
+
+\begin{prob}
+\textbf{G1. }\ Let $A=\begin{pmatrix}1&1&0\\-1&3&0\\0&0&2\end{pmatrix}$ act on $\CC^3$. Find the eigenvalues, $E(2,A)$, $G(2,A)$, the Jordan form, a Jordan basis, and $m_A$.
+\end{prob}
+
+\begin{prob}
+\textbf{G2. }\ Let $V$ be finite-dimensional and $S,T\in\LL(V)$ with $ST=TS$. Prove that $G(\lambda,T)$ is invariant under $S$.
+\end{prob}
+
+\begin{prob}
+\textbf{G3. }\ 
+\begin{enumerate}[(a)]
+  \ii Let $N$ be nilpotent on a finite-dimensional $V\ne\{0\}$. Prove that $\lambda I+N$ is invertible if and only if $\lambda\ne0$.
+  \ii Let $V$ be a finite-dimensional complex vector space and suppose $T\in\LL(V)$ has only one eigenvalue $\lambda$. Prove that $T-\lambda I$ is nilpotent.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{G4. }\ Find all possible Jordan forms of $T\in\LL(\CC^4)$ with $\chi_T=(x-2)^4$ and $m_T=(x-2)^2$. Which single number tells them apart?
+\end{prob}
+
+\begin{prob}
+\textbf{G5. }\ Let $V$ be a finite-dimensional complex vector space and $T\in\LL(V)$. Prove that if every generalized eigenvector of $T$ is an eigenvector, then $T$ is diagonalizable.
+\end{prob}
+
+\needspace{14\baselineskip}
+\subsection{Trace (HW9)}
+
+\begin{prob}
+\textbf{HW9 P1. }\ Let $P$ be a projection on a finite-dimensional vector space, so that $P^2=P$. Prove that $\tr P=\operatorname{rank}P$. You may choose a basis adapted to the decomposition $V=\nul P\oplus\range P$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW9 P2. }\ Let $T\in\LL(\CC^5)$ have minimal polynomial $m_T(x)=(x-2)^2(x+1)$.
+\begin{enumerate}[(a)]
+  \ii Determine all possible algebraic multiplicities of the eigenvalues $2$ and $-1$.
+  \ii Determine all possible values of $\tr T$.
+  \ii For each possible trace, exhibit a Jordan normal form realizing it.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW9 P3. }\ 
+\begin{enumerate}[(a)]
+  \ii Prove that every nilpotent operator on a finite-dimensional complex vector space has trace $0$.
+  \ii Give a nonzero operator with trace $0$ that is not nilpotent.
+  \ii Give two $2\times2$ matrices $A,B$ for which $AB-BA\ne0$, and verify directly that $\tr(AB-BA)=0$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{Tr1. }\ Let $A$ be a real $2\times2$ matrix with $A^2=-I$. Prove that $\tr A=0$ and $\det A=1$.
+\end{prob}
+
+\begin{prob}
+\textbf{Tr2. }\ Let $T\in\LL(\CC^3)$ have $m_T=(x-1)(x-2)^2$. Find $\chi_T$, the Jordan form of $T$, and $\tr T$.
+\end{prob}
+
+\needspace{14\baselineskip}
+\subsection{Inner products (HW9)}
+
+\begin{prob}
+\textbf{HW9 P4. }\ For each of the following formulas on $\RR^2$, decide whether it defines an inner product. Justify your answer.
+\[ \ip xy_1=x_1y_1+2x_2y_2,\qquad\ip xy_2=x_1y_1-x_2y_2,\qquad\ip xy_3=(x_1+x_2)(y_1+y_2). \]
+\end{prob}
+
+\begin{prob}
+\textbf{HW9 P5. }\ On $\PP_2(\RR)$ define $\ip pq=\int_{-1}^1p(x)q(x)\,dx$.
+\begin{enumerate}[(a)]
+  \ii Prove that this is an inner product.
+  \ii Compute the norms of $1$, $x$, and $x^2$.
+  \ii Determine which pairs among $1,x,x^2$ are orthogonal.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW9 P6. }\ Use the Cauchy--Schwarz inequality to prove that for all real numbers $a,b,c$, $(a+b+c)^2\le3(a^2+b^2+c^2)$. Determine exactly when equality holds.
+\end{prob}
+
+\begin{prob}
+\textbf{HW9 P7. (optional)}\ Prove the parallelogram identity $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$ in every real or complex inner-product space.
+\end{prob}
+
+\needspace{10\baselineskip}
+
+
+
+\begin{prob}
+\textbf{I1. }\ Let $a_1,\dots,a_n>0$. Prove that $(a_1+\dots+a_n)\big(\frac1{a_1}+\dots+\frac1{a_n}\big)\ge n^2$, and find when equality holds.
+\end{prob}
+
+\needspace{14\baselineskip}
+\subsection{Orthogonality (HW10)}
+
+\begin{prob}
+\textbf{HW10 P1. }\ On $\PP_2(\RR)$ use the inner product $\ip pq=\int_{-1}^1p(x)q(x)\,dx$. Apply the Gram--Schmidt procedure to the ordered basis $1,x,x^2$ to obtain an orthonormal basis of $\PP_2(\RR)$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P2. }\ Let $W=\spn\big((1,-1,1,0),(0,2,1,0)\big)\subseteq\RR^4$ with the standard inner product. Find a basis of $W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P3. }\ On $\PP_2(\RR)$ use the same inner product as in Problem 1, and let $W=\spn(x+1)$. Find a basis of $W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P4. }\ Let $U$ and $W$ be subspaces of a finite-dimensional inner-product space $V$. Prove $(U\cap W)^\perp=U^\perp+W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P5. }\ Let $U$ be a subspace of a finite-dimensional inner-product space $V$, and let $e_1,\dots,e_m$ be an orthonormal basis of $U$.
+\begin{enumerate}[(a)]
+  \ii Prove that $P_Uv=\sum_{j=1}^m\ip v{e_j}e_j$.
+  \ii Prove the best-approximation property $\|v-P_Uv\|\le\|v-u\|$ for every $u\in U$, and determine when equality holds.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P6. (optional)}\ On $\PP_1(\RR)$ use the inner product $\ip fg=\int_{-1}^1f(x)g(x)\,dx$. Find the unique polynomial $p\in\PP_1(\RR)$ such that $\int_0^2f(x)\,dx=\ip fp$ for every $f\in\PP_1(\RR)$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P7. (optional)}\ Let $P$ be a projector on a finite-dimensional inner-product space, so $P^2=P$. Prove that $P$ is an orthogonal projection if and only if $\|Pv\|\le\|v\|$ for every $v$.
+\end{prob}
+
+\begin{prob}
+\textbf{O1. }\ Find the polynomial $p\in\PP_1(\RR)$ that minimizes $\int_0^1\big(x^2-p(x)\big)^2dx$, and the minimum value.
+\end{prob}
+
+\begin{prob}
+\textbf{O2. }\ In $\RR^4$ with the dot product let $U=\spn\big((1,1,1,1)\big)$ and $v=(1,2,3,4)$. Find $P_Uv$, a basis of $U^\perp$, and the distance from $v$ to $U$.
+\end{prob}
+
+\begin{prob}
+\textbf{O3. Reflections.}\ Let $U$ be a subspace of a finite-dimensional inner product space and $R=I-2P_U$. Prove that $\|Rv\|=\|v\|$ for all $v$ and that $R^2=I$.
+\end{prob}
+
+\end{document}

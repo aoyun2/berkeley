@@ -1,0 +1,859 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}
+\newcommand{\PP}{\mathcal P}
+\newcommand{\MM}{\mathcal M}
+\newcommand{\Fp}{\mathbb F_p}
+\newcommand{\traps}{\par\medskip\noindent\textbf{\color{RawSienna}Traps.}\ }
+\setlength{\emergencystretch}{3em}
+
+\title{Math 110 Quiz Prep}
+\subtitle{Notes Ch.~1--9, HW1--4}
+\author{}
+\date{}
+
+\ihead{}
+\begin{document}
+\maketitle
+
+\section{Review}
+
+\subsection{Sets and functions}
+Let $f\colon X\to Y$ be a function.
+For a subset $U$ of $X$, the \vocab{image} $f(U)$ is the set of all outputs $f(x)$ with $x$ in $U$.
+For a subset $V$ of $Y$, the \vocab{preimage} $f^{-1}(V)$ is the set of all inputs $x$ whose output $f(x)$ lands in $V$.
+The preimage makes sense for every function. Writing $f^{-1}(V)$ does not mean $f$ has an inverse.
+
+\begin{proposition*}[HW1 P1]
+  Going to the preimage and back never gives more than you started with: $f(f^{-1}(V))\subseteq V$.
+  Going to the image and back never gives less: $U\subseteq f^{-1}(f(U))$.
+  \begin{itemize}
+    \ii The first is always an equality exactly when $f$ is surjective.
+    \ii The second is always an equality exactly when $f$ is injective.
+  \end{itemize}
+\end{proposition*}
+
+\traps Do not assume you get back what you started with. Take $f(x)=x^2$ on $\RR$.
+With $U=[0,1]$: $f(U)=[0,1]$, and $f^{-1}([0,1])=[-1,1]$, which is bigger than $U$.
+With $V=[-1,1]$: $f^{-1}(V)=[-1,1]$, and $f([-1,1])=[0,1]$, which is smaller than $V$.
+
+\subsection{Fields}
+A \vocab{field} is a set of numbers where you can add, subtract, multiply, and divide by anything except $0$, with the usual rules of algebra.
+Examples: $\QQ$, $\RR$, $\CC$, and $\Fp=\{0,1,\dots,p-1\}$ with arithmetic mod $p$, when $p$ is prime.
+
+\begin{proposition*}[HW1 P3]
+  In a field, if $ab=0$ then $a=0$ or $b=0$.
+\end{proposition*}
+\begin{proof}
+  Suppose $a\ne0$. Then $a$ has an inverse. Multiply both sides of $ab=0$ by $a^{-1}$ to get $b=0$.
+\end{proof}
+For example, arithmetic mod $6$ is not a field, because $2\cdot3=6=0$ but neither $2$ nor $3$ is $0$.
+
+In $\FF_2$ we have $1+1=0$. So $(x+1)^2=x^2+2x+1=x^2+1$, and squaring twice more gives $(x+1)^8=x^8+1$ (HW1 P7).
+
+\traps Any step where you divide by $2$ breaks in $\FF_2$, because $2=0$ there.
+Over a finite field, two different polynomials can give the same function. For example, $x^2$ and $x$ give the same output at both points of $\FF_2$.
+
+\subsection{Vector spaces and subspaces}
+Examples of vector spaces: $\FF^n$; $\FF^\infty$ (infinite sequences); functions from a set $S$ to $\FF$; $\PP_n(\FF)$ (polynomials of degree at most $n$); $\FF^{m,n}$ ($m\times n$ matrices); $\LL(V,W)$ (linear maps from $V$ to $W$).
+Basic facts that follow from the axioms: $0v=0$, $a0=0$, $(-1)v=-v$, and if $av=0$ then $a=0$ or $v=0$ (HW1 P4).
+
+\begin{definition*}
+  A \vocab{subspace} of $V$ is a subset $U$ that contains $0$, and is closed under addition and scalar multiplication.
+  A quick way to check both closure conditions at once: $\lambda u+w$ is in $U$ whenever $u,w$ are in $U$.
+
+  The \vocab{sum} $U+W$ is the set of all vectors $u+w$ with $u$ in $U$ and $w$ in $W$. It is the smallest subspace containing both.
+
+  The sum is \vocab{direct}, written $U\oplus W$, if every vector in $U+W$ can be written as $u+w$ in only one way.
+\end{definition*}
+
+\begin{proposition*}[LADR 1.45]
+  For two subspaces: $U+W$ is direct exactly when the only vector in both $U$ and $W$ is $0$.
+
+  For any number of subspaces: $U_1+\dots+U_m$ is direct exactly when the only way to write $0=u_1+\dots+u_m$ is with every $u_i=0$.
+\end{proposition*}
+
+\traps With three or more subspaces, checking that each pair meets only at $0$ is not enough. Three different lines through the origin in $\RR^2$ pass that check, but their sum is not direct.
+
+The union $U\cup W$ is almost never a subspace. It is one only when one of $U$, $W$ contains the other.
+
+Over $\RR$, a set that is nonempty and closed under addition need not be a subspace (the integer points $\ZZ^n$). Over $\Fp$ it always is, because every scalar is $1+1+\dots+1$.
+
+\subsection{Span, independence, bases}
+\begin{definition*}
+  The \vocab{span} of $v_1,\dots,v_m$ is the set of all linear combinations $a_1v_1+\dots+a_mv_m$.
+
+  The list is \vocab{linearly independent} if the only combination equal to $0$ is the one with all coefficients $0$.
+
+  A \vocab{basis} is a list that is independent and spans $V$. Equivalently, every vector in $V$ can be written as a combination of the list in exactly one way.
+\end{definition*}
+
+\begin{proposition*}[Linear dependence lemma, LADR 2.19]
+  If a list is dependent, then one of its vectors is a combination of the earlier ones, and you can delete it without changing the span.
+\end{proposition*}
+
+\begin{theorem*}[LADR 2.22]
+  In a finite-dimensional space, an independent list is never longer than a spanning list.
+\end{theorem*}
+
+\begin{proposition*}[LADR 2.30, 2.32]
+  You can delete vectors from any spanning list to get a basis.
+  In a finite-dimensional space, you can add vectors to any independent list to get a basis.
+\end{proposition*}
+
+\traps A span only contains \emph{finite} combinations. So $e_1,e_2,e_3,\dots$ do not span $\FF^\infty$: the sequence $(1,1,1,\dots)$ would need infinitely many terms (HW2 P2).
+
+Whether a list is independent can depend on the field. $(1,1,0),(0,1,1),(1,0,1)$ is a basis of $\RR^3$, but in $\FF_2^3$ the three vectors add up to $0$.
+
+\subsection{Dimension}
+The \vocab{dimension} of $V$ is the number of vectors in any basis.
+Examples: $\dim\FF^n=n$, $\dim\PP_n=n+1$ (basis $1,x,\dots,x^n$), $\dim\FF^{m,n}=mn$.
+
+\begin{proposition*}[LADR 2.38, 2.39, 2.42]
+  Suppose $\dim V=n$.
+  \begin{itemize}
+    \ii Any $n$ independent vectors form a basis. Any $n$ vectors that span form a basis. So you only need to check one of the two conditions.
+    \ii A subspace has dimension at most $n$, and it has dimension exactly $n$ only if it is all of $V$.
+  \end{itemize}
+\end{proposition*}
+
+\begin{theorem*}[LADR 2.43]
+  $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+
+  Two consequences:
+  \begin{itemize}
+    \ii $U+W$ is direct exactly when $\dim(U+W)=\dim U+\dim W$.
+    \ii The intersection cannot be too small: $\dim(U\cap W)\ge\dim U+\dim W-\dim V$.
+  \end{itemize}
+\end{theorem*}
+
+\traps There is no similar formula for three subspaces.
+To show two subspaces are equal, show that one is inside the other and that they have the same dimension. Having the same dimension alone is not enough.
+
+\subsection{Linear maps, null space, range}
+\begin{definition*}
+  $T\colon V\to W$ is \vocab{linear} if $T(\lambda v+w)=\lambda Tv+Tw$ for all vectors and scalars.
+
+  The \vocab{null space} $\nul T$ is the set of vectors that $T$ sends to $0$.
+  The \vocab{range} $\range T$ is the set of all outputs of $T$.
+  Both are subspaces.
+\end{definition*}
+
+\begin{proposition*}[LADR 3.4]
+  A linear map is decided by what it does to a basis.
+  If $v_1,\dots,v_n$ is a basis of $V$, you can pick $w_1,\dots,w_n$ in $W$ freely, and there is exactly one linear map with $Tv_1=w_1,\dots,Tv_n=w_n$.
+\end{proposition*}
+This is how you build a linear map in a proof: pick a convenient basis and say where each basis vector goes.
+
+\begin{proposition*}[LADR 3.15]
+  $T$ is injective exactly when its null space is just $\{0\}$.
+\end{proposition*}
+\begin{proof}
+  Suppose $\nul T=\{0\}$ and $Tv=Tw$. Then $T(v-w)=Tv-Tw=0$, so $v-w$ is in the null space. So $v-w=0$, meaning $v=w$.
+\end{proof}
+
+\begin{theorem*}[Rank--nullity, LADR 3.21]
+  If $V$ is finite-dimensional, then $\dim V=\dim\nul T+\dim\range T$.
+\end{theorem*}
+\begin{proof}
+  Start with a basis $u_1,\dots,u_m$ of the null space, and add vectors $v_1,\dots,v_k$ to make a basis of $V$.
+  We show that $Tv_1,\dots,Tv_k$ is a basis of the range. Then $\dim V=m+k=\dim\nul T+\dim\range T$.
+  \begin{itemize}
+    \ii They span the range: $T$ sends each $u_i$ to $0$, so every output $Tv$ is a combination of $Tv_1,\dots,Tv_k$.
+    \ii They are independent: if $\sum a_iTv_i=0$, then $T(\sum a_iv_i)=0$, so $\sum a_iv_i$ is in the null space. That makes it a combination of the $u_j$. Since the $u$'s and $v$'s together are independent, all $a_i=0$.
+  \end{itemize}
+\end{proof}
+Many hard proofs use this same basis: a basis of the null space, extended to a basis of $V$.
+
+\begin{corollary*}
+  If $V$ is bigger than $W$ ($\dim V>\dim W$), no linear map $V\to W$ is injective.
+  If $V$ is smaller than $W$, no linear map $V\to W$ is surjective.
+\end{corollary*}
+
+\begin{proposition*}[Preimage formula, HW3 P1]
+  For a subspace $U$ of $W$, the set of vectors that $T$ sends into $U$ has dimension
+  \[ \dim T^{-1}(U)=\dim\nul T+\dim(U\cap\range T). \]
+\end{proposition*}
+\begin{proof}
+  Apply rank--nullity to $T$, using only inputs from $T^{-1}(U)$.
+  The vectors it sends to $0$ are still $\nul T$.
+  Its outputs are exactly the vectors of $U$ that $T$ can reach, which is $U\cap\range T$.
+\end{proof}
+
+\begin{proposition*}[HW3 P2]
+  If $T^2=0$, then every output of $T$ is sent to $0$ by $T$, so $\range T\subseteq\nul T$.
+
+  If $\nul T=\range T$, then rank--nullity gives $\dim V=2\dim\range T$, so $\dim V$ must be even.
+\end{proposition*}
+
+\traps Rank--nullity only says the dimensions add up. It does not say $V$ splits as $\nul T\oplus\range T$. For $N(x,y)=(y,0)$, the null space and the range are the same line.
+
+A linear map can send an independent list to a dependent one (unless it is injective).
+It sends a basis to a list that spans the range, but that list might not be a basis.
+
+\subsection{Matrices}
+\begin{definition*}
+  Pick a basis $v_1,\dots,v_n$ of $V$ and a basis $w_1,\dots,w_m$ of $W$.
+  The matrix $\MM(T)$ has $m$ rows and $n$ columns.
+  Its $j$th column lists the coefficients you need to write $Tv_j$ in terms of $w_1,\dots,w_m$.
+\end{definition*}
+
+\begin{proposition*}[LADR 3.43, 3.76]
+  Multiplying matrices is the same as composing maps: $\MM(ST)=\MM(S)\MM(T)$.
+  Multiplying a matrix by a coordinate vector is the same as applying the map: $\MM(Tv)=\MM(T)\MM(v)$.
+\end{proposition*}
+
+\begin{proposition*}
+  $Ax$ is $x_1(\text{column }1)+\dots+x_n(\text{column }n)$.
+  So the range of $A$ is the span of its columns, and the rank of $A$ is the dimension of that span.
+
+  The solutions of $Ax=b$, if there are any, are one solution $x_0$ plus anything in the null space.
+  Over $\FF_2$, if there is a solution, there are exactly $2^{m-\operatorname{rank}A}$ of them, where $m$ is the number of unknowns.
+\end{proposition*}
+
+\traps $\MM(T)$ has $\dim W$ rows and $\dim V$ columns, not the other way round.
+The matrix changes if you change the bases.
+
+\subsection{Isomorphisms}
+\begin{definition*}
+  A linear map $T\colon V\to W$ is an \vocab{isomorphism} (or \vocab{invertible}) if there is a linear map $S\colon W\to V$ that undoes it from both sides: $ST=I$ on $V$ and $TS=I$ on $W$.
+  When an isomorphism exists, we write $V\cong W$ and say $V$ and $W$ are isomorphic.
+\end{definition*}
+
+\begin{proposition*}[LADR 3.60]
+  A map has at most one inverse.
+  In fact, if $S_1T=I$ and $TS_2=I$, then $S_1=S_2$.
+\end{proposition*}
+\begin{proof}
+  $S_1=S_1(TS_2)=(S_1T)S_2=S_2$.
+\end{proof}
+
+\begin{theorem*}[LADR 3.63]
+  $T$ is an isomorphism exactly when it is both injective and surjective.
+  You never need to check separately that the inverse is linear. That is automatic.
+\end{theorem*}
+\begin{proof}
+  If $T$ has an inverse: when $Tv=0$, apply $T^{-1}$ to get $v=0$, so $T$ is injective. Every $w$ equals $T(T^{-1}w)$, so $T$ is surjective.
+
+  If $T$ is injective and surjective: each $w$ comes from exactly one $v$. Define $T^{-1}w$ to be that $v$.
+  To see it is linear: $T$ sends $\lambda T^{-1}w_1+T^{-1}w_2$ to $\lambda w_1+w_2$. Only one vector goes to $\lambda w_1+w_2$, so $T^{-1}(\lambda w_1+w_2)=\lambda T^{-1}w_1+T^{-1}w_2$.
+\end{proof}
+
+\begin{theorem*}[LADR 3.70]
+  Two finite-dimensional spaces are isomorphic exactly when they have the same dimension.
+\end{theorem*}
+\begin{proof}
+  If $T$ is an isomorphism, its null space is $\{0\}$ and its range is all of $W$. Rank--nullity gives $\dim V=0+\dim W$.
+  If the dimensions are equal, pick a basis of each and let $T$ send the first basis to the second.
+\end{proof}
+
+\begin{theorem*}[LADR 3.65]
+  If $V$ and $W$ have the same finite dimension, then for $T\colon V\to W$ these are all the same condition:
+  $T$ is injective; $T$ is surjective; $T$ is an isomorphism.
+\end{theorem*}
+\begin{proof}
+  By rank--nullity, the null space has dimension $0$ exactly when the range has dimension $\dim V$, which equals $\dim W$.
+\end{proof}
+This is usually the fastest way to prove something is an isomorphism: show that $Tv=0$ forces $v=0$.
+
+It also proves that equations have solutions. To show $Tp=q$ can be solved for every $q$, show $T$ is injective between spaces of the same dimension. The notes use this for polynomial interpolation (Ex.~34) and for $(x^2+5x+7)p''=q$ (Ex.~35).
+
+\begin{proposition*}[HW4 P3]
+  Let $V$ be finite-dimensional and $T\colon V\to V$.
+  $T$ is an isomorphism exactly when it sends a basis to a basis. It then sends every basis to a basis.
+\end{proposition*}
+\begin{proof}
+  An isomorphism is injective, so it keeps lists independent, and surjective, so the image of a basis spans.
+  Conversely, if $Tv_1,\dots,Tv_n$ is a basis, every vector is an output, so $T$ is surjective and therefore an isomorphism by LADR 3.65.
+\end{proof}
+
+\begin{proposition*}[LADR 3D]
+  If $S$ and $T$ are invertible, then so is $ST$, and $(ST)^{-1}=T^{-1}S^{-1}$ (the order flips).
+
+  If $ST$ is invertible, then $S$ is surjective and $T$ is injective.
+\end{proposition*}
+\begin{proof}
+  $S$ is surjective: any $v$ equals $S\big(T(ST)^{-1}v\big)$, which is an output of $S$.
+
+  $T$ is injective: if $Tv=0$, then $v=(ST)^{-1}S(Tv)=(ST)^{-1}S(0)=0$.
+\end{proof}
+
+\begin{corollary*}[Prop.~33]
+  If $V$ is finite-dimensional and $S,T\colon V\to V$, then $ST=I$ implies $TS=I$.
+  So in this case you only need to check one side.
+\end{corollary*}
+\begin{proof}
+  $ST=I$ makes $T$ injective. By LADR 3.65, $T$ is invertible. Then $S=S(TT^{-1})=(ST)T^{-1}=T^{-1}$.
+\end{proof}
+
+\begin{proposition*}[HW4 P1]
+  The $2\times2$ matrix $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, over any field, is invertible exactly when $ad-bc\ne0$. Then
+  \[ A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}. \]
+\end{proposition*}
+\begin{proof}
+  Multiplying out gives $A\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}=(ad-bc)I$. If $ad-bc\ne0$, divide by it.
+
+  If $ad-bc=0$: when $a$ or $b$ is nonzero, $A$ sends the nonzero vector $(b,-a)$ to $0$, so it is not injective. When $a=b=0$, every output has first entry $0$, so $A$ is not surjective.
+\end{proof}
+
+\begin{proposition*}[HW4 P4]
+  A product has rank at most the rank of each factor: $\operatorname{rank}(BC)\le\min(\operatorname{rank}B,\operatorname{rank}C)$.
+\end{proposition*}
+\begin{proof}
+  Every output of $BC$ is an output of $B$, so $\operatorname{rank}(BC)\le\operatorname{rank}B$.
+  The outputs of $BC$ are $B$ applied to the outputs of $C$, and a linear map cannot increase the dimension of a subspace, so $\operatorname{rank}(BC)\le\operatorname{rank}C$.
+\end{proof}
+
+\begin{proposition*}[Prop.~26]
+  Once bases are fixed, sending $T$ to its matrix is an isomorphism from $\LL(V,W)$ to $\FF^{m,n}$.
+  So $\dim\LL(V,W)=(\dim V)(\dim W)$.
+\end{proposition*}
+
+\begin{proposition*}[HW4 P7]
+  Let $U$ be a subspace of a finite-dimensional $V$, and let $S\colon U\to V$ be injective.
+  Then there is an invertible $T\colon V\to V$ that agrees with $S$ on $U$.
+\end{proposition*}
+\begin{proof}
+  Take a basis $u_1,\dots,u_m$ of $U$ and add $w_1,\dots,w_k$ to get a basis of $V$.
+  Because $S$ is injective, $Su_1,\dots,Su_m$ is independent. Add $y_1,\dots,y_k$ to it to get a basis of $V$.
+  Define $T$ by $Tu_i=Su_i$ and $Tw_j=y_j$. It sends a basis to a basis, so it is invertible.
+\end{proof}
+
+\traps Do not write $T^{-1}$ until you have shown it exists.
+
+LADR 3.65 and Prop.~33 need finite dimensions. On $\FF^\infty$, shifting left, $L(a_1,a_2,\dots)=(a_2,a_3,\dots)$, and shifting right, $R(a_1,a_2,\dots)=(0,a_1,a_2,\dots)$, satisfy $LR=I$ but $RL\ne I$. Differentiation on all polynomials is surjective but not injective.
+
+A matrix that is not square has no two-sided inverse, but it can have a one-sided one. $\begin{psmallmatrix}1&2\end{psmallmatrix}$ has infinitely many right inverses.
+
+If $ST$ is injective, you only learn that $T$ is injective, not $S$.
+
+\subsection{Products}
+\begin{definition*}
+  The \vocab{product} $V_1\times\dots\times V_m$ is the set of lists $(v_1,\dots,v_m)$ with each $v_i$ in $V_i$.
+  You add lists entry by entry, and multiply a list by a scalar by multiplying each entry.
+\end{definition*}
+The spaces do not need to be related. An element of $\PP_2(\RR)\times\RR^3$ is a pair: a polynomial and a vector.
+$\RR^m\times\RR^n$ is really the same as $\RR^{m+n}$: just write the two lists one after the other.
+Each $V_i$ sits inside the product as the lists that are $0$ except in slot $i$. The product is the direct sum of these copies.
+
+\begin{proposition*}[Prop.~36]
+  The dimensions add: $\dim(V_1\times\dots\times V_m)=\dim V_1+\dots+\dim V_m$.
+\end{proposition*}
+\begin{proof}
+  For two spaces: if $v_1,\dots,v_n$ is a basis of $V$ and $w_1,\dots,w_k$ is a basis of $W$, then
+  $(v_1,0),\dots,(v_n,0),(0,w_1),\dots,(0,w_k)$ is a basis of $V\times W$.
+  It spans because $(v,w)=(v,0)+(0,w)$. It is independent because you can check each slot separately.
+\end{proof}
+
+\begin{proposition*}[Prop.~37]
+  For subspaces $U_1,\dots,U_m$ of $V$, the map that adds up the entries, $(u_1,\dots,u_m)\mapsto u_1+\dots+u_m$, is a linear map from the product onto the sum $U_1+\dots+U_m$.
+  It is injective exactly when the sum is direct.
+  So $\dim(U_1+\dots+U_m)\le\dim U_1+\dots+\dim U_m$, with equality exactly when the sum is direct.
+\end{proposition*}
+
+\traps The dimension of a product is a sum. The dimension of $\LL(V,W)$ is a product.
+
+\subsection{Affine subsets}
+\begin{definition*}
+  An \vocab{affine subset} is a subspace moved away from the origin: $v+U$ is the set of all $v+u$ with $u$ in $U$.
+  We say $v+U$ is \vocab{parallel} to $U$.
+\end{definition*}
+Examples:
+\begin{itemize}
+  \ii The line $x+y=1$ in $\RR^2$ is $(1,0)+\spn((-1,1))$: the line through the origin with slope $-1$, moved to pass through $(1,0)$.
+  \ii The antiderivatives of $x^2$ are $\tfrac13x^3+C$ for any constant $C$. That is $\tfrac13x^3$ plus the subspace of constants.
+  \ii The solutions of $Tx=b$ are either none, or one solution $x_0$ plus the null space: $x_0+\nul T$.
+\end{itemize}
+A map of the form $x\mapsto Tx+b$ with $T$ linear is called affine. It is linear only when $b=0$, because it sends $0$ to $b$.
+
+\begin{proposition*}[LADR 3.101]
+  For a subspace $U$, these three statements say the same thing:
+  \begin{enumerate}
+    \ii $v-w$ is in $U$;
+    \ii $v+U=w+U$;
+    \ii $v+U$ and $w+U$ have at least one point in common.
+  \end{enumerate}
+  So two shifted copies of $U$ are either identical or do not touch.
+\end{proposition*}
+\begin{proof}
+  If $v-w$ is in $U$, then any $v+u$ can be rewritten as $w+\big((v-w)+u\big)$, which is in $w+U$. The same argument works the other way.
+
+  If the two sets share a point $v+u_1=w+u_2$, then $v-w=u_2-u_1$ is in $U$.
+\end{proof}
+
+\begin{proposition*}[HW4 P6, Prop.~38]
+  $v+U$ is a subspace exactly when $v$ is in $U$, and then $v+U$ is just $U$.
+  Each affine subset is parallel to only one subspace.
+\end{proposition*}
+
+\traps The set $v+U$ determines $U$, but not $v$. Any point of the set can play the role of $v$.
+The solutions of $Tx=b$ with $b\ne0$ do not form a subspace, because $0$ is not a solution.
+
+\subsection{Quotient spaces}
+\begin{definition*}
+  Let $U$ be a subspace of $V$. The \vocab{quotient} $V/U$ is the set of all the shifted copies $v+U$.
+  You add and scale them using any representative:
+  \[ (v+U)+(w+U)=(v+w)+U,\qquad \lambda(v+U)=\lambda v+U. \]
+  The zero of $V/U$ is $0+U$, which is $U$ itself.
+\end{definition*}
+The idea: $V/U$ is $V$ where you stop telling apart two vectors that differ by something in $U$.
+
+Example: take $U$ to be the $y$-axis in $\RR^2$. Then $(1,2)+U$ is the vertical line $x=1$, and so is $(1,4)+U$. Every vertical line is determined by its $x$-value, so $\RR^2/U$ is just a copy of $\RR$.
+
+\textbf{Why ``well defined'' comes up.}
+The same element of $V/U$ has many names: $v+U$ and $v'+U$ are equal whenever $v-v'$ is in $U$.
+A formula that uses $v$ must give the same answer for every name.
+For addition: if $v_1-v_2$ and $w_1-w_2$ are in $U$, then so is $(v_1+w_1)-(v_2+w_2)$, so the answer does not depend on the names. Scalar multiplication works the same way.
+
+\begin{proposition*}[LADR 3.104, 3.105]
+  The map $\pi(v)=v+U$ from $V$ to $V/U$ is linear and surjective, and it sends exactly the vectors of $U$ to zero.
+  Rank--nullity then gives $\dim V/U=\dim V-\dim U$.
+
+  To get a basis: take a basis $u_1,\dots,u_m$ of $U$ and add $v_1,\dots,v_k$ to make a basis of $V$. Then $v_1+U,\dots,v_k+U$ is a basis of $V/U$.
+\end{proposition*}
+
+\begin{proposition*}[HW5 P2]
+  Let $T\colon V\to W$ be linear, and suppose $T$ sends everything in $U$ to $0$.
+  Then $\tilde T(v+U)=Tv$ is a well-defined linear map from $V/U$ to $W$.
+\end{proposition*}
+\begin{proof}
+  If $v+U=v'+U$, then $v-v'$ is in $U$, so $Tv-Tv'=T(v-v')=0$. Both names give the same output.
+\end{proof}
+
+\begin{theorem*}[First isomorphism theorem, LADR 3.107]
+  For any linear $T\colon V\to W$, the map $v+\nul T\mapsto Tv$ is an isomorphism from $V/\nul T$ to $\range T$.
+\end{theorem*}
+\begin{proof}
+  It is well defined by the previous proposition.
+  It is surjective because every element of the range is some $Tv$.
+  It is injective because if $Tv=0$, then $v$ is in the null space, so $v+\nul T$ is the zero element.
+\end{proof}
+Example: differentiation on polynomials sends exactly the constants to $0$. So ``polynomials, where you ignore the constant term'' is isomorphic to ``polynomials'', by $p\mapsto p'$. The inverse is the indefinite integral.
+
+The second and third isomorphism theorems are $U/(U\cap W)\cong(U+W)/W$ and, for $W\subseteq U$, $(V/W)/(U/W)\cong V/U$. Both are proved the same way: write down a surjective map and apply the first theorem.
+
+\traps Any map you define on $V/U$ by a formula in $v$ needs a check that it is well defined.
+For example, $(x,y)+U\mapsto x$ works when $U$ is the $y$-axis, but not when $U$ is the $x$-axis: then $(0,0)+U=(1,0)+U$, and the formula gives $0$ for one and $1$ for the other.
+
+$v+U$ is the zero of $V/U$ when $v$ is in $U$. It does not require $v=0$.
+
+\section{Problems}
+Starred problems are the most likely quiz material. Solutions are in Section~\ref{sec:sol}.
+
+\begin{problem}[$\star$ Images and preimages]
+  Let $f\colon X\to Y$ be a function.
+  \begin{enumerate}[(a)]
+    \ii Prove $f$ is injective if and only if $f^{-1}(f(U))=U$ for every $U\subseteq X$.
+    \ii Prove $f$ is surjective if and only if $f(f^{-1}(V))=V$ for every $V\subseteq Y$.
+    \ii Prove $f(A\cap B)\subseteq f(A)\cap f(B)$, with equality for all $A,B$ if and only if $f$ is injective.
+    \ii Let $T\colon V\to W$ be linear, $U\subseteq V$ and $X\subseteq W$ subspaces. Prove
+    \[ T^{-1}(T(U))=U+\nul T, \qquad T(T^{-1}(X))=X\cap\range T. \]
+    \ii For $V$ finite-dimensional, prove $\dim T(U)=\dim U-\dim(U\cap\nul T)$.
+    Then prove $T^{-1}(T(U))=U$ for every subspace $U$ if and only if $T$ is injective.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Finite fields and polynomial functions]
+  Let $p$ be prime. Here $\PP_n(\Fp)$ means formal polynomials of degree $\le n$ (basis $1,x,\dots,x^n$), and $\SF$ is the space of all functions $\Fp\to\Fp$.
+  \begin{enumerate}[(a)]
+    \ii Prove $\ZZ/6\ZZ$ is not a field.
+    \ii Let $\FF$ be a field with $q$ elements and $a\ne0$.
+    Prove $x\mapsto ax$ is a bijection $\FF\to\FF$, and deduce $a^{q-1}=1$.
+    Conclude $c^p=c$ for all $c\in\Fp$.
+    \ii Find $\dim\SF$.
+    Let $E\colon\PP_n(\Fp)\to\SF$ send a polynomial to the function it defines.
+    Determine exactly for which $n$ the map $E$ is injective, surjective, an isomorphism.
+    For $n=p$, give a nonzero element of $\nul E$.
+    \ii Over $\FF_2$, expand $(x+1)^4$.
+    Which polynomial of degree $\le 1$ defines the same function?
+    Which hypothesis of the interpolation argument (Ex.~34) fails when $|\FF|<n+1$?
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Independence depends on the field]
+  Let $v_1,\dots,v_n$ be linearly independent, $n\ge2$.
+  \begin{enumerate}[(a)]
+    \ii Prove or disprove: $v_1-v_2,\ v_2-v_3,\ \dots,\ v_{n-1}-v_n,\ v_n-v_1$ is linearly independent.
+    \ii Let $w_j=v_j+v_{j+1}$ for $j<n$ and $w_n=v_n+v_1$.
+    Determine exactly, in terms of $n$ and $\FF$, when $w_1,\dots,w_n$ is independent.
+    In that case, write $v_1$ in terms of the $w_j$.
+    \ii Suppose $v_1+w,\dots,v_n+w$ is linearly dependent. Prove $w\in\spn(v_1,\dots,v_n)$.
+    \ii Prove or disprove: if $\spn(u_1,\dots,u_n)=\spn(v_1,\dots,v_n)$, then $u_1,\dots,u_n$ is independent.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Dimension counting]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Let $\dim V=10$ and $U,W,X$ subspaces of dimension $7$.
+    Prove $U\cap W\cap X\ne\{0\}$, and show $\dim(U\cap W\cap X)=1$ is possible.
+    \ii If $U_1,\dots,U_k$ are subspaces of an $n$-dimensional $V$, prove $\dim\bigcap U_i\ge\sum\dim U_i-(k-1)n$.
+    \ii Prove or disprove: $\dim(U_1+U_2+U_3)=\sum\dim U_i-\sum_{i<j}\dim(U_i\cap U_j)+\dim(U_1\cap U_2\cap U_3)$.
+    \ii Let $\dim V=n$ and $\dim U=m$.
+    Prove $\mathcal E=\{T\in\LL(V):T(U)\subseteq U\}$ is a subspace of $\LL(V)$ and compute $\dim\mathcal E$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Null spaces of compositions]
+  Let $T\colon U\to V$ and $S\colon V\to W$ be linear with $U,V$ finite-dimensional.
+  \begin{enumerate}[(a)]
+    \ii Show $\nul(ST)=T^{-1}(\nul S)$, and deduce
+    $\dim\nul(ST)=\dim\nul T+\dim(\nul S\cap\range T)$.
+    \ii Prove $\dim\nul(ST)\le\dim\nul S+\dim\nul T$, with equality if and only if $\nul S\subseteq\range T$.
+    \ii Prove $\rank(ST)\ge\rank S+\rank T-\dim V$.
+    Determine exactly when $\rank(ST)=\rank T$.
+    \ii Are there $S,T\in\LL(\RR^3)$ with $\rank S=\rank T=2$ and $ST=0$?
+    Are there $S,T\in\LL(\FF^2)$ with $ST\ne0$ and $TS=0$?
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Prescribing null spaces and ranges]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii If $T\in\LL(V)$, $V$ finite-dimensional, and $T^2=0$, prove $\rank T\le\frac12\dim V$.
+    \ii Prove some $T\in\LL(\FF^n)$ has $\nul T=\range T$ if and only if $n$ is even.
+    Write one down for $n=6$.
+    \ii Let $V,W$ be finite-dimensional and $U\subseteq V$.
+    Prove some $T\in\LL(V,W)$ has $\nul T=U$ if and only if $\dim U\ge\dim V-\dim W$.
+    \ii Prove no linear map $\FF^5\to\FF^2$ has null space $\{x: x_1=3x_2,\ x_3=x_4=x_5\}$.
+    \ii If $\nul T\cap\range T=\{0\}$ for $T\in\LL(V)$, $V$ finite-dimensional, prove $V=\nul T\oplus\range T$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Matrices of polynomial maps]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Define $\Delta\colon\PP_3(\RR)\to\PP_2(\RR)$ by $(\Delta p)(x)=p(x+1)-p(x)$.
+    Explain why $\deg\Delta p\le2$.
+    Find $\MM(\Delta)$ in the monomial bases, and find $\nul\Delta$ and $\range\Delta$.
+    \ii Find $p$ with $\Delta p=x^2$ and $p(0)=0$. Use it to compute $\sum_{k=0}^{n-1}k^2$.
+    \ii Find $\dim\{p\in\PP_3(\RR):\Delta p\in\spn(1,x^2)\}$ using the preimage formula.
+    \ii Let $T=I+D$ on $\PP_3(\RR)$, $Dp=p'$.
+    Prove $T$ is an isomorphism without a matrix, show $T^{-1}=I-D+D^2-D^3$, and solve $p+p'=x^3$.
+    \ii Is $I+D$ invertible on $\PP(\RR)$? Compare with $D$ on $\PP(\RR)$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Interpolation with derivatives]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii For $a\in\RR$ let $T_a\colon\PP_2(\RR)\to\RR^3$, $T_a(p)=(p(0),p(1),p'(a))$.
+    Determine exactly which $a$ make $T_a$ an isomorphism.
+    For the others, find $\nul T_a$ and $\range T_a$, and explain using the mean value theorem.
+    \ii Prove, before computing, that exactly one $p\in\PP_3(\RR)$ has
+    $p(0)=1$, $p'(0)=0$, $p(1)=2$, $p'(1)=-1$. Then find it.
+    \ii Prove or disprove: for distinct $x_0,x_1$ and any $a_0,a_1,b_0,b_1$, exactly one $p\in\PP_3(\RR)$ has $p(x_i)=a_i$, $p'(x_i)=b_i$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Invertibility and one-sided inverses]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Over $\FF_5$, for which $a$ is $A_a=\begin{psmallmatrix}a&2\\3&a\end{psmallmatrix}$ invertible?
+    Find $A_2^{-1}$.
+    \ii Over $\CC$, is $B=\begin{psmallmatrix}1+i&2\\1&1-i\end{psmallmatrix}$ invertible?
+    If not, find a nonzero vector in $\nul B$ and describe $\range B$.
+    \ii Count the invertible $2\times2$ matrices over $\Fp$.
+    \ii Let $A=\begin{psmallmatrix}1&2&3\\0&1&1\end{psmallmatrix}\in\RR^{2,3}$.
+    Find all $B$ with $AB=I_2$. Prove no $C$ has $CA=I_3$.
+    \ii Prove $A\in\FF^{m,n}$ has a right inverse if and only if $\rank A=m$, and a left inverse if and only if $\rank A=n$.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Structure theorems for isomorphisms]
+  All spaces are finite-dimensional.
+  \begin{enumerate}[(a)]
+    \ii Let $T_1,T_2\in\LL(V,W)$.
+    Prove $\nul T_1=\nul T_2$ if and only if $T_1=ST_2$ for some invertible $S\in\LL(W)$.
+    \ii Prove $\range T_1=\range T_2$ if and only if $T_1=T_2S$ for some invertible $S\in\LL(V)$.
+    \ii If $ST=TS$ for every $S\in\LL(V)$, prove $T=\lambda I$.
+    \ii Over $\RR$, suppose $T^2-3T+2I=0$.
+    Prove $T$ is invertible and write $T^{-1}$ as a polynomial in $T$.
+    If $V\ne\{0\}$, prove $T-I$ or $T-2I$ is not invertible.
+    What goes wrong over $\FF_2$?
+    \ii If $\dim V\ge2$, prove the non-invertible operators on $V$ do not form a subspace.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[$\star$ Products, affine sets, extensions]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Prove two translates $v+U$, $w+U$ of a subspace $U$ are equal or disjoint.
+    \ii Prove $\{x:Tx=b\}$ is empty or equal to $x_0+\nul T$ for any solution $x_0$.
+    Use this to list all solutions over $\FF_2$ of $x+y+z+w=1$, $x+z=0$.
+    \ii Prove $V\times W=(V\times\{0\})\oplus(\{0\}\times W)$ and $V\cong V\times\{0\}$.
+    Reprove $\dim(V\times W)=\dim V+\dim W$.
+    \ii Is $\PP_2(\RR)\times\RR^2\cong\RR^{1,5}$? Is $\LL(\RR^2,\RR^3)\cong\RR^2\times\RR^4$?
+    \ii Let $U\subseteq V$, $V$ finite-dimensional, and $S\colon U\to V$ injective.
+    Prove $S$ extends to an invertible $T\in\LL(V)$.
+    Show the hypothesis ``injective'' cannot be dropped.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}[Quotient spaces]
+  \leavevmode
+  \begin{enumerate}[(a)]
+    \ii Let $U=\spn((1,1,1))\subseteq\RR^3$.
+    Decide whether $(1,0,0)+U=(0,1,-1)+U$ and whether $(2,1,1)+U=(1,0,0)+U$.
+    Find a basis of $\RR^3/U$, and write $(3,5,7)+U$ in that basis.
+    \ii Prove: if $u_1,\dots,u_m$ is a basis of $U$ and $u_1,\dots,u_m,v_1,\dots,v_k$ is a basis of $V$, then $v_1+U,\dots,v_k+U$ is a basis of $V/U$.
+    Conclude $\dim V/U=\dim V-\dim U$ without using rank--nullity.
+    \ii On $\RR^2/\spn(e_2)$, show that $f\big((x,y)+U\big)=x$ is a well-defined isomorphism onto $\RR$.
+    Show that the same formula is not well defined on $\RR^2/\spn(e_1)$.
+    \ii Let $T\in\LL(V,W)$ and $U\subseteq V$ a subspace.
+    Prove $\tilde T(v+U)=Tv$ defines a map $V/U\to W$ if and only if $U\subseteq\nul T$.
+    In that case, find $\nul\tilde T$.
+    \ii Let $T\colon\PP_3(\RR)\to\RR^2$, $T(p)=(p(0),p(1))$.
+    Find $\nul T$ and a basis of $\PP_3(\RR)/\nul T$, and describe the isomorphism $\PP_3(\RR)/\nul T\to\RR^2$ from the first isomorphism theorem.
+  \end{enumerate}
+\end{problem}
+
+\section{True or false}
+Give a one-line reason or counterexample. Spaces are finite-dimensional unless stated otherwise.
+\begin{enumerate}
+  \ii Over $\FF_3$, every nonempty subset of $\FF_3^n$ closed under addition is a subspace.
+  \ii Over $\RR$, every nonempty subset of $\RR^n$ closed under addition is a subspace.
+  \ii If $U\cup W$ is a subspace, then $U\subseteq W$ or $W\subseteq U$.
+  \ii $(1,1,0),(0,1,1),(1,0,1)$ is a basis of $\FF_2^3$.
+  \ii There is an injective linear map $\PP_4(\RR)\to\RR^4$.
+  \ii If $ST$ is injective, then $S$ is injective.
+  \ii If $T^2=0$, then $I-T$ is invertible.
+  \ii On an infinite-dimensional space, every injective operator is surjective.
+  \ii If $\dim V=5$ and $T\in\LL(V,\FF^3)$, then $\dim\nul T\ge2$.
+  \ii For every subspace $U\subseteq V$ there is $T\in\LL(V)$ with $\nul T=\range T=U$.
+  \ii If $v_1,\dots,v_n$ is a basis and $T$ is surjective, then $Tv_1,\dots,Tv_n$ is a basis of $W$.
+  \ii $\LL(\FF^2,\FF^3)\cong\FF^6$.
+  \ii The non-invertible $2\times2$ matrices over $\FF_2$ form a subspace.
+  \ii If $S,T\in\LL(V)$ and $ST=I$, then $TS=I$.
+  \ii For $A\in\FF^{2,3}$, some $B$ has $AB=I_2$ if and only if the columns of $A$ span $\FF^2$.
+\end{enumerate}
+
+\newpage
+\section{Solutions}\label{sec:sol}
+
+\subsection*{Problem 1}
+\begin{enumerate}[(a)]
+  \ii ($\Rightarrow$) If $x\in f^{-1}(f(U))$ then $f(x)=f(u)$ for some $u\in U$, so $x=u\in U$.
+  ($\Leftarrow$) If $f(x_1)=f(x_2)$, take $U=\{x_1\}$: then $x_2\in f^{-1}(f(U))=U$, so $x_2=x_1$.
+  \ii ($\Rightarrow$) For $y\in V$ pick $x$ with $f(x)=y$; then $x\in f^{-1}(V)$.
+  ($\Leftarrow$) Take $V=Y$: $Y=f(f^{-1}(Y))=f(X)$.
+  \ii The inclusion is immediate.
+  If $f$ is injective and $y=f(a)=f(b)$ with $a\in A$, $b\in B$, then $a=b\in A\cap B$.
+  If $f(x_1)=f(x_2)$ with $x_1\ne x_2$, then $A=\{x_1\}$, $B=\{x_2\}$ give $f(A\cap B)=\varnothing\ne f(A)\cap f(B)$.
+  \ii $v\in T^{-1}(T(U))\iff Tv=Tu$ for some $u\in U\iff v-u\in\nul T$ for some $u\in U\iff v\in U+\nul T$.
+  And $w\in T(T^{-1}(X))\iff w=Tv$ with $Tv\in X\iff w\in\range T\cap X$.
+  \ii $T|_U$ has null space $U\cap\nul T$ and range $T(U)$; apply rank--nullity.
+  By (d), $T^{-1}(T(U))=U\iff\nul T\subseteq U$.
+  This holds for $U=\{0\}$ if and only if $\nul T=\{0\}$.
+\end{enumerate}
+
+\subsection*{Problem 2}
+\begin{enumerate}[(a)]
+  \ii $2\cdot3=0$ with $2,3\ne0$, impossible in a field.
+  \ii $ax=ay\implies a(x-y)=0\implies x=y$.
+  An injective self-map of a finite set is bijective, and it fixes $0$, so it permutes the nonzero $x_1,\dots,x_{q-1}$.
+  Then $a^{q-1}\prod x_i=\prod(ax_i)=\prod x_i$, and $\prod x_i\ne0$ cancels: $a^{q-1}=1$.
+  So $a^q=a$ for all $a$ (including $0$).
+  \ii The indicator functions $\delta_c$ form a basis, so $\dim\SF=p$; $\dim\PP_n=n+1$.
+  \begin{itemize}
+    \ii Injective if and only if $n\le p-1$: a nonzero polynomial of degree $\le n<p$ cannot vanish at all $p$ points.
+    If $n\ge p$, then $x^p-x\in\nul E$ by (b).
+    \ii Surjective if and only if $n\ge p-1$: at $n=p-1$, $E$ is injective between $p$-dimensional spaces, so surjective; larger $n$ only enlarges the range.
+    For $n<p-1$ the domain is too small.
+    \ii Isomorphism if and only if $n=p-1$.
+  \end{itemize}
+  \ii $(x+1)^4=(x^2+1)^2=x^4+1$, which equals $x+1$ as a function since $c^4=c$ on $\FF_2$.
+  Ex.~34 needs $n+1$ distinct points in $\FF$; with $|\FF|<n+1$ they do not exist, and distinct polynomials (e.g.\ $x^2$ and $x$ over $\FF_2$) define the same function.
+\end{enumerate}
+
+\subsection*{Problem 3}
+\begin{enumerate}[(a)]
+  \ii False: the vectors sum to $0$.
+  \ii If $\sum c_jw_j=0$, the coefficient of $v_j$ is $c_j+c_{j-1}$ (indices mod $n$), so $c_j=(-1)^{j-1}c_1$, and wrapping around gives $c_1=(-1)^nc_1$.
+  \begin{itemize}
+    \ii $n$ even: $c=(1,-1,\dots,-1)$ works, so the list is dependent over every field.
+    \ii $n$ odd: $2c_1=0$. Independent if and only if $2\ne0$ in $\FF$; dependent over $\FF_2$.
+  \end{itemize}
+  When independent, $w_1-w_2+w_3-\dots+w_n=2v_1$, so $v_1=\tfrac12(w_1-w_2+\dots+w_n)$.
+  \ii Take $\sum a_i(v_i+w)=0$, not all $a_i=0$.
+  Then $\sum a_iv_i=-(\sum a_i)w$.
+  If $s=\sum a_i=0$, independence forces all $a_i=0$, contradiction.
+  So $w=-s^{-1}\sum a_iv_i$.
+  \ii True: $\spn(v_1,\dots,v_n)$ has dimension $n$, and a spanning list of length $n$ in it is a basis.
+\end{enumerate}
+
+\subsection*{Problem 4}
+\begin{enumerate}[(a)]
+  \ii $\dim(U\cap W)\ge7+7-10=4$, then $\dim(U\cap W\cap X)\ge4+7-10=1$.
+  Equality: in $\FF^{10}$, $U=\{x_1=x_2=x_3=0\}$, $W=\{x_4=x_5=x_6=0\}$, $X=\{x_7=x_8=x_9=0\}$ meet in $\spn(e_{10})$.
+  \ii Induct with $\dim(I\cap U_k)\ge\dim I+\dim U_k-n$ where $I=U_1\cap\dots\cap U_{k-1}$.
+  \ii False: lines spanned by $e_1,e_2,e_1+e_2$ in $\RR^2$ give $2$ on the left and $3$ on the right.
+  \ii Closure: $(\lambda S+T)u=\lambda Su+Tu\in U$.
+  Extend a basis $u_1,\dots,u_m$ of $U$ to a basis of $V$.
+  $T(U)\subseteq U$ if and only if rows $m+1,\dots,n$ of columns $1,\dots,m$ of $\MM(T)$ vanish.
+  Since $\MM$ is an isomorphism, $\dim\mathcal E=n^2-m(n-m)$.
+\end{enumerate}
+
+\subsection*{Problem 5}
+\begin{enumerate}[(a)]
+  \ii $u\in\nul(ST)\iff Tu\in\nul S$. Apply HW3 P1(b) with $U=\nul S$.
+  \ii $\nul S\cap\range T\subseteq\nul S$ gives the inequality.
+  Equality if and only if the two nested subspaces are equal, if and only if $\nul S\subseteq\range T$.
+  \ii $\rank(ST)=\dim U-\dim\nul(ST)\ge\dim U-\dim\nul T-\dim\nul S=\rank T+\rank S-\dim V$.
+  Exactly: $\rank(ST)=\rank T-\dim(\nul S\cap\range T)$, so $\rank(ST)=\rank T$ if and only if $\nul S\cap\range T=\{0\}$.
+  \ii No: $\rank(ST)\ge2+2-3=1$.
+  Yes: $S=\begin{psmallmatrix}1&0\\0&0\end{psmallmatrix}$, $T=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ give $ST=T\ne0$ and $TS=0$.
+\end{enumerate}
+
+\subsection*{Problem 6}
+\begin{enumerate}[(a)]
+  \ii $Tw=T^2v=0$ for $w=Tv$, so $\range T\subseteq\nul T$, and $\dim V\ge2\rank T$.
+  \ii ($\Rightarrow$) $n=2\rank T$.
+  ($\Leftarrow$) For $n=2k$ set $Te_j=0$ and $Te_{k+j}=e_j$ ($j\le k$).
+  Then $\range T=\spn(e_1,\dots,e_k)\subseteq\nul T$ and both have dimension $k$.
+  For $n=6$: $\MM(T)=\begin{psmallmatrix}0&I_3\\0&0\end{psmallmatrix}$.
+  \ii ($\Rightarrow$) $\dim V-\dim U=\rank T\le\dim W$.
+  ($\Leftarrow$) Extend a basis $u_1,\dots,u_m$ of $U$ by $v_1,\dots,v_k$, where $k\le\dim W$.
+  Set $Tu_i=0$ and $Tv_i=w_i$ for independent $w_1,\dots,w_k$.
+  If $T(\sum a_iu_i+\sum b_iv_i)=\sum b_iw_i=0$, all $b_i=0$, so $\nul T=U$.
+  \ii The subspace $\{(3s,s,t,t,t)\}$ has dimension $2<5-2$.
+  \ii The sum is direct and has dimension $\dim\nul T+\dim\range T=\dim V$.
+\end{enumerate}
+
+\subsection*{Problem 7}
+\begin{enumerate}[(a)]
+  \ii The $x^k$ terms of $(x+1)^k-x^k$ cancel.
+  $\Delta1=0$, $\Delta x=1$, $\Delta x^2=2x+1$, $\Delta x^3=3x^2+3x+1$, so
+  \[ \MM(\Delta)=\begin{pmatrix}0&1&1&1\\0&0&2&3\\0&0&0&3\end{pmatrix}. \]
+  Rank $3$, so $\range\Delta=\PP_2(\RR)$ and $\nul\Delta=\spn(1)$.
+  \ii Solving gives $c_3=\tfrac13$, $c_2=-\tfrac12$, $c_1=\tfrac16$:
+  $p=\tfrac13x^3-\tfrac12x^2+\tfrac16x$.
+  Telescoping, $\sum_{k=0}^{n-1}k^2=p(n)-p(0)=\tfrac{n(n-1)(2n-1)}{6}$.
+  \ii $1+\dim(\spn(1,x^2)\cap\PP_2)=1+2=3$.
+  \ii If $p\ne0$ has degree $d$, then $p+p'$ has degree $d$, so $T$ is injective, hence an isomorphism.
+  $D^4=0$ on $\PP_3$, so $(I+D)(I-D+D^2-D^3)=I+D^4=I$.
+  Then $p=(I-D+D^2-D^3)x^3=x^3-3x^2+6x-6$.
+  \ii Yes: $Sp=\sum_{k\ge0}(-D)^kp$ is a finite sum for each $p$, and $(I+D)S=S(I+D)=I$.
+  $D$ itself is surjective but not injective on $\PP(\RR)$.
+\end{enumerate}
+
+\subsection*{Problem 8}
+\begin{enumerate}[(a)]
+  \ii For $p=c_0+c_1x+c_2x^2$, $T_ap=0$ means $c_0=0$, $c_1+c_2=0$, $c_1+2ac_2=0$, so $(2a-1)c_2=0$.
+  For $a\ne\tfrac12$, $T_a$ is injective, hence an isomorphism.
+  For $a=\tfrac12$: $\nul T_a=\spn(x-x^2)$, and since $p(1)-p(0)=c_1+c_2=p'(\tfrac12)$,
+  $\range T_a=\{(y_0,y_1,z):z=y_1-y_0\}$.
+  For a quadratic, the secant slope on $[0,1]$ equals the derivative at the midpoint exactly, so $p'(\tfrac12)$ cannot be prescribed.
+  \ii $Sp=(p(0),p'(0),p(1),p'(1))$ on $\PP_3\to\RR^4$.
+  If $Sp=0$ then $p=c_2x^2+c_3x^3$ with $c_2+c_3=0=2c_2+3c_3$, so $p=0$.
+  Hence $S$ is an isomorphism.
+  Solving: $p=1+4x^2-3x^3$.
+  \ii True: a $p\in\PP_3$ with double roots at $x_0,x_1$ is divisible by the degree-$4$ polynomial $(x-x_0)^2(x-x_1)^2$, so $p=0$.
+\end{enumerate}
+
+\subsection*{Problem 9}
+\begin{enumerate}[(a)]
+  \ii $\det A_a=a^2-6=(a-1)(a+1)$ in $\FF_5$, so invertible if and only if $a\in\{0,2,3\}$.
+  For $a=2$, $\det=3$ and $3^{-1}=2$:
+  $A_2^{-1}=2\begin{psmallmatrix}2&-2\\-3&2\end{psmallmatrix}=\begin{psmallmatrix}4&1\\4&4\end{psmallmatrix}$.
+  \ii $\det B=(1+i)(1-i)-2=0$.
+  $(2,-1-i)^T\in\nul B$.
+  Column 2 is $(1-i)$ times column 1, so $\range B=\spn\big((1+i,1)^T\big)$.
+  \ii $(p^2-1)(p^2-p)$: any nonzero first column, then a second column that is not a multiple of it.
+  \ii $\nul A=\spn\big((-1,-1,1)^T\big)$; particular solutions $(1,0,0)^T$ for $e_1$ and $(-2,1,0)^T$ for $e_2$. So
+  \[ B=\begin{pmatrix}1-s&-2-t\\-s&1-t\\s&t\end{pmatrix},\quad s,t\in\RR. \]
+  No left inverse: $\rank(CA)\le\rank A\le2<3$.
+  \ii $AB=I_m\implies m\le\rank A\le m$.
+  Conversely, if $A$ is surjective, choose $b_j$ with $Ab_j=e_j$.
+  $CA=I_n\implies n\le\rank A\le n$.
+  Conversely, if $A$ is injective, extend $Ae_1,\dots,Ae_n$ to a basis of $\FF^m$ and let $C$ send $Ae_j\mapsto e_j$ and the rest to $0$.
+\end{enumerate}
+
+\subsection*{Problem 10}
+\begin{enumerate}[(a)]
+  \ii ($\Leftarrow$) $S$ is injective, so $ST_2v=0\iff T_2v=0$.
+  ($\Rightarrow$) Take a basis $u_1,\dots,u_m$ of the common null space, extended by $v_1,\dots,v_k$.
+  Both $T_1v_1,\dots,T_1v_k$ and $T_2v_1,\dots,T_2v_k$ are independent.
+  Extend them to bases $T_2v_i,x_j$ and $T_1v_i,y_j$ of $W$ (same length).
+  Define $S(T_2v_i)=T_1v_i$ and $Sx_j=y_j$: basis to basis, so $S$ is invertible, and $ST_2=T_1$ on $u_i$ and $v_i$.
+  \ii ($\Leftarrow$) $\range(T_2S)=T_2(V)$ since $S$ is surjective.
+  ($\Rightarrow$) Equal ranks give equal nullities $m$.
+  Take an adapted basis $u_i,v_i$ for $T_1$, choose $v_i'$ with $T_2v_i'=T_1v_i$, and a basis $u_i'$ of $\nul T_2$.
+  Then $u_i',v_i'$ is independent (apply $T_2$ to a relation) and has length $\dim V$.
+  Set $Su_i=u_i'$ and $Sv_i=v_i'$.
+  \ii If $v,Tv$ were independent, extend to a basis and let $Sv=v$, $S(Tv)=0$: then $STv=0\ne Tv=TSv$.
+  So $Tv=a_vv$ for every $v$.
+  For independent $v,w$: $a_{v+w}(v+w)=a_vv+a_ww$ gives $a_v=a_w$.
+  For $w=cv$: $a_ww=T(cv)=a_vw$.
+  So $T=\lambda I$.
+  \ii $T(3I-T)=2I$, so $T^{-1}=\tfrac12(3I-T)$.
+  $(T-I)(T-2I)=0$ is not invertible when $V\ne\{0\}$, so the factors cannot both be.
+  Over $\FF_2$ the equation is $T^2-T=0$; dividing by $2$ is impossible and $T=0$ satisfies it.
+  \ii With a basis $v_1,\dots,v_n$, let $P_1v_1=v_1$, $P_1v_j=0$ for $j\ge2$, and $P_2=I-P_1$.
+  Neither is injective, but $P_1+P_2=I$.
+\end{enumerate}
+
+\subsection*{Problem 11}
+\begin{enumerate}[(a)]
+  \ii If $v+u_1=w+u_2$, then $v-w\in U$, so $v+U=w+U$ (HW4 P6b).
+  \ii $Tx=b\iff T(x-x_0)=0$.
+  Over $\FF_2$: $z=x$, then $y+w=1$. With $x_0=(0,0,0,1)$ and $\nul=\spn((1,0,1,0),(0,1,0,1))$, the solutions are
+  $(0,0,0,1)$, $(1,0,1,1)$, $(0,1,0,0)$, $(1,1,1,0)$.
+  \ii $(v,w)=(v,0)+(0,w)$ and the intersection is $\{0\}$.
+  $v\mapsto(v,0)$ is a linear bijection onto $V\times\{0\}$.
+  Dimensions of a direct sum of two subspaces add.
+  \ii Both yes: dimensions $5=5$ and $6=6$.
+  \ii Extend a basis $u_i$ of $U$ by $w_j$ to a basis of $V$.
+  Injectivity makes $Su_i$ independent; extend by $y_j$ to a basis of $V$.
+  Set $Tu_i=Su_i$, $Tw_j=y_j$.
+  Counterexample without injectivity: $S=0$ on $U=V=\FF$.
+\end{enumerate}
+
+\subsection*{Problem 12}
+\begin{enumerate}[(a)]
+  \ii $(1,0,0)-(0,1,-1)=(1,-1,1)\notin U$, so the translates are different (and disjoint).
+  $(2,1,1)-(1,0,0)=(1,1,1)\in U$, so they are equal.
+  $(1,1,1),e_1,e_2$ is a basis of $\RR^3$, so $e_1+U,e_2+U$ is a basis of $\RR^3/U$ by (b).
+  $(3,5,7)=7(1,1,1)-4e_1-2e_2$, so $(3,5,7)+U=-4(e_1+U)-2(e_2+U)$.
+  \ii Spanning: write $v=\sum a_iu_i+\sum b_jv_j$; then $v+U=\sum b_j(v_j+U)$ because $\sum a_iu_i\in U$.
+  Independence: if $\sum b_j(v_j+U)=0+U$, then $\sum b_jv_j\in U$, so $\sum b_jv_j=\sum a_iu_i$ for some $a_i$.
+  Independence of the full basis forces all $b_j=0$.
+  So $\dim V/U=k=\dim V-\dim U$.
+  \ii If $(x,y)+U=(x',y')+U$, then $(x-x',y-y')\in\spn(e_2)$, so $x=x'$: well defined.
+  It is linear, surjective ($x\mapsto(x,0)+U$), and injective ($x=0$ means $(0,y)\in U$).
+  On $\RR^2/\spn(e_1)$: $(0,0)+U=(1,0)+U$ but the formula gives $0$ and $1$.
+  \ii ($\Leftarrow$) If $v-v'\in U\subseteq\nul T$, then $Tv=Tv'$.
+  Linearity follows from linearity of $T$.
+  ($\Rightarrow$) If $u\in U$ has $Tu\ne0$, then $0+U=u+U$ would have to map to both $0$ and $Tu$.
+  $\nul\tilde T=\{v+U:v\in\nul T\}$, which is $(\nul T)/U$.
+  In particular $\tilde T$ is injective if and only if $U=\nul T$.
+  \ii $T$ is surjective ($p=a+(b-a)x$ hits $(a,b)$), so $\dim\nul T=4-2=2$ and $\nul T=\spn\big(x(x-1),\,x^2(x-1)\big)$.
+  $1,x,x(x-1),x^2(x-1)$ is a basis of $\PP_3(\RR)$, so $1+\nul T,\ x+\nul T$ is a basis of the quotient.
+  The isomorphism is $p+\nul T\mapsto(p(0),p(1))$, sending $1+\nul T\mapsto(1,1)$ and $x+\nul T\mapsto(0,1)$.
+  Two polynomials are equal in the quotient if and only if they agree at $0$ and $1$.
+\end{enumerate}
+
+\subsection*{True or false}
+\begin{enumerate}
+  \ii True: $2v=v+v$ and $0=3v$ lie in the set, and those are all the scalar multiples.
+  \ii False: $\ZZ^n$.
+  \ii True: if $u\in U\setminus W$, $w\in W\setminus U$, then $u+w$ lies in neither.
+  \ii False: the sum is $0$. (True over $\RR$.)
+  \ii False: $5>4$.
+  \ii False: $T(t)=(t,0)$, $S(x,y)=x$ give $ST=I$. ($T$ must be injective.)
+  \ii True: $(I-T)^{-1}=I+T$.
+  \ii False: the right shift.
+  \ii True: $5-\rank T\ge5-3$.
+  \ii False: requires $\dim U=\frac12\dim V$.
+  \ii False: spans but need not be independent; $(x,y)\mapsto x$.
+  \ii True: $\dim=6$.
+  \ii False: $E_{11}+E_{22}=I$.
+  \ii True in finite dimensions; false for the shifts on $\FF^\infty$.
+  \ii True: a right inverse exists if and only if $\rank A=2$.
+\end{enumerate}
+
+\end{document}
