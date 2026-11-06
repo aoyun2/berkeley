@@ -7,7 +7,7 @@ Aaron clarified that the goal is to understand ideas, intuition and motivations 
 - Week 2 now follows this clarification: **11-page handout + 2-page solutions**, full two-of-three criterion on page 9, common/missing basis figure on page 10, grouped consequences and complete source coverage. Independent math/coverage and ideas/reference/layout reviews passed; see its audit below.
 - Week 1 is now consolidated too: **14-page handout + 4 unchanged solutions pages**, shared generating arguments, explicit useful criteria and complete source coverage; both independent verdicts and every-page inspection passed.
 - Week 3 is now consolidated: **14-page handout + 2 unchanged solutions pages**, six generating arguments, explicit preimage/column/prescription/stochastic criteria, restored textbook examples and complete source coverage. Both independent reviews and every-page inspection passed. Week 4 is now consolidated too: **13-page handout + 3 unchanged solutions pages**, shared basis/inverse/component/difference arguments and explicit useful criteria; both independent verdicts and every-page inspection passed.
-- Week 5's expanded draft is saved and unreleased; it is next for consolidation before continuing the remaining historical backfill in course order. Preserve all source results while explaining their derivations through the central arguments.
+- Week 5 is now regenerated: **12-page handout + 3-page solutions**, shared quotient-factorization and duality arguments, restored textbook examples and real review problems, complete source/HW coverage, both independent reviews and every-page inspection passed. Week 6 is next, then the remaining historical weeks and other courses in order.
 
 ## Current regeneration — following Aaron's supplied PDF
 
@@ -15,13 +15,14 @@ Aaron clarified that the goal is to understand ideas, intuition and motivations 
 - **MATH 110 week 2 (2026-09-07): revised**, with an 11-page [handout](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/solutions.pdf). Fresh source/reference review, exact computation checks and final-page inspection passed after the recorded corrections.
 - **MATH 110 week 3 (2026-09-14): revised**, with a 14-page [handout](semesters/2026-fall/math110/handouts/2026-09-14-linear-maps-matrices/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-14-linear-maps-matrices/solutions.pdf). Consolidated around shared arguments and explicit useful criteria, with restored textbook examples and compact static illustrations; exact checks, fresh independent math/ideas/reference review and every-page inspection passed.
 - **MATH 110 week 4 (2026-09-21): revised**, with a 13-page [handout](semesters/2026-fall/math110/handouts/2026-09-21-isomorphisms-products-quotients/handout.pdf) and 3-page [solutions](semesters/2026-fall/math110/handouts/2026-09-21-isomorphisms-products-quotients/solutions.pdf). Fresh independent correctness/coverage and reference-style/layout reviews, exact checks and every-page inspection passed.
-- **MATH 110 weeks 5–10: not yet regenerated**, previous versions remain rejected; Week 5 is next.
+- **MATH 110 week 5 (2026-09-28): regenerated**, with a 12-page [handout](semesters/2026-fall/math110/handouts/2026-09-28-quotients-duality/handout.pdf) and 3-page [solutions](semesters/2026-fall/math110/handouts/2026-09-28-quotients-duality/solutions.pdf). Shared generating arguments, restored textbook/examples/real review problems, exact checks, fresh independent dual reviews and every-page inspection passed.
+- **MATH 110 weeks 6–10: not yet regenerated**, previous versions remain rejected; Week 6 is next.
 - CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. Production follows the MATH 110 rework in that order, using the supplied PDF as the presentation standard.
 
 
 ## Previous MATH 110 release — rejected; revision required
 
-Aaron rejected the previous packets for unclear prose, insufficient explanatory figures, and vague claims. **These are the rejected original versions. Weeks 1–4 have since been replaced as described above; Weeks 5–10 still require revision and review.** The previous files were built and pushed in week order. Each folder contains `handout.tex`, `handout.pdf`, `solutions.tex`, and `solutions.pdf`. Total: **20 PDFs, 151 pages** (131 handout pages and 20 solution pages).
+Aaron rejected the previous packets for unclear prose, insufficient explanatory figures, and vague claims. **These are the rejected original versions. Weeks 1–5 have since been replaced as described above; Weeks 6–10 still require revision and review.** The previous files were built and pushed in week order. Each folder contains `handout.tex`, `handout.pdf`, `solutions.tex`, and `solutions.pdf`. Total: **20 PDFs, 151 pages** (131 handout pages and 20 solution pages).
 
 | Week | Start | Topics | Handout pages | Solutions pages |
 |---|---|---|---:|---:|
