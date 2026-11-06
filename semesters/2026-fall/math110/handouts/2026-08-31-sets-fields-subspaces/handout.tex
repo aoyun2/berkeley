@@ -22,6 +22,7 @@ A \emph{set} is a collection of distinguishable elements. Write $x\in A$ for mem
  A\cap B=\{x:x\in A\text{ and }x\in B\},\quad A\setminus B=A\cap B^c.
 \]
 The Cartesian product $A\times B$ consists of ordered pairs $(a,b)$ with $a\in A,b\in B$. Thus $(1,2)\ne(2,1)$. In Notes Example 1, $\{x\in\{1,2,3,4,5,6\}:x\text{ is even}\}=\{2,4,6\}$; order and repetitions do not change a set.
+A list of length $n$ has $n$ ordered entries; repeats are retained, and the length-zero list is empty (LADR 1.8--1.9).
 \end{definition*}\end{prob}
 \begin{prob}\begin{definition*}[Notes Definition 2]
 A function $f:A\to B$ assigns exactly one value $f(a)\in B$ to every $a\in A$. It is \emph{injective} if $f(a)=f(a')$ implies $a=a'$, \emph{surjective} if every $b\in B$ equals some $f(a)$, and \emph{bijective} if both hold. For $U\subseteq A$ and $V\subseteq B$, its image and inverse image are
@@ -69,6 +70,17 @@ f(a)=p,\qquad f(b)=p,\qquad f(c)=q,\qquad f(d)=q.
 \end{steps}
 \end{prob}
 \begin{fig}\FunctionIllustration\end{fig}
+\begin{proposition*}[Images, inverse images and equality conditions; HW1 P1]
+For $f:X\to Y$, $U\subseteq X$, $V\subseteq Y$,
+\[f(f^{-1}(V))=V\cap f(X),\qquad
+f^{-1}(f(U))=\{x\in X:\text{some }u\in U\text{ has }f(x)=f(u)\}.\]
+The first equals $V$ iff $V\subseteq f(X)$, and equals $V$ for every $V$ iff $f$ is onto. The second contains $U$ and equals $U$ iff every input sharing an output with a member of $U$ also lies in $U$; equality for every $U$ is equivalent to injectivity.
+\end{proposition*}
+\begin{prob}\begin{proof}\begin{steps}
+\ii An output in $f(f^{-1}(V))$ is both in $V$ and attained by $f$; conversely an attained output in $V$ comes from an input in $f^{-1}(V)$. This proves the first identity and its equality condition. Taking $V=Y$ proves the onto criterion.
+\ii By definition, $x\in f^{-1}(f(U))$ iff $f(x)=f(u)$ for some $u\in U$. This proves the second identity and its equality condition. If $f$ is injective, such $x$ equals $u$; conversely, equality for $U=\{u\}$ forces any $x$ with $f(x)=f(u)$ to equal $u$.
+\end{steps}\end{proof}\end{prob}
+
 \begin{shortcuts}
 \ii To disprove injectivity, give two different inputs with the same output; this negates its defining implication.
 \ii To disprove surjectivity, give one codomain element with no preimage; a missing output suffices.
@@ -89,9 +101,8 @@ A field $F$ has addition and multiplication, distinct elements $0,1$, and these 
 Identities and inverses are unique. In a field, $a+b=a+c$ implies $b=c$, $a0=0$, and $ab=0$ implies $a=0$ or $b=0$.
 \end{proposition*}
 \begin{motive}
-\ii[Want.] Cancel a common term, and cancel a factor when it is nonzero.
-\ii[Know.] The axioms give $-a$ and, for $a\ne0$, $a^{-1}$.
-\ii[Key step.] Add $-a$ to cancel $a$ from a sum. First prove $a0=0$ by cancelling in $a0=a0+a0$; then multiply $ab=0$ by $a^{-1}$ when $a\ne0$.
+\ii[Want.] Derive the cancellation rules used to solve equations.
+\ii[Key step.] Add the inverse of a common summand, or multiply by the inverse of a nonzero factor. Distributivity gives $a0=a0+a0$; subtracting $a0$ proves $a0=0$.
 \end{motive}
 \begin{prob}\begin{proof}\begin{steps}
 \ii Two additive identities satisfy $0=0+0'=0'$. Two multiplicative identities satisfy $1=1\cdot1'=1'$.
@@ -103,12 +114,9 @@ Identities and inverses are unique. In a field, $a+b=a+c$ implies $b=c$, $a0=0$,
 \end{steps}\end{proof}\end{prob}
 \begin{prob}
 \method{Solving $ax=b$ in a field}
-When $a\ne0$, multiply by $a^{-1}$ to isolate $x$; then check that the resulting value really solves the equation.
 \begin{steps}
-\ii Any solution must satisfy $x=1x=(a^{-1}a)x=a^{-1}(ax)=a^{-1}b$, using associativity and $ax=b$. Thus there is at most one solution.
-\ii The candidate does work: $a(a^{-1}b)=(aa^{-1})b=1b=b$. Hence $x=a^{-1}b$ is the unique solution when $a\ne0$.
-\ii If $a=0$, then $ax=0$ for every $x$. Thus $0x=0$ has every $x\in F$ as a solution, while $0x=b$ has no solution when $b\ne0$.
-\ii Over $\mathbb R$, $2x=1$ gives $x=2^{-1}\cdot1=1/2$, and substitution gives $2(1/2)=1$.
+\ii If $a\ne0$, every solution satisfies $x=a^{-1}(ax)=a^{-1}b$. This candidate works because $a(a^{-1}b)=(aa^{-1})b=b$, so the solution is unique.
+\ii If $a=0$, the left side is always zero: every $x$ solves the equation when $b=0$, and none does when $b\ne0$. Over $\mathbb R$, $2x=1$ gives $x=1/2$, and $2(1/2)=1$ checks it.
 \end{steps}
 \end{prob}
 \begin{example*}[Notes Example 3]
@@ -158,6 +166,10 @@ which are the sums of the coordinates of $(a+bi)(c+di)$ and $(a+bi)(e+fi)$.
 \ii Distribute every term, then collect the two coordinates:
 \[
 (5+i)(4+3i)=20+15i+4i+3i^2=(20-3)+(15+4)i=17+19i.
+\]
+LADR 1.2 uses the same rule:
+\[
+(2+3i)(4+5i)=8+10i+12i+15i^2=-7+22i.
 \]
 \ii Multiply numerator and denominator by the denominator's conjugate:
 \[
@@ -215,42 +227,23 @@ An element of $V$ is a vector; an element of $F$ is a scalar. We write $0$ for e
 \begin{proposition*}[Notes Chapter 2; LADR 1.26--1.27 as cited there]
 The zero vector and each additive inverse are unique, and vector addition permits cancellation.
 \end{proposition*}
-\begin{motive}
-\ii[Want.] Two proposed zero vectors, or two proposed inverses of the same vector, must agree.
-\ii[Key step.] Add the two proposed zeros: each identity law gives one of them. For inverses $u,w$ of $v$, insert $v+w=0$ into $u+0$ and regroup: $u+(v+w)=(u+v)+w=w$.
-\end{motive}
 \begin{prob}\begin{proof}\begin{steps}
-\ii For two zero vectors $0,0'$, $0=0+0'=0'$.
-\ii If $v+u=v+w=0$, then $u=u+(v+w)=(u+v)+w=w$.
-\ii If $v+u=v+w$, adding $-v$ to both sides gives $u=w$.
+\ii The earlier inverse argument uses only the additive laws, so it applies here: $0=0+0'=0'$, and $u=u+(v+w)=(u+v)+w=w$ for two inverses $u,w$ of $v$.
+\ii If $v+u=v+w$, add $-v$ and regroup to get $u=w$. No multiplication of two vectors is needed.
 \end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 5: tuples]
-In $F^n$, addition and scaling are componentwise:
-\[
-(x_1,\ldots,x_n)+(y_1,\ldots,y_n)=(x_1+y_1,\ldots,x_n+y_n),\quad
- a(x_1,\ldots,x_n)=(ax_1,\ldots,ax_n).
-\]
+\begin{example*}[Notes Examples 5--6: tuples, functions and sequences]
+For a set $S$, let $F^S$ be all functions $S\to F$, with pointwise operations
+\[(f+g)(s)=f(s)+g(s),\qquad(af)(s)=af(s).\]
+\textbf{The idea: fix one input.} An identity of functions holds if its values agree at every input. At a fixed $s$, the vector-space identities become the field identities already known.
 \begin{steps}
-\ii Each coordinate stays in $F$, so both operations stay in $F^n$. The zero tuple is $(0,\ldots,0)$ and the inverse of $x$ is $(-x_1,\ldots,-x_n)$.
-\ii To check $a(x+y)=ax+ay$, coordinate $j$ on the left is $a(x_j+y_j)=ax_j+ay_j$, the coordinate on the right. The field distributive law proves equality in every coordinate.
-\ii Commutativity and associativity of addition, $(ab)x=a(bx)$, $(a+b)x=ax+bx$, and $1x=x$ follow respectively from those field laws in each coordinate. Hence $F^n$ is a vector space. The case $n=1$ is $F$ itself.
-\end{steps}
-\end{example*}
-\begin{example*}[Notes Example 6: functions and sequences]
-For a set $S$, $F^S$ consists of all functions $S\to F$. Define $(f+g)(s)=f(s)+g(s)$ and $(af)(s)=af(s)$.
-For $f(x)=x$, $g(x)=1$ on $\mathbb R$, $(2f+g)(3)=2f(3)+g(3)=7$; the function itself is $x\mapsto2x+1$.
-\begin{steps}
-\ii The zero function has value $0$ at every input; the additive inverse $-f$ has value $-f(s)$ at input $s$.
-\ii For example, at an arbitrary $s$,
-\[
-\bigl(a(f+g)\bigr)(s)=a\bigl(f(s)+g(s)\bigr)=af(s)+ag(s)=(af+ag)(s).
-\]
-The middle equality is distributivity in $F$. Equality at every input is equality of functions.
-\ii The other axioms use exactly the corresponding field identities at each input: for example $((ab)f)(s)=(ab)f(s)=a(bf(s))=(a(bf))(s)$. Thus $F^S$ is a vector space.
-\ii For $S=\{1,\ldots,n\}$, record $f$ as the tuple $(f(1),\ldots,f(n))$. For $S=\mathbb N=\{1,2,\ldots\}$, record the sequence $(f(1),f(2),\ldots)$; this space is also written $F^\infty$.
-\end{steps}
-
-\end{example*}
+\ii Operations stay in $F^S$; the zero function takes value $0$, and $(-f)(s)=-f(s)$. At every $s$,
+\[(a(f+g))(s)=a(f(s)+g(s))=af(s)+ag(s),\quad ((ab)f)(s)=(ab)f(s)=a(bf(s)).\]
+\ii Commutativity and associativity of addition, $(a+b)f=af+bf$, and $1f=f$ follow from the corresponding scalar identities at $s$. Since this holds for every $s$, all vector-space axioms hold.
+\ii For $S=\{1,\ldots,n\}$, record $f$ as the list $(f(1),\ldots,f(n))\in F^n$. The operations are
+\[(x_j)_{j=1}^n+(y_j)_{j=1}^n=(x_j+y_j)_{j=1}^n,\qquad a(x_j)_{j=1}^n=(ax_j)_{j=1}^n.\]
+Zero is $(0,\ldots,0)$, negatives act coordinatewise, and $n=1$ gives $F$. For $S=\mathbb N=\{1,2,\ldots\}$, the same values form a sequence, written $F^\infty$.
+\ii For real functions $f(x)=x$, $g(x)=1$, $2f+g$ is the function $x\mapsto2x+1$; its value at $3$ is $7$. For tuples, $2(1,3)+(4,-1)=(6,5)$ is the same pointwise rule.
+\end{steps}\end{example*}
 \begin{example*}[Notes Example 7: choosing a smaller scalar field]
 $\mathbb C$ is a real vector space with its usual addition and multiplication by real scalars. For instance $2(1+i)-(3-i)=-1+3i\in\mathbb C$.
 \begin{steps}
@@ -259,18 +252,16 @@ $\mathbb C$ is a real vector space with its usual addition and multiplication by
 \end{steps}
 Changing the scalar field changes the closure question. For example, $\mathbb R$ with its usual multiplication cannot be a vector space over $\mathbb C$, since $i\cdot1\notin\mathbb R$.
 \end{example*}
-\begin{proposition*}[Notes Proposition 4; notes cite LADR 1.30--1.32]
-For $a\in F$ and $v\in V$, $0v=0_V$, $a0_V=0_V$, and $(-1)v=-v$.
+\begin{proposition*}[Notes Proposition 4; notes cite LADR 1.30--1.32; HW1 P4]
+For $a\in F$ and $v\in V$, $0v=0_V$, $a0_V=0_V$, $(-1)v=-v$, and $av=0$ iff $a=0$ or $v=0$.
 \end{proposition*}
-\begin{motive}
-\ii[Want.] Prove $0_Fv=0_V$, $a0_V=0_V$, and $(-1)v=-v$.
-\ii[Know.] Additive cancellation is already proved.
-\ii[Key step.] Distributivity gives $0v=0v+0v$ and $a0_V=a0_V+a0_V$; cancellation makes both zero. Then $(-1)v+v=(-1+1)v=0v=0_V$, which identifies the inverse.
-\end{motive}
+Apply the earlier cancellation argument to the two distributive laws:
+
 \begin{prob}\begin{proof}\begin{steps}
 \ii $0v=(0+0)v=0v+0v$; cancelling $0v$ gives $0v=0_V$.
 \ii $a0_V=a(0_V+0_V)=a0_V+a0_V$; cancelling $a0_V$ gives $a0_V=0_V$.
 \ii $(-1)v+v=(-1+1)v=0v=0_V$. Uniqueness of the additive inverse gives $(-1)v=-v$.
+\ii If $av=0$ and $a\ne0$, then $v=(a^{-1}a)v=a^{-1}(av)=a^{-1}0_V=0_V$. Conversely either zero scalar or zero vector gives zero product by the first two identities.
 \end{steps}\end{proof}\end{prob}
 \begin{prob}\method{Checking a proposed scalar multiplication}
 On the usual additive set $\mathbb R$, define $a\mathbin{*}v=0$ for all $a,v$. Most scaling identities hold because both sides are zero, but $1\mathbin{*}1=0\ne1$, so it is not a vector space. For example, $a*(v+w)=0=0+0=a*v+a*w$ does hold, so checking distributivity alone would miss the failure. The unit axiom must be checked as well.\end{prob}
@@ -287,10 +278,10 @@ On the usual additive set $\mathbb R$, define $a\mathbin{*}v=0$ for all $a,v$. M
 \section{Subspaces, sums and direct sums}
 \begin{qbox}In $\mathbb R^2$, let $U=\{(x,y):x+y=0\}$ and $W=\{(x,y):x+y=1\}$. Is each a vector space with the usual operations? The first task is to test $(0,0)$, then to substitute $au+v$ into each equation.\end{qbox}
 \begin{prob}\begin{definition*}[Notes Definition 5; notes cite LADR 1.34]
-A subset $U$ of a vector space $V$ is a subspace if $0\in U$ and $au+v\in U$ whenever $u,v\in U$, $a\in F$. Equivalently it contains zero and is closed under addition and scalar multiplication. The sets $\{0\}$ and $V$ are subspaces; the empty set is not, because it does not contain zero.
+A subset $U$ of a vector space $V$ is a subspace if $0\in U$ and $au+v\in U$ whenever $u,v\in U$, $a\in F$. Equivalently it contains zero and is closed under addition and scalar multiplication. A third equivalent test is that $U$ is nonempty and $au+bv\in U$ for all $u,v\in U$ and $a,b\in F$. The sets $\{0\}$ and $V$ are subspaces; the empty set is not, because it does not contain zero.
 \end{definition*}\end{prob}
 \begin{proposition*}[Subspace test; Notes Definition 5 and its consequence]
-The two formulations of the test agree. A subset satisfying the test is a vector space with the inherited operations.
+The three formulations of the test agree. A subset satisfying the test is a vector space with the inherited operations.
 \end{proposition*}
 \begin{motive}
 \ii[Want.] Know which vector-space axioms can fail for $U\subseteq V$.
@@ -298,10 +289,19 @@ The two formulations of the test agree. A subset satisfying the test is a vector
 \ii[Key step.] In $au+v\in U$, take $a=1$ for addition, $v=0$ for scaling, and then $a=-1$ for additive inverses.
 \end{motive}
 \begin{prob}\begin{proof}\begin{steps}
-\ii The combined condition with $a=1$ gives addition; with $v=0$ it gives scalar closure. Conversely the two closure properties give the combined condition.
+\ii From $au+v\in U$ and $0\in U$, take $a=1$ for addition and $v=0$ for scaling; conversely these imply $au+v\in U$. Two-scalar closure follows by scaling $v$ by $b$. If instead $U$ is merely nonempty with two-scalar closure, choose $u\in U$ and $a=b=0$ to obtain $0u+0u=0\in U$, so the other tests apply.
 \ii $0\in U$, and $-u=(-1)u\in U$ by scalar closure and Proposition 4.
 \ii The inherited associative, commutative, distributive and unit identities hold because they hold for these elements in $V$.
 \end{steps}\end{proof}\end{prob}
+\begin{prob}
+\method{Why zero right-hand sides recur}
+Suppose a scalar-valued rule $L:V\to F$ satisfies $L(au+v)=aL(u)+L(v)$. Then
+\begin{steps}
+\ii $L(0)=L(0+0)=L(0)+L(0)$, so scalar cancellation gives $L(0)=0$.
+\ii The condition $L(v)=b$ can define a subspace only when $b=0$, since a subspace contains zero. When $b=0$, the same rule gives $L(au+v)=a0+0=0$, proving closure. Thus it is a subspace exactly when $b=0$.
+\end{steps}
+The coordinate, derivative and integral conditions below and in HW1 P5 all use this argument. One must still check that the particular rule $L$ preserves $au+v$.
+\end{prob}
 \begin{prob}
 \method{Substituting into a defining equation}
 \begin{steps}
@@ -309,13 +309,10 @@ The two formulations of the test agree. A subset satisfying the test is a vector
 \ii The zero vector does not satisfy $x+y=1$. Thus $W$ is not a subspace. Also $(1,0)\in W$ but $2(1,0)=(2,0)\notin W$, a separate failure of scalar closure.
 \end{steps}\end{prob}
 \begin{example*}[LADR 1.35(a): a coordinate equation]
-For $b\in F$, the set $U_b=\{(x_1,x_2,x_3,x_4)\in F^4:x_3=5x_4+b\}$ is a subspace if and only if $b=0$.
-\begin{steps}
-\ii If $U_b$ is a subspace, its zero vector must satisfy $0=5\cdot0+b$, so $b=0$.
-\ii If $b=0$, zero belongs to $U_0$. For $u,v\in U_0$ and $a\in F$,
-$(au+v)_3=au_3+v_3=5(au_4+v_4)=5(au+v)_4$.
-Thus $au+v\in U_0$.
-\end{steps}
+For $b\in F$, $U_b=\{x\in F^4:x_3=5x_4+b\}$ is a subspace exactly when $b=0$.
+Use $L(x)=x_3-5x_4$:
+\[L(au+v)=(au_3+v_3)-5(au_4+v_4)=a(u_3-5u_4)+(v_3-5v_4)=aL(u)+L(v).\]
+Thus the preceding zero-right-hand-side argument applies over any field.
 \end{example*}
 \begin{example*}[Notes Example 8]
 Continuity means that function values approach the value at each point as the input approaches that point; differentiability means that the difference quotient has a limit, denoted $f'(x)$. The closure and derivative rules below are cited from elementary calculus.
@@ -323,17 +320,11 @@ Continuity means that function values approach the value at each point as the in
 The same closure rules give LADR 1.35(b),(c): continuous functions on $[0,1]$ form a subspace of $\mathbb R^{[0,1]}$, and differentiable functions on $\mathbb R$ form a subspace of $\mathbb R^{\mathbb R}$.
 \end{example*}
 \begin{example*}[LADR 1.35(d): a prescribed derivative]
-For $b\in\mathbb R$, let $D_b$ be the differentiable real-valued functions $f$ on $(0,3)$ such that $f'(2)=b$. Here $f'(2)$ is the derivative of $f$ at the input $2$. Then $D_b$ is a subspace of $\mathbb R^{(0,3)}$ if and only if $b=0$.
+For real $b$, let $D_b$ consist of differentiable real functions on $(0,3)$ satisfying $f'(2)=b$.
 \begin{steps}
-\ii If $D_b$ is a subspace, it contains the zero function. Its derivative is zero at every input, so its membership forces $b=0$.
-\ii Conversely, $D_0$ contains the zero function. For $f,g\in D_0$ and $a\in\mathbb R$, the cited derivative rules give that $af+g$ is differentiable and
-\[
-(af+g)'(2)=af'(2)+g'(2)=a\cdot0+0=0.
-\]
-Thus $af+g\in D_0$, and the subspace test applies.
-\ii The condition does not require the function itself to be zero: $f(x)=(x-2)^2$ has $f'(x)=2(x-2)$, so $f'(2)=0$.
-\end{steps}
-\end{example*}
+\ii Differentiable functions on $(0,3)$ form a vector space by the same cited derivative rules used in Notes Example 8. The rule $L(f)=f'(2)$ satisfies $L(af+g)=af'(2)+g'(2)$ by the cited calculus rule. Hence $D_b$ is a subspace exactly when $b=0$.
+\ii A zero derivative value does not mean a zero function: $f(x)=(x-2)^2$ has $f'(2)=2(2-2)=0$.
+\end{steps}\end{example*}
 \begin{example*}[LADR 1.35(e): complex sequences tending to zero]
 A real sequence $r_n$ \emph{tends to zero} if, for every real $\varepsilon>0$, there is an index $N$ such that $-\varepsilon<r_n<\varepsilon$ whenever $n\ge N$. A complex sequence $z_n=x_n+iy_n$ tends to zero when both real sequences $x_n$ and $y_n$ tend to zero. We cite the elementary real-limit fact that sums and fixed real scalar multiples of sequences tending to zero still tend to zero.
 \begin{steps}
@@ -359,10 +350,7 @@ With $(p,q)=(0,1)$, this gives $(0,1,1,2,3,5,8,\ldots)$.
 \begin{proposition*}[Notes Proposition 5; notes cite LADR 1C.10]
 The intersection $U\cap W$ of two subspaces of $V$ is a subspace.
 \end{proposition*}
-\begin{motive}
-\ii[Want.] If $u,v$ lie in both $U$ and $W$, then $au+v$ must still lie in both.
-\ii[Key step.] Apply closure in $U$ and closure in $W$ separately. The two memberships give membership in $U\cap W$.
-\end{motive}
+
 \begin{prob}\begin{proof}\begin{steps}
 \ii Both subspaces contain $0$, hence so does their intersection.
 \ii If $u,v\in U\cap W$, then $au+v$ lies in $U$ and in $W$, hence in $U\cap W$.
@@ -371,7 +359,7 @@ The intersection $U\cap W$ of two subspaces of $V$ is a subspace.
 $U+W=\{u+w:u\in U,w\in W\}$. More generally $U_1+\cdots+U_m$ consists of sums $u_1+\cdots+u_m$ with $u_j\in U_j$. We abbreviate $u_1+\cdots+u_m$ by $\sum_{j=1}^m u_j$, or $\sum_j u_j$ when the range is clear; $\sum_{j<k}$ means indices $1,\ldots,k-1$.
 \end{definition*}\end{prob}
 \begin{proposition*}[Notes Proposition 6; notes cite LADR 1.40]
-$U+W$ is a subspace and is the smallest subspace containing $U\cup W$.
+$U+W$ is a subspace and is the smallest subspace containing $U\cup W$. More generally, $U_1+\cdots+U_m$ is the smallest subspace containing every $U_j$.
 \end{proposition*}
 \begin{motive}
 \ii[Want.] The smallest subspace containing both $U$ and $W$.
@@ -383,9 +371,17 @@ $a(u_1+w_1)+(u_2+w_2)=(au_1+u_2)+(aw_1+w_2)$, with the first summand in $U$ and 
 \ii $0=0+0$ lies in $U+W$. Also $a(u_1+w_1)+(u_2+w_2)=(au_1+u_2)+(aw_1+w_2)\in U+W$.
 \ii Each $u\in U$ equals $u+0$ and each $w\in W$ equals $0+w$, so $U\cup W\subseteq U+W$.
 \ii Any subspace $X$ containing $U\cup W$ contains every $u+w$ by addition closure; hence $U+W\subseteq X$.
-\ii For $m$ subspaces, $0=0+\cdots+0$ is in the sum. Also $a(u_1+\cdots+u_m)+(v_1+\cdots+v_m)=(au_1+v_1)+\cdots+(au_m+v_m)$, with $au_j+v_j\in U_j$ by closure in $U_j$. Thus the same test proves $U_1+\cdots+U_m$ is a subspace.
+\ii For $m$ subspaces, $0=0+\cdots+0$ is in the sum. Also $a(u_1+\cdots+u_m)+(v_1+\cdots+v_m)=(au_1+v_1)+\cdots+(au_m+v_m)$, with $au_j+v_j\in U_j$ by closure in $U_j$. Thus the same test proves $U_1+\cdots+U_m$ is a subspace. It contains each $U_j$ by taking the other summands zero. Every subspace containing all $U_j$ contains all these sums by repeated addition, proving minimality.
 \end{steps}\end{proof}\end{prob}
 \begin{fig}\UnionIllustration\end{fig}
+\begin{proposition*}[When a union is a subspace]
+For two subspaces $U,W$ of $V$, $U\cup W$ is a subspace iff $U\subseteq W$ or $W\subseteq U$.
+\end{proposition*}
+\begin{prob}\begin{proof}\begin{steps}
+\ii If one contains the other, their union is the larger subspace.
+\ii Otherwise choose $u\in U\setminus W$ and $w\in W\setminus U$. If $u+w\in U$, subtraction gives $w\in U$, a contradiction. If $u+w\in W$, it gives $u\in W$, also a contradiction. Thus the union fails addition closure.
+\end{steps}\end{proof}\end{prob}
+
 \begin{example*}[LADR 1.37: the sum of two coordinate axes]
 In $F^3$, let $U=\{(x,0,0):x\in F\}$ and $W=\{(0,y,0):y\in F\}$. Then
 \[
@@ -428,22 +424,14 @@ U_k\cap(U_1+\cdots+U_{k-1})=\{0\}\qquad(2\le k\le m).
 For subspaces $U_1,\ldots,U_m$, the following are equivalent: (i) their sum is direct; (ii) every vector in their sum has a unique representation $u_1+\cdots+u_m$, $u_j\in U_j$; (iii) $u_1+\cdots+u_m=0$ implies $u_1=\cdots=u_m=0$.
 \end{proposition*}
 \begin{motive}
-\ii[Want.] Show that a direct sum gives unique summands.
-\ii[Know.] Subtracting two representations gives $\sum_j(u_j-v_j)=0$, with $u_j-v_j\in U_j$.
-\ii[Key step.] Choose the largest index $k$ where the summands differ. The later terms cancel, leaving
-$u_k-v_k=\sum_{j<k}(v_j-u_j)\in U_k\cap(U_1+\cdots+U_{k-1})=\{0\}$, a contradiction.
-\ii[Plan.] Prove directness gives uniqueness, uniqueness gives only the zero representation of zero, and failure of directness gives a nonzero representation of zero.
+\ii[Want.] Determine when summands can be recovered uniquely from their sum.
+\ii[Key step.] Subtract two decompositions. Their differences lie in the same respective subspaces and sum to zero. Thus uniqueness is exactly the claim that no nonzero choice of summands represents zero. The intersection condition tests this: the last nonzero summand of a zero sum would also belong to the sum of the preceding subspaces.
 \end{motive}
 \begin{prob}\begin{proof}\begin{steps}
-\ii Assume (i). Each vector in the sum has at least one representation by the definition of sum. Suppose two representations differ, and let $k$ be the largest index where $u_k\ne v_k$.
-\ii Cancel the terms for $j>k$. If $k=1$, the remaining equation gives $u_1=v_1$, a contradiction. If $k\ge2$, rearrange it to obtain
-\[
-u_k-v_k=\sum_{j<k}(v_j-u_j)\in U_k\cap(U_1+\cdots+U_{k-1})=\{0\}.
-\]
-Each difference on the right lies in its indicated subspace by closure. Again $u_k=v_k$, a contradiction. This proves (ii).
-\ii Assume (ii). The vector $0$ has the representation $0+\cdots+0$. Uniqueness says that any $u_1+\cdots+u_m=0$ has each $u_j=0$, which is (iii).
-\ii Assume (iii). If (i) fails, some $k\ge2$ admits $0\ne x\in U_k\cap(U_1+\cdots+U_{k-1})$. Write $x=u_1+\cdots+u_{k-1}$ with $u_j\in U_j$.
-\ii Then $u_1+\cdots+u_{k-1}+(-x)+0+\cdots+0=0$ has its $k$th summand $-x\ne0$ in $U_k$, contradicting (iii). Thus (i) holds.
+\ii (i)$\Rightarrow$(iii): if $\sum_j u_j=0$ has a last nonzero term $u_k$, then $k=1$ is impossible. For $k\ge2$, $u_k=-\sum_{j<k}u_j\in U_k\cap(U_1+\cdots+U_{k-1})=\{0\}$, also impossible.
+\ii (iii)$\Rightarrow$(i): otherwise choose $0\ne x\in U_k\cap(U_1+\cdots+U_{k-1})$ and write $x=\sum_{j<k}u_j$. Then $u_1+\cdots+u_{k-1}-x+0+\cdots+0=0$ is a nonzero choice of summands, contradicting (iii).
+\ii (iii)$\Rightarrow$(ii): each vector has a decomposition by definition of the sum. If $\sum u_j=\sum v_j$, then $\sum(u_j-v_j)=0$. Each difference lies in $U_j$, so (iii) gives $u_j=v_j$ for every $j$.
+\ii (ii)$\Rightarrow$(iii): compare any representation of zero with $0+\cdots+0$.
 \end{steps}\end{proof}\end{prob}
 \begin{example*}[LADR 1.42--1.44: coordinate direct sums and a nonexample]
 \begin{steps}
@@ -511,7 +499,6 @@ For example $(1,0)$ belongs to the left side but not the right. Intersection doe
 \end{trapbox}
 
 
-\clearpage
 \section{Problem set}
 \begin{prob}\textbf{HW1 P1.} For $f:X\to Y$, $U\subseteq X$, $V\subseteq Y$, prove (a) $f(f^{-1}(V))\subseteq V$, (b) $U\subseteq f^{-1}(f(U))$. (c) Give strict-inclusion examples and determine exactly when equality holds in each.\\\emph{Hint:} Use the image and inverse-image definitions; distinguish a fixed subset from a statement for every subset.\end{prob}
 \begin{prob}\textbf{HW1 P2 (LADR 1A.7).} Show that $(-1+\sqrt3\,i)/2$ is a cube root of $1$.\\\emph{Hint:} Expand using $i^2=-1$ and square before multiplying once more.\end{prob}

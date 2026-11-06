@@ -4,6 +4,7 @@ from sympy import I, Matrix, Poly, Rational, conjugate, expand, integrate, simpl
 x=symbols('x')
 assert expand((1+I)**3)==-2+2*I
 assert expand((5+I)*(4+3*I))==17+19*I
+assert expand((2+3*I)*(4+5*I))==-7+22*I
 assert simplify(1/(3+4*I)-(3-4*I)/25)==0
 assert expand((2+I)**3)==2+11*I
 assert expand((2-I)**3)==2-11*I
