@@ -67,4 +67,10 @@ for k in range(7):
  assert s.diff(x**(k+1)/s.Integer(k+1),x) == x**k
 assert all(sum(P[:,j])==1 for j in range(3)) and all(z>=0 for z in P)
 assert s.Matrix([[1,2]])*s.Matrix([3,4]) == s.Matrix([11])
+# Literal LADR 3.23, 3.42 and 3.45 examples restored in the idea revision.
+Acount=s.Matrix([[7,s.pi,0,1],[97,3,2,0],[0,1,6,7]])
+assert Acount.shape==(3,4) and Acount.rank()==3 and len(Acount.nullspace())==1
+assert s.Matrix([[1,2],[3,4],[5,6]])*s.Matrix([[6,5,4,3],[2,1,0,-1]])==s.Matrix([[10,7,4,1],[26,19,12,5],[42,31,20,9]])
+Arow=s.Matrix([[8,4,5],[1,9,7]])
+assert Arow[1,:]==s.Matrix([[1,9,7]]) and Arow[:,1]==s.Matrix([4,9])
 print('Week3 exact matrix, polynomial, probability, textbook and finite-field checks passed.')

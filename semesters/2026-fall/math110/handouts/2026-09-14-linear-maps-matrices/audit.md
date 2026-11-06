@@ -1,6 +1,6 @@
 # Week 3 revised packet — independent review
 
-Current version: 14 handout pages and 2 solutions pages. Earlier approval of the rejected version is superseded. This revision follows the supplied 22-page reference PDF directly.
+Current version: 14 handout pages and 2 solutions pages, consolidated under the latest ideas/reconstruction goal. Earlier approval of the rejected version is superseded. This revision follows the supplied 22-page reference PDF directly.
 
 ## Sources and coverage
 
@@ -22,3 +22,16 @@ Shared method-heading spacing now uses immediate Needspace rather than synthetic
 
 Handout SHA-256: b2e4e7f2e22b09981cae37d5b41eff7c24598596f69ec98b0b5a420be88fd12c.
 Solutions SHA-256: d430eec528288a43cbae0e3f892c58e9af14459b5e0d8cc262980906cdaf64a1.
+
+## Latest ideas/reconstruction revision
+
+Reorganized around six central arguments: unique components prescribe maps; equal outputs differ by a kernel vector; an extended kernel basis yields the range basis and dimension count; substitution of coordinate expansions yields matrix products; a column basis yields the row/column rank factorization; and probability columns characterize stochasticity. Routine pointwise checks and dimension/algebra consequences retain their explicit derivations without repeated motivations.
+
+Made useful criteria explicit: all preimages are v0+kerT, image prescriptions on a spanning list must respect all relations, ST=0 exactly when rangeT lies in kerS, and columns characterize solvability and uniqueness. Stochastic probability preservation is now an iff, including product closure. Restored literal textbook examples3.23,3.42,3.45 and the3.33 derivative label; all previous source examples and every homework/exam part remain. The page count remains14+2 while these criteria replace repeated exposition.
+
+Fresh independent review read the revised sources, original notes/book/HW/exams and reference, then personally inspected all14+2 pages. Both correctness/coverage and ideas/reference/teaching/layout PASS. Fixed the sole requested layout repair by keeping the nonstandard-basis method's check with step2. Root inspected all final1 pages and both changed final2 pages; exact image comparison establishes all other pages unchanged. Final renders: /tmp/math110-w03-ideas-final2/handout-01.png through handout-14.png and solutions-01.png through solutions-02.png. Reviewer report: /tmp/math110-w03-consolidation-audit.md.
+
+Expanded exact check script passes the restored numerical examples as well as the existing matrix, polynomial, complex, finite-field and probability calculations. Build has zero overfull boxes. Original materials and Weak spots remain unchanged.
+
+Current handout SHA-256: 3625003145d07d7e4785f38f5f21b4bda2d0b2cd530dc2d6e82660e300c9d4a8.
+Current solutions SHA-256: d430eec528288a43cbae0e3f892c58e9af14459b5e0d8cc262980906cdaf64a1.
