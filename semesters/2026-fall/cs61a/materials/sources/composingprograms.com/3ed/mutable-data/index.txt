@@ -1,0 +1,497 @@
+Source: https://composingprograms.com/3ed/mutable-data/
+Retrieved: 2026-11-06
+
+Downloads
+2.4 Mutable Data
+from pytutor import env_diagram
+We have seen how abstraction is vital in helping us to cope with the complexity of large systems. Effective programming also requires organizational principles that can guide us in formulating the overall design of a program. In particular, we need strategies to help us structure large systems to be modular, meaning that they divide naturally into coherent parts that can be separately developed and maintained.
+One powerful technique for creating modular programs is to incorporate data that may change state over time. In this way, a single data object can represent something that evolves independently of the rest of the program. The behavior of a changing object may be influenced by its history, just like an entity in the world. Adding state to data is a central ingredient of a paradigm called object-oriented programming.
+Mutable Containers
+¶
+Instances of primitive built-in values such as numbers are
+immutable
+. The values themselves cannot change over the course of program execution. Lists and dictionaries, on the other hand, are
+mutable
+.
+Mutable objects can be used to represent values that change over time. A person is the same person from one day to the next, despite having aged, received a haircut, or otherwise changed in some way. Similarly, an object may have changing properties due to
+mutation
+operations. For example, it is possible to change the contents of a list. Most changes are performed by invoking methods on list objects.
+We can introduce many list modification operations through an example that illustrates the history of playing cards (drastically simplified). Comments in the examples describe the effect of each method invocation.
+Playing cards were invented in China, perhaps around the 9th century. An early deck had three suits, which corresponded to denominations of money.
+>>> chinese = ['coin', 'string', 'myriad']  # A list literal
+>>> suits = chinese                         # Two names refer to the same list
+As cards migrated to Europe (perhaps through Egypt), only the suit of coins remained in Spanish decks (
+oro
+).
+>>> suits.pop()             # Remove and return the final item
+'myriad'
+>>> suits.remove('string')  # Remove the first item that equals the argument
+Three more suits were added (they evolved in name and design over time),
+>>> suits.append('cup')              # Add an item to the end
+>>> suits.extend(['sword', 'club'])  # Add all items of a sequence to the end
+and Italians called swords
+spades
+.
+>>> suits[2] = 'spade'  # Replace an item
+giving the suits of a traditional Italian deck of cards.
+>>> suits
+['coin', 'cup', 'spade', 'club']
+The French variant used today in the U.S. changes the first two suits:
+>>> suits[0:2] = ['heart', 'diamond']  # Replace a slice
+>>> suits
+['heart', 'diamond', 'spade', 'club']
+Methods also exist for inserting, sorting, and reversing lists. All of these mutation operations change the value of the list; they do not create new list objects.
+Sharing and Identity.
+Because we have been changing a single list rather than creating new lists, the object bound to the name
+chinese
+has also changed, because it is the same list object that was bound to
+suits
+!
+>>> chinese  # This name co-refers with "suits" to the same changing list
+['heart', 'diamond', 'spade', 'club']
+This behavior is new. Previously, if a name did not appear in a statement, then its value would not be affected by that statement. With mutable data, methods called on one name can affect another name at the same time.
+The environment diagram for this example shows how the value bound to
+chinese
+is changed by statements involving only
+suits
+. Step through each line of the following example to observe these changes.
+env_diagram(r'''
+chinese = ['coin', 'string', 'myriad']
+suits = chinese
+suits.pop()
+suits.remove('string')
+suits.append('cup')
+suits.extend(['sword', 'club'])
+suits[2] = 'spade'
+suits[0:2] = ['heart', 'diamond']
+''', step=3, cumulative=False)
+Loading...
+Lists can be copied using the
+list
+constructor function. Changes to one list do not affect another, unless they share structure.
+>>> nest = list(suits)  # Bind "nest" to a second list with the same items
+>>> nest[0] = suits     # Create a nested list
+According to this environment, changing the list referenced by
+suits
+will affect the nested list that is the first item of
+nest
+, but not the other items.
+>>> suits.insert(2, 'Joker')  # Insert an item at index 2, shifting the rest
+>>> nest
+[['heart', 'diamond', 'Joker', 'spade', 'club'], 'diamond', 'spade', 'club']
+And likewise, undoing this change in the first item of
+nest
+will change
+suits
+as well.
+>>> nest[0].pop(2)
+'Joker'
+>>> suits
+['heart', 'diamond', 'spade', 'club']
+Stepping through this example line by line will show the representation of a nested list.
+env_diagram(r'''
+suits = ['heart', 'diamond', 'spade', 'club']
+nest = list(suits)
+nest[0] = suits
+suits.insert(2, 'Joker')
+joke = nest[0].pop(2)
+''', step=0, cumulative=False)
+Loading...
+Because two lists may have the same contents but in fact be different lists, we require a means to test whether two objects are the same. Python includes two comparison operators, called
+is
+and
+is not
+, that test whether two expressions in fact evaluate to the identical object. Two objects are identical if they are equal in their current value, and any change to one will always be reflected in the other. Identity is a stronger condition than equality.
+>>> suits is nest[0]
+True
+>>> suits is ['heart', 'diamond', 'spade', 'club']
+False
+>>> suits == ['heart', 'diamond', 'spade', 'club']
+True
+The final two comparisons illustrate the difference between
+is
+and
+==
+. The former checks for identity, while the latter checks for the equality of contents.
+List comprehensions.
+A list comprehension always creates a new list. For example, the
+unicodedata
+module tracks the official names of every character in the Unicode alphabet. We can look up the characters corresponding to names, including those for card suits.
+>>> from unicodedata import lookup
+>>> [lookup('WHITE ' + s.upper() + ' SUIT') for s in suits]
+['♡', '♢', '♤', '♧']
+This resulting list does not share any of its contents with
+suits
+, and evaluating the list comprehension does not modify the
+suits
+list.
+You can read more about the Unicode standard for representing text in the
+Unicode section
+of Dive into Python 3.
+Tuples.
+Tuples are immutable sequences. A new tuple can be created based on an existing one, but modifications cannot be made to an existing tuple’s length or the identity of the items it contains.
+While it is not possible to change which items are in a tuple, it is possible to change the value of a mutable item contained within a tuple.
+env_diagram(r'''
+nest = (10, 20, [30, 40])
+nest[2].pop()
+''', cumulative=False)
+Loading...
+Tuples are used implicitly in multiple assignment. An assignment of two values to two names creates a two-item tuple and then unpacks it.
+Dictionaries.
+Dictionaries are mutable. Adding new key-value pairs and changing the existing value for a key can both be achieved with assignment statements.
+>>> numerals = {'I': 'one', 'V': 5, 'X': 10}
+>>> numerals['I'] = 1
+>>> numerals['L'] = 50
+>>> numerals
+{'I': 1, 'V': 5, 'X': 10, 'L': 50}
+>>> numerals.pop('X')
+10
+>>> numerals
+{'I': 1, 'V': 5, 'L': 50}
+Notice that
+'I'
+kept its position in the output above even though its value changed, while the new key
+'L'
+was added to the end. Dictionaries preserve insertion order: when we print a dictionary, keys appear in the order in which they were first added, and assigning a new value to an existing key does not change its position.
+Local State
+¶
+Lists and dictionaries have
+local state
+: they are changing values that have some particular contents at any point in the execution of a program. The word “state” implies an evolving process in which that state may change.
+Functions can also have local state, which is stored in their parent frame. For instance, let us define a function that models the process of withdrawing money from a bank account. We will create a function called
+withdraw
+, which takes as its argument an amount to be withdrawn. If there is enough money in the account to accommodate the withdrawal, then
+withdraw
+will return the amount remaining after the withdrawal. Otherwise,
+withdraw
+will return the message
+'Insufficient funds'
+. For example, if we begin with $100 in the account, we would like to obtain the following sequence of return values by calling withdraw:
+>>> withdraw(25)
+75
+>>> withdraw(25)
+50
+>>> withdraw(60)
+'Insufficient funds'
+>>> withdraw(15)
+35
+Above, the expression
+withdraw(25)
+, evaluated twice, yields different values. Thus, this user-defined function is non-pure. Calling the function not only returns a value, but also has the side effect of changing the function in some way, so that the next call with the same argument will return a different result. This side effect is a result of
+withdraw
+changing the contents of a list that is bound to a name outside of the current frame.
+For
+withdraw
+to make sense, it must be created with an initial account balance. The function
+make_withdraw
+is a higher-order function that takes a starting balance as an argument. The function
+withdraw
+is its return value.
+>>> withdraw = make_withdraw(100)
+The implementation of
+make_withdraw
+below uses a one-element mutable list called
+state
+to store the state of
+withdraw
+. When we call
+make_withdraw
+, we place the
+initial_balance
+in the
+state
+list. We then define and return a local function,
+withdraw
+, which updates and returns the contents of
+state
+when called.
+>>> def make_withdraw(initial_balance):
+        """Return a withdraw function whose state starts at initial_balance and decreases with each call."""
+        state = [initial_balance]
+        def withdraw(amount):
+            if amount > state[0]:
+                return 'Insufficient funds'
+            state[0] = state[0] - amount
+            return state[0]
+        return withdraw
+The following environment diagrams illustrate the effects of multiple calls to a function created by
+make_withdraw
+.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(20)
+wd(5)
+wd(3)
+''', step=6, cumulative=True)
+Loading...
+The first def statement has the usual effect: it creates a new user-defined function and binds the name
+make_withdraw
+to that function in the global frame. The subsequent call to
+make_withdraw
+creates and returns a locally defined function
+withdraw
+, which is bound to the name
+wd
+in the global frame. In the
+make_withdraw
+frame, the name
+state
+is bound to a list containing the starting balance 20. Crucially, there will only be this single binding for the name
+state
+throughout the rest of this example.
+Next, we evaluate an expression that calls this function, bound to the name
+wd
+, on an amount 5. The body of
+withdraw
+is executed in a new environment that extends the environment in which
+withdraw
+was defined.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(20)
+wd(5)
+wd(3)
+''', step=9, cumulative=True)
+Loading...
+Instead of using
+initial_balance
+, the
+withdraw
+function uses and updates
+state[0]
+. An assignment statement with
+state[0]
+on the left-hand side of
+=
+does not bind the name
+state
+. Instead, it looks up
+state
+in the current environment, finds it in the
+make_withdraw
+frame, and changes the contents of that list. Updating an item of a list is allowed, even if the name for that list does not appear in the local frame but instead in some non-local or global frame of the current environment.
+By virtue of changing the contents of
+state
+, we have changed the
+withdraw
+function as well. The next time it is called,
+state[0]
+will evaluate to 15 instead of 20. Hence, when we call
+withdraw
+a second time, we see that its return value is 12 and not 17. The change to
+state
+from the first call affects the result of the second call.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(20)
+wd(5)
+wd(3)
+''', cumulative=True)
+Loading...
+The second call to
+withdraw
+does create a second local frame, as usual. However, both
+withdraw
+frames have the same parent. That is, they both extend the environment for
+make_withdraw
+, which contains the binding for
+state
+. Hence, they share the contents of this list. Calling
+withdraw
+has the side effect of altering the environment that will be extended by future calls to
+withdraw
+. Using a mutable value in the parent allows
+withdraw
+to change its future behavior.
+Python Particulars.
+Python has an unusual restriction regarding the lookup of names: within the body of a function, all instances of a name must refer to the same frame. As a result, Python cannot look up the value of a name in a non-local frame, then bind that same name in the local frame, because the same name would be accessed in two different frames in the same function. This restriction allows Python to pre-compute which frame contains each name before executing the body of a function. When this restriction is violated, a confusing error message results. To demonstrate, the
+make_withdraw
+example is repeated below without a
+state
+list.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    balance = initial_balance
+    def withdraw(amount):
+        if amount > balance:
+            return 'Insufficient funds'
+        balance = balance - amount
+        return balance
+    return withdraw
+
+wd = make_withdraw(20)
+wd(5)
+''', step=8, cumulative=True)
+Loading...
+This
+UnboundLocalError
+appears because
+balance
+is assigned locally in line 6, and so Python assumes that all references to
+balance
+must appear in the local frame as well. This error occurs
+before
+line 6 is ever executed, implying that Python has considered line 6 in some way before executing line 4. Storing the balance in a
+state
+list avoids this error, because
+withdraw
+never changes what object
+state
+refers to, instead it only changes the contents of that object.
+The Benefits of Mutation
+¶
+Writing a function that updates its own state is a first step toward viewing a complex program as a collection of independent and autonomous
+objects
+, which interact with each other but each manage their own internal state.
+List mutation has given us the ability to maintain some state that is local to a function, but evolves over successive calls to that function. The
+state
+associated with a particular withdraw function is shared among all calls to that function. However, this state associated with a particular
+withdraw
+function is inaccessible to the rest of the program. Only
+wd
+is associated with the frame for
+make_withdraw
+in which it was defined. If
+make_withdraw
+is called again, then it will create a separate frame with a separate binding for
+state
+.
+We can extend our example to illustrate this point. A second call to
+make_withdraw
+returns a second
+withdraw
+function that has a different parent. We bind this second function to the name
+wd2
+in the global frame.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(20)
+wd2 = make_withdraw(7)
+wd2(6)
+wd(8)
+''', step=11, cumulative=True)
+Loading...
+Now, we see that there are in fact two bindings for the name
+state
+in two different frames, and each
+withdraw
+function has a different parent. The name
+wd
+is bound to a function whose
+state
+list contains 20, while
+wd2
+is bound to a different function whose
+state
+list contains 7.
+Calling
+wd2
+changes the contents of the
+state
+list in its parent frame, but does not affect the function bound to the name
+wd
+. As a result, calling
+wd
+uses a
+state
+list that still contains 20.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(20)
+wd2 = make_withdraw(7)
+wd2(6)
+wd(8)
+''', step=16, cumulative=True)
+Loading...
+In this way, each instance of
+withdraw
+maintains its own state, but that state is inaccessible to any other function in the program. Viewing this situation at a higher level, we have created an abstraction of a bank account that manages its own internals but behaves in a way that models accounts in the world: it changes over time based on its own history of withdrawal requests.
+The Cost of Mutation
+¶
+Our environment model of computation cleanly extends to explain the effects of mutation. However, mutation introduces some important nuances in the way we think about names and values.
+Previously, our values did not change; only our names and bindings changed. When two names
+a
+and
+b
+were both bound to the value 4, it did not matter whether they were bound to the same 4 or different 4’s. As far as we could tell, there was only one 4 object that never changed.
+However, functions with state do not behave this way. When two names
+wd
+and
+wd2
+are both bound to a
+withdraw
+function, it
+does
+matter whether they are bound to the same function or different instances of that function. Consider the following example, which contrasts the one we just analyzed. In this case, calling the function named by
+wd2
+did change the state of the function named by
+wd
+, because both names refer to the same function.
+env_diagram(r'''
+def make_withdraw(initial_balance):
+    state = [initial_balance]
+    def withdraw(amount):
+        if amount > state[0]:
+            return 'Insufficient funds'
+        state[0] = state[0] - amount
+        return state[0]
+    return withdraw
+
+wd = make_withdraw(12)
+wd2 = wd
+wd2(1)
+wd(1)
+''', cumulative=True)
+Loading...
+It is not unusual for two names to co-refer to the same value in the world, and so it is in our programs. But, as values change over time, we must be very careful to understand the effect of a change on other names that might refer to those values.
+Sameness and change.
+These subtleties arise because, by introducing non-pure functions that change values referenced from their parent frames, we have changed the nature of expressions. An expression that contains only pure function calls is
+referentially transparent
+; its value does not change if we substitute one of its subexpressions with the value of that subexpression.
+Mutation operations violate the conditions of referential transparency because they do more than return a value; they change the environment. When we introduce mutation, we encounter a thorny epistemological issue: what it means for two values to be the same. In our environment model of computation, two separately defined functions are not the same, because changes to one may not be reflected in the other.
+In general, so long as we never modify data objects, we can regard a compound data object to be precisely the totality of its pieces. For example, a geographic position is determined by giving its latitude and longitude. But this view is no longer valid in the presence of change, where a compound data object has an “identity” that is something different from the pieces of which it is composed. A bank account is still “the same” bank account even if we change the balance by making a withdrawal; conversely, we could have two bank accounts that happen to have the same balance, but are different objects.
+Despite the complications it introduces, mutation is a powerful tool for creating modular programs. Different parts of a program, which correspond to different environment frames, can evolve separately throughout program execution.
+Chapter 2: Data
+2.3 Compound Data
+Chapter 2: Data
+2.5 Object-Oriented Programming

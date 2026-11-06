@@ -1,0 +1,372 @@
+Source: https://stat20.berkeley.edu/fall-2026/extras/coding-probability.html
+Retrieved: 2026-11-06
+
+Extra Practice: Coding Probability
+[Interactive R block: webr-1-contents; attributes: {"autorun": true, "echo": false, "edit": false, "envir": "extra_probability_r", "eval": true, "include": false, "output": false}]
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+Click to expand and work on the sections you need.
+A good rule of thumb is this: do a bunch of problems in each section until you get bored because everything has gotten too easy.
+The d, p and r functions
+Computing probabilities, and drawing random values, from named distributions.
+Write your code in the editor below each question, then click Run Code.
+Function reference
+Distribution |
+\(P(X = x)\) |
+\(P(X \le x)\) |
+Random draws |
+\(Bin(n, p)\) |
+dbinom(x, size, prob) |
+pbinom(q, size, prob) |
+rbinom(n, size, prob) |
+\(HG(N, G, n)\)† |
+dhyper(x, m, n, k) |
+phyper(q, m, n, k) |
+rhyper(nn, m, n, k) |
+\(Poisson(\lambda)\) |
+dpois(x, lambda) |
+ppois(q, lambda) |
+rpois(n, lambda) |
+† Watch out for the hypergeometric arguments:
+m is \(G\), the number of successes in the box.
+n is \(N - G\), the number of failures in the box. R’s n is not our \(n\)!
+k is \(n\), the number of draws.
+Question 1: Exactly 3 heads
+You flip a fair coin 8 times. Compute the probability of getting exactly 3 heads.
+[Interactive R block: webr-2-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.21875
+Show answer
+[#cb2-1]dbinom(3, size = 8, prob = 0.5)
+Question 2: At most 6 free throws
+A basketball player makes each free throw with probability 0.7, independently. She takes 10 free throws. Compute the probability that she makes at most 6 of them.
+[Interactive R block: webr-3-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.3503893
+Show answer
+[#cb4-1]pbinom(6, size = 10, prob = 0.7)
+“At most 6” is \(P(X \le 6)\), which is exactly what pbinom() computes.
+Question 3: At least 4 sixes
+You roll a fair die 12 times. Compute the probability of rolling at least 4 sixes.
+[Interactive R block: webr-4-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.1251781
+Show answer
+[#cb6-1]1 - pbinom(3, size = 12, prob = 1/6)
+\(P(X \ge 4) = 1 - P(X \le 3)\). Using pbinom(4, ...) would be off by one, since it includes 4.
+Adding up the pmf also works:
+[#cb7-1]sum(dbinom(4:12, size = 12, prob = 1/6))
+Question 4: Between 5 and 8
+Let \(X \sim Bin(20, 0.3)\). Compute \(P(5 \le X \le 8)\).
+[Interactive R block: webr-5-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.6491608
+Show answer
+[#cb9-1]pbinom(8, size = 20, prob = 0.3) - pbinom(4, size = 20, prob = 0.3)
+\(P(X \le 8)\) minus \(P(X \le 4)\) leaves exactly the values 5 through 8. Or add them up directly:
+[#cb10-1]sum(dbinom(5:8, size = 20, prob = 0.3))
+Question 5: The whole pmf at once
+Let \(X\) be the number of heads in 4 flips of a fair coin. In one line of code, compute \(P(X = x)\) for every possible value \(x = 0, 1, 2, 3, 4\).
+[Interactive R block: webr-6-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.0625 0.2500 0.3750 0.2500 0.0625
+Show answer
+[#cb12-1]dbinom(0:4, size = 4, prob = 0.5)
+dbinom() accepts a vector of values, and returns one probability for each.
+Question 6: Red marbles
+A bag holds 15 marbles, 5 of them red. You draw 4 marbles without replacement. Compute the probability that exactly 2 of them are red.
+[Interactive R block: webr-7-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.3296703
+Show answer
+[#cb14-1]dhyper(2, m = 5, n = 10, k = 4)
+m is the 5 red marbles, n is the 10 marbles that aren’t red, and k is the 4 draws.
+Question 7: At most one ace
+You’re dealt 5 cards from a well-shuffled standard 52-card deck. Compute the probability that your hand has at most 1 ace.
+[Interactive R block: webr-8-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.9583156
+Show answer
+[#cb16-1]phyper(1, m = 4, n = 48, k = 5)
+Question 8: Catching a bad bulb
+A box holds 50 light bulbs, 6 of them defective. An inspector tests 8 bulbs, chosen without replacement. Compute the probability that the inspector finds at least one defective bulb.
+[Interactive R block: webr-9-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.6698833
+Show answer
+[#cb18-1]1 - dhyper(0, m = 6, n = 44, k = 8)
+“At least one” is everything except zero, so subtract \(P(X = 0)\) from 1.
+Question 9: Find the bug
+A bag holds 15 marbles, 5 of them red. Someone wants the probability of drawing exactly 2 red marbles in 4 draws without replacement, and writes:
+[#cb19-1]dhyper(2, m = 5, n = 15, k = 4)
+The code runs, but the answer is wrong. Fix it.
+[Interactive R block: webr-10-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+dhyper(2, m = 5, n = 15, k = 4)
+Show answer
+[#cb20-1]dhyper(2, m = 5, n = 10, k = 4)
+n is the number of marbles that aren’t red, \(15 - 5 = 10\), not the total number of marbles. The buggy code describes a bag of 20 marbles.
+Question 10: Simulate some free throws
+The player from Question 2 (70% free throws) shoots 10 free throws every day for a week. Write code (using an r.... function) to simulate how many she makes on each of the 7 days.
+[Interactive R block: webr-11-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your numbers will be different, since they’re random, but you should get 7 whole numbers between 0 and 10, mostly around 7. For example:
+[1] 8 8 7 5 8 5 5
+Show answer
+[#cb22-1]rbinom(7, size = 10, prob = 0.7)
+In rbinom(), the first argument n is how many random values you want (7 days), and size is the number of trials in each one (10 free throws).
+Question 11: Simulate some poker hands
+Use rhyper() to simulate the number of hearts in each of 6 different 5-card hands, each dealt from a full, well-shuffled deck.
+[Interactive R block: webr-12-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your numbers will be different, but you should get 6 whole numbers between 0 and 5, mostly 0, 1 or 2. For example:
+[1] 0 2 1 0 3 3
+Show answer
+[#cb24-1]rhyper(6, m = 13, n = 39, k = 5)
+The first argument, nn, is how many hands to simulate.
+Question 12: Help desk emails
+A help desk gets an average of 3 emails per hour, and the number of emails in an hour follows a \(Poisson(3)\) distribution. Compute the probability that the help desk gets no emails in an hour, and then the probability that it gets at most 2.
+[Interactive R block: webr-13-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] 0.04978707
+[1] 0.4231901
+Show answer
+[#cb27-1]dpois(0, lambda = 3)
+[#cb27-2]ppois(2, lambda = 3)
+Collapse section
+Simulating with rep(), sample() and replicate()
+Building boxes of tickets, drawing from them, and repeating the experiment many times.
+Write your code in the editor below each question, then click Run Code. Your answers to the simulation questions will be a little different from the hints, since they’re random.
+Question 1: Build a box
+Use rep() to make a box (a vector) that holds 20 tickets marked "X" and 20 tickets marked "O".
+[Interactive R block: webr-14-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[1] "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X" "X"
+[20] "X" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O" "O"
+[39] "O" "O"
+Show answer
+[#cb29-1]c(rep("red", 3), rep("blue", 2))
+This also works, using a vector for times:
+[#cb30-1]rep(c("red", "blue"), times = c(3, 2))
+Question 2: times vs. each
+Before you run them, predict what each of these lines will print. Then run them and check.
+[Interactive R block: webr-15-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+rep(1:3, times = 2)
+rep(1:3, each = 2)
+Show answer
+[#cb31-1]rep(1:3, times = 2)   # 1 2 3 1 2 3
+[#cb31-2]rep(1:3, each = 2)    # 1 1 2 2 3 3
+times repeats the whole vector, while each repeats every element before moving on to the next.
+Question 3: A 30% box
+Make a box of tickets that gives a 30% chance of drawing a 1 and a 70% chance of drawing a 0. Then draw 20 times from it, with replacement, and add up the draws.
+[Interactive R block: webr-16-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+A single whole number between 0 and 20, usually around 6. For example:
+[1] 1
+Show answer
+[#cb33-1]box <- c(rep(1, 3), rep(0, 7))
+[#cb33-2]sum(sample(box, size = 20, replace = TRUE))
+Because the tickets are 1s and 0s, the sum counts the 1s.
+Question 4: Repeat it
+Use replicate() to repeat the experiment from Question 3 (20 draws from the 30% box, then a sum) 5 times.
+[Interactive R block: webr-17-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+5 whole numbers between 0 and 20. For example:
+[1] 8 4 7 8 4
+Show answer
+[#cb35-1]replicate(5, sum(sample(box, size = 20, replace = TRUE)))
+replicate(5, ...) runs the code inside 5 times and collects the 5 results in a vector.
+Question 5: Sixes, simulated
+Simulate rolling a fair die 12 times and counting the sixes, and repeat that 10,000 times. Use your simulation to estimate the probability of rolling at least 4 sixes. Then compare your estimate to the exact answer from pbinom() (Question 3 of the first section).
+[Interactive R block: webr-18-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your estimate should be close to, but not exactly, the true probability (below):
+[1] 0.1251781
+Show answer
+[#cb37-1]die <- 1:6
+[#cb37-2]sixes <- replicate(10000, sum(sample(die, size = 12, replace = TRUE) == 6))
+[#cb37-3]mean(sixes >= 4)
+sample(die, ...) == 6 gives TRUE for each six, and sum() counts the TRUEs. Then mean(sixes >= 4) is the proportion of the 10,000 experiments with at least 4 sixes.
+A box of 1s and 0s also works: box <- c(1, rep(0, 5)), then sum(sample(box, size = 12, replace = TRUE)).
+Question 6: Bad bulbs, simulated
+Simulate the light bulb inspection from Question 8 of the first section: a box of 50 bulbs, 6 of them defective, and the inspector tests 8 without replacement. Repeat it 10,000 times, and estimate the probability that the inspector finds at least one defective bulb.
+[Interactive R block: webr-19-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your estimate should be close to, but not exactly, the true probability from earlier (below):
+[1] 0.6698833
+Show answer
+[#cb39-1]bulbs <- c(rep(1, 6), rep(0, 44))
+[#cb39-2]defectives <- replicate(10000, sum(sample(bulbs, size = 8)))
+[#cb39-3]mean(defectives >= 1)
+sample() draws without replacement unless you tell it otherwise, which is what we want here.
+Question 7: Betting on red
+A roulette wheel has 18 red pockets and 20 that aren’t red. Each $1 bet on red wins $1 if the ball lands on red and loses $1 otherwise. Build a box for the net gain of one bet, then simulate the total net gain from 10 bets, repeated 10,000 times. Estimate the probability that you come out ahead (a total net gain above 0).
+[Interactive R block: webr-20-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your estimate should be close to 0.31. For example:
+[1] 0.3203
+Show answer
+[#cb41-1]bet <- c(rep(1, 18), rep(-1, 20))
+[#cb41-2]gains <- replicate(10000, sum(sample(bet, size = 10, replace = TRUE)))
+[#cb41-3]mean(gains > 0)
+The box has a ticket for each pocket: 18 marked \(+1\) and 20 marked \(-1\). Each spin is a draw with replacement.
+Collapse section
+Putting it all together (with plots)
+Simulating, then plotting empirical distributions, pmfs and cdfs.
+Each question has three parts. Write your code in the editor below each part, then click Run Code. All libraries you need have been pre-loaded for you. Run part (a) before part (b), since (b) uses the plot you saved in (a).
+Question 1: Climbing goats
+At a goat yoga class, each of 10 goats independently has a 30% chance of climbing onto someone’s back. Let \(X\) be the number of goats that climb, so \(X \sim Bin(10, 0.3)\).
+(a) Simulate, then plot the empirical distribution
+Use the r function to simulate 1,000 values of \(X\). Put them in a data frame, and plot the empirical distribution: the proportion of the 1,000 simulations that gave each value. Give the plot the title “Empirical” and a fill color of your choice, and save the plot as p_emp.
+[Interactive R block: webr-21-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-41-1.png]
+Show answer
+[#cb42-1]sims <- rbinom(1000, size = 10, prob = 0.3)
+[#cb42-2]
+[#cb42-3]p_emp <- data.frame(x = sims) |>
+[#cb42-4]    group_by(x) |>
+[#cb42-5]    summarize(prop = n() / 1000) |>
+[#cb42-6]    ggplot(aes(x = x, y = prop)) +
+[#cb42-7]    geom_col(fill = "steelblue") +
+[#cb42-8]    labs(title = "Empirical")
+[#cb42-9]
+[#cb42-10]p_emp
+(b) Plot the pmf, next to the empirical distribution
+Use the d function to compute \(P(X = x)\) for \(x = 0, 1, \ldots, 10\), and plot the pmf. Give this plot the title “Theoretical” and a different fill color from p_emp, and save it as p_pmf. Then use patchwork to show p_emp and p_pmf side by side. How do they compare?
+[Interactive R block: webr-22-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your left-hand plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-43-1.png]
+Show answer
+[#cb43-1]p_pmf <- data.frame(x = 0:10) |>
+[#cb43-2]    mutate(pmf = dbinom(x, size = 10, prob = 0.3)) |>
+[#cb43-3]    ggplot(aes(x = x, y = pmf)) +
+[#cb43-4]    geom_col(fill = "darkorange") +
+[#cb43-5]    labs(title = "Theoretical")
+[#cb43-6]
+[#cb43-7]p_emp + p_pmf
+(c) Plot the cdf
+Use the p function to compute \(P(X \le x)\) for the same values, and plot the cdf. geom_step() draws a step function, which is just what a cdf looks like.
+[Interactive R block: webr-23-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-45-1.png]
+Show answer
+[#cb44-1]data.frame(x = 0:10) |>
+[#cb44-2]    mutate(cdf = pbinom(x, size = 10, prob = 0.3)) |>
+[#cb44-3]    ggplot(aes(x = x, y = cdf)) +
+[#cb44-4]    geom_step()
+Question 2: Hearts in a hand
+You’re dealt 5 cards from a well-shuffled standard deck. Let \(X\) be the number of hearts in your hand, so \(X \sim HG(52, 13, 5)\).
+(a) Simulate, then plot the empirical distribution
+Use the r function to simulate 1,000 values of \(X\). Put them in a data frame, and plot the empirical distribution: the proportion of the 1,000 simulations that gave each value. Give the plot the title “Empirical” and a fill color of your choice, and save it as p_emp.
+[Interactive R block: webr-24-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-47-1.png]
+Show answer
+[#cb45-1]sims <- rhyper(1000, m = 13, n = 39, k = 5)
+[#cb45-2]
+[#cb45-3]p_emp <- data.frame(x = sims) |>
+[#cb45-4]    group_by(x) |>
+[#cb45-5]    summarize(prop = n() / 1000) |>
+[#cb45-6]    ggplot(aes(x = x, y = prop)) +
+[#cb45-7]    geom_col(fill = "steelblue") +
+[#cb45-8]    labs(title = "Empirical")
+[#cb45-9]
+[#cb45-10]p_emp
+(b) Plot the pmf, next to the empirical distribution
+Use the d function to compute \(P(X = x)\) for \(x = 0, 1, \ldots, 5\), and plot the pmf. Give this plot the title “Theoretical” and a different fill color from p_emp, and save it as p_pmf. Then use patchwork to show p_emp and p_pmf side by side. How do they compare?
+[Interactive R block: webr-25-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your left-hand plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-49-1.png]
+Show answer
+[#cb46-1]p_pmf <- data.frame(x = 0:5) |>
+[#cb46-2]    mutate(pmf = dhyper(x, m = 13, n = 39, k = 5)) |>
+[#cb46-3]    ggplot(aes(x = x, y = pmf)) +
+[#cb46-4]    geom_col(fill = "darkorange") +
+[#cb46-5]    labs(title = "Theoretical")
+[#cb46-6]
+[#cb46-7]p_emp + p_pmf
+(c) Plot the cdf
+Use the p function to compute \(P(X \le x)\) for the same values, and plot the cdf. geom_step() draws a step function, which is just what a cdf looks like.
+[Interactive R block: webr-26-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-51-1.png]
+Show answer
+[#cb47-1]data.frame(x = 0:5) |>
+[#cb47-2]    mutate(cdf = phyper(x, m = 13, n = 39, k = 5)) |>
+[#cb47-3]    ggplot(aes(x = x, y = cdf)) +
+[#cb47-4]    geom_step()
+Question 3: Help desk emails
+A help desk gets a \(Poisson(3)\) number of emails each hour. Let \(X\) be the number of emails in a given hour. (\(X\) can be any whole number 0, 1, 2, …, but values above 10 are very unlikely, so use \(x = 0, 1, \ldots, 10\) for the pmf and cdf.)
+(a) Simulate, then plot the empirical distribution
+Use the r function to simulate 1,000 values of \(X\). Put them in a data frame, and plot the empirical distribution: the proportion of the 1,000 simulations that gave each value. Give the plot the title “Empirical” and a fill color of your choice, and save it as p_emp.
+[Interactive R block: webr-27-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-53-1.png]
+Show answer
+[#cb48-1]sims <- rpois(1000, lambda = 3)
+[#cb48-2]
+[#cb48-3]p_emp <- data.frame(x = sims) |>
+[#cb48-4]    group_by(x) |>
+[#cb48-5]    summarize(prop = n() / 1000) |>
+[#cb48-6]    ggplot(aes(x = x, y = prop)) +
+[#cb48-7]    geom_col(fill = "steelblue") +
+[#cb48-8]    labs(title = "Empirical")
+[#cb48-9]
+[#cb48-10]p_emp
+(b) Plot the pmf, next to the empirical distribution
+Use the d function to compute \(P(X = x)\) for \(x = 0, 1, \ldots, 10\), and plot the pmf. Give this plot the title “Theoretical” and a different fill color from p_emp, and save it as p_pmf. Then use patchwork to show p_emp and p_pmf side by side. How do they compare?
+[Interactive R block: webr-28-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+Your left-hand plot will look a little different, since it’s random.
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-55-1.png]
+Show answer
+[#cb49-1]p_pmf <- data.frame(x = 0:10) |>
+[#cb49-2]    mutate(pmf = dpois(x, lambda = 3)) |>
+[#cb49-3]    ggplot(aes(x = x, y = pmf)) +
+[#cb49-4]    geom_col(fill = "darkorange") +
+[#cb49-5]    labs(title = "Theoretical")
+[#cb49-6]
+[#cb49-7]p_emp + p_pmf
+(c) Plot the cdf
+Use the p function to compute \(P(X \le x)\) for the same values, and plot the cdf. geom_step() draws a step function, which is just what a cdf looks like.
+[Interactive R block: webr-29-contents; attributes: {"autorun": false, "edit": true, "envir": "extra_probability_r", "eval": true}]
+# Write your code here.
+Expected output is below, as a hint
+[Image: ; coding-probability_files/figure-html/unnamed-chunk-57-1.png]
+Show answer
+[#cb50-1]data.frame(x = 0:10) |>
+[#cb50-2]    mutate(cdf = ppois(x, lambda = 3)) |>
+[#cb50-3]    ggplot(aes(x = x, y = cdf)) +
+[#cb50-4]    geom_step()
+Collapse section

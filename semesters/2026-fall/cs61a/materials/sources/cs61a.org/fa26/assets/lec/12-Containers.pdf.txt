@@ -1,0 +1,314 @@
+Source: https://cs61a.org/fa26/assets/lec/12-Containers.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Containers
+Announcements
+List Review: Understanding []
+
+>>> digits = [1, 8, 0, 1]                   >>> digits[1:]   Make a new list with
+                                            [8, 0, 1]        some of the elements
+               Make a new list by
+            describing every element        >>> same_digits = [digits[0]] + digits[1:]
+>>> [d * 100 for d in digits if d < 5]      >>> same_digits
+                                            [1, 8, 0, 1]      Create a new list with
+[100, 0, 100]                                                   all of the elements in
+                                                                the first list followed
+        Make a new list by telling Python                       by all of the elements
+           how to create every element                            in the second list
+>>> digits[1]
+8                Look up one element
+
+>>> digits[100]
+Traceback (most recent call last):          >>> digits[:1000]       Ok to go
+  File "<stdin>", line 1, in <module>       [1, 8, 0, 1]            off the
+IndexError: list index out of range         >>> digits[1000:]         end!
+                                            []
+
+>>> [d * 100 for d in digits if d < 5][1]
+0
+                                                                                          3
+Recursion Example: Reverse
+
+def reverse(s):                     (A) reverse(s[1:] + [s[0]])
+    """Return s in reverse order.
+
+   >>> reverse([4, 6, 2])
+   [2, 6, 4]                        (B) [s[-1]] + reverse(s[:-1])
+   """
+   if not s:
+       return []
+          reverse(s[1:]) + [s[0]]
+   return _______________________   (C) [s[-1 * i] for i in range(len(s))]
+
+
+
+
+                                    (D) [s[-x + 1] for x in range(reverse(s))]
+
+                                              What do each of these do?
+                                              Which correctly reverse?
+
+                                                 pollev.com/cs61a
+                                                                                 4
+Recursion Example: Reverse
+
+def reverse(s):                     (A) reverse(s[1:] + [s[0]])
+    """Return s in reverse order.                                        Runs forever
+                                                 [6, 2]       [4]
+   >>> reverse([4, 6, 2])                           [6, 2, 4]
+   [2, 6, 4]                        (B) [s[-1]] + reverse(s[:-1])
+   """                                    [2]                 [4, 6]
+   if not s:
+       return []                                           [6, 4]
+          reverse(s[1:]) + [s[0]]
+   return _______________________   (C) [s[-1 * i] for i in range(len(s))]
+                                      s[-1*0]    s[-1*1]    s[-1*2]    0, 1, 2
+
+                                                 [ 4 , 2 , 6 ]
+                                    (D) [s[-x + 1] for x in range(reverse(s))]
+                                                                                 Runs forever
+                                                What do each of these do?
+                                                Which correctly reverse?
+
+                                                   pollev.com/cs61a
+                                                                                          5
+Box-and-Pointer Notation
+Box-and-Pointer Notation in Environment Diagrams
+
+Lists are represented as a row of index-labeled adjacent boxes, one per element
+
+Each box either contains a primitive value or points to a compound value
+
+
+
+
+                                                                                                                                                                                                   7
+               pythontutor.com/composingprograms.html#code=pair%20%3D%20[1,%202]%0A%0Anested_list%20%3D%20[[1,%202],%20[],%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20[[3,%20False,%20None],
+               %0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20[4,%20lambda%3A%205]]]&mode=display&origin=composingprograms.js&cumulative=true&py=3&rawInputLstJSON=[]&curInstr=4
+Discussion Question
+
+What's the environment diagram? What gets printed?
+
+def f(s):
+    x = s[0]
+    return [x]
+
+t = [3, [2+2, 5]]
+u = [f(t[1]), t]
+print(u)
+
+
+
+
+                                   pollev.com/cs61a
+
+
+
+                                                                                                                                                                                                                                                                                                                                                8
+    https://pythontutor.com/cp/composingprograms.html#code=def%20f%28s%29%3A%0A%20%20%20%20x%20%3D%20s%5B0%5D%0A%20%20%20%20return%20%5Bx%5D%0A%0At%20%3D%20%5B3,%20%5B2%2B2,%205%5D%5D%0Au%20%3D%20%5Bf%28t%5B1%5D%29,%20t%5D%0Aprint%28u%29&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+           Double-Eights with a List
+             Implement double_eights,
+             which takes a list s and returns whether two consecutive items are both 8.
+            using positions (indices)…                                                                                                                                                                    using slices…
+            def double_eights(s):                                                                                                                                                                         def double_eights(s):
+                """Return whether two consecutive items                                                                                                                                                       """Return whether two consecutive items
+                of list s are 8.                                                                                                                                                                              of list s are 8.
+
+                            >>> double_eights([1, 2, 8, 8])                                                                                                                                                               >>> double_eights([1, 2, 8, 8])
+                            True                                                                                                                                                                                          True
+                            >>> double_eights([8, 8, 0])                                                                                                                                                                  >>> double_eights([8, 8, 0])
+                            True                                                                                                                                                                                          True
+                            >>> double_eights([5, 3, 8, 8, 3, 5])                                                                                                                                                         >>> double_eights([5, 3, 8, 8, 3, 5])
+                            True                                                                                                                                                                                          True
+                            >>> double_eights([2, 8, 4, 6, 8, 2])                                                                                                                                                         >>> double_eights([2, 8, 4, 6, 8, 2])
+                            False                                                                                                                                                                                         False
+                            """                                                                                                                                                                                           """
+                                    i in range(len(s)-1)
+                            for ______________________________:                                                                                                                                                                  s[:2]          8, 8
+                                                                                                                                                                                                                          if ____________ == [ _____ ]:
+                                                                                                                                                                                                                              return True
+                                    s[i] == 8 and s[i+1] == 8
+                                if ___________________________:                                                                                                                                                           elif len(s) < 2:
+                                    return True                                                                                                                                                                               return False
+                            return False                                                                                                                                                                                  else:
+                                                                                                                                                                                                                                       double_eights(s[1:])
+                                                                                                                                                                                                                              return _______________________
+https://pythontutor.com/cp/                                                                                                                                                                                                                                                                                                                                                                 9
+composingprograms.html#code=def%20double_eights%28s%29%3A%0A%20%20%20%20if%20s%5B%3A2%5D%20%3D%3D%20%5B8,%208%5D%3A%0A%20%20%20%20%20%20%20%20return%20True%0A%20%20%20%20elif%20len%28s%29%20%3C%202%3A%0A%20%20%20%20%20%20%20%20return%20False%0A%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20return%20double_eights%28s%5B1%3A%5D%29%0A%20%20%20%20%20%20%20%20%0Adouble_eights%28%5B5,%203,%208,%208,%
+203,%205%5D%29&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+Processing Container Values
+Aggregation
+
+Several built-in functions take iterable arguments and aggregate them into a value
+
+  • sum(iterable[,   start]) -> value
+
+   Return the sum of an iterable (not of strings) plus the value
+   of parameter 'start' (which defaults to 0). When the iterable is
+   empty, return start.
+
+  • max(iterable[,key=func]) -> value
+   max(a, b, c, ...[, key=func]) -> value
+
+   With a single iterable argument, return its largest item.
+   With two or more arguments, return the largest argument.
+
+  • all(iterable)    -> bool
+
+   Return True if bool(x) is True for all values x in the iterable.
+   If the iterable is empty, return True.
+
+                                            (Demo)
+                                                                                     11
+Summation
+                                                  Built-in aggregations:
+def cube(k):
+    return pow(k, 3)                                   • sum(iterable[,   start]) -> value
+
+def summation(n, term):                                 Return the sum of an iterable
+    """Sum the first n terms of a sequence.             plus the value of parameter
+                                                        'start' (which defaults to 0).
+    >>> summation(5, cube)
+    225                                                • max(iterable[,   key=func]) ->
+    """               1 + 8 + 27 + 64 + 125
+                                                        value
+    total, k = 0, 1                                     max(a, b, c, ...[, key=func]) ->
+    while k <= n:                                       value
+        total, k = total + term(k), k + 1
+    return total                                        With a single iterable argument,
+                                                        return its largest item.
+def summation2(n, term):
+                                                       • all(iterable)    -> bool
+    return _________________________________________
+                                                        Return True if bool(x) is True
+                                                        for all values x in the iterable.
+                pollev.com/cs61a
+                                                                                          12
+Summation
+                                                     Built-in aggregations:
+def cube(k):
+    return pow(k, 3)                                     • sum(iterable[,   start]) -> value
+
+def summation(n, term):                                   Return the sum of an iterable
+    """Sum the first n terms of a sequence.               plus the value of parameter
+                                                          'start' (which defaults to 0).
+    >>> summation(5, cube)
+    225                                                  • max(iterable[,   key=func]) ->
+    """               1 + 8 + 27 + 64 + 125
+                                                          value
+    total, k = 0, 1                                       max(a, b, c, ...[, key=func]) ->
+    while k <= n:                                         value
+        total, k = total + term(k), k + 1
+    return total                                          With a single iterable argument,
+                                                          return its largest item.
+def summation2(n, term):
+                                     1, 2, 3, 4, 5       • all(iterable)    -> bool
+            sum( [ term(x) for x in range(1, n + 1)]
+    return _________________________________________ )
+                                                          Return True if bool(x) is True
+                                                          for all values x in the iterable.
+                pollev.com/cs61a
+                                                                                            13
+Spring 2023 Midterm 2 Question
+
+
+
+
+                                 14
+Spring 2023 Midterm 2 Question
+
+
+
+
+             sum(s[:k+1])        range(len(s))
+
+
+
+
+                                                 15
+Strings
+
+
+
+
+ 'Demo'
+Tree Recursion (with Strings)
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement count_park, which returns the number of ways that vehicles can be parked in n
+adjacent parking spots for positive integer n. Some or all spots can be empty.
+
+          def count_park(n):
+              """Count the ways to park cars and motorcycles in n adjacent spots.
+              >>> count_park(1) # '.' or '%'
+              2
+              >>> count_park(2) # '..', '.%', '%.', '%%', or '<>'
+              5
+              >>> count_park(4) # some examples: '<><>', '.%%.', '%<>%', '%.<>'
+              29
+              """
+              if n < 0:
+                  return ____________
+              elif n == 0:
+                  return ____________
+              else:
+                  return ____________________________________________________
+                                                                                              18
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement count_park, which returns the number of ways that vehicles can be parked in n
+adjacent parking spots for positive integer n. Some or all spots can be empty.
+
+          def count_park(n):
+              """Count the ways to park cars and motorcycles in n adjacent spots.
+              >>> count_park(1) # '.' or '%'
+              2
+              >>> count_park(2) # '..', '.%', '%.', '%%', or '<>'
+              5
+              >>> count_park(4) # some examples: '<><>', '.%%.', '%<>%', '%.<>'
+              29
+              """
+              if n < 0:
+                               0
+                  return ____________
+              elif n == 0:
+                               1
+                  return ____________
+              else:
+                          count_park(n-2) + count_park(n-1) + count_park(n-1)
+                  return ____________________________________________________
+                                                                                              19
+Spring 2023 Midterm 2 Question 5(b) [modified a lot]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement park, which returns a list of all the ways, represented as strings, that vehicles
+can be parked in n adjacent parking spots for positive integer n. Spots can be empty.
+def park(n):                                                                          park(3):
+    """Return the ways to park cars and motorcycles in n adjacent spots.                 %%%
+    >>> park(1)                                                                          %%.
+    ['%', '.']                                                                           %.%
+    >>> park(2)                                                                          %..
+    ['%%', '%.', '.%', '..', '<>']                                                       %<>
+    >>> len(park(4)) # some examples: '<><>', '.%%.', '%<>%', '%.<>'                     .%%
+    29                                                                                   .%.
+    """                                                                                  ..%
+    if n < 0:                                                                            ...
+                   []
+        return _______                                                                   .<>
+    elif n == 0:                                                                         <>%
+                  ['']
+        return _______                                                                   <>.
+    else:
+                ['%'+s for s in park(n-1)] + ['.'+s for s in park(n-1)] + ['<>'+s for s in park(n-2)]
+        return ________________________________________________________________________________
+                                                                                                 20
+

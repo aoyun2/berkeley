@@ -1,0 +1,123 @@
+Source: https://stat20.berkeley.edu/fall-2026/3-generalization/01-prob-foundations/tutorial.html
+Retrieved: 2026-11-06
+
+Probability Foundations
+Definitions, axioms, and examples
+WarningThis page covers…
+sample() for drawing from a box (vector)
+1:6 is shorthand for c(1,2,3,4,5,6), 5:7 is shorthand for c(5,6,7), and so forth
+seq() can generate rbitrary sequences with spacing (e.g. seq(from = 1, by = 2, to = 9) gives 1, 3, 5, 7, 9)
+set.seed() for reproducible results. It ensures that your code will always generate the same random numbers, no matter how many times it is run.
+[Interactive R block: webr-1-contents; attributes: {"edit": false, "eval": true, "output": false}]
+webr::install("gradethis", quiet = TRUE)
+library(gradethis)
+options(webr.exercise.checker = function(
+label, user_code, solution_code, check_code, envir_result, evaluate_result,
+envir_prep, last_value, engine, stage, ...
+) {
+if (is.null(check_code)) {
+# No grading code, so just skip grading
+invisible(NULL)
+} else if (is.null(label)) {
+list(
+correct = FALSE,
+type = "warning",
+message = "All exercises must have a label."
+)
+} else if (is.null(solution_code)) {
+list(
+correct = FALSE,
+type = "warning",
+message = htmltools::tags$div(
+htmltools::tags$p("A problem occurred grading this exercise."),
+htmltools::tags$p(
+"No solution code was found. Note that grading exercises using the ",
+htmltools::tags$code("gradethis"),
+"package requires a model solution to be included in the document."
+)
+)
+)
+} else {
+gradethis::gradethis_exercise_checker(
+label = label, solution_code = solution_code, user_code = user_code,
+check_code = check_code, envir_result = envir_result,
+evaluate_result = evaluate_result, envir_prep = envir_prep,
+last_value = last_value, stage = stage, engine = engine)
+}
+})
+Our first step toward simulating experiments is introducing randomness in R. The following three functions are a good start.
+sample()
+Drawing from a box of tickets is easily simulated in R, since there is a convenient function sample() that does exactly what we need: draw tickets from a “box” (which needs to be a vector).
+Arguments
+x: the vector to be sampled from, this must be specified
+size: the number of items to be sampled, the default value is the length of x
+replace: whether we replace a drawn item before we draw again, the default value is FALSE, indicating that we would draw without replacement.
+Example: one sample of size 2 (no replacement) from a box with tickets from 1 to 6
+[Interactive R block: webr-2-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_1"}]
+box <- c(1, 2, 3, 4, 5, 6)
+sample(box, size = 2, replace = FALSE)
+What would happen if we don’t specify values for size and replace?
+[Interactive R block: webr-3-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_2"}]
+box <- c(1, 2, 3, 4, 5, 6)
+sample(box)
+By default, size is the full size of the box (6 here), and replace = FALSE by default, so we get 6 draws from the box without replacement. Since there’s only 6 things in the box, we get them all back out, just in a random order. In other words, sample(box) gives a shuffled version of box.
+You try: What would we do differently if we wanted to simulate two rolls of a die?
+Check your answer
+We would sample twice from the same vector with replacement:
+[Interactive R block: webr-4-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_3"}]
+# Let's just call it `die` for clarity, but its the same idea
+die <- c(1, 2, 3, 4, 5, 6)
+sample(die, size = 2, replace = TRUE)
+Reproducible randomness
+If you’re writing code that does random things (like sample), you will get a different answer every time you run your code. Run the cell below a few times, you’ll see that the results change
+[Interactive R block: webr-5-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_4"}]
+die <- c(1, 2, 3, 4, 5, 6)
+sample(die, size = 5, replace = TRUE)
+You’ll get a fresh run of 5 die rolls each time you press “Run Code.” This is normal and fine.
+Except that sometimes it’s not fine. A few scenarios where this is a problem:
+Your writings, plot annotations, etc are expecting specific results.
+You run some code that flips a bunch of coins, make a plot, then write, “As you can see here, 55 out of the 100 coin flips came up Heads.” If you rerun your code, or “render” the file (which reruns the code), you’ll get fresh results, which might not be 55 heads. Now what you’ve written is wrong!
+You want to share your code with others, and want them to get the exact same results as you
+Similar to the above, when they run the code, they’ll get fresh random numbers, so they won’t be looking at the same results you saw.
+What to do?
+Enter set.seed
+In brief: Just run set.seed(any number) right before the code that uses randomness. Now your code will always generate the same numbers, no matter how many times it is run. The “any number” above can be literally any integer, so you could run set.seed(1) or set.seed(20) or set.seed(8237441) or whatever you like.
+Why it works: To oversimplify a bit1 [#fn1], R “generates random numbers” simply by keeping a file with an enormously long list of random-looking numbers to offer up. Each time it needs to generate a random number, it takes the next one in the list. This means that if you run the same sample(...) code twice in a row, each will get different random numbers as R moves down the list.
+When you run set.seed, it tells R to jump to that specific place in the list of random numbers. The number you picked (like 1 or 20) is called the “seed” (or “seed number”). So set.seed(1) moves to the start of the list, set.seed(20) moves to the 20th place in the list, etc. If you use set.seed before some randomness code, it will always start pulling numbers from the same place in the list, so you’ll always get the same result. Try it yourself below:
+Run the cell below repeatedly. You should always get the same answer.
+[Interactive R block: webr-6-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_5"}]
+set.seed(1)
+die <- c(1, 2, 3, 4, 5, 6)
+sample(die, size = 5, replace = TRUE)
+You generally only need to run set.seed once, at the top of your document. Even if your document does a bunch of random number generating, if it always starts from the same place up top, you’ll always get the same results. A quick set.seed fits perfectly at the beginning of your work, when you are also loading libraries and packages.
+Don’t worry about which seed number to use. It doesn’t matter. Just pick your favorite number, and always use that anytime you set.seed. Or use 20 since this is Stat 20.
+Building sequences less tediously
+Above, we created the vector die using die <- c(1, 2, 3, 4, 5, 6), which is fine, but this method would be tedious if we wanted to simulate a 20-sided die, for instance.
+For creating simple lists of integers-in-a-row (like 1 through 6), just use 1:6. You can use any start and end integers and they’ll be filled in. Here’s a few examples to give you the idea.
+[Interactive R block: webr-7-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_6"}]
+1:6
+[Interactive R block: webr-8-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_7"}]
+1:20
+[Interactive R block: webr-9-contents; attributes: {"autorun": false, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_8"}]
+3:5
+Beyond integers-in-a-row, using seq
+The function seq allows us to create any sequence we like, of any length, with any spacing. Before we explain the code, try running the cells below and examine their output. Try to infer how it works:
+[Interactive R block: webr-10-contents; attributes: {"autorun": true, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_9"}]
+seq(from = 1, by = 2, to = 9)
+[Interactive R block: webr-11-contents; attributes: {"autorun": true, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_10"}]
+seq(from = 1, by = 2, length = 9)
+[Interactive R block: webr-12-contents; attributes: {"autorun": true, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_11"}]
+seq(from = 1, to = 5, length = 9)
+[Interactive R block: webr-13-contents; attributes: {"autorun": true, "code-fold": false, "edit": true, "envir": "tutorial_3_01", "eval": true, "exercise": "3_01_ex_12"}]
+seq(to = 10, by = 2, length = 5)
+As you can see, seq is flexible and lets you set up a sequence in a number of ways. It needs you to set 3 of these 4 arguments:
+from: First number in the sequence.
+to: Last number in the sequence.
+length: How many numbers in the sequence.
+by: Step size between numbers.
+Again, you don’t need to set all 4 of these. Why?
+Notice that the first example above, seq(from = 1, by = 2, to = 9), doesn’t have a length argument. But that’s fine, because its length is already foretold. If you count from 1 to 9 by 2s, you get the sequence 1, 3, 5, 7, 9. Which is 5 numbers. There’s no other “length” you could end up with.
+Similarly, the last example, seq(to = 10, by = 2, length = 5), doesn’t have a from argument. But we don’t need it, because the only way to get a sequence of 5 numbers, counting by 2s, that ends in the number 10, is to have the sequence 2, 4, 6, 8, 10. It had to start from 2 to fit all the other specs!
+Happy sequencing o_0
+Footnotes
+It’s not quite this simple, but this is a totally reasonable way to think about it. If you want to dig deeper into how computers actually generate random numbers, you can start here [https://bookdown.org/rdpeng/advstatcomp/random-number-generation.html] for the general ideal.↩︎ [#fnref1]

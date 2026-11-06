@@ -1,0 +1,244 @@
+Source: https://cs61a.org/fa26/assets/lec/22-Iterators.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Iterators
+Announcements
+Iterators
+Iterators
+
+A container can provide an iterator that provides access to its elements in order
+
+    iter(iterable): Return an iterator over the elements
+                    of an iterable value
+                                                                >>> s = [3, 4, 5]
+                                                                >>> t = iter(s)
+    next(iterator): Return the next element in an iterator
+                                                                >>> next(t)
+                                                                3
+                                                                >>> next(t)
+                                                                4
+                                                                >>> u = iter(s)
+                                                                >>> next(u)
+                                                                3
+                                                                >>> next(t)
+                                                                5
+                                                                >>> w = u
+                                                                >>> next(w)
+                                                                4
+                                     (Demo)
+
+
+                                                                                    4
+Discussion Question
+
+What will be printed?
+
+a = [1, 2, 3]
+b = [a, 4]
+c = iter(a)
+d = c
+print(next(c))
+print(next(d))
+print(b)
+
+
+
+
+                        5
+Discussion Question
+
+What will be printed?
+
+a = [1, 2, 3]           1
+b = [a, 4]              2
+c = iter(a)             [[1, 2, 3], 4]
+d = c
+print(next(c))
+print(next(d))
+print(b)
+
+
+
+
+                                         6
+Map Function
+Map
+
+map(func, iterable): Make an iterator over the return values of calling func on each
+element of the iterable.
+
+
+
+
+                                           (Demo)
+
+
+                                                                                       8
+Built-in Functions for Iteration
+
+Many built-in Python sequence operations return iterators that compute results lazily
+
+                    map(func, iterable):   Iterate over func(x) for x in iterable
+
+                 filter(func, iterable):   Iterate over x in iterable if func(x)
+
+          zip(first_iter, second_iter):    Iterate over co-indexed (x, y) pairs
+
+                     reversed(sequence):   Iterate over x in a sequence in reverse order
+
+
+
+
+                                                                                           9
+Example: summation
+
+def cube(k):                                  Re-implement summation:
+    return pow(k, 3)
+
+def summation(n, term):
+    """Sum the first n terms of a sequence.   def summation_list_comprehension(n, term):
+
+    >>> summation(5, cube)                       return _______________________________________
+    225
+          0 + 1 + 8 + 27 + 64 + 125
+    """                                           Include [<map exp> for <name> in <iter exp>]
+    total, k = 0, 1
+    while k <= n:
+        total = total + term(k)               def summation_map(n, term):
+        k = k + 1
+                                                 return ________________________________
+    return total
+
+                                                   Include map(func, iterable)
+
+
+
+                                                                                           10
+Example: summation
+
+def cube(k):                                  Re-implement summation:
+    return pow(k, 3)
+
+def summation(n, term):
+    """Sum the first n terms of a sequence.   def summation_list_comprehension(n, term):
+
+                                                        sum([term(k) for k in range(1, n + 1)])
+                                                 return _______________________________________
+    >>> summation(5, cube)
+    225
+          0 + 1 + 8 + 27 + 64 + 125
+    """                                           Include [<map exp> for <name> in <iter exp>]
+    total, k = 0, 1
+    while k <= n:
+        total = total + term(k)               def summation_map(n, term):
+        k = k + 1                                       sum(map(term, range(1, n + 1)))
+                                                 return ________________________________
+    return total
+
+                                                   Include map(func, iterable)
+
+
+
+                                                                                           11
+List comprehension vs. map function
+
+def cube(k):
+    print("cubing", k)
+    return pow(k, 3)
+
+
+
+What will be printed for each?
+
+
+
+>>> x = [cube(k) for k in range(1, 6)]   >>> x = map(cube, range(1, 6))
+cubing 1
+cubing 2                                      Nothing is printed!
+cubing 3                                   Iterators compute results
+                                                    lazily
+cubing 4
+cubing 5
+                                         >>> x
+>>> x                                    <map object at 0x10a002f20>
+[1, 8, 27, 64, 125]
+                                                                          12
+all and any
+
+all(s: iterable) -> bool: Return True if all values in s evaluate to True
+                          Returns as soon as a False value is reached
+
+any(s: iterable) -> bool: Return True if at least one value in s evaluates to True
+                          Returns as soon as a True value is reached
+
+
+
+What's printed when evaluating:
+
+>>> x = all(map(print, range(-3, 3)))
+
+
+
+
+                                                                                     13
+all and any
+
+all(s: iterable) -> bool: Return True if all values in s evaluate to True
+                          Returns as soon as a False value is reached
+
+any(s: iterable) -> bool: Return True if at least one value in s evaluates to True
+                          Returns as soon as a True value is reached
+
+
+
+What's printed when evaluating:
+
+>>> x = all(map(print, range(-3, 3)))
+-3
+
+                           Why?
+                            • print(-3) returns None after displaying -3
+                            • None is a false value
+                            • all([None, ...]) is False for any ...
+                            • The map iterator never needs to advances beyond -3
+
+                                                                                     14
+                                                                                                                                          List Practice
+
+
+
+
+https://pythontutor.com/cp/composingprograms.html#code=s%20%3D%20%5B2,%20%5B3,%204%5D,%205%5D%0As.append%28%5B6,%207%5D%29%0As.extend%28%5B8,%209%5D%29%0At%20%3D%20%5B%5D%0At.extend%28s%29%0As%5B3%5D.append%28s%5B1%5D.pop%28%29%29%0Aprint%28t%29&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+Spring 2023 Midterm 2 Question 1
+
+def chain(s):                                                                                    Global frame                                                   func chain(s) [parent=Global]
+    return [s[0], s[1:]]                                                                         chain                                                          list
+silver = [2, chain([3, 4, 5])]                                                                                                                                       2
+                                                                                                                                                                     1
+                                                                                                 silver
+gold = [silver[0], silver[1].pop()]
+                                                                                                 gold                                                           list                                              silver[1]
+silver[0] = 1
+platinum = chain(chain([6, 7, 8]))                                                               platinum                                                            2                                           evaluates to
+                                                                                                                                                                                                                  this list
+Reminder: s.pop() removes and                                                                    chain                       [p=G]                              list
+returns the last item in list s.                                                                 s                                                                   3           4           5                  list                            list
+
+                                                                                                 ret val                                                                                                             3                           4     5
+                                                                                                                                                                list
+>>> silver
+                                                                                                 chain                       [p=G]                                   6           7           8
+[1, [3]]                                                                                                                                                                                                                                         silver[1].pop()
+                                                                                                 s                                                              list                                     list                                     evaluates to
+>>> gold                                                                                         ret val                                                             6                                       7           8                          this list
+[2, [4, 5]]
+                                                                                                 chain                       [p=G]
+>>> platinum                                                                                                                                                    list                           list
+                                                                                                 s
+[6, [[7, 8]]]                                                                                    ret val                                                             6
+
+                                                                                                                                                                                                                                                              16
+                  https://pythontutor.com/cp/composingprograms.html#code=def%20chain%28s%29%3A%0A%20%20%20%20return%20%5Bs%5B0%5D,%20s%5B1%3A%5D%5D%0Asilver%20%3D%20%5B2,%20chain%28%5B3,%204,%205%5D%29%5D%0Agold%20%3D%20%5Bsilver%5B0%5D,
+                  %20silver%5B1%5D.pop%28%29%5D%0Asilver%5B0%5D%20%3D%201%0Aplatinum%20%3D%20chain%28chain%28%5B6,%207,%208%5D%29%29%0A&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+

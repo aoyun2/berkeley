@@ -1,0 +1,961 @@
+Source: https://cs61a.org/fa26/labs/lab07/
+Retrieved: 2026-11-06
+
+Lab 7: Iterators and Generators
+Due:
+Wednesday 10/21 @ 11:59pm
+Points:
+1
+Download:
+lab07.zip
+Attendance
+You need to submit the lab problems in addition to attending to get credit for lab. Students in mega lab only need to submit the lab problems. Preceptor interviews are highly recommended but
+not required
+for lab submissions.
+If you are in regular lab, your TA will come around during lab to check you in. If you didn't attend for a good reason (such as being sick), fill out this form (within 2 weeks of your lab):
+attendance form
+.
+These videos
+may provide some helpful direction for tackling the coding
+problems on this assignment.
+To see these videos, you should be logged into your berkeley.edu email.
+Required Questions
+Iterators
+Consult the drop-down if you need a refresher on iterators.
+Iterators
+An
+iterable
+is any value that can be iterated through, or gone through one
+item at a time. One construct that we've used to iterate through an iterable
+is a
+for
+statement:
+for
+item
+in
+iterable
+:
+# do something
+In general, an
+iterable
+is an object on which calling the built-in
+iter
+function returns an
+iterator
+. An
+iterator
+is an object on which calling
+the built-in
+next
+function returns the next value.
+For example, a list is an iterable value.
+>>>
+s
+=
+[
+1
+,
+2
+,
+3
+,
+4
+]
+>>>
+next
+(
+s
+)
+# s is iterable, but not an iterator
+TypeError
+:
+'list'
+object
+is
+not
+an
+iterator
+>>>
+t
+=
+iter
+(
+s
+)
+# Creates an iterator
+>>>
+t
+<
+list_iterator
+object
+...>
+>>>
+next
+(
+t
+)
+# Calling next on an iterator
+1
+>>>
+next
+(
+t
+)
+# Calling next on the same iterator
+2
+>>>
+next
+(
+iter
+(
+t
+))
+# Calling iter on an iterator returns itself
+3
+>>>
+t2
+=
+iter
+(
+s
+)
+>>>
+next
+(
+t2
+)
+# Second iterator starts at the beginning of s
+1
+>>>
+next
+(
+t
+)
+# First iterator is unaffected by second iterator
+4
+>>>
+next
+(
+t
+)
+# No items left!
+StopIteration
+>>>
+s
+# Original iterable is unaffected
+[
+1
+,
+2
+,
+3
+,
+4
+]
+You can also use an iterator in a
+for
+statement because all iterators are
+iterable. But note that since iterators keep their state, they're only good to
+iterate through an iterable once:
+>>>
+t
+=
+iter
+([
+4
+,
+3
+,
+2
+,
+1
+])
+>>>
+for
+i
+in
+t
+:
+...
+print
+(
+i
+)
+4
+3
+2
+1
+>>>
+for
+i
+in
+t
+:
+...
+print
+(
+i
+)
+There are built-in functions that return iterators. These built-in Python
+sequence operations are said to compute results
+lazily
+.
+>>>
+m
+=
+map
+(
+lambda
+x
+:
+x
+*
+x
+,
+[
+3
+,
+4
+,
+5
+])
+>>>
+next
+(
+m
+)
+9
+>>>
+next
+(
+m
+)
+16
+>>>
+f
+=
+filter
+(
+lambda
+x
+:
+x
+>
+3
+,
+[
+3
+,
+4
+,
+5
+])
+>>>
+next
+(
+f
+)
+4
+>>>
+next
+(
+f
+)
+5
+>>>
+z
+=
+zip
+([
+30
+,
+40
+,
+50
+],
+[
+3
+,
+4
+,
+5
+])
+>>>
+next
+(
+z
+)
+(
+30
+,
+3
+)
+>>>
+next
+(
+z
+)
+(
+40
+,
+4
+)
+Q1: WWPD: Iterators
+Important:
+Python's built-in functions
+map
+,
+filter
+, and
+zip
+return
+iterators
+, not lists.
+Predict what Python will display when the following lines are entered into an
+interactive session, then unlock the test to check your answers. Type
+ERROR
+if it errors (including a
+StopIteration
+error):
+python3 -m pytest -k iterators_wwpd --unlock
+Unlocking Examples
+>>> s = [1, 2, 3, 4]
+>>> t = iter(s)
+>>> next(s)
+______
+>>> next(t)
+______
+>>> next(t)
+______
+>>> next(iter(s))
+______
+>>> next(iter(s))
+______
+>>> u = t
+>>> next(u)
+______
+>>> next(t)
+______
+>>> r = range(6)
+>>> r_iter = iter(r)
+>>> next(r_iter)
+______
+>>> [x + 1 for x in r]
+______
+>>> [x + 1 for x in r_iter]
+______
+>>> next(r_iter)
+______
+>>> map_iter = map(lambda x : x + 10, range(5))
+>>> next(map_iter)
+______
+>>> next(map_iter)
+______
+>>> list(map_iter)
+______
+>>> for e in filter(lambda x : x % 4 == 0, range(1000, 1008)):
+...     print(e)
+______
+______
+>>> [x + y for x, y in zip([1, 2, 3], [4, 5, 6])]
+______
+Q2: Count Occurrences
+Implement
+count_occurrences
+, which takes an iterator
+t
+, an integer
+n
+, and
+a value
+x
+. It returns the number of items in the first
+n
+items of
+t
+that are equal to
+x
+.
+You can assume that
+t
+has at least
+n
+items.
+Important:
+You should call
+next
+on
+t
+exactly
+n
+times. If you need to
+iterate through more than
+n
+items, think about how you can optimize your
+solution.
+from
+collections.abc
+import
+Iterator
+# t: Iterator[int] means t is an iterator that yields integers
+def
+count_occurrences
+(
+t
+:
+Iterator
+[
+int
+],
+n
+:
+int
+,
+x
+:
+int
+)
+->
+int
+:
+"""Return the number of times that x is equal to one of the
+first n items of iterator t.
+>>> s = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
+>>> count_occurrences(s, 10, 9)
+3
+>>> t = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
+>>> count_occurrences(t, 3, 10)
+2
+>>> u = iter([3, 2, 2, 2, 1, 2, 1, 4, 4, 5, 5, 5])
+>>> count_occurrences(u, 1, 3)  # Only iterate over 3
+1
+>>> count_occurrences(u, 3, 2)  # Only iterate over 2, 2, 2
+3
+>>> list(u)                     # Ensure that the iterator has advanced the right amount
+[1, 2, 1, 4, 4, 5, 5, 5]
+>>> v = iter([4, 1, 6, 6, 7, 7, 6, 6, 2, 2, 2, 5])
+>>> count_occurrences(v, 6, 6)
+2
+"""
+"*** YOUR CODE HERE ***"
+python3 -m pytest -k count_occurrences
+Q3: Repeated
+Implement
+repeated
+, which takes in an iterator
+t
+and an integer
+k
+greater
+than 1. It returns the first value in
+t
+that appears
+k
+times in a row. You
+may assume that there is an item of
+t
+repeated at least
+k
+times in a row.
+Important:
+Call
+next
+on
+t
+only the minimum number of times required.
+If you are receiving a
+StopIteration
+exception, your
+repeated
+function is
+calling
+next
+too many times.
+from
+collections.abc
+import
+Iterator
+# t: Iterator[int] means t is an iterator that yields integers
+def
+repeated
+(
+t
+:
+Iterator
+[
+int
+],
+k
+:
+int
+)
+->
+int
+:
+"""Return the first value in iterator t that appears k times in a row,
+calling next on t as few times as possible.
+>>> s = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
+>>> repeated(s, 2)
+9
+>>> t = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
+>>> repeated(t, 3)
+8
+>>> u = iter([3, 2, 2, 2, 1, 2, 1, 4, 4, 5, 5, 5])
+>>> repeated(u, 3)
+2
+>>> repeated(u, 3)
+5
+>>> v = iter([4, 1, 6, 6, 7, 7, 8, 8, 2, 2, 2, 5])
+>>> repeated(v, 3)
+2
+"""
+assert
+k
+>
+1
+"*** YOUR CODE HERE ***"
+python3 -m pytest -k repeated
+Generators
+Consult the drop-down if you need a refresher on generators.
+Generators
+We can create our own custom iterators by writing a
+generator function
+, which
+returns a special type of iterator called a
+generator
+. Generator functions
+have
+yield
+statements within the body of the function instead of
+return
+statements. Calling a generator function will return a generator object and will
+not
+execute the body of the function.
+For example, let's consider the following generator function:
+def
+countdown
+(
+n
+):
+print
+(
+"Beginning countdown!"
+)
+while
+n
+>=
+0
+:
+yield
+n
+n
+-=
+1
+print
+(
+"Blastoff!"
+)
+Calling
+countdown(k)
+will return a generator object that counts down from
+k
+to 0. Since generators are iterators, we can call
+iter
+on the resulting
+object, which will simply return the same object. Note that the body is not
+executed at this point; nothing is printed and no numbers are outputted.
+>>>
+c
+=
+countdown
+(
+5
+)
+>>>
+c
+<
+generator
+object
+countdown
+...>
+>>>
+c
+is
+iter
+(
+c
+)
+True
+Since generators are iterators, we call
+next
+on them to get the next item.
+The first time
+next
+is called, execution begins at the first line of the
+function body and continues until the
+yield
+statement is reached. The result
+of evaluating the expression in the
+yield
+statement is returned.
+>>>
+next
+(
+c
+)
+Beginning
+countdown
+!
+5
+On any consecutive calls to
+next
+, execution picks up from the line after the
+yield
+statement that was previously executed and continues until the next
+yield
+statement is reached (so
+Beginning countdown!
+doesn't print again).
+>>>
+next
+(
+c
+)
+4
+>>>
+next
+(
+c
+)
+3
+When the end of the function body is reached before hitting a
+yield
+statement,
+a
+StopIteration
+is raised.
+Another useful tool for generators is the
+yield from
+statement, which yields
+all values from an iterator or iterable:
+>>>
+def
+gen_list
+(
+lst
+):
+...
+yield from
+lst
+>>>
+g
+=
+gen_list
+([
+1
+,
+2
+])
+>>>
+next
+(
+g
+)
+1
+>>>
+next
+(
+g
+)
+2
+>>>
+next
+(
+g
+)
+StopIteration
+Q4: Infinite Hailstone
+Write a generator function that yields the items of the hailstone sequence
+starting at number
+n
+. After reaching 1, the generator should continue with 4.
+Here is a quick reminder of how the hailstone sequence is defined:
+Pick a positive integer
+n
+as the start.
+If
+n
+is even, divide it by 2.
+If
+n
+is odd, multiply it by 3 and add 1.
+Try to write this generator function recursively. If you are stuck, you can
+first try writing it iteratively and then seeing how you can turn that
+implementation into a recursive one.
+It's ok if your implementation only yields a few hundred items before reaching Python's recursion limit.
+Hint:
+Since
+hailstone
+returns a generator, you can
+yield from
+a call to
+hailstone
+.
+def
+hailstone
+(
+n
+):
+"""Yield the items of the hailstone sequence starting at n.
+>>> hail_gen = hailstone(10)
+>>> [next(hail_gen) for _ in range(10)]
+[10, 5, 16, 8, 4, 2, 1, 4, 2, 1]
+>>> next(hail_gen)
+4
+"""
+"*** YOUR CODE HERE ***"
+python3 -m pytest -k hailstone
+Q5: Merge
+Definition:
+An
+infinite iterator
+is an iterator that never stops providing
+values when
+next
+is called. For example,
+ones()
+evaluates to an infinite
+iterator:
+def
+ones
+():
+while
+True
+:
+yield
+1
+Write a generator function
+merge(a, b)
+that takes two infinite iterators over
+numbers,
+a
+and
+b
+, which both yield items in strictly increasing order with no
+duplicates. Your generator should yield all unique items from both input
+iterators in increasing order, without any duplicates.
+If a test errors with
+TestTimeout
+, make sure you are always advancing at least one iterator in your
+while
+statement.
+def
+merge
+(
+a
+,
+b
+):
+"""Yield the items of increasing infinite iterators a and b in order,
+removing repeats. Assume that a and b have no repeats.
+>>> def sequence(start, step):
+...     while True:
+...         yield start
+...         start += step
+>>> a = sequence(2, 3)  # 2, 5, 8, 11, 14, ...
+>>> b = sequence(3, 2)  # 3, 5, 7, 9, 11, 13, 15, ...
+>>> result = merge(a, b)
+>>> type(result)
+<class 'generator'>
+>>> [next(result) for _ in range(10)]
+[2, 3, 5, 7, 8, 9, 11, 13, 14, 15]
+"""
+next_a
+,
+next_b
+=
+next
+(
+a
+),
+next
+(
+b
+)
+while
+True
+:
+if
+next_a
+==
+next_b
+:
+"*** YOUR CODE HERE ***"
+elif
+next_a
+<
+next_b
+:
+"*** YOUR CODE HERE ***"
+else
+:
+"*** YOUR CODE HERE ***"
+python3 -m pytest -k merge
+Submit Assignment
+Submit this assignment by running
+Provenance: Prepare Submission Bundle
+from the VS Code command palette and
+uploading the resulting zip
+to Gradescope
+. The zip already contains the
+files you've edited.
+Lab 00
+has detailed
+instructions.
+Your responses to WWPD questions are not submitted, and they do not need to
+be. Lab credit is based on the code writing questions.
+Optional Questions
+These questions are optional. If you don't complete them, you will
+still receive credit for this assignment. They are great practice, so do them
+anyway!
+Q6: Squares
+Implement the generator function
+squares
+, which takes
+positive
+integers
+total
+and
+k
+. It yields all lists of perfect squares greater than or equal to
+k*k
+that sum to
+total
+. Each list is in non-increasing order (large to
+small).
+Hint:
+The statement
+yield from t
+is identical to the following:
+for x in t:
+    yield x
+from
+collections.abc
+import
+Iterator
+def
+squares
+(
+total
+:
+int
+,
+k
+:
+int
+)
+->
+Iterator
+[
+list
+[
+int
+]]:
+"""Yield the ways in which perfect squares greater or equal to k*k sum to total.
+>>> list(squares(10, 1))  # All lists of perfect squares that sum to 10
+[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [4, 1, 1, 1, 1, 1, 1], [4, 4, 1, 1], [9, 1]]
+>>> list(squares(20, 2))  # Only use perfect squares greater or equal to 4 (2*2).
+[[4, 4, 4, 4, 4], [16, 4]]
+"""
+assert
+total
+>
+0
+and
+k
+>
+0
+if
+total
+==
+k
+*
+k
+:
+yield
+____
+elif
+total
+>
+k
+*
+k
+:
+for
+s
+in
+____
+:
+yield
+____
+yield from
+squares
+(
+total
+,
+k
++
+1
+)
+python3 -m pytest -k squares
+And how about some quick box-and-pointer diagram review before Midterm 3?
+Q7: WWPD: Mutation
+Predict what Python will display when the following lines are entered into an
+interactive session, then unlock the test to check your answers. As you go,
+draw a box-and-pointer diagram for each list, keeping track of which names
+refer to the same list.
+python3 -m pytest -k mutation_wwpd --unlock
+Unlocking Examples
+>>> x = [2, 3]
+>>> y = x
+>>> x.extend([4, 5])
+>>> x
+______
+>>> y
+______
+>>> x = [2, 3]
+>>> y = x
+>>> x = x + [4, 5]
+>>> x
+______
+>>> y
+______
+>>> s1 = [1, 2, 3]
+>>> s2 = s1
+>>> s1 is s2
+______
+>>> s2.extend([5, 6])
+>>> s1[4]
+______
+>>> s1.append([-1, 0, 1])
+>>> s2[5]
+______
+>>> s3 = s2[:]
+>>> s3.insert(3, s2.pop(3))
+>>> len(s1)
+______
+>>> s1[4] is s3[6]
+______
+>>> s3[s2[4][1]]
+______
+>>> s1[:3] is s2[:3]
+______
+>>> s1[:3] == s2[:3]
+______
+>>> s1[4].append(2)
+>>> s3[6][3]
+______
+To check your diagrams,
+step
+through this code in Python Tutor
+.

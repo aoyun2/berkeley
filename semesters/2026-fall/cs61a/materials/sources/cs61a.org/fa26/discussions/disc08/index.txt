@@ -1,0 +1,1107 @@
+Source: https://cs61a.org/fa26/discussions/disc08/
+Retrieved: 2026-11-06
+
+Discussion 8: Gleam
+🖨️
+Attendance
+Your TA will come around during discussion to check you in. You can start on
+the worksheet before being checked in; you don't need to wait for your TA to
+get started.
+If you didn't attend for a good reason (such as being sick), fill out this
+form (within 2 weeks of your discussion):
+attendance form
+If you get stuck, there are
+walkthrough videos
+(@berkeley.edu login to YouTube required).
+Recursion in Gleam
+Gleam has no
+while
+or
+for
+statements, so repetition in Gleam is expressed
+with recursion. A
+case
+expression can choose between a base case and a
+recursive case.
+For example, here's a function that computes
+n
+factorial for nonnegative
+n
+.
+/// n * (n-1) * (n-2) * ... * 1
+pub
+fn
+factorial
+(
+n
+:
+Int
+)
+->
+Int
+{
+case
+n
+{
+0
+->
+1
+_
+->
+n
+*
+factorial
+(
+n
+-
+1
+)
+}
+}
+Some useful pages from the Gleam language tour:
+Equality
+Assignment
+Functions
+Case expressions
+Q1: Repeatedly Cube
+Implement
+repeatedly_cube
+, which takes a nonnegative integer
+n
+and an integer
+x
+and cubes
+x
+a total of
+n
+times.
+For example:
+// 1 cubed 100 times is still 1
+assert
+repeatedly_cube
+(
+100
+,
+1
+)
+==
+1
+// (2^3)^3 = 512
+assert
+repeatedly_cube
+(
+2
+,
+2
+)
+==
+512
+// ((2^3)^3)^3 = 134217728
+assert
+repeatedly_cube
+(
+3
+,
+2
+)
+==
+134217728
+/// Cube `x` a total of `n` times, where `n` is a nonnegative integer.
+pub
+fn
+repeatedly_cube
+(
+n
+:
+Int
+,
+x
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Hint: Template
+Use recursion with
+n == 0
+as the base case. You'll need to fill in the
+recursive case.
+pub
+fn
+repeatedly_cube
+(
+n
+:
+Int
+,
+x
+:
+Int
+)
+->
+Int
+{
+case
+n
+{
+0
+->
+x
+_
+->
+{
+...
+repeatedly_cube
+(
+_
+,
+_
+)
+...
+}
+}
+}
+Hint: Cubing
+The following code creates a block that will evaluate to the cube of the return
+value of some function call
+f(...)
+. A block like this can be used anywhere an
+expression goes, including after
+->
+within a
+case
+expression.
+{
+let
+y
+=
+f
+(...)
+y
+*
+y
+*
+y
+}
+Higher-Order Functions in Gleam
+In Gleam,
+fn(x) { x * x }
+is an anonymous function, and a function's type is
+written like
+fn(Int) -> Int
+(takes an
+Int
+and returns an
+Int
+).
+Some more useful pages from the Gleam language tour:
+Higher-order functions
+Anonymous functions
+Q2: Summation
+Section
+1.6
+of
+Composing Programs defines
+summation
+, which takes an upper bound
+n
+and a
+function
+term
+that computes the
+k
+th term, and returns the sum of
+term(k)
+for each
+k
+from 1 to
+n
+:
+def
+summation
+(
+n
+,
+term
+):
+total
+,
+k
+=
+0
+,
+1
+while
+k
+<=
+n
+:
+total
+=
+total
++
+term
+(
+k
+)
+k
+=
+k
++
+1
+return
+total
+Gleam has no
+while
+statement. Implement
+summation
+in Gleam using recursion
+instead.
+let
+cube
+=
+fn
+(
+x
+)
+{
+x
+*
+x
+*
+x
+}
+assert
+summation
+(
+3
+,
+cube
+)
+==
+36
+// 1*1*1 + 2*2*2 + 3*3*3
+assert
+summation
+(
+10
+,
+fn
+(
+x
+)
+{
+x
+})
+==
+55
+// 1 + 2 + ... + 10
+/// The sum of `term(k)` for each `k` from 1 to `n`, where `n` is a
+/// nonnegative integer.
+pub
+fn
+summation
+(
+n
+:
+Int
+,
+term
+:
+fn
+(
+Int
+)
+->
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Q3: Compose
+Write the function
+compose
+, which takes in functions
+f
+and
+g
+and returns a
+new function. This new function takes in a number
+x
+and returns the result of
+calling
+f
+on
+g
+of
+x
+. Both
+f
+and
+g
+take and return an integer.
+/// A function of `x` that returns the result of calling `f` on `g` of `x`.
+pub
+fn
+compose
+(
+f
+:
+fn
+(
+Int
+)
+->
+Int
+,
+g
+:
+fn
+(
+Int
+)
+->
+Int
+)
+->
+fn
+(
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Then, implement
+next_hailstone
+, which takes a positive integer
+n
+and
+returns the next number in a hailstone sequence after
+n
+. The next hailstone
+number is found by the rule:
+If
+n
+is even, divide it by 2.
+If
+n
+is odd, multiply it by 3 and add 1.
+assert
+next_hailstone
+(
+6
+)
+==
+3
+assert
+next_hailstone
+(
+3
+)
+==
+10
+Do so without writing
+fn
+,
+case
+,
++
+,
+-
+,
+*
+, or
+/
+. Instead, use
+compose
+and the provided functions
+choose
+,
+odd
+,
+triple
+,
+half
+, and
+increment
+. Your answer should be one line.
+pub
+fn
+odd
+(
+n
+:
+Int
+)
+->
+Bool
+{
+n
+%
+2
+==
+1
+}
+pub
+fn
+triple
+(
+n
+:
+Int
+)
+->
+Int
+{
+3
+*
+n
+}
+pub
+fn
+half
+(
+n
+:
+Int
+)
+->
+Int
+{
+n
+/
+2
+}
+pub
+fn
+increment
+(
+n
+:
+Int
+)
+->
+Int
+{
+n
++
+1
+}
+pub
+fn
+choose
+(
+condition
+:
+fn
+(
+Int
+)
+->
+Bool
+,
+if_true
+:
+fn
+(
+Int
+)
+->
+Int
+,
+if_false
+:
+fn
+(
+Int
+)
+->
+Int
+,
+)
+->
+fn
+(
+Int
+)
+->
+Int
+{
+fn
+(
+x
+)
+{
+case
+condition
+(
+x
+)
+{
+True
+->
+if_true
+(
+x
+)
+False
+->
+if_false
+(
+x
+)
+}
+}
+}
+/// The number after `n` in a hailstone sequence.
+pub
+fn
+next_hailstone
+(
+n
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Q4: Repeat
+Implement
+repeat
+, which takes a function
+f
+and a nonnegative integer
+n
+,
+and returns a new function that takes a number
+x
+and returns
+the result of calling
+f
+on
+x
+a total of
+n
+times.
+let
+square
+=
+fn
+(
+x
+)
+{
+x
+*
+x
+}
+assert
+repeat
+(
+square
+,
+2
+)(
+5
+)
+==
+625
+// square(square(5))
+assert
+repeat
+(
+square
+,
+3
+)(
+3
+)
+==
+6561
+// square(square(square(3)))
+assert
+repeat
+(
+square
+,
+1
+)(
+7
+)
+==
+49
+// square(7)
+assert
+repeat
+(
+square
+,
+0
+)(
+7
+)
+==
+7
+// 7
+/// A function of `x` that calls `f` on `x` a total of `n` times, where `n` is
+/// a nonnegative integer.
+pub
+fn
+repeat
+(
+f
+:
+fn
+(
+Int
+)
+->
+Int
+,
+n
+:
+Int
+)
+->
+fn
+(
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Hint: Two Templates
+There are two similar ways to structure this function. One is to create different
+functions depending on whether
+n == 0
+or
+n
+is larger than 0.
+pub
+fn
+repeat
+(
+f
+:
+fn
+(
+Int
+)
+->
+Int
+,
+n
+:
+Int
+)
+->
+fn
+(
+Int
+)
+->
+Int
+{
+case
+n
+{
+0
+->
+fn
+(
+x
+)
+{
+...
+}
+_
+->
+fn
+(
+x
+)
+{
+...
+}
+}
+}
+The other is to create one function that contains a
+case
+expression.
+pub
+fn
+repeat
+(
+f
+:
+fn
+(
+Int
+)
+->
+Int
+,
+n
+:
+Int
+)
+->
+fn
+(
+Int
+)
+->
+Int
+{
+fn
+(
+x
+)
+{
+case
+n
+{
+0
+->
+...
+_
+->
+...
+}
+}
+}
+The way you would fill in
+...
+is the same in both templates.
+Hint: Recursive Case
+Define a function of
+x
+, call
+repeat
+, and then call the function it returns
+on
+x
+in order to get the result of calling
+f
+repeatedly on
+x
+:
+fn(x) { ... repeat(f, _)(x) ... }
+Optional Question
+In
+Discussion 3
+, you implemented
+sevens
+in Python. Now
+implement it in Gleam.
+Q5: Sevens
+The Game of Sevens
+: Players in a circle count up from 1 in the clockwise
+direction. (The starting player says 1, the player to their left says 2, etc.)
+If a number is divisible by 7 or contains a 7 (or both), switch directions.
+For example, 5 people would count to 10 like this:
+Player 1 says 1
+Player 2 says 2
+Player 3 says 3
+Player 4 says 4
+Player 5 says 5
+Player 1 says 6  # All the way around the circle
+Player 2 says 7  # Switch to counterclockwise
+Player 1 says 8
+Player 5 says 9  # Back around the circle counterclockwise
+Player 4 says 10
+Implement
+sevens
+, which takes a positive integer
+n
+and a number of
+players
+k
+. It returns which of the
+k
+players says
+n
+. You may call
+has_seven
+.
+assert
+sevens
+(
+2
+,
+5
+)
+==
+2
+assert
+sevens
+(
+6
+,
+5
+)
+==
+1
+assert
+sevens
+(
+7
+,
+5
+)
+==
+2
+assert
+sevens
+(
+8
+,
+5
+)
+==
+1
+assert
+sevens
+(
+9
+,
+5
+)
+==
+5
+assert
+sevens
+(
+18
+,
+5
+)
+==
+2
+Gleam functions can't be defined inside other functions, so the simulation
+happens in a separate function
+play
+. It keeps track of the final number
+n
+,
+the number of players
+k
+, the current number
+i
+, the player
+who
+will say
+i
+, and the current
+direction
+that determines the next player (either
+1
+for increasing or
+-1
+for decreasing).
+/// Whether `n` contains the digit 7, where `n` is a nonnegative integer.
+pub
+fn
+has_seven
+(
+n
+:
+Int
+)
+->
+Bool
+{
+case
+n
+{
+0
+->
+False
+_
+->
+n
+%
+10
+==
+7
+||
+has_seven
+(
+n
+/
+10
+)
+}
+}
+/// The (clockwise) position of who says `n` among `k` players.
+pub
+fn
+sevens
+(
+n
+:
+Int
+,
+k
+:
+Int
+)
+->
+Int
+{
+play
+(
+n
+,
+k
+,
+1
+,
+1
+,
+1
+)
+}
+/// The position of who says `n` among `k` players, given that player `who`
+/// says `i` and that `direction` (1 or -1) is added to `who` to find the next
+/// player.
+fn
+play
+(
+n
+:
+Int
+,
+k
+:
+Int
+,
+i
+:
+Int
+,
+who
+:
+Int
+,
+direction
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+Hint: Template
+First check if
+i
+is a multiple of 7 or contains a 7, and if so, bind
+new_direction
+to
+-direction
+. Then, add the new direction to
+who
+, and use a
+case
+to set
+new_who
+to a number from 1 to
+k
+. Finally, call
+play
+on an
+updated
+i
+,
+new_who
+, and
+new_direction
+.
+fn
+play
+(
+n
+:
+Int
+,
+k
+:
+Int
+,
+i
+:
+Int
+,
+who
+:
+Int
+,
+direction
+:
+Int
+)
+->
+Int
+{
+case
+i
+==
+n
+{
+True
+->
+who
+False
+->
+{
+let
+new_direction
+=
+case
+...
+{
+...
+}
+let
+new_who
+=
+case
+who
++
+new_direction
+{
+...
+}
+play
+(
+n
+,
+k
+,
+_
+,
+_
+,
+_
+)
+}
+}
+}

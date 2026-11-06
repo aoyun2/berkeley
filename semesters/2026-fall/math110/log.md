@@ -1,5 +1,13 @@
 # MATH 110 log
 
+## Regeneration against Aaron's reference packet
+
+- 2026-11-06: Aaron rejected the previous backfill for unclear prose, insufficient explanatory figures and vague claims. All ten previous weeks require revision/regeneration and fresh teaching-quality approval under standards/teaching-quality.md. Week 1 is being rewritten first; none is yet approved under the new review.
+
+## Superseded release
+
+The following entries describe the rejected release and its previous checks. They do not establish current teaching-quality approval.
+
 - 2026-11-06: Backfilled week of 2026-08-31 (Notes Ch. 1–2, HW1): 10-page handout and 2-page solutions; exact computation checks, independent source/content audit, and all-page visual inspection passed.
 - 2026-11-06: Backfilled week of 2026-09-07 (Notes Ch. 3–4, HW2): 10-page handout and 2-page solutions; exact computation checks, independent source/content audit, and all-page visual inspection passed.
 

@@ -1,0 +1,138 @@
+Source: https://stat20.berkeley.edu/fall-2026/3-generalization/09-bootstrapping/tutorial.html
+Retrieved: 2026-11-06
+
+Bootstrapping
+Another Approach to Confidence Intervals
+WarningThis page covers…
+TODO
+This tutorial utilizes several functions from the infer library, which can be used to calculate confidence intervals via the bootstrap and conduct hypothesis tests via a few different methods. It can be loaded with library(infer).
+For a comprehensive list of templates that you can use to form intervals, see the online documentation: https://infer.netlify.app/articles/observed_stat_examples.html [https://infer.netlify.app/articles/observed_stat_examples.html].
+specify() [https://infer.netlify.app/reference/specify.html]
+The specify function allows you to specify which column of a data frame you are using as your response variable (your variable of interest). When looking at the relationship between two variables you will specify both the response and the explanatory variables. As such, the main arguments are response and explanatory.
+[#cb1-1]penguins |>
+[#cb1-2]  specify(response = bill_length_mm)
+Response: bill_length_mm (numeric)
+# A tibble: 342 × 1
+bill_length_mm
+<dbl>
+1           39.1
+2           39.5
+3           40.3
+4           36.7
+5           39.3
+6           38.9
+7           39.2
+8           34.1
+9           42
+10           37.8
+# ℹ 332 more rows
+Observe that the output of specify is essentially the same data frame that went in. the only difference is that bill_length_mm is tagged as the response variable. That will be useful for downstream functions.
+Working with categorical response variables
+bill_length_mm is numerical. Say you’re working with a categorical variable and want to estimate a proportion. Since there are usually at least two levels (options) in a categorical variable, the specify() function will ask you: “the proportion of what level?” You need to tell specify() which level explicitly. This can be done with the additional success argument! Below, we are telling infer that we are interested in estimating the proportion of all Antarctic penguins that are female. Make sure the column name is in quotes.
+[#cb3-1]penguins |>
+[#cb3-2]  specify(response = sex, success = "female")
+Response: sex (factor)
+# A tibble: 333 × 1
+sex
+<fct>
+1 male
+2 female
+3 female
+4 female
+5 male
+6 female
+7 male
+8 female
+9 male
+10 male
+# ℹ 323 more rows
+generate() [https://infer.netlify.app/reference/generate.html]
+The generate function generates many replicate data frames using simulation, the bootstrap procedure, or shuffling. Note that it must follow specify() so that it knows which column(s) to use.
+Useful functions include:
+reps: the number of data set replicates to generate. Generally set this to 500 when making confidence intervals.
+type: the mechanism used to generate new data. Either "bootstrap", "draw", or "permute". Today, we’ll be using the bootstrap; the other two argument choices will be explained in subsequent lectures!
+[#cb5-1]penguins |>
+[#cb5-2]  specify(response = bill_length_mm) |>
+[#cb5-3]  generate(reps = 2, type = "bootstrap")
+Response: bill_length_mm (numeric)
+# A tibble: 684 × 2
+# Groups:   replicate [2]
+replicate bill_length_mm
+<int>          <dbl>
+1         1           37
+2         1           40.9
+3         1           40.8
+4         1           52.7
+5         1           40.2
+6         1           46.1
+7         1           39.6
+8         1           42.9
+9         1           37
+10         1           47.3
+# ℹ 674 more rows
+Observe:
+the output data frame has two columns, replicate, which keeps track of the replicate (1 or 2 here) and bill_length_mm.
+the number of rows in the resulting data frame is the \(n \times reps\), so this data frame is contains all of the bootstrap replicate stapled together one on top of another.
+calculate() [https://infer.netlify.app/reference/calculate.html]
+The third link in an infer pipeline is the calculate function, which calculates a single summary statistic for each replicate data frame. The main argument is stat, which can take values "mean", "median", "prop" (for proportion), "diff in means", "diff in props" and a few more.
+[#cb7-1]penguins |>
+[#cb7-2]  specify(response = bill_length_mm) |>
+[#cb7-3]  generate(reps = 2, type = "bootstrap") |>
+[#cb7-4]  calculate(stat = "mean")
+Response: bill_length_mm (numeric)
+# A tibble: 2 × 2
+replicate  stat
+<int> <dbl>
+1         1  43.1
+2         2  44.3
+Observe:
+The name of the summary statistic should be put in quotation marks.
+The resulting data frame had reps rows, one statistic from every replicate.
+The calculate function is a shortcut for an operation you’re familiar with:
+df |>
+group_by(replicate) |>
+summarize(mean(bill_length_mm))
+visualize() [https://infer.netlify.app/reference/visualize.html]
+Now imagine that we have a distribution of many bootstrapped statistics (a bootstrap sampling distribution). Let’s put that distribution on a histogram! Normally, we’d have to use ggplot() to do this, but the infer library offers a nifty function called visualize() which does this for us in one easy step (and even titles the plot appropriately!) Here, we’ll plot a sampling distribution of 500 bootstrapped means.
+[#cb10-1]penguins |>
+[#cb10-2]  specify(response = bill_length_mm) |>
+[#cb10-3]  generate(reps = 500, type = "bootstrap") |>
+[#cb10-4]  calculate(stat = "mean") |>
+[#cb10-5]  visualize()
+[Image: ; tutorial_files/figure-html/unnamed-chunk-7-1.png]
+Here is a nice visual which sums up what we’ve done so far!
+[Image: ; images/infer-pipeline.png]
+get_ci() [https://infer.tidymodels.org/reference/get_confidence_interval.html]
+The moment we’ve been waiting for is here– it’s time to calculate the confidence interval! For a 95 percent confidence interval, we’ll leave out 5 percent of the sampling distribution: 2.5 percent on the low side, counting up from 0 percent, and 2.5 percent on the high side, counting down from 100 percent. Therefore, we’ll take the 2.5th percentile and the 97.5th percentile of our distribution as the lower and upper bound, respectively.
+Luckily, the get_ci() function does this work for us! Its level argument allows us to specify the confidence level we’d like.
+[#cb11-1]penguins |>
+[#cb11-2]  specify(response = bill_length_mm) |>
+[#cb11-3]  generate(reps = 500, type = "bootstrap") |>
+[#cb11-4]  calculate(stat = "mean") |>
+[#cb11-5]  get_ci(level = 0.95)
+# A tibble: 1 × 2
+lower_ci upper_ci
+<dbl>    <dbl>
+1     43.4     44.4
+fit()
+If you would like to create bootstrapped coefficients for a linear model, you’ll have to do something a bit different since there is a more than 1 summary statistic involved for each replicate data set. This is the role of fit(). There are no arguments to fill-in; it inherits the formula for the linear model from specify().
+[#cb13-1]penguins_adelie <- penguins |>
+[#cb13-2]  filter(species == "Adelie")
+[#cb13-3]
+[#cb13-4]penguins_adelie |>
+[#cb13-5]  specify(body_mass_g ~ sex + flipper_length_mm) |>
+[#cb13-6]  generate(reps = 2, type = "bootstrap") |>
+[#cb13-7]  fit()
+# A tibble: 6 × 3
+# Groups:   replicate [2]
+replicate term              estimate
+<int> <chr>                <dbl>
+1         1 intercept             19.7
+2         1 sexmale              542.
+3         1 flipper_length_mm     18.0
+4         2 intercept            -51.6
+5         2 sexmale              522.
+6         2 flipper_length_mm     18.4
+Observe:
+The data frame has a number of rows equal to reps times the number of coefficients in the linear model (in this case \(2 \times 3\)).
+To get the collection of all coefficients for flipper_length_mm, for example, follow your infer pipeline with filter(term == "flipper_length_mm").

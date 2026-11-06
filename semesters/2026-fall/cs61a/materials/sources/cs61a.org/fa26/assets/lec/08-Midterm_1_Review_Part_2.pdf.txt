@@ -1,0 +1,336 @@
+Source: https://cs61a.org/fa26/assets/lec/08-Midterm_1_Review_Part_2.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Midterm Review (Part 2)
+Announcements
+Example: Reverse
+
+The square function can be defined in terms of the built-in pow function:
+
+def square(x):          def cube(x):
+    """Square x.            """Cube x.
+
+    >>> square(3)           >>> cube(3)
+    9                       27
+    """                     """
+    return pow(x, 2)        return pow(x, 3)
+
+Define square and cube in one line without using lambda or ** (using curry and reverse and pow).
+
+def reverse(f):                      def curry(f):                 Curry converts a two-argument
+    return lambda x, y: f(y, x)          def g(x):                 function into a function that
+                                             def h(y):
+                                                                    takes the first and then the
+  Reverse switches the argument                   return f(x, y)
+                                                                   second argument in two calls:
+ order of a two-argument function            return h
+                                         return g                  curry(pow)(5)(2) == pow(5, 2)
+ reverse(pow)(2, 3) == pow(3, 2)
+
+
+square = _______________________
+cube   = _______________________   pollev.com/cs61a
+
+                                                                                                   3
+Example: Reverse
+
+The square function can be defined in terms of the built-in pow function:
+
+def square(x):          def cube(x):
+    """Square x.            """Cube x.
+
+    >>> square(3)           >>> cube(3)
+    9                       27
+    """                     """
+    return pow(x, 2)        return pow(x, 3)
+
+Define square and cube in one line without using lambda or ** (using curry and reverse and pow).
+
+def reverse(f):                      def curry(f):                 Curry converts a two-argument
+    return lambda x, y: f(y, x)          def g(x):                 function into a function that
+                                             def h(y):
+                                                                    takes the first and then the
+  Reverse switches the argument                   return f(x, y)
+                                                                   second argument in two calls:
+ order of a two-argument function            return h
+                                         return g                  curry(pow)(5)(2) == pow(5, 2)
+ reverse(pow)(2, 3) == pow(3, 2)
+
+          curry(reverse(pow))(2)
+square = _______________________
+cube      curry(reverse(pow))(3)
+       = _______________________   pollev.com/cs61a
+
+                                                                                                   4
+Functional Abstraction Practice
+Spring 2025 Question 3(a)
+The function all_digits takes a positive integer n and one-argument function cond that
+always returns True or False. It returns True if cond(d) returns True when called on every
+digit d in n, and False otherwise.
+
+def all_digits(n, cond):
+    """Return whether cond returns true for every digit of positive n.
+
+   >> odd = lambda d: d % 2 == 1
+   >>> all_digits(123, odd) # not all digits are odd
+   False
+   >>> all_digits(357, odd) # all digits are odd
+   True
+   """
+   while n:
+
+       if __________________:
+
+            _________________
+
+        n = n // 10
+
+   return __________
+                                                                                             6
+  Spring 2025 Question 3(a)
+  The function all_digits takes a positive integer n and one-argument function cond that
+  always returns True or False. It returns True if cond(d) returns True when called on every
+  digit d in n, and False otherwise.
+
+ def all_digits(n, cond):
+     """Return whether cond returns true for every digit of positive n.
+
+     >> odd = lambda d: d % 2 == 1
+     >>> all_digits(123, odd) # not all digits are odd         Read the description
+     False                                                     Verify the examples & pick a
+     >>> all_digits(357, odd) # all digits are odd             simple one
+     True
+     """             Do something                              Read the template
+     while n: 123     with the 3! From discussion:
+                                                               Annotate names with values from
+             not cond(n % 10)     Describe a process (in       your chosen example
+         if __________________:
+                                  English) that computes the   Write code to compute the result
+pollev.com/cs61a  return False
+              _________________   output from the input
+                                  using simple steps.          Did you really return the right
+         n = n // 10                                           thing?
+                         12       Can you ever stop before
+                                  going through all of the
+               True
+     return __________            digits?
+                                                                                               7
+Spring 2025 Question 3(a)
+The function all_digits takes a positive integer n and one-argument function cond that
+always returns True or False. It returns True if cond(d) returns True when called on every
+digit d in n, and False otherwise.
+
+def all_digits(n, cond):
+    """Return whether cond returns true for every digit of positive n.
+
+   >> odd = lambda d: d % 2 == 1
+   >>> all_digits(123, odd) # not all digits are odd          Read the description
+   False                                                      Verify the examples & pick a
+   >>> all_digits(357, odd) # all digits are odd              simple one
+   True
+   """        n: 123 12                                       Read the template
+   while n:                      From discussion:
+                 odd(3) odd(2)                                Annotate names with values from
+            not cond(n % 10)     Describe a process (in       your chosen example
+       if __________________:
+                                 English) that computes the   Write code to compute the result
+                return False
+            _________________    output from the input
+                                 using simple steps.          Did you really return the right
+        n = n // 10                                           thing?
+                                 Can you ever stop before
+                                 going through all of the     Check your solution with the
+             True
+   return __________             digits?                      other examples
+                                                                                             8
+Spring 2025 Question 3(b)
+From 3(a): the function all_digits takes a positive integer n and one-argument function
+cond that always returns True or False. It returns True if cond(d) returns True when called
+on every digit d in n, and False otherwise.
+Definition. A prefix of a positive integer n is the value of n//pow(10, p) for some non-
+negative integer p. For example, 3456 has prefixes 3456, 345, 34, 3, and 0.
+def prefix_digits(n, cond):
+    """Return the largest prefix of positive n for which cond returns true for every digit.
+                                     def process(n, check):
+    >>> odd = lambda d: d % 2 == 1
+                                         """A function to help implement prefix_digits."""
+    >>> prefix_digits(94720, odd)
+                                         while n: 94720
+    9
+                                             if check(n): What should this do?
+    >>> prefix_digits(919321, odd)
+                                                  return n eventually: return 9
+    9193
+                                             n = n // 10 9472
+    >>> prefix_digits(2025, odd)
+                                         return 0
+    0
+    >>> prefix_digits(20252025, lambda d: d < 4) Important questions:
+    202                                           • What does process do?
+    >>> prefix_digits(20252025, lambda d: True)   • How does that help with prefix_digits?
+    20252025                                      • What does the k represent in lambda k:____?
+    """           94720
+    return process(n, lambda k: ____________________________________ )    pollev.com/cs61a
+                                                                                              9
+Spring 2025 Question 3(b)
+From 3(a): the function all_digits takes a positive integer n and one-argument function
+cond that always returns True or False. It returns True if cond(d) returns True when called
+on every digit d in n, and False otherwise.
+Definition. A prefix of a positive integer n is the value of n//pow(10, p) for some non-
+negative integer p. For example, 3456 has prefixes 3456, 345, 34, 3, and 0.
+def prefix_digits(n, cond):
+    """Return the largest prefix of positive n for which cond returns true for every digit.
+                                     def process(n, check):
+    >>> odd = lambda d: d % 2 == 1
+                                         """A function to help implement prefix_digits."""
+    >>> prefix_digits(94720, odd)
+                                         while n: 94720
+    9
+                                             if check(n): What should this do?
+    >>> prefix_digits(919321, odd)
+                                                  return n eventually: return 9
+    9193
+                                             n = n // 10 9472
+    >>> prefix_digits(2025, odd)
+                                         return 0
+    0
+    >>> prefix_digits(20252025, lambda d: d < 4) Important questions:
+    202                                           • What does process do?
+    >>> prefix_digits(20252025, lambda d: True)   • How does that help with prefix_digits?
+    20252025                                      • What does the k represent in lambda k:____?
+    """           94720
+                                        all_digits(k, cond)               pollev.com/cs61a
+    return process(n, lambda k: ____________________________________ )
+                                                                                              10
+Iteration Practice
+Spring 2025 Question 3(c)
+Definition. A prefix of a positive integer n is the value of n//pow(10, p) for some non-
+negative integer p. For example, 3456 has prefixes 3456, 345, 34, 3, and 0.
+def prefix_digits(n, cond):
+    """Return the largest prefix of positive n for which cond returns true for every digit.
+    >>> odd = lambda d: d % 2 == 1
+    >>> prefix_digits(94720, odd)                   Questions to help figure out the process:
+    9                                               • Can you ever stop before going through
+    >>> prefix_digits(919321, odd)                    all of the digits?
+    9193                                            • What kind of value should you return?
+    >>> prefix_digits(2025, odd)                    • What does k represent?
+    0                                               • How does increasing k help?
+    >>> prefix_digits(20252025, lambda d: d < 4)
+    202
+    """
+    k = 0
+    while n >= ________________________ :
+       if cond(_______________________):
+             k += 1
+       else:
+              n = n // 10
+              ___________________________
+  return n
+                                                                                                12
+Spring 2025 Question 3(c)
+Definition. A prefix of a positive integer n is the value of n//pow(10, p) for some non-
+negative integer p. For example, 3456 has prefixes 3456, 345, 34, 3, and 0.
+def prefix_digits(n, cond):
+    """Return the largest prefix of positive n for which cond returns true for every digit.
+    >>> odd = lambda d: d % 2 == 1
+    >>> prefix_digits(94720, odd)                   Questions to help figure out the process:
+    9                                               • Can you ever stop before going through
+    >>> prefix_digits(919321, odd)                    all of the digits?
+    9193                                            • What kind of value should you return?
+    >>> prefix_digits(2025, odd)                    • What does k represent?
+    0                                               • How does increasing k help?
+    >>> prefix_digits(20252025, lambda d: d < 4)
+                                                    Process that fits this template:
+    202
+    """                                             • Use k to call cond on each digit of n
+                                  pollev.com/cs61a • If cond ever returns false, shorten n
+    k = 0 1 0 1
+                     pow(10, k)
+    while n >= ________________________ :             and start over
+                n // pow(10, k) % 10
+       if cond(_______________________): odd(0) -> False       Call cond on the
+                                            odd(2) -> False
+             k += 1 pollev.com/cs61a                              last digit
+                                            odd(7) -> True
+       else: n: 94720 9472 947 94 9         odd(4) -> False
+                                            odd(4) -> False     Call cond on the
+              n = n // 10
+                                            odd(9) -> True    second to last digit
+              k = 0
+              ___________________________
+  return n    eventually: 9
+                                                                                                13
+Spring 2025 Question 4
+def hailstone(n):
+    """Print numbered updates in the hailstone sequence.
+
+   >>> hailstone(10)
+   1 10 -> 5
+   2 5 -> 16
+   3 16 -> 8
+   4 8 -> 4                                      Questions to help figure out the process:
+   5 4 -> 2                                      • What does f do?
+   6 2 -> 1                                      • What do m, n, and k represent?
+   """
+   def f():
+       if n % 2 == 1:
+            m = 3 * n + 1
+       else:
+            m = n // 2
+        __________________________________
+       __________________________________
+   k = 1
+   while n > 1:
+       k, n = k + 1, f()
+                                                                                             14
+Spring 2025 Question 4
+def hailstone(n):
+    """Print numbered updates in the hailstone sequence.
+
+   >>> hailstone(10)
+   1 10 -> 5
+   2 5 -> 16
+   3 16 -> 8
+   4 8 -> 4                                      Questions to help figure out the process:
+   5 4 -> 2                                      • What does f do?
+   6 2 -> 1                                      • What do m, n, and k represent?
+   """
+   def f():
+       if n % 2 == 1:
+            m = 3 * n + 1
+       else:              m: 5
+            m = n // 2
+       print(k, n, '->', m)
+       __________________________________
+       return m
+       __________________________________
+   k = 1   k: 1     n: 10
+   while n > 1:
+       k, n = k + 1, f()
+                                                                                             15
+Lambda Practice
+Lambda and Def
+
+Any program containing lambda expressions can be rewritten using def statements.
+
+                                  twice                    square
+                >>> (lambda f: lambda x: f(f(x)))(lambda y: y * y)(3)
+                81
+
+                >>> def twice(f):
+                ...     def g(x):
+                ...         return f(f(x))
+                ...     return g
+                ...
+                >>> def square(y):
+                ...     return y * y
+                ...
+                >>> twice(square)(3)
+                81
+
+
+
+
+                                                                                   17
+

@@ -1,0 +1,648 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability-Eating Monster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Caveat:wght@500;700&display=swap">
+<style>
+/* Layout: one wide "graph paper" stage like the hand sketch, transport controls under it, then the pmf editor beside a short guide. */
+:root {
+  --paper: #fbfaf6;
+  --card: #ffffff;
+  --grid: #e6e9f0;
+  --ink: #1f1d26;
+  --muted: #66626f;
+  --line: #d9d6e0;
+  --cdf: #5b3fa6;
+  --food: #d6452b;
+  --food-soft: #f6d9d2;
+  --monster: #2a2433;
+  --monster-eye: #ffffff;
+  --mouth: #8f1d2c;
+  --ok: #2d7a4f;
+  --warn: #b2541a;
+  --font-hand: "Caveat", "Comic Sans MS", "Segoe Print", cursive;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #16141c; --card: #1e1b26; --grid: #262330; --ink: #ece8f4; --muted: #a59fb3;
+    --line: #353043; --cdf: #b39cff; --food: #ff7a5c; --food-soft: #4a2620;
+    --monster: #d9cfee; --monster-eye: #16141c; --mouth: #ff8f8f; --ok: #6fd39b; --warn: #ffab70;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #16141c; --card: #1e1b26; --grid: #262330; --ink: #ece8f4; --muted: #a59fb3;
+  --line: #353043; --cdf: #b39cff; --food: #ff7a5c; --food-soft: #4a2620;
+  --monster: #d9cfee; --monster-eye: #16141c; --mouth: #ff8f8f; --ok: #6fd39b; --warn: #ffab70;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body);
+  font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 20px 40px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 18px; }
+header h1 {
+  font-family: var(--font-hand); font-weight: 700; font-size: clamp(2rem, 5vw, 2.8rem);
+  line-height: 1.05; margin: 0; text-wrap: balance;
+}
+header p { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+header p.byline { margin-top: 2px; font-size: 0.9rem; color: var(--muted); }
+header .email { user-select: all; color: var(--ink); }
+header p em { font-family: var(--font-hand); font-style: normal; font-size: 1.35em; color: var(--food); }
+.stage {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+#stageWrap { width: 100%; }
+canvas { display: block; width: 100%; }
+.readout {
+  display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; padding: 10px 16px 12px;
+  border-top: 1px solid var(--line); font-variant-numeric: tabular-nums;
+}
+.readout .big { font-size: 1.25rem; }
+.readout .big b { color: var(--cdf); }
+.readout #status { font-family: var(--font-hand); font-size: 1.4rem; color: var(--food); margin-left: auto; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+button, select {
+  font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+  border-radius: 8px; padding: 7px 14px; cursor: pointer;
+}
+button:hover, select:hover { border-color: var(--cdf); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--cdf); outline-offset: 2px; }
+button.primary { background: var(--cdf); color: var(--card); border-color: var(--cdf); font-weight: 700; min-width: 92px; }
+.controls label { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+#scrub { flex: 1 1 220px; min-width: 0; accent-color: var(--cdf); }
+#speed { width: 110px; accent-color: var(--cdf); }
+.cols { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 760px) { .cols { grid-template-columns: 1fr; } .readout #status { margin-left: 0; } }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.panel h2 { font-family: var(--font-hand); font-size: 1.7rem; font-weight: 700; margin: 0 0 6px; line-height: 1.1; }
+.panel p { margin: 0 0 8px; }
+.panel p:last-child { margin-bottom: 0; }
+.row-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-weight: 700; color: var(--muted); font-size: 0.9rem; padding: 4px 6px; }
+td { padding: 3px 6px; border-top: 1px solid var(--line); }
+td input {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 8px; font-variant-numeric: tabular-nums;
+}
+td input.bad { border-color: var(--warn); }
+tr.eating td { background: var(--food-soft); }
+tr.eaten .tick { color: var(--ok); }
+td.tick { width: 2.2em; text-align: center; font-weight: 700; color: var(--line); }
+td.del { width: 2.4em; }
+td.del button { padding: 2px 8px; color: var(--muted); }
+.sum { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 10px; }
+.chip { font-size: 0.85rem; padding: 2px 10px; border-radius: 99px; border: 1px solid currentColor; }
+.chip.ok { color: var(--ok); }
+.chip.warn { color: var(--warn); }
+.hint { color: var(--muted); font-size: 0.88rem; }
+.guide dl { margin: 0; display: grid; gap: 8px; }
+.guide dt { font-weight: 700; }
+.guide dd { margin: 0; color: var(--muted); }
+.guide .sym { display: inline-block; width: 1.4em; text-align: center; color: var(--cdf); font-weight: 700; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>The probability-eating monster</h1>
+    <p class="byline">Imagined by Shobhana Stoyanov and implemented by Claude<br>Department of Statistics, UC Berkeley · <span class="email">shobhana@berkeley.edu</span></p>
+    <p>Type in a probability mass function and watch the CDF walk along the x-axis. <em>The CDF is a probability-eating function:</em> it goes along the x-axis, swallowing all the probability it finds and growing bigger. So at each x, it has eaten everything up to and including what it finds at x. Eventually it eats all the available probability and cannot grow any bigger.</p>
+  </header>
+
+  <section class="stage" aria-label="Animation of the CDF">
+    <div id="stageWrap"><canvas id="stage" role="img" aria-label="A fuzzy monster walking along the graph of the CDF, eating the probability at each jump"></canvas></div>
+    <div class="readout" aria-live="polite">
+      <span class="big"><span id="rxl">x =</span> <b id="rx">−2</b></span>
+      <span class="big">F(x) = P(X ≤ x) = <b id="rF">0</b></span>
+      <span id="status">Empty CDF has nothing inside</span>
+    </div>
+  </section>
+
+  <div class="controls">
+    <button id="play" class="primary" type="button">Play</button>
+    <button id="next" type="button">Next jump</button>
+    <button id="restart" type="button">Restart</button>
+    <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Position in the animation">
+    <label for="speed">Speed <input id="speed" type="range" min="0.25" max="2" step="0.25" value="1"></label>
+  </div>
+
+  <div class="cols">
+    <section class="panel">
+      <div class="row-head">
+        <h2>Probability distribution</h2>
+        <select id="preset" aria-label="Example distributions">
+          <option value="sketch">Example: −1, 0, 1</option>
+          <option value="die">Fair die</option>
+          <option value="binom">Binomial(4, 1/2)</option>
+          <option value="bern">Bernoulli(0.3)</option>
+          <option value="uneven">Uneven: 0, 1, 2, 5</option>
+        </select>
+      </div>
+      <table>
+        <thead><tr><th>x</th><th>f(x) = P(X = x)</th><th>Eaten</th><th><span hidden>Remove</span></th></tr></thead>
+        <tbody id="pmfBody"></tbody>
+      </table>
+      <div class="sum">
+        <button id="addRow" type="button">Add a value</button>
+        <span id="sumChip" class="chip ok">Total = 1</span>
+        <button id="rescale" type="button" hidden>Rescale to add to 1</button>
+      </div>
+      <p class="hint" style="margin-top:8px">Probabilities can be fractions like 1/3 or decimals like 0.25. Repeated x values are combined.</p>
+    </section>
+
+    <section class="panel guide">
+      <h2>What you're seeing</h2>
+      <dl>
+        <div><dt>The monster's height</dt><dd>F(x) = P(X ≤ x): all the probability it has eaten so far. It gets bigger as F grows.</dd></div>
+        <div><dt>The red blocks</dt><dd>Probability waiting at each possible value. A block's height is f(x), so it fills the jump in the CDF.</dd></div>
+        <div><dt><span class="sym">○</span> and <span class="sym">●</span></dt><dd>At each jump, the open circle is the height just before x and the filled dot is F(x). The CDF is right-continuous.</dd></div>
+        <div><dt>The two ends</dt><dd>Far to the left the CDF is empty (F = 0). Past the largest value it is full grown (F = 1).</dd></div>
+      </dl>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const canvas = $('#stage');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const PRESETS = {
+    sketch: [['-1', '1/3'], ['0', '1/3'], ['1', '1/3']],
+    die: [['1', '1/6'], ['2', '1/6'], ['3', '1/6'], ['4', '1/6'], ['5', '1/6'], ['6', '1/6']],
+    binom: [['0', '1/16'], ['1', '4/16'], ['2', '6/16'], ['3', '4/16'], ['4', '1/16']],
+    bern: [['0', '0.7'], ['1', '0.3']],
+    uneven: [['0', '0.1'], ['1', '0.5'], ['2', '0.15'], ['5', '0.25']],
+  };
+
+  let rows = PRESETS.sketch.map(([x, p]) => ({ x, p }));
+  let model = null;
+  let t = 0, playing = false, rate = 1, last = null;
+
+  // ---------- numbers ----------
+  function parseNum(s) {
+    s = String(s).trim().replace(/−/g, '-');
+    if (!s) return NaN;
+    if (s.includes('/')) {
+      const [a, b] = s.split('/');
+      const n = Number(a), d = Number(b);
+      return d ? n / d : NaN;
+    }
+    return Number(s);
+  }
+  const minus = (s) => s.replace(/^-/, '−');
+  function fmtNum(v, dp = 2) {
+    if (Math.abs(v - Math.round(v)) < 1e-9) return minus(String(Math.round(v)));
+    return minus(String(+v.toFixed(dp)));
+  }
+  function frac(v) {
+    if (Math.abs(v) < 1e-12) return '0';
+    if (Math.abs(v - Math.round(v)) < 1e-9) return minus(String(Math.round(v)));
+    for (let d = 2; d <= 100; d++) {
+      const n = Math.round(v * d);
+      if (Math.abs(v * d - n) < 1e-7) return (n < 0 ? '−' : '') + Math.abs(n) + '/' + d;
+    }
+    return fmtNum(v, 3);
+  }
+
+  // ---------- model and timeline ----------
+  function buildModel() {
+    const map = new Map();
+    rows.forEach((r) => {
+      const x = parseNum(r.x), p = parseNum(r.p);
+      r.bad = !(isFinite(x) && isFinite(p) && p >= 0);
+      if (r.bad) return;
+      const k = +x.toFixed(10);
+      map.set(k, (map.get(k) || 0) + p);
+    });
+    const pts = [...map].sort((a, b) => a[0] - b[0]).map(([x, p]) => ({ x, p }));
+    let c = 0;
+    pts.forEach((pt) => { pt.F0 = c; c += pt.p; pt.F1 = c; });
+    const total = c;
+    let xmin = -1, xmax = 1;
+    if (pts.length) {
+      const lo = pts[0].x, hi = pts[pts.length - 1].x, span = hi - lo;
+      const pad = span === 0 ? 1 : Math.max(0.8, span * 0.18);
+      xmin = lo - pad; xmax = hi + pad;
+    }
+    const walkRate = (xmax - xmin) / 7; // x-units per second
+    const segs = [];
+    const push = (s) => { s.t0 = segs.length ? segs[segs.length - 1].t0 + segs[segs.length - 1].dur : 0; segs.push(s); };
+    push({ type: 'hold', x: xmin, F: 0, dur: 0.6 });
+    let cur = xmin;
+    pts.forEach((pt, i) => {
+      push({ type: 'walk', x0: cur, x1: pt.x, F: pt.F0, dur: Math.max(0.15, (pt.x - cur) / walkRate) });
+      if (pt.p > 0) push({ type: 'eat', x: pt.x, F0: pt.F0, F1: pt.F1, idx: i, dur: 1.3 });
+      cur = pt.x;
+    });
+    push({ type: 'walk', x0: cur, x1: xmax, F: total, dur: Math.max(0.3, (xmax - cur) / walkRate) });
+    push({ type: 'exit', x: xmax, F: total, dur: 2.4 });
+    push({ type: 'hold', x: xmax, F: total, dur: 1.5, end: true });
+    const T = segs[segs.length - 1].t0 + segs[segs.length - 1].dur;
+    model = { pts, total, xmin, xmax, segs, T };
+  }
+
+  const clamp01 = (u) => Math.max(0, Math.min(1, u));
+  const ease = (u) => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+
+  function stateAt(time) {
+    const { segs } = model;
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i];
+      if (time < s.t0 + s.dur || i === segs.length - 1) {
+        const u = clamp01((time - s.t0) / s.dur);
+        const st = { seg: i, s, u, dir: 0, eating: false };
+        if (s.type === 'hold') { st.x = s.x; st.F = s.F; if (s.end) st.exitU = 1; }
+        else if (s.type === 'exit') { st.x = s.x; st.F = s.F; st.exitU = u; }
+        else if (s.type === 'walk') { st.x = s.x0 + (s.x1 - s.x0) * u; st.F = s.F; }
+        else {
+          st.x = s.x; st.eating = true;
+          st.F = s.F0 + (s.F1 - s.F0) * ease(clamp01((u - 0.2) / 0.65));
+          const up = u < 0.2 ? ease(u / 0.2) : u > 0.88 ? 1 - ease((u - 0.88) / 0.12) : 1;
+          st.dir = -Math.PI / 2 * up;
+        }
+        return st;
+      }
+    }
+  }
+
+  // ---------- drawing ----------
+  let W = 0, H = 0, dpr = 1, M = null, rMax = 40;
+  let colors = {};
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    ['paper', 'card', 'grid', 'ink', 'muted', 'line', 'cdf', 'food', 'food-soft', 'monster', 'monster-eye', 'mouth']
+      .forEach((k) => { colors[k] = cs.getPropertyValue('--' + k).trim(); });
+  }
+  function resize() {
+    const w = $('#stageWrap').clientWidth;
+    W = w; H = Math.round(Math.max(300, Math.min(540, w * 0.56)));
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    canvas.style.height = H + 'px';
+    rMax = Math.max(22, Math.min(46, H * 0.09));
+    M = { l: W < 500 ? 44 : 60, r: W < 500 ? 18 : 30, t: rMax + 28, b: 44 };
+    draw();
+  }
+  const ymaxOf = () => Math.max(1, model.total);
+  const X = (x) => M.l + (x - model.xmin) / (model.xmax - model.xmin) * (W - M.l - M.r);
+  const Y = (F) => H - M.b - F / ymaxOf() * (H - M.t - M.b);
+  const radius = (F) => 6 + (rMax - 6) * clamp01(F / ymaxOf());
+
+  function arrowHead(x, y, ang, size, color) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-size, -size * 0.55); ctx.moveTo(0, 0); ctx.lineTo(-size, size * 0.55);
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+  }
+
+  function hand(text, x, y, color, size = 22, align = 'left') {
+    ctx.font = `700 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-hand') || 'cursive'}`;
+    const w = ctx.measureText(text).width;
+    let ax = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+    ax = Math.max(6, Math.min(W - w - 6, ax));
+    const ay = Math.max(size, Math.min(H - 6, y));
+    ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(text, ax, ay);
+  }
+
+  function bodyFont(size, weight = 400) {
+    ctx.font = `${weight} ${size}px "Atkinson Hyperlegible", system-ui, sans-serif`;
+  }
+
+  function drawGrid() {
+    ctx.fillStyle = colors.card; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = colors.grid; ctx.lineWidth = 1;
+    const step = 24;
+    for (let x = 0.5; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0.5; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+
+  function drawAxes() {
+    const { xmin, xmax, pts } = model;
+    const y0 = Y(0);
+    const yAxisX = (xmin < 0 && xmax > 0) ? X(0) : M.l;
+    ctx.strokeStyle = colors.ink; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(10, y0); ctx.lineTo(W - 10, y0); ctx.stroke();
+    arrowHead(W - 10, y0, 0, 9, colors.ink); arrowHead(10, y0, Math.PI, 9, colors.ink);
+    ctx.beginPath(); ctx.moveTo(yAxisX, H - 12); ctx.lineTo(yAxisX, M.t - rMax - 6); ctx.stroke();
+    arrowHead(yAxisX, M.t - rMax - 6, -Math.PI / 2, 9, colors.ink);
+    hand('x', W - 24, y0 + 30, colors.ink, 24);
+    hand('F(x)', yAxisX + 10, M.t - rMax + 6, colors.ink, 24);
+
+    // x tick labels at the possible values (and 0)
+    bodyFont(13);
+    ctx.fillStyle = colors.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const xs = pts.map((p) => p.x);
+    if (xmin < 0 && xmax > 0 && !xs.some((v) => Math.abs(v) < 1e-9)) xs.push(0);
+    xs.sort((a, b) => a - b);
+    let lastPx = -1e9;
+    xs.forEach((v) => {
+      const px = X(v);
+      if (px - lastPx < 26) return;
+      lastPx = px;
+      ctx.strokeStyle = colors.ink; ctx.beginPath(); ctx.moveTo(px, y0 - 4); ctx.lineTo(px, y0 + 4); ctx.stroke();
+      const lbl = fmtNum(v);
+      const off = Math.abs(px - yAxisX) < 2 ? 10 : 0;
+      ctx.fillText(lbl, px + off, y0 + 8);
+    });
+
+    // y tick labels at the CDF heights
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const Fs = [0, ...pts.map((p) => p.F1)];
+    if (!Fs.some((v) => Math.abs(v - 1) < 1e-9)) Fs.push(1);
+    let lastPy = 1e9;
+    Fs.sort((a, b) => a - b).forEach((v) => {
+      const py = Y(v);
+      if (lastPy - py < 16) return;
+      lastPy = py;
+      if (v > 0) {
+        ctx.strokeStyle = colors.ink; ctx.beginPath(); ctx.moveTo(yAxisX - 4, py); ctx.lineTo(yAxisX + 4, py); ctx.stroke();
+        ctx.strokeStyle = colors.line; ctx.setLineDash([3, 5]);
+        ctx.beginPath(); ctx.moveTo(yAxisX + 6, py); ctx.lineTo(W - M.r, py); ctx.stroke(); ctx.setLineDash([]);
+      }
+      ctx.fillStyle = colors.muted;
+      ctx.fillText(frac(v), yAxisX - 8, v === 0 ? py - 10 : py);
+    });
+  }
+
+  function dot(x, y, filled) {
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = filled ? colors.cdf : colors.card; ctx.fill();
+    ctx.strokeStyle = colors.cdf; ctx.lineWidth = 2.2; ctx.stroke();
+  }
+
+  function drawTrail(st) {
+    const { segs } = model;
+    ctx.strokeStyle = colors.cdf; ctx.lineWidth = 3.2; ctx.lineCap = 'round';
+    const dots = [];
+    for (let i = 0; i <= st.seg; i++) {
+      const s = segs[i];
+      const done = i < st.seg;
+      if (s.type === 'walk') {
+        const xe = done ? s.x1 : st.x;
+        ctx.beginPath(); ctx.moveTo(X(s.x0), Y(s.F)); ctx.lineTo(X(xe), Y(s.F)); ctx.stroke();
+        if (i === 1 && X(xe) - X(s.x0) > 14) arrowHead(X(s.x0) - 2, Y(s.F), Math.PI, 10, colors.cdf);
+      } else if (s.type === 'eat') {
+        dots.push([X(s.x), Y(s.F0), false]);
+        if (done || st.u > 0.85) dots.push([X(s.x), Y(s.F1), true]);
+      }
+    }
+    if (st.exitU != null) {
+      const yy = Y(model.total), xe = Math.min(monsterPx(st), W - 14);
+      ctx.beginPath(); ctx.moveTo(X(model.xmax), yy); ctx.lineTo(xe, yy); ctx.stroke();
+      if (monsterPx(st) >= W - 14) arrowHead(W - 14, yy, 0, 11, colors.cdf);
+    }
+    dots.forEach(([x, y, f]) => dot(x, y, f));
+  }
+
+  // pixel position of the monster; past the last value it walks on and off the right edge
+  function monsterPx(st) {
+    if (st.exitU == null) return X(st.x);
+    const x0 = X(model.xmax);
+    return x0 + (W + rMax * 1.6 - x0) * st.exitU;
+  }
+
+  function drawFood(st) {
+    const { pts, segs } = model;
+    const w = Math.max(12, Math.min(20, W / 50));
+    pts.forEach((p, i) => {
+      if (p.p <= 0) return;
+      // which eat segment is this?
+      const eatSeg = segs.find((s) => s.type === 'eat' && s.idx === i);
+      const segIndex = segs.indexOf(eatSeg);
+      let bottom = p.F0;
+      if (segIndex < st.seg) return; // already eaten
+      if (segIndex === st.seg) bottom = st.F;
+      if (p.F1 - bottom < 1e-6) return;
+      const x = X(p.x), yTop = Y(p.F1), yBot = Y(bottom);
+      ctx.fillStyle = colors.food; ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x - w / 2, yTop, w, yBot - yTop, 4); else ctx.rect(x - w / 2, yTop, w, yBot - yTop);
+      ctx.fill(); ctx.globalAlpha = 1;
+      if (segIndex !== st.seg) hand(frac(p.p), x + w / 2 + 6, (yTop + yBot) / 2 + 7, colors.food, 22);
+    });
+  }
+
+  const noise = (i) => { const v = Math.sin(i * 12.9898) * 43758.5453; return v - Math.floor(v); };
+
+  function drawMonster(cx, cy, r, dir, open, tm, blink) {
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(dir);
+    // mouth inside
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r * 0.92, -open, open); ctx.closePath();
+    ctx.fillStyle = colors.mouth; ctx.fill();
+    // fuzzy body, leaving a wedge for the mouth
+    const N = Math.max(14, Math.round(r * 1.5));
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    const a0 = open, a1 = Math.PI * 2 - open;
+    for (let k = 0; k <= N * 2; k++) {
+      const a = a0 + (a1 - a0) * k / (N * 2);
+      const rr = k % 2 ? r * (1.1 + 0.16 * noise(k) + 0.04 * Math.sin(tm * 6 + k)) : r * 0.93;
+      ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    ctx.closePath(); ctx.fillStyle = colors.monster; ctx.fill();
+    // teeth on both lips
+    if (open > 0.12 && r > 9) {
+      ctx.fillStyle = '#ffffff';
+      [-1, 1].forEach((side) => {
+        for (const f of [0.45, 0.72]) {
+          const a = side * open;
+          const px = Math.cos(a) * r * f, py = Math.sin(a) * r * f;
+          const nx = -Math.sin(a) * side, ny = Math.cos(a) * side; // points into the mouth
+          const ts = r * 0.13;
+          ctx.beginPath();
+          ctx.moveTo(px - Math.cos(a) * ts, py - Math.sin(a) * ts);
+          ctx.lineTo(px + Math.cos(a) * ts, py + Math.sin(a) * ts);
+          ctx.lineTo(px - nx * ts * 1.4, py - ny * ts * 1.4);
+          ctx.closePath(); ctx.fill();
+        }
+      });
+    }
+    // eye
+    const ex = r * 0.12, ey = -r * 0.5, er = Math.max(2.2, r * 0.27);
+    ctx.fillStyle = colors['monster-eye'];
+    ctx.beginPath();
+    if (blink) ctx.ellipse(ex, ey, er, er * 0.15, 0, 0, Math.PI * 2); else ctx.arc(ex, ey, er, 0, Math.PI * 2);
+    ctx.fill();
+    if (!blink) {
+      ctx.fillStyle = colors.monster;
+      ctx.beginPath(); ctx.arc(ex + er * 0.4, ey + er * 0.05, Math.max(1.1, er * 0.48), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function statusFor(st) {
+    const s = st.s;
+    if (s.end) return 'F(x) stays at 1 forever';
+    if (s.type === 'exit') return 'Still full: nothing left to eat, so it stops growing';
+    if (s.type === 'eat') return 'Gobbling f(' + fmtNum(s.x) + ') = ' + frac(s.F1 - s.F0);
+    if (s.end || (s.type === 'walk' && s.x1 === model.xmax && st.F > 0 && model.pts.length && st.x > model.pts[model.pts.length - 1].x))
+      return 'Full grown: it has eaten all the probability';
+    if (st.F < 1e-9) return 'Empty CDF has nothing inside';
+    return 'Got a bit of probability';
+  }
+
+  function draw() {
+    if (!model || !W) return;
+    readColors();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawGrid();
+    drawAxes();
+    const st = stateAt(t);
+    drawFood(st);
+    drawTrail(st);
+    const r = radius(st.F);
+    const tm = performance.now() / 1000;
+    let open;
+    if (st.eating) open = 0.08 + 0.42 * Math.abs(Math.sin(tm * 11));
+    else if ((st.s.type === 'walk' || st.s.type === 'exit') && playing) open = 0.12 + 0.3 * Math.abs(Math.sin(tm * 6));
+    else open = 0.32;
+    const blink = (tm % 3.7) < 0.12;
+    drawMonster(monsterPx(st), Y(st.F), r, st.dir, open, playing ? tm : 0, blink);
+    if (st.exitU != null && st.exitU > 0.35) {
+      ctx.save(); ctx.globalAlpha = clamp01((st.exitU - 0.35) / 0.3);
+      hand('F(x) = 1 forever', W - M.r - 8, Y(model.total) - 14, colors.cdf, 26, 'right');
+      ctx.restore();
+    }
+
+    // readout
+    const atJump = st.s.type === 'eat';
+    if (st.s.end) { $('#rxl').textContent = 'x →'; $('#rx').textContent = '∞'; }
+    else {
+      $('#rxl').textContent = 'x =';
+      const pxPerUnit = (W - M.l - M.r) / (model.xmax - model.xmin);
+      const xNow = st.exitU != null ? model.xmax + (monsterPx(st) - X(model.xmax)) / pxPerUnit : st.x;
+      $('#rx').textContent = atJump ? fmtNum(st.s.x) : fmtNum(xNow, 2);
+    }
+    const shownF = atJump ? (st.u > 0.85 ? st.s.F1 : st.s.F0) : st.F;
+    $('#rF').textContent = frac(shownF);
+    $('#status').textContent = statusFor(st);
+    $('#scrub').value = Math.round(t / model.T * 1000);
+    updateTableState(st);
+  }
+
+  // ---------- table ----------
+  function renderTable() {
+    const body = $('#pmfBody');
+    body.innerHTML = '';
+    rows.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><input id="x${i}" inputmode="decimal" aria-label="x value ${i + 1}"></td>
+        <td><input id="p${i}" inputmode="decimal" aria-label="Probability ${i + 1}"></td>
+        <td class="tick" aria-label="Eaten">✓</td>
+        <td class="del"><button type="button" aria-label="Remove row ${i + 1}">×</button></td>`;
+      const xi = tr.querySelector('#x' + i), pi = tr.querySelector('#p' + i);
+      xi.value = r.x; pi.value = r.p;
+      xi.addEventListener('input', () => { r.x = xi.value; changed(); });
+      pi.addEventListener('input', () => { r.p = pi.value; changed(); });
+      tr.querySelector('button').addEventListener('click', () => { rows.splice(i, 1); renderTable(); changed(); });
+      body.appendChild(tr);
+    });
+    markBad();
+  }
+  function markBad() {
+    rows.forEach((r, i) => {
+      const x = parseNum(r.x), p = parseNum(r.p);
+      const xi = document.getElementById('x' + i), pi = document.getElementById('p' + i);
+      if (xi) xi.classList.toggle('bad', !isFinite(x));
+      if (pi) pi.classList.toggle('bad', !(isFinite(p) && p >= 0));
+    });
+  }
+  function updateTableState(st) {
+    const trs = $('#pmfBody').children;
+    rows.forEach((r, i) => {
+      const tr = trs[i]; if (!tr) return;
+      const x = parseNum(r.x);
+      const p = model.pts.find((q) => Math.abs(q.x - x) < 1e-9);
+      let eaten = false, eating = false;
+      if (p && !r.bad) {
+        const idx = model.pts.indexOf(p);
+        const seg = model.segs.findIndex((s) => s.type === 'eat' && s.idx === idx);
+        if (seg >= 0) { eaten = seg < st.seg || (seg === st.seg && st.u > 0.85); eating = seg === st.seg && !eaten; }
+      }
+      tr.classList.toggle('eaten', eaten); tr.classList.toggle('eating', eating);
+    });
+  }
+  function updateSum() {
+    const total = model.total;
+    const ok = Math.abs(total - 1) < 1e-6;
+    const chip = $('#sumChip');
+    chip.className = 'chip ' + (ok ? 'ok' : 'warn');
+    chip.textContent = ok ? 'Total = 1' : 'Total = ' + frac(total) + ': a pmf must add to 1';
+    $('#rescale').hidden = ok || total <= 0;
+  }
+  function changed() {
+    markBad(); buildModel(); updateSum(); t = 0; setPlaying(false); draw();
+  }
+
+  // ---------- controls ----------
+  function setPlaying(p) {
+    playing = p; $('#play').textContent = p ? 'Pause' : 'Play'; last = null;
+    if (p) requestAnimationFrame(tick);
+  }
+  function tick(now) {
+    if (!playing) return;
+    if (last != null) {
+      t += (now - last) / 1000 * rate;
+      if (t >= model.T) { t = model.T; setPlaying(false); }
+    }
+    last = now; draw();
+    if (playing) requestAnimationFrame(tick);
+  }
+  // idle redraw for blinking and breathing when paused
+  setInterval(() => { if (!playing) draw(); }, 120);
+
+  $('#play').addEventListener('click', () => { if (t >= model.T) t = 0; setPlaying(!playing); });
+  $('#restart').addEventListener('click', () => { t = 0; setPlaying(true); });
+  $('#next').addEventListener('click', () => {
+    const next = model.segs.find((s) => s.type === 'eat' && s.t0 + s.dur > t + 1e-6);
+    t = next ? next.t0 + next.dur : model.T; setPlaying(false); draw();
+  });
+  $('#scrub').addEventListener('input', (e) => { setPlaying(false); t = e.target.value / 1000 * model.T; draw(); });
+  $('#speed').addEventListener('input', (e) => { rate = +e.target.value; });
+  $('#addRow').addEventListener('click', () => {
+    const xs = rows.map((r) => parseNum(r.x)).filter(isFinite);
+    rows.push({ x: String(xs.length ? Math.max(...xs) + 1 : 0), p: '0' });
+    renderTable(); changed();
+    document.getElementById('p' + (rows.length - 1)).focus();
+  });
+  $('#rescale').addEventListener('click', () => {
+    const total = model.total;
+    rows.forEach((r) => { const p = parseNum(r.p); if (isFinite(p) && p >= 0) r.p = String(+(p / total).toFixed(6)); });
+    renderTable(); changed();
+  });
+  $('#preset').addEventListener('change', (e) => {
+    rows = PRESETS[e.target.value].map(([x, p]) => ({ x, p }));
+    renderTable(); changed(); t = 0; setPlaying(!reduceMotion);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !/INPUT|SELECT|BUTTON|TEXTAREA/.test(document.activeElement.tagName)) {
+      e.preventDefault(); $('#play').click();
+    }
+  });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // ---------- start ----------
+  renderTable();
+  buildModel();
+  updateSum();
+  new ResizeObserver(resize).observe($('#stageWrap'));
+  const start = () => {
+    resize();
+    if (reduceMotion) {
+      const second = model.segs.filter((s) => s.type === 'eat')[1];
+      t = second ? second.t0 + second.dur : 0; draw();
+    } else {
+      setTimeout(() => setPlaying(true), 500);
+    }
+  };
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
+})();
+</script>

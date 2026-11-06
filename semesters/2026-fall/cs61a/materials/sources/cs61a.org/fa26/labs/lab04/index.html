@@ -1,0 +1,921 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Lab 4: Linked Lists | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Lab 4: Linked Lists" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/labs/lab04/" />
+<meta property="og:url" content="https://cs61a.org/fa26/labs/lab04/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Lab 4: Linked Lists" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Lab 4: Linked Lists","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/labs/lab04/"},"url":"https://cs61a.org/fa26/labs/lab04/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Lab 4: Linked Lists
+  
+  
+</h1>
+    <ul class="assignment-facts"><li><strong>Due:</strong> Wednesday 09/30 @ 11:59pm</li><li><strong>Points:</strong> 1</li><li><strong>Download:</strong> <a href="lab04.zip">lab04.zip</a></li></ul></header>
+<h1 id="attendance">
+  
+  
+    <a href="#attendance" class="anchor-heading" aria-labelledby="attendance"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attendance
+  
+  
+</h1>
+    
+<p>You need to submit the lab problems in addition to attending to get credit for lab. Students in mega lab only need to submit the lab problems. Preceptor interviews are highly recommended but <strong>not required</strong> for lab submissions.</p>
+<p>If you are in regular lab, your TA will come around during lab to check you in. If you didn't attend for a good reason (such as being sick), fill out this form (within 2 weeks of your lab): <a href="https://links.cs61a.org/attendance">attendance form</a>.</p>
+<h2 id="getting-started-videos">
+  
+  
+    <a href="#getting-started-videos" class="anchor-heading" aria-labelledby="getting-started-videos"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started Videos
+  
+  
+</h2>
+    
+<p><a href="https://www.youtube.com/playlist?list=PLRRK32tDzNA8">These videos</a> may provide some helpful direction for tackling the coding
+problems on this assignment.</p>
+<blockquote><p>To see these videos, you should be logged into your berkeley.edu email.</p></blockquote>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=FlyVN8UNuyiWsDMM&amp;list=PLRRK32tDzNA8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h1 id="required-questions">
+  
+  
+    <a href="#required-questions" class="anchor-heading" aria-labelledby="required-questions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Required Questions
+  
+  
+</h1>
+    
+<p>Python 3.12 or newer is required for the remainder of the course. Please upgrade if you're using Python 3.11 (or older). See the <a href="../../labs/lab00/#install-python">Install Python section of Lab 0</a> for instructions.</p>
+<h2 id="review">
+  
+  
+    <a href="#review" class="anchor-heading" aria-labelledby="review"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Review
+  
+  
+</h2>
+    
+<p>This drop-down provides an overview of working with linked lists.</p>
+<details class="hint"><summary>Linked Lists</summary><div>
+<p>A linked list is a sequence type that is more efficient than a built-in list for
+certain operations, such as inserting a value at the front of a long list.
+Two linked lists that differ only in their <code>first</code> item can share the same <code>rest</code>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">type</span> <span class="n">LinkedList</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="n">Link</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[()]</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Link</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">T</span>
+    <span class="n">rest</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>  <span class="c1"># rest defaults to an empty linked list</span>
+</code></pre></div></div>
+<p>A <code>Link</code> is a non-empty <code>LinkedList</code>, and so has a <code>first</code> and <code>rest</code>. The
+<code>rest</code> of a <code>Link</code> should always be a linked list: either another <code>Link</code> or
+<code>()</code>.</p>
+<p>You can make a <code>LinkedList</code> by calling <code>Link</code>.</p>
+<ul>
+<li><code>Link(4)</code> makes a linked list of length 1 containing 4.</li>
+<li><code>Link(4, s)</code> makes a linked list that starts with 4 followed by the elements of
+linked list <code>s</code>.</li>
+</ul>
+<p>Printing a <code>Link</code> shows its elements within parentheses: <code>print(Link(3, Link(4)))</code> displays <code>(3 4)</code>.</p>
+<p>The second element of <code>s</code> is <code>s.rest.first</code> and the third is
+<code>s.rest.rest.first</code>.</p>
+<p>This <a href="https://composingprograms.com/3ed/draw">linked list visualizer</a> is a great way to understand the structure of a
+complex linked list.</p>
+<p>To check whether a linked list <code>s</code> is empty, use <code>isinstance(s, Link)</code>. The VS
+Code type checker infers that <code>s</code> is a <code>Link</code> and therefore has <code>first</code> and
+<code>rest</code> attributes only when <code>isinstance(s, Link)</code> is true:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">sum_link</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the sum of the items in linked list s.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Link</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">first</span> <span class="o">+</span> <span class="n">sum_link</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The type <code>LinkedList[int]</code> describes a linked list whose elements are all
+integers. A type variable, such as <code>T</code> in <code>def extend[T](s: LinkedList[T], t: LinkedList[T]) -&gt; LinkedList[T]</code>, represents any type and expresses that the
+inputs and output to this function all contain the same type of items.</p>
+</div></details>
+<h2 id="linked-lists">
+  
+  
+    <a href="#linked-lists" class="anchor-heading" aria-labelledby="linked-lists"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Linked Lists
+  
+  
+</h2>
+    
+<h3 id="q1-wwpd-linked-lists">
+  
+  
+    <a href="#q1-wwpd-linked-lists" class="anchor-heading" aria-labelledby="q1-wwpd-linked-lists"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: WWPD: Linked Lists
+  
+  
+</h3>
+    
+<p>Read over the <code>Link</code> class in <code>link.py</code>. Make sure you understand the
+doctests.</p>
+<p>Predict what Python will display when the following lines are entered into an
+interactive session in which the <code>Link</code> class has already been defined, then
+unlock the test to check your answers. Type <code>ERROR</code> if it errors:</p>
+<div class="pytest-command" data-command="python3 -m pytest -k link_wwpd --unlock"><pre><code>python3 -m pytest -k link_wwpd --unlock</code></pre></div>
+<details class="unlock-examples" open>
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from lab04 import Link
+&gt;&gt;&gt; a = Link(1000)
+&gt;&gt;&gt; a.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; a.rest    # the empty linked list is ()
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(a)  # printing a linked list shows all its items in parentheses
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; b = Link(1, Link(2, Link(3)))
+&gt;&gt;&gt; print(b)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; b.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; b.rest.rest.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; b.rest.rest.rest
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; skip = Link(9001, b.rest.rest)
+&gt;&gt;&gt; skip.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; skip.rest.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; skip.rest.rest
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; b.rest.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(Link(4, b))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; c = Link(Link(1), Link(2))
+&gt;&gt;&gt; c.first.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; c.first.rest
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; c.rest.first
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(c)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; d = Link(5, Link(6, Link(7)))
+&gt;&gt;&gt; print(d)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(d.rest.rest)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(Link(8, Link(9, d.rest)))
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(Link(10, Link(d.rest.rest, d.rest)))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; print(Link(5, 6))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<blockquote>
+<p>If you get stuck, try drawing a linked list on a piece of paper or running
+<code>python3 -i link.py</code> and then evaluating different expressions.</p>
+</blockquote>
+<h3 id="q2-change">
+  
+  
+    <a href="#q2-change" class="anchor-heading" aria-labelledby="q2-change"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: Change
+  
+  
+</h3>
+    
+<p>Write a function that takes in a linked list <code>s</code> and two values, <code>old</code> and
+<code>new</code>. The function returns a copy of <code>s</code> but with all instances of <code>old</code>
+replaced with <code>new</code>.</p>
+<p>Hint: Use recursion. It's easier in this case!</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">change</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">old</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinkedList</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a linked list matching s but with all instances of old (if any)</span>
+<span class="sd">    replaced by new.</span>
+
+<span class="sd">    &gt;&gt;&gt; s = Link(1, Link(2, Link(3)))</span>
+<span class="sd">    &gt;&gt;&gt; t = change(s, 3, 1)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    (1 2 1)</span>
+<span class="sd">    &gt;&gt;&gt; u = change(t, 1, 2)</span>
+<span class="sd">    &gt;&gt;&gt; print(u)</span>
+<span class="sd">    (2 2 2)</span>
+<span class="sd">    &gt;&gt;&gt; v = change(u, 5, 1)</span>
+<span class="sd">    &gt;&gt;&gt; print(v)</span>
+<span class="sd">    (2 2 2)</span>
+<span class="sd">    &gt;&gt;&gt; print(s)   # The original linked list s is unchanged.</span>
+<span class="sd">    (1 2 3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>  <span class="c1"># replace the code below</span>
+    <span class="k">return</span> <span class="p">()</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k change"><pre><code>python3 -m pytest -k change</code></pre></div>
+<h3 id="q3-without-one">
+  
+  
+    <a href="#q3-without-one" class="anchor-heading" aria-labelledby="q3-without-one"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: Without One
+  
+  
+</h3>
+    
+<p>Implement <code>without</code>, which takes a linked list <code>s</code> and a non-negative integer
+index <code>i</code>. It returns a linked list with all of the elements of <code>s</code> except for the
+one at index <code>i</code>. (Assume <code>s.first</code> is the element at index 0.)</p>
+<p>The original linked list <code>s</code> should not be changed.</p>
+<p>If <code>i</code> is greater than or equal to the length of <code>s</code>, then <code>without</code> should return a linked list with the same contents as <code>s</code>.</p>
+<blockquote>
+<p><strong>Hint:</strong> Use recursion. It's easier in this case!</p>
+</blockquote>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">without</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinkedList</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a linked list like s but without the element at index i.</span>
+
+<span class="sd">    &gt;&gt;&gt; s = Link(3, Link(5, Link(7, Link(9))))</span>
+<span class="sd">    &gt;&gt;&gt; print(without(s, 0))</span>
+<span class="sd">    (5 7 9)</span>
+<span class="sd">    &gt;&gt;&gt; print(without(s, 2))</span>
+<span class="sd">    (3 5 9)</span>
+<span class="sd">    &gt;&gt;&gt; print(without(s, 4))  # There is no index 4, so all of s is retained.</span>
+<span class="sd">    (3 5 7 9)</span>
+<span class="sd">    &gt;&gt;&gt; print(s)              # The original linked list s is unchanged.</span>
+<span class="sd">    (3 5 7 9)</span>
+<span class="sd">    &gt;&gt;&gt; without((), 0)</span>
+<span class="sd">    ()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>  <span class="c1"># replace the code below</span>
+    <span class="k">return</span> <span class="p">()</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k without"><pre><code>python3 -m pytest -k without</code></pre></div>
+<h3 id="q4-print-every-other">
+  
+  
+    <a href="#q4-print-every-other" class="anchor-heading" aria-labelledby="q4-print-every-other"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Print Every Other
+  
+  
+</h3>
+    
+<p>Implement <code>print_every_other</code>, which takes a linked list <code>s</code> and prints every
+other element of <code>s</code>, starting with the first, each on its own line. It prints
+nothing if <code>s</code> is empty. It returns <code>None</code>, which should happen automatically; you don't need a <code>return</code> statement.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">print_every_other</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print every other element of linked list s, starting with the first.</span>
+
+<span class="sd">    &gt;&gt;&gt; sentence = Link(&#39;I&#39;, Link(&#39;have&#39;, Link(&#39;love&#39;, Link(&#39;for&#39;, Link(&#39;Oski&#39;)))))</span>
+<span class="sd">    &gt;&gt;&gt; print_every_other(sentence)</span>
+<span class="sd">    I</span>
+<span class="sd">    love</span>
+<span class="sd">    Oski</span>
+<span class="sd">    &gt;&gt;&gt; print_every_other(Link(1, Link(2, Link(3, Link(4)))))</span>
+<span class="sd">    1</span>
+<span class="sd">    3</span>
+<span class="sd">    &gt;&gt;&gt; print_every_other(Link(5))</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; print_every_other(())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k print_every_other"><pre><code>python3 -m pytest -k print_every_other</code></pre></div>
+<h3 id="q5-store-digits">
+  
+  
+    <a href="#q5-store-digits" class="anchor-heading" aria-labelledby="q5-store-digits"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q5: Store Digits
+  
+  
+</h3>
+    
+<p>Write a function <code>store_digits</code> that takes in an integer <code>n</code> and returns a linked
+list containing the digits of <code>n</code> in the same order (from left to right).</p>
+<blockquote>
+<p><strong>Important</strong>: Do not use any string manipulation functions, such as <code>str</code> or
+<code>reversed</code>.</p>
+</blockquote>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">store_digits</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinkedList</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores the digits of a positive number n in a linked list.</span>
+
+<span class="sd">    &gt;&gt;&gt; s = store_digits(1)</span>
+<span class="sd">    &gt;&gt;&gt; s</span>
+<span class="sd">    Link(first=1, rest=())</span>
+<span class="sd">    &gt;&gt;&gt; print(store_digits(2345))</span>
+<span class="sd">    (2 3 4 5)</span>
+<span class="sd">    &gt;&gt;&gt; print(store_digits(876))</span>
+<span class="sd">    (8 7 6)</span>
+<span class="sd">    &gt;&gt;&gt; print(store_digits(2450))</span>
+<span class="sd">    (2 4 5 0)</span>
+<span class="sd">    &gt;&gt;&gt; print(store_digits(20105))</span>
+<span class="sd">    (2 0 1 0 5)</span>
+<span class="sd">    &gt;&gt;&gt; # a check that you do not use str or reversed</span>
+<span class="sd">    &gt;&gt;&gt; import inspect, ast</span>
+<span class="sd">    &gt;&gt;&gt; [n.id for n in ast.walk(ast.parse(inspect.getsource(store_digits)))</span>
+<span class="sd">    ...  if isinstance(n, ast.Name) and n.id in (&#39;str&#39;, &#39;reversed&#39;)]</span>
+<span class="sd">    []</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>  <span class="c1"># replace the code below</span>
+    <span class="k">return</span> <span class="p">()</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k store_digits"><pre><code>python3 -m pytest -k store_digits</code></pre></div>
+<h1 id="submit-assignment">
+  
+  
+    <a href="#submit-assignment" class="anchor-heading" aria-labelledby="submit-assignment"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Submit Assignment
+  
+  
+</h1>
+    
+<p>Submit this assignment by running
+<strong>Provenance: Prepare Submission Bundle</strong> from the VS Code command palette and
+uploading the resulting zip <strong>to Gradescope</strong>. The zip already contains the
+files you've edited.
+<a href="../../labs/lab00/#task-c-submit-the-assignment">Lab 00</a> has detailed
+instructions.</p>
+<p>Your responses to WWPD questions are not submitted, and they do not need to
+be. Lab credit is based on the code writing questions.</p>
+<h1 id="optional-questions">
+  
+  
+    <a href="#optional-questions" class="anchor-heading" aria-labelledby="optional-questions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Optional Questions
+  
+  
+</h1>
+    
+<blockquote>
+<p>These questions are optional. If you don't complete them, you will
+still receive credit for this assignment. They are great practice, so do them
+anyway!</p>
+</blockquote>
+<h2 id="q6-linked-sum">
+  
+  
+    <a href="#q6-linked-sum" class="anchor-heading" aria-labelledby="q6-linked-sum"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q6: Linked Sum
+  
+  
+</h2>
+    
+<p>This was Question 6 on the <a href="https://cs61a.org/resources/su16/mt1/61a-su16-midterm.pdf">Summer 2016 61A Midterm</a>.</p>
+<p>Implement <code>linked_sum</code>, which takes a linked list of positive integers <code>s</code> and a
+non-negative integer <code>total</code>. It returns the number of ways that adding up items
+in <code>s</code> can sum up to <code>total</code>. Each item can be used more than once.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">linked_sum</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of combinations of elements in s that</span>
+<span class="sd">    sum up to total.</span>
+
+<span class="sd">    &gt;&gt;&gt; # Four combinations: 1 1 1 1 , 1 1 2 , 1 3 , 2 2</span>
+<span class="sd">    &gt;&gt;&gt; linked_sum(Link(1, Link(2, Link(3, Link(5)))), 4)</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; linked_sum(Link(2, Link(3, Link(5))), 1)</span>
+<span class="sd">    0</span>
+<span class="sd">    &gt;&gt;&gt; # One combination: 2 3</span>
+<span class="sd">    &gt;&gt;&gt; linked_sum(Link(2, Link(4, Link(3))), 5)</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">____________________________</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">____________________________</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">with_first</span> <span class="o">=</span> <span class="n">____________________________</span>
+        <span class="n">without_first</span> <span class="o">=</span> <span class="n">____________________________</span>
+        <span class="k">return</span> <span class="n">____________________________</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k linked_sum"><pre><code>python3 -m pytest -k linked_sum</code></pre></div>
+<h2 id="q7-max-pair-sum">
+  
+  
+    <a href="#q7-max-pair-sum" class="anchor-heading" aria-labelledby="q7-max-pair-sum"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q7: Max Pair Sum
+  
+  
+</h2>
+    
+<p>This was Question 4(e) on the <a href="https://cs61a.org/resources/fa23/final/61a-fa23-final.pdf">Fall 2023 61A Final</a>.</p>
+<p><strong>Definition:</strong> A <em>pairing</em> of a sequence <code>s</code> is a list of two-element tuples
+(called <em>pairs</em>) that contain adjacent elements of <code>s</code>. There must be at least
+one element of <code>s</code> <strong>between</strong> any two pairs in the pairing. The pairs in the
+pairing must be in the same order as they are in <code>s</code>.</p>
+<p>The sequence <code>[4, 5, 6, 1, 2, 3, 7, 8]</code> has pairings <code>[(6, 1), (3, 7)]</code> and
+<code>[(4, 5), (1, 2), (7, 8)]</code> and <code>[]</code> and many others, but the following are not
+pairings of that sequence:</p>
+<ul>
+<li><code>[(5, 1), (3, 7)]</code> contains a pair <code>(5, 1)</code>, but 5 and 1 are not adjacent in
+the sequence.</li>
+<li><code>[(5, 6), (1, 2)]</code> contains two pairs with no element between them, since 6
+is adjacent to 1 in the sequence.</li>
+<li><code>[(1, 2), (4, 5)]</code> contains valid pairs, but those pairs are not in the same
+order as the sequence.</li>
+</ul>
+<p>Implement <code>max_pair_sum</code>, which takes a linked list <code>s</code> (either a <code>Link</code> or
+<code>()</code>). It returns the largest possible sum of the values in a pairing of <code>s</code>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">max_pair_sum</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">LinkedList</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the largest sum of values in a pairing for a linked list of positive numbers s.</span>
+
+<span class="sd">    &gt;&gt;&gt; L = Link                                                     # Abbreviate Link</span>
+<span class="sd">    &gt;&gt;&gt; max_pair_sum(L(3, L(4, L(5, L(3, L(4, L(5, L(6))))))))       # 4+5 + 5+6</span>
+<span class="sd">    20</span>
+<span class="sd">    &gt;&gt;&gt; max_pair_sum(L(3, L(4, L(5, L(3, L(4, L(5, L(6, L(3))))))))) # 3+4 + 3+4 + 6+3</span>
+<span class="sd">    23</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">____________________________</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">____________________________</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">rest</span><span class="p">,</span> <span class="n">Link</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">n</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">max_pair_sum</span><span class="p">(</span><span class="n">____________</span><span class="p">),</span> <span class="n">max_pair_sum</span><span class="p">(</span><span class="n">____________</span><span class="p">))</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k max_pair_sum"><pre><code>python3 -m pytest -k max_pair_sum</code></pre></div>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

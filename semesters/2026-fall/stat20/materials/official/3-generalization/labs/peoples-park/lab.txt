@@ -1,0 +1,76 @@
+Source: https://stat20.berkeley.edu/fall-2026/3-generalization/labs/peoples-park/lab.html
+Retrieved: 2026-11-06
+
+Lab 8: People’s Park
+[#cb1-1]library(stat20data)
+[#cb1-2]data(ppk)
+The Data
+On September 30, 2021 Chancellor Carol Christ sent an e-mail out to the UC Berkeley community informing them that the UC Regents approved UC Berkeley’s planned development on the People’s Park property. Development on the land had been a focus for the UC for some time and this e-mail was the most significant step taken by the administration so far.
+Chancellor Christ mentioned that keeping student opinion in mind was important to the university. To that end, the UC Berkeley sent out a Google form survey in hopes of garnering student perspectives on “housing issues in general, and plans for People’s Park in particular”. Within the survey, students were asked their opinions on the People’s Park project and then shown more details about the project. Their opinions were then gauged again.
+According to the e-mail and materials linked in the Chancellor’s e-mail, not only were students in support of the project initially, but once students learned more about the project, their support for the project grew.
+The Statistics department obtained a partial version of the dataset obtained in the survey: the ppk data frame in the stat20data library.
+You are also given access to a few documents (click on the links below):
+a summary of the survey details as given by the facilitator Qualtrics [references/background-methods.pdf],
+a copy of the Google Form that was sent out to students [references/questionnaire.pdf]
+a copy of Chancellor Christ’s e-mail to students [references/chancellors-email.pdf].
+Across the next two weeks (this week’s lab and next), you will be performing inference to determine if the survey was able to change student opinion in the way that the chancellor’s e-mail described.
+Questions: Understanding context
+For these questions, use the provided documents to inform your answers.
+Question 1
+What do you think was the goal(s) of the Chancellor’s office in commissioning this survey? Answer in at least two to three sentences.
+Question 2
+Write down
+the initial number of students selected to take the survey;
+the final sample size that actually did take the survey;
+the response rate.
+The population parameter that we will focus on in this lab is the overall change in support (yes/no) after respondents were exposed to the information on page 14 of the Google Form survey.
+Question 3
+Identify a possible source of bias and whether it is selection, measurement, or nonresponse bias. How do you expect this source will affect the point estimate of the parameter?
+Question 4
+Identify a possible source of variation and whether it is sampling or measurement variability. How do you expect this source will affect an interval estimate of the parameter?
+Questions: Computing on the data
+Now it is time to access the ppk data frame!
+Question 5
+What is the unit of observation in the ppk data frame? Answer in at least one sentence.
+BEFORE MOVING TO QUESTION 6: a note on missing data
+As you take a look at the ppk data frame, you may notice that some data is missing. Data entries that are missing or not collected are labeled as NA in R.
+There are many ways to handle situations like this, but in this lab, when performing calculations that involve columns containing NA entries, you can remove them before starting your calculation using the drop_na() function, which scans any columns that you provide and drop any rows (observations) with NA in that column. For example, imagine that someone would like to work with scale option one in the seventh question on the Google form, and notices there is missing data. They might precede the calculation as follows:
+[#cb2-1]ppk |>
+[#cb2-2]  drop_na(Q7_1) |>
+[#cb2-3]  ... # continue with the calculation
+Make sure not to use drop_na() without first specifying the columns, or you may get rid of more data than you need to!
+Question 6
+part a
+Write code to construct a 95% confidence interval for the mean rating of the condition of People’s Park. Your answer should come in the form of a data frame containing the lower and upper bounds of this interval in a single pipeline.
+part b
+Interpret the confidence interval you constructed in the context of the problem in at least one sentence.
+Question 7
+part a
+Add a new column to the ppk data frame called support_before that takes the response data (in text form) from Question 18 on the Google Form and returns TRUE for answers of "Very strongly support", "Strongly support", and "Somewhat support" and FALSE otherwise. Recall that you can use the %in% operator to check if the response is one of these three values.
+part b
+Repeat the process of part a but instead for the response data from Question 21 on the Google Form. Call this column support_after.
+part c
+Create a data structure which displays, for each class (freshman, sophomore, etc) the proportion that supported the People’s Park project:
+before they received additional information about the project
+after they received this information
+part d
+Add a third column to the data frame called change_in_support that subtracts support_before from support_after.
+Question 8
+part a
+Write code to construct a 95% confidence interval for the mean change in support for the Project across the entire population after being exposed to additional information about the project. Your answer should come in the form of a data frame containing the lower and upper bounds of this interval in a single pipeline.
+part b
+Interpret the confidence interval you constructed in the context of the problem in at least one sentence.
+part c
+Does your interval from the previous question contain 0?
+What are the implications of that for those working in the Chancellor’s Office on the People’s Park Project?
+Answer in at least two sentences.
+WARNING: Does your rendered pdf have 30+ pages? (And do you want to get credit?)
+If your final pdf is really long, you are probably printing an entire dataframe in one of your code cells. For example, a line that just says flights will print the entire flights dataframe (over 100,000 rows!). You don’t realize this, because RStudio is smart enough to hide most of the rows from your screen while you’re working. But when you render, it will obediently print every single row of the dataframe, giving you an unwieldy output.
+To fix this, anytime you have a line that is just displaying a dataframe (e.g. just flights), change it to only show the first few rows by using either the head function, e.g. head(flights) or the tidyverse equivalent slice_head(flights, n = 10).
+Last Question
+Will you ensure that your submission to Gradescope…
+is a pdf generated from a qmd file
+your code is fully visible (not running off the page)
+follows formatting rules (here [https://edstem.org/us/courses/101622/discussion/8236759])
+and assigns each of the questions to all pages that show your work for that question?
+(This one is easy! Just answer “yes” or “no”)

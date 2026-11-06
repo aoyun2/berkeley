@@ -1,0 +1,876 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Discussion 5: Trees | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Discussion 5: Trees" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/discussions/disc05/" />
+<meta property="og:url" content="https://cs61a.org/fa26/discussions/disc05/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Discussion 5: Trees" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Discussion 5: Trees","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/discussions/disc05/"},"url":"https://cs61a.org/fa26/discussions/disc05/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Discussion 5: Trees<a class="print-button" href="print.html" title="Printable version" aria-label="Printable version">🖨️</a>
+  
+  
+</h1>
+    </header>
+<h2 id="attendance">
+  
+  
+    <a href="#attendance" class="anchor-heading" aria-labelledby="attendance"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attendance
+  
+  
+</h2>
+    
+<p>Your TA will come around during discussion to check you in. You can start on
+the worksheet before being checked in; you don't need to wait for your TA to
+get started.</p>
+<p>If you didn't attend for a good reason (such as being sick), fill out this
+form (within 2 weeks of your discussion):
+<a href="https://links.cs61a.org/attendance">attendance form</a></p>
+<p>If you get stuck, there are <a href="https://www.youtube.com/playlist?list=PLd6wm-PG0KZI">walkthrough videos</a> (@berkeley.edu login to YouTube required).</p>
+<h2 id="getting-started">
+  
+  
+    <a href="#getting-started" class="anchor-heading" aria-labelledby="getting-started"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started
+  
+  
+</h2>
+    
+<p>Everyone go around and say your name.</p>
+<p><strong>For fun:</strong> Think of a big word with at least three syllables, such as
+&quot;solitary&quot; or &quot;conundrum&quot; or &quot;ominous&quot;. Try to use it as many times as you can
+during today's discussion, but in ways that don't give away that it's your big
+word. At the end, your group will try to guess each person's big word. Whoever
+uses their big word the most times (and at least twice) without their group
+guessing it wins.  (You win nothing; it's just a game.)</p>
+<h2 id="trees">
+  
+  
+    <a href="#trees" class="anchor-heading" aria-labelledby="trees"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Trees
+  
+  
+</h2>
+    
+<p>A <code>Tree</code> has a <code>label</code> and a list of <code>branches</code>, each
+of which is a <code>Tree</code>. A tree with no branches is called a <em>leaf</em>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tree</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">T</span>
+    <span class="n">branches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tree</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># branches defaults to []</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_leaf</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="s2">&quot;Return whether a Tree t is a leaf with no branches.&quot;</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">branches</span>
+</code></pre></div></div>
+<p>For example:</p>
+<ul>
+<li><code>Tree(4)</code> makes a leaf labeled 4.</li>
+<li><code>u = Tree(5, [Tree(6), Tree(7)])</code> makes a tree labeled 5 with two leaves labeled 6 and 7.</li>
+<li><code>t = Tree(3, [Tree(4), u])</code> makes a tree labeled 3 with two branches: a leaf labeled 4 and the tree <code>u</code>.</li>
+</ul>
+<p><img src="assets/example_tree_illustration.svg" alt="Example Tree" /></p>
+<p>Printing a <code>Tree</code> shows each label on its own line, indented below its parent's label:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="n">Tree</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">7</span><span class="p">)])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="n">Tree</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">u</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="mi">3</span>
+  <span class="mi">4</span>
+  <span class="mi">5</span>
+    <span class="mi">6</span>
+    <span class="mi">7</span>
+</code></pre></div></div>
+<p>The label of the second branch of <code>t</code> is <code>t.branches[1].label</code>, which is 5.</p>
+<p>A <em>node</em> of <code>Tree</code> <code>t</code> is either itself or a <code>Tree</code> within it. A node's <em>parent</em> is the <code>Tree</code> for which it is a branch, and its <em>children</em> are its branches. The <em>root node</em> is <code>t</code> and has no parent. Leaves have no children. A <em>path</em> is a sequence of nodes in which each is the parent of the next.</p>
+<p>This <a href="https://composingprograms.com/3ed/draw">tree visualizer</a> draws the
+structure of any tree.</p>
+<p><strong>Remember</strong>, for a tree <code>t</code>:</p>
+<ul>
+<li>Its root label <code>t.label</code> can be any value.</li>
+<li>Its branches are trees, and <code>t.branches</code> is a list of its branches.</li>
+<li>An equivalent tree can be constructed with <code>Tree(t.label, t.branches)</code>.</li>
+<li>To check whether a tree <code>t</code> is a leaf, call <code>is_leaf(t)</code>.</li>
+<li>You can call functions that take a tree as an argument, such as <code>sum_leaves(t)</code>.</li>
+</ul>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">sum_leaves</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the sum of the labels of the leaves of tree t.</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Tree(3, [Tree(4), Tree(5, [Tree(6), Tree(7)])])</span>
+<span class="sd">    &gt;&gt;&gt; sum_leaves(t)  # 4 + 6 + 7</span>
+<span class="sd">    17</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_leaf</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>  <span class="c1"># if t is a leaf,</span>
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">label</span>  <span class="c1"># then the sum of its leaf labels is just its label</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">sum_leaves</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">branches</span><span class="p">])</span>
+</code></pre></div></div>
+<p>The type <code>Tree[int]</code> describes a tree whose labels are all integers.</p>
+<p>A type variable, such as <code>T</code> below, represents any type and expresses that the
+return value has the same type as the labels of the input tree.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">largest_leaf</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the largest label of the leaves of tree t.</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Tree(3, [Tree(4), Tree(5, [Tree(6), Tree(7)])])</span>
+<span class="sd">    &gt;&gt;&gt; largest_leaf(t)</span>
+<span class="sd">    7</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_leaf</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>  <span class="c1"># if t is a leaf,</span>
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">label</span>  <span class="c1"># then the largest leaf label is just its label</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">([</span><span class="n">largest_leaf</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">branches</span><span class="p">])</span>
+</code></pre></div></div>
+<h3 id="q1-warm-up">
+  
+  
+    <a href="#q1-warm-up" class="anchor-heading" aria-labelledby="q1-warm-up"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: Warm Up
+  
+  
+</h3>
+    
+<p>What value is bound to <code>result</code>?</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">label</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="n">Tree</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">7</span><span class="p">)])</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="n">Tree</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">u</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">branches</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">label</span>
+</code></pre></div></div>
+<p>How convoluted! (That's a big word.)</p>
+<details class="hint"><summary>What does key do?</summary><div>
+<p>Here's a quick refresher on how <code>key</code> functions work with <code>max</code> and <code>min</code>.</p>
+<p><code>max(s, key=f)</code> returns the item <code>x</code> in <code>s</code> for which <code>f(x)</code> is largest.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="o">-</span><span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">abs</span><span class="p">)</span>
+<span class="o">-</span><span class="mi">5</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="p">])</span>
+<span class="mi">5</span>
+</code></pre></div></div>
+<p>Therefore, <code>max([t, u], key=label)</code> returns the tree with the largest label,
+in this case <code>u</code>.</p>
+</div></details>
+<h3 id="q2-has-path">
+  
+  
+    <a href="#q2-has-path" class="anchor-heading" aria-labelledby="q2-has-path"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: Has Path
+  
+  
+</h3>
+    
+<p>Implement <code>has_path</code>, which takes a tree <code>t</code> and a list <code>p</code>. It returns whether
+there is a path from the root of <code>t</code> with labels <code>p</code>. For example, <code>t</code> has a
+path from its root with labels <code>[3, 5, 6]</code> but not <code>[3, 4, 6]</code> or <code>[5, 6]</code>.</p>
+<p><strong>Important</strong>: Before trying to implement this function, discuss these questions
+from lecture about the recursive call of a tree processing function:</p>
+<ul>
+<li>What small initial choice can I make (such as which branch to explore)?</li>
+<li>What recursive call should I make for each option?</li>
+<li>How can I combine the results of those recursive calls?
+<ul>
+<li>What type of values do they return?</li>
+<li>What do those return values mean?</li>
+</ul>
+</li>
+</ul>
+<p>If you get stuck, you can view our answers to these questions by clicking the
+hint button below, but <em>please</em> don't do that until your whole group agrees.</p>
+<details class="hint"><summary>Big Hint: Describing the Recursive Call</summary><div>
+<p><strong>What small initial choice can I make (such as which branch to explore)?</strong></p>
+<p>Choose each one of the branches and call it <code>b</code>.</p>
+<p><strong>What recursive call should I make for each branch?</strong></p>
+<p>Call <code>has_path</code> on each branch <code>b</code>. You'll make this call after comparing <code>p[0]</code>
+to <code>t.label</code>, and so the second argument to <code>has_path</code> will be the rest of <code>p</code>:
+<code>has_path(b, p[1:])</code>.</p>
+<p><strong>What type of values do they return?</strong></p>
+<p><code>has_path</code> always returns a <code>bool</code> value: <code>True</code> or <code>False</code>.</p>
+<p><strong>What do the possible return values mean?</strong></p>
+<p>If <code>has_path(b, p[1:])</code> returns <code>True</code>, then there is a path through branch <code>b</code>
+for which <code>p[1:]</code> are the node labels.</p>
+<p><strong>How can I combine the results of those recursive calls?</strong></p>
+<p>If you have already checked that <code>t.label</code> is equal to <code>p[0]</code>, then a <code>True</code>
+return value from the recursive call <code>has_path(b, p[1:])</code> means there is a path
+through <code>t</code> with labels <code>p</code> using that branch <code>b</code>, so return.  A <code>False</code> value
+means there is no path through that branch, but there might be path through a
+different branch, so don't return yet.</p>
+</div></details>
+<div class="code-editor" data-language="python" data-question="has_path">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">has_path</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether tree t has a path from the root with labels p.</span>
+
+<span class="sd">    &gt;&gt;&gt; u = Tree(5, [Tree(6), Tree(7)])</span>
+<span class="sd">    &gt;&gt;&gt; t = Tree(3, [Tree(4), u])</span>
+<span class="sd">    &gt;&gt;&gt; has_path(t, [5, 6])        # This path is not from the root of t</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; has_path(u, [5, 6])        # This path is from the root of u</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; has_path(t, [3, 5])        # This path does not go to a leaf, but that&#39;s ok</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; has_path(t, [3, 5, 6])     # This path goes to a leaf</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; has_path(t, [3, 4, 5, 6])  # There is no path with these labels</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="n">____</span><span class="p">:</span>  <span class="c1"># when len(p) is 1</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">t</span><span class="o">.</span><span class="n">label</span> <span class="o">!=</span> <span class="n">____</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="has_path" data-lib="from __future__ import annotations&#10;from dataclasses import dataclass, field&#10;&#10;@dataclass&#10;class Tree[T]:&#10;    &quot;&quot;&quot;A Tree has a label (of type T) and a list of branches, which are trees.&#10;&#10;    &gt;&gt;&gt; t = Tree(3, [Tree(1, []), Tree(2, [Tree(1, []), Tree(1, [])])])&#10;    &gt;&gt;&gt; t.branches[0]&#10;    Tree(label=1, branches=[])&#10;    &gt;&gt;&gt; len(t.branches)&#10;    2&#10;    &gt;&gt;&gt; t.branches[1].label&#10;    2&#10;    &gt;&gt;&gt; len(t.branches[1].branches)&#10;    2&#10;    &gt;&gt;&gt; expr = Tree(10, [Tree(6, [Tree(2), Tree(&#x27;*&#x27;), Tree(3)]), Tree(&#x27;+&#x27;), Tree(4)])&#10;    &gt;&gt;&gt; print(expr)&#10;    10&#10;      6&#10;        2&#10;        *&#10;        3&#10;      +&#10;      4&#10;    &quot;&quot;&quot;&#10;    label: T&#10;    branches: list[Tree[T]] = field(default_factory=list)  # branches defaults to []&#10;&#10;    def __str__(self):&#10;        return format_tree(self)&#10;&#10;def format_tree(t: Tree, indent=&#x27;&#x27;) -&gt; str:&#10;    &quot;Format a tree with each branch indented below its label.&quot;&#10;    assert isinstance(t, Tree), f&#x27;{t!r} is not a Tree&#x27;&#10;    assert isinstance(t.branches, list), f&#x27;branches of {t!r} is not a list&#x27;&#10;    string = indent + str(t.label)&#10;    for b in t.branches:&#10;        string += &#x27;\n&#x27; + format_tree(b, indent + &#x27;  &#x27;)&#10;    return string&#10;&#10;def is_leaf(t: Tree) -&gt; bool:&#10;    &quot;Return whether a Tree t is a leaf with no branches.&quot;&#10;    return not t.branches" data-visualize="false"></div>
+<p>If your group needs some guidance, see the hints below, but please
+talk with your group first before reading the hints.</p>
+<details class="hint"><summary>Hint: Base Cases</summary><div>
+<p>The first base case should check whether <code>p</code> is a list of length one with the
+label of <code>t</code> as its only element.  The second base case should check if the
+first element of <code>p</code> matches the label of <code>t</code>.</p>
+</div></details>
+<details class="hint"><summary>Hint: Recursive Case</summary><div>
+<p>When entering the recursive case, your code should already have checked that
+<code>p[0]</code> is equal to <code>t.label</code>, and so all that's left to check is that <code>p[1:]</code>
+contains the labels in a path through one of the branches. One way is with
+this template:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for ____:
+    if ____:
+        return True
+return False
+</code></pre></div></div>
+</div></details>
+<h3 id="q3-find-path">
+  
+  
+    <a href="#q3-find-path" class="anchor-heading" aria-labelledby="q3-find-path"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: Find Path
+  
+  
+</h3>
+    
+<p>Implement <code>find_path</code>, which takes a tree <code>t</code> with unique labels and a value
+<code>x</code>. It returns a list containing the labels of the nodes along a path from the
+root of <code>t</code> to a node labeled <code>x</code>.</p>
+<p>If <code>x</code> is not a label in <code>t</code>, return <code>None</code>. Assume that the labels of <code>t</code> are unique.</p>
+<p>First talk through how to make and use the recursive call.
+(Try it yourselves; don't just click the hint button. That's how you learn.)</p>
+<details class="hint"><summary>Big Hint: Describing the Recursive Call</summary><div>
+<p><strong>What small initial choice can I make (such as which branch to explore)?</strong></p>
+<p>Choose each one of the branches and call it <code>b</code>.</p>
+<p><strong>What recursive call should I make for each branch?</strong></p>
+<p><code>find_path(b, x)</code> on each branch <code>b</code>.</p>
+<p><strong>What type of values do they return?</strong></p>
+<p>Each recursive call will either return <code>None</code> or a non-empty list of node labels.</p>
+<p><strong>What do the possible return values mean?</strong></p>
+<p>If <code>find_path(b, x)</code> returns <code>None</code>, then <code>x</code> does not appear in <code>b</code>. If
+<code>find_path(b, x)</code> returns a list, then it contains the node labels for a path
+through <code>b</code> that ends with the node labeled <code>x</code>.</p>
+<p><strong>How can you use those return values to complete your implementation?</strong></p>
+<p>If a list is returned, then it contains all of the labels in the path except
+<code>t.label</code>, which must be placed at the front.</p>
+</div></details>
+<div class="code-editor" data-language="python" data-question="find_path">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">find_path</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list of the labels along a path from the root of t to a node</span>
+<span class="sd">    labeled x, or None if no node is labeled x.</span>
+
+<span class="sd">    &gt;&gt;&gt; u = Tree(5, [Tree(6), Tree(7)])</span>
+<span class="sd">    &gt;&gt;&gt; t = Tree(3, [Tree(4), u])</span>
+<span class="sd">    &gt;&gt;&gt; find_path(t, 5)</span>
+<span class="sd">    [3, 5]</span>
+<span class="sd">    &gt;&gt;&gt; find_path(t, 4)</span>
+<span class="sd">    [3, 4]</span>
+<span class="sd">    &gt;&gt;&gt; find_path(t, 6)</span>
+<span class="sd">    [3, 5, 6]</span>
+<span class="sd">    &gt;&gt;&gt; find_path(u, 6)</span>
+<span class="sd">    [5, 6]</span>
+<span class="sd">    &gt;&gt;&gt; print(find_path(t, 2))</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_______________________________________</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_______________________________________</span>
+    <span class="n">_______________________________________</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">_______________________________________</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_______________________________________</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="find_path" data-lib="from __future__ import annotations&#10;from dataclasses import dataclass, field&#10;&#10;@dataclass&#10;class Tree[T]:&#10;    &quot;&quot;&quot;A Tree has a label (of type T) and a list of branches, which are trees.&#10;&#10;    &gt;&gt;&gt; t = Tree(3, [Tree(1, []), Tree(2, [Tree(1, []), Tree(1, [])])])&#10;    &gt;&gt;&gt; t.branches[0]&#10;    Tree(label=1, branches=[])&#10;    &gt;&gt;&gt; len(t.branches)&#10;    2&#10;    &gt;&gt;&gt; t.branches[1].label&#10;    2&#10;    &gt;&gt;&gt; len(t.branches[1].branches)&#10;    2&#10;    &gt;&gt;&gt; expr = Tree(10, [Tree(6, [Tree(2), Tree(&#x27;*&#x27;), Tree(3)]), Tree(&#x27;+&#x27;), Tree(4)])&#10;    &gt;&gt;&gt; print(expr)&#10;    10&#10;      6&#10;        2&#10;        *&#10;        3&#10;      +&#10;      4&#10;    &quot;&quot;&quot;&#10;    label: T&#10;    branches: list[Tree[T]] = field(default_factory=list)  # branches defaults to []&#10;&#10;    def __str__(self):&#10;        return format_tree(self)&#10;&#10;def format_tree(t: Tree, indent=&#x27;&#x27;) -&gt; str:&#10;    &quot;Format a tree with each branch indented below its label.&quot;&#10;    assert isinstance(t, Tree), f&#x27;{t!r} is not a Tree&#x27;&#10;    assert isinstance(t.branches, list), f&#x27;branches of {t!r} is not a list&#x27;&#10;    string = indent + str(t.label)&#10;    for b in t.branches:&#10;        string += &#x27;\n&#x27; + format_tree(b, indent + &#x27;  &#x27;)&#10;    return string&#10;&#10;def is_leaf(t: Tree) -&gt; bool:&#10;    &quot;Return whether a Tree t is a leaf with no branches.&quot;&#10;    return not t.branches" data-visualize="false"></div>
+<p>Please don't view the hints until you've discussed with your group and can't
+make progress.</p>
+<details class="hint"><summary>Hint: Base Case</summary><div>
+<p>If <code>x</code> is the label of <code>t</code>, then return a list with one element that contains
+the label of <code>t</code>.</p>
+</div></details>
+<details class="hint"><summary>Hint: Recursive Case</summary><div>
+<p>Assign <code>path</code> to the result of a recursive call to <code>find_path(b, x)</code> so that you
+can both check whether it's <code>None</code> and extend it if it's a list.</p>
+<p>For a list <code>path</code> and a value <code>v</code>, the expression <code>[v] + path</code> creates a longer
+list that starts with <code>v</code> and then has the elements of <code>path</code>.</p>
+</div></details>
+<p><strong>Description Time!</strong> When your group has completed this question, it's time to
+describe why this function does not have a base case that checks whether <code>t</code>
+is a leaf (<code>is_leaf(t)</code>). If you can't figure it out, talk to a TA.</p>
+<h2 id="big-word-search">
+  
+  
+    <a href="#big-word-search" class="anchor-heading" aria-labelledby="big-word-search"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Big Word Search
+  
+  
+</h2>
+    
+<p>For each person, the rest of the group should try to guess their <em>big word</em>
+(from the Getting Started section). The group only gets one guess. After they
+guess, reveal your <em>big word</em> and how many times you used it during discussion.</p>
+<h2 id="highly-recommended-question-if-time-allows">
+  
+  
+    <a href="#highly-recommended-question-if-time-allows" class="anchor-heading" aria-labelledby="highly-recommended-question-if-time-allows"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Highly Recommended Question (If Time Allows)
+  
+  
+</h2>
+    
+<p>Tree problems often appear on exams. Here's one:</p>
+<h3 id="q4-only-paths">
+  
+  
+    <a href="#q4-only-paths" class="anchor-heading" aria-labelledby="q4-only-paths"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Only Paths
+  
+  
+</h3>
+    
+<p>This was Question 5 from the <a href="https://cs61a.org/resources/fa23/mt2/61a-fa23-mt2.pdf">Fall 2023 61A Midterm 2</a>.</p>
+<p>Implement <code>only_paths</code>, which takes a tree of numbers <code>t</code> and a number <code>n</code>. It
+returns a tree with only the nodes of <code>t</code> that are on a path from the root
+to a leaf with labels that sum to <code>n</code>, or <code>None</code> if no path sums to <code>n</code>.</p>
+<p>Here is an illustration of the doctest examples involving <code>t</code>.</p>
+<p><img src="assets/only_paths.svg" alt="Diagrams of the tree t and of only_paths(t, 7) and only_paths(t, 9)" /></p>
+<div class="code-editor" data-language="python" data-question="only_paths">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">only_paths</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">Tree</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tree</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a tree with only the nodes of t along paths from the root to a leaf of t</span>
+<span class="sd">    for which the node labels of the path sum to n. If no paths sum to n, return None.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(only_paths(Tree(5, [Tree(2), Tree(1, [Tree(2)]), Tree(1, [Tree(1)])]), 7))</span>
+<span class="sd">    5</span>
+<span class="sd">      2</span>
+<span class="sd">      1</span>
+<span class="sd">        1</span>
+<span class="sd">    &gt;&gt;&gt; t = Tree(3, [Tree(4), Tree(1, [Tree(3, [Tree(2)]), Tree(2, [Tree(1)]), Tree(5), Tree(3)])])</span>
+<span class="sd">    &gt;&gt;&gt; print(only_paths(t, 7))</span>
+<span class="sd">    3</span>
+<span class="sd">      4</span>
+<span class="sd">      1</span>
+<span class="sd">        2</span>
+<span class="sd">          1</span>
+<span class="sd">        3</span>
+<span class="sd">    &gt;&gt;&gt; print(only_paths(t, 9))</span>
+<span class="sd">    3</span>
+<span class="sd">      1</span>
+<span class="sd">        3</span>
+<span class="sd">          2</span>
+<span class="sd">        5</span>
+<span class="sd">    &gt;&gt;&gt; print(only_paths(t, 3))</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">____</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">t</span>
+    <span class="n">new_branches</span> <span class="o">=</span> <span class="p">[</span><span class="n">____</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">branches</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">____</span><span class="p">(</span><span class="n">new_branches</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Tree</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">new_branches</span> <span class="k">if</span> <span class="n">____</span><span class="p">])</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="only_paths" data-lib="from __future__ import annotations&#10;from dataclasses import dataclass, field&#10;&#10;@dataclass&#10;class Tree[T]:&#10;    &quot;&quot;&quot;A Tree has a label (of type T) and a list of branches, which are trees.&#10;&#10;    &gt;&gt;&gt; t = Tree(3, [Tree(1, []), Tree(2, [Tree(1, []), Tree(1, [])])])&#10;    &gt;&gt;&gt; t.branches[0]&#10;    Tree(label=1, branches=[])&#10;    &gt;&gt;&gt; len(t.branches)&#10;    2&#10;    &gt;&gt;&gt; t.branches[1].label&#10;    2&#10;    &gt;&gt;&gt; len(t.branches[1].branches)&#10;    2&#10;    &gt;&gt;&gt; expr = Tree(10, [Tree(6, [Tree(2), Tree(&#x27;*&#x27;), Tree(3)]), Tree(&#x27;+&#x27;), Tree(4)])&#10;    &gt;&gt;&gt; print(expr)&#10;    10&#10;      6&#10;        2&#10;        *&#10;        3&#10;      +&#10;      4&#10;    &quot;&quot;&quot;&#10;    label: T&#10;    branches: list[Tree[T]] = field(default_factory=list)  # branches defaults to []&#10;&#10;    def __str__(self):&#10;        return format_tree(self)&#10;&#10;def format_tree(t: Tree, indent=&#x27;&#x27;) -&gt; str:&#10;    &quot;Format a tree with each branch indented below its label.&quot;&#10;    assert isinstance(t, Tree), f&#x27;{t!r} is not a Tree&#x27;&#10;    assert isinstance(t.branches, list), f&#x27;branches of {t!r} is not a list&#x27;&#10;    string = indent + str(t.label)&#10;    for b in t.branches:&#10;        string += &#x27;\n&#x27; + format_tree(b, indent + &#x27;  &#x27;)&#10;    return string&#10;&#10;def is_leaf(t: Tree) -&gt; bool:&#10;    &quot;Return whether a Tree t is a leaf with no branches.&quot;&#10;    return not t.branches" data-visualize="false"></div>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

@@ -1,0 +1,191 @@
+Source: https://cs61a.org/fa26/assets/lec/06-Functional_Abstraction.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Lambdas
+
+
+
+
+pollev.com/cs61a
+Announcements
+Lambda Expressions
+     return total
+
+Example from Wednesday: summation
+def identity(k):
+    return k
+                               Function of a single argument
+def cube(k):                        (not called "term")
+    return pow(k, 3)
+                             A formal parameter that will
+def summation(n,       term): be bound to a function
+    """Sum the first n terms of a sequence.
+                                                               What about the natural
+                                                                      numbers?
+     >>> summation(5, cube)
+     225
+                       The cube function is passed
+     """                  as an argument value
+     total, k = 0, 1
+     while k <= n:
+                                                                      (Demo)
+         total, k = total + term(k), k + 1
+     return total
+                               The function bound to term
+   1 + 8 + 27 + 64 + 125
+def pi_term(k):                     gets called here
+    return 8 / (k * 4  3) / (k * 4  1)
+                                                                                        4
+hof.py                                                                         Page 2
+Lambda practice
+    return total
+def identity(k):
+    return k
+
+def cube(k):
+    return pow(k, 3)
+                                                sum = summation(5, lambda x: x)
+def summation(n, term):
+    """Sum the first n terms of a sequence.     print(sum)
+
+    >>> summation(5, cube)
+    225
+    """
+    total, k = 0, 1
+    while k <= n:
+        total, k = total + term(k), k + 1
+    return total
+                                                Write the call to summation for this series:
+def pi_term(k):
+    return 8 / (k * 4  3) / (k * 4  1)
+                                                sum = summation(5, ________)
+                                                print(sum)
+# Local function definitions; returning functions
+
+def make_adder(n):
+                                                          pollev.com/cs61a
+    """Return a function that takes one argument k and returns k + n.
+                                                                                          5
+    >>> add_three = make_adder(3)
+ Lambda Expressions
+                                                           Equivalent ways of writing this:
+
+                                                                Lambda expressions can
+                              An expression:                    be used in assignment
+                              evaluates to a                          statements
+                                 function
+
+summation(5, lambda x: pow(1/2, x))                        term = lambda x: pow(1/2, x)
+
+                         Important: No "return" keyword!   summation(5, term)
+            A function
+              with formal parameter x
+                that returns the value of pow(1/2, x)      All lambda expressions can
+                                                           be re-written using a def
+                                                                (not vice versa)
+                      Must be a single expression
+
+                                                           def term(x):
+
+                                                               return pow(1/2, x)
+
+                                                           summation(5, term)
+                                                                                          6
+Lambda Environments
+
+
+
+
+                                                                                                                                        (Demo)
+
+                                                                                                              pollev.com/cs61a
+        https://pythontutor.com/cp/composingprograms.html#code=common_ratio%20%3D%201/2%0A%0Aterm%20%3D%20lambda%20x%3A%20pow%28common_ratio,%20x%29%0A%0Acommon_ratio%20%3D%201/3%0A%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20N%20terms%20of%20a%20sequence.   7
+        %0A%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20common_ratio%20%3D%201/4%0A%20%20%20%20total,%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,
+        %20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total%0A%0Acommon_ratio%20%3D%201/5%0A%0Aprint%28summation%285,%20term%29%29%0A&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+Function Currying
+
+Convert a function that takes multiple arguments
+into a chain of functions that each take a single argument
+
+
+
+
+pow(1/2, 5)
+
+
+
+
+curry(pow)(1/2)(5)
+
+
+
+
+                                          (Demo)
+
+
+
+                                                             8
+Zero-Argument Functions
+
+
+
+
+       (Demo: Dice)
+Lab 02 Q2: Higher-Order Functions
+>>> def cake():                                                                                                                                                                          >>> def snake(x, y):
+...    print('beets')                                                                                                                                                                    ...    if cake == more_cake:
+...    def pie():                                                                                                                                                                        ...        return chocolate
+...        print('sweets')                                                                                                                                                               ...    else:
+...        return 'cake'                                                                                                                                                                 ...        return x + y
+...    return pie                                                                                                                                                                        ...
+...                                                                                                                                                                                      >>> snake(10, 20)
+>>> chocolate = cake()                                                                                                                                                                   <function cake.<locals>.pie at ...>
+beets                                                                                                                                                                                    >>> snake(10, 20)()
+>>> chocolate                                                                                                                                                                            sweets
+<function cake.<locals>.pie at ...>                                                                                                                                                      'cake'
+>>> chocolate()                                                                                                                                                                          >>> cake = 'cake'
+sweets                                                                                                                                                                                   >>> snake(10, 20)
+'cake'                                                                                                                                                                                   30
+
+
+>>> more_chocolate, more_cake = chocolate(), cake
+sweets
+>>> more_chocolate
+'cake'
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cake%28%29%3A%0A%20%20%20print%28'beets'%29%0A%20%20%20def%20pie%28%29%3A%0A%20%20%20%20%20%20%20print%28'sweets'%29%0A%20%20%20%20%20%20%20return%20'cake'%0A%20%20%20return%20pie%0A%0Achocolate%20%3D%20cake%28%29%0A%23%20chocolate%0A%23%20chocolate%28%29%0Amore_chocolate,                                 10
+%20more_cake%20%3D%20chocolate%28%29,%20cake%0A%23%20more_chocolate%0Adef%20snake%28x,
+%20y%29%3A%0A%20%20%20if%20cake%20%3D%3D%20more_cake%3A%0A%20%20%20%20%20%20%20return%20chocolate%0A%20%20%20else%3A%0A%20%20%20%20%20%20%20return%20x%20%2B%20y%0A%0A%23%20snake%2810,%2020%29%0Asnake%2810,%2020%29%28%29%0A%23%20cake%20%3D%20'cake'%0A%23%20snake%2810,%2020%29&cumulative=true&curInstr=0&mode=display&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+Lambda Expressions Practice
+Lambda and Def
+
+Any program containing lambda expressions can be rewritten using def statements.
+
+                                  twice                    square
+                >>> (lambda f: lambda x: f(f(x)))(lambda y: y * y)(3)
+                81
+
+                >>> def twice(f):
+                ...     def g(x):
+                ...         return f(f(x))
+                ...     return g
+                ...
+                >>> def square(y):
+                ...     return y * y
+                ...
+                >>> twice(square)(3)
+                81
+
+
+
+
+                                                                                   12
+Fall 2022 Midterm 1 Question 4(a)
+
+
+
+
+                               pollev.com/cs61a
+                                                  13
+

@@ -1,5 +1,7 @@
 # Handout standard
 
+For the restarted backfill, also follow [teaching-quality.md](teaching-quality.md) and Aaron's supplied reference PDF. Earlier audit approvals do not establish teaching quality; every previously generated packet needs revision and a new review.
+
 Every handout, review packet and solutions file, in every course, follows this. Aaron set each rule after seeing what went wrong without it.
 
 ## Scope

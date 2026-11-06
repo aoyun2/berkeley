@@ -1,0 +1,190 @@
+Source: https://stat20.berkeley.edu/fall-2026/3-generalization/04-random-variables/tutorial.html
+Retrieved: 2026-11-06
+
+Random Variables
+Discrete random variables, probability mass functions, cumulative distribution functions
+WarningThis page covers…
+TODO
+[Interactive R block: webr-1-contents; attributes: {"edit": false, "eval": true, "output": false}]
+webr::install("gradethis", quiet = TRUE)
+library(gradethis)
+options(webr.exercise.checker = function(
+label, user_code, solution_code, check_code, envir_result, evaluate_result,
+envir_prep, last_value, engine, stage, ...
+) {
+if (is.null(check_code)) {
+# No grading code, so just skip grading
+invisible(NULL)
+} else if (is.null(label)) {
+list(
+correct = FALSE,
+type = "warning",
+message = "All exercises must have a label."
+)
+} else if (is.null(solution_code)) {
+list(
+correct = FALSE,
+type = "warning",
+message = htmltools::tags$div(
+htmltools::tags$p("A problem occurred grading this exercise."),
+htmltools::tags$p(
+"No solution code was found. Note that grading exercises using the ",
+htmltools::tags$code("gradethis"),
+"package requires a model solution to be included in the document."
+)
+)
+)
+} else {
+gradethis::gradethis_exercise_checker(
+label = label, solution_code = solution_code, user_code = user_code,
+check_code = check_code, envir_result = envir_result,
+evaluate_result = evaluate_result, envir_prep = envir_prep,
+last_value = last_value, stage = stage, engine = engine)
+}
+})
+Useful functions
+factorial() and choose()
+The function used to compute the binomial coefficient \(\binom{n}{k}\) is choose(n,k), while the function to compute \(n!\) is factorial(n). Here are a couple of examples:
+[#cb1-1]cat(" 5! is equal to ", factorial(5) )
+5! is equal to  120
+cat() prints whatever is in the ().
+[#cb3-1]choose(4,2)
+[1] 6
+While these are both functions that are useful if we want to compute binomial probabilities, we won’t use them since R has built in functions that calculate both \(f(x)\) and \(F(x)\) for many distributions, including the ones that we have listed in these notes.
+All these all have the similar forms, and we will list the functions and their arguments here. For each distribution, there are four types of functions and they begin with d, p, r, and q, followed by an abbreviation of the name of the distribution. We will describe the first three types of functions in these notes.
+Bernoulli\((p)\) and Binomial\((n,p)\)
+dbinom computes the pmf of \(X\), \(f(k) = P(X = k)\), for \(k = 0, 1, \ldots, n\).
+Arguments:
+x: the value of \(k\) in \(f(k)\)
+size: the parameter \(n\), the number of trials
+prob: the parameter \(p\), the probability of success
+pbinom computes the cdf \(F(x) = P(X \le x)\)
+Arguments:
+q: the value of \(x\) in \(F(x)\)
+size: the parameter \(n\), the number of trials
+prob: the parameter \(p\), the probability of success
+rbinom generates a sample (random numbers) from the Binomial\((n,p)\) distribution.
+Arguments:
+n: the sample size
+size: the parameter \(n\), the number of trials
+prob: the parameter \(p\), the probability of success
+Example
+Suppose we consider \(n = 3\), \(p= 0.5\), that is, \(X\) is the number of successes in 3 independent Bernoulli trials.
+[#cb5-1]# probability that we see exactly 1 success = f(1)
+[#cb5-2]dbinom(x = 1, size = 3, prob = 0.5)
+[1] 0.375
+[#cb7-1]# probability that we see at most 1 success = F(1) = f(0) + f(1)
+[#cb7-2]pbinom(q = 1, size = 3, prob = 0.5 )
+[1] 0.5
+[#cb9-1]# check f(0) + f(1)
+[#cb9-2]dbinom(x = 0, size = 3, prob = 0.5) + dbinom(x = 1, size = 3, prob = 0.5)
+[1] 0.5
+[#cb11-1]# generate a sample of size 5 where each element in sample
+[#cb11-2]# represents number of successes in 3 trials (like number of heads in 3 tosses)
+[#cb11-3]rbinom(n = 5, size = 3, prob = 0.5)
+[1] 1 1 2 3 1
+[#cb13-1]# if we want to generate a sequence of 10 tosses of a fair coin, for example:
+[#cb13-2]rbinom(n = 10, size = 1, prob = 0.5)
+[1] 0 0 0 0 0 0 0 1 0 1
+Exercise
+In the section on the Binomial distribution above, we had an exercise where \(X \sim Bin(10, 0.4)\). Using the functions defined above, compute:
+\(X = 5\)
+\(X \le 5\)
+\(3 \le X \le 8\)
+Check your answer
+[#cb15-1]# P(X = 5)
+[#cb15-2]dbinom(x = 5, size = 10, prob = 0.4)
+[1] 0.2006581
+[#cb17-1]# P(X = 5)
+[#cb17-2]pbinom(5, 10, 0.4) - pbinom(4, 10, 0.4)
+[1] 0.2006581
+[#cb19-1]# P(X <= 5)
+[#cb19-2]dbinom(x = 0, size = 10, prob = 0.4) + dbinom(x = 1, size = 10, prob = 0.4) +
+[#cb19-3]  dbinom(x = 2, size = 10, prob = 0.4) + dbinom(x = 3, size = 10, prob = 0.4) +
+[#cb19-4]  dbinom(x = 4, size = 10, prob = 0.4) + dbinom(x = 5, size = 10, prob = 0.4)
+[1] 0.8337614
+[#cb21-1]# P(X <= 5)
+[#cb21-2]pbinom(5, 10, 0.4)
+[1] 0.8337614
+[#cb23-1]# P(3 <= X <= 8)
+[#cb23-2]dbinom(x = 3, size = 10, prob = 0.4) + dbinom(x = 4, size = 10, prob = 0.4) +
+[#cb23-3]  dbinom(x = 5, size = 10, prob = 0.4) + dbinom(x = 6, size = 10, prob = 0.4) +
+[#cb23-4]  dbinom(x = 7, size = 10, prob = 0.4) + dbinom(x = 8, size = 10, prob = 0.4)
+[1] 0.8310325
+[#cb25-1]# P(3 <= X <= 8)
+[#cb25-2]pbinom(8, 10, 0.4) - pbinom(2, 10, 0.4)
+[1] 0.8310325
+What is going on in the last expression? Why is \(P(3 <= X <= 8) = F(8) - F(2)\)?
+Check your answer
+\(P(3 <= X <= 8)\) consists of all the probability at the points \(3, 4, 5, 6, 7, 8\).
+\(F(8) = P(X \le 8)\) is all the probability up to \(8\), including any probability at \(8\). We subtract off all the probability up to and including \(2\) from \(F(8)\) and are left with the probability at the values \(3\) up to and including \(8\), which is what we want.
+Hypergeometric \((N, G, n)\)
+The notation is a bit confusing, but just remember that x is usually the number \(k\) that you want the probability for, and m + n\(=N\) is the total number of successes and failures, or the population size.
+dhyper computes the pmf of \(X\), \(f(k) = P(X = k)\), for \(k = 0, 1, \ldots, n\).
+Arguments:
+x: the value of \(k\) in \(f(k)\)
+m: the parameter \(G\), the number of successes in the population
+n: the value \(N-G\), the number of failures in the population
+k: the sample size (number of draws \(n\), note that \(0 \le k \le m+n\))
+phyper computes the cdf \(F(x) = P(X \le x)\)
+Arguments:
+q: the value of \(x\) in \(F(x)\)
+m: the parameter \(G\), the number of successes in the population
+n: the value \(N-G\), the number of failures in the population
+k: the sample size (number of draws \(n\))
+rhyper generates a sample (random numbers) from the hypergeometric\((N, G, n)\) distribution.
+Arguments:
+nn: the number of random numbers desired
+m: the parameter \(G\), the number of successes in the population
+n: the value \(N-G\), the number of failures in the population
+k: the sample size (number of draws \(n\))
+Example
+Suppose we consider \(N = 10, G  = 6, n = 3\), that is, \(X\) is the number of successes in 3 draws without replacement from a box that has 6 tickets marked \(\fbox{1}\) and 4 tickets marked \(\fbox{0}\)
+[#cb27-1]# probability that we see exactly 1 success = f(1)
+[#cb27-2]dhyper(x = 1, m = 6, n = 4, k = 3)
+[1] 0.3
+[#cb29-1]# you can compute this by hand as well to check.
+[#cb29-2]
+[#cb29-3]# probability that we see at most 1 success = F(1) = f(0) + f(1)
+[#cb29-4]phyper(q = 1, m = 6, n = 4, k = 3)
+[1] 0.3333333
+[#cb31-1]# check f(0) + f(1)
+[#cb31-2]dhyper(x = 0, m = 6, n = 4, k = 3) + dhyper(x = 1, m = 6, n = 4, k = 3)
+[1] 0.3333333
+[#cb33-1]# generate a sample of size 5 where each element in sample
+[#cb33-2]# represents number of successes in 3 draws
+[#cb33-3]rhyper(nn = 5, m = 6, n = 4, k = 3)
+[1] 1 3 3 2 2
+Poisson(\(\lambda\))
+dpois computes the pmf of \(X\), \(f(k) = P(X = k)\), for \(k = 0, 1, 2,  \ldots\).
+Arguments:
+x: the value of \(k\) in \(f(k)\)
+lambda: the parameter \(\lambda\)
+ppois computes the cdf \(F(x) = P(X \le x)\)
+Arguments:
+q: the value of \(x\) in \(F(x)\)
+lambda: the parameter \(\lambda\)
+rpois generates a sample (random numbers) from the Poisson(\(\lambda\)) distribution.
+Arguments:
+n: the desired sample size
+lambda: the parameter \(\lambda\)
+Example
+Suppose we consider \(\lambda = 1\), that is \(X \sim\) Poisson\((\lambda)\).
+[#cb35-1]# probability that we see exactly 1 event = f(1)
+[#cb35-2]dpois(x = 1, lambda = 1)
+[1] 0.3678794
+[#cb37-1]#check f(1) = exp(-lambda)*lambda = exp(-1)*1
+[#cb37-2]exp(-1)
+[1] 0.3678794
+[#cb39-1]# probability that we see at most 1 success = F(1) = f(0) + f(1)
+[#cb39-2]ppois(q = 1,lambda = 1)
+[1] 0.7357589
+[#cb41-1]# check f(0) + f(1)
+[#cb41-2]dpois(x = 0, lambda = 1) + dpois(x = 1, lambda = 1)
+[1] 0.7357589
+[#cb43-1]# generate a sample of size 5 where each element in sample
+[#cb43-2]# represents a random count from the Poisson(1) distribution
+[#cb43-3]rpois(n = 5, lambda = 1)
+[1] 0 2 0 0 1
+Summary
+We defined functions in R that can compute the pmf and cdf for the named distributions (except for discrete uniform since it doesn’t need a special function as we can just use sample()).

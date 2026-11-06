@@ -1,0 +1,755 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Homework 7: Gleam | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Homework 7: Gleam" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/hw/hw07/" />
+<meta property="og:url" content="https://cs61a.org/fa26/hw/hw07/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Homework 7: Gleam" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Homework 7: Gleam","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/hw/hw07/"},"url":"https://cs61a.org/fa26/hw/hw07/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Homework 7: Gleam
+  
+  
+</h1>
+    <ul class="assignment-facts"><li><strong>Due:</strong> Thursday 11/05 @ 11:59pm</li><li><strong>Points:</strong> 1</li><li><strong>Download:</strong> <a href="hw07.zip">hw07.zip</a></li></ul></header>
+<p class="assignment-intro">Complete your work in <code>src/hw07.gleam</code>, and from inside the folder run your tests with <code>gleam test</code> (or <code>gleam test -- score</code> to see your score).</p>
+<p class="assignment-intro">To receive credit, you must solve each problem and then complete a short checkoff interview about your solution. You may use Preceptor for the interview or come to office hours to be interviewed by a member of the course staff. If the interviews are not working, please still submit your working code on time or request an extension by the deadline. <strong>Staff will be doing in-person checkoffs for up to 3 business days after the assignment deadline (including any approved extension)</strong>. If a checkoff happens more than 3 business days after the regular deadline, staff may ask to confirm your extended deadline via Flextensions. You will submit a Provenance bundle that includes a record of how you used VS Code, including interactions with Preceptor. Please do not use AI tools other than Preceptor for this assignment.</p>
+<h1 id="setup">
+  
+  
+    <a href="#setup" class="anchor-heading" aria-labelledby="setup"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup
+  
+  
+</h1>
+    
+<p>This homework is written in <a href="https://gleam.run">Gleam</a>. To install Node.js and
+Gleam and set up VS Code for Gleam, follow the
+<a href="../../labs/lab08/#setup">setup instructions in Lab 8</a>. Download and open
+<code>hw07</code> the same way you did <code>lab08</code>.</p>
+<h2 id="test-your-code">
+  
+  
+    <a href="#test-your-code" class="anchor-heading" aria-labelledby="test-your-code"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Test Your Code
+  
+  
+</h2>
+    
+<p>From the <em>Terminal</em> menu within VS Code, select <em>New Terminal</em>, which opens a
+terminal pane at the bottom of your <code>hw07</code> VS Code window. When you type <code>ls</code>,
+you should see <code>gleam.toml</code>, <code>src</code>, and <code>test</code>.</p>
+<p>Run one question's tests by naming it after <code>--</code>, or run the whole suite with
+<code>gleam test</code>:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gleam<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>pow<span class="w">        </span><span class="c1"># just this question</span>
+gleam<span class="w"> </span><span class="nb">test</span><span class="w">               </span><span class="c1"># the whole suite</span>
+gleam<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>score<span class="w">      </span><span class="c1"># every question, with your score</span>
+</code></pre></div></div>
+<p>The tests will fail until you've solved the questions below. If something goes
+wrong, see <em>What can go wrong?</em> in <a href="../../labs/lab08/#test-your-code">Lab 8</a>.</p>
+<h2 id="run-your-gleam-code">
+  
+  
+    <a href="#run-your-gleam-code" class="anchor-heading" aria-labelledby="run-your-gleam-code"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Run Your Gleam Code
+  
+  
+</h2>
+    
+<p>The file you're editing ends with a <code>main</code> function, which <code>gleam run</code> calls:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gleam<span class="w"> </span>run
+</code></pre></div></div>
+<p>Right now, <code>main</code> just prints a message. You can add any Gleam code there you
+want, including calls to the functions in this assignment.</p>
+<p><code>echo</code> also works inside any other function, so you can print intermediate
+values while the tests run.</p>
+<p>You can also test out Gleam code on the online <a href="https://playground.gleam.run">Gleam Playground</a>.</p>
+<p><strong>Getting Started Videos:</strong></p>
+<p>If you feel stuck, <a href="https://www.youtube.com/playlist?list=PLXO3yasDLDio">these videos</a> may provide some helpful direction for tackling the coding problems on this assignment.</p>
+<blockquote><p>To see these videos, you should be logged into your berkeley.edu email.</p></blockquote>
+<h1 id="required-questions">
+  
+  
+    <a href="#required-questions" class="anchor-heading" aria-labelledby="required-questions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Required Questions
+  
+  
+</h1>
+    
+<h2 id="q1-powers">
+  
+  
+    <a href="#q1-powers" class="anchor-heading" aria-labelledby="q1-powers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: Powers
+  
+  
+</h2>
+    
+<p>Implement a function <code>pow</code> that raises a number <code>base</code> to the power of a
+nonnegative integer <code>exp</code> just by using multiplication. It should be fast! For example,
+<code>pow(2, 32)</code> should result in 5 or 6 recursive <code>pow</code> calls rather than 32.</p>
+<blockquote>
+<p><strong>How to make it fast:</strong></p>
+<ol>
+<li>x<sup>2y</sup> = (x<sup>y</sup>)<sup>2</sup></li>
+<li>x<sup>2y+1</sup> = x(x<sup>y</sup>)<sup>2</sup></li>
+</ol>
+<p>For example, 2<sup>16</sup> = (2<sup>8</sup>)<sup>2</sup> and
+2<sup>17</sup> = 2 · (2<sup>8</sup>)<sup>2</sup>.
+<code>exp % 2</code> is <code>0</code> when <code>exp</code> is even.</p>
+</blockquote>
+<p>If you see a <code>js(RangeError: Maximum call stack size exceeded)</code>, that's equivalent to Python's <code>RecursionError: maximum recursion depth exceeded</code> and indicates that your code is trying to make too many (and possibly infinite) recursive calls.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// `base` raised to the power `exp`, where `exp` is a nonnegative integer.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="n">base</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">,</span><span class="w"> </span><span class="n">exp</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- pow"><pre><code>gleam test -- pow</code></pre></div>
+<h2 id="q2-smallest-factor">
+  
+  
+    <a href="#q2-smallest-factor" class="anchor-heading" aria-labelledby="q2-smallest-factor"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: Smallest Factor
+  
+  
+</h2>
+    
+<p>Implement <code>smallest_factor</code>, which takes an integer <code>n</code> greater than 1 and
+returns the smallest factor of <code>n</code> that is greater than 1. Search upward from 2
+until you find a number that evenly divides <code>n</code>. (<code>n % k</code> is <code>0</code> when <code>k</code> evenly
+divides <code>n</code>.)</p>
+<p>Define any new recursive functions you need <strong>outside</strong> of the <code>smallest_factor</code> function. Unlike Python, you cannot define a named function inside another function. (You can define anonymous functions, but they can't call themselves directly.)</p>
+<p>For example:</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 51 = 3 * 17</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">smallest_factor</span><span class="p">(</span><span class="mi">51</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">3</span>
+
+<span class="c1">// 49 = 7 * 7</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">smallest_factor</span><span class="p">(</span><span class="mi">49</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">7</span>
+
+<span class="c1">// 13 is prime, so its only factor greater than 1 is itself</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">smallest_factor</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">13</span>
+</code></pre></div></div>
+<p><strong>You can (and should) define an additional function to help your implementation.</strong></p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// The smallest factor of `n` greater than 1, where `n` is greater than 1.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">smallest_factor</span><span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- smallest_factor"><pre><code>gleam test -- smallest_factor</code></pre></div>
+<h2 id="q3-minimize">
+  
+  
+    <a href="#q3-minimize" class="anchor-heading" aria-labelledby="q3-minimize"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: Minimize
+  
+  
+</h2>
+    
+<p>Implement <code>min</code>, which takes integers <code>start</code> and <code>end</code> with <code>start &lt; end</code> and a function <code>key</code>. It returns the integer <code>k</code> from <code>start</code> up to (but not including) <code>end</code> for
+which <code>key(k)</code> is smallest. If several integers tie for the smallest <code>key</code>
+value, return the smallest of them. Assume that <code>start</code> is less than <code>end</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// (x - 6) * (x - 2) is smallest (-4) at x = 4</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="k">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">4</span>
+
+<span class="c1">// Every key is 0, so the first integer is returned</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="k">fn</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">3</span>
+</code></pre></div></div>
+<p>You may call <code>key</code> as many times as you want. For an extra challenge, implement <code>min</code> so that <code>key</code> is called at most once on each input, and the <code>min</code> function (or its helper function) is tail recursive.</p>
+<p>Define any new recursive functions you need <strong>outside</strong> of the <code>min</code> function. Unlike Python, you cannot define a named function inside another function. (You can define anonymous functions, but they can't call themselves directly.)</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// The integer `k` from `start` up to (but not including) `end` for</span>
+<span class="sd">/// which `key(k)` is smallest. If several integers tie for the smallest key</span>
+<span class="sd">/// value, return the smallest of them. Assume `start` is less than `end`.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="k">fn</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- min"><pre><code>gleam test -- min</code></pre></div>
+<p>Then, implement <code>sqrt</code>, which takes a positive integer <code>n</code> and returns the
+positive integer whose square is closest to <code>n</code>. Implement <code>sqrt</code> by calling
+<code>min</code>. Your implementation should be only one line.</p>
+<blockquote>
+<p><strong>Hint</strong>: The <code>int.absolute_value</code> function returns the absolute value of an
+integer.</p>
+</blockquote>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">144</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">12</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">49</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">8</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">56</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">7</span><span class="w">   </span><span class="c1">// 7 * 7 = 49 is 7 away from 56; 8 * 8 = 64 is 8 away</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">57</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="mi">8</span><span class="w">   </span><span class="c1">// 7 * 7 = 49 is 8 away from 57; 8 * 8 = 64 is 7 away</span>
+</code></pre></div></div>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// The positive integer whose square is closest to `n`, where `n` is positive.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">int</span><span class="p">.</span><span class="n">absolute_value</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- sqrt"><pre><code>gleam test -- sqrt</code></pre></div>
+<h2 id="q4-pairs">
+  
+  
+    <a href="#q4-pairs" class="anchor-heading" aria-labelledby="q4-pairs"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Pairs
+  
+  
+</h2>
+    
+<p>Implement <code>pairs</code>, which takes a list <code>s</code> and returns whether <code>s</code> is made up of
+adjacent pairs of equal elements, such as <code>[3, 3, 1, 1, 4, 4, 1, 1]</code>. For
+<code>pairs</code> to return <code>True</code>, the input list must have an even length, and items at
+index <code>i</code> and <code>i+1</code> must be equal for all even <code>i</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">True</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">True</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">False</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">False</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">False</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">pairs</span><span class="p">([])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">True</span>
+</code></pre></div></div>
+<blockquote>
+<p><strong>Hint:</strong> Within a <code>case</code> expression for a list, <code>[]</code> matches an empty list, <code>[_]</code> matches a length-one list, and <code>[a, b, ..tail]</code> matches a list with length at least two.</p>
+</blockquote>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// Whether `s` is made up of adjacent pairs of equal elements.</span>
+<span class="sd">/// An empty list is, but a list with an odd length is not.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">pairs</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Bool</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- pairs"><pre><code>gleam test -- pairs</code></pre></div>
+<h2 id="q5-longest-increasing-sublist">
+  
+  
+    <a href="#q5-longest-increasing-sublist" class="anchor-heading" aria-labelledby="q5-longest-increasing-sublist"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q5: Longest Increasing Sublist
+  
+  
+</h2>
+    
+<p>Implement <code>longest_increasing</code>, which takes a list of integers <code>s</code> and returns
+the longest sublist of <code>s</code> whose elements are strictly increasing: each element
+is greater than (not equal to) the one before it. The elements of the sublist
+appear in the same order as in <code>s</code>, but they <strong>do not have to be adjacent</strong> in
+<code>s</code>. Assume that the longest increasing sublist is unique.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 1, 2, 3, 4, 9, 10 skips over 3, 4, 1, and 5</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">longest_increasing</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1">// Skipping 3 leaves the longer sublist [1, 2]</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">longest_increasing</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1">// Equal elements are not increasing</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">longest_increasing</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</code></pre></div></div>
+<blockquote>
+<p><strong>Hint:</strong> Use <code>list.filter</code> (<a href="https://hexdocs.pm/gleam_stdlib/gleam/list.html#filter">docs</a>) and <code>list.length</code> (<a href="https://hexdocs.pm/gleam_stdlib/gleam/list.html#length">docs</a>).</p>
+</blockquote>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span><span class="w"> </span><span class="n">gleam</span><span class="o">/</span><span class="n">list</span>
+
+<span class="sd">/// The longest sublist of `s` whose elements are strictly increasing.</span>
+<span class="sd">/// Assume that this longest sublist is unique.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">longest_increasing</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Int</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="gleam test -- longest_increasing"><pre><code>gleam test -- longest_increasing</code></pre></div>
+<h1 id="practice-for-quiz-6">
+  
+  
+    <a href="#practice-for-quiz-6" class="anchor-heading" aria-labelledby="practice-for-quiz-6"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Practice for Quiz 6
+  
+  
+</h1>
+    
+<p><strong>Quiz 6</strong> will occur on Monday, November 9th and Tuesday, November 10th and will have a variant of <a href="../../hw/hw07/#q5-longest-increasing-sublist">Q5 (Longest Increasing Sublist)</a>. The <a href="https://us.prairielearn.com/pl/course_instance/224353/assessment/2743236">practice quiz</a> is released now on PrairieLearn so that you can prepare.</p>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

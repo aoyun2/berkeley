@@ -1,0 +1,189 @@
+Source: https://cs61a.org/resources/guides/fa26/61a-mt3-study-guide.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+CS 61A Midterm 3 Study Guide
+
+Trees                                                                                                          Dictionary Mutation                                                Python Object System
+                                   root                                                   label
+Recursive description:                                                                                         >>> words = {"oruguita": "caterpillar"}                            When a class is called:
+• A tree has a root label
+                                   branch                              3
+                                                                                                               >>> words["oruguita"] += " " 🐛                                     1. A new instance of that class is created.
+  and a list of branches                                                                                       >>> words["oruguita"]                                              2. The __init__ method of the class is called with the new
+                                                                                                   node
+• Each branch is a tree                                                                                        'caterpillar '🐛                                                       object as its first argument (named self), along with any
+                                                                                                                                                                                     additional arguments provided in the call expression.
+• A tree with zero branches                                                                                    >>> words["mariposa"] = "butterfly"
+  is a leaf                                           1                                    2                   >>> words                                                          Example: All bank accounts have a balance and a holder; the
+Relative description:
+                                                                                                                                          🐛
+                                                                                                               {'oruguita': 'caterpillar ', 'mariposa': 'butterfly'}              Account class adds those attributes to each of its instances.
+• Each location is a node                                                                                                                                                         >>> a = Account('Jim')
+                                              0                1               1                   1           Copies and Tuples                                                                              A new instance is created by calling
+• Each node has a label                                                                                                                                                           >>> a.holder                              a class
+• A node is a branch of its                                                                                    Making a new list does not           A tuple can't change, but a   'Jim'
+  parent; its branches are         leaf                                    path                                copy nested lists it contains.       list inside it can.           >>> a.balance                         An account instance
+  its children                                                                             0           1                                                                          0                                 balance: 0    holder: 'Jim'
+                                                                                                               >>> a = [[1], 2]                     >>> t = (1, [2])
+@dataclass                                                                                                     >>> c = list(a)                      >>> t.append(3) # no append   class Account:
+class Tree[T]:                                                                                                 >>> c[0].append(5)                   AttributeError                    interest = 0.02   # class attribute: shared
+    """A Tree has a label (of type T) and a list of branches."""
+                                                                                                               >>> c[1] = 9                         >>> t[1].append(3)                def __init__(self, account_holder):
+    label: T
+                                                                                                               >>> a                                >>> t
+    branches: list[Tree[T]] = field(default_factory=list) # []
+    def __str__(self):                                                                                         [[1, 5], 2]                          (1, [2, 3])
+                                                                                                               >>> (c is a, c[0] is a[0])                                                   __init__ is called a constructor
+        return format_tree(self)
+                                                                                                               (False, True)                                                              self.balance = 0      # instance attributes:
+def format_tree(t: Tree, indent='') -> str:                                                                                                                                               self.holder = account_holder # one per object
+    "Format a tree with each branch indented below its label."                                                 Iterators & Iterables                                                               self
+                                                                                                                                                                                      def deposit(      , amount):
+    assert isinstance(t, Tree) and isinstance(t.branches, list)
+    string = indent + str(t.label)                                                                             An iterable value is one that for can iterate over (list,
+    for b in t.branches:                                                                                       tuple, range, dict, str). An iterator provides the items of           self should always be bound to an instance of the
+        string += '\n' + format_tree(b, indent + ' ')                                                          an iterable one at a time, tracking its position through the          Account class or a subclass of Account
+    return string                                                                                              iterable. Iterators are also iterables.
+                                                                                                                                                                                          self.balance = self.balance + amount
+def is_leaf(t: Tree) -> bool:                                                                                  iter(iterable) make an iterator over the iterable's items                  return self.balance
+    "Return whether a Tree t is a leaf with no branches."                                                      next(iterator) return the next item in the iterator                    def withdraw(self, amount):
+    return not t.branches                                                                                                                                                                 if amount > self.balance:
+                                                                                                               >>> s = [3, 4, 5]    >>> d = {'one': 1,       >>> v = iter(
+>>> expr = Tree(10, [Tree(6, [Tree(2), Tree('*'),                                                              >>> t = iter(s)      ...      'two': 2}       ...   d.values())                return 'Insufficient funds'
+...   Tree(3)]), Tree('+'), Tree(4)])                                                                                                                                                     self.balance = self.balance - amount
+                                                                                                               >>> next(t)          >>> k = iter(d)          >>> next(v)
+>>> expr.branches[0].label, len(expr.branches)                                                                                                                                            return self.balance
+                                                                                                               3                    >>> next(k)              1
+(6, 3)                                                                                                         >>> next(t)          'one'                    >>> next(v)          >>> type(Account.deposit)
+                                                                                                                                                                                                                  Looked up by the class: a plain
+>>> print(expr)                                                                                                4                    >>> next(k)              2                    <class 'function'>
+                                                  10                                                                                                                                                                 function. Looked up by an
+10                                                                                                                                  'two'                                         >>> type(a.deposit)
+                                                                                                                                                                                                                      instance: a bound method
+   6                                                                                                                                                                              <class 'method'>
+                               6                  +                        4                                   Once an iterator reaches the end, calling next on it causes
+     2
+                                                                                                               an error (StopIteration). Calling iter again on an iterable        >>> Account.deposit(a, 10)      Function call: all arguments
+     *
+                           2   *          3                                                                    such as a list makes a new iterator.                               10                                   within parentheses
+     3
+   +                                                                                                           >>> s = [3, 4, 5]                   >>> u = iter(s)
+                  >>> expr.branches[1]                                                                                                                                                                             Method invocation: one object
+   4                                                                                                           >>> t = iter(s)                     >>> next(u)                    >>> a.deposit(2)
+                  Tree(label='+', branches=[])                                                                                                                                                                    before the dot, other arguments
+                                                                                                                                                                                  12
+                                                                                                               >>> next(t)                         3                                                                    within parentheses
+Each branch of a tree is a tree, so a function that takes
+                                                                                                               3                                   >>> next(t)
+trees can be called recursively on each of its branches.                                                                                                                          >>> f = a.deposit
+                                                                                                               >>> next(t)                         5
+                                                                                                                                                                                  >>> f(10)
+def increment_leaves(t: Tree[int]) -> Tree[int]:                                                               4                                   >>> next(u)
+                                                                                                                                                                                  22
+    "Return a tree like t with the leaf labels incremented."                                                                                       4
+                                                                                                                                                                                  >>> a.balance
+    if not t.branches:                                                                                                                                                            22
+                                                                                                               • A for statement calls iter, then next until StopIteration.
+        return Tree(t.label + 1)                                                                                                                                                  >>> a.balance()        # int not callable
+                                                                                                               • iter of an iterator returns itself.
+    incremented = [increment_leaves(b) for b in t.branches]                                                                                                                       TypeError
+                                                                                                               • Adding a dict key while iterating over it: RuntimeError.
+    return Tree(t.label, incremented)
+                                                                                                               Lazy Evaluation                                                    Class vs. Instance Attributes
+List Mutation
+                                                                                                               These functions return iterators whose evaluation is lazy:         Assigning to <expression>.<name> sets an attribute on that
+>>> suits = ['coin', 'string', 'myriad', 'cup']                                                                                                                                   object: on an instance, an instance attribute; on a class, a
+>>> suits.pop()               # remove & return last                                                           map(func, iterable)       func(x) for x in iterable                class attribute.
+'cup'                                                                                                          filter(func, iterable)    x in iterable if func(x)
+                                                                                                               zip(first, second)        co-indexed (x, y) pairs                  >>> jim = Account('Jim')           >>> jim.interest = 0.08
+>>> suits.pop(1)              # remove & return index 1
+                                                                                                               reversed(sequence)        x in reverse order                       >>> tom = Account('Tom')           >>> jim.interest
+'string'
+                                                                                                                                                                                  >>> tom.interest                   0.08
+>>> suits.remove('myriad')    # remove first match
+                                                                                                               To view the contents of an iterator, place the items into a        0.02                               >>> tom.interest
+>>> suits
+                                                                                                               container with list, tuple, or sorted.                             >>> Account.interest = 0.04        0.04
+['coin']                                                                                                                                                                          >>> tom.interest                   >>> Account.interest = 0.05
+>>> suits.append('spade')     # add one to the end                                                             def double(x):
+                                                                                                                                                                                  0.04                               >>> tom.interest
+>>> suits.extend(['heart', 'club']) # add all to end                                                               print('***', x, '=>', 2*x, '***')                              >>> jim.interest                   0.05
+>>> suits[0] = 'diamond'                                                                                           return 2*x                                                     0.04                               >>> jim.interest
+>>> suits.insert(0, 'joker') # add at index                                                                    >>> s = [3, 4, 5]                   >>> list(doubled)                                                 0.08
+>>> suits                                                                                                      >>> doubled = map(double, s)        *** 4 => 8 ***
+['joker', 'diamond', 'spade', 'heart', 'club']                                                                 >>> next(doubled)                   *** 5 => 10 ***                Account (class)                jim (instance)      tom (instance)
+>>> print(suits.append('x')) # append returns None                                                                                                                                interest: 0.02 0.04 0.05       balance: 0          balance: 0
+                                                                                                               *** 3 => 6 ***                      [8, 10]
+None                          # so do extend, insert & remove                                                                                                                                                    interest: 0.08
+                                                                                                               6
+>>> s = [1, 2]                      >>> t = s                                                                                                                                     Inheritance
+                                                                                                               Generators
+>>> s.append([3, 4])                >>> s += [7]     # mutates
+>>> s.extend([5, 6])                >>> s = s + [8] # new list                                                 A generator function has yield in its body. Calling it             A subclass inherits all attributes of its base class and can
+>>> s                               >>> t                                                                      doesn't run the body: it returns a generator, which is an          override some. Use it for is-a relationships (a checking
+[1, 2, [3, 4], 5, 6]                [1, 2, [3, 4], 5, 6, 7]                                                    iterator. Each next runs the body until the next yield,            account is an account).
+                                                                                                               returns that value, and pauses there (local names keep their       class CheckingAccount(Account):
+>>> a = [10]                        >>> a = [10]                                                               values). When the body ends, next raises StopIteration.                """A bank account that charges for withdrawals."""
+>>> b = a      # same list          >>> b = [10]   # new list
+                                                                                                               def countdown(n):              >>> g = countdown(2)                    withdraw_fee = 1
+>>> a == b                          >>> a == b
+                                                                                                                   print('start')             >>> next(g)                             interest = 0.01
+True                                True
+                                                                                                                   while n > 0:               start                                   def withdraw(self, amount):
+>>> b.append(20)                    >>> b.append(20)
+>>> a == b                          >>> a == b                                                                         yield n                2                                           return super().withdraw(amount + self.withdraw_fee)
+True                                False                                                                              n -= 1                 >>> next(g)
+                                                                                                                   print('done')              1                                   super() = "the parent class's version, bound to self". Inside
+>>> a                               >>> a
+                                                                                                                                              >>> next(g)                         CheckingAccount.withdraw, super().withdraw(x) skips
+[10, 20]                            [10]
+                                                                                                               countdown(2) printed nothing; done                                 CheckingAccount and looks withdraw up starting in Account, so
+>>> b                               >>> b
+                                                                                                               each next resumes after yield. StopIteration                       the original behavior is used. self is passed automatically.
+[10, 20]                            [10, 20]                                                                                                                                      • Same as Account.withdraw(self, x).
+>>> a is b                          >>> a is b                                                                 yield from <it> yields every value of <it>, one at a time.         • Not self.withdraw(x); that finds CheckingAccount.withdraw
+True                                False                                                                                                                                           which results in infinite recursion.
+                                                                                                               def a_then_b(a, b):      >>> list(a_then_b([3, 4],
+                                                                                                                   yield from a         ...               range(5, 7)))           • Write self.withdraw_fee, not CheckingAccount.withdraw_fee,
+Mutation and Box-and-Pointer Diagrams                                                                                                                                               so a subclass or instance can override the fee.
+                                                                                                                   yield from b         [3, 4, 5, 6]
+                                                       list                                                                                                                       • A subclass __init__ overrides the parent's; call
+>>> s = [1, [2, 3], 4]                                  0      1       2       3                               A recursive call to a generator function returns an iterator.        super().__init__(...) to also run the parent's setup.
+>>> s.append([s[1], 5])                   s               1            4
+>>> print(s)                                            list                       list
+                                                                                                               def prefixes(s):                >>> list(prefixes('abc'))
+                                                                                                                                                                                  >>> ch = CheckingAccount('Tom') # Account.__init__
+[1, [2, 3], 4, [[2, 3], 5]]                              0     1                    0       1                    if s:                         ['a', 'ab', 'abc']                 >>> ch.interest     # Found in CheckingAccount
+                                                          2        3                           5                   yield from prefixes(s[:-1])                                    0.01
+                                                                                                                   yield s                                                        >>> ch.deposit(20) # Found in Account
+                                                                                                                                                                                  20
+Environment diagram: mutation inside a function                                                                                                                                   >>> ch.withdraw(5) # Found in CheckingAccount
+                                                                                                                                                                                  14
+ Global frame                                                                       func make_withdraw_list(balance) [parent=Global]
+                       make_withdraw_list                                                                                                                                         Looking up obj.name:
+                                                                                    list                                                                                          1. Evaluate obj to get an object.
+                                   withdraw                                                                  It changes the         def make_withdraw_list(balance: int):
+                                                                                     0                                                                                            2. If name is an instance attribute of that object, use it.
+                                                                                                           contents of the b            b = [balance]
+                                                                                      75                          list
+                                                                                                                                                                                  3. Otherwise look in the object's class, then its base class,
+ f1: make_withdraw_list [parent=Global]                                                                                                 def withdraw(amount: int) -> int:            then that class's base class, and so on.
+                                                                                    func withdraw(amount) [parent=f1]                                                             4. Not found anywhere: AttributeError.
+ withdraw doesn't                   balance 100                                                                                             if amount > b[0]:
+ reassign any name                                                                                                                                                                If an attribute is found in the class and is a function, you
+                                   withdraw                                                                Name bound outside
+                                                                                                                                                return 'Insufficient funds'
+ within the parent                                                                                                                                                                get a bound method.
+                                              b                                                              of withdraw def                b[0] = b[0] - amount
+                                                                                                                                                                                  obj.name = v always sets the attribute name on obj.
+                                     Return                                                                                                 return b[0]
+                                      value
+                                                                                                                                        return withdraw
+                                                                                                           Item assignment                                                        Memoization
+ f2: withdraw [parent=f1]                                                                                  changes a list
+                                                                                                                                                                                  Save each result (e.g. in a dict keyed by the argument) so a
+                                     amount 25                                                                                      withdraw = make_withdraw_list(100)            repeated call is just a lookup instead of being recomputed. A
+                                     Return                                                                                         withdraw(25)                                  memoized tree-recursive fib computes each fib(k) only once.
+                                      value 75
+

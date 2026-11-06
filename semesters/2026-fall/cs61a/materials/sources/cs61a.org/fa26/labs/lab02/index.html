@@ -1,0 +1,1271 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Lab 2: Higher-Order Functions | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Lab 2: Higher-Order Functions" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/labs/lab02/" />
+<meta property="og:url" content="https://cs61a.org/fa26/labs/lab02/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Lab 2: Higher-Order Functions" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Lab 2: Higher-Order Functions","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/labs/lab02/"},"url":"https://cs61a.org/fa26/labs/lab02/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Lab 2: Higher-Order Functions
+  
+  
+</h1>
+    <ul class="assignment-facts"><li><strong>Due:</strong> Wednesday 09/09 @ 11:59pm</li><li><strong>Points:</strong> 1</li><li><strong>Download:</strong> <a href="lab02.zip">lab02.zip</a></li></ul></header>
+<!-- @include topics/meta/attendance.md -->
+<h1 id="attendance">
+  
+  
+    <a href="#attendance" class="anchor-heading" aria-labelledby="attendance"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attendance
+  
+  
+</h1>
+    
+<p>All students will get attendance this week.</p>
+<p>If you get stuck, there are <a href="https://www.youtube.com/playlist?list=PLQbEF49eidA4">walkthrough videos</a> (@berkeley.edu login to YouTube required).</p>
+<h1 id="required-questions">
+  
+  
+    <a href="#required-questions" class="anchor-heading" aria-labelledby="required-questions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Required Questions
+  
+  
+</h1>
+    
+<h2 id="review">
+  
+  
+    <a href="#review" class="anchor-heading" aria-labelledby="review"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Review
+  
+  
+</h2>
+    
+<details class="hint"><summary>Short-Circuiting</summary><div>
+<p>What do you think will happen if we type the following into Python?</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1 / 0
+</code></pre></div></div>
+<p>Try it out in Python! You should see a <code>ZeroDivisionError</code>. But what about
+this expression?</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>True or 1 / 0
+</code></pre></div></div>
+<p>It evaluates to <code>True</code> because Python's <code>and</code> and <code>or</code> operators
+<em>short-circuit</em>. That is, they don't necessarily evaluate every operand.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Checks if:</th>
+<th>Evaluates from left to right up to:</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AND</td>
+<td>All values are true</td>
+<td>The first false value</td>
+<td><code>False and 1 / 0</code> evaluates to <code>False</code></td>
+</tr>
+<tr>
+<td>OR</td>
+<td>At least one value is true</td>
+<td>The first true value</td>
+<td><code>True or 1 / 0</code> evaluates to <code>True</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Short-circuiting happens when the operator reaches an operand that allows them
+to make a conclusion about the expression. For example, <code>and</code> will
+short-circuit as soon as it reaches the first false value because it then
+knows that not all the values are true.</p>
+<p>If <code>and</code> and <code>or</code> do not <em>short-circuit</em>, they just return the last value;
+another way to remember this is that <code>and</code> and <code>or</code> always return the last
+thing they evaluate, whether they short-circuit or not. Keep in mind that
+<code>and</code> and <code>or</code> don't always return booleans when using values other than
+<code>True</code> and <code>False</code>.</p>
+</div></details>
+<details class="hint"><summary>Lambda Expressions</summary><div>
+<p>Lambda expressions are expressions that evaluate to functions by specifying two
+things: the parameters and a return expression.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lambda &lt;parameters&gt;: &lt;return expression&gt;
+</code></pre></div></div>
+<p>While both <code>lambda</code> expressions and <code>def</code> statements create function objects,
+there are some notable differences. <code>lambda</code> expressions work like other
+expressions; much like a mathematical expression just evaluates to a number and
+does not alter the current environment, a <code>lambda</code> expression
+evaluates to a function without changing the current environment.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>lambda</code></th>
+<th><code>def</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>An <em>expression</em> that evaluates to a value.</td>
+<td>A <em>statement</em> that alters the environment.</td>
+</tr>
+<tr>
+<td><strong>Result of execution</strong></td>
+<td>Creates an anonymous lambda function with no intrinsic name.</td>
+<td>Creates a function with an intrinsic name and binds it to that name in the current environment.</td>
+</tr>
+<tr>
+<td><strong>Effect on the environment</strong></td>
+<td>Evaluating a <code>lambda</code> expression does <em>not</em> create or modify any variables.</td>
+<td>Executing a <code>def</code> statement both creates a new function object <em>and</em> binds it to a name in the current environment.</td>
+</tr>
+<tr>
+<td><strong>Usage</strong></td>
+<td>A <code>lambda</code> expression can be used anywhere that expects an expression, such as in an assignment statement or as the operator or operand of a call expression.</td>
+<td>After executing a <code>def</code> statement, use the function's bound name anywhere that expects an expression.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong><code>lambda</code> examples</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># A lambda expression by itself does not alter</span>
+<span class="c1"># the environment</span>
+<span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+
+<span class="c1"># We can assign lambda functions to a name</span>
+<span class="c1"># with an assignment statement</span>
+<span class="n">square</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">square</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Lambda expressions can be used as an operator</span>
+<span class="c1"># or operand</span>
+<span class="n">negate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">negate</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+<p><strong><code>def</code> example</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">square</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+
+<span class="c1"># A function created by a def statement</span>
+<span class="c1"># can be referred to by its intrinsic name</span>
+<span class="n">square</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+</div></details>
+<details class="hint"><summary>Higher-Order Functions</summary><div>
+<p>Variables are names bound to values, which can be primitives like <code>3</code> or
+<code>'Hello World'</code>, but they can also be functions. And since functions can take
+arguments of any value, other functions can be passed in as arguments. This is
+the basis for higher-order functions.</p>
+<p>A higher-order function is a function that manipulates other functions by
+taking in functions as arguments, returning a function, or both.</p>
+<h3 id="functions-as-arguments">
+  
+  
+    <a href="#functions-as-arguments" class="anchor-heading" aria-labelledby="functions-as-arguments"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Functions as arguments
+  
+  
+</h3>
+    
+<p>In Python, function objects are values that can be passed around. We know that
+one way to create functions is by using a <code>def</code> statement:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def square(x):
+    return x * x
+</code></pre></div></div>
+<p>The above statement created a function object with the intrinsic name <code>square</code>
+as well as binded it to the name <code>square</code> in the current environment. Now
+let's try passing it as an argument.</p>
+<p>First, let's write a function that takes in another function as an argument:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def scale(f, x, k):
+    &quot;&quot;&quot; Returns the result of f(x) scaled by k. &quot;&quot;&quot;
+    return k * f(x)
+</code></pre></div></div>
+<p>We can now call <code>scale</code> on <code>square</code> and some other arguments:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; scale(square, 3, 2) # Double square(3)
+18
+&gt;&gt;&gt; scale(square, 2, 5) # 5 times 2 squared
+20
+</code></pre></div></div>
+<p>Note that in the body of the call to <code>scale</code>, the function object with the
+intrinsic name <code>square</code> is bound to the parameter <code>f</code>. Then, we call <code>square</code>
+in the body of <code>scale</code> by calling <code>f(x)</code>.</p>
+<p>As we saw in the section on <code>lambda</code> expressions, we can also pass <code>lambda</code>
+expressions into call expressions!</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; scale(lambda x: x + 10, 5, 2)
+30
+</code></pre></div></div>
+<p>In the frame for this call expression, the name <code>f</code> is bound to the function
+created by the <code>lambda</code> expression <code>lambda x: x + 10</code>.</p>
+<h3 id="functions-that-return-functions">
+  
+  
+    <a href="#functions-that-return-functions" class="anchor-heading" aria-labelledby="functions-that-return-functions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Functions that return functions
+  
+  
+</h3>
+    
+<p>Because functions are values, they are valid as return values! Here's an
+example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def multiply_by(m):
+    def multiply(n):
+        return n * m
+    return multiply
+</code></pre></div></div>
+<p>In this particular case, we defined the function <code>multiply</code> within the body of
+<code>multiply_by</code> and then returned it. Let's see it in action:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; multiply_by(3)
+&lt;function multiply_by.&lt;locals&gt;.multiply at ...&gt;
+&gt;&gt;&gt; multiply(4)
+Traceback (most recent call last):
+File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+NameError: name &#x27;multiply&#x27; is not defined
+</code></pre></div></div>
+<p>A call to <code>multiply_by</code> returns a function, as expected. However, calling
+<code>multiply</code> errors, even though that's the name we gave the inner function.
+This is because the name <code>multiply</code> only exists within the frame where we
+evaluate the body of <code>multiply_by</code>.</p>
+<p>So how do we actually use the inner function? Here are two ways:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; times_three = multiply_by(3) # Assign the result of the call expression to a name
+&gt;&gt;&gt; times_three(5) # Call the inner function with its new name
+15
+&gt;&gt;&gt; multiply_by(3)(10) # Chain together two call expressions
+30
+</code></pre></div></div>
+<p>The point is, because <code>multiply_by</code> returns a function, you can use its return
+value just like you would use any other function.</p>
+</div></details>
+<details class="hint"><summary>Environment Diagrams</summary><div>
+<p>Environment diagrams are one of the best learning tools for understanding
+<code>lambda</code> expressions and higher-order functions because you're able to keep
+track of all of the different names, function objects, and arguments to
+functions. We highly recommend drawing environment diagrams or using <a href="https://tutor.cs61a.org">Python
+tutor</a> if you get stuck doing the WWPD problems
+below. For examples of what environment diagrams should look like, try running
+some code in Python tutor. Here are the rules:</p>
+<h3 id="assignment-statements">
+  
+  
+    <a href="#assignment-statements" class="anchor-heading" aria-labelledby="assignment-statements"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Assignment Statements
+  
+  
+</h3>
+    
+<ol>
+<li>Evaluate the expression on the right hand side of the <code>=</code> sign.</li>
+<li>If the name found on the left hand side of the <code>=</code> doesn't already exist in
+the current frame, write it in. If it does, erase the current binding. Bind
+the <em>value</em> obtained in step 1 to this name.</li>
+</ol>
+<p>If there is more than one name/expression in the statement, evaluate all of
+the expressions first from left to right before making any bindings.</p>
+<iframe title="Python Tutor environment diagram for assignment statements" width="800" height="270" frameborder="0"
+src="https://pythontutor.com/iframe-embed.html#code=x%20%3D%2010%0Ay%20%3D%20x%0Ax%20%3D%2020%0Ax,%20y%20%3D%20y%20%2B%201,%20x%20-%201&codeDivHeight=400&codeDivWidth=350&cumulative=true&curInstr=0&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D">
+</iframe>
+<h3 id="def-statements">
+  
+  
+    <a href="#def-statements" class="anchor-heading" aria-labelledby="def-statements"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>def</code> Statements
+  
+  
+</h3>
+    
+<ol>
+<li>Draw the function object with its intrinsic name, formal parameters, and
+parent frame. A function's parent frame is the frame in which the function was
+defined.</li>
+<li>If the intrinsic name of the function doesn't already exist in the current
+frame, write it in. If it does, erase the current binding. Bind the newly
+created function object to this name.</li>
+</ol>
+<iframe title="Python Tutor environment diagram for def statements" width="800" height="360" frameborder="0"
+src="https://pythontutor.com/iframe-embed.html#code=def%20f%28x%29%3A%0A%20%20%20%20return%20x%20%2B%201%0A%0Adef%20g%28y%29%3A%0A%20%20%20%20return%20y%20-%201%0A%0Adef%20f%28z%29%3A%0A%20%20%20%20return%20x%20*%202&codeDivHeight=400&codeDivWidth=350&cumulative=true&curInstr=0&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D">
+</iframe>
+<h3 id="call-expressions">
+  
+  
+    <a href="#call-expressions" class="anchor-heading" aria-labelledby="call-expressions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Call expressions
+  
+  
+</h3>
+    
+<blockquote>
+<p>Note: you do not have to go through this process for a built-in Python
+function like <code>max</code> or <code>print</code>.</p>
+</blockquote>
+<ol>
+<li>Evaluate the operator, whose value should be a function.</li>
+<li>Evaluate the operands left to right.</li>
+<li>Open a new frame. Label it with the sequential frame number, the intrinsic
+name of the function, and its parent.</li>
+<li>Bind the formal parameters of the function to the arguments whose values
+you found in step 2.</li>
+<li>Execute the body of the function in the new environment.</li>
+</ol>
+<iframe title="Python Tutor environment diagram for call expressions" width="800" height="330" frameborder="0"
+src="https://pythontutor.com/iframe-embed.html#code=def%20f%28a,%20b,%20c%29%3A%0A%20%20%20%20return%20a%20*%20%28b%20%2B%20c%29%0A%0Adef%20g%28x%29%3A%0A%20%20%20%20return%203%20*%20x%0A%0Af%281%20%2B%202,%20g%282%29,%206%29&codeDivHeight=400&codeDivWidth=350&cumulative=true&curInstr=0&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D">
+</iframe>
+<h3 id="lambdas">
+  
+  
+    <a href="#lambdas" class="anchor-heading" aria-labelledby="lambdas"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Lambdas
+  
+  
+</h3>
+    
+<blockquote>
+<p><em>Note:</em> As we saw in the <code>lambda</code> expression section above, <code>lambda</code>
+functions have no intrinsic name. When drawing <code>lambda</code> functions in
+environment diagrams, they are labeled with the name <code>lambda</code> or with the
+lowercase Greek letter λ. This can get confusing when there are
+multiple lambda functions in an environment diagram, so you can distinguish
+them by numbering them or by writing the line number on which they were
+defined.</p>
+</blockquote>
+<ol>
+<li>Draw the lambda function object and label it with λ, its formal
+parameters, and its parent frame. A function's parent frame is the frame in
+which the function was defined.</li>
+</ol>
+<p>This is the only step. We are including this section to emphasize the fact
+that the difference between <code>lambda</code> expressions and <code>def</code> statements is that
+<code>lambda</code> expressions <em>do not</em> create any new bindings in the environment.</p>
+<iframe title="Python Tutor environment diagram for lambda expressions" width="800" height="330" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=lambda%20x%3A%20x%20*%20x%20%23no%20binding%20created%0Asquare%20%3D%20lambda%20x%3A%20x%20*%20x%0Asquare%284%29%20%23calling%20a%20lambda%20function%0A&codeDivHeight=400&codeDivWidth=350&cumulative=true&curInstr=0&heapPrimitives=false&origin=opt-frontend.js&py=3&rawInputLstJSON=%5B%5D&textReferences=false"> </iframe>
+</div></details>
+<h2 id="what-would-python-display-wwpd">
+  
+  
+    <a href="#what-would-python-display-wwpd" class="anchor-heading" aria-labelledby="what-would-python-display-wwpd"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What Would Python Display? (WWPD)
+  
+  
+</h2>
+    
+<h3 id="q1-wwpd-the-truth-will-prevail">
+  
+  
+    <a href="#q1-wwpd-the-truth-will-prevail" class="anchor-heading" aria-labelledby="q1-wwpd-the-truth-will-prevail"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: WWPD: The Truth Will Prevail
+  
+  
+</h3>
+    
+<p>Predict what Python will display when the following lines are entered into an
+interactive session, then unlock the test to check your answers. Type <code>FUNCTION</code>
+if you believe the answer is a function, <code>ERROR</code> if it errors, and <code>NOTHING</code> if
+nothing is displayed:</p>
+<div class="pytest-command" data-command="python3 -m pytest -k short_circuit --unlock"><pre><code>python3 -m pytest -k short_circuit --unlock</code></pre></div>
+<details class="unlock-examples" open>
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; True and 13
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; False or 0
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; not 10
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; not None
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; True and 1 / 0
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; True or 1 / 0
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; -1 and 1 &gt; 0
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; -1 or 5
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; (1 + 1) and 1
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(3) or &quot;&quot;
+<span class="wwpd-blank">______</span>
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; def f(x):
+...     if x == 0:
+...         return &quot;zero&quot;
+...     elif x &gt; 0:
+...         return &quot;positive&quot;
+...     else:
+...         return &quot;&quot;
+&gt;&gt;&gt; 0 or f(1)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; f(0) or f(-1)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; f(0) and f(-1)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<h3 id="q2-wwpd-higher-order-functions">
+  
+  
+    <a href="#q2-wwpd-higher-order-functions" class="anchor-heading" aria-labelledby="q2-wwpd-higher-order-functions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: WWPD: Higher-Order Functions
+  
+  
+</h3>
+    
+<p>Predict what Python will display when the following lines are entered into an
+interactive session, then unlock the test to check your answers:</p>
+<blockquote>
+<p><strong>Important:</strong> Type <code>FUNCTION</code> if you believe the answer is a function
+value, such as <code>&lt;function f at ...&gt;</code> or <code>&lt;built-in function pow&gt;</code>.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k hof_wwpd --unlock"><pre><code>python3 -m pytest -k hof_wwpd --unlock</code></pre></div>
+<details class="unlock-examples" open>
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; def cake():
+...    print(&#x27;beets&#x27;)
+...    def pie():
+...        print(&#x27;sweets&#x27;)
+...        return &#x27;cake&#x27;
+...    return pie
+&gt;&gt;&gt; chocolate = cake()
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; chocolate
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; chocolate()
+<span class="wwpd-blank">______</span>
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; more_chocolate, more_cake = chocolate(), cake
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; more_chocolate
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; def snake(x, y):
+...    if cake == more_cake:
+...        return chocolate
+...    else:
+...        return x + y
+&gt;&gt;&gt; snake(10, 20)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; snake(10, 20)()
+<span class="wwpd-blank">______</span>
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; cake = &#x27;cake&#x27;
+&gt;&gt;&gt; snake(10, 20)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<h3 id="q3-wwpd-lambda">
+  
+  
+    <a href="#q3-wwpd-lambda" class="anchor-heading" aria-labelledby="q3-wwpd-lambda"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: WWPD: Lambda
+  
+  
+</h3>
+    
+<p>Predict what Python will display when the following lines are entered into an
+interactive session, then unlock the test to check your answers:</p>
+<blockquote>
+<p><strong>Important:</strong> Type <code>FUNCTION</code> if you believe the answer is a function
+value. As a reminder, the following two lines of code will not display any
+output in the interactive Python interpreter when executed:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; x = None
+&gt;&gt;&gt; x
+&gt;&gt;&gt;
+</code></pre></div></div>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k lambda_wwpd --unlock"><pre><code>python3 -m pytest -k lambda_wwpd --unlock</code></pre></div>
+<details class="unlock-examples" open>
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; lambda x: x  # A lambda expression with one parameter x
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; a = lambda x: x  # Assigning the lambda function to the name a
+&gt;&gt;&gt; a(5)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; (lambda: 3)()  # Using a lambda expression as an operator in a call expression
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; b = lambda x, y: lambda: x + y  # Lambdas can return other lambdas!
+&gt;&gt;&gt; c = b(8, 4)
+&gt;&gt;&gt; c
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; c()
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; d = lambda f: f(4)  # They can have functions as arguments as well
+&gt;&gt;&gt; def square(x):
+...     return x * x
+&gt;&gt;&gt; d(square)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; higher_order_lambda = lambda f: lambda x: f(x)
+&gt;&gt;&gt; g = lambda x: x * x
+&gt;&gt;&gt; higher_order_lambda(g)(2)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; call_thrice = lambda f: lambda x: f(f(f(x)))
+&gt;&gt;&gt; call_thrice(lambda y: y + 2)(5)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print_lambda = lambda z: print(z)  # When is the return expression of a lambda expression executed?
+&gt;&gt;&gt; print_lambda
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; one_thousand = print_lambda(1000)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; print(one_thousand)  # What did the call to print_lambda return?
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<h2 id="write-code">
+  
+  
+    <a href="#write-code" class="anchor-heading" aria-labelledby="write-code"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Write Code
+  
+  
+</h2>
+    
+<h3 id="q4-piecewise">
+  
+  
+    <a href="#q4-piecewise" class="anchor-heading" aria-labelledby="q4-piecewise"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Piecewise
+  
+  
+</h3>
+    
+<p>Implement <code>piecewise</code>, which takes two one-argument functions, <code>f</code> and <code>g</code>,
+along with a number <code>b</code>. It returns a new function that takes a number <code>x</code> and
+returns either <code>f(x)</code> if <code>x</code> is less than <code>b</code>, or <code>g(x)</code> if <code>x</code> is greater than
+or equal to <code>b</code>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">piecewise</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the piecewise function h where:</span>
+
+<span class="sd">    h(x) = f(x) if x &lt; b,</span>
+<span class="sd">           g(x) otherwise</span>
+
+<span class="sd">    &gt;&gt;&gt; def negate(x):</span>
+<span class="sd">    ...     return -x</span>
+<span class="sd">    &gt;&gt;&gt; identity = lambda x: x</span>
+<span class="sd">    &gt;&gt;&gt; abs_value = piecewise(negate, identity, 0)</span>
+<span class="sd">    &gt;&gt;&gt; abs_value(6)</span>
+<span class="sd">    6</span>
+<span class="sd">    &gt;&gt;&gt; abs_value(-1)</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k piecewise"><pre><code>python3 -m pytest -k piecewise</code></pre></div>
+<h3 id="q5-count-cond">
+  
+  
+    <a href="#q5-count-cond" class="anchor-heading" aria-labelledby="q5-count-cond"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q5: Count Cond
+  
+  
+</h3>
+    
+<p>Consider the following implementations of <code>count_fives</code> and <code>count_primes</code>,
+which use the <code>sum_digits</code> and <code>is_prime</code> functions defined in your starter
+file:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def count_fives(n):
+    &quot;&quot;&quot;Return the number of values i from 1 to n (including n)
+    where sum_digits(n * i) is 5.
+
+    &gt;&gt;&gt; count_fives(10)  # Among 10, 20, 30, ..., 100, only 50 (10 * 5) has digit sum 5
+    1
+    &gt;&gt;&gt; count_fives(50)  # 50 (50 * 1), 500 (50 * 10), 1400 (50 * 28), 2300 (50 * 46)
+    4
+    &quot;&quot;&quot;
+    i = 1
+    count = 0
+    while i &lt;= n:
+        if sum_digits(n * i) == 5:
+            count += 1
+        i += 1
+    return count
+
+def count_primes(n):
+    &quot;&quot;&quot;Return the number of prime numbers up to and including n.
+
+    &gt;&gt;&gt; count_primes(6)   # 2, 3, 5
+    3
+    &gt;&gt;&gt; count_primes(13)  # 2, 3, 5, 7, 11, 13
+    6
+    &quot;&quot;&quot;
+    i = 1
+    count = 0
+    while i &lt;= n:
+        if is_prime(i):
+            count += 1
+        i += 1
+    return count
+</code></pre></div></div>
+<p>The implementations look quite similar! Generalize this logic by writing a
+function <code>count_cond</code>, which takes in a two-argument predicate function
+<code>condition(n, i)</code>. <code>count_cond</code> returns a one-argument function that takes in
+<code>n</code>, which counts all the numbers from 1 to <code>n</code> that satisfy <code>condition</code> when
+called.</p>
+<blockquote>
+<p><strong>Note:</strong> When we say <code>condition</code> is a predicate function, we mean that it
+is a function that will return <code>True</code> or <code>False</code>.</p>
+</blockquote>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">count_cond</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function with one parameter n that counts all the numbers i</span>
+<span class="sd">    (1 to n) that satisfy the two-argument predicate function condition, where</span>
+<span class="sd">    the first argument for condition is n and the second argument is i.</span>
+
+<span class="sd">    &gt;&gt;&gt; count_fives = count_cond(lambda n, i: sum_digits(n * i) == 5)</span>
+<span class="sd">    &gt;&gt;&gt; count_fives(10)   # 50 (10 * 5)</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; count_fives(50)   # 50 (50 * 1), 500 (50 * 10), 1400 (50 * 28), 2300 (50 * 46)</span>
+<span class="sd">    4</span>
+
+<span class="sd">    &gt;&gt;&gt; is_i_prime = lambda n, i: is_prime(i) # need to pass 2-argument function into count_cond</span>
+<span class="sd">    &gt;&gt;&gt; count_primes = count_cond(is_i_prime)</span>
+<span class="sd">    &gt;&gt;&gt; count_primes(2)    # 2</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; count_primes(3)    # 2, 3</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; count_primes(4)    # 2, 3</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; count_primes(5)    # 2, 3, 5</span>
+<span class="sd">    3</span>
+<span class="sd">    &gt;&gt;&gt; count_primes(20)   # 2, 3, 5, 7, 11, 13, 17, 19</span>
+<span class="sd">    8</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k count_cond"><pre><code>python3 -m pytest -k count_cond</code></pre></div>
+<h2 id="environment-diagrams">
+  
+  
+    <a href="#environment-diagrams" class="anchor-heading" aria-labelledby="environment-diagrams"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Environment Diagrams
+  
+  
+</h2>
+    
+<h3 id="q6-hof-diagram-practice">
+  
+  
+    <a href="#q6-hof-diagram-practice" class="anchor-heading" aria-labelledby="q6-hof-diagram-practice"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q6: HOF Diagram Practice
+  
+  
+</h3>
+    
+<p>Draw the environment diagram that results from executing the code below on
+paper or a whiteboard. Use <a href="https://tutor.cs61a.org">tutor.cs61a.org</a> to check
+your work. There is nothing to submit for this question.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = 7
+
+def f(x):
+    n = 8
+    return x + 1
+
+def g(x):
+    n = 9
+    def h():
+        return x + 1
+    return h
+
+def f(f, x):
+    return f(x + n)
+
+f = f(g, n)
+g = (lambda y: y())(f)
+</code></pre></div></div>
+<h2 id="survey">
+  
+  
+    <a href="#survey" class="anchor-heading" aria-labelledby="survey"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Survey
+  
+  
+</h2>
+    
+<h3 id="q7-week-3-survey">
+  
+  
+    <a href="#q7-week-3-survey" class="anchor-heading" aria-labelledby="q7-week-3-survey"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q7: Week 3 Survey
+  
+  
+</h3>
+    
+<p>As part of this assignment, fill out the
+<a href="https://forms.gle/nbhRwerW4MQEWWDB8">Week 3 Survey</a> form.</p>
+<p>Once you finish the survey, you will be presented with a passphrase. Put
+this passphrase, as a string, on the line that says
+<code>passphrase = 'REPLACE_THIS_WITH_PASSPHRASE'</code> in the Python file for this
+assignment. E.g. if the passphrase is <code>abc</code>, then the line should be
+<code>passphrase = 'abc'</code>.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k week3_survey"><pre><code>python3 -m pytest -k week3_survey</code></pre></div>
+<h1 id="submit-assignment">
+  
+  
+    <a href="#submit-assignment" class="anchor-heading" aria-labelledby="submit-assignment"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Submit Assignment
+  
+  
+</h1>
+    
+<p>Submit this assignment by running
+<strong>Provenance: Prepare Submission Bundle</strong> from the VS Code command palette and
+uploading the resulting zip <strong>to Gradescope</strong>. The zip already contains the
+files you've edited.
+<a href="../../labs/lab00/#task-c-submit-the-assignment">Lab 00</a> has detailed
+instructions.</p>
+<p>Your responses to WWPD questions are not submitted, and they do not need to
+be. Lab credit is based on the code writing questions.</p>
+<h1 id="optional-questions">
+  
+  
+    <a href="#optional-questions" class="anchor-heading" aria-labelledby="optional-questions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Optional Questions
+  
+  
+</h1>
+    
+<blockquote>
+<p>These questions are optional. If you don't complete them, you will
+still receive credit for this assignment. They are great practice, so do them
+anyway!</p>
+</blockquote>
+<h2 id="q8-i-heard-you-liked-functions">
+  
+  
+    <a href="#q8-i-heard-you-liked-functions" class="anchor-heading" aria-labelledby="q8-i-heard-you-liked-functions"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q8: I Heard You Liked Functions...
+  
+  
+</h2>
+    
+<p>Define a function <code>cycle</code> that takes in three functions <code>f1</code>, <code>f2</code>, and <code>f3</code>,
+as arguments. <code>cycle</code> will return another function <code>g</code> that should take in an
+integer argument <code>n</code> and return another function <code>h</code>. That final function <code>h</code>
+should take in an argument <code>x</code> and cycle through applying <code>f1</code>, <code>f2</code>, and <code>f3</code>
+to <code>x</code>, depending on what <code>n</code> was. Here's what the final function <code>h</code> should
+do to <code>x</code> for a few values of <code>n</code>:</p>
+<ul>
+<li><code>n = 0</code>, return <code>x</code></li>
+<li><code>n = 1</code>, apply <code>f1</code> to <code>x</code>, or return <code>f1(x)</code></li>
+<li><code>n = 2</code>, apply <code>f1</code> to <code>x</code> and then <code>f2</code> to the result of that, or return
+<code>f2(f1(x))</code></li>
+<li><code>n = 3</code>, apply <code>f1</code> to <code>x</code>, <code>f2</code> to the result of applying <code>f1</code>, and then
+<code>f3</code> to the result of applying <code>f2</code>, or <code>f3(f2(f1(x)))</code></li>
+<li><code>n = 4</code>, start the cycle again applying <code>f1</code>, then <code>f2</code>, then <code>f3</code>, then
+<code>f1</code> again, or <code>f1(f3(f2(f1(x))))</code></li>
+<li>And so forth.</li>
+</ul>
+<blockquote>
+<p><em>Hint</em>: most of the work goes inside the most nested function.</p>
+</blockquote>
+<blockquote>
+<p><em>Hint</em>: How can you utilize the <code>%</code> operator to achieve the cyclic behavior?
+Try computing <code>n % 3</code> for all integers <code>n</code> from 0 to 12. What pattern do you
+notice?</p>
+</blockquote>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">cycle</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function that is itself a higher-order function.</span>
+
+<span class="sd">    &gt;&gt;&gt; def add1(x):</span>
+<span class="sd">    ...     return x + 1</span>
+<span class="sd">    &gt;&gt;&gt; def times2(x):</span>
+<span class="sd">    ...     return x * 2</span>
+<span class="sd">    &gt;&gt;&gt; def add3(x):</span>
+<span class="sd">    ...     return x + 3</span>
+<span class="sd">    &gt;&gt;&gt; my_cycle = cycle(add1, times2, add3)</span>
+<span class="sd">    &gt;&gt;&gt; identity = my_cycle(0)</span>
+<span class="sd">    &gt;&gt;&gt; identity(5)</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; add_one_then_double = my_cycle(2)</span>
+<span class="sd">    &gt;&gt;&gt; add_one_then_double(1)</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; do_all_functions = my_cycle(3)</span>
+<span class="sd">    &gt;&gt;&gt; do_all_functions(2)</span>
+<span class="sd">    9</span>
+<span class="sd">    &gt;&gt;&gt; do_more_than_a_cycle = my_cycle(4)</span>
+<span class="sd">    &gt;&gt;&gt; do_more_than_a_cycle(2)</span>
+<span class="sd">    10</span>
+<span class="sd">    &gt;&gt;&gt; do_two_cycles = my_cycle(6)</span>
+<span class="sd">    &gt;&gt;&gt; do_two_cycles(1)</span>
+<span class="sd">    19</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+<div class="pytest-command" data-command="python3 -m pytest -k cycle"><pre><code>python3 -m pytest -k cycle</code></pre></div>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

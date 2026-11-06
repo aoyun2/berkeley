@@ -1,0 +1,485 @@
+Source: https://cs61a.org/fa26/assets/lec/27-Functional_Programming.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Functional Programming
+Announcements
+What's Next?
+ New Programming Language Ideas
+
+ • Algebraic data types and pattern matching (Rust, Swift, TypeScript, etc.)
+
+ • Working effectively with immutable data (Rust, Erlang, Scala, etc.)
+
+ • Value-based error handling (Rust, Go, Elm, etc.)
+
+ Interpreters
+
+ • Implementing the rules for how programs run
+
+ • Controlling how programs run
+
+ Applications
+
+ • Program design and web technologies
+
+ • AI-assisted software development
+                                                                               3
+Functional Programming
+Perspective on Programming
+
+Imperative: Programs are instructions for updating memory
+
+Object-oriented: Programs define objects that behave like entities they represent
+
+Functional: Programs are data definitions and pure functions that generate data
+
+These aren't mutually exclusive, and ideas from each perspective can be combined
+
+
+
+
+                                                                                    5
+The Gleam Language
+Some characteristics of Gleam that make it a functional language:
+
+• Program behavior is just functions, and function bodies are expressions
+
+• Functions are first-class values that can be passed as arguments and returned
+
+• Anonymous functions are convenient to create and used liberally
+
+• All values are immutable (and no for/while loops that update variables)
+
+
+Why learn Gleam in particular?
+
+• It's small & simple: only functions, names, and one form of conditional (case)
+
+• A nice language for learning about algebraic data types and pattern matching
+
+• Great preparation for learning Rust, Swift, and Typescript (which are larger)
+
+
+                                                                                   6
+Gleam Functions
+Gleam Programs
+Gleam programs are organized into modules (files). For a while, we'll just write one module.
+
+
+There must be a main function that is accessible to users of the module (marked as pub):
+
+
+pub fn main() {
+  echo 61
+             echo displays any value, similar
+}
+                to Python's print function
+
+You can also define more functions and call them.
+
+
+
+
+                                https://playground.gleam.run/
+
+                                           (Demo)
+                                                                                           8
+Expressions
+An expression is evaluated in an environment (that gives names meaning) to produce a value.
+
+The body of Gleam functions are all expressions, which can be:
+
+• Literal expressions:          2   3.3     True   "Hello"
+
+• Call expressions:             f(2, 3)
+
+• Let expressions:              let x = 4
+
+• Echo expressions:             echo x
+
+• Case expressions:
+       case x > 3 {                      case x {
+           True -> "big"                     3 -> "three"
+           False -> "not big"                4 -> "four"
+       }                                     _ -> "not three or four"
+                                         }
+
+
+                                             (Demo)
+                                                                                              9
+Defining Functions
+
+No return in Gleam; the value of a call expression is the value of its body expression
+
+
+
+def sum_squares(x, y):                   fn sum_squares(x, y) {
+    return x * x + y * y                   x * x + y * y
+                                         }
+
+
+Instead of multiple return statements, Gleam returns the value of the case expression
+
+
+def fib(n):                                      fn fib(n) {
+    if n == 0:                                     case n {
+        return 0                                     0 -> 0
+    elif n == 1:                                     1 -> 1
+        return 1                                     _ -> fib(n - 2) + fib(n - 1)
+    else:                                          }
+        return fib(n - 2) + fib(n - 1)           }
+
+
+
+                                                                                         10
+Guards in Case Expressions
+
+There is if in Gleam! It introduces a guard on a pattern in a case expression
+
+ pub fn describe(n: Int) -> String {
+   case n {
+     _ if n < 0 -> "Negative"
+     0 -> "None"
+     1 -> "One"
+     2 | 3 | 4 -> "Few"                     Nil is "a value that is returned by
+     _ -> "Many"                            functions that have nothing else to return,
+   }                                        as all functions must return something."
+ }
+
+ pub fn sign(n: Int) -> Int {               pub fn sign(n: Int) -> Int {
+   case n {                                   case Nil {
+     _ if n > 0 -> 1                            _ if n > 0 -> 1
+     _ if n < 0 -> -1                           _ if n < 0 -> -1
+     _ -> 0                                     _ -> 0
+   }                                          }
+ }       No reference of n                  }
+
+
+                                                                                          11
+Higher-Order Functions
+Function Types and Anonymous Functions
+
+An anonymous function can be created with fn: fn(x, y) { x + y }
+
+A function type can be declared with fn: fn(Int, Int) -> Int
+
+These are used together to create higher-order functions
+
+
+            A function type for a one-         Calling combine on a function that multiplies
+           argument function of integers
+                                                 combine(2, 3, 4, fn (x, y) { x * y })
+fn make_adder(n: Int) -> fn(Int) -> Int {
+  fn(k) { n + k }                              fn combine(x: Int, y: Int, z: Int,
+}                                                         f: fn(Int, Int) -> Int) -> Int {
+                                                 f(f(x, y), z)
+                                               }
+Calling make_adder returns a function,
+which can be called to add 3 and 4                     A function type for a two-
+                                                      argument function of integers
+ make_adder(3)(4)
+
+
+                                                                                             13
+Assignment
+Gleam Let
+                                                  fn sum_squares(x, y) {
+Assign a value to a local name with let:
+                                                      fn (x2) {
+fn sum_squares(x, y) {
+                                                        fn (y2) {
+    let x2 = x * x
+                                                           x2 + y2
+    let y2 = y * y           Is equivalent to
+                                                         }(y * y)
+    x2 + y2
+                                                      }(x * x)
+}
+                                                  }
+
+Each let introduces a new scope (equivalent to a new local frame)
+
+                          pub fn main() {
+    >>> x = 3
+                            let x = 3
+    >>> f = lambda: x
+                            let f = fn () {x}
+    >>> x = 4
+                            let x = 4
+    >>> f()
+                            echo f()
+    4
+                          }
+
+
+                                                                           15
+Blocks
+Blocks
+
+Blocks can contain multiple lines, and they evaluate to the value of their last expression
+
+A let within a block does not affect expressions outside the block
+
+Blocks are used to change the order of evaluation in arithmetic (instead of parentheses)
+
+  /// Compute a*x*x + b*x + c
+  pub fn quadratic(x: Int, a: Int, b: Int, c: Int) -> Int {
+    let ax2 = {
+      let x2 = x * x
+      a * x2
+    }
+
+      // ax2 is in scope here, but x2 is not
+      ax2 + b * x + c
+  }
+
+
+  let celsius = { fahrenheit - 32 } * 5 / 9
+  echo celsius
+
+                                                                                             17
+Iteration
+Python vs Gleam: Iteration
+Gleam has no for/while statements, so recursion is required to iterate.
+
+
+                                                fn sum_first(n) {
+                                                  sum_from(n, 1, 0)
+  >>> def sum_first(n):                         }
+  ...     k = 1
+  ...     total = 0                             fn sum_from(n, k, total) {
+  ...     while k <= n:                           case k <= n {
+  ...         k, total = k + 1, total + k           True -> sum_from(n, k + 1, total + k)
+  ...     return total                              False -> total
+  ...                                             }
+  >>> sum_first(5)                              }
+  15
+
+
+
+
+                                                                                            19
+Evaluation by Substitution
+With no loops or mutation, call expressions can be evaluated by substitution:
+
+To apply a function to arguments, evaluate the body of the function with each formal
+parameter replaced by the corresponding argument.
+
+ fn sum_first(n)
+     sum_first(1) {
+     sum_first(2)
+     sum_first(3)
+     sum_first(0)
+     sum_first(4)
+     sum_first(5)
+   case n1 {
+         2
+         3
+         0
+         4
+         5
+      0 -> 0
+      _ -> n
+           5
+           2
+           4
+           3
+           1 + sum_first(n-1)
+           0   sum_first(1-1)
+               sum_first(2-1)
+               sum_first(3-1)
+               sum_first(0-1)
+               sum_first(4-1)
+               sum_first(5-1)
+   }
+ }
+  sum_first(5)
+  5 + sum_first(4)
+  5 + 4 + sum_first(3)
+  5 + 4 + 3 + sum_first(2)
+  5 + 4 + 3 + 2 + sum_first(1)
+  5 + 4 + 3 + 2 + 1 + sum_first(0)
+  5 + 4 + 3 + 2 + 1 + 0
+                                                                                       20
+Tail Recursion
+Comparing Two Processes
+                                       fn sum_first(n)
+                                          sum_first(5) {
+Some recursive processes grow, while     sum_from(5, 1, 0)
+                                         sum_from(n,
+others have a fixed size.              }
+
+                                       fn sum_from(n,
+                                           sum_from(5, k,3,
+                                                         1,
+                                                         2,
+                                                         4,
+                                                         5,
+                                                         6, total)
+                                                              15
+                                                              10
+                                                              6
+                                                              3
+                                                              0    {
+ fn sum_first(n) {                       case k6 > n
+                                               5
+                                               4
+                                               3
+                                               2
+                                               1   5 {
+   case n {                                 True -> total
+                                                     3
+                                                     0
+                                                     1
+                                                     605
+     0 -> 0                                            sum_from(5, k
+                                            False -> sum_from(n,   2
+                                                                   4
+                                                                   6 + 1, total
+                                                                   3
+                                                                   1
+                                                                   5        15
+                                                                            10
+                                                                            6
+                                                                            3
+                                                                            0   + k)
+                                                                                  5)
+                                                                                  1)
+                                                                                  2)
+                                                                                  3)
+                                                                                  6)
+     _ -> n + sum_first(n-1)             }
+   }                                   }
+ }                                     sum_first(5)
+ sum_first(5)                          sum_from(5, 1, 0)
+ 5 + sum_first(4)                      sum_from(5, 2, 1)
+ 5 + 4 + sum_first(3)                  sum_from(5, 3, 3)
+ 5 + 4 + 3 + sum_first(2)              sum_from(5, 4, 6)
+ 5 + 4 + 3 + 2 + sum_first(1)          sum_from(5, 5, 10)
+ 5 + 4 + 3 + 2 + 1 + sum_first(0)      sum_from(5, 6, 15)
+ 5 + 4 + 3 + 2 + 1 + 0                 15
+                                                                                       22
+Tail Calls
+A language that executes an iterative process as effeciently as a while statement, even
+if the iterative process is described by a recursive procedure, is called tail-recursive.
+
+
+fn sum_from(n, k, total) {                        This works in Gleam (and tail-recursive
+  case k > n {                                    languages in general) if the recursive
+    True -> total                                 call appears in a tail context:
+    False -> sum_from(n, k + 1, total + k)
+  }                                               • The body of a function (after any let)
+}
+                                                  • A result of a case in a tail context
+
+      Should use resources like
+
+
+
+def sum_from(n, k, total):
+    while k <= n:
+        k, total = k + 1, total + k
+    return total
+
+
+
+                                                                                             23
+Non-Tail Calls
+A recursive call that's part of a larger expression is not in a tail context.
+
+
+
+fn sum_from(n, k, total) {                        This works in Gleam (and tail-recursive
+  case k > n {                                    languages in general) if the recursive
+    True -> total                                 call appears in a tail context:
+    False -> sum_from(n, k + 1, total + k)
+  }                                               • The body of a function (after any let)
+}
+                                                  • A result of a case in a tail context
+
+
+                                                  When the recursive call is in a tail
+ fn sum_first(n) {                                context, calling the function is fast
+   case n {             Not a tail context        and uses space just like a while loop.
+     0 -> 0
+     _ -> n + sum_first(n-1)
+   }
+ }
+
+
+
+                                                                                             24
+Compiling Gleam
+Gleam is compiled (checked and translated) into either Javascript or Erlang.
+
+When compiling to Javascript, which is not tail-recursive, it generates while loops for
+recursive tail calls.
+
+fn sum_from(n, k, total) {                    function sum_from(loop$n, loop$k, loop$total) {
+  case k > n {                                  while (true) {
+    True -> total                                 let n = loop$n;
+    False -> sum_from(n, k + 1, total + k)        let k = loop$k;
+  }                                               let total = loop$total;
+}                                                 let $ = k > n;
+                                                  if ($) {
+                                                    return total;
+                                                  } else {
+                                                    loop$n = n;
+                                                    loop$k = k + 1;
+                                                    loop$total = total + k;
+                                                  }
+                                                }
+                                              }
+
+                            Demo: https://playground.gleam.run/
+                                                                                          25
+Example: Tail-Recursive Fib
+Try to implement fib as a tail-recursive function.
+
+
+fn fib(n) {                           fn fib(n) {
+  case n {                              fib_iter(1, 0, n)
+    0 | 1 -> n                        }
+    _ -> fib(n-2) + fib(n-1)
+  }                                   fn fib_iter(prev, curr, steps) {
+}                                       case steps {
+                                          0 -> curr
+                                          _ -> fib_iter(curr, prev + curr, steps - 1)
+                                        }
+def fib(n):                           }
+    prev, curr = 1, 0
+    while n > 0:
+        prev, curr, n = curr, prev + curr, n - 1
+    return curr
+
+                               https://playground.gleam.run/
+
+                (Careful: making an infinite loop will crash the playground)
+                                                                                        26
+Generic Functions
+Generic Functions Take Multiple Types of Values
+
+A lowercase type name is a placeholder for the actual type used to call a function.
+
+   pub fn main() {
+     let add_one = fn(x) { x + 1 }
+     let exclaim = fn(x) { x <> "!" }
+
+       echo twice(add_one, 10)
+       echo twice(exclaim, "Hello")
+   }
+
+   // The name t refers to the same type multiple times          // Also works:
+   fn twice(f: fn(t) -> t, x: t) -> t {                          fn twice(f, x) {
+     f(f(x))                                                       f(f(x))
+   }                                                             }
+
+Exercise: Write the generic function fn k_times(f: fn(t) -> t, x: t, k: Int) -> t,
+which calls f repeatedly k times on x.
+For example, k_times(add_one, 10, 3) evaluates add_one(add_one(add_one(10)))
+
+                                https://playground.gleam.run/
+
+                                                                                      28
+

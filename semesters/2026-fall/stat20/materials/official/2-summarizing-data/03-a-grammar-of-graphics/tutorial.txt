@@ -1,0 +1,263 @@
+Source: https://stat20.berkeley.edu/fall-2026/2-summarizing-data/03-a-grammar-of-graphics/tutorial.html
+Retrieved: 2026-11-06
+
+A Grammar of Graphics
+A unified framework for constructing statistical graphics.
+WarningThis page covers…
+What is a “Grammar of Graphics”?
+Dataset, aesthetic mappings, and layers (like geometries - actually drawing stuff)
+More layers: axis labels, titles, themes, captions
+Functions:
+ggplot
+aes
+various geom_... functions
+labs
+theme
+[Interactive R block: webr-1-contents; attributes: {"edit": false, "eval": true, "output": false}]
+webr::install("gradethis", quiet = TRUE)
+library(gradethis)
+options(webr.exercise.checker = function(
+label, user_code, solution_code, check_code, envir_result, evaluate_result,
+envir_prep, last_value, engine, stage, ...
+) {
+if (is.null(check_code)) {
+# No grading code, so just skip grading
+invisible(NULL)
+} else if (is.null(label)) {
+list(
+correct = FALSE,
+type = "warning",
+message = "All exercises must have a label."
+)
+} else if (is.null(solution_code)) {
+list(
+correct = FALSE,
+type = "warning",
+message = htmltools::tags$div(
+htmltools::tags$p("A problem occurred grading this exercise."),
+htmltools::tags$p(
+"No solution code was found. Note that grading exercises using the ",
+htmltools::tags$code("gradethis"),
+"package requires a model solution to be included in the document."
+)
+)
+)
+} else {
+gradethis::gradethis_exercise_checker(
+label = label, solution_code = solution_code, user_code = user_code,
+check_code = check_code, envir_result = envir_result,
+evaluate_result = evaluate_result, envir_prep = envir_prep,
+last_value = last_value, stage = stage, engine = engine)
+}
+})
+Let’s learn to make this plot:
+[Image: ; tutorial_files/figure-html/unnamed-chunk-3-1.png]
+[Interactive R block: webr-2-contents; attributes: {"autorun": true, "echo": false, "edit": false, "envir": "tutorial_2_03", "eval": true, "include": false, "output": false}]
+library(tidyverse)
+library(palmerpenguins)
+The package we use to make the plot is called ggplot2, which comes along for free with tidyverse. There are other ways to make plots in R, but ggplot2 is by far the most widely used. It is designed to follow the idea of a “grammar of graphics,” which you read about in the notes.
+Building a plot
+Let’s code up the penguin plot bit by bit. We’ve already loaded your libraries for you, so you can assume all the packages you need are loaded.
+[#cb1-1]library(tidyverse)
+[#cb1-2]library(stat20data)
+Base plot
+The first step is to call the function ggplot() and pass it our dataset. Run this cell:
+[Interactive R block: webr-3-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "fig-align": "center", "fig-height": 3.8, "fig-width": 5.2}]
+ggplot(penguins)
+It creates… just a blank canvas so far. It knows about your data, but it doesn’t know what you want to do with it yet. So it offers an empty canvas. In diagram form, here’s what just happened:
+[Image: ; images/f_ggplot_penguins.png]
+So, ggplot() is a function that makes the canvas itself. Now we need to draw some things on it.
+However, before we start drawing on the canvas, ggplot needs us to tell it how our data relates to visual aspects of the plot. For example, we want the x axis to represent penguin bill length, right? ggplot wants to know things like that up front, before it even knows what kind of shapes and lines you’ll be drawing.
+We use the aes function for this. It creates an “aesthetic mapping,” which tells ggplot which visual attributes (like x-axis position, or color, or size) should be based on which columns in our dataset. aes creates an object storing this information, which we immediately pass to ggplot alongside the data iself. Run the code below:
+[Interactive R block: webr-4-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "fig-align": "center", "fig-height": 3.8, "fig-width": 5.2}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm))
+Still not much to look at, but we’re making progress. We’ve got axes, they are labeled, and they cover about the right range of values. In diagram form, here’s what just happened
+[Image: ; images/f_aes.png]  [Image: ; images/f_ggplot_aes.png]
+Adding geometry (drawing stuff)
+We have a plot, it’s all configured, we just… haven’t drawn any shapes yet. To do that, we need to add + some geometry to the canvas. For example, adding geom_point will draw little circles on the canvas. You’ve seen a lot of geometries so far: geom_bar, geom_density, geom_boxplot, etc. Any geometry is something you add to the base canvas. Like painting on top of it.
+To represent each penguin as a point, we just need to add + geom_point() to our code. Run the cell below:
+[Interactive R block: webr-5-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "fig-align": "center", "fig-height": 3.8, "fig-width": 5.2}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm)) +
+geom_point()
+We have a scatter plot! (The “warning” is just telling you that not all data was plotted - which is expected in this case, as some penguins simply did not have bill measurements given, so we can’t plot them).
+The + geom_point() said, “Draw a point on the canvas for every row in the dataset.” Of course, the points need to know where to be drawn (x and y position), and for that it looks to the aesthetic mappings. Each row will become one point, which finds its x and y positions in the columns it sees in the aesthetic mappings (x = bill_length_mm and y = bill_depth_mm). It doesn’t know these are penguins at all. It’s essentially just drawing circles based on numbers in a table.
+Scatter plots are a popular choice for visualizing two numerical variables. The original penguin plot, though, visualized the relationship between three variables (different species had different colors). To complete our plot, let’s make one more aesthetic mapping: the color attribute of all geometries should be determined by the species.
+[Interactive R block: webr-6-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "fig-align": "center", "fig-height": 3.8, "fig-width": 5.2}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+color = species)) +
+geom_point()
+You may want to look back at the plot before this one. What color were the points? They were all black. Every geometry (like a point) has a lot of different knobs you can tune to change where and how it appears. For geom_point, one of these knobs is color. Before being drawn, each point tries to ask, “What color should I be?” If we haven’t told it anything about color, it use a default setting (black in this case). But once we map color to species, the question “What color should I be?” finds a ready answer in our aesthetic mappings: the color should be based on the species column.
+To check in briefly, here’s what’s happening:
+We have a dataset called penguins. Each row has information on one penguin.
+Each penguin has become a point (circle) on the canvas
+The point will be located at the x and y coordinates given by the penguin’s bill length and bill depth
+The point will get a color that is unique to its species.
+Changing axis labels, title, and caption
+We aren’t quite done yet. Let’s compare the original plot (from the top of this page) to our most recent plot. Can you spot the differences?
+[Image: ; tutorial_files/figure-html/unnamed-chunk-9-1.png]
+There are four things different about the original (on the left):
+The x axis is labeled “Bill Length (mm)”, which is much more human-readable than “bill_length_mm”, the raw column name.
+Same for y axis.
+The original has a title on top (“Penguin Bill Sizes”)
+The original has some text below the plot (a “caption”) about where the data came from.
+These are all kinds of labels. You add some or all of them to the plot with + and the labs function. Run the cell below:
+[Interactive R block: webr-7-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_trylabels", "fig-align": "center", "fig-height": 3.8, "fig-width": 5.2}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+color = species)) +
+geom_point() +
+labs(x = "Bill Length (mm)",
+y = "Bill Depth (mm)",
+title = "Penguin bill sizes",
+caption = "Source: Dr. Kristen Gorman, Palmer Station, Antarctica")
+Try tinkering with the labels to get a feel for it.
+The title of a plot is especially valuable real estate. In most cases, the title should highlight the most important structure in the data. In the plot above, there appears to be little correspondence between bill length and bill depth. BUT that changes when give each species its own color. Let’s change our title accordingly.
+[Interactive R block: webr-8-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_13", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+color = species)) +
+geom_point() +
+labs(x = "Bill Length (mm)",
+y = "Bill Depth (mm)",
+title = "Bill length and depth are strongly related within species",
+caption = "Source: Dr. Kristen Gorman, Palmer Station, Antarctica")
+The practice of using the plot title to convey the main message is used to powerful effect by the visualization experts at the British publication, The Financial Times.1 [#fn1] They have developed a wealth of visualizations to help readers understand what is happening with public health throughout the pandemic. The sobering graphic below uses the title to guide the viewer to the most important visual structure in the plot: the yawning vertical gap between dosage rates between high and low income countries.
+[Image: ; images/ft.png]
+Quick comprehension check exercise
+A different penguins plot
+The code cell below creates our unlabeled penguin plot. Modify the code to:
+Visualize the relationship between the flipper length of penguins on the x-axis (flipper_length_mm) and their body bass on the y-axis (body_mass_g).
+Instead of coloring by species, color by sex.
+Label the axes appropriately.
+Create a title that summarizes the main pattern you see.
+Add a caption that offers some nuance to your main point.
+[Interactive R block: webr-9-contents; attributes: {"edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_compcheck"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+color = species)) +
+geom_point()
+Show solution
+(One of many reasonable solutions)
+[#cb2-1]ggplot(penguins, aes(x = flipper_length_mm,
+[#cb2-2]                     y = body_mass_g,
+[#cb2-3]                     color = sex)) +
+[#cb2-4]    geom_point() +
+[#cb2-5]    labs(x = "Flipper Length in mm",
+[#cb2-6]         y = "Body Mass in grams",
+[#cb2-7]         title = "Heavier penguins have bigger flippers",
+[#cb2-8]         caption = "Males seem generally bigger as well")
+[Image: ; tutorial_files/figure-html/unnamed-chunk-13-1.png]
+Communicating with Graphics
+At this point in the course, you have a bevy of different types of statistical graphics under your belt: scatterplots, histograms, dot plots, violin plots, box plots, density curves, and bar plots of several kinds. You also have a broad framework to explain how these graphics are composed: the Grammar of Graphics. But to what purpose? Why plot data? For whom?
+Every time you build a plot, you do so with one of two audiences in mind.
+Yourself.
+Someone else.
+The process of building understanding from a data set is one that should be driven by curiosity, skepticism, and thoughtfulness. As a data scientist, you’ll find yourself in conversation with your data: asking questions of it, probing it for structure, and seeing how it responds. This thoughtful conversation is called exploratory data analysis (or EDA).
+During EDA, the aim is to explore the shape and structure of your data and to uncover unexpected features. It’s an informal iterative process where you are your own audience. In this setting, you should construct graphics that work best for you.
+At some point, you’ll find yourself confident in the claim that can be supported by your data and the focus changes to communicating that claim as effectively as possible with a graphic. Here, your audience shifts from yourself to someone else: other scientists, customers, co-workers in a different part of your company, or casual readers. You must consider the context in which they’ll be viewing your graphic: what they know, what they expect, what they want.
+In this tutorial we’ll focus on a few ways to hone the message of your visualization.
+Mapping versus setting visual attributes
+Labels for clarity
+Using themes
+Annotations
+We will use two running examples: a line plot of the number of christenings (roughly, births) in 17th century London (collected by a man named John Arbuthnot), and a simplified version of our penguin plot.
+[Image: ; tutorial_files/figure-html/unnamed-chunk-14-1.png]
+Mapping vs Setting
+Once you have your first draft of a plot complete and you’re thinking about how to fine tune it for your audience, your eye will turn to the aesthetic attributes. Is that color right? What about the size of the points?
+Consider the first draft of the penguins plot above. It might feel a bit drab to have a large mass of points all in black, the same color as the labels and surrounding text. Let’s make the points blue instead to make them stand out a bit more. Run the code below to see if it works:
+[Interactive R block: webr-10-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_6", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+color = "blue")) +
+geom_point()
+This is . . . unexpected. Why did it color the points red? Is this a bug?
+What we’ve stumbled into is a subtle but essential distinction in the grammar of graphics: mapping vs setting. When you put an aesthetic attribute (x, color, size, etc.) into the aes() function, you’re mapping that attribute in the plot to a column in the data frame. Mapping was this process:
+[Image: ; images/mapping.png]
+Again, aes maps attributes to columns. Our code tried to map color to a column named… "blue". Which does not exist.
+If you think about it, we weren’t trying to do any kind of “mapping” here. We didn’t need the points to be different colors based on what kind of penguin they were. What we want is actually totally unrelated to the dataset itself: we just wanted all the dots to be blue. If you want to change something that is independent of the data values, you need to “set” the attribute. All that means is that you put the code inside the geometry-building function geom_point() instead of inside the data-aesthetics mapping function aes().2 [#fn2]
+[Interactive R block: webr-11-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_7", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm)) +
+geom_point(color = "blue")
+Ah, that looks much better. To recap: if you want to make ALL the geometric objects change in the same way, you “set” the attribute. If you want the data points to vary in how they look, according to what’s in the dataset, you “map” the attribute to a column name.
+Color isn’t the only aesthetic attribute that you can set. Let’s increase slightly the size of our points by setting the size attribute to something much bigger than the size default size (which is 1).
+[Interactive R block: webr-12-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_8", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm)) +
+geom_point(color = "blue", size = 5)
+It’s not clear that that improves the readability of the plot - there is more overlap between the points now - but it works. All the points are the same, bigger size now.
+When you have a lot of overlapping things on your canvas, a common strategy is to make the shapes a little bit see-through. For this, use the alpha mapping. alpha is basically “how opaque should this be?” If you set alpha to 1, the points are fully solid. If you set alpha to 0, they are fully transparent (invisible). If you set it to 0.5, they are somewhat see-through. Let’s try that out:
+[Interactive R block: webr-13-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_9", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+size = species)) +
+geom_point(color = "blue",
+size = 5,
+alpha = .5)
+How would it have looked if instead we had mapped instead of set the size? Well, when you map, you are saying that the points sizes can be different, based on what values are in some column. So let’s try mapping size to the species column.
+[Interactive R block: webr-14-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_10", "fig-align": "center"}]
+ggplot(penguins, aes(x = bill_length_mm,
+y = bill_depth_mm,
+size = species)) +
+geom_point(color = "blue")
+We’ve made a mess of our plot now, but it is clear what happened. R looked inside the species column, found a categorical variable with three levels and selected a distinct size for each of those levels.
+All in all, this is another area in which the grammar of graphic guides clear thinking when constructing a graphic. The aesthetic attributes of a plot can be determined either by variability found in a data set or by fixed values that we set. The former is present in all data visualization but it’s the latter that comes into play when fine-tuning your plot for an audience.
+Using themes
+What piece of software did I use to produce the following plot?
+[Image: ; tutorial_files/figure-html/unnamed-chunk-20-1.png]
+If you said “Excel”, you are correct! Well… it is Excel in spirit. What makes this plot look like it was made in Excel are a series of small visual choices that were made: the background is a dark gray, there are black horizontal guide lines, and the plot and the legend is surrounded by a black box.
+ggplot offers ways to tweak a basic plot to look like this. You can manually configure every font, every line color, and so forth. But that gets tedious. It’s far easier to bring in a whole bunch of harmonious settings in one swoop. This is where a theme is helpful. Adding a theme is, essentially, “setting” a whole bunch of visual attributes at once. The ggthemes library has a number of themes that mimic the look and feel of popular software packages, like Excel, or publications, like The Economist and The Wall Street Journal.
+To add a theme, you literally add + theme_NAME() to your plot. For example, here’s the code used to make the Excel-looking plot. Note the last line as you run this code:
+[#cb3-1]library(ggthemes)
+[#cb3-2]
+[#cb3-3]ggplot(penguins, aes(x = bill_length_mm,
+[#cb3-4]                     y = bill_depth_mm,
+[#cb3-5]                     color = species)) +
+[#cb3-6]    geom_point() +
+[#cb3-7]    labs(x = "Bill Length (mm)",
+[#cb3-8]         y = "Bill Depth (mm)") +
+[#cb3-9]    theme_excel()
+[Image: ; tutorial_files/figure-html/unnamed-chunk-21-1.png]
+Let’s look at a few more. Do they look familiar?
+[Image: ; tutorial_files/figure-html/unnamed-chunk-22-1.png]
+They are, from top to bottom, a theme based on The Wall Street Journal, The Economist, and one of the themes built into ggplot2 packaged called bw for “black and white” (there are no grays). The ggplot2 library has several themes to choose from and yet more live in other packages like ggthemes. To use a theme, all you need to do is add a layer called theme_NAME (e.g. for the black and white theme, use theme_bw()).
+Themeing your plots is an easy way to change the look of your plot. Tinker with a few different themes and considering using them in your work.3 [#fn3] But as with all design decisions around graphics, be sure to think about your audience. You might find the Excel aesthetics ugly and dated, but will your audience? If you’re presenting your plot to a community that works with Excel plots day in and day out, that’s probably a sound choice. If you are preparing a plot for submission to a scientific journal, a more minimalist theme is more appropriate.
+Annotations (last part)
+In the same way that a title highlights the main message of a plot, you can add visual cues to draw attention to certain components or provide helpful context.
+In the plot below, we visualize the change in total births recorded in London, England in the 17th century, stored in the arbuthnot data frame. Although these records seem very simple, they actually capture a wealth of historical information. We can add this information to our plot by adding annotations.
+[Interactive R block: webr-15-contents; attributes: {"autorun": true, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_annotate_arbuthnot", "fig-align": "center", "fig-height": 4, "fig-width": 6}]
+library(openintro)
+arbuthnot <- mutate(arbuthnot, total = girls + boys)
+ggplot(arbuthnot, aes(x = year,
+y = total)) +
+geom_line(color = "steelblue") +
+labs(x = "Year", y = "Total Christenings") +
+theme_bw()
+Are you curious about what caused that dip in the number of births in 17th century London? It happens to correspond to the duration of the English Civil War, when the monarchy was overthrown by a dictator named Oliver Cromwell. This very important context can be conveyed by adding a text label and a line segment through two new annotate() layers:
+[Interactive R block: webr-16-contents; attributes: {"autorun": true, "edit": true, "envir": "tutorial_2_03", "eval": true, "exercise": "2_03_ex_annotate_christenings", "fig-align": "center", "fig-height": 4, "fig-width": 6}]
+library(openintro)
+arbuthnot <- mutate(arbuthnot, total = girls + boys)
+ggplot(arbuthnot, aes(x = year,
+y = total)) +
+geom_line(color = "steelblue") +
+labs(x = "Year", y = "Total Christenings") +
+theme_bw() +
+annotate("text",
+label = "English Civil War begins",
+x = 1642, y = 13000) +
+annotate("segment",
+x = 1642, xend = 1642,
+y = 12600, yend = 10900)
+Within ggplot2, annotations are a flexible way to add the context or comparisons that help guide readers in interpreting your data. You can add text, shapes, lines, points. To learn more, consult the documentation [https://ggplot2.tidyverse.org/reference/annotate.html].
+So if the drop after 1642 corresponds to the English Civil War, what about the spike down around 1666? What about 1703? If you’re curious, explore Wikipedia to find out and add those events as annotations to this plot.
+To learn more about how to use annotation layers in ggplot2, see: https://ggplot2.tidyverse.org/reference/annotate.html [https://ggplot2.tidyverse.org/reference/annotate.html].
+Summary
+Over the coming weeks, you’ll get lots of practice with ggplot2. It is an incredibly flexible and powerful piece of software that helps you not just build plots, but think about each of the design decisions that you make. Throughout your journey, it is helpful to have a source of documentation to learn about the functionality of the tool. The help files on each function are only so useful. A better option is the official ggplot2 documentation: https://ggplot2.tidyverse.org/ [https://ggplot2.tidyverse.org/].
+There are two main uses for data visualization. The first is as part of exploratory data analysis, when you are constructing plots for yourself to better understand the structure of the data. When you’re ready to communicate with an outside audience using graphics, more thought is needed: you must think about the difference between mapping and setting, the use of labels for clarity, choosing a theme, and emphasizing elements of the plot using annotations.
+Footnotes
+Visualization drawn from the excellent collection of graphics at the Financial Times Covid Tracker https://ig.ft.com/coronavirus-vaccine-tracker/ [https://ig.ft.com/coronavirus-vaccine-tracker/].↩︎ [#fnref1]
+To see the vast (and somewhat strange) palette of color names that R knows, type colors() at the console.↩︎ [#fnref2]
+Explore the themes available within ggplot2 by reading the documentation https://ggplot2.tidyverse.org/reference/ggtheme.html [https://ggplot2.tidyverse.org/reference/ggtheme.html]. For the additional themes held in the ggthemes package, read this: https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/ [https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/].↩︎ [#fnref3]

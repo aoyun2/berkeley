@@ -1,0 +1,344 @@
+Source: https://composingprograms.com/3ed/functional-programming/
+Retrieved: 2026-11-06
+
+Downloads
+3.2 Functional Programming
+The software running on any modern computer is written in a variety of programming languages. There are machine languages that are executed directly by the hardware of a particular computer. These languages are concerned with the representation of data and control in terms of individual bits of storage and primitive machine instructions. High-level languages, which must be translated to or executed by machine languages, hide concerns about the representation of data as collections of bits and the representation of programs as sequences of primitive instructions. These languages have means of combination and abstraction, such as function definition, that are appropriate to the task of developing complex software.
+In this section, we introduce a high-level
+functional
+programming language called
+Gleam
+. It employs a very similar model of computation to Python’s in terms of functions, names, and environments, but uses only a small set of language features.
+Gleam is a relatively new language, reaching v1.0.0 in 2024, that combines characteristics of more established languages, particularly the type inference system of
+ML
+(Meta Language) and many of the syntactic conventions of
+C
+. Perhaps its most important characteristic for the purposes of this text is its simplicity. The language broadly consists of function definitions, data definitions, conditional expressions, and little else. Therefore, it is a language that can be learned quickly.
+To try out examples as you read more, use the
+Gleam Playground
+.
+Functions
+¶
+This section gives an overview of Gleam functions. For a more comprehensive description of Gleam functions, read each section of this appendix on
+Gleam functions and control
+. This appendix is a subset of the full
+Gleam language tour
+, which also covers features of the language that do not appear in this text.
+Each Gleam function definition appears in a
+.gleam
+module
+file such as this
+examples.gleam
+which contains all of the examples from this section.
+Functions
+are introduced using
+fn
+and can be marked
+pub
+to indicate that they are
+public
+, which means that they can be imported by other modules. Comments in Gleam begin with
+//
+and docstrings for functions begin with
+///
+.
+/// Triple an integer
+pub fn triple(x: Int) -> Int {
+  3 * x
+}
+As with Python type hints, each formal parameter and the return value can be
+annotated with a type
+. Specific types are always capitalized, and
+Int
+is Gleam’s built-in
+integer type
+.
+Unlike Python, there is no
+return
+keyword or equivalent statement. Instead, function bodies end with an expression that determines the return value.
+Also unlike Python, this
+triple
+function can only be called on an
+Int
+value and must return an
+Int
+. A Gleam program cannot run without first confirming that all implicit and explicit
+type annotations are respected
+.
+Let.
+A
+let
+binds a name to the value of an expression, much like Python’s assignment statement.
+/// Sum the squares of x and y.
+pub fn sum_squares(x: Int, y: Int) -> Int {
+  let x2 = x * x
+  let y2 = y * y
+  x2 + y2
+}
+Blocks.
+Gleam uses braces to create
+blocks
+of code, which end in an expression that provides the value of the block.
+/// Compute a*x*x + b*x + c
+pub fn quadratic(x: Int, a: Int, b: Int, c: Int) -> Int {
+  let ax2 = {
+    let x2 = x * x
+    a * x2
+  }
+
+  // ax2 is in scope here, but x2 is not
+  ax2 + b * x + c
+}
+Blocks are used instead of parentheses to express the order of operations in a complex arithmetic expression. Therefore, parentheses can be reserved for other purposes such as defining and calling functions.
+/// x + 1, doubled
+pub fn add_one_and_double(x: Int) -> Int {
+  { x + 1 } * 2
+}
+A name assigned within a block using
+let
+cannot be accessed outside of that block.
+Strings and Output
+¶
+Gleam
+string
+literals are text within double quotes. Two strings can be concatenated with the
+<>
+operator, and the
+gleam/string
+module provides a variety of string manipulation functions. Printing strings involves importing the
+gleam/io
+module, then calling
+io.println
+, which displays a string on its own line.
+import gleam/io
+import gleam/string
+
+pub fn print_thrice(s: String) {
+  io.println(s)
+  io.println(s)
+  io.println(s)
+}
+
+/// cheer("bears") prints
+/// Go BEARS!
+/// Go BEARS!
+/// Go BEARS!
+pub fn cheer(mascot: String) {
+  print_thrice("Go " <> string.uppercase(mascot) <> "!")
+}
+To print a value that is not a string, convert it to a string. For example, after
+import gleam/int
+, the expression
+io.println(int.to_string(12))
+prints 12 using
+int.to_string
+. These modules are all part of Gleam’s
+standard library
+.
+Alternatively, an
+echo
+expression displays any value along with the line number in the program, and evaluates to the value that was displayed. The intended use of
+echo
+is to display intermediate values while debugging.
+Higher-Order Functions
+¶
+Functions are values and therefore have types. The type of a function in Gleam specifies how many arguments it takes, their types, and the type of value it returns. In order to describe the type of a function that is either passed into or returned from another function, we can write a
+function type
+, which also starts with
+fn
+but does not have a name. For example,
+fn(Int, Int) -> Int
+is a type of function that takes two integers and returns one.
+/// Combine x, y, and z by calling f on x and y, then z.
+pub fn combine(x: Int, y: Int, z: Int, f: fn(Int, Int) -> Int) -> Int {
+  f(f(x, y), z)
+}
+Anonymous functions
+also use the
+fn
+keyword and behave similarly to Python’s
+lambda
+expressions. For example,
+fn(x, y) { x + y }
+defines a function that adds two integers. The
+twelve
+function uses
+combine
+to add 3, 4, and 5.
+/// 3 + 4 + 5
+pub fn twelve() -> Int {
+  combine(3, 4, 5, fn(x, y) { x + y })
+}
+The body of an anonymous function can refer to names in its enclosing scope. However, unlike Python, binding the same name again with
+let
+after a function has been created does not affect that function.
+/// Calling three() returns 3, not 4.
+pub fn three() -> Int {
+  let x = 3
+  let f = fn() { x }
+  let x = 4
+  f()
+}
+Generic functions.
+A lowercase type name is used to express that the same type appears multiple times in a function’s signature but can be any type, which makes the function
+generic
+. For example, this
+twice
+function can take any function that takes and returns the same type. The name
+t
+refers to that type each time it appears. It returns a value of that same type. It can be used on functions that take and return integers or strings.
+/// Call a function f twice on x.
+fn twice(f: fn(t) -> t, x: t) -> t {
+  f(f(x))
+}
+
+/// Echoes 12 and then "Hello!!", each after its line number.
+pub fn test_twice() {
+  let add_one = fn(x) { x + 1 }
+  let exclaim = fn(x) { x <> "!" }
+
+  echo twice(add_one, 10)
+  echo twice(exclaim, "Hello")
+}
+Control
+¶
+A means of control in a programming language determines what expressions are evaluated and when. Defining and calling functions is the most common way to control the flow of execution of a program, and some sort of
+if
+statement or expression, called a
+conditional
+, is the second most common means of control. Gleam has the
+case
+expression
+, which matches the value of a header expression against patterns and evaluates to the value of one of several alternatives: the one for the first pattern that matches the value of the header expression.
+The simplest
+case
+has a header that evaluates to
+True
+or
+False
+.
+/// Divide n by d if d evenly divides n, and otherwise return n.
+pub fn attempt_to_divide(n: Int, d: Int) -> Int {
+  case n % d == 0 {
+    True -> n / d
+    False -> n
+  }
+}
+The header can evaluate to any type of value, and the patterns can match specific values or
+alternatives
+. The
+_
+discard pattern
+matches any value. In this example,
+"Few"
+is returned for inputs 2, 3, and 4.
+pub fn describe_positive(n: Int) -> String {
+  case n {
+    1 -> "One"
+    2 | 3 | 4 -> "Few"
+    _ -> "Many"
+  }
+}
+A
+guard
+is an
+if
+following a pattern that specifies a condition under which the pattern is matched. If a guard condition is not met, then evaluation continues to the next pattern in search of a match. For example,
+"Negative"
+is returned only for negative inputs even though the pattern
+_
+matches any number.
+pub fn describe(n: Int) -> String {
+  case n {
+    _ if n < 0 -> "Negative"
+    0 -> "None"
+    1 -> "One"
+    2 | 3 | 4 -> "Few"
+    _ -> "Many"
+  }
+}
+Two or more expressions, separated by commas, can appear in the header of a
+case
+expression. These are called
+multiple subjects
+. Each pattern then has one comma-separated part for each subject, and each part is matched against the value of the corresponding subject.
+/// Return True if either a or b is True but not both, and False otherwise.
+pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
+  case a, b {
+    True, False -> True
+    False, True -> True
+    _, _ -> False
+  }
+}
+Boolean values
+a
+and
+b
+can be combined using
+a && b
+, which is
+True
+if both are
+True
+, or
+a || b
+, which is
+True
+if either is
+True
+. If
+a
+is
+True
+, then
+!a
+is
+False
+, and vice versa. The
+gleam/bool
+module provides other functions on booleans.
+Iteration
+¶
+Gleam has no
+for
+or
+while
+, and so iteration must be expressed using
+recursion
+.
+For example, here’s a function that computes
+n
+factorial for nonnegative
+n
+.
+/// n * (n-1) * (n-2) * ... * 1
+pub fn factorial(n: Int) -> Int {
+  case n {
+    _ if n <= 0 -> 1
+    _ -> n * factorial(n - 1)
+  }
+}
+When a function is implemented using a recursive helper function, the helper is defined as a top-level function rather than within the body of another function. If a helper function is primarily intended to serve as part of the implementation of another function, rather than for general purposes, it is not marked
+pub
+.
+/// Return the number of ways that a non-decreasing sequence of positive integers can sum to n.
+/// E.g., count_all_partitions(5) counts 5, 1+4, 2+3, 1+1+3, 1+2+2, 1+1+1+2, and 1+1+1+1+1.
+pub fn count_all_partitions(n: Int) -> Int {
+  count_partitions(n, n)
+}
+
+/// Count the ways of summing to n using parts up to m to implement count_all_partitions.
+fn count_partitions(n: Int, m: Int) -> Int {
+  case n, m {
+    0, _ -> 1
+    _, _ if n < 0 || m <= 0 -> 0
+    _, _ -> count_partitions(n - m, m) + count_partitions(n, m - 1)
+  }
+}
+Data
+¶
+Coming soon!
+Chapter 3: Interpreting Computer Programs
+3.1 Introduction
+Chapter 3: Interpreting Computer Programs
+Appendix: Orders of Growth

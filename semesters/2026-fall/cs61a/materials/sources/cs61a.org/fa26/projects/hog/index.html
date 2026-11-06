@@ -1,0 +1,1597 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>The Game of Hog | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="The Game of Hog" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/projects/hog/" />
+<meta property="og:url" content="https://cs61a.org/fa26/projects/hog/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="The Game of Hog" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"The Game of Hog","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/projects/hog/"},"url":"https://cs61a.org/fa26/projects/hog/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    The Game of Hog
+  
+  
+</h1>
+    <ul class="assignment-facts"><li><strong>Due:</strong> Thursday 09/17 @ 11:59pm</li><li><strong>Checkpoint:</strong> Thursday 09/10 @ 11:59pm</li><li><strong>Points:</strong> 25</li><li><strong>Download:</strong> <a href="hog.zip">hog.zip</a></li></ul></header>
+<p class="assignment-intro">To receive credit, you must solve each problem and then complete a short checkoff interview about your solution. You may use Preceptor for the interview or come to office hours to be interviewed by a member of the course staff. If the interviews are not working, please still submit your working code on time or request an extension by the deadline. <strong>Staff will be doing in-person checkoffs for up to 3 business days after the assignment deadline (including any approved extension)</strong>. If a checkoff happens more than 3 business days after the regular deadline, staff may ask to confirm your extended deadline via Flextensions. You will submit a Provenance bundle that includes a record of how you used VS Code, including interactions with Preceptor. Please do not use AI tools other than Preceptor for this assignment.</p>
+<blockquote>
+<p><img src="assets/icon.gif" alt="5-sided die" /></p>
+<cite>
+I know! I'll use my<br/>
+Higher-order functions to<br/>
+Order higher > rolls.
+</cite>
+</blockquote>
+<blockquote>
+<p><strong>Important submission note:</strong> For full credit:</p>
+<ul>
+<li>Submit with Phase 1 complete by <strong>Thursday 09/10</strong>, worth 1 pt.</li>
+<li>Submit the complete project by <strong>Thursday 09/17</strong>.</li>
+</ul>
+<p>Try to attempt the problems in order, including running the tests for each
+problem as you progress, since some later problems will depend on earlier
+problems in their implementation.</p>
+<p>You may complete the project with a partner. <strong>However</strong>, you both need to
+complete the project, each typing out all solutions (which are not very long).
+Each of you should turn in the project you typed out.</p>
+<p>Alternatively, if you and your partner work together to complete the project
+on one computer, switching off who types, then you both may submit the same
+Provenance zip from that one computer.</p>
+<p>You can get 1 bonus point by submitting the entire project by <strong>Wednesday 09/16</strong>.
+You can receive extensions on the project deadline and checkpoint
+deadline, but not on the early deadline, unless you're a DSP student with an
+accommodation for assignment extensions.</p>
+</blockquote>
+<h2 id="introduction">
+  
+  
+    <a href="#introduction" class="anchor-heading" aria-labelledby="introduction"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Introduction
+  
+  
+</h2>
+    
+<p>In this project, you will develop a simulator and multiple strategies for the
+dice game Hog. You will need to use <em>control statements</em> and <em>higher-order
+functions</em> together, as described in Lectures 1-5 and Sections 1.1 through 1.6
+of <a href="https://composingprograms.com">Composing Programs</a>.</p>
+<blockquote>
+<p>When students in the past have tried to implement the functions without
+thoroughly reading the problem description, they’ve often run into issues.
+😱
+<strong>Read each description thoroughly before starting to code.</strong></p>
+</blockquote>
+<h3 id="rules">
+  
+  
+    <a href="#rules" class="anchor-heading" aria-labelledby="rules"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Rules
+  
+  
+</h3>
+    
+<p>In Hog, two players alternate turns trying to be the first to end a turn with
+at least <code>GOAL</code> total points, where <code>GOAL</code> is by default 100. On each turn, the current player chooses some number
+of dice to roll together, up to 10. That player's score for the turn is the sum of the
+dice outcomes. However, a player who rolls too many dice risks:</p>
+<ul>
+<li><strong>Sow Sad</strong>. If any of the dice outcomes is a 1, the current player's score
+for the turn is <code>1</code>, regardless of the other values rolled.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li><em>Example 1:</em> The current player rolls 7 dice, 5 of which are 1's. They
+score <code>1</code> point for the turn.</li>
+<li><em>Example 2:</em> The current player rolls 4 dice, all of which are 3's. Since
+Sow Sad did not occur, they score <code>12</code> points for the turn.</li>
+</ul>
+</div></details>
+<p>In a normal game of Hog, those are all the rules. To spice up the game, we'll
+include some special rules:</p>
+<ul>
+<li><strong>Boar Brawl</strong>. A player who chooses to roll zero dice scores three times
+the absolute difference between the tens digit of the opponent’s score and
+the ones digit of the current player’s score, or 1, whichever is greater.
+The ones digit refers to the rightmost digit and the tens digit refers to
+the second-rightmost digit. If a player's score is a single digit (less than
+10), the tens digit of that player's score is 0.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li><em>Example 1:</em>
+<ul>
+<li>The current player has <code>21</code> points and the opponent has <code>46</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>4</code> and the ones digit of the current player's score is <code>1</code>.</li>
+<li>Therefore, the player gains <code>3 * abs(4 - 1) = 9</code> points.</li>
+</ul>
+</li>
+<li><em>Example 2:</em>
+<ul>
+<li>The current player has <code>45</code> points and the opponent has <code>52</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>5</code> and the ones digit of the current player's score is <code>5</code>.</li>
+<li>Since <code>3 * abs(5 - 5) = 0</code>, the player gains <code>1</code> point.</li>
+</ul>
+</li>
+<li><em>Example 3:</em>
+<ul>
+<li>The current player has <code>2</code> points and the opponent has <code>5</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>0</code> and the ones digit of the current player's score is <code>2</code>.</li>
+<li>Therefore, the player gains <code>3 * abs(0 - 2) = 6</code> points.</li>
+</ul>
+</li>
+</ul>
+</div></details>
+<ul>
+<li><strong>Sus Fuss</strong>.
+We call a number <a href="https://en.wikipedia.org/wiki/Sus_%28genus%29"><em>sus</em></a> if it has exactly
+3 or 4 factors, including 1 and the number itself.
+If, after rolling, the current player's score is a sus number, their score instantly increases to the closest prime number greater than their current score.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li>
+<p><em>Example 1:</em></p>
+<ul>
+<li>A player has 14 points and rolls 2 dice that earns them 7 points.
+Their new score would be 21, which has 4 factors: 1, 3, 7, and 21.
+Therefore, 21 is sus, and the player's score is immediately increased to 23, the
+next prime number.</li>
+</ul>
+</li>
+<li>
+<p><em>Example 2:</em></p>
+<ul>
+<li>A player with 63 points rolls 5 dice and earns 1 point from their turn.
+Their new score would be 64 (Sow Sad 😢), which has 7 factors: 1, 2, 4, 8, 16,
+32, and 64.
+Since 64 is not sus, the score of the player is unchanged.</li>
+</ul>
+</li>
+<li>
+<p><em>Example 3:</em></p>
+<ul>
+<li>A player has 49 points and rolls 5 dice that total 18 points.
+Their new score would be 67, which is prime and has 2 factors: 1 and 67.
+Since 67 is not sus, the score of the player is unchanged.</li>
+</ul>
+</li>
+</ul>
+</div></details>
+<h2 id="download-starter-files">
+  
+  
+    <a href="#download-starter-files" class="anchor-heading" aria-labelledby="download-starter-files"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Download starter files
+  
+  
+</h2>
+    
+<p>To get started, download all of the project code as a <a href="hog.zip">zip archive</a>.
+Below is a list of all the files you will see in the archive once unzipped.
+For the project, you'll only be making changes to <a href="hog.py.html"><code>hog.py</code></a>.</p>
+<ul>
+<li><a href="hog.py.html"><code>hog.py</code></a>: A starter implementation of Hog</li>
+<li><a href="dice.py.html"><code>dice.py</code></a>: Functions for making and rolling dice</li>
+<li><a href="hog_gui.py.html"><code>hog_gui.py</code></a>: A graphical user interface (GUI) for Hog</li>
+<li><a href="ucb.py.html"><code>ucb.py</code></a>: Utility functions for CS 61A</li>
+<li><a href="hog_ui.py.html"><code>hog_ui.py</code></a>: A text-based user interface (UI) for Hog</li>
+<li><code>tests</code>: Tests for each problem</li>
+<li><code>gui-files</code>: A folder of various things used by the web GUI</li>
+</ul>
+<p>Other files and folders configure the tests and VS Code extensions. Please do
+not modify any files other than <a href="hog.py.html"><code>hog.py</code></a>.</p>
+<h2 id="getting-started-videos">
+  
+  
+    <a href="#getting-started-videos" class="anchor-heading" aria-labelledby="getting-started-videos"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started Videos
+  
+  
+</h2>
+    
+<p><a href="https://youtube.com/playlist?list=PLHAFlxnEEc5k&amp;si=uB-LBKGaU3yi0nj3">These videos</a> may provide some helpful direction for tackling the coding
+problems on this assignment.</p>
+<blockquote><p>To see these videos, you should be logged into your berkeley.edu email.</p></blockquote>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=ZOBoo0fj_xFUbvL_&amp;list=PLHAFlxnEEc5k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h2 id="phase-1-rules-of-the-game">
+  
+  
+    <a href="#phase-1-rules-of-the-game" class="anchor-heading" aria-labelledby="phase-1-rules-of-the-game"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase 1: Rules of the Game
+  
+  
+</h2>
+    
+<p>In the first phase, you will develop a simulator for the game of Hog.</p>
+<h3 id="problem-0-0-pt">
+  
+  
+    <a href="#problem-0-0-pt" class="anchor-heading" aria-labelledby="problem-0-0-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 0 (0 pt)
+  
+  
+</h3>
+    
+<p>The <a href="dice.py.html"><code>dice.py</code></a> file represents dice using non-pure zero-argument functions.
+These functions are non-pure because they may have different return values each
+time they are called, and so a side-effect of calling the function is
+changing what will be returned when the function is called again.</p>
+<p>A dice function takes no arguments and returns a number from 1 to n (inclusive),
+where n is the number of sides on the dice.</p>
+<p>Fair dice produce each possible outcome with equal probability. The <code>six_sided</code>
+function represents fair six-sided dice.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">six_sided</span> <span class="o">=</span> <span class="n">make_fair_dice</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Test dice always cycles through a fixed
+sequence of values that are passed as arguments.
+Test dice are generated by the make_test_dice function.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span><span class="w"> </span><span class="nf">make_test_dice</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+    <span class="s2">&quot;&quot;&quot;Return a die that cycles deterministically through OUTCOMES.</span>
+
+<span class="s2">    &gt;&gt;&gt; dice = make_test_dice(1, 2, 3)</span>
+<span class="s2">    &gt;&gt;&gt; dice()</span>
+<span class="s2">    1</span>
+<span class="s2">    &gt;&gt;&gt; dice()</span>
+<span class="s2">    2</span>
+<span class="s2">    &gt;&gt;&gt; dice()</span>
+<span class="s2">    3</span>
+<span class="s2">    &gt;&gt;&gt; dice()</span>
+<span class="s2">    1</span>
+<span class="s2">    &gt;&gt;&gt; dice()</span>
+<span class="s2">    2</span>
+</code></pre></div></div>
+<p>Check your understanding by unlocking the dice tests.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q00 --unlock"><pre><code>python3 -m pytest -k q00 --unlock</code></pre></div>
+<details class="unlock-examples" open>
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; test_dice = make_test_dice(4, 1, 2)
+&gt;&gt;&gt; test_dice()
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; test_dice() # Second call
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; test_dice() # Third call
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; test_dice() # Fourth call
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; test_dice() # Fifth call
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<p>You can exit the unlocker by typing <code>exit()</code>.</p>
+<h3 id="problem-1-2-pt">
+  
+  
+    <a href="#problem-1-2-pt" class="anchor-heading" aria-labelledby="problem-1-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 1 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement the <code>roll_dice</code> function in <a href="hog.py.html"><code>hog.py</code></a>. It takes two arguments: a
+positive integer called <code>num_rolls</code>, which specifies the number of times to roll
+dice, and a <code>dice</code> function. It returns the number of points scored by rolling
+<code>num_rolls</code> dice in a turn: either the sum of the outcomes or 1.</p>
+<ul>
+<li><strong>Sow Sad</strong>. If any of the dice outcomes is a 1, the current player's score
+for the turn is <code>1</code>, regardless of the other values rolled.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li><em>Example 1:</em> The current player rolls 7 dice, 5 of which are 1's. They
+score <code>1</code> point for the turn.</li>
+<li><em>Example 2:</em> The current player rolls 4 dice, all of which are 3's. Since
+Sow Sad did not occur, they score <code>12</code> points for the turn.</li>
+</ul>
+</div></details>
+<p>To obtain a single outcome of a dice roll, call <code>dice()</code>. You should call
+<code>dice()</code> <strong>exactly <code>num_rolls</code> times</strong> in the body of <code>roll_dice</code>, <strong>even if Sow
+Sad happens in the middle of rolling</strong>. By doing so, you will correctly simulate
+rolling all the dice together (and the user interface and tests will work
+correctly).</p>
+<p>Do not use lists, strings, square brackets, or for statements in your answer.</p>
+<blockquote>
+<p><strong>Note:</strong> The <code>roll_dice</code> function, and many other functions throughout the
+project, makes use of <em>default argument values</em>. You can see this in the
+function heading:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def roll_dice(num_rolls, dice=six_sided): ...
+</code></pre></div></div>
+<p>The argument <code>dice=six_sided</code> indicates that the <code>dice</code> parameter in the
+<code>roll_dice</code> function is <strong>optional</strong>. If no value is provided for <code>dice</code>, then
+<code>six_sided</code> will be used by default.</p>
+<p>However, to roll different dice (such as test dice), you must pass them in.</p>
+</blockquote>
+<p>Unlock the test cases to check your understanding, then run them once you implement the function.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q01 --unlock"><pre><code>python3 -m pytest -k q01 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; roll_dice(5, make_test_dice(4, 2, 3, 3, 4, 1))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; roll_dice(2, make_test_dice(1))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; dice = make_test_dice(5, 4, 3, 2, 1)
+&gt;&gt;&gt; roll_dice(1, dice)    # Outcomes: (5)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; roll_dice(4, dice)    # Outcomes: (4, 3, 2, 1)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; roll_dice(2, dice)    # Outcomes: (5, 4)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; roll_dice(6, dice)    # Outcomes: (3, 2, 1, 5, 4, 3)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; roll_dice(3, dice)    # Outcomes: &lt;you figure it out&gt;
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; roll_dice(2, dice)    # Outcomes: &lt;you figure it out&gt;
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q01"><pre><code>python3 -m pytest -k q01</code></pre></div>
+<details class="hint"><summary>Debugging Tips</summary><div>
+<p>Check out the <a href="/articles/debugging/">Debugging Guide</a>!</p>
+<p>If the tests don't pass, it's time to debug. You can observe the behavior of
+your function using Python directly. First, start the Python interpreter and
+load the <a href="hog.py.html"><code>hog.py</code></a> file.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 -i hog.py
+</code></pre></div></div>
+<p>Then, you can call your <code>roll_dice</code> function on any number of dice you want.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; roll_dice(4)
+</code></pre></div></div>
+<p>You will find that the previous expression may have a different result each
+time you call it, since it is simulating random dice rolls. You can also use
+test dice that fix the outcomes of the dice in advance. For example, rolling
+twice when you know that the dice will come up 3 and 4 should give a total
+outcome of 7.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; fixed_dice = make_test_dice(3, 4)
+&gt;&gt;&gt; roll_dice(2, fixed_dice)
+7
+</code></pre></div></div>
+<blockquote>
+<p>On most systems, you can load previous expressions by pressing the up arrow.</p>
+<p>Once you correct a problem in <a href="hog.py.html"><code>hog.py</code></a>, exit the Python interpreter by typing
+<code>exit()</code> after the <code>&gt;&gt;&gt;</code> prompt, then re-run the problem's tests.</p>
+</blockquote>
+</div></details>
+<h3 id="problem-2-2-pt">
+  
+  
+    <a href="#problem-2-2-pt" class="anchor-heading" aria-labelledby="problem-2-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 2 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement <code>boar_brawl</code>, which takes the player's current score <code>player_score</code> and the
+opponent's current score <code>opponent_score</code>. It returns the number of points scored when
+the player rolls 0 dice.</p>
+<ul>
+<li><strong>Boar Brawl</strong>. A player who chooses to roll zero dice scores three times
+the absolute difference between the tens digit of the opponent’s score and
+the ones digit of the current player’s score, or 1, whichever is greater.
+The ones digit refers to the rightmost digit and the tens digit refers to
+the second-rightmost digit. If a player's score is a single digit (less than
+10), the tens digit of that player's score is 0.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li><em>Example 1:</em>
+<ul>
+<li>The current player has <code>21</code> points and the opponent has <code>46</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>4</code> and the ones digit of the current player's score is <code>1</code>.</li>
+<li>Therefore, the player gains <code>3 * abs(4 - 1) = 9</code> points.</li>
+</ul>
+</li>
+<li><em>Example 2:</em>
+<ul>
+<li>The current player has <code>45</code> points and the opponent has <code>52</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>5</code> and the ones digit of the current player's score is <code>5</code>.</li>
+<li>Since <code>3 * abs(5 - 5) = 0</code>, the player gains <code>1</code> point.</li>
+</ul>
+</li>
+<li><em>Example 3:</em>
+<ul>
+<li>The current player has <code>2</code> points and the opponent has <code>5</code> points, and the current player
+chooses to roll zero dice.</li>
+<li>The tens digit of the opponent's score is <code>0</code> and the ones digit of the current player's score is <code>2</code>.</li>
+<li>Therefore, the player gains <code>3 * abs(0 - 2) = 6</code> points.</li>
+</ul>
+</li>
+</ul>
+</div></details>
+<blockquote>
+<p>Don't assume that scores are below 100. Write your <code>boar_brawl</code> function so
+that it works correctly for any non-negative score.</p>
+</blockquote>
+<p>Do not use lists, strings, square brackets, or for statements in your answer.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q02 --unlock"><pre><code>python3 -m pytest -k q02 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; import tests.construct_check as test
+&gt;&gt;&gt; boar_brawl(21, 46)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(52, 79)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(0, 0)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(0, 5)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(5, 0)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(2, 5)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(7, 2)
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; boar_brawl(72, 29)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q02"><pre><code>python3 -m pytest -k q02</code></pre></div>
+<p>You can also test <code>boar_brawl</code> interactively by running <code>python3 -i hog.py</code>
+from the terminal and calling <code>boar_brawl</code> on various inputs.</p>
+<h3 id="problem-3-2-pt">
+  
+  
+    <a href="#problem-3-2-pt" class="anchor-heading" aria-labelledby="problem-3-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 3 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement the <code>take_turn</code> function, which returns the number of points scored
+for a turn by rolling the <code>dice</code> <code>num_rolls</code> times.</p>
+<p>Your implementation of <code>take_turn</code> should call both the <code>roll_dice</code> and
+<code>boar_brawl</code> functions rather than repeating their implementations.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q03 --unlock"><pre><code>python3 -m pytest -k q03 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; take_turn(2, 7, 27, make_test_dice(4, 5, 1))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; take_turn(3, 15, 9, make_test_dice(4, 6, 1))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; take_turn(0, 12, 41) # what happens when you roll 0 dice?
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q03"><pre><code>python3 -m pytest -k q03</code></pre></div>
+<h3 id="problem-4-2-pt">
+  
+  
+    <a href="#problem-4-2-pt" class="anchor-heading" aria-labelledby="problem-4-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 4 (2 pt)
+  
+  
+</h3>
+    
+<p>First, implement <code>num_factors</code>, which takes in a positive integer <code>n</code> and
+determines the number of factors that <code>n</code> has. 1 and <code>n</code> are both factors of
+<code>n</code>.</p>
+<p>After, implement <code>sus_points</code> and <code>sus_update</code>.</p>
+<ul>
+<li><code>sus_points</code> takes in a player's score and returns the player's new score
+after applying the Sus Fuss rule, even if the score remains unchanged. For
+example, <code>sus_points(5)</code> should return <code>5</code> and <code>sus_points(21)</code> should return
+<code>23</code>. You should use <code>num_factors</code> and the provided <code>is_prime</code> function in
+your implementation.</li>
+<li><code>sus_update</code> returns a player's <em>total score</em> after they roll <code>num_rolls</code>
+dice, taking both Boar Brawl and Sus Fuss into account. You should use
+<code>sus_points</code> in this function.</li>
+</ul>
+<blockquote>
+<p><strong>Hints</strong>:</p>
+<ul>
+<li>Look at the implementation of <code>simple_update</code> in <a href="hog.py.html"><code>hog.py</code></a> and use that as a
+starting point for your <code>sus_update</code> function.</li>
+<li><code>take_turn</code> already implements the Boar Brawl rule.</li>
+</ul>
+</blockquote>
+<ul>
+<li><strong>Sus Fuss</strong>.
+We call a number <a href="https://en.wikipedia.org/wiki/Sus_%28genus%29"><em>sus</em></a> if it has exactly
+3 or 4 factors, including 1 and the number itself.
+If, after rolling, the current player's score is a sus number, their score instantly increases to the closest prime number greater than their current score.</li>
+</ul>
+<details class="hint"><summary>Examples</summary><div>
+<ul>
+<li>
+<p><em>Example 1:</em></p>
+<ul>
+<li>A player has 14 points and rolls 2 dice that earns them 7 points.
+Their new score would be 21, which has 4 factors: 1, 3, 7, and 21.
+Therefore, 21 is sus, and the player's score is immediately increased to 23, the
+next prime number.</li>
+</ul>
+</li>
+<li>
+<p><em>Example 2:</em></p>
+<ul>
+<li>A player with 63 points rolls 5 dice and earns 1 point from their turn.
+Their new score would be 64 (Sow Sad 😢), which has 7 factors: 1, 2, 4, 8, 16,
+32, and 64.
+Since 64 is not sus, the score of the player is unchanged.</li>
+</ul>
+</li>
+<li>
+<p><em>Example 3:</em></p>
+<ul>
+<li>A player has 49 points and rolls 5 dice that total 18 points.
+Their new score would be 67, which is prime and has 2 factors: 1 and 67.
+Since 67 is not sus, the score of the player is unchanged.</li>
+</ul>
+</li>
+</ul>
+</div></details>
+<div class="pytest-command" data-command="python3 -m pytest -k q04 --unlock"><pre><code>python3 -m pytest -k q04 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_factors(1)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_factors(2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_factors(3)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_factors(8)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_factors(9)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_points(2)  # 2 is not sus
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_points(8)  # 8 is sus
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; num_rolls = 1
+&gt;&gt;&gt; simple_update(num_rolls, 1, 3, make_test_dice(5))
+<span class="wwpd-blank">______</span>
+&gt;&gt;&gt; sus_update(num_rolls, 1, 3, make_test_dice(5)) # 1 and 5 are not sus, but 6 is!
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q04"><pre><code>python3 -m pytest -k q04</code></pre></div>
+<h3 id="problem-5-4-pt">
+  
+  
+    <a href="#problem-5-4-pt" class="anchor-heading" aria-labelledby="problem-5-4-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 5 (4 pt)
+  
+  
+</h3>
+    
+<p>Implement the <code>play</code> function, which simulates a full game of Hog. Players take
+turns rolling dice until one of the players reaches the <code>goal</code> score.
+The function then returns the final scores of both players.</p>
+<p>To determine how many dice are rolled each turn, call the current player's
+strategy function (Player 0 uses <code>strategy0</code> and Player 1 uses <code>strategy1</code>). A
+<em>strategy</em> is a function that, given a player's score and their opponent's
+score, returns the number of dice that the current player will roll in that
+turn. A simple example strategy is <code>always_roll_5</code> which appears above <code>play</code>.</p>
+<p>To determine the updated score for a player after they take a turn, call the
+<code>update</code> function. An <code>update</code> function takes the number of dice to roll, the
+current player's score, the opponent's score, and the dice function used to
+simulate rolling dice. It returns the updated score of the current player after
+they take their turn. Two examples of <code>update</code> functions are <code>simple_update</code> and
+<code>sus_update</code>. Update functions return the player's <em>total score</em> after their
+turn, not just the change in score.</p>
+<p>The game ends when a player reaches or exceeds the goal score by the end of
+their turn, after all applicable rules have been applied. <code>play</code> will then
+return the final total scores of both players, with Player 0's score first and
+Player 1's score second.</p>
+<p>Some example calls to <code>play</code> are:</p>
+<ul>
+<li><code>play(always_roll_5, always_roll_5, simple_update)</code> simulates two players
+that both always roll 5 dice each turn, playing with just the Sow Sad and Boar
+Brawl rules.</li>
+<li><code>play(always_roll_5, always_roll_5, sus_update)</code> simulates two players
+that both always roll 5 dice each turn, playing with the Sus Fuss rule in
+addition to the Sow Sad and Boar Brawl rules (i.e. all the rules).</li>
+</ul>
+<blockquote>
+<p><strong>Important:</strong> For the user interface to work, a strategy function should be
+called only once per turn.  Only call <code>strategy0</code> when it is Player 0's turn
+and only call <code>strategy1</code> when it is Player 1's turn.</p>
+</blockquote>
+<blockquote>
+<p><strong>Hints</strong>:</p>
+<ul>
+<li>If <code>who</code> is the current player, the next player is <code>1 - who</code>.</li>
+<li>To call <code>play(always_roll_5, always_roll_5, sus_update)</code> and print out
+what happens each turn, run <code>python3 hog_ui.py</code> from the terminal.</li>
+</ul>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q05"><pre><code>python3 -m pytest -k q05</code></pre></div>
+<h2 id="checkpoint-submission">
+  
+  
+    <a href="#checkpoint-submission" class="anchor-heading" aria-labelledby="checkpoint-submission"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Checkpoint Submission
+  
+  
+</h2>
+    
+<p>Run <strong>Provenance: Prepare Submission Bundle</strong> from the VS Code command palette
+and upload the zip it creates to the Hog Checkpoint assignment <strong>on
+Gradescope.</strong></p>
+<p>Be sure to submit before the checkpoint deadline of Thursday 09/10. For a
+refresher on how to create and submit your zip with Provenance, refer to
+<a href="../../labs/lab00/#task-c-submit-the-assignment">Lab 00</a>.</p>
+<p>Each partner must submit the version of the project that they typed.</p>
+<p><strong>Congratulations! You have finished Phase 1 of this project!</strong></p>
+<h2 id="interlude-user-interfaces">
+  
+  
+    <a href="#interlude-user-interfaces" class="anchor-heading" aria-labelledby="interlude-user-interfaces"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Interlude: User Interfaces
+  
+  
+</h2>
+    
+<blockquote>
+<p>There are no required problems in this section of the project, just some
+examples for you to read. See Phase 2 for the remaining project problems.</p>
+</blockquote>
+<img src="assets/hog_animation.gif" alt="Animated die" style="width: 90%; height: auto;">
+<p><em>Animation created by Tristan &amp; Tyler Roath</em></p>
+<h3 id="printing-game-events">
+  
+  
+    <a href="#printing-game-events" class="anchor-heading" aria-labelledby="printing-game-events"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Printing Game Events
+  
+  
+</h3>
+    
+<p>We have built a simulator for the game, but haven't added any code to describe
+how the game events should be displayed to a person. Therefore, we've built a
+computer game that no one can play. (Lame!)</p>
+<p>However, the simulator is expressed in terms of small functions, and we can
+replace each function by a version that prints out what happens when it is
+called. Using higher-order functions, we can do so without changing much of our
+original code.  An example appears in <a href="hog_ui.py.html"><code>hog_ui.py</code></a>, which you are encouraged to
+read.</p>
+<p>The <code>play_and_print</code> function calls the same <code>play</code> function just implemented,
+but using:</p>
+<ul>
+<li>new strategy functions (e.g., <code>printing_strategy(0, always_roll_5)</code>) that
+print out the scores and number of dice rolled.</li>
+<li>a new update function (<code>sus_update_and_print</code>) that prints the outcome of
+each turn.</li>
+<li>a new dice function (<code>printing_dice(six_sided)</code>) that prints the outcome of
+rolling the dice.</li>
+</ul>
+<p>Notice how much of the original simulator code can be reused.</p>
+<p>Running <code>python3 hog_ui.py</code> from the terminal calls
+<code>play_and_print(always_roll_5, always_roll_5)</code>.</p>
+<h3 id="accepting-user-input">
+  
+  
+    <a href="#accepting-user-input" class="anchor-heading" aria-labelledby="accepting-user-input"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Accepting User Input
+  
+  
+</h3>
+    
+<p>The built-in <code>input</code> function waits for the user to type a line of text and
+then returns that text as a string. The built-in <code>int</code> function can take a
+string containing the digits of an integer and return that integer.</p>
+<p>The <code>interactive_strategy</code> function returns a strategy that lets a person
+choose how many dice to roll each turn by calling <code>input</code>.</p>
+<p>With this strategy, we can finally play a game using our <code>play</code> function:</p>
+<p>Running <code>python3 hog_ui.py -n 1</code> from the terminal calls
+<code>play_and_print(interactive_strategy(0), always_roll_5)</code>, which plays a game
+between a human (Player 0) and a computer strategy that always rolls 5.</p>
+<p>Running <code>python3 hog_ui.py -n 2</code> from the terminal calls
+<code>play_and_print(interactive_strategy(0), interactive_strategy(1))</code>, which plays
+a game between two human players.</p>
+<p>You are welcome to change <a href="hog_ui.py.html"><code>hog_ui.py</code></a> in any way you want, for example to use
+different strategies than <code>always_roll_5</code>.</p>
+<h3 id="graphical-user-interface-gui">
+  
+  
+    <a href="#graphical-user-interface-gui" class="anchor-heading" aria-labelledby="graphical-user-interface-gui"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Graphical User Interface (GUI)
+  
+  
+</h3>
+    
+<p>We have also provided a web-based graphical user interface for the game using a similar approach as <a href="hog_ui.py.html"><code>hog_ui.py</code></a> called <a href="hog_gui.py.html"><code>hog_gui.py</code></a>. You can run it from the terminal:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 hog_gui.py
+</code></pre></div></div>
+<p>Like <a href="hog_ui.py.html"><code>hog_ui.py</code></a>, the GUI relies on your simulator implementation, so if you have any bugs in your code, they will be reflected in the GUI. This means you can also use the GUI as a debugging tool; however, it's better to run the tests first.</p>
+<p>We will study how this GUI is created later in the course.</p>
+<h2 id="phase-2-strategies">
+  
+  
+    <a href="#phase-2-strategies" class="anchor-heading" aria-labelledby="phase-2-strategies"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Phase 2: Strategies
+  
+  
+</h2>
+    
+<p>In this phase, you will experiment with ways to improve upon the simple
+<code>always_roll_5</code> strategy. A <em>strategy</em> is a function that takes two
+arguments: the current player's score and their opponent's score. It returns the
+number of dice the player will roll, which can be from 0 to 10 (inclusive).</p>
+<h3 id="problem-6-2-pt">
+  
+  
+    <a href="#problem-6-2-pt" class="anchor-heading" aria-labelledby="problem-6-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 6 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement <code>always_roll</code>, a higher-order function that takes a number of dice
+<code>n</code> and returns a strategy function that always rolls <code>n</code> dice. Thus, <code>always_roll(5)</code>
+would be equivalent to <code>always_roll_5</code>.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q06 --unlock"><pre><code>python3 -m pytest -k q06 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; always_roll(3)(10, 20)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; always_roll(0)(99, 99)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q06"><pre><code>python3 -m pytest -k q06</code></pre></div>
+<h3 id="problem-7-2-pt">
+  
+  
+    <a href="#problem-7-2-pt" class="anchor-heading" aria-labelledby="problem-7-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 7 (2 pt)
+  
+  
+</h3>
+    
+<p>A strategy has a fixed number of possible argument values. For example, in a
+game with a <code>goal</code> of 100, there are only 100 possible <code>score</code> values (0-99) and
+100 possible <code>opponent_score</code> values (0-99), resulting in 10,000 possible
+argument combinations to a strategy function.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Player Score</th>
+<th>Opponent Score Combinations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>(0,0), (0,1), (0,2), ..., (0,99)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>(1,0), (1,1), (1,2), ..., (1,99)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(2,0), (2,1), (2,2), ..., (2,99)</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>98</td>
+<td>(98,0), (98,1), (98,2), ..., (98,99)</td>
+</tr>
+<tr>
+<td>99</td>
+<td>(99,0), (99,1), (99,2), ..., (99,99)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Implement <code>is_always_roll</code>, which takes a strategy and returns whether that
+strategy always rolls the same number of dice for every possible argument
+combination, where each score is up to <code>goal</code> points.</p>
+<blockquote>
+<p><strong>Reminder:</strong> The game continues until one player reaches <code>goal</code> points (in
+the above example <code>goal</code> is set to <code>100</code>, but it could be any number).
+Ensure your solution considers every possible combination of <code>score</code> and <code>opponent_score</code> for the specified <code>goal</code>.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q07 --unlock"><pre><code>python3 -m pytest -k q07 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; is_always_roll(always_roll_5)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; is_always_roll(always_roll(3))
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; is_always_roll(catch_up)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q07"><pre><code>python3 -m pytest -k q07</code></pre></div>
+<h3 id="problem-8-2-pt">
+  
+  
+    <a href="#problem-8-2-pt" class="anchor-heading" aria-labelledby="problem-8-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 8 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement <code>make_averaged</code>, which is a higher-order function that takes a
+function <code>func_to_average</code> as an argument.</p>
+<p>The return value of <code>make_averaged</code> is a function that takes in the same
+arguments as <code>func_to_average</code>. When called with specific arguments, this
+function should repeatedly call <code>func_to_average</code> on those same arguments
+<code>iterations</code> times, and return the average of the results. Take a look at the
+<code>make_averaged</code> doctest. Be sure to keep track of what values are being passed
+into the function!</p>
+<blockquote>
+<p><strong>Doctest Walkthrough</strong>:
+Take a close look at the <code>make_averaged</code> doctest. Here, <code>func_to_average</code> is <code>roll_dice</code>.
+Notice the line <code>averaged_dice(1, dice)</code>. This implies that the arguments for <code>roll_dice</code> are <code>(1, dice)</code> (think about why!) Observe how <code>averaged_dice</code> accepts the same arguments as <code>roll_dice</code>. The arguments are not passed directly to <code>roll_dice</code> but rather to <code>averaged_dice</code>. (Think about how this can be achieved!) Keep in mind, <code>make_averaged</code> should work with any <code>func_to_average</code> that shares the same argument structure as the function returned by <code>make_averaged</code>.
+In this example, rolling a single die is considered a sample (<code>roll_dice(1, dice)</code>). Since <code>iterations</code> is set to 40, this sampling is repeated 40 times. The <code>make_averaged</code> function then calculates the average result of these 40 calls to <code>roll_dice</code>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Important:</strong>
+To implement this function, you will need to use a new piece of Python syntax.
+We would like to write a function that accepts an arbitrary number of arguments,
+and then calls another function using exactly those arguments. Here's how
+it works.</p>
+<p>Instead of listing formal parameters for a function, you can write <code>*args</code>,
+which represents <strong>all</strong> of the arguments that get passed into the
+function. We can then call another function with these same arguments by
+passing these <code>*args</code> into this other function. For example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; def printed(f):
+...     def print_and_return(*args):
+...         result = f(*args)
+...         print(&#x27;Result:&#x27;, result)
+...         return result
+...     return print_and_return
+&gt;&gt;&gt; printed_pow = printed(pow)
+&gt;&gt;&gt; printed_pow(2, 8)  # *args represents the arguments (2, 8)
+Result: 256
+256
+&gt;&gt;&gt; printed_abs = printed(abs)
+&gt;&gt;&gt; printed_abs(-10)  # *args represents one argument (-10)
+Result: 10
+10
+</code></pre></div></div>
+<p>Here, we can pass any number of arguments into <code>print_and_return</code> via the
+<code>*args</code> syntax. We can also use <code>*args</code> inside our <code>print_and_return</code>
+function to make another function call with the same arguments.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q08 --unlock"><pre><code>python3 -m pytest -k q08 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; dice = make_test_dice(3, 1, 5, 6)
+&gt;&gt;&gt; averaged_dice = make_averaged(dice, 1000)
+&gt;&gt;&gt; averaged_dice()
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; dice = make_test_dice(3, 1, 5, 6)
+&gt;&gt;&gt; averaged_roll_dice = make_averaged(roll_dice, 1000)
+&gt;&gt;&gt; averaged_roll_dice(2, dice)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q08"><pre><code>python3 -m pytest -k q08</code></pre></div>
+<h3 id="problem-9-2-pt">
+  
+  
+    <a href="#problem-9-2-pt" class="anchor-heading" aria-labelledby="problem-9-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 9 (2 pt)
+  
+  
+</h3>
+    
+<p>Implement <code>max_scoring_num_rolls</code>, which runs an experiment using a die with a fixed number of sides to
+determine the number of rolls (from 1 to 10) that gives the maximum average
+score for a turn. Your implementation should use <code>make_averaged</code> and <code>roll_dice</code>.</p>
+<p>If two numbers of rolls are tied for the maximum average score, return the
+lower number. For example, if both 3 and 6 achieve the same maximum average score,
+return 3.</p>
+<p>Read the doctest for this problem and <code>make_averaged</code> (Problem 8) before trying
+to unlock the tests.</p>
+<blockquote>
+<p><strong>Important:</strong> In order to pass all of our tests, please make sure that you are
+testing dice rolls starting from 1 going up to 10, rather than from 10 to 1.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q09 --unlock"><pre><code>python3 -m pytest -k q09 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; dice = make_test_dice(3)   # dice always returns 3
+&gt;&gt;&gt; max_scoring_num_rolls(dice, iterations=1000)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; dice = make_test_dice(2)     # dice always rolls 2
+&gt;&gt;&gt; max_scoring_num_rolls(dice, iterations=1000)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; dice = make_test_dice(1)     # dice always rolls 1
+&gt;&gt;&gt; max_scoring_num_rolls(dice, iterations=1000)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; dice = make_test_dice(1, 2)  # dice alternates 1 and 2
+&gt;&gt;&gt; max_scoring_num_rolls(dice, iterations=1000)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q09"><pre><code>python3 -m pytest -k q09</code></pre></div>
+<h3 id="running-experiments">
+  
+  
+    <a href="#running-experiments" class="anchor-heading" aria-labelledby="running-experiments"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running Experiments
+  
+  
+</h3>
+    
+<p>The provided <code>run_experiments</code> function calls
+<code>max_scoring_num_rolls(six_sided)</code> and prints the result. You will likely find
+that rolling 6 dice maximizes the result of <code>roll_dice</code> using six-sided dice.</p>
+<p>To call this function and see the result, run <a href="hog.py.html"><code>hog.py</code></a> with the <code>-r</code> flag:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 hog.py -r
+</code></pre></div></div>
+<p>In addition, <code>run_experiments</code> compares various strategies to <code>always_roll(6)</code>.
+You are welcome to change the implementation of <code>run_experiments</code> as you wish.
+Note that running experiments with <code>boar_strategy</code> and <code>sus_strategy</code> will not
+have accurate results until you implement them in the next two problems.</p>
+<p>Some of the experiments may take up to a minute to run. You can always reduce
+the number of trials in your call to <code>make_averaged</code> to speed up experiments.</p>
+<p>Running experiments won't affect your score on the project.</p>
+<h3 id="problem-10-2-pt">
+  
+  
+    <a href="#problem-10-2-pt" class="anchor-heading" aria-labelledby="problem-10-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 10 (2 pt)
+  
+  
+</h3>
+    
+<p>A strategy can try to take advantage of the <em>Boar Brawl</em> rule by rolling 0 when
+it is most beneficial to do so. Implement <code>boar_strategy</code>, which returns 0
+whenever rolling 0 would give <strong>at least</strong> <code>threshold</code> points and returns
+<code>num_rolls</code> otherwise. This strategy should <strong>not</strong> also take into account
+the Sus Fuss rule.</p>
+<blockquote>
+<p><strong>Hint</strong>: You can use the <code>boar_brawl</code> function you defined in Problem 2.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q10 --unlock"><pre><code>python3 -m pytest -k q10 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; boar_strategy(40, 51, threshold=7, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; boar_strategy(40, 51, threshold=15, num_rolls=7)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; boar_strategy(40, 51, threshold=16, num_rolls=7)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q10"><pre><code>python3 -m pytest -k q10</code></pre></div>
+<p>You should find that running <code>python3 hog.py -r</code> now shows a win rate for
+<code>boar_strategy</code> close to 66-67%.</p>
+<h3 id="problem-11-2-pt">
+  
+  
+    <a href="#problem-11-2-pt" class="anchor-heading" aria-labelledby="problem-11-2-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Problem 11 (2 pt)
+  
+  
+</h3>
+    
+<p>A better strategy would take advantage of both <em>Boar Brawl</em> and <em>Sus Fuss</em> in
+combination.
+For example, if a player has 53 points and their opponent has 60, rolling 0
+would bring them to 62, which is a sus number, and so they would end the
+turn with 67 points: a gain of 67 - 53 = 14!</p>
+<p>The <code>sus_strategy</code> returns 0 whenever rolling 0 would result in a score that
+is <strong>at least</strong> <code>threshold</code> points more than the player's score at the
+start of turn.</p>
+<blockquote>
+<p><strong>Hint</strong>: You can use the <code>sus_update</code> function you defined in Problem 4.</p>
+</blockquote>
+<div class="pytest-command" data-command="python3 -m pytest -k q11 --unlock"><pre><code>python3 -m pytest -k q11 --unlock</code></pre></div>
+<details class="unlock-examples">
+<summary>Unlocking Examples</summary>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; from hog import *
+&gt;&gt;&gt; sus_strategy(31, 21, threshold=10, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(30, 41, threshold=10, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(53, 60, threshold=14, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(53, 60, threshold=15, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(23, 54, threshold=4, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(14, 21, threshold=8, num_rolls=2)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight wwpd"><code>
+&gt;&gt;&gt; sus_strategy(14, 21, threshold=12, num_rolls=5)
+<span class="wwpd-blank">______</span>
+</code></pre></div></div>
+</details>
+<div class="pytest-command" data-command="python3 -m pytest -k q11"><pre><code>python3 -m pytest -k q11</code></pre></div>
+<p>You should find that running <code>python3 hog.py -r</code> now shows a win rate for
+<code>sus_strategy</code> close to 67-69%.</p>
+<h3 id="optional-problem-12-0-pt">
+  
+  
+    <a href="#optional-problem-12-0-pt" class="anchor-heading" aria-labelledby="optional-problem-12-0-pt"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Optional: Problem 12 (0 pt)
+  
+  
+</h3>
+    
+<p>Implement <code>final_strategy</code>, which combines these ideas and any other ideas you
+have to achieve a high win rate against the baseline strategy. Some
+suggestions:</p>
+<ul>
+<li>If you know the goal score (by default it is 100), there's no benefit to
+scoring more than the goal. Check whether you can win by rolling 0, 1 or 2
+dice. If you are in the lead, you might decide to take fewer risks.</li>
+<li>Instead of using a threshold, roll 0 whenever it would give you more points
+on average than rolling 6.</li>
+</ul>
+<p>You can check that your final strategy is valid by running pytest.</p>
+<div class="pytest-command" data-command="python3 -m pytest -k q12"><pre><code>python3 -m pytest -k q12</code></pre></div>
+<h2 id="project-submission">
+  
+  
+    <a href="#project-submission" class="anchor-heading" aria-labelledby="project-submission"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Project Submission
+  
+  
+</h2>
+    
+<p>Check your score on each part of the project:</p>
+<div class="pytest-command" data-command="python3 -m pytest --score"><pre><code>python3 -m pytest --score</code></pre></div>
+<p>Once you are satisfied, submit this assignment: run <strong>Provenance: Prepare Submission Bundle</strong> from the VS Code command palette and upload the zip it creates <strong>to Gradescope.</strong> For a refresher on how to do this, refer to <a href="../../labs/lab00/#task-c-submit-the-assignment">Lab 00</a>.</p>
+<p>Each partner must submit the version of the project that they typed.</p>
+<p><strong>Congratulations, you have reached the end of your first CS 61A project!</strong>
+If you haven't already, relax and enjoy a few games of Hog with a friend.</p>
+<h2 id="hog-contest">
+  
+  
+    <a href="#hog-contest" class="anchor-heading" aria-labelledby="hog-contest"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hog Contest
+  
+  
+</h2>
+    
+<p>If you're interested, you can take your implementation of Hog one step further
+by participating in the completely optional <a href="../../projects/hog_contest">Hog Strategy Contest</a>, where you design a <code>final_strategy</code>
+to be played against those of other students. The winning strategies will receive a paltry
+amount of extra credit.</p>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

@@ -1,0 +1,437 @@
+Source: https://cs61a.org/fa26/assets/lec/26-Midterm_3_Review.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Midterm 3 Review
+Announcements
+           Prefixes
+            def prefixes(s):
+                """Return a list of all of the list prefixes of s.                                                                                                                                                                                                             pollev.com/cs61a
+
+                            >>> prefixes([1, 2, 3])                                                                                                                                                                                                              >>> prefixes([1, 2, 3])
+                            [[1], [1, 2], [1, 2, 3]]
+                            “""
+
+                            so_far = []
+
+                            result = []
+
+                            for x in s:
+
+                                            so_far.append(x)
+
+                                            result.append(so_far)
+
+                            return result
+
+
+
+
+https://pythontutor.com/cp/                                                                                                                                                                                                                                                                                                                                                                 3
+composingprograms.html#code=def%20prefixes%28s%29%3A%0A%20%20%20%20so_far%20%3D%20%5B%5D%0A%20%20%20%20result%20%3D%20%5B%5D%0A%20%20%20%20for%20x%20in%20s%3A%0A%20%20%20%20%20%20%20%20so_far.append%28x%29%0A%20%20%20%20%20%20%20%20result.append%28so_far%29%0A%20%20%20%20return%20result%0A%0Aprint%28prefixes%28%5B1,%202,%203%5D%29%29&cumulative=true&curInstr=0&mode=display&origin=composingprog
+rams.js&py=3&rawInputLstJSON=%5B%5D
+           Prefixes
+            def prefixes(s):
+                """Return a list of all of the list prefixes of s.
+
+                            >>> prefixes([1, 2, 3])                                                                                                                                                                                                              >>> prefixes([1, 2, 3])
+                            [[1], [1, 2], [1, 2, 3]]
+                            “""                                                                                                                                                                                                                                  [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+                            so_far = []
+                                                                                                                                                                                                                                                                How can we fix the implementation?
+                            result = []
+                                                                                                                                                                                                                                                                                              pollev.com/cs61a
+                            for x in s:
+
+                                            so_far.append(x)
+                                                        list(so_far)
+                                            result.append(so_far)
+
+                            return result
+
+
+
+
+https://pythontutor.com/cp/                                                                                                                                                                                                                                                                                                                                                                 4
+composingprograms.html#code=def%20prefixes%28s%29%3A%0A%20%20%20%20so_far%20%3D%20%5B%5D%0A%20%20%20%20result%20%3D%20%5B%5D%0A%20%20%20%20for%20x%20in%20s%3A%0A%20%20%20%20%20%20%20%20so_far.append%28x%29%0A%20%20%20%20%20%20%20%20result.append%28so_far%29%0A%20%20%20%20return%20result%0A%0Aprint%28prefixes%28%5B1,%202,%203%5D%29%29&cumulative=true&curInstr=0&mode=display&origin=composingprog
+rams.js&py=3&rawInputLstJSON=%5B%5D
+Recursion Recipe
+
+• Write     down an example input
+• What   small initial choice can I make?
+
+• What   recursive call for each option?
+  • Write   down the recursive call(s) for your example input
+  • Write     down what each of those calls returns for your example input
+
+
+
+
+                                                                             5
+Tree Recursion Practice
+Spring 2023 Midterm 2 Question 4(a)
+Implement exclude, which takes a Tree t and a value x. It returns a Tree containing the root
+node of t as well as each non-root node of t with a label not equal to x. The parent of a
+node in the result is its nearest ancestor node that is not excluded.
+def exclude(t, x):
+    """Return a tree with the non-root nodes of tree t labeled anything but x.         1
+
+   >>> t = Tree(1, [Tree(2, [Tree(2), Tree(3), Tree(4)]), Tree(5, [Tree(1)])])     2       5
+   >>> print(exclude(t, 2))
+   1                                                                           2   3   4   1
+     3
+     4
+     5                                       What will the recursive call          2       5
+       1                                        on each branch return?
+   """                                                                         2   3   4   1
+   filtered_branches = map(lambda y: _______________, t.branches)
+   bs = []                                   What should we do with those
+   for b in filtered_branches:                      return values?                     1
+
+       if ________________:                           Branch has label x?          2       5
+                                                       Take its branches
+           bs.________(______________)
+       else:                                                                   2   3   4   1
+                                                     Otherwise we’re cool
+           bs.append(b)                              with the branch as-is                 7
+   return Tree(t.label, bs)
+ Spring 2023 Midterm 2 Question 4(a)
+  Implement exclude, which takes a Tree t and a value x. It returns a Tree containing the root
+  node of t as well as each non-root node of t with a label not equal to x. The parent of a
+  node in the result is its nearest ancestor node that is not excluded.
+  def exclude(t, x):
+      """Return a tree with the non-root nodes of tree t labeled anything but x.         1
+
+      >>> t = Tree(1, [Tree(2, [Tree(2), Tree(3), Tree(4)]), Tree(5, [Tree(1)])])     2       5
+      >>> print(exclude(t, 2))
+      1                                                                           2   3   4   1
+         3                                     In Spring 2023,
+         4                                     20% of students
+         5                                                                            2       5
+                                                got this right
+           1
+      """                                                                         2   3   4   1
+                                           exclude(y,  x)
+      filtered_branches = map(lambda y: _______________, t.branches)
+      bs = []
+      for b in filtered_branches:                                                         1
+                                    37% of students
+               b.label == x          got this   right
+ 30% got if ________________:                              Branch has label x?        2       5
+it right;                                                   Take its branches
+                   extend    b.branches
+               bs.________(______________)   24% got
+ 1 of 4
+           else:                             it  right                            2   3   4   1
+ options                                                   Otherwise we’re cool
+               bs.append(b)                               with the branch as-is               8
+      return Tree(t.label, bs)
+String Practice
+Fruit: Warm-Up
+def display(fruit: str, count: int) -> str:
+    """Display a count of a fruit in angle brackets. When count is 1, the fruit name should
+    be singular: drop the final s, so that display('apples', 1) returns '<1 apple>'. Assume
+    that every plural fruit name can be made singular by removing the last letter.
+
+   >>> display('apples', 3)
+   '<3 apples>'
+   >>> display('apples', 1)
+   '<1 apple>'
+   >>> display('kiwis', 12)
+   '<12 kiwis>'
+   >>> print(display('apples', 3) + display('kiwis', 3))
+   <3 apples><3 kiwis>
+   """
+   assert count >= 1 and fruit[-1] == 's'
+   if count == 1:
+        ____________________
+   return f'__________________'
+                                                                                              10
+Fruit: Warm-Up
+def display(fruit: str, count: int) -> str:
+    """Display a count of a fruit in angle brackets. When count is 1, the fruit name should
+    be singular: drop the final s, so that display('apples', 1) returns '<1 apple>'. Assume
+    that every plural fruit name can be made singular by removing the last letter.
+
+   >>> display('apples', 3)
+   '<3 apples>'
+   >>> display('apples', 1)
+   '<1 apple>'
+   >>> display('kiwis', 12)
+   '<12 kiwis>'
+   >>> print(display('apples', 3) + display('kiwis', 3))
+   <3 apples><3 kiwis>
+   """
+   assert count >= 1 and fruit[-1] == 's'
+   if count == 1:
+        fruit = fruit[:-1]
+        ____________________
+            <{count} {fruit}>
+   return f'__________________'
+                                                                                              11
+Dictionary/Recursion Practice
+Buying Fruit
+def buy(fruits_to_buy: list[str], prices: dict[str, int], total_amount: int) -> None:
+    """Print ways to buy some of each fruit so that
+    the sum of prices is amount.
+
+    >>> prices = {'oranges': 4, 'apples': 3,
+                  'bananas': 2, 'kiwis': 9}
+    >>> buy(['apples', 'oranges', 'bananas'],
+            prices, 16)
+    <2 apples><1 orange><3 bananas>
+    <2 apples><2 oranges><1 banana>
+    """
+
+Implement the buy function that takes three parameters:
+
+fruits_to_buy: A list of strings representing the fruits you need to buy. At least one of each
+fruit must be bought.
+prices: A dictionary where the keys are fruit names (strings) and the values are positive
+integers representing the cost of each fruit.
+total_amount: An integer representing the total money available for purchasing the fruits.
+
+The function should print all possible ways to buy the required fruits so that the combined
+cost equals total_amount. You can only select fruits mentioned in the fruits_to_buy list.
+                                                                                              13
+Buying Fruit
+def buy(fruits_to_buy: list[str], prices: dict[str, int], total_amount: int) -> None:
+    """Print ways to buy some of each fruit so that
+    the sum of prices is amount.
+
+    >>> prices = {'oranges': 4, 'apples': 3,
+                  'bananas': 2, 'kiwis': 9}
+    >>> buy(['apples', 'oranges', 'bananas'],
+            prices, 16)
+    <2 apples><1 orange><3 bananas>
+    <2 apples><2 oranges><1 banana>
+    """                                                                The display function
+    def add(fruits: list[str], amount: int, cart: str) -> None:      will help you add fruit
+                                                                            to the cart
+        if fruits == [] and amount == 0:
+            print(cart)
+                                                  def display(fruit: str, count: int) -> str:
+        elif fruits and amount > 0:
+            fruit = fruits[0]
+            price = _____________
+            for k in ______________________________:
+               add(__________, ___________________, _________________________)
+    add(fruits_to_buy, total_amount, '')
+                                                                                           14
+Buying Fruit
+def buy(fruits_to_buy: list[str], prices: dict[str, int], total_amount: int) -> None:
+    """Print ways to buy some of each fruit so that
+    the sum of prices is amount.
+
+    >>> prices = {'oranges': 4, 'apples': 3,
+                  'bananas': 2, 'kiwis': 9}
+    >>> buy(['apples', 'oranges', 'bananas'],
+            prices, 16)
+    <2 apples><1 orange><3 bananas>
+    <2 apples><2 oranges><1 banana>
+    """                                                                The display function
+    def add(fruits: list[str], amount: int, cart: str) -> None:       will help you add fruit
+                                                                            to the cart
+        if fruits == [] and amount == 0:
+            print(cart)
+                                                  def display(fruit: str, count: int) -> str:
+        elif fruits and amount > 0:
+            fruit = fruits[0]
+                    prices[fruit]
+            price = _____________
+                     range(1, amount // price + 1)
+            for k in ______________________________:
+               add(__________,  amount - price * k _________________________)
+                   fruits[1:] ___________________,   cart + display(fruit, k)
+    add(fruits_to_buy, total_amount, '')
+                                                                                           15
+Class Practice
+Mic and Speakers (Spring 2024 Midterm)
+class Mic:                                                  If you sing lyrics into a mic, every
+    """A microphone connected to speakers.                  connected speaker repeats them.
+   >>> m = Mic() # Front is connected automatically
+   >>> m.sing('Is this thing on?')                          A Mic instance has a dictionary speakers
+   Front - Is this thing on?                                containing Speaker instances as values,
+   >>> Speaker(str.lower).connect(m, 'Left Side')           each with its location (str) as its key.
+   >>> m.sing("You BELONG with me.")                        Its sing method takes a string lyrics
+   Front - You BELONG with me.                              and invokes the repeat method of each
+   Left Side - you belong with me.
+                                                            Speaker instance connected to it.
+   """
+   def __init__(self):
+       self.speakers = _______                              A Speaker takes a transform function
+                                                            that takes and returns a string. To
+   def sing(self, lyrics: str):                             connect a Speaker instance to m (Mic) in
+       for k in self.speakers.keys():                       a location (str), add that instance to
+           print(k, '-', ________________.repeat(lyrics))   the speakers dictionary of m in that
+                                                            location. To repeat a signal s (str),
+class Speaker:
+    def __init__(self, transform):                          return the result of calling
+        self.transform = transform                          the speaker's transform function on s.
+
+   def connect(self, m: Mic, location: str):                Every Mic starts connected to a Speaker
+       _______                                              in the Front location that repeats the
+                                                            exact same signal it receives.
+   def repeat(self, s: str) -> str:
+       return _______                                                                                 17
+Mic and Speakers (Spring 2024 Midterm)
+class Mic:                                                  If you sing lyrics into a mic, every
+    """A microphone connected to speakers.                  connected speaker repeats them.
+   >>> m = Mic() # Front is connected automatically
+   >>> m.sing('Is this thing on?')                          A Mic instance has a dictionary speakers
+   Front - Is this thing on?                                containing Speaker instances as values,
+   >>> Speaker(str.lower).connect(m, 'Left Side')           each with its location (str) as its key.
+   >>> m.sing("You BELONG with me.")                        Its sing method takes a string lyrics
+   Front - You BELONG with me.                              and invokes the repeat method of each
+   Left Side - you belong with me.
+                                                            Speaker instance connected to it.
+   """
+   def __init__(self):
+                       {'Front': Speaker(lambda x: x)}
+       self.speakers = _______                              A Speaker takes a transform function
+                                                            that takes and returns a string. To
+   def sing(self, lyrics: str):                             connect a Speaker instance to m (Mic) in
+       for k in self.speakers.keys():                       a location (str), add that instance to
+                         self.speakers[k]
+           print(k, '-', ________________.repeat(lyrics))   the speakers dictionary of m in that
+                                                            location. To repeat a signal s (str),
+class Speaker:
+    def __init__(self, transform):                          return the result of calling
+        self.transform = transform                          the speaker's transform function on s.
+
+   def connect(self, m: Mic, location: str):                Every Mic starts connected to a Speaker
+       m.speakers[location]
+       _______              = self                          in the Front location that repeats the
+                                                            exact same signal it receives.
+   def repeat(self, s: str) -> str:
+       return self.transform(s)
+              _______                                                                                 18
+Example: Three Attributes
+                                         A class
+class A:
+    x, y, z = 0, 1, 2                     x: 0
+                                          y: 1
+   def f(self):
+                                          z: 2
+       return [self.x, self.y, self.z]
+                                         B class
+class B(A):
+    """What would Python Do?              x: 6
+
+    >>> A().f()                          A instance
+
+
+    [0, 1, 2]
+                                         B instance
+    >>> B().f()
+                                          z: 'A'
+     [6, 1, 'A']
+    _____________
+
+   """
+   x = 6
+   def __init__(self):
+       self.z = 'A'
+                                                      19
+Class Attributes
+A class attribute can be accessed from either an instance or its class. There is only one
+value for a class attribute, regardless of how many instances.
+class Transaction:
+    """A logged transaction.                  Transaction class  List
+
+
+    >>> s = [20, -3, -4]                       log:
+    >>> ts = [Transaction(x) for x in s]       ...
+    >>> ts[1].balance()
+    17
+    >>> ts[2].balance()
+    13                                        Transaction instance   Transaction instance   Transaction instance
+
+    """            Always bound to some
+                                               amount: 20             amount: -3             amount: -4
+    log = []       Transaction instance
+                                               prior:                 prior:                 prior:
+    def __init__(self, amount):
+        self.amount = amount                       empty list
+                     list(self.log) # a list of Transactions
+        self.prior = _______________
+        self.log.append(self)
+                                Equivalently: list(type(self).log) or list(Transaction.log)
+    def balance(self):
+        """The sum of amounts for this transaction and all prior transactions"""
+                                  [t.amount for t in self.prior] )
+        return self.amount + sum(_______________________________
+                                                                                                              20
+Generator Practice
+Generator Where’s Waldo
+                                                          'o'
+
+def all_elements(t: Tree):
+    for b in t.branches:                            'a'         ‘W'
+        yield from all_elements(b)
+    yield t.label
+                                                          'o'         ‘a'
+
+                                                                ‘d'         ‘l’
+
+>>> t = Tree('o', [Tree('a'), Tree('W', [Tree('o'), Tree('a', [Tree('d'), Tree('l')])])])
+>>> a = all_elements(t)
+>>> a
+<generator object all_elements at 0x104e4ddd0>
+>>> next(a)
+'a'                                                    Write an expression that
+                                                       uses a and evaluates to
+>>> list(reversed(list(a)[:-1]))                      [‘W', ‘a', ‘l', ‘d', ‘o']
+['W', 'a', 'l', 'd', 'o']
+
+
+
+
+                                                                                            22
+More List Practice
+Lists of Fibonacci Numbers Recursively
+
+List mutations can be used to build up a list incrementally, even using recursion
+
+ def fibs_rec(n):
+     """Return a list of the first n fibonacci numbers.
+
+    >>> fibs_rec(10)
+    [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+    """
+    s = []
+    def f(i):
+        _________:
+             if i < 2:
+                 s.append(i)
+             else:
+                 s.append(s[-2] + s[-1])
+             __________
+    _____
+    return s
+                                                                                    24
+Lists of Fibonacci Numbers Recursively
+
+List mutations can be used to build up a list incrementally, even using recursion
+
+ def fibs_rec(n):
+     """Return a list of the first n fibonacci numbers.
+
+    >>> fibs_rec(10)
+    [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+    """
+    s = []
+    def f(i):
+         if i < n
+        _________:
+             if i < 2:
+                 s.append(i)
+             else:
+                 s.append(s[-2] + s[-1])
+             f(i + 1)
+             __________
+     f(0)
+    _____
+    return s
+                                                                                    25
+

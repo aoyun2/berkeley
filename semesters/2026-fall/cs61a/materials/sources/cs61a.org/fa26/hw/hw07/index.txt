@@ -1,0 +1,682 @@
+Source: https://cs61a.org/fa26/hw/hw07/
+Retrieved: 2026-11-06
+
+Homework 7: Gleam
+Due:
+Thursday 11/05 @ 11:59pm
+Points:
+1
+Download:
+hw07.zip
+Complete your work in
+src/hw07.gleam
+, and from inside the folder run your tests with
+gleam test
+(or
+gleam test -- score
+to see your score).
+To receive credit, you must solve each problem and then complete a short checkoff interview about your solution. You may use Preceptor for the interview or come to office hours to be interviewed by a member of the course staff. If the interviews are not working, please still submit your working code on time or request an extension by the deadline.
+Staff will be doing in-person checkoffs for up to 3 business days after the assignment deadline (including any approved extension)
+. If a checkoff happens more than 3 business days after the regular deadline, staff may ask to confirm your extended deadline via Flextensions. You will submit a Provenance bundle that includes a record of how you used VS Code, including interactions with Preceptor. Please do not use AI tools other than Preceptor for this assignment.
+Setup
+This homework is written in
+Gleam
+. To install Node.js and
+Gleam and set up VS Code for Gleam, follow the
+setup instructions in Lab 8
+. Download and open
+hw07
+the same way you did
+lab08
+.
+Test Your Code
+From the
+Terminal
+menu within VS Code, select
+New Terminal
+, which opens a
+terminal pane at the bottom of your
+hw07
+VS Code window. When you type
+ls
+,
+you should see
+gleam.toml
+,
+src
+, and
+test
+.
+Run one question's tests by naming it after
+--
+, or run the whole suite with
+gleam test
+:
+gleam
+test
+--
+pow
+# just this question
+gleam
+test
+# the whole suite
+gleam
+test
+--
+score
+# every question, with your score
+The tests will fail until you've solved the questions below. If something goes
+wrong, see
+What can go wrong?
+in
+Lab 8
+.
+Run Your Gleam Code
+The file you're editing ends with a
+main
+function, which
+gleam run
+calls:
+gleam
+run
+Right now,
+main
+just prints a message. You can add any Gleam code there you
+want, including calls to the functions in this assignment.
+echo
+also works inside any other function, so you can print intermediate
+values while the tests run.
+You can also test out Gleam code on the online
+Gleam Playground
+.
+Getting Started Videos:
+If you feel stuck,
+these videos
+may provide some helpful direction for tackling the coding problems on this assignment.
+To see these videos, you should be logged into your berkeley.edu email.
+Required Questions
+Q1: Powers
+Implement a function
+pow
+that raises a number
+base
+to the power of a
+nonnegative integer
+exp
+just by using multiplication. It should be fast! For example,
+pow(2, 32)
+should result in 5 or 6 recursive
+pow
+calls rather than 32.
+How to make it fast:
+x
+2y
+= (x
+y
+)
+2
+x
+2y+1
+= x(x
+y
+)
+2
+For example, 2
+16
+= (2
+8
+)
+2
+and
+2
+17
+= 2 · (2
+8
+)
+2
+.
+exp % 2
+is
+0
+when
+exp
+is even.
+If you see a
+js(RangeError: Maximum call stack size exceeded)
+, that's equivalent to Python's
+RecursionError: maximum recursion depth exceeded
+and indicates that your code is trying to make too many (and possibly infinite) recursive calls.
+/// `base` raised to the power `exp`, where `exp` is a nonnegative integer.
+pub
+fn
+pow
+(
+base
+:
+Int
+,
+exp
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- pow
+Q2: Smallest Factor
+Implement
+smallest_factor
+, which takes an integer
+n
+greater than 1 and
+returns the smallest factor of
+n
+that is greater than 1. Search upward from 2
+until you find a number that evenly divides
+n
+. (
+n % k
+is
+0
+when
+k
+evenly
+divides
+n
+.)
+Define any new recursive functions you need
+outside
+of the
+smallest_factor
+function. Unlike Python, you cannot define a named function inside another function. (You can define anonymous functions, but they can't call themselves directly.)
+For example:
+// 51 = 3 * 17
+assert
+smallest_factor
+(
+51
+)
+==
+3
+// 49 = 7 * 7
+assert
+smallest_factor
+(
+49
+)
+==
+7
+// 13 is prime, so its only factor greater than 1 is itself
+assert
+smallest_factor
+(
+13
+)
+==
+13
+You can (and should) define an additional function to help your implementation.
+/// The smallest factor of `n` greater than 1, where `n` is greater than 1.
+pub
+fn
+smallest_factor
+(
+n
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- smallest_factor
+Q3: Minimize
+Implement
+min
+, which takes integers
+start
+and
+end
+with
+start < end
+and a function
+key
+. It returns the integer
+k
+from
+start
+up to (but not including)
+end
+for
+which
+key(k)
+is smallest. If several integers tie for the smallest
+key
+value, return the smallest of them. Assume that
+start
+is less than
+end
+.
+// (x - 6) * (x - 2) is smallest (-4) at x = 4
+assert
+min
+(
+0
+,
+10
+,
+fn
+(
+x
+)
+{
+{
+x
+-
+6
+}
+*
+{
+x
+-
+2
+}
+})
+==
+4
+// Every key is 0, so the first integer is returned
+assert
+min
+(
+3
+,
+8
+,
+fn
+(
+_
+)
+{
+0
+})
+==
+3
+You may call
+key
+as many times as you want. For an extra challenge, implement
+min
+so that
+key
+is called at most once on each input, and the
+min
+function (or its helper function) is tail recursive.
+Define any new recursive functions you need
+outside
+of the
+min
+function. Unlike Python, you cannot define a named function inside another function. (You can define anonymous functions, but they can't call themselves directly.)
+/// The integer `k` from `start` up to (but not including) `end` for
+/// which `key(k)` is smallest. If several integers tie for the smallest key
+/// value, return the smallest of them. Assume `start` is less than `end`.
+pub
+fn
+min
+(
+start
+:
+Int
+,
+end
+:
+Int
+,
+key
+:
+fn
+(
+Int
+)
+->
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- min
+Then, implement
+sqrt
+, which takes a positive integer
+n
+and returns the
+positive integer whose square is closest to
+n
+. Implement
+sqrt
+by calling
+min
+. Your implementation should be only one line.
+Hint
+: The
+int.absolute_value
+function returns the absolute value of an
+integer.
+assert
+sqrt
+(
+144
+)
+==
+12
+assert
+sqrt
+(
+49
+)
+==
+7
+assert
+sqrt
+(
+64
+)
+==
+8
+assert
+sqrt
+(
+56
+)
+==
+7
+// 7 * 7 = 49 is 7 away from 56; 8 * 8 = 64 is 8 away
+assert
+sqrt
+(
+57
+)
+==
+8
+// 7 * 7 = 49 is 8 away from 57; 8 * 8 = 64 is 7 away
+/// The positive integer whose square is closest to `n`, where `n` is positive.
+pub
+fn
+sqrt
+(
+n
+:
+Int
+)
+->
+Int
+{
+// YOUR CODE HERE (replace the code below)
+int
+.
+absolute_value
+(
+n
+)
+}
+gleam test -- sqrt
+Q4: Pairs
+Implement
+pairs
+, which takes a list
+s
+and returns whether
+s
+is made up of
+adjacent pairs of equal elements, such as
+[3, 3, 1, 1, 4, 4, 1, 1]
+. For
+pairs
+to return
+True
+, the input list must have an even length, and items at
+index
+i
+and
+i+1
+must be equal for all even
+i
+.
+assert
+pairs
+([
+1
+,
+1
+,
+5
+,
+5
+,
+3
+,
+3
+])
+==
+True
+assert
+pairs
+([
+5
+,
+5
+,
+5
+,
+5
+])
+==
+True
+assert
+pairs
+([
+1
+,
+2
+,
+1
+,
+2
+])
+==
+False
+assert
+pairs
+([
+1
+,
+2
+,
+2
+,
+3
+,
+3
+,
+1
+])
+==
+False
+assert
+pairs
+([
+1
+,
+1
+,
+2
+])
+==
+False
+assert
+pairs
+([])
+==
+True
+Hint:
+Within a
+case
+expression for a list,
+[]
+matches an empty list,
+[_]
+matches a length-one list, and
+[a, b, ..tail]
+matches a list with length at least two.
+/// Whether `s` is made up of adjacent pairs of equal elements.
+/// An empty list is, but a list with an odd length is not.
+pub
+fn
+pairs
+(
+s
+:
+List
+(
+a
+))
+->
+Bool
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- pairs
+Q5: Longest Increasing Sublist
+Implement
+longest_increasing
+, which takes a list of integers
+s
+and returns
+the longest sublist of
+s
+whose elements are strictly increasing: each element
+is greater than (not equal to) the one before it. The elements of the sublist
+appear in the same order as in
+s
+, but they
+do not have to be adjacent
+in
+s
+. Assume that the longest increasing sublist is unique.
+// 1, 2, 3, 4, 9, 10 skips over 3, 4, 1, and 5
+assert
+longest_increasing
+([
+1
+,
+2
+,
+3
+,
+4
+,
+9
+,
+3
+,
+4
+,
+1
+,
+10
+,
+5
+])
+==
+[
+1
+,
+2
+,
+3
+,
+4
+,
+9
+,
+10
+]
+// Skipping 3 leaves the longer sublist [1, 2]
+assert
+longest_increasing
+([
+3
+,
+1
+,
+2
+])
+==
+[
+1
+,
+2
+]
+// Equal elements are not increasing
+assert
+longest_increasing
+([
+2
+,
+2
+,
+2
+])
+==
+[
+2
+]
+Hint:
+Use
+list.filter
+(
+docs
+) and
+list.length
+(
+docs
+).
+import
+gleam
+/
+list
+/// The longest sublist of `s` whose elements are strictly increasing.
+/// Assume that this longest sublist is unique.
+pub
+fn
+longest_increasing
+(
+s
+:
+List
+(
+Int
+))
+->
+List
+(
+Int
+)
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- longest_increasing
+Practice for Quiz 6
+Quiz 6
+will occur on Monday, November 9th and Tuesday, November 10th and will have a variant of
+Q5 (Longest Increasing Sublist)
+. The
+practice quiz
+is released now on PrairieLearn so that you can prepare.

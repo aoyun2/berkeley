@@ -1,0 +1,989 @@
+Source: https://cs61a.org/fa26/labs/lab08/#run-your-gleam-code
+Retrieved: 2026-11-06
+
+Lab 8: Gleam Lists
+Due:
+Wednesday 11/04 @ 11:59pm
+Points:
+1
+Download:
+lab08.zip
+Complete your work in
+src/lab08.gleam
+, and from inside the folder run your tests with
+gleam test
+(or
+gleam test -- score
+to see your score).
+Attendance
+You need to submit the lab problems in addition to attending to get credit for lab. Students in mega lab only need to submit the lab problems. Preceptor interviews are highly recommended but
+not required
+for lab submissions.
+If you are in regular lab, your TA will come around during lab to check you in. If you didn't attend for a good reason (such as being sick), fill out this form (within 2 weeks of your lab):
+attendance form
+.
+Setup
+Install Node.js
+The Gleam assignments in this course compile to JavaScript and run on
+Node.js
+. To check whether you already have it, open a
+terminal and type
+node --version
+. If you see a version number that is 22 or
+larger, skip to the next step.
+Otherwise, download the
+LTS
+installer for your operating system from the
+Node.js download page
+, open the downloaded
+file, and follow the instructions of the installer. On Windows, the installer
+has a
+Tools for Native Modules
+page with a checkbox to automatically install
+the necessary tools. Leave that box unchecked: this course doesn't need those
+tools, and installing them takes a long time.
+Install Gleam
+Mac:
+If you have
+Homebrew
+, open the
+Terminal
+application, type
+brew install gleam
+, and press Enter. (Homebrew also installs
+Erlang, which Gleam can use but this course doesn't.)
+Otherwise, open the
+Terminal
+application, paste this command, and press Enter:
+v
+=
+$(
+curl
+-fsSLI
+-o
+/dev/null
+-w
+"%{url_effective}"
+https://github.com/gleam-lang/gleam/releases/latest
+|
+sed
+"s|.*/||"
+)
+&&
+mkdir
+-p
+~/.local/bin
+&&
+curl
+-fsSL
+"https://github.com/gleam-lang/gleam/releases/download/
+$v
+/gleam-
+$v
+-
+$(
+uname
+-m
+|
+sed
+s/arm64/aarch64/
+)
+-apple-darwin.tar.gz"
+|
+tar
+-xz
+-C
+~/.local/bin
+&&
+echo
+'export PATH="$HOME/.local/bin:$PATH"'
+>>
+~/.zshrc
+This command looks up the latest version of Gleam (
+v=...
+), creates a
+.local/bin
+folder in your home folder (
+mkdir
+), downloads Gleam (
+curl
+downloads files), unpacks the
+gleam
+program into that
+folder (
+tar
+), and adds a line to your
+.zshrc
+file that tells your terminal
+to look for programs there.
+Windows:
+Open
+PowerShell
+from the Start menu, type
+winget install --id Gleam.Gleam
+, and press Enter. If it asks whether you agree
+to the source terms, type
+Y
+. (
+winget
+is a program installer that is built
+into Windows 10 and 11. If PowerShell says that
+winget
+is not recognized,
+install
+App Installer
+from the Microsoft Store, open a new PowerShell window,
+and try again.)
+Linux:
+Follow the
+Gleam install guide
+for your
+distribution.
+The install guide may tell you to install Erlang as well. You can skip that: the
+assignments in this course only use Gleam's JavaScript target, which needs
+Node.js instead.
+To check that the installation worked, open a
+new
+terminal and type
+gleam --version
+. You should see
+gleam
+followed by a version number.
+Download and Open Lab08
+Click the
+lab08.zip
+link at the top of this page. It will be placed in your
+Downloads folder. Move
+lab08.zip
+to wherever you keep your course work.
+Then, unzip it: on Mac or Linux, double-click the downloaded file; on Windows,
+right-click it and choose
+Extract All...
+. (If you downloaded it with Safari on
+a Mac, Safari may have unzipped it for you already. In that case, you'll find a
+lab08
+folder in your Downloads folder instead of
+lab08.zip
+; move that folder
+instead.) Unzipping creates a
+lab08
+folder
+containing
+src/lab08.gleam
+, which is the file you'll edit, a
+test
+folder of
+tests, and a
+gleam.toml
+file that describes the project.
+Important:
+Use VS Code to open the whole
+lab08
+folder. Use
+Open
+Folder...
+in the
+File
+menu of VS Code, or drag the
+lab08
+folder onto an open
+VS Code window. Opening a folder that contains
+lab08
+instead of the
+lab08
+folder itself won't work.
+Configure VS Code for Gleam
+When you open the
+lab08
+folder, VS Code will offer to install the extensions
+recommended for the assignment. Accept the recommendations. Along with Provenance
+and Preceptor, these include the
+Gleam extension
+,
+which provides syntax highlighting, error messages as you type, and
+autocompletion for
+.gleam
+files. It also formats your code each time you save
+(the assignment folder's settings turn that on).
+If VS Code did not offer to install the extensions, click the extensions button
+in the menu on the left (the button looks like 4 boxes). Click Install for each
+of the recommended extensions.
+The Gleam extension uses the
+gleam
+program you installed above. If you installed
+Gleam while VS Code was open, quit and reopen VS Code so that it can find
+gleam
+.
+As in other assignments, check the status bar along the bottom of your VS Code
+window: it should show
+Provenance: recording
+.
+Test Your Code
+From the
+Terminal
+menu within VS Code, select
+New Terminal
+, which opens a
+terminal pane at the bottom of your
+lab08
+VS Code window. When you type
+ls
+,
+you should see
+gleam.toml
+,
+src
+, and
+test
+.
+Run
+gleam test
+in that terminal. The first time you run it, Gleam downloads the
+packages that the lab depends on, so you'll need an internet connection.
+If everything is set up correctly but you haven't started the lab, Gleam first
+prints several warnings about your code, such as
+warning: Todo found
+and
+warning: Unused variable
+. These appear because each unfinished function
+contains
+todo
+, a placeholder for code you haven't written yet. Then Gleam runs
+the tests, and every test fails with a message like this one:
+todo src/lab08.gleam:16
+ test: perfect_fit_test.perfect_fit_examples_test
+ info: `todo` expression evaluated. This code has not yet been implemented.
+The last line of the output should be
+0 passed, 13 failures
+. As you solve each
+question below, these warnings and failures will go away.
+What can go wrong?
+If the terminal says that
+gleam
+is not found, close the terminal, quit and
+reopen VS Code, and try again. If it still isn't found, repeat the
+Install Gleam
+step.
+If
+gleam test
+says
+Project not found
+and that it was unable to find
+gleam.toml
+, the terminal isn't in the
+lab08
+folder. Make sure you opened
+the
+lab08
+folder itself in VS Code, then open a new terminal from the
+Terminal
+menu and try again.
+If
+gleam test
+complains that
+node
+is not found, repeat the
+Install Node.js
+step and then reopen VS Code.
+Run Your Gleam Code
+The file you're editing ends with a
+main
+function, which
+gleam run
+calls:
+gleam
+run
+Right now,
+main
+just prints a message. You can add any Gleam code there you
+want, including calls to the functions in this assignment.
+echo
+also works inside any other function, so you can print intermediate
+values while the tests run.
+You can also test out Gleam code on the online
+Gleam Playground
+.
+These videos
+may provide some helpful direction for tackling the coding problems on this assignment.
+To see these videos, you should be logged into your berkeley.edu email.
+Required Questions
+Q1: Perfect Fit
+Definition:
+A
+perfect square
+is
+k * k
+for some integer
+k
+.
+Implement
+perfect_fit
+, which takes nonnegative integers
+total
+and
+n
+. It
+returns whether there are
+n
+different
+positive perfect squares that sum
+to
+total
+.
+assert
+perfect_fit
+(
+10
+,
+2
+)
+==
+True
+// 1*1 + 3*3
+assert
+perfect_fit
+(
+9
+,
+1
+)
+==
+True
+// 3*3
+assert
+perfect_fit
+(
+9
+,
+2
+)
+==
+False
+assert
+perfect_fit
+(
+9
+,
+3
+)
+==
+False
+// 1*1 + 2*2 + 2*2 repeats 2*2
+assert
+perfect_fit
+(
+25
+,
+2
+)
+==
+True
+// 3*3 + 4*4
+/// Whether there are `n` different positive perfect squares that sum to
+/// `total`, where `total` and `n` are nonnegative.
+pub
+fn
+perfect_fit
+(
+total
+:
+Int
+,
+n
+:
+Int
+)
+->
+Bool
+{
+fit_from
+(
+total
+,
+n
+,
+1
+)
+}
+/// Whether there are `n` different perfect squares, each `k * k` or greater,
+/// that sum to `total`.
+pub
+fn
+fit_from
+(
+total
+:
+Int
+,
+n
+:
+Int
+,
+k
+:
+Int
+)
+->
+Bool
+{
+case
+total
+,
+n
+{
+0
+,
+0
+->
+True
+_
+,
+_
+if
+total
+<
+k
+*
+k
+->
+False
+// YOUR CODE HERE (replace the code below)
+_
+,
+_
+->
+todo
+}
+}
+gleam test -- perfect_fit
+How to approach this problem
+This is a tree recursion problem. Your implementation should try different ways
+of summing up
+n
+different perfect squares to see if the sum is
+total
+. For
+the example
+perfect_fit(10, 2)
+, the call to
+fit_from(10, 2, 1)
+returns whether there
+are 2 perfect squares that sum to 10 and are each
+1*1
+or greater. To figure
+that out, you'll need to make two recursive calls:
+fit_from(10, 2, 2)
+, which returns whether there are 2 perfect squares that
+sum to 10 and are each
+2*2
+or greater (nope)
+fit_from(9, 1, 2)
+, which returns whether there is 1 perfect square that sums
+to 9 and is
+2*2
+or greater (yep:
+3*3
+)
+Once your implementation makes these two recursive calls, it needs to combine
+them into one result.
+Hint
+Use
+||
+to combine two recursive calls: one that uses
+k * k
+in the sum and
+one that does not. The first should subtract
+k * k
+from
+total
+and subtract 1
+from
+n
+; the other should leave
+total
+and
+n
+unchanged.
+Q2: Remove
+Implement
+remove
+, which takes a list of integers
+s
+and an integer
+x
+. It
+returns a list of the elements of
+s
+that are not equal to
+x
+, in the same
+order as in
+s
+.
+assert
+remove
+([
+3
+,
+4
+,
+3
+,
+4
+,
+4
+,
+3
+],
+3
+)
+==
+[
+4
+,
+4
+,
+4
+]
+assert
+remove
+([
+3
+,
+4
+,
+3
+,
+4
+,
+4
+,
+3
+],
+4
+)
+==
+[
+3
+,
+3
+,
+3
+]
+assert
+remove
+([
+1
+,
+3
+,
+2
+],
+42
+)
+==
+[
+1
+,
+3
+,
+2
+]
+Hint:
+A
+case
+pattern can have a guard:
+[first, ..rest] if first == x
+matches a non-empty list whose first element is
+x
+.
+/// A list of the elements of `s` that are not equal to `x`, in order.
+pub
+fn
+remove
+(
+s
+:
+List
+(
+Int
+),
+x
+:
+Int
+)
+->
+List
+(
+Int
+)
+{
+case
+s
+{
+[]
+->
+[]
+// YOUR CODE HERE (replace the code below)
+[
+first
+,
+..
+rest
+]
+->
+todo
+}
+}
+gleam test -- remove
+Q3: Pair Up
+Implement
+pair_up
+, which takes a list
+s
+. It returns
+a list of lists that together contain all of the items in
+s
+in order. The last list can have 0 to 3 (inclusive) items. Each
+previous list should have exactly 2 items. If there is more than one list, the last one should have 2 or 3 items.
+Look at the examples to make sure you understand what this
+function does.
+assert
+pair_up
+([
+3
+,
+4
+,
+5
+,
+6
+,
+7
+,
+8
+])
+==
+[[
+3
+,
+4
+],
+[
+5
+,
+6
+],
+[
+7
+,
+8
+]]
+assert
+pair_up
+([
+3
+,
+4
+,
+5
+,
+6
+,
+7
+,
+8
+,
+9
+])
+==
+[[
+3
+,
+4
+],
+[
+5
+,
+6
+],
+[
+7
+,
+8
+,
+9
+]]
+assert
+pair_up
+([
+1
+,
+2
+,
+3
+])
+==
+[[
+1
+,
+2
+,
+3
+]]
+assert
+pair_up
+([
+1
+])
+==
+[[
+1
+]]
+assert
+pair_up
+([])
+==
+[[]]
+/// The items of `s` in order, grouped into lists of 2 items, except that
+/// the last list has 3 items when the length of `s` is odd and at least 3.
+/// If `s` has fewer than 2 items, the result is a list containing just `s`.
+pub
+fn
+pair_up
+(
+s
+:
+List
+(
+a
+))
+->
+List
+(
+List
+(
+a
+))
+{
+// YOUR CODE HERE (replace the code below)
+todo
+}
+gleam test -- pair_up
+Hint: Base Case
+pair_up
+takes a list and returns a list of lists, so when
+s
+has 3 or fewer
+items, return a list containing the list
+s
+. For example,
+pair_up([2, 3, 4])
+should return
+[[2, 3, 4]]
+.
+Hint: Recursive Case
+The pattern
+[first, second, third, fourth, ..rest]
+matches a list with at
+least 4 items. Put a list of its first two items in front of the result of
+calling
+pair_up
+on everything after them.
+Submit Assignment
+Submit this assignment by running
+Provenance: Prepare Submission Bundle
+from the VS Code command palette and
+uploading the resulting zip
+to Gradescope
+. The zip already contains the
+files you've edited.
+Lab 00
+has detailed
+instructions.
+Your responses to WWPD questions are not submitted, and they do not need to
+be. Lab credit is based on the code writing questions.
+Optional Questions
+These questions are optional. If you don't complete them, you will
+still receive credit for this assignment. They are great practice, so do them
+anyway!
+Q4: Increasing Rope
+Definition:
+A
+rope
+is a non-empty list of non-empty lists of numbers,
+such as
+[[3], [1, 4], [1, 5]]
+.
+Implement
+up
+, which takes a positive integer
+n
+. It returns a rope containing
+the digits of
+n
+in order that is the shortest rope in which each pair of
+adjacent numbers in the same list is in increasing order.
+assert
+up
+(
+314152667899
+)
+==
+[[
+3
+],
+[
+1
+,
+4
+],
+[
+1
+,
+5
+],
+[
+2
+,
+6
+],
+[
+6
+,
+7
+,
+8
+,
+9
+],
+[
+9
+]]
+assert
+up
+(
+1234
+)
+==
+[[
+1
+,
+2
+,
+3
+,
+4
+]]
+Reminder:
+For integers,
+/
+performs floor division (like
+//
+in Python)
+for positive numbers, and
+%
+is the remainder.
+/// The shortest rope of the digits of `n` in which the numbers in each list
+/// are increasing, where `n` is positive.
+pub
+fn
+up
+(
+n
+:
+Int
+)
+->
+List
+(
+List
+(
+Int
+))
+{
+// YOUR CODE HERE (replace the code below)
+up_helper
+(
+n
+/
+10
+,
+todo
+)
+}
+/// The rope `result` with the digits of `n` added to its front.
+pub
+fn
+up_helper
+(
+n
+:
+Int
+,
+result
+:
+List
+(
+List
+(
+Int
+)))
+->
+List
+(
+List
+(
+Int
+))
+{
+let
+first
+=
+n
+%
+10
+case
+n
+,
+result
+{
+0
+,
+_
+->
+result
+// YOUR CODE HERE (replace the code below)
+_
+,
+_
+->
+todo
+}
+}
+gleam test -- up
+Hint: Defining up_helper
+Compare
+first
+to the first number in the first list of
+result
+to decide
+whether to put
+first
+at the front of that list, or to start a new list that
+contains just
+first
+in front of
+result
+.
+Hint: Calling up_helper
+To call
+up_helper
+from within
+up
+, build a rope that only contains the last
+digit of
+n
+:
+[[n % 10]]
+.

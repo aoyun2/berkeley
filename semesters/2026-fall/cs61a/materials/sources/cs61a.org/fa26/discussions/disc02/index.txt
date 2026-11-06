@@ -1,0 +1,491 @@
+Source: https://cs61a.org/fa26/discussions/disc02/
+Retrieved: 2026-11-06
+
+Discussion 2: Environment Diagrams, Higher-Order Functions
+🖨️
+Attendance
+Your TA will come around during discussion to check you in. You can start on
+the worksheet before being checked in; you don't need to wait for your TA to
+get started.
+If you didn't attend for a good reason (such as being sick), fill out this
+form (within 2 weeks of your discussion):
+attendance form
+If you get stuck, there are
+walkthrough videos
+(@berkeley.edu login to YouTube required).
+Getting Started
+Say your name and a city (or place) that you like, which is not Berkeley and is
+not where you have lived. Feel free to share why you like it.
+VERY IMPORTANT:
+In this discussion, don't run any Python code until your
+whole group is sure that the answer is right. Your goal should be to have
+all answers right the first time
+! Figure things out and check your work by
+thinking
+about what your code will do and
+discussing
+with others. Not sure?
+Talk to your group or a TA!  (You won't get to run Python during the midterm,
+so get used to solving problems without it now.)
+Q1: Warm Up
+What is the value of
+result
+after executing
+result = (lambda x: 2 * (lambda x: 3)(4) * x)(5)
+? Talk about it with your
+whole group and make sure you all agree before anybody checks the answer.
+Call Expressions
+Q2: Teamwork
+Draw an environment diagram for the code below. You can use paper or a tablet
+or the whiteboard. Talk to your group about how you are going to draw it, then
+go through each step
+together
+.
+def team(work):
+    return t(work) - 1
+def dream(work, s):
+    if work(s-2):
+        t = not s
+    return not t
+work, t = 3, abs
+team = dream(team, work + 1) and t
+Then
+step through the
+environment diagram in Python Tutor
+(opens a new tab) to check your work.
+Here's a blank diagram in case you're using a tablet.
+If you have questions, ask them instead of just looking up the answer! First
+ask your group, and then your TA.
+Higher-Order Functions
+Remember the problem-solving approach from last discussion; it works just as
+well for implementing higher-order functions.
+Pick an example input and corresponding output.
+(This time it might be a function.)
+Describe a process (in English) that computes the output from the input using simple steps.
+Figure out what additional names you'll need to carry out this process.
+Implement the process in code using those additional names.
+Determine whether the implementation really works on your original example.
+Determine whether the implementation really works on other examples. (If not, you might need to revise step 2.)
+Q3: Make Keeper
+Implement
+make_keeper
+, which takes a positive integer
+n
+and returns a
+function
+f
+that takes as its argument another one-argument function
+cond
+.
+When
+f
+is called on
+cond
+, it prints out the integers from 1 to
+n
+(including
+n
+) for which
+cond
+returns a true value when called on each of
+those integers. Each integer is printed on a separate line.
+def
+make_keeper
+(
+n
+):
+"""Returns a function that takes one parameter cond and prints
+out all integers 1..i..n where calling cond(i) returns True.
+>>> def is_even(x): # Even numbers have remainder 0 when divided by 2.
+...     return x % 2 == 0
+>>> make_keeper(5)(is_even)
+2
+4
+>>> make_keeper(5)(lambda x: True)
+1
+2
+3
+4
+5
+>>> make_keeper(5)(lambda x: False)  # Nothing is printed
+"""
+"*** YOUR CODE HERE ***"
+No peeking! First try to implement it without the hint.
+Hint
+To return a function
+f
+, include
+def f(cond):
+as the first line of the
+implementation and
+return f
+as the last. The
+f
+function should introduce
+i = 1
+in order to loop through all integers, calling
+cond(i)
+to determine
+whether
+cond
+returns true for each integer.
+Before you press Verify, check your work just by thinking!
+Once your group has converged on a solution, now it's time to practice your
+ability to describe your own code. A good description is like a good program:
+concise and accurate. Nominate someone to describe how your solution works and
+have them present to the group. If you want feedback, you can also present to
+your TA.
+Q4: Digit Finder
+Implement
+find_digit
+, which takes in a positive integer
+k
+and returns a
+function that takes in a positive integer
+x
+and returns the
+k
+th digit from
+the right of
+x
+. If
+x
+has fewer than
+k
+digits, it returns 0.
+For example, in the number 4567, 7 is the 1st digit from the right, 6 is the
+2nd digit from the right, and the 5th digit from the right is 0 (since
+there are only 4 digits).
+Important:
+You may not use strings or indexing for this problem. Try to solve
+this problem using only one line as a single
+lambda
+expression, since lambdas can only
+contain one expression (no loops/assignments).
+Tip
+: Use floor dividing by a power of 10 to get rid of the rightmost
+digits.
+def
+find_digit
+(
+k
+):
+"""Returns a function that returns the kth digit of x.
+>>> find_digit(2)(3456)
+5
+>>> find_digit(2)(5678)
+7
+>>> find_digit(1)(10)
+0
+>>> find_digit(4)(789)
+0
+"""
+assert
+k
+>
+0
+"*** YOUR CODE HERE ***"
+Hint
+First remove all of the digits after digit
+k
+, at which point digit
+k
+will
+be the last digit.
+Q5: Match Maker
+Implement
+match_k
+, which takes in an integer
+k
+and returns a function
+that takes in a variable
+x
+and returns
+True
+if all the digits in
+x
+that
+are
+k
+apart are the same.
+For example,
+match_k(2)
+returns a one argument function that takes in
+x
+and checks if digits that are 2 away in
+x
+are the same.
+match_k(2)(1010)
+has the value of
+x = 1010
+and digits 1, 0, 1, 0 going
+from left to right.
+1 == 1
+and
+0 == 0
+, so the
+match_k(2)(1010)
+results
+in
+True
+.
+match_k(2)(2010)
+has the value of
+x = 2010
+and digits 2, 0, 1, 0 going
+from left to right.
+2 != 1
+and
+0 == 0
+, so the
+match_k(2)(2010)
+results
+in
+False
+.
+Important:
+You may not use strings or indexing for this problem.
+You may call
+find_digit
+.
+Tip:
+Floor dividing by powers of 10 gets rid of the rightmost digits.
+def
+match_k
+(
+k
+):
+"""Returns a function that checks if digits k apart match.
+>>> match_k(2)(1010)
+True
+>>> match_k(2)(2010)
+False
+>>> match_k(1)(1010)
+False
+>>> match_k(1)(1)
+True
+>>> match_k(1)(2111111111111111)
+False
+>>> match_k(3)(123123)
+True
+>>> match_k(2)(123123)
+False
+"""
+def
+check
+(
+x
+):
+while
+x
+//
+(
+10
+**
+k
+)
+>
+0
+:
+if
+____________________________
+:
+return
+____________________________
+x
+//=
+10
+____________________________
+____________________________
+Hint
+In each iteration, compare the last digit with the one that is
+k
+positions
+before it.
+Optional Exam Review
+Here are some recent Midterm 1 problems that are similar to the problems you
+just solved. If you have extra time, discuss them with your group. If you don't
+have enough time, you could schedule another meeting with your group before the
+midterm to go through these together.
+Here's a good format for group exam review:
+First, everyone read the question but don't solve it yet.
+Second, see if anyone has any questions about what the problem is asking for.
+Third, let everyone work individually for five minutes or so to try to make progress on their own.
+Fourth, have the people who got stuck (which is ok!) explain what they tried.
+Fifth, give suggestions to the people who got stuck about what they might have tried to keep making progress.
+Finally, talk through potential solutions to the problem.
+Avoid the temptation to look up the solution until your whole group is
+confident that you've reached a correct answer.
+All past exams are here:
+cs61a.org/resources/
+Q6: Which One
+This question was
+Spring 2024 61A Midterm 1
+Question 1(b).
+What is displayed by the interactive Python interpreter after evaluating
+which()()
+, given that the following code has been executed?
+one = 1
+def which():
+    one = 3
+    def this():
+        return one
+        return one + 1
+    return this
+    one = 4
+Once your whole group agrees on an answer,
+step
+through it in Python Tutor
+(opens a new tab) to see the answer.
+Q7: Choose Wisely
+This question was
+Fall 2023 61A Midterm 1
+Question 4(b). On the exam, the last two blanks were multiple choice.
+It is a typical problem that combines iteration and a higher-order function.
+Definition
+: A
+digit test
+is a function that takes a non-negative integer
+less than 10 and returns
+True
+or
+False
+.
+Implement
+every
+, which takes a
+digit test
+t
+and returns a function
+digit
+that takes a positive integer
+n
+. The
+digit
+function returns whether
+t
+returns
+True
+for every digit of
+n
+.
+def
+every
+(
+t
+):
+"""Return a function of n that returns whether t returns True for every digit of n.
+>>> f = every(lambda d: d % 2 == 1)
+>>> f(37511)  # every digit is odd
+True
+>>> f(2023)   # Not every digit is odd
+False
+"""
+def
+digit
+(
+n
+):
+assert
+n
+>
+0
+while
+n
+:
+if
+____________________________
+:
+____________________________
+n
+=
+n
+//
+10
+return
+____________________________
+return
+____________________________
+Q8: Nice Dice
+These two questions were
+Spring 2024 Midterm 1
+Questions 4(b) and 4(c). On the exam, the blank in
+count_at_least
+was
+multiple choice.
+It is a typical problem that asks you to use a function that you just defined.
+Fill in the blank of
+count_if
+, which takes a one-argument function
+f
+. It
+returns a function that takes a positive integer
+n
+and returns the count of
+its digits for which
+f
+returns a true value.
+Then, fill in the blank of
+count_at_least
+, which takes a positive integer
+k
+.
+It returns a function that takes a positive integer
+n
+and returns the count of
+its digits that are greater than or equal to
+k
+.
+def
+count_if
+(
+f
+):
+"""Return a function that takes a positive integer n and returns
+the count of its digits for which f returns a true value.
+>>> is_three = lambda d: d == 3
+>>> count_threes = count_if(is_three)  # count_threes returns the number of threes in n
+>>> count_threes(431663334231)         # 3 appears 5 times
+5
+"""
+def
+g
+(
+n
+):
+count
+=
+0
+while
+n
+:
+if
+____________________________
+:
+count
++=
+1
+n
+=
+n
+//
+10
+return
+count
+return
+g
+def
+count_at_least
+(
+k
+):
+"""Return a function that returns how many of the digits of its argument are at least k.
+>>> above_3 = count_at_least(3)  # above_3 returns the # of digits greater than or equal to 3
+>>> above_3(431663334231)
+9
+"""
+return
+count_if
+(
+____________________________
+)

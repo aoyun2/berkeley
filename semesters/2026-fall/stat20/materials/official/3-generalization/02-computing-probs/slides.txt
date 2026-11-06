@@ -1,0 +1,149 @@
+Source: https://stat20.berkeley.edu/fall-2026/3-generalization/02-computing-probs/slides.html
+Retrieved: 2026-11-06
+
+Stat 20 (Fall 2026) – Computing Probabilities
+Computing Probabilities
+STAT 20: Introduction to Probability and Statistics
+Warmup Question
+−
++
+10:00
+The following problem is taken from Frederick Mosteller’s book Fifty Challenging Problems in Probability, which is apparently a favorite source for interview questions in quantitative trading and research firms such as Jane Street.
+To encourage Elmer’s promising tennis career, his father offeres him a prize if he wins (at least) two tennis sets in a row in a three-set series to be played with his father and the club champion alternately: father-champion-father or champion-father-champion, according to Elmer’s choice. The champion is a better player than Elmer’s father. Which series should Elmer choose: father-champion-father or champion-father-champion? You may treat the result of each game within a set as independent of the other two games.
+Even though it seems intuitive that Elmer should play more games against his father, because the middle game is the crucial game to be won, Elmer should choose the champion-father-champion three game series as that gives him a higher chance of winning.
+Let \(C\) stand for a game Elmer plays against the champion, and \(F\) stand for a game against Elmer’s father. Let \(p_C\) denote the probability of Elmer beating the champion, and \(p_F\) denote the probability Elmer will beat his father. Since the champion is a better player than Elmer’s father, we know that \(p_C < p_F\), and so at first it seems intuitive that Elmer should choose the series where he plays his father first (\(F\,C\,F\)) rather than playing the champion first (\(C\,F\,C\)). If we enumerate the games and probabilities, we have:
+Father first
+Set with: |
+\(F\) |
+\(C\) |
+\(F\) |
+Probability |
+|
+\(W\) |
+\(W\) |
+\(W\) |
+\(p_F p_C p_F\) |
+|
+\(W\) |
+\(W\) |
+\(L\) |
+\(p_F p_C (1 - p_F)\) |
+|
+\(L\) |
+\(W\) |
+\(W\) |
+\((1 - p_F) p_C p_F\) |
+Totals |
+|
+|
+|
+\(p_F p_C (2 - p_F)\) |
+Champion first
+Set with: |
+\(C\) |
+\(F\) |
+\(C\) |
+Probability |
+|
+\(W\) |
+\(W\) |
+\(W\) |
+\(p_C p_F p_C\) |
+|
+\(W\) |
+\(W\) |
+\(L\) |
+\(p_C p_F (1 - p_C)\) |
+|
+\(L\) |
+\(W\) |
+\(W\) |
+\((1 - p_C) p_F p_C\) |
+Totals |
+|
+|
+|
+\(p_F p_C (2 - p_C)\) |
+Since \(p_C < p_F\), this means that \((2 - p_C) > (2 - p_F)\), and Elmer should choose to play the champion first (\(C\,F\,C\)).
+What’s an easy and intuitive way to think about this? Winning the middle game is crucial, and he should play that against his father.
+Do you want a car or do you want a goat?
+[Image: ; ]
+Of course, this is the Monty Hall problem. The text for this comic is “A few minutes later, the goat behind door C drives away in the car.”
+Can have some fun and ask them to if they chose door A and door B had a goat, would they stay with A or would they switch to C?
+Verbally describe the setup: There are three doors A, B, C. Car behind one of them, goats behind other two. You pick a door at random (say you pick A), host opens one of the doors you didn’t pick (say they open B), and shows you a goat. Now should you stick with your original choice of A or should you switch to C. Will be fun to see what they guess.
+The right answer is that they should switch. Waving hands, the total mass of 1 was split 1/3 to 2/3 (win to not win) with the choice of A. A is kept aside, and B is opened.Now the P(A doesn’t win) = 2/3 is moved to C.Therefore more likely to win if you switch. Not worth doing in stat 20 with formal notation even after going over Bayes.
+Use this site to demo: https://onlinestatbook.com/2/probability/monty_hall_demo.htmls [https://onlinestatbook.com/2/probability/monty_hall_demo.htmls]
+You can change the number of doors and see how often you win by switching (the probability increases).
+Concept Review
+Rules for computing probabilities
+Conditional Probability:
+For two events \(A\) and \(B\), \(P(A \vert B) = \displaystyle \frac{P(A \text{ and } B)}{P(B)}\)
+Multiplication rule:
+For two events \(A\) and \(B\), \(P(A \cap B) = P(A \textbf{ and } B)= P(A \vert B) P(B)\)
+Independent events:
+We say that two non-empty events \(A\) and \(B\) are independent if \(P(A \cap B) = P(A)\times P(B)\).
+Complement rule:
+\(P(A^C) = 1 - P(A)\)
+Addition rule (events not necessarily mutually exclusive):
+\(P(A\cup B) = P(A \textbf{ or } B)= P(A) + P(B) - P(A\cap B)\)
+I like to tell them for conditional probability that their “universe” (outcome space) changes with the information, so now all the probabilities have to be adjusted. That is what conditioning on this new information means. We now have a new probability function on this new outcome space \(B\).
+You can tell them here that \(A^C\) is “not A”, and then maybe use dice or coin toss examples. Review mutually exclusive vs independent events, emphasizing that these are very different ideas, though both apply to pairs of events.
+Mutually exclusive events means that the occurrence of one event prevents the occurrence of the other. (that is, it reduces the chance of the other occurring to 0.)
+Independent events means that the occurrence of one event does not change the chance of the other occurring.
+For the addition rule, ask them what happens if the sets are mutually exclusive.
+Drawing tickets from a box
+−
++
+03:00
+Suppose we draw 2 tickets at random without replacement from a box with tickets marked {1, 2, 3, . . . , 9}. Let \(A\) be the event that at least one of the tickets drawn is labeled with an even number, let \(B\) be the event that at least one of the tickets drawn is labeled with a prime number (recall that the number 1 is not regarded as a prime number). Suppose the numbers on the tickets drawn are 3 and 9.
+Which of the following events occur?
+\(A\)
+\(B\)
+\(A\) and \(B\) (\(= A \cap B\))
+\(A\) and \(B^c\) (\(= A \cap B^c\))
+\(A^c\) and \(B\) (\(= A^c \cap B\))
+ii and v, I told them they can immediately see that A^C is true since no even number, so definitely (v) and then we do have a prime number and both are odd so (ii) is true.
+You could give other events for practice such as 2 and 9, or 4 and 9 etc.
+Baseball!
+−
++
+01:00
+[Image: ; ]
+The MLB 2026 postseason is almost here, but let’s look back at the 2025 World Series. This championship series was a best-of-seven playoff between the Los Angeles Dodgers and the Toronto Blue Jays. The winners in the World Series have to win a majority of 7 games, so the first team to win 4 games wins the series. Before the series began, the estimated probability that the Dodgers would have beaten the Blue Jays in any single game was \(\dfrac{2}{3}\), independently of all the other games.
+What was the probability that the Dodgers would have won in a clean sweep?
+When they won in 2024, it was the Dodgers’ first World Series appearance and win since 2020, and the Yankees’ first World Series appearance since 2009.Now they have won the National league west and are favories to be the world series champs again.
+Straightforward application of multiplication rule for independent events. probability is (2/3)^4 = 0.1975309. You could even ask more or less than 20%?
+You may have to explain Clean sweep means that they won in the first 4 games - which didn’t happen, they won in 5 games.
+Follow up comment/question: if the teams were more evenly matched, say probability of either team winning is 50%, What is the probability of going to 7 games vs probability of winning in 6 games GIVEN 5 games are played.
+(They are equal because if 5 games are played it means one of the teams is leading 3-2. Therefore there are two scenarios: the team that is ahead wins game 6 and the series, or the team that is behind wins game 6 and they go to 7 games. Both are equally likely.
+And of course, you could always ask the Giants fans in the class who they are going to root for in the postseason.
+Tossing coins
+−
++
+02:00
+Toss three coins, one at a time. Define the following events:
+\(A\) is the event that the first coin flipped shows a head.
+\(B\) is the event that the first two coins flipped both show heads.
+\(C\) is the event that the last two coins flipped both show tails.
+Are the events \(A\) and \(B\) independent, mutually exclusive or neither?
+What about \(A\) and \(C\)? What about \(B\) and \(C\)?
+After they are done, write out the outcome space for the results of flipping 3 coins. And go through what are A and B, C, then easy to answer all three questions.
+A and B are neither independent nor mutually exclusive, in fact \(B \subset A\).
+A and C are independent, and B and C are mutually exclusive.
+Testing positive for a rare condition: should you be freaked out?
+−
++
+03:00
+A rare condition affects 0.2% of the population. A test for this condition is 99% accurate: this means that the probability that a person with the condition tests positive is 99% and the probability that a person without the condition tests negative is 99%. Is the probability that a person who tests positive has the condition more or less than \(50\%\)?
+First, DON’T do Bayes’ theorem, but show them how to think about the chances, and where the positive tests come from. We can think about the number of cases in 100,000, then the numbers are nice and whole.
+Since prevalence is 0.2%, then 0.2% of 100,000 is 0.002*100000 = 200 people will have the condition, and 99% or 198 of them are expected to test positive. Out of the remaining (100000-200 = 99800) people who do not have the condition, 1% will test positive, which is 998 people, so the total number of positive tests is 998+198 = 1198. The proportion of true positives is 198/1198 = about 16.55% cases or about between 16% and 17% of the positives are true positives (if we use Bayes’ rule formally, it works out to be 16.55%).
+Break
+−
++
+05:00
+Worksheet: Computing Probabilities
+−
++
+25:00
+Then review the worksheet
+[Image: ; ../../site_libs/quarto-contrib/quarto-project/stat20/stat20slides/stat20-hex-vsmall.png]

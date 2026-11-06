@@ -1,0 +1,261 @@
+Source: https://cs61a.org/fa26/assets/lec/24-Efficiency.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Efficiency
+Announcements
+Measuring Efficiency
+Recursive Computation of the Fibonacci Sequence
+
+Our first example of tree recursion:                                        def fib(n):
+                                                                                if n == 0:
+                                                                                    return 0
+                                fib(5)                                          elif n == 1:
+                                                                                    return 1
+                                                                                else:
+                                                                                    return fib(n-2) + fib(n-1)
+          fib(3)                                        fib(4)
+
+
+   fib(1)         fib(2)
+
+                                         fib(2)                      fib(3)
+      1     fib(0)     fib(1)
+
+                                  fib(0)          fib(1)    fib(1)           fib(2)
+              0            1
+
+                                     0              1            1   fib(0)       fib(1)
+
+
+                                         (Demo)                         0             1
+
+                                                                                                            4
+Memoization
+Memoized Tree Recursion
+
+                                                                                     Call to fib
+                                   fib(5)
+                                                                                     Found in cache
+
+                                                                                     Skipped
+             fib(3)                                          fib(4)
+
+
+       fib(1)         fib(2)
+
+                                                fib(2)                    fib(3)
+         1      fib(0)     fib(1)
+
+                                       fib(0)        fib(1)      fib(1)          fib(2)
+                  0            1
+
+                                            0            1            1   fib(0)      fib(1)
+
+
+                                                                             0            1
+
+
+
+                                                                                                      6
+Memoization
+
+Idea: Remember the results that have been computed before
+
+
+
+
+               def memo(f):         Keys are arguments that
+                   cache = {}        map to return values
+
+                   def memoized(n):
+                       if n not in cache:
+                              cache[n] = f(n)
+                       return cache[n]
+                   return memoized         Same behavior as f,
+                                         if f is a pure function
+
+
+
+                                                (Demo)
+
+
+                                                                   7
+List Efficiency
+List Efficiency
+Appending, assigning, and list comprehensions are fast:
+
+   3 5 2 7
+         9 4 2 6                   2 4 6 8
+
+Inserting (beginning/middle), slicing, and adding lists are slow:
+
+   3 5 2 9
+         7 3
+           7 4
+             3 2
+               4 2                 3 5 2 7      +   9               3 5 2 7 9
+
+Example: building long lists of perfect squares (numbers that are an integer times itself)
+
+def using_list_comprehension(n):       def using_insert(n):           When n = 100,000
+    return [k * k for k in range(n)]       s = []                     using_list_comprehension: 1.58 ms
+                                           for k in range(n):         using_append:             1.76 ms
+def using_append(n):                           s.insert(0, k * k)     using_assign:             2.58 ms
+    s = []                                 return s                   using_insert:         1,470    ms
+    for k in range(n):                                                using_add:            9,210    ms
+        s.append(k * k)                def using_add(n):
+    return s                               s = []
+                                           for k in range(n):
+def using_assign(n):                           s = s + [k*k]
+    s = [0 for k in range(n)]              return s
+    for k in range(n):
+        s[k] = k * k
+    return s
+                                                                                                      9
+Generator Practice
+Example: Powers
+
+A generator function returns a generator which is an iterator
+ def powers(b):
+     """Yield the powers of b."""
+     n = 0
+     ___________:
+           ________________________
+           n += 1
+
+
+ def prefix(t, n):
+     """Yield the first n items of an infinite iterator t.
+
+
+     >>> list(prefix(powers(2), 10))
+     [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+     """
+     for i in range(n):
+           ______________
+
+                                                                11
+Example: Powers
+
+A generator function returns a generator which is an iterator
+ def powers(b):
+     """Yield the powers of b."""
+     n = 0
+     while True
+     ___________:
+           yield pow(b, n)
+           ________________________
+           n += 1
+
+
+ def prefix(t, n):
+     """Yield the first n items of an infinite iterator t.
+
+
+     >>> list(prefix(powers(2), 10))
+     [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+     """
+     for i in range(n):
+          yield next(t)
+         ______________
+
+                                                                12
+Higher-Order Generator Functions
+                                                                     def powers(b):
+Generator functions can take functions as arguments                      """Yield the powers of b."""
+                                                                         n = 0
+from operator import add                                                 while True:
+                                                                             yield pow(b, n)
+                                                                             n += 1
+def map_pairs(f, t):
+    """Yield the result of calling f on each pair of consecutive items in t.
+    (You can assume t has at least two items)
+
+
+    >>> list(map_pairs(add, iter([3, 4, 5, 6, 7])))
+    [7, 9, 11, 13]
+    >>> list(prefix(map_pairs(lambda x, y: (x, y), powers(2)), 5))
+    [(1, 2), (2, 4), (4, 8), (8, 16), (16, 32)]
+    """
+    _________________________
+    for x in t:
+          _____________________
+          _____________________
+                                                                                                  13
+Higher-Order Generator Functions
+                                                                     def powers(b):
+Generator functions can take functions as arguments                      """Yield the powers of b."""
+                                                                         n = 0
+from operator import add                                                 while True:
+                                                                             yield pow(b, n)
+                                                                             n += 1
+def map_pairs(f, t):
+    """Yield the result of calling f on each pair of consecutive items in t.
+    (You can assume t has at least two items)
+
+
+    >>> list(map_pairs(add, iter([3, 4, 5, 6, 7])))
+    [7, 9, 11, 13]
+    >>> list(prefix(map_pairs(lambda x, y: (x, y), powers(2)), 5))
+    [(1, 2), (2, 4), (4, 8), (8, 16), (16, 32)]
+    """
+    previous = next(t)
+    _________________________
+    for x in t:
+         yield f(previous, x)
+        _____________________
+         previous = x
+        _____________________
+                                                                                                  14
+Generators for Linked Lists and Trees
+ def items(s: LinkedList):                   type LinkedList[T] = Link[T] | tuple[()]
+     """Yield the items in a linked list.
+                                             @dataclass
+     >>> nums = Link(3, Link(5, Link(7)))    class Link[T]:
+     >>> sum(items(nums))                        first: T
+     15                                          rest: LinkedList[T] = ()   # rest defaults to empty
+     """
+     ___________________________:
+         yield s.first
+         _____________________
+
+ def labels(t: Tree):
+     """Yield the labels of a tree.
+
+     >>> list(labels(Tree(1, [Tree(2, [Tree(3), Tree(4)]), Tree(5)])))
+     [1, 2, 3, 4, 5]
+     """                                 @dataclass
+     _______________                     class Tree[T]:
+     for b in t.branches:                   label: T
+                                            branches: list[Tree[T]] = ...   # branches defaults to []
+         _____________________
+                                                                                                  15
+Generators for Linked Lists and Trees
+ def items(s: LinkedList):                   type LinkedList[T] = Link[T] | tuple[()]
+     """Yield the items in a linked list.
+                                             @dataclass
+     >>> nums = Link(3, Link(5, Link(7)))    class Link[T]:
+     >>> sum(items(nums))                        first: T
+     15                                          rest: LinkedList[T] = ()   # rest defaults to empty
+     """
+     while isinstance(s, Link)
+     ___________________________:
+         yield s.first
+         s = s.rest
+         _____________________
+
+ def labels(t: Tree):
+     """Yield the labels of a tree.
+
+     >>> list(labels(Tree(1, [Tree(2, [Tree(3), Tree(4)]), Tree(5)])))
+     [1, 2, 3, 4, 5]
+     """                                 @dataclass
+      yield t.label
+     _______________                     class Tree[T]:
+     for b in t.branches:                   label: T
+                                            branches: list[Tree[T]] = ...   # branches defaults to []
+         yield from labels(b)
+         _____________________
+                                                                                                  16
+

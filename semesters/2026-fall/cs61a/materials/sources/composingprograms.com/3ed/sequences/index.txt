@@ -1,0 +1,656 @@
+Source: https://composingprograms.com/3ed/sequences/
+Retrieved: 2026-11-06
+
+Downloads
+2.2 Sequences
+from pytutor import env_diagram
+A sequence is an ordered collection of values. A sequence is not an instance of a particular built-in type in Python, but instead an abstraction: a collection of behaviors.
+Length.
+A sequence has a finite length. An empty sequence has length 0.
+Item selection.
+A sequence has an item corresponding to any non-negative integer index less than its length, starting at 0 for the first item.
+While sequences are collections of items, which are values, each sequence itself is also a value. That is, a sequence can be given a name, passed as an argument, or returned from a function.
+These behaviors are shared among several different data types, the most important of which is the
+list
+.
+Lists
+¶
+A list can be constructed by placing expressions within square brackets separated by commas. Such an expression is called a list literal.
+>>> [10, 20]
+[10, 20]
+The items of a list can be accessed in two ways. The first way is via our familiar method of multiple assignment, which unpacks a list into its items and binds each item to a different name.
+>>> pair = [10, 20]
+>>> pair
+[10, 20]
+>>> x, y = pair
+>>> x
+10
+>>> y
+20
+A second method for accessing the items in a list is by the item selection operator, also expressed using square brackets. Unlike a list literal, a square-brackets expression directly following another expression does not evaluate to a
+list
+value, but instead selects an item from the value of the preceding expression.
+>>> pair[0]
+10
+>>> pair[1]
+20
+Lists in Python (and sequences in most other programming languages) are 0-indexed, meaning that the index 0 selects the first item, index 1 selects the second, and so on. One intuition that supports this indexing convention is that the index represents how far an item is offset from the beginning of the list.
+The equivalent function for the item selection operator is called
+getitem
+, and it also uses 0-indexed positions to select items from a list.
+>>> from operator import getitem
+>>> getitem(pair, 0)
+10
+>>> getitem(pair, 1)
+20
+A
+list
+can have any finite length, and modern computers can work with lists that contain millions of items.
+The built-in
+len
+function returns the length of a sequence. Below,
+digits
+is a list with four items. The item at index 3 is 8.
+>>> digits = [1, 8, 2, 8]
+>>> len(digits)
+4
+>>> digits[len(digits) - 1]
+8
+Lists can be added together and multiplied by integers. For sequences, addition and multiplication do not add or multiply items, but instead combine and replicate the sequences themselves. That is, the
++
+operator (and the
+add
+function in the
+operator
+module) returns a list that is the concatenation of the added list arguments. The
+*
+operator (and the
+mul
+function in
+operator
+) can take a list and an integer
+k
+to return the list that consists of
+k
+repetitions of the original list.
+>>> [2, 7] + digits * 2
+[2, 7, 1, 8, 2, 8, 1, 8, 2, 8]
+Any values can be included in a list, including another list. Item selection can be applied multiple times in order to select a deeply nested item in a list containing lists.
+>>> pairs = [[10, 20], [30, 40]]
+>>> pairs[1]
+[30, 40]
+>>> pairs[1][0]
+30
+Allowing lists to contain other lists enables us to create hierarchical structures --- structures made up of parts, which themselves are made up of parts, and so on.
+>>> dog = [['head', ['face', ['nose', 'eyes']], ['ears']], ['body', ['legs', ['paws']]], 'tail']
+>>> dog[0]
+['head', ['face', ['nose', 'eyes']], ['ears']]
+We can visualize lists in environment diagrams using
+box-and-pointer
+notation. A list is depicted as adjacent boxes that contain the items of the list. Primitive values such as numbers, strings, boolean values, and
+None
+appear within an item box. Compound values, such as function values and other lists, are indicated by an arrow.
+env_diagram(r'''
+one_two = [1, 2]
+nested = [[1, 2], [],
+          [[3, False, None],
+           [4, lambda: 5]]]
+''', cumulative=False)
+Loading...
+Sequence Iteration
+¶
+In many cases, we would like to iterate over the items of a sequence and perform some computation for each item in turn. This pattern is so common that Python has an additional control statement to process sequential data: the
+for
+statement.
+Consider the problem of counting how many times a value appears in a sequence. We can implement a function to compute this count using a
+while
+loop.
+>>> def count(s, value):
+        """Count the number of occurrences of value in sequence s."""
+        total, index = 0, 0
+        while index < len(s):
+            if s[index] == value:
+                total = total + 1
+            index = index + 1
+        return total
+
+>>> count(digits, 8)
+2
+The Python
+for
+statement can simplify this function body by iterating over the item values directly without introducing the name
+index
+at all.
+>>> def count(s, value):
+        """Count the number of occurrences of value in sequence s."""
+        total = 0
+        for item in s:
+            if item == value:
+                total = total + 1
+        return total
+
+>>> count(digits, 8)
+2
+A
+for
+statement consists of a single clause with the form:
+for <name> in <expression>:
+    <suite>
+A
+for
+statement is executed by the following procedure:
+Evaluate the header
+<expression>
+, which must yield an iterable value.
+For each item value in that iterable value, in order:
+A.  Bind
+<name>
+to that value in the current frame.
+B.  Execute the
+<suite>
+.
+This execution procedure refers to
+iterable values
+. Lists are a type of sequence, and sequences are iterable values. Their items are considered in their sequential order. Python includes other iterable types, but we will focus on sequences for now; the general definition of the term “iterable” appears in
+Section 2.8
+.
+An important consequence of this evaluation procedure is that
+<name>
+will be bound to the last item of the sequence after the
+for
+statement is executed (unless the sequence is empty). The
+for
+loop introduces yet another way in which the environment can be updated by a statement.
+Sequence Unpacking
+¶
+A common pattern in programs is to have a sequence of items that are themselves sequences, but all of a fixed length. A
+for
+statement may include multiple names in its header to “unpack” each item sequence into its respective items. For example, we may have a list of two-item lists.
+>>> pairs = [[1, 2], [2, 2], [2, 3], [4, 4]]
+and wish to find the number of these pairs that have the same first and second item.
+>>> same_count = 0
+The following
+for
+statement with two names in its header will bind each name
+x
+and
+y
+to the first and second items in each pair, respectively.
+>>> for x, y in pairs:
+        if x == y:
+            same_count = same_count + 1
+
+>>> same_count
+2
+This pattern of binding multiple names to multiple values in a fixed-length sequence is called
+sequence unpacking
+; it is the same pattern that we see in assignment statements that bind multiple names to multiple values.
+Ranges
+¶
+A
+range
+is another built-in type of sequence in Python, which represents a range of integers. Ranges are created with
+range
+, which takes two integer arguments: the first number and one beyond the last number in the desired range.
+>>> range(1, 10)  # Includes 1, but not 10
+range(1, 10)
+Calling the
+list
+constructor on a range evaluates to a list with the same items as the range, so that the items can be easily inspected.
+>>> list(range(5, 8))
+[5, 6, 7]
+If only one argument is given, it is interpreted as one beyond the last value for a range that starts at 0.
+>>> list(range(4))
+[0, 1, 2, 3]
+Ranges commonly appear as the expression in a
+for
+header to specify the number of times that the suite should be executed. A common convention is to use a single underscore character for the name in the
+for
+header if the name is unused in the suite.
+>>> for _ in range(3):
+        print('Go Bears!')
+
+Go Bears!
+Go Bears!
+Go Bears!
+This underscore is just another name in the environment as far as the interpreter is concerned, but has a conventional meaning among programmers that indicates the name will not appear in any future expressions.
+Sequence Processing
+¶
+Sequences are such a common form of compound data that whole programs are often organized around this single abstraction. Modular components that have sequences as both inputs and outputs can be mixed and matched to perform data processing. Complex components can be defined by chaining together a pipeline of sequence processing operations, each of which is simple and focused.
+List Comprehensions
+¶
+Many sequence processing operations can be expressed by evaluating a fixed expression for each item in a sequence and collecting the resulting values in a result sequence. In Python, a list comprehension is an expression that performs such a computation.
+>>> odds = [1, 3, 5, 7, 9]
+>>> [x+1 for x in odds]
+[2, 4, 6, 8, 10]
+The
+for
+keyword above is not part of a
+for
+statement, but instead part of a list comprehension because it is contained within square brackets. The sub-expression
+x+1
+is evaluated with
+x
+bound to each item of
+odds
+in turn, and the resulting values are collected into a list.
+Another common sequence processing operation is to select a subset of values that satisfy some condition. List comprehensions can also express this pattern, for instance selecting all items of
+odds
+that evenly divide
+25
+.
+>>> [x for x in odds if 25 % x == 0]
+[1, 5]
+The general form of a list comprehension is:
+[<map expression> for <name> in <sequence expression> if <filter expression>]
+To evaluate a list comprehension, Python evaluates the
+<sequence expression>
+, which must return an iterable value. Then, for each item in order, the item value is bound to
+<name>
+, the filter expression is evaluated (if present), and if it evaluates to a true value (or there is no filter), the map expression is evaluated. The values of the map expression are collected into a list.
+Aggregation
+¶
+A third common pattern in sequence processing is to aggregate all values in a sequence into a single value. The built-in functions
+sum
+,
+min
+, and
+max
+are all examples of aggregation functions.
+By combining the patterns of evaluating an expression for each item, selecting a subset of items, and aggregating items, we can solve problems using a sequence processing approach.
+A perfect number is a positive integer that is equal to the sum of its divisors. The divisors of
+n
+are positive integers less than
+n
+that divide evenly into
+n
+. Listing the divisors of
+n
+can be expressed with a list comprehension.
+>>> def divisors(n):
+        return [1] + [x for x in range(2, n) if n % x == 0]
+
+>>> divisors(4)
+[1, 2]
+>>> divisors(12)
+[1, 2, 3, 4, 6]
+Using
+divisors
+, we can compute all perfect numbers up to 1000 with another list comprehension. (The range begins at 2 because
+divisors(1)
+is
+[1]
+, which sums to 1, but 1 is not a perfect number.)
+>>> [n for n in range(2, 1000) if sum(divisors(n)) == n]
+[6, 28, 496]
+We can reuse our definition of
+divisors
+to solve another problem, finding the minimum perimeter of a rectangle with integer side lengths, given its area. The area of a rectangle is its height times its width. Therefore, given the area and height, we can compute the width. We can assert that the height evenly divides the area to ensure that the side lengths are integers.
+>>> def width(area, height):
+        assert area % height == 0
+        return area // height
+The perimeter of a rectangle is the sum of its side lengths.
+>>> def perimeter(width, height):
+        return 2 * width + 2 * height
+The height of a rectangle with integer side lengths must be a divisor of its area. We can compute the minimum perimeter by considering all heights.
+>>> def minimum_perimeter(area):
+        heights = divisors(area)
+        perimeters = [perimeter(width(area, h), h) for h in heights]
+        return min(perimeters)
+
+>>> area = 80
+>>> width(area, 5)
+16
+>>> perimeter(16, 5)
+42
+>>> perimeter(10, 8)
+36
+>>> minimum_perimeter(area)
+36
+>>> [minimum_perimeter(n) for n in range(1, 10)]
+[4, 6, 8, 8, 12, 10, 16, 12, 12]
+Type hints.
+It is possible to indicate that a formal parameter or return value is a
+list
+and also that it is a list of items that all have a common type. For example, the type hint
+list[int]
+indicates that a name should be used for a list of integers.
+A type hint describing
+[[1, 2], [3, 4], [5, 6]]
+would be
+list[list[int]]
+, since it is a list containing lists of integers. The fact that each list item contains exactly two integers is not something that a list type hint can specify in Python.
+>>> def divisible_by(s: list[int], k: int) -> list[int]:
+        "The items in s that are divisible by k."
+        return [n for n in s if n % k == 0]
+
+>>> divisible_by([3, 4, 5, 6, 7, 8], 4)
+[4, 8]
+Higher-Order Functions
+¶
+The common patterns we have observed in sequence processing can be expressed using higher-order functions. First, evaluating an expression for each item in a sequence can be expressed by applying a function to each item.
+>>> def apply_to_all(map_fn, s):
+        return [map_fn(x) for x in s]
+Selecting only items for which some expression is true can be expressed by applying a function to each item.
+>>> def keep_if(filter_fn, s):
+        return [x for x in s if filter_fn(x)]
+Finally, many forms of aggregation can be expressed as repeatedly applying a two-argument function to the
+reduced
+value so far and each item in turn.
+>>> def reduce(reduce_fn, s, initial):
+        reduced = initial
+        for x in s:
+            reduced = reduce_fn(reduced, x)
+        return reduced
+Using
+mul
+as the
+reduce_fn
+and 1 as the
+initial
+value,
+reduce
+can be used to multiply together a sequence of numbers.
+>>> from operator import mul
+>>> reduce(mul, [2, 4, 8], 1)
+64
+We can find perfect numbers using these higher-order functions as well.
+>>> def divisors_of(n):
+        divides_n = lambda x: n % x == 0
+        return [1] + keep_if(divides_n, range(2, n))
+
+>>> divisors_of(12)
+[1, 2, 3, 4, 6]
+>>> from operator import add
+>>> def sum_of_divisors(n):
+        return reduce(add, divisors_of(n), 0)
+
+>>> def perfect(n):
+        return sum_of_divisors(n) == n
+
+>>> keep_if(perfect, range(2, 1000))
+[6, 28, 496]
+Conventional names.
+In the computer science community, the more common name for
+apply_to_all
+is
+map
+and the more common name for
+keep_if
+is
+filter
+. In Python, the built-in
+map
+and
+filter
+are generalizations of these functions that do not return lists. These functions are discussed in
+Section 2.8
+. The
+apply_to_all
+and
+keep_if
+functions above are equivalent to applying the
+list
+constructor to the result of built-in
+map
+and
+filter
+calls.
+>>> apply_to_all = lambda map_fn, s: list(map(map_fn, s))
+>>> keep_if = lambda filter_fn, s: list(filter(filter_fn, s))
+The
+reduce
+function is built into the
+functools
+module of the Python standard library. In this version, the
+initial
+argument is optional.
+>>> from functools import reduce
+>>> from operator import mul
+>>> def product(s):
+        return reduce(mul, s)
+
+>>> product([1, 2, 3, 4, 5])
+120
+In Python programs, it is more common to use list comprehensions directly rather than higher-order functions, but both approaches to sequence processing are widely used.
+Sequence Abstraction
+¶
+We have introduced two native data types that satisfy the conditions with which we began this section: length and item selection. Python includes two more behaviors of sequence types that extend the sequence abstraction.
+Membership.
+A value can be tested for membership in a sequence. Python has two operators
+in
+and
+not in
+that evaluate to
+True
+or
+False
+depending on whether an item appears in a sequence.
+>>> digits
+[1, 8, 2, 8]
+>>> 2 in digits
+True
+>>> 1828 not in digits
+True
+Slicing.
+Sequences contain smaller sequences within them. A
+slice
+of a sequence is any contiguous span of the original sequence, designated by a pair of integers. As with the
+range
+constructor, the first integer indicates the starting index of the slice and the second indicates one beyond the ending index.
+In Python, sequence slicing is expressed similarly to item selection, using square brackets. A colon separates the starting and ending indices. Any bound that is omitted is assumed to be an extreme value: 0 for the starting index, and the length of the sequence for the ending index.
+>>> digits[0:2]
+[1, 8]
+>>> digits[1:]
+[8, 2, 8]
+Enumerating these additional behaviors of the Python sequence abstraction gives us an opportunity to reflect upon what constitutes a useful data abstraction in general. The richness of an abstraction (that is, how many behaviors it includes) has consequences. For users of an abstraction, additional behaviors can be helpful. On the other hand, complicated abstractions take longer for users to learn.
+Sequences have a rich abstraction (with length, item selection, membership, and slicing) because they are so ubiquitous in computing that learning a few complex behaviors is justified. In general, most user-defined abstractions should be kept as simple as possible.
+Further reading.
+Slice notation admits a variety of special cases, such as negative starting values, ending values, and step sizes. A complete description appears in the subsection called
+slicing a list
+in Dive Into Python 3. In this chapter, we will only use the basic features described above.
+Strings
+¶
+Text values are perhaps more fundamental to computer science than even numbers. Python programs are written and stored as text. The native data type for text in Python is called a string, and corresponds to the constructor
+str
+.
+There are many details of how strings are represented, expressed, and manipulated in Python. Strings are another example of a rich abstraction, one that requires a substantial commitment on the part of the programmer to master. This section serves as a condensed introduction to essential string behaviors.
+String literals can express arbitrary text, surrounded by either single or double quotation marks.
+>>> 'I am string!'
+'I am string!'
+>>> "I've got an apostrophe"
+"I've got an apostrophe"
+>>> '您好'
+'您好'
+We have seen strings already in our code, as docstrings, in calls to
+print
+, and as error messages in
+assert
+statements.
+Strings satisfy the two basic conditions of a sequence that we introduced at the beginning of this section: they have a length and they support item selection.
+>>> city = 'Berkeley'
+>>> len(city)
+8
+>>> city[3]
+'k'
+The items of a string are themselves strings that have only a single character. A character is any single letter of the alphabet, punctuation mark, or other symbol. Unlike many other programming languages, Python does not have a separate character type; any text is a string, and strings that represent single characters have a length of 1.
+Like lists, strings can also be combined via addition and multiplication.
+>>> 'Berkeley' + ', CA'
+'Berkeley, CA'
+>>> 'Shabu ' * 2
+'Shabu Shabu '
+Membership.
+The behavior of strings diverges from other sequence types in Python. The string abstraction does not conform to the full sequence abstraction that we described for lists and ranges. In particular, the membership operator
+in
+applies to strings, but has an entirely different behavior than when it is applied to other sequences. It matches substrings rather than items.
+>>> 'here' in "Where's Waldo?"
+True
+Multiline literals.
+Strings aren’t limited to a single line. Triple quotes delimit string literals that span multiple lines. We have used this triple quoting extensively already for docstrings.
+>>> """The Zen of Python
+claims, "Readability counts."
+Read more: import this."""
+'The Zen of Python\nclaims, "Readability counts."\nRead more: import this.'
+In the printed result above, the
+\n
+(pronounced “
+backslash en
+”) is a single item that represents a new line. Although it appears as two characters (backslash and “n”), it is considered a single character for the purposes of length and item selection.
+String coercion.
+A string can be created from any object in Python by calling the
+str
+constructor function with an object value as its argument. This feature of strings is useful for constructing descriptive strings from objects of various types.
+>>> str(1 + 1) + ' is an item of ' + str(digits)
+'2 is an item of [1, 8, 2, 8]'
+String interpolation.
+A string can also be created by inserting the string representation of the values of expressions into a larger template, called an f-string or
+formatted string literal
+. Preceding a string literal by the letter f directs Python to evaluate all expressions contained within braces and include the string representations of their values.
+>>> f'{1 + 1} is an item of {digits}'
+'2 is an item of [1, 8, 2, 8]'
+Further reading.
+Encoding text in computers is a complex topic. In this chapter, we will abstract away the details of how strings are represented. However, for many applications, the particular details of how strings are encoded by computers are essential knowledge.
+The strings chapter of Dive Into Python 3
+provides a description of character encodings and Unicode. The
+Python tutorial section on f-strings
+describes the many ways that the format of values can be specified.
+Dictionaries
+¶
+Dictionaries are Python’s built-in data type for storing and manipulating correspondence relationships. A dictionary is an ordered collection of key-value pairs. The purpose of a dictionary is to provide an abstraction for storing and retrieving values that are looked up not by consecutive integers, but by descriptive keys.
+Strings commonly serve as keys, because strings are our conventional representation for names of things. This dictionary literal gives the values of various Roman numerals.
+>>> numerals = {'I': 1, 'V': 5, 'X': 10}
+>>> numerals
+{'I': 1, 'V': 5, 'X': 10}
+>>> len(numerals)
+3
+Looking up values by their keys uses the item selection operator that we previously applied to sequences.
+>>> numerals['X']
+10
+A dictionary can have at most one value for each key. The order of key-value pairs is determined by the order that the keys first appear, but only the last value is retained.
+>>> {'X': 11, 'V': 5, 'X': 10}
+{'X': 10, 'V': 5}
+A key of a dictionary cannot be a list or another dictionary (or, more generally, any other
+unhashable
+value).  This restriction is tied to the underlying implementation of
+dictionaries in Python
+.
+Dictionaries also support ways of iterating over the key-value pairs of a dictionary. The simplest approach iterates over the keys using a
+for
+statement.
+>>> for k in numerals:
+        print('key:', k, 'value:', numerals[k])
+key: I value: 1
+key: V value: 5
+key: X value: 10
+Similarly, it’s possible to create a list of a dictionary’s keys.
+>>> list(numerals)
+['I', 'V', 'X']
+Dictionaries can appear in environment diagrams as well.
+env_diagram(r'''
+numerals = {'I': 1, 'V': 5, 'X': 10}
+''', cumulative=False)
+Loading...
+The type hint for a dictionary can be just
+dict
+or specify a type for the keys and a type for the values. For example, the type hint describing the
+numerals
+dictionary would be
+dict[str, int]
+.
+Dot Notation
+¶
+Using a
+dot expression
+, it is also possible to iterate over the values or key-value pairs of a dictionary. A dot expression is a way to access parts of compound data or access behavior that is specific to the type of the value. The many details of dot notation are discussed in section 2.5 on object-oriented programming. For now, it is sufficient to know that
+.values()
+accesses the values of a dictionary and
+.items()
+accesses the key-value pairs. These are called
+methods
+of the dictionary.
+>>> for v in numerals.values():
+        print(v)
+1
+5
+10
+>>> for k, v in numerals.items():
+        print(k, v)
+I 1
+V 5
+X 10
+Another useful method on dictionaries is
+get
+, which returns either the value for a key, if the key is present, or a default value. The arguments to
+get
+are the key and the default value.
+>>> numerals.get('A', 0)
+0
+>>> numerals.get('V', 0)
+5
+A list of key-value pairs can be converted into a dictionary by calling
+dict
+.
+>>> dict([[3, 9], [4, 16], [5, 25]])
+{3: 9, 4: 16, 5: 25}
+Dictionaries also have a comprehension syntax analogous to those of lists. A key expression and a value expression are separated by a colon. Evaluating a dictionary comprehension creates a new dictionary object.
+>>> {x: x*x for x in range(3,6)}
+{3: 9, 4: 16, 5: 25}
+Tuples
+¶
+A tuple is a sequence that can be the key of a dictionary (as long as the tuple contains no disallowed values such as lists or dictionaries). It is created using a tuple literal that separates item expressions by commas. Parentheses are optional but almost always included in practice. Any values can be placed within tuples.
+>>> 1, 2 + 3
+(1, 5)
+>>> ("the", 1, ("and", "only"))
+('the', 1, ('and', 'only'))
+>>> type( (10, 20) )
+<class 'tuple'>
+Empty and one-item tuples have special literal syntax.
+>>> ()    # 0 items
+()
+>>> (10,) # 1 item
+(10,)
+Like lists, tuples have a finite length and support item selection, slicing, and membership. Their items can also be unpacked using assignment.
+>>> code = ('up', 'up', 'down', 'down') + ('left', 'right') * 2
+>>> len(code)
+8
+>>> code[3]
+'down'
+>>> 'left' in code
+True
+>>> code[1:3]
+('up', 'down')
+>>> u, d = code[1:3]
+>>> u
+'up'
+>>> d
+'down'
+The type hint for a tuple can specify the type of value in each position, since tuples are often used to hold multiple types. The example below contains a type hint
+tuple[str, int]
+for a two-item tuple holding a
+str
+and then an
+int
+. This format of type hint differs from list type hints, which only specify one shared type for all the items in the list. As a consequence, the type hint for a tuple can specify the length of a tuple, while the type hint for a list cannot.
+>>> def display_age(person: tuple[str, int], year: int) -> None:
+        name, year_born = person
+        print(name, 'was', year - year_born, 'years old in', year)
+
+>>> keanu = ("Keanu Reeves", 1964)
+>>> display_age(keanu, 1999)
+Keanu Reeves was 35 years old in 1999
+If a dictionary needs compound keys, tuples are a common choice. This dictionary distinguishes between Michael Jordan the basketball player and Michael B. Jordan the actor by associating each with his birth year.
+>>> top_movies = {
+        ('Michael Jordan', 1963): 'Space Jam',
+        ('Michael Jordan', 1987): 'Black Panther',
+    }
+>>> top_movies[('Michael Jordan', 1963)]
+'Space Jam'
+A precise type hint describing the
+top_movies
+dictionary would be
+dict[tuple[str, int], str]
+, which describes that the keys are two-element tuples and the values are strings.
+Chapter 2: Data
+2.1 Introduction
+Chapter 2: Data
+2.3 Compound Data

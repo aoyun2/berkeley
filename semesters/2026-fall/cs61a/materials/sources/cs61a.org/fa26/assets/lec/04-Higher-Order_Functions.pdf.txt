@@ -1,0 +1,488 @@
+Source: https://cs61a.org/fa26/assets/lec/04-Higher-Order_Functions.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Higher-Order Functions
+Announcements
+Evaluating Boolean Expressions
+
+False values in Python:    False, 0, '', None    (more to come)
+
+To evaluate the expression <left> and <right>:
+ 1. Evaluate the subexpression <left>.
+ 2. If the result is a false value v, then the expression evaluates to v.
+ 3. Otherwise, the expression evaluates to the value of the subexpression <right>.
+
+To evaluate the expression <left> or <right>:
+ 1. Evaluate the subexpression <left>.
+ 2. If the result is a true value v, then the expression evaluates to v.
+ 3. Otherwise, the expression evaluates to the value of the subexpression <right>.
+
+To evaluate the expression not <exp>:
+ 1. Evaluate the subexpression <exp>.
+ 2. The value is True if the result is a false value, and False otherwise
+
+
+Python stops evaluating it when it knows the answer (“short circuiting”), and returns
+the value of the most recent subexpression it evaluated
+
+                                        (Demo)
+                                                                                        3
+Designing Functions
+Describing Functions
+
+                                                          def square(x):
+                                                              """Return x * x.”""
+
+
+
+A function's domain is the set of all inputs it might     x is a number
+possibly take as arguments.
+
+
+
+
+A function's range is the set of output values it might   square returns a non-
+possibly return.                                          negative real number
+
+
+
+
+A pure function's behavior is the relationship it         square returns the
+creates between input and output.                         square of x
+
+
+
+
+                                                                                    5
+A Guide to Designing Functions
+
+Give each function exactly one job, but make it apply to many related situations
+
+
+ >>> round(1.23)    >>> round(1.23, 1)      >>> round(1.23, 0)     >>> round(1.23, 5)
+ 1                  1.2                     1                      1.23
+
+
+
+
+Don’t repeat yourself (DRY):   Implement a process just once, but execute it many times
+
+
+
+
+                                            (Demo)
+
+
+
+
+                                                                                          6
+Higher-Order Functions
+Values and Expressions
+
+Expressions describe a computation, evaluate to a value
+
+  Call Expression: f()
+
+
+
+
+                               Boolean
+
+Values: 2, 3.14, ’are you a human’, False , func pow...
+
+     Number           String                  Functions are just another
+                                                        value!
+
+
+
+
+                                         (Demo)
+                                                                           8
+              return total
+Summation Example
+           def identity(k):
+               return k
+                                         Function of a single argument
+          def cube(k):                        (not called "term")
+              return pow(k, 3)
+                                       A formal parameter that will
+          def summation(n,       term): be bound to a function
+              """Sum the first n terms of a sequence.
+              >>> summation(5, cube)
+              225
+                                The cube function is passed
+              """                  as an argument value
+              total, k = 0, 1
+              while k <= n:
+                  total, k = total + term(k), k + 1
+              return total
+                                         The function bound to term
+           0 + 1 + 8 + 27 + 64 + 125
+          def pi_term(k):                     gets called here
+              return 8 / (k * 4  3) / (k * 4  1)
+                                                                         9
+Evaluation Procedure Cheat Sheet
+
+                    Parens, e.g., f(x)
+Call expressions:
+1. Evaluate the operator (function)
+2. Evaluate the operands, from left to right (arguments)
+3. Apply the function to the arguments
+
+   Calling user defined functions:
+       1. Add a local frame, forming a new environment
+       2. Bind the function's formal parameters to its arguments in that frame
+       3. Execute the body of the function in that new environment
+
+
+              = sign, e.g., x = 1 + 2
+Assignment:
+  The expression (right) is evaluated, and its value is assigned to the name (left)
+
+
+Boolean expressions: and, or, not (see earlier slide for rule)
+
+                                                                                      10
+               return total
+ def identity(k):
+ Summation Example, slowly!
+     return k
+ def cube(k):
+     return pow(k, 3)
+ def summation(n, term):
+     """Sum the first n terms of a sequence.
+               >>> summation(5, cube)
+               225
+               """
+               total, k = 0, 1
+               while k <= n:
+                   total, k = total + term(k), k + 1
+               return total
+
+ def pi_term(k):
+     return 8 / (k * 4  3) / (k * 4  1)
+
+
+ # Local function definitions; returning functions
+
+ def make_adder(n):
+     """Return a function that takes one argument k and returns k + n.
+
+               >>> add_three = make_adder(3)
+               >>> add_three(4)
+               7
+               """
+               def adder(k):
+                   return k + n
+               return adder
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   11
+ def compose1(f, g):
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+ Summation Example, slowly!
+
+                                                                                      Parens, e.g., f(x)
+   Call expressions:
+   1. Evaluate the operator (function)
+   2. Evaluate the operands, from left to right (arguments)
+   3. Apply the function to the arguments
+
+                 Calling user defined functions:
+                                1. Add a local frame, forming a new environment
+                                2. Bind the function's formal parameters to its arguments in that frame
+                                3. Execute the body of the function in that new environment
+
+
+                                                              = sign, e.g., x = 1 + 2
+   Assignment:
+           The expression (right) is evaluated, and its value is assigned to the name (left)
+
+
+   Boolean expressions: and, or, not (see earlier slide for rule)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   12
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+ Summation Example, slowly!
+
+                                                                                      Parens, e.g., f(x)
+   Call expressions:
+   1. Evaluate the operator (function)
+     hof.py                                                                                                                                                                                                                                                                               Page 2
+   2. Evaluate the operands, from left to right (arguments)                                                                                                                                                                                func summation...                                                            5              func cube...
+                   return total
+   3. Apply the function to the arguments
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k * 4  3) / (k * 4  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   13
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+ Summation Example, slowly!
+    Calling user defined functions:
+                  1. Add a local frame, forming a new environment
+         2. Bind the function's formal parameters to its
+     hof.py arguments in that frame                                                                                                                                                                                                                                                       Page 2
+                  3. Execute                                                                                                                                                                                                               func summation...                                                            5              func cube...
+                  return totalthe body of the function in that new
+                     environment
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k * 4  3) / (k * 4  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   14
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+ Summation Example, slowly!
+
+                                                                                      Parens, e.g., f(x)
+   Call expressions:
+   1. Evaluate the operator (function)
+     hof.py                                                                                                                                                                                                                                                                               Page 2
+   2. Evaluate the operands, from left to right (arguments)                                                                                                                                                                                func summation...                                                            5              func cube...
+                   return total
+   3. Apply the function to the arguments
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:             1
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k *func
+                         4  cube...
+                             3) / (k * 14  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   15
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+ Summation Example, slowly!
+
+                                                                                      Parens, e.g., f(x)
+   Call expressions:
+   1. Evaluate the operator (function)
+     hof.py                                                                                                                                                                                                                                                                               Page 2
+   2. Evaluate the operands, from left to right (arguments)                                                                                                                                                                                func summation...                                                                               343
+                                                                                                                                                                                                                                                                                                                          5
+                   return total
+   3. Apply the function to the arguments                                                                                                                                                                                                                                                                                                cube(7)
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+                                                                                                                                                                                                                                                                                                           func cube...                                                  7
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k * 4  3) / (k * 4  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   16
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+ Summation Example, slowly!
+    Calling user defined functions:
+                  1. Add a local frame, forming a new environment
+         2. Bind the function's formal parameters to its
+     hof.py arguments in that frame                                                                                                                                                                                                                                                       Page 2
+                  3. Execute                                                                                                                                                                                                               func summation...                                                              5                343
+                  return totalthe body of the function in that new
+                     environment                                                                                                                                                                                                                                                                                                         cube(7)
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+                                                                                                                                                                                                                                                                                                           func cube...                                                  7
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k * 4  3) / (k * 4  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   17
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+ Summation Example, slowly!
+   Calling user defined functions:
+                        Parens, e.g., f(x)
+  Call 1.
+        expressions:
+          Add a local frame, forming a new environment
+  1. Evaluate   thefunction's
+       2. Bind the  operator (function)
+                              formal parameters to its
+  2.      arguments
+      Evaluate
+   hof.py       the in that frame
+                    operands, from left to right (arguments)                                                                                                                                                                                                                              Page 2
+      3. Execute  the bodyto
+                           ofthe
+                              thearguments
+                                  function in that new                                                                                                                                                                                     func summation...                                                              5                343
+  3. Apply
+      returnthe  function
+             total
+         environment                                                                                                                                                                                                                                                                                                                     cube(7)
+     def identity(k):
+         return k
+     def cube(k):
+         return pow(k, 3)
+                                                                                                                                                                                                                                                                                                           func cube...                                                  7
+     def summation(n, term):
+         """Sum the first n terms of a sequence.
+                   >>> summation(5, cube)
+                   225
+                   """
+                   total, k = 0, 1
+                   while k <= n:
+                       total, k = total + term(k), k + 1
+                   return total
+
+     def pi_term(k):
+         return 8 / (k * 4 343
+                             3) / (k * 14  1)
+
+https://pythontutor.com/cp/composingprograms.html#code=def%20cube%28k%29%3A%0A%20%20%20%20return%20pow%28k,%203%29%0A%20%20%20%20%0Adef%20summation%28n,%20term%29%3A%0A%20%20%20%20%22%22%22Sum%20the%20first%20n%20terms%20of%20a%20sequence.%0A%20%20%20%20%0A%20%20%20%20%3E%3E%3E%20summation%285,%20cube%29%0A%20%20%20%20225%0A%20%20%20%20%22%22%22%0A%20%20%20%20total,
+                                                                                                                                                                                                                                                                                                                                                                                   18
+%20k%20%3D%200,%201%0A%20%20%20%20while%20k%20%3C%3D%20n%3A%0A%20%20%20%20%20%20%20%20total,%20k%20%3D%20total%20%2B%20term%28k%29,%20k%20%2B%201%0A%20%20%20%20return%20total&cumulative=true&mode=edit&origin=composingprograms.js&py=3&rawInputLstJSON=%5B%5D
+     # Local function definitions; returning functions
+Program Design
+
+
+
+
+                      Modularity
+
+                      Abstraction
+
+                 Separation of Concerns
+
+
+
+
+                                          19
+Modularity, Abstraction, and Separation of Concerns
+
+                                                         Abstraction: I only
+                               I put it in the mailbox   provide the address
+
+                               Postal worker collects it, brings it to a distribution center
+
+                               Truck carries letter from distribution center to airport
+    Grandma Hanson
+    …                          Letter goes on an airplane from SFO to Columbia Metro Airport
+
+    Columbia, South Carolina
+                               Truck carriers letter from airport to Columbia post office
+
+                               Postal worker drives letter to Grandma’s house
+
+
+Modularity: Pilot pilots the
+          airplane
+                                       Separation of Concerns: Postal worker
+                                        does not know how to pilot airplane
+
+                                                                                            20
+Modularity, Abstraction, and Separation of Concerns
+
+                                                      Abstraction: Go get the
+                            curl https://cs61a.org     data at this address
+
+
+    Modularity: How do we break
+    this into different pieces?
+
+
+               Where is the computer located that has this data?
+                               How do we get there?
+                      How do we send this text over a wire?
+                  How do we share that wire with other users?
+
+
+
+
+                                                                                21
+Twenty-One Rules
+
+Two players alternate turns, on which they can add 1, 2, or 3 to the current total
+
+The total starts at 0
+
+The game end whenever the total is 21 or more
+
+The last player to add to the total loses
+
+                                            (Demo)
+
+
+
+
+                                                                                     22
+Functions within other functions
+
+
+
+
+                                   (Demo)
+
+
+
+
+                                            23
+

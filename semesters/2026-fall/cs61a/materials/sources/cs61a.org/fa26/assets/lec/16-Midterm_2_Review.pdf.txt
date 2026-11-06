@@ -1,0 +1,421 @@
+Source: https://cs61a.org/fa26/assets/lec/16-Midterm_2_Review.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+Midterm 2 Review
+Announcements
+Linked List Practice
+Example: Above First
+
+def above_first(s: LinkedList):
+   """ Print all of the labels of s that are larger than first.
+
+
+    >>> above_first(Link(3, Link(0, Link(8, Link(5)))))
+    8
+    5
+    """
+   def process(t: LinkedList):
+          _______________________:
+              if _______ > __________:
+                  print(____________)
+               ____________________
+    process(s)
+
+
+
+                                                                  5
+Example: Above First
+
+def above_first(s: LinkedList):
+   """ Print all of the labels of s that are larger than first.
+
+
+    >>> above_first(Link(3, Link(0, Link(8, Link(5)))))
+    8
+    5
+    """
+   def process(t: LinkedList):
+        if isinstance(t, Link)
+        _______________________:
+             if t.first     s.first
+                _______ > __________:
+                         t.first
+                 print(____________)
+             process(t.rest)
+             ____________________
+    process(s)
+
+
+
+                                                                  6
+Example: Above First, Take 2
+def above_first(s: LinkedList) -> LinkedList:
+   """ Return a new list with only the items in s larger than first.
+
+
+    >>> above_first(Link(3, Link(5, Link(1))))
+    (5)
+    >>> above_first(Link(3, Link(0, Link(8, Link(5)))))
+    (8 5)
+    """
+
+
+
+
+                                                                       7
+Example: Above First, Take 2
+def above_first(s: LinkedList) -> LinkedList:
+   """ Return a new list with only the items in s larger than first.
+
+
+    >>> above_first(Link(3, Link(5, Link(1))))
+    (5)
+    >>> above_first(Link(3, Link(0, Link(8, Link(5)))))
+    (8 5)
+    """
+   def process(t: LinkedList) -> LinkedList:
+          if not isinstance(t, Link):
+             return ()
+          if t.first > s.first:
+             return Link(t.first, process(t.rest))
+          return process(t.rest)
+  return process(s)
+                                                                       8
+List Practice
+Example: Closest to Index
+
+def closest_to_index(s):
+   """ Return the item in non-empty list s whose value has the
+    smallest absolute difference from its index.
+
+
+    >>> closest_to_index([8, 3, 10])
+    3
+    >>> closest_to_index([-3, 2, 100])
+    2
+    """
+    smallest = 0
+   for ___________________:
+          if ___________________________:
+              _______________
+   return _____________
+
+                                                                 10
+Example: Closest to Index
+
+def closest_to_index(s):
+   """ Return the item in non-empty list s whose value has the
+    smallest absolute difference from its index.
+
+
+    >>> closest_to_index([8, 3, 10])
+    3
+    >>> closest_to_index([-3, 2, 100])
+    2
+    """
+   smallest = 0
+        i in range(len(s))
+   for ___________________:
+              abs(i - s[i]) < abs(smallest - s[smallest])
+          if ____________________________________________:
+              smallest = i
+              _______________
+           s[smallest]
+   return _____________
+
+                                                                 11
+Example: Closest to Index
+
+def closest_to_index(s):
+   """ Return the item in non-empty list s whose value has the
+    smallest absolute difference from its index.
+
+
+    >>> closest_to_index([4, 2, 10])
+    2
+    >>> closest_to_index([-1, 100])
+    -1
+    """
+   return __________________________________________________
+
+
+
+
+                                                                 12
+Example: Closest to Index
+
+def closest_to_index(s):
+   """ Return the item in non-empty list s whose value has the
+    smallest absolute difference from its index.
+
+
+    >>> closest_to_index([4, 2, 10])
+    2
+    >>> closest_to_index([-1, 100])
+    -1
+    """
+          s[min(range(len(s)), key=lambda i: abs(i - s[i]))]
+   return __________________________________________________
+
+
+
+
+                                                                 13
+Recursion and Strings
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement count_park, which returns the number of ways that vehicles can be parked in n
+adjacent parking spots for positive integer n. Some or all spots can be empty.
+
+def count_park(n):
+    """Count the ways to park cars and motorcycles in n adjacent spots.
+    >>> count_park(1) # '.' or '%'
+    2
+    >>> count_park(2) # '..', '.%', '%.', '%%', or '<>'
+    5
+    >>> count_park(4) # some examples: '<><>', '.%%.', '%<>%', '%.<>'
+    29
+    """
+
+
+        We haven’t parked anything yet.   What’s a first choice we can make?
+
+
+
+                                                                                              15
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+                           Choice: how do
+3 spaces                    we fill the                   (Haven’t parked anything)
+  left                      first space?
+
+
+
+2 spaces
+  left
+              count_park(n-1)   %      count_park(n-1).
+
+             Describe what this
+1 space    recursive call returns
+ left
+                                                                         count_park(n-2)   <>
+           Number of ways to fill     Number of ways to fill             Number of ways to fill
+           3 spots, if you start  +   3 spots, if you start       +      3 spots, if you start
+             with a motorcycle         with an empty space                    with a car
+
+
+
+
+                                                                                                  16
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement count_park, which returns the number of ways that vehicles can be parked in n
+adjacent parking spots for positive integer n. Some or all spots can be empty.
+def count_park(n):
+    """Count the ways to park cars and motorcycles in n adjacent spots.
+    >>> count_park(1) # '.' or '%'                                            count_park(3):
+    2                                                                           %%%
+    >>> count_park(2) # '..', '.%', '%.', '%%', or '<>'                         %%.
+    5                                                                           %.%
+    >>> count_park(4) # some examples: '<><>', '.%%.', '%<>%', '%.<>'           %..
+    29                                                                          %<>
+    """                                                                         .%%
+    if n < 0:                    One way to think about these base cases:       .%.
+        return ____________     which of
+                              Number   recursive
+                                         ways to calls
+                                                 fill lead to these cases,      ..%
+    elif n == 0:                     and  what should
+                              3 spots, if you start   their values be?          ...
+        return ____________     with a motorcycle                               .<>
+    else:                                                                       <>%
+                count_park(n-1) + count_park(n-1) + count_park(n-2)             <>.
+        return ____________________________________________________
+                                                                                              17
+ Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+                          Choice: how do
+3 spaces                   we fill the                  (Haven’t parked anything)
+  left                     first space?
+
+
+
+2 spaces
+  left
+             count_park(n-1)   %                    .
+                                      count_park(n-1)
+
+
+
+
+1 space                                          (Omitted for
+ left          %%              %.                  brevity)
+                                                                       count_park(n-2)   <>
+
+0 spaces
+  left      %%% %%.       %.% %..            %<>                            <>% <>.
+            What should
+-1 spaces   count_park
+  left        return?     %%<>             %.<>                                           <><>
+                                                                                              18
+Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement count_park, which returns the number of ways that vehicles can be parked in n
+adjacent parking spots for positive integer n. Some or all spots can be empty.
+def count_park(n):
+    """Count the ways to park cars and motorcycles in n adjacent spots.
+    >>> count_park(1) # '.' or '%'                                            count_park(3):
+    2                                                                           %%%
+    >>> count_park(2) # '..', '.%', '%.', '%%', or '<>'                         %%.
+    5                                                                           %.%
+    >>> count_park(4) # some examples: '<><>', '.%%.', '%<>%', '%.<>'           %..
+    29                                                                          %<>
+    """                                                                         .%%
+    if n < 0:                    One way to think about these base cases:       .%.
+                     0
+        return ____________     which recursive calls lead to these cases,      ..%
+    elif n == 0:                     and what should their values be?           ...
+                     1
+        return ____________                                                     .<>
+    else:                                                                       <>%
+                count_park(n-1) + count_park(n-1) + count_park(n-2)             <>.
+        return ____________________________________________________
+                                                                                              19
+ Spring 2023 Midterm 2 Question 5(a) [modified a bit]
+                           Choice: how do
+3 spaces                    we fill the                  (Haven’t parked anything)
+  left                      first space?
+
+
+
+2 spaces
+  left
+             count_park(n-1)   %                     .
+                                       count_park(n-1)
+
+
+
+
+1 space                                           (Omitted for
+ left          %%              %.                   brevity)
+                                                                        count_park(n-2)   <>
+
+0 spaces
+  left      %%% %%.        %.% %..            %<>                            <>% <>.
+            What choices
+            did we make?
+-1 spaces
+  left
+             motorcycle
+             motorcycle
+                           %%<>             %.<>                                           <><>
+             motorcycle                                                                        20
+Recursion so far
+double_eights(s: list[int]) -> bool:
+  Strategy: Check if the first two elements are both 8s
+            Call double_eights on everything except the first element
+
+streak(n: int) -> bool:                                                        Deal with one
+      Return whether n is a dice integer in which all digits the same         item or digit;
+  Strategy: Check if last digit is a dice integer, and matches the previous   recurse for the
+            Call streak on everything except the last digit                        rest
+
+
+reverse(s: list) -> list:
+  Strategy: Get the first element into place
+            Call reverse on the rest
+
+count_partitions(n: int, m: int) -> int:
+      Return how many ways we can count to n, using pieces of up to size m    Tree recursion:
+  Strategy: Use a piece of size m; recurse for the rest                        Make a SMALL
+            Don’t use any pieces of size m; recurse for the rest              choice; recurse
+
+park(n: int) -> int: Return the ways to park in n adjacent spots
+  Strategy: Use a motorcycle; recurse for the rest
+            Use nothing; recurse for the rest
+            Use a car; recurse for the rest
+                                                                                         21
+Spring 2023 Midterm 2 Question 5(b) [modified a lot]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement park, which returns a list of all the ways, represented as strings, that vehicles
+can be parked in n adjacent parking spots for positive integer n. Spots can be empty.
+def park(n):                                                              park(3):
+    """Return the ways to park cars and motorcycles in n adjacent spots.     %%%
+    >>> park(1)                                                              %%.
+    ['%', '.']                                                               %.%     park(2)
+    >>> park(2)                                                              %..
+    ['%%', '%.', '.%', '..', '<>']                                           %<>
+    >>> len(park(4)) # some examples: '<><>', '.%%.', '%<>%', '%.<>'         .%%
+    29                                                                       .%.
+    """                                                                      ..%
+    if n < 0:                                                                ...
+                  []
+        return _______                                                       .<>
+    elif n == 0:                                                             <>%
+                 ['']
+        return _______                                                       <>.
+    else:
+        return ________________________________________________________________________________
+                   motorcycle first     +        nothing first     +         car first        22
+Spring 2023 Midterm 2 Question 5(b) [modified a lot]
+Definition. When parking vehicles in a row, a motorcycle takes up 1 parking spot and a car
+takes up 2 adjacent parking spots. A string of length n can represent n adjacent parking
+spots using % for a motorcycle, <> for a car, and . for an empty spot.
+For example: '.%%.<><>' (Thanks to the Berkeley Math Circle for introducing this question.)
+Implement park, which returns a list of all the ways, represented as strings, that vehicles
+can be parked in n adjacent parking spots for positive integer n. Spots can be empty.
+def park(n):                                                                     park(3):
+    """Return the ways to park cars and motorcycles in n adjacent spots.            %%%
+    >>> park(1)                                                                     %%.
+    ['%', '.']                                                                      %.%      park(2)
+    >>> park(2)                                                                     %..
+    ['%%', '%.', '.%', '..', '<>']                                                  %<>
+    >>> len(park(4)) # some examples: '<><>', '.%%.', '%<>%', '%.<>'                .%%
+    29                                                                              .%.
+    """                                                                             ..%
+    if n < 0:                                                                       ...
+                   []
+        return _______                                                              .<>
+    elif n == 0:                                                                    <>%
+                  ['']
+        return _______                                                              <>.
+    else:
+                ['%' +s for s in park(n-1)] + [ '.'+s for s in park(n-1)] + ['<>'+s for s in park(n-2)]
+        return ________________________________________________________________________________
+                    motorcycle first       +        nothing first        +         car first       23
+Quick Review: Adding Lists & Strings
+
+>>> x = 'cal'                                    >>> s = []
+>>> y = 'bears'                                  >>> ['cal' + x for x in s]
+>>> u = [x]                                      []
+>>> v = [y]
+                                                 >>> s = ['']
+>>> x + y                                        >>> ['cal' + x for x in s]
+'calbears'                                       ['cal']
+
+>>> u + v
+['cal', 'bears']
+
+>>> ['go ' + z for z in [x, y]]
+['go cal', 'go bears']
+
+
+>>> [‘cal' + x for x in s]
+
+What s will result in ['cal']?
+                                  pollev.com/cs61a
+What s will result in []?
+
+                                                                              24
+

@@ -1,0 +1,499 @@
+Source: https://stat20.berkeley.edu/fall-2026/2-summarizing-data/04-data-wrangling/tutorial.html
+Retrieved: 2026-11-06
+
+Data Wrangling
+Whipping your data into shape.
+WarningThis page covers…
+Practice problems with dplyr functions: mutate(), filter(),select(), arrange(), and summarize().
+Practice using the pipe |>
+[Interactive R block: webr-1-contents; attributes: {"edit": false, "eval": true, "output": false}]
+webr::install("gradethis", quiet = TRUE)
+library(gradethis)
+options(webr.exercise.checker = function(
+label, user_code, solution_code, check_code, envir_result, evaluate_result,
+envir_prep, last_value, engine, stage, ...
+) {
+if (is.null(check_code)) {
+# No grading code, so just skip grading
+invisible(NULL)
+} else if (is.null(label)) {
+list(
+correct = FALSE,
+type = "warning",
+message = "All exercises must have a label."
+)
+} else if (is.null(solution_code)) {
+list(
+correct = FALSE,
+type = "warning",
+message = htmltools::tags$div(
+htmltools::tags$p("A problem occurred grading this exercise."),
+htmltools::tags$p(
+"No solution code was found. Note that grading exercises using the ",
+htmltools::tags$code("gradethis"),
+"package requires a model solution to be included in the document."
+)
+)
+)
+} else {
+gradethis::gradethis_exercise_checker(
+label = label, solution_code = solution_code, user_code = user_code,
+check_code = check_code, envir_result = envir_result,
+evaluate_result = evaluate_result, envir_prep = envir_prep,
+last_value = last_value, stage = stage, engine = engine)
+}
+})
+IMPORTANT - if you want to actually learn and remember (so you can do well on quizzes…), be sure to struggle with these exercises, looking back at the notes [../../2-summarizing-data/04-data-wrangling/notes.html] as needed, figuring out how to solve it yourself (or with tutor help).
+If you just look at the solutions, or ask Claude/Gemini for help, you’ll short-circuit your memory formation. See AI Policy [../../syllabus.html#ai-policy] on the syllabus for a longer explanation of why this is so important.
+Side quest: How conditions actually work
+First, let’s look back at this code one more time
+[#cb1-1]filter(msleep, vore == "carni")
+The vore == "carni" part asks (==), for each row, is the vore column equal to the text carni? We have 83 animals in our dataset, so the vore == "carni" part will become a vector of 83 TRUE and FALSE answers. Literally. filter uses these TRUE and FALSE values to decide which rows to keep.
+To demonstrate, consider the code below, which seems insane but totally works (remember, T and F are valid shorthand for TRUE and FALSE)
+[#cb2-1]filter(msleep, c(T, F, F, F, F, F, T, F, T, F,
+[#cb2-2]                 F, F, F, F, F, F, F, T, F, F,
+[#cb2-3]                 F, F, F, F, F, F, F, T, F, F,
+[#cb2-4]                 T, T, F, F, F, F, T, F, F, F,
+[#cb2-5]                 F, F, F, F, T, F, T, F, F, F,
+[#cb2-6]                 T, T, T, F, F, F, F, F, T, T,
+[#cb2-7]                 F, F, F, F, F, F, F, F, F, F,
+[#cb2-8]                 F, F, F, F, F, F, F, F, F, T,
+[#cb2-9]                 T, T, T))
+name |
+genus |
+vore |
+order |
+conservation |
+sleep_total |
+sleep_rem |
+sleep_cycle |
+awake |
+brainwt |
+bodywt |
+Cheetah |
+Acinonyx |
+carni |
+Carnivora |
+lc |
+12.1 |
+NA |
+NA |
+11.90 |
+NA |
+50.00 |
+Northern fur seal |
+Callorhinus |
+carni |
+Carnivora |
+vu |
+8.7 |
+1.4 |
+0.3833333 |
+15.30 |
+NA |
+20.49 |
+Dog |
+Canis |
+carni |
+Carnivora |
+domesticated |
+10.1 |
+2.9 |
+0.3333333 |
+13.90 |
+0.0700 |
+14.00 |
+Long-nosed armadillo |
+Dasypus |
+carni |
+Cingulata |
+lc |
+17.4 |
+3.1 |
+0.3833333 |
+6.60 |
+0.0108 |
+3.50 |
+Domestic cat |
+Felis |
+carni |
+Carnivora |
+domesticated |
+12.5 |
+3.2 |
+0.4166667 |
+11.50 |
+0.0256 |
+3.30 |
+Pilot whale |
+Globicephalus |
+carni |
+Cetacea |
+cd |
+2.7 |
+0.1 |
+NA |
+21.35 |
+NA |
+800.00 |
+Gray seal |
+Haliochoerus |
+carni |
+Carnivora |
+lc |
+6.2 |
+1.5 |
+NA |
+17.80 |
+0.3250 |
+85.00 |
+Thick-tailed opposum |
+Lutreolina |
+carni |
+Didelphimorphia |
+lc |
+19.4 |
+6.6 |
+NA |
+4.60 |
+NA |
+0.37 |
+Same result. The first value in the vector is TRUE. So we keep the first row (the Cheetah). The second value is FALSE, so we don’t keep that one (Owl Monkey). And so forth. We are left with just the carnivores, though we had to hand-specify which rows to keep. Obviously this approach is very tedious, prohibitively so for larger datasets, so we use expressions like vore == "carni" instead.
+This little “side quest” was just to show you what these expressions are doing: vore == "carni" produces a vector of TRUE and FALSE values, indicating to filter which rows to keep.
+A simpler example to illustrate:
+[#cb3-1]minidata <- data.frame(x = c(1, 2, 3, 4, 5),
+[#cb3-2]                       y = c("a", "b", "c", "d", "e"))
+[#cb3-3]minidata
+x |
+y |
+1 |
+a |
+2 |
+b |
+3 |
+c |
+4 |
+d |
+5 |
+e |
+[#cb4-1]filter(minidata, x > 3)
+x |
+y |
+4 |
+d |
+5 |
+e |
+[#cb5-1]filter(minidata, c(F, F, F, T, T))
+x |
+y |
+4 |
+d |
+5 |
+e |
+You can pick arbitrary rows out:
+[#cb6-1]filter(minidata, c(F, T, F, T, F))
+x |
+y |
+2 |
+b |
+4 |
+d |
+Practice Exercises
+The following packages have already been loaded for you:
+[#cb7-1]library(tidyverse)
+[#cb7-2]library(stat20data)
+[#cb7-3]library(gapminder)
+Practice Section: gapminder
+For these first questions we’ll work with the gapminder dataset you saw in class. This dataset contains information about countries over time, including statistics like population, life expectancy, and GDP per capita. We’ll use this dataset to practice our data wrangling skills.
+country |
+continent |
+year |
+lifeExp |
+pop |
+gdpPercap |
+Afghanistan |
+Asia |
+1952 |
+28.801 |
+8425333 |
+779.4453 |
+Afghanistan |
+Asia |
+1957 |
+30.332 |
+9240934 |
+820.8530 |
+Afghanistan |
+Asia |
+1962 |
+31.997 |
+10267083 |
+853.1007 |
+Afghanistan |
+Asia |
+1967 |
+34.020 |
+11537966 |
+836.1971 |
+Afghanistan |
+Asia |
+1972 |
+36.088 |
+13079460 |
+739.9811 |
+Afghanistan |
+Asia |
+1977 |
+38.438 |
+14880372 |
+786.1134 |
+Afghanistan |
+Asia |
+1982 |
+39.854 |
+12881816 |
+978.0114 |
+Afghanistan |
+Asia |
+1987 |
+40.822 |
+13867957 |
+852.3959 |
+This is just the first few rows. We have one row for each country in each year, with statistics about the country that year.
+Q: Do we have data for every country in every year?
+It’s useful to know how complete a dataset is. Fill in the blank in the following code that counts how many countries have data in each year:
+[Interactive R block: webr-2-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_groupby_year"}]
+gapminder |>
+_________________ |>
+summarize(n = n())
+Show answer
+[#cb8-1]gapminder |>
+[#cb8-2]    group_by(year) |>
+[#cb8-3]    summarize(n = n())
+# A tibble: 12 × 2
+year     n
+<int> <int>
+1  1952   142
+2  1957   142
+3  1962   142
+4  1967   142
+5  1972   142
+6  1977   142
+7  1982   142
+8  1987   142
+9  1992   142
+10  1997   142
+11  2002   142
+12  2007   142
+Looks like all the data is accounted for in every year.
+Q: How many countries do we have for each continent?
+The following code is almost correct.
+[#cb10-1]gapminder |>
+[#cb10-2]    group_by(continent) |>
+[#cb10-3]    summarize(n = n())
+# A tibble: 5 × 2
+continent     n
+<fct>     <int>
+1 Africa      624
+2 Americas    300
+3 Asia        396
+4 Europe      360
+5 Oceania      24
+Hmm… it says we have 624 countries in Africa? These numbers are all too high. What’s going on?
+Based on what you know about the dataset (specifically - what does one row represent?), add a pipeline step that will fix this issue and generate correct numbers.
+[Interactive R block: webr-3-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_groupby_continent"}]
+gapminder |>
+_______________
+group_by(continent) |>
+summarize(n = n())
+Show answer
+The problem is that we have multiple rows for each country, one for each year. We just saw that we have all 142 countries every year, so we can fix this by filtering to just one year (e.g., 2007).
+[#cb12-1]gapminder |>
+[#cb12-2]    filter(year == 2007) |>
+[#cb12-3]    group_by(continent) |>
+[#cb12-4]    summarize(n = n())
+# A tibble: 5 × 2
+continent     n
+<fct>     <int>
+1 Africa       52
+2 Americas     25
+3 Asia         33
+4 Europe       30
+5 Oceania       2
+Q: Let’s keep going with this pipeline. Take your solution from the previous step, and:
+Pipe it to ggplot() to make a bar plot of the number of countries in each continent.
+Have all bars be different, solid colors.
+Add a title
+Remove the x and y axis labels (just set them to an empty string, "")
+Hint: you’ll need to use geom_col instead of geom_bar, since you’ll be setting the bar heights yourself…
+[Interactive R block: webr-4-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_groupby_continent_ggplot"}]
+Show answer
+[#cb14-1]gapminder |>
+[#cb14-2]    filter(year == 2007) |>
+[#cb14-3]    group_by(continent) |>
+[#cb14-4]    summarize(n = n()) |>
+[#cb14-5]    ggplot(aes(x = continent, y = n, fill = continent)) +
+[#cb14-6]    geom_col() +
+[#cb14-7]    labs(title = "Number of countries on each continent in the gapminder dataset",
+[#cb14-8]         x = "", y = "")
+[Image: ; tutorial_files/figure-html/unnamed-chunk-20-1.png]
+Q: What was the total population of each continent in each year?
+Think about this for a minute. What do we want to group by? What do we want to summarize? We need the total for each continent in each year. So we need to group by TWO things.
+group_by() can take multiple things to group on, like so:
+[#cb15-1]gapminder |>
+[#cb15-2]    group_by(continent, year) |>
+[#cb15-3]    summarize(total_pop = sum(pop))
+# A tibble: 60 × 3
+# Groups:   continent [5]
+continent  year total_pop
+<fct>     <int>     <dbl>
+1 Africa     1952 237640501
+2 Africa     1957 264837738
+3 Africa     1962 296516865
+4 Africa     1967 335289489
+5 Africa     1972 379879541
+6 Africa     1977 433061021
+7 Africa     1982 499348587
+8 Africa     1987 574834110
+9 Africa     1992 659081517
+10 Africa     1997 743832984
+# ℹ 50 more rows
+Now your task is to pipe this to ggplot() to make a line plot of the total population of each continent over time. Be sure to also:
+Color the lines by continent.
+Add a title
+[Interactive R block: webr-5-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_group2_plot"}]
+gapminder |>
+group_by(continent, year) |>
+summarize(total_pop = sum(pop)) |>
+(add code here - it will take multiple lines)
+Show answer
+[#cb17-1]gapminder |>
+[#cb17-2]    group_by(continent, year) |>
+[#cb17-3]    summarize(total_pop = sum(pop)) |>
+[#cb17-4]    ggplot(aes(x = year, y = total_pop, color = continent)) +
+[#cb17-5]    geom_line() +
+[#cb17-6]    labs(title = "Total Population by Continent Over Time")
+[Image: ; tutorial_files/figure-html/unnamed-chunk-23-1.png]
+Q: One more step - let’s change the y axis…
+Populations tend to have a funny distribution, some are extremely large, some are a lot smaller. Instead of plotting the raw population, let’s plot the log (base 10) of the population. This will make the differences between continents more apparent. (For more explanation of why and when we take the log of things, see the “Why do we use the log of body weight? (Optional)” section of today’s notes [../../2-summarizing-data/04-data-wrangling/notes.html].)
+Copy/paste your pipeline from the previous step. Then, in the right place (this is tricky!), add a new pipeline step to make a new column called log10_pop that is the log base 10 of the population. Then use that column as your y axis.
+Be sure to:
+Use mutate() to create the new column.
+Use log10() to calculate the log base 10.
+Change the y axis to say “Population - log 10 scale” or similar
+Hint: Think carefully about where this step should go in the pipe so that the result is meaningful. We want the log of the total continent population, not the sum of the logs of individual country populations, since log10(x + y) is not the same as log10(x) + log10(y)…
+[Interactive R block: webr-6-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_groupby_continent_logplot"}]
+Show answer
+[#cb18-1]gapminder |>
+[#cb18-2]    group_by(continent, year) |>
+[#cb18-3]    summarize(total_pop = sum(pop)) |>
+[#cb18-4]    mutate(log10_pop = log10(total_pop)) |>
+[#cb18-5]    ggplot(aes(x = year, y = log10_pop, color = continent)) +
+[#cb18-6]    geom_line() +
+[#cb18-7]    labs(title = "Total Population by Continent Over Time",
+[#cb18-8]         y = "Population - log 10 scale")
+[Image: ; tutorial_files/figure-html/unnamed-chunk-25-1.png]
+Practice Section: msleep
+name |
+genus |
+vore |
+order |
+conservation |
+sleep_total |
+bodywt |
+Cheetah |
+Acinonyx |
+carni |
+Carnivora |
+lc |
+12.1 |
+50.000 |
+Owl monkey |
+Aotus |
+omni |
+Primates |
+NA |
+17.0 |
+0.480 |
+Mountain beaver |
+Aplodontia |
+herbi |
+Rodentia |
+nt |
+14.4 |
+1.350 |
+Greater short-tailed shrew |
+Blarina |
+omni |
+Soricomorpha |
+lc |
+14.9 |
+0.019 |
+Cow |
+Bos |
+herbi |
+Artiodactyla |
+domesticated |
+4.0 |
+600.000 |
+Three-toed sloth |
+Bradypus |
+herbi |
+Pilosa |
+NA |
+14.4 |
+3.850 |
+Northern fur seal |
+Callorhinus |
+carni |
+Carnivora |
+vu |
+8.7 |
+20.490 |
+Vesper mouse |
+Calomys |
+NA |
+Rodentia |
+NA |
+7.0 |
+0.045 |
+Q: Getting a simpler dataset
+From the msleep dataset, write a pipeline that creates a dataframe with only the animals that sleep more than 10 hours. Further, your output should contain only the columns name, vore, and sleep_total.
+[Interactive R block: webr-7-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_msleep_select"}]
+Show answer
+[#cb19-1]msleep |>
+[#cb19-2]    filter(sleep_total > 10) |>
+[#cb19-3]    select(name, vore, sleep_total)
+# A tibble: 44 × 3
+name                       vore  sleep_total
+<chr>                      <chr>       <dbl>
+1 Cheetah                    carni        12.1
+2 Owl monkey                 omni         17
+3 Mountain beaver            herbi        14.4
+4 Greater short-tailed shrew omni         14.9
+5 Three-toed sloth           herbi        14.4
+6 Dog                        carni        10.1
+7 Chinchilla                 herbi        12.5
+8 Star-nosed mole            omni         10.3
+9 Long-nosed armadillo       carni        17.4
+10 North American Opossum     omni         18
+# ℹ 34 more rows
+Q: Animals vary in how much they sleep. Which type of vore varies the most?
+Using the msleep dataset, write a single pipeline to create a summary table showing the mean and standard deviation of sleep_total for each type of vore.
+The last step in your pipeline should sort the rows from largest to smallest standard deviation.
+Refer back to the notes [../../2-summarizing-data/04-data-wrangling/notes.html] as needed.
+[Interactive R block: webr-8-contents; attributes: {"autorun": false, "edit": true, "envir": "tutorial_2_04", "eval": true, "exercise": "2_04_ex_msleep_arrange"}]
+Show answer
+[#cb21-1]msleep |>
+[#cb21-2]    group_by(vore) |>
+[#cb21-3]    summarize(mean_sleep = mean(sleep_total),
+[#cb21-4]              sd_sleep = sd(sleep_total)) |>
+[#cb21-5]    arrange(desc(sd_sleep))
+# A tibble: 5 × 3
+vore    mean_sleep sd_sleep
+<chr>        <dbl>    <dbl>
+1 insecti      14.9      5.92
+2 herbi         9.51     4.88
+3 carni        10.4      4.67
+4 <NA>         10.2      3.00
+5 omni         10.9      2.95

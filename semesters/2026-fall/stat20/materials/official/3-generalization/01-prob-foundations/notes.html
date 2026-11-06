@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Intro to Probability – Stat 20 (Fall 2026)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../3-generalization/02-computing-probs/notes.html" rel="next">
+<link href="../../3-generalization/notes.html" rel="prev">
+<link href="../../assets/stat20-hex.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f7d53fbfeca47580150879ef1fa5e7d1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/stat20notes-1.0.0/stat20notes.js"></script>
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-WP7F4QKDC8"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-WP7F4QKDC8', { 'anonymize_ip': true});
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../site_libs/quarto-contrib/quarto-project/stat20/stat20notes/sidebar.css">
+<meta property="og:title" content="Intro to Probability – Stat 20 (Fall 2026)">
+<meta property="og:description" content="Definitions, axioms, and examples">
+<meta property="og:image" content="https://stat20.berkeley.edu/fall-2026/3-generalization/01-prob-foundations/images/dice-players-painting.jpeg">
+<meta property="og:site_name" content="Stat 20">
+<meta name="twitter:title" content="Intro to Probability – Stat 20 (Fall 2026)">
+<meta name="twitter:description" content="Definitions, axioms, and examples">
+<meta name="twitter:image" content="https://stat20.berkeley.edu/fall-2026/3-generalization/01-prob-foundations/images/dice-players-painting.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-sm " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/stat20-hex-small.png" alt="Stat 20 logo" class="navbar-logo light-content">
+    <img src="../../assets/stat20-hex-small.png" alt="Stat 20 logo" class="navbar-logo dark-content">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../syllabus.html"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../office-hours.html"> 
+<span class="menu-text">Office Hours</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../notes.html" aria-current="page"> 
+<span class="menu-text">Notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../tutorials.html"> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../extras.html"> 
+<span class="menu-text">Extras</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://edstem.org/us/courses/101622/discussion" rel="noopener" title="" class="quarto-navigation-tool px-1" aria-label="Ed Discussion Forum" target="_blank"><i class="bi bi-chat-fill"></i></a>
+    <a href="https://www.gradescope.com/" rel="noopener" title="" class="quarto-navigation-tool px-1" aria-label="Gradescope" target="_blank"><i class="bi bi-bar-chart-fill"></i></a>
+    <a href="https://stat20.datahub.berkeley.edu/" rel="noopener" title="" class="quarto-navigation-tool px-1" aria-label="RStudio" target="_blank"><i class="bi bi-r-circle-fill"></i></a>
+    <a href="https://stat20-grades.wetchler.com/" rel="noopener" title="" class="quarto-navigation-tool px-1" aria-label="See my grade calculation" target="_blank"><i class="bi bi-calculator-fill"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <h1 class="quarto-secondary-nav-title no-breadcrumbs">Intro to Probability</h1>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+  <div id="quarto-announcement" data-announcement-id="0e448cb404be6a7dd8a500cd096574bd" class="alert alert-info hidden"><i class="bi bi-calculator-fill quarto-announcement-icon"></i><div class="quarto-announcement-content">
+<p><strong>New:</strong> Check your current grade calculation anytime with the calculator icon in the top right, or <a href="https://stat20-grades.wetchler.com/" target="_blank" rel="noopener">open it here</a>.</p>
+</div><i class="bi bi-x-lg quarto-announcement-action"></i></div>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Questions and Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../1-questions-and-data/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Questions and Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../1-questions-and-data/01-understanding-the-world/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Understanding the World with Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../1-questions-and-data/02-taxonomy-of-data/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Taxonomy of Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/01-summarizing-categorical-data/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summarizing Categorical Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/02-summarizing-numerical-data/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summarizing Numerical Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/03-a-grammar-of-graphics/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A Grammar of Graphics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/04-data-wrangling/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Wrangling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/05-summarizing-associations/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summarizing Numerical Associations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../2-summarizing-data/06-data-visualization/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Visualization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Generalization</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/01-prob-foundations/notes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Intro to Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/02-computing-probs/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Computing Probabilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/03-probability-dsns/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/04-random-variables/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Random Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/05-ev-se/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Expected Value and Variance</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/06-normal-approx/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Continuous Distributions and Normal Approximations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/07-from-samps-to-pops/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Samples to Populations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/08-confidence-intervals/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Confidence Intervals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/09-bootstrapping/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bootstrapping</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/10-hypothesis-tests/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/11-hypothesis-tests-2/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hypothesis Tests II</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../3-generalization/12-wrong-by-design/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Wrong by Design</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../4-prediction/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prediction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../4-prediction/01-method-of-least-squares/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Intro to Prediction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../4-prediction/02-improving-predictions-overfitting/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Improving Predictions and Overfitting</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Prediction</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../4-prediction/05-logistic-regression/notes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Causality</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#de-mérés-paradox" id="toc-de-mérés-paradox" class="nav-link active" data-scroll-target="#de-mérés-paradox">De Méré’s Paradox</a></li>
+  <li><a href="#basics" id="toc-basics" class="nav-link" data-scroll-target="#basics">Basics</a>
+  <ul class="collapse">
+  <li><a href="#example-tossing-a-fair-coin" id="toc-example-tossing-a-fair-coin" class="nav-link" data-scroll-target="#example-tossing-a-fair-coin">Example: Tossing a fair coin</a></li>
+  <li><a href="#example-tossing-a-fair-six-sided-diedice" id="toc-example-tossing-a-fair-six-sided-diedice" class="nav-link" data-scroll-target="#example-tossing-a-fair-six-sided-diedice">Example: Tossing a fair six-sided die</a></li>
+  </ul></li>
+  <li><a href="#axioms-of-probability" id="toc-axioms-of-probability" class="nav-link" data-scroll-target="#axioms-of-probability">Axioms of probability</a>
+  <ul class="collapse">
+  <li><a href="#an-example-using-the-axioms-and-our-favorite-birds-penguins-not-shoebills" id="toc-an-example-using-the-axioms-and-our-favorite-birds-penguins-not-shoebills" class="nav-link" data-scroll-target="#an-example-using-the-axioms-and-our-favorite-birds-penguins-not-shoebills">An example using the axioms and our favorite birds (penguins, not shoebills)</a></li>
+  </ul></li>
+  <li><a href="#some-examples" id="toc-some-examples" class="nav-link" data-scroll-target="#some-examples">Some Examples</a></li>
+  <li><a href="#venn-diagrams" id="toc-venn-diagrams" class="nav-link" data-scroll-target="#venn-diagrams">Venn Diagrams</a></li>
+  <li><a href="#the-box-model" id="toc-the-box-model" class="nav-link" data-scroll-target="#the-box-model">The Box Model</a>
+  <ul class="collapse">
+  <li><a href="#a-box-of-tickets-1" id="toc-a-box-of-tickets-1" class="nav-link" data-scroll-target="#a-box-of-tickets-1">A box of tickets</a></li>
+  <li><a href="#with-or-without-replacement" id="toc-with-or-without-replacement" class="nav-link" data-scroll-target="#with-or-without-replacement">With or without replacement?</a></li>
+  <li><a href="#setting-up-a-box-model-examples" id="toc-setting-up-a-box-model-examples" class="nav-link" data-scroll-target="#setting-up-a-box-model-examples">Setting up a box model: examples</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="quarto-other-links"><h2>Other Links</h2><ul><li><a href="slides.html"><i class="bi bi-file-slides-fill"></i>Slides</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Intro to Probability</h1>
+<p class="subtitle lead">Definitions, axioms, and examples</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="page-overview callout callout-style-default callout-warning callout-titled" title="This page covers...">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>This page covers…
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Basic definitions and vocabulary for probability (outcome space, events, probability, impossible events etc)</li>
+<li>Probabilities of equally likely outcomes</li>
+<li>Axioms of probability</li>
+<li>Set notation and Venn diagrams</li>
+<li>The box model</li>
+<li>Addition rule (probability of the union of mutually exclusive events)</li>
+</ul>
+</div>
+</div>
+</div>
+<p><span class="dropcap">M</span>uch of the field of statistics concerns itself with taking a <em>sample</em> of data to try to learn about a larger <em>population</em>. For example, an ice cream company can ask 100 volunteers if they prefer flavor A or flavor B, and they hope to learn which flavor would sell better if offered to <em>everyone</em> in grocery stores.</p>
+<p>This is <strong>generalization</strong>, and it is perhaps the most central task of statistics. <strong>Probability</strong> is a crucial lodestone in the statistician’s work. This lesson begins our explorations of probability.</p>
+<p>In order to be taken seriously as we extend our statements about data sets to larger populations, we need to be careful about how we collect data, and then about how we generalize our findings. For example, we are awash in polls these days, as we head towards the midterms. You may have observed that some polling companies are more accurate than others in their estimates and predictions, and consequently people pay more attention to them.</p>
+<p>Below is a snapshot of rankings of polling organizations from the well-known statistician Nate Silver’s Substack newsletter <em>Silver Bulletin</em>.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, and one can imagine that not many take heed of the polling done by the firms with C or worse grades. According to the website, the rankings are based on the polling organization’s “historical accuracy and transparency.”</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/silver-bulletin-pollster-rankings.png" class="quarto-figure quarto-figure-center figure-img" width="700" height="800"></p>
+</figure>
+</div>
+<p>When we want to understand voter opinions based on a small poll, or understand the efficacy of a new drug based on a clinical trial of a few hundred participants, or any time we examine a sample of data and make conclusions about a larger group, we have to understand the <em>variations</em> in our estimates introduced by the random nature of taking a sample.</p>
+<p>For example, if we conducted the same poll twice, we would get a <em>different group</em> of voters each time, and therefore a <em>different estimate</em> of what the overall population’s opinion is. How different could these estimates be? How concerned should we be? A core part of a statistician’s work is to <strong>quantify uncertainty</strong> and communicate it clearly to others.</p>
+<p>To understand this variation and uncertainty, though, we first have to understand how <em>probability</em> was involved in collecting the data. In these notes, we are going to describe methods by which we can obtain representative samples from the target population. Since these methods are based on probability, we need to first understand the basics of probability or randomness.</p>
+<p>We will begin our study of probability right where the subject began: in the salons of 17th century France where high society men and women gathered to gamble, usually with dice and coins.</p>
+<p>But wait, you say, dice have been around for thousands of years… well, that is quite true. One of the oldest surviving dice artifacts is the <em>Harappan dice</em>, (the left most image below) - cubical terracotta dice, from the Indus Valley Civilization, about 2500 - 1900 BCE. In the middle we have the famous “Kempten Astragaloi”, ancient knucklebones discovered in Bavaria, dating back to the 1st century BCE – 1st century CE. If we venture into mythologies and legends, we have the famous “Shakuni’s dice” (on the right) which were part of a pivotal game in the ancient Indian epic <em>Mahabharata</em>.</p>
+<div class="quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/harappandie.jpg" class="img-fluid figure-img" width="250"></p>
+<figcaption>Harappan dice</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/256px-Kempten_Astragaloi.jpg" class="img-fluid figure-img" width="250"></p>
+<figcaption>Kempten Astragaloi</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/shakunis-dice.jpg" class="img-fluid figure-img" width="250"></p>
+<figcaption>Shakuni’s dice</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>We should say, more correctly, that the study of <em>modern</em> probability began with a French nobleman (and gambler), the Chevalier de Méré, and his gambling woes.</p>
+<section id="de-mérés-paradox" class="level2">
+<h2 class="anchored" data-anchor-id="de-mérés-paradox">De Méré’s Paradox</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/dice-players-painting.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="400"></p>
+</figure>
+</div>
+<p>Seventeenth century French gamblers would bet on anything. In particular, they would bet on a fair six-sided die landing on 6 <em>at least once</em> in four rolls. Antoine Gombaud, aka the Chevalier de Méré, was a gambler who also considered himself something of a mathematician. He computed the chance of getting at least one six in four rolls as 2/3 by computing <span class="math inline">\((4 \times (1/6) = 4/6)\)</span>. He won quite often by betting on this event, and was convinced his computation was correct. Was it? (<strong>Spoiler alert</strong>: No! It was wrong!)</p>
+<p>The next popular dice game was betting on at least one double-six in twenty-four rolls of a <em>pair</em> of dice. De Méré knew that there were 36 possible outcomes when rolling a pair of dice, and therefore, assuming all the outcomes were <em>equally likely</em>, he computed that the chance of a double six was 1/36. Using this he concluded that the chance of at least one double six in 24 rolls was the same as that of at least one six in four rolls, that is, 2/3 (<span class="math inline">\(=24 \times 1/36\)</span>). He happily bet on this event (at least one double six in 24 rolls) but to his shock, lost more often than he won!</p>
+<p>What was going on? Why did he win more often than lose in the first situation, and lose more often than win in the second? De Méré got so desperate after losing a lot of money that he consulted one of the great thinkers of that time, Blaise Pascal. Pascal got intrigued by the problem, and began a famous correspondence with another mathematician of the day, Pierre Fermat - and modern probability was born!</p>
+<p>We will see later how to <em>compute</em> the probability of de Méré winning his bet, but for now we can <em>estimate</em> (guess at) the value by <strong>simulating</strong> rolling a die many times (1000 times) and looking at the <em>proportion</em> of times we see at least one six in 4 rolls of a fair die (game 1), and do the same with at least one double-six in 24 rolls (game 2).</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of simulations = 1000</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  prop_wins_game_1
+1            0.514</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  prop_wins_game_2
+1            0.487</code></pre>
+</div>
+</div>
+<p>You can see here that the poor Chevalier wasn’t as good a mathematician as he imagined himself to be, and didn’t compute the chances correctly. The simulated probabilities are nowhere close to his own calculation of 2/3 for both games!</p>
+<p>By the end of this unit, you’ll be able to conduct simulations like these yourself in <code>R</code>. For today, we are going to begin by introducing the <em>conceptual</em> building blocks behind probability.</p>
+</section>
+<section id="basics" class="level2">
+<h2 class="anchored" data-anchor-id="basics">Basics</h2>
+<p>First, let’s establish some vocabulary—it’s much easier if all of us are thinking of the same meanings when we use probabilistic terms:</p>
+<div class="def">
+<dl>
+<dt><strong>Experiment</strong></dt>
+<dd>
+An action, involving chance, that can result in a number of possible <em>outcomes</em> (results of the experiment). For example, a coin toss is an experiment, and the possible outcomes are the coin landing heads or tails. Note that we can have finitely many outcomes or infinitely many outcomes.
+</dd>
+</dl>
+</div>
+<div class="def">
+<dl>
+<dt><strong>Outcome space</strong></dt>
+<dd>
+<p>This is just a <a href="https://en.wikipedia.org/wiki/Set_(mathematics)">set</a> of everything that could happen. The collection of <em>all</em> possible outcomes of an experiment is called an “outcome space” aka “sample space,” and we denote it by the upper case Greek letter <span class="math inline">\(\Omega\)</span> (“Omega”). We will denote a set by enclosing the elements of the set in braces: <span class="math inline">\(\{ \}\)</span>.</p>
+</dd>
+</dl>
+<ul>
+<li>For example, if we toss a coin, then the corresponding outcome space is <span class="math inline">\(\Omega = \{\text{Heads, Tails}\}\)</span>.</li>
+<li>If we roll a die, then the corresponding outcome space <span class="math inline">\(\Omega = \{1, 2, 3, 4, 5, 6\}\)</span>.</li>
+</ul>
+</div>
+<div class="def">
+<dl>
+<dt><strong>Event</strong></dt>
+<dd>
+Technically an “event” is just a subset of all possible outcomes. When we run an experiment, depending on the specific outcome, one or more events might “happen.” For example, in rolling a die, we could define event “A” as “rolling a 6” and define event “B” as “rolling an even number.” If we roll a 1, neither event happens. If we roll a 2, event B happens, but not event A. If we roll a 6, both A and B happen. We usually denote events by upper case letters from the beginning of the alphabet: <span class="math inline">\(A, B, C, \ldots\)</span>. Because an event is a subset of the outcome space, we denote this by writing <span class="math inline">\(A \subset \Omega\)</span>.
+</dd>
+</dl>
+</div>
+<div class="def">
+<dl>
+<dt><strong>P(A)</strong></dt>
+<dd>
+For any event <span class="math inline">\(A\)</span>, we write <em>the probability of <span class="math inline">\(A\)</span></em> as <span class="math inline">\(P(A)\)</span>. When all outcomes are equally likely*, we can define the probability of an event <span class="math inline">\(A\)</span> as <span class="math inline">\(P(A) = \dfrac{\text{ size of }A}{\text{ size of }\Omega}\)</span>. For example, if our experiment or action is rolling a fair six-sided die, then <span class="math inline">\(\Omega\)</span> has 6 outcomes, and its size is 6. If <span class="math inline">\(A\)</span> is the event that we roll a number less than 3, then <span class="math inline">\(A = \{1, 2\}\)</span>, and <span class="math inline">\(P(A) = \dfrac{2}{6} = \dfrac{1}{3}\)</span>. Of course, in this particular example, we are assuming here that all the outcomes are <em>equally likely</em> (defined below).
+</dd>
+</dl>
+<p>* Technically there must also be a <em>finite</em> number of outcomes. This is nuanced, and we will return to it when we get to continuous probability distributions.</p>
+</div>
+<div class="def">
+<dl>
+<dt><strong>Equally likely outcomes</strong></dt>
+<dd>
+This means exactly what you think it might: When all the possible outcomes in a finite outcome space of size <span class="math inline">\(n\)</span> happen with the same probability, which is <span class="math inline">\(\displaystyle \frac{1}{n}\)</span>. Rolling a die is a classic example: each of the six possible outcomes has a 1/6 probability of occurring.
+</dd>
+</dl>
+<p>Let’s say that there are <span class="math inline">\(n\)</span> possible outcomes in the outcome space <span class="math inline">\(\Omega\)</span>, and an event <span class="math inline">\(A\)</span> has <span class="math inline">\(k\)</span> possible outcomes out of those <span class="math inline">\(n\)</span>. If all the outcomes are equally likely to happen (as in a die roll or coin toss), then we say that the probability of <span class="math inline">\(A\)</span> occurring is <span class="math inline">\(\displaystyle \frac{k}{n}\)</span>.</p>
+<p><span class="math display">\[
+P(A) = \frac{k}{n}
+\]</span></p>
+</div>
+<section id="example-tossing-a-fair-coin" class="level3">
+<h3 class="anchored" data-anchor-id="example-tossing-a-fair-coin">Example: Tossing a fair coin</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/us-quarter.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="100"></p>
+</figure>
+</div>
+<p>Suppose we toss a fair coin. What is the chance of the coin landing heads? Most people would guess 50%, reasoning that there are two possible things that can happen, and if the coin is fair, then they are both equally likely, making the probability of heads 1/2 or 50%.</p>
+<p>Here, we have thought about an event: the coin landing heads. We observed that there is <em>one</em> outcome in that event, and two (equally likely) outcomes in the outcome space, so we say the probability of the event, <span class="math inline">\(P(\text{Heads})\)</span>, is 1/2.</p>
+</section>
+<section id="example-tossing-a-fair-six-sided-diedice" class="level3">
+<h3 class="anchored" data-anchor-id="example-tossing-a-fair-six-sided-diedice">Example: Tossing a fair six-sided die<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></h3>
+<p>Consider rolling a fair six-sided die: six outcomes are possible so <span class="math inline">\(\Omega = \{1, 2, 3, 4, 5, 6\}\)</span>. Since the die is fair, each outcome is equally likely, with probability <span class="math inline">\(= \displaystyle \frac{1}{6}\)</span>. We can list the outcomes and their probabilities in a table.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><strong>Outcome</strong></th>
+<th style="text-align: center;"><span class="math inline">\(1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(3\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(4\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(5\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(6\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Probability</strong></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\displaystyle \frac{1}{6}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Let <span class="math inline">\(A\)</span> be the event that an even number is rolled. Then the set <span class="math inline">\(A\)</span> can be written <span class="math inline">\(\{2,4,6\}\)</span>. Since all of these outcomes are equally likely:</p>
+<p><span class="math display">\[P(A) = \frac{1}{6} + \frac{1}{6} + \frac{1}{6} = \frac{3}{6}\]</span></p>
+</section>
+</section>
+<section id="axioms-of-probability" class="level2">
+<h2 class="anchored" data-anchor-id="axioms-of-probability">Axioms of probability</h2>
+<p>In order to compute the probabilities of events, we need to set some basic mathematical rules called <em>axioms</em> (which are intuitively clear if you think of the probability of an event as the proportion of the outcomes that are in it). There are <strong>three basic rules</strong> that we use to compute probabilities, and here are the first two:</p>
+<dl>
+<dt>Axiom 1</dt>
+<dd>
+The chance of any event is at least <span class="math inline">\(0\)</span>: <span class="math inline">\(P(A) \ge 0\)</span> for any event <span class="math inline">\(A\)</span>. In other words, there are no negative probabilities.
+</dd>
+<dt>Axiom 2</dt>
+<dd>
+The chance of an outcome being in <span class="math inline">\(\Omega\)</span> is <span class="math inline">\(1\)</span>: <span class="math inline">\(P(\Omega) = 1\)</span>. This follows by definition - <span class="math inline">\(\Omega\)</span> is <em>defined</em> as the set of every single thing that could happen. Hence, whatever happens must be in <span class="math inline">\(\Omega\)</span>. In the case of equally-likely outcomes, we also see that the probability of <span class="math inline">\(\Omega\)</span> is the number of outcomes in <span class="math inline">\(\Omega\)</span> divided by <span class="math inline">\(n\)</span>, which is <span class="math inline">\(n/n = 1\)</span>.
+</dd>
+</dl>
+<p>Before we write the third rule, we need some more definitions and notation:</p>
+<div class="def">
+<dl>
+<dt><strong>Impossible event</strong></dt>
+<dd>
+An event with no outcomes in it. Denoted by either empty braces <span class="math inline">\(\{\}\)</span> or the symbol for the empty set <span class="math inline">\(\emptyset\)</span>. Note that this is a <strong>symbol</strong> representing a set, and is <strong>not</strong> the same thing as the <em>number</em> 0. The <em>probability</em> of the impossible event is <span class="math inline">\(0\)</span>.
+</dd>
+</dl>
+<p>For example, if you roll a standard 6-sided die, the event of “rolling an 8” is impossible. There is no 8 anywhere on a standard die, so 8 is not in the outcome space.</p>
+</div>
+<div class="def">
+<dl>
+<dt><strong>Union of events</strong></dt>
+<dd>
+Given events <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, we can define a new event called <span class="math inline">\(A\)</span> <em>or</em> <span class="math inline">\(B\)</span>, which consists of all the outcomes that are <em>either</em> in <span class="math inline">\(A\)</span> <em>or</em> in <span class="math inline">\(B\)</span> <strong>or both</strong>. This is also written as <span class="math inline">\(A \cup B\)</span>, read as “<span class="math inline">\(A\)</span> union <span class="math inline">\(B\)</span>.”
+</dd>
+</dl>
+<p>Example: let’s say you roll a standard 6-sided die, and define these two events:</p>
+<ul>
+<li><span class="math inline">\(A = \{1,2,3\}\)</span> (the roll is 3 or less)</li>
+<li><span class="math inline">\(B = \{1,3,5\}\)</span> (the roll is odd)</li>
+</ul>
+<p>Then the event <span class="math inline">\(A \cup B = \{1,2,3,5\}\)</span>. You’ll notice that the number 2 is only in <span class="math inline">\(A\)</span>, the number 5 is only in <span class="math inline">\(B\)</span>, and the numbers 1 and 3 are in both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The union of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> contains all of these numbers.</p>
+<p>Put differently, in order for a die roll to be 3-or-less, odd, or both, we need to roll a 1, 2, 3, or 5.</p>
+</div>
+<div class="def">
+<dl>
+<dt><strong>Intersection of events</strong></dt>
+<dd>
+Given events <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, we can define a new event called <span class="math inline">\(A\)</span> <em>and</em> <span class="math inline">\(B\)</span>, which consists of all the outcomes that are in <strong>both</strong> <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. This is also written as <span class="math inline">\(A \cap B\)</span>, read as “<span class="math inline">\(A\)</span> intersect <span class="math inline">\(B\)</span>.”
+</dd>
+</dl>
+<p>Same example: let’s say you roll a standard 6-sided die, and define these two events:</p>
+<ul>
+<li><span class="math inline">\(A = \{1,2,3\}\)</span> (the roll is 3 or less)</li>
+<li><span class="math inline">\(B = \{1,3,5\}\)</span> (the roll is odd)</li>
+</ul>
+<p>Then the event <span class="math inline">\(A \cap B = \{1,3\}\)</span>. These are the only outcomes in both events.</p>
+<p>Put differently, in order for a die roll to be both odd <em>and</em> 3-or-less, we need to roll a 1 or a 3.</p>
+</div>
+<p>Now we consider events that don’t intersect or overlap at all, that is, they are <em>disjoint</em> from each other, or <em>mutually exclusive</em>:</p>
+<div class="def">
+<dl>
+<dt><strong>Mutually exclusive events</strong></dt>
+<dd>
+If two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> <em>cannot both happen at once</em>, we say that the events are <strong>mutually exclusive</strong>. Mutually exclusive events are sets that do not overlap at all, and therefore have no outcomes in common.
+</dd>
+</dl>
+<p>A die roll cannot be both even and odd at the same time. A single coin flip cannot be both heads and tails. Such events are <em>mutually exclusive</em>.</p>
+<p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are mutually exclusive, then we know that if one of them happens, the other one <em>cannot</em>. If a die roll is even, then it is definitely <em>not</em> odd. We denote this by writing <span class="math inline">\(A \cap B = \emptyset\)</span> and read this as “<span class="math inline">\(A\)</span> <em>intersect</em> <span class="math inline">\(B\)</span> is empty”. Therefore, for mutually exclusive events:</p>
+<p><span class="math display">\[P(A \cap B) = P(\emptyset) = 0\]</span></p>
+</div>
+<p>The event that a die roll is <em>even</em> <span class="math inline">\(\{2,4,6\}\)</span> and the event that a die roll is odd <span class="math inline">\(\{1,3,5\}\)</span> are mutually exclusive. They have no outcomes in common, and therefore cannot both happen.</p>
+<p>However, the event that a die roll is <em>even</em> <span class="math inline">\(\{2,4,6\}\)</span> and the event that a die roll is a <em>prime</em> number <span class="math inline">\(\{2,3,5\}\)</span> are <em>not</em> mutually exclusive. The number 2 is both even and prime, so both events could happen.</p>
+<p>Here’s another example that might interest soccer fans: The event that <em>Arsenal</em> wins the English Premier League (EPL) this season, and the event that <em>Manchester City</em> wins the EPL this season, <em>are</em> mutually exclusive, since you cannot have two teams winning the premier league in the same season. However, the event that <em>Arsenal</em> wins the EPL this season and the event that <em>Manchester City</em> wins the EPL <em>next</em> season are <em>not</em> mutually exclusive. Both could happen.</p>
+<p>Now for the third axiom:</p>
+<dl>
+<dt>Axiom 3</dt>
+<dd>
+If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are mutually exclusive (<span class="math inline">\(A \cap B = \emptyset\)</span>), then
+</dd>
+</dl>
+<p><span class="math display">\[P(A \cup B) = P(A) + P(B)\]</span></p>
+<p>That is, for two mutually exclusive events, the probability that <em>either</em> of the two events might occur is the <em>sum</em> of their probabilities. This is called the <strong>addition rule</strong>.</p>
+<p>For example, consider rolling a fair six-sided die, and the two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, where <span class="math inline">\(A\)</span> is the event of rolling a multiple of <span class="math inline">\(5\)</span>, and <span class="math inline">\(B\)</span> is the event that we roll a multiple of <span class="math inline">\(2\)</span>.</p>
+<p>The only outcome in <span class="math inline">\(A\)</span> is <span class="math inline">\(5\)</span>, while <span class="math inline">\(B\)</span> has <span class="math inline">\(\{2, 4, 6\}\)</span>. <span class="math inline">\(P(A) = 1/6\)</span>, and <span class="math inline">\(P(B) = 3/6\)</span>. Since <span class="math inline">\(A \cap B =\emptyset\)</span> (<span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> have no outcomes in common), we have that</p>
+<p><span class="math display">\[P(A \cup B) = P(A) + P(B) = \frac{1}{6} + \frac{3}{6} = \frac{4}{6}\]</span></p>
+<p><strong>You can only add probabilities like this IF the events are mutually exclusive.</strong> Why? Consider:</p>
+<ul>
+<li>Event A: a die roll is 2 or higher.
+<ul>
+<li>That is, <span class="math inline">\(A = \{2,3,4,5,6\}\)</span></li>
+<li>So <span class="math inline">\(P(A) = 5/6\)</span></li>
+</ul></li>
+<li>Event B: a die roll is 4 or <em>lower</em>.
+<ul>
+<li>That is, <span class="math inline">\(B = \{1,2,3,4\}\)</span></li>
+<li>So <span class="math inline">\(P(B) = 4/6\)</span></li>
+</ul></li>
+</ul>
+<p>These events are NOT mutually exclusive. They can <em>both</em> be true if we roll a 2, 3, or 4.</p>
+<p>If you try to compute <span class="math inline">\(P(A \cup B)\)</span> (“A or B”) by adding <span class="math inline">\(P(A) + P(B)\)</span>, you get <span class="math inline">\(5/6 + 4/6 = 9/6\)</span> which is 150%. You can’t have a &gt; 100% chance of anything happening! (See Axiom 2).</p>
+<p>Why didn’t this work? Well, you’ve double-counted the numbers that satisfy both events (2, 3, and 4). You can only add probabilities directly if you have nothing to double-count, which only happens when the events are mutually exclusive.</p>
+<div class="def">
+<p><strong>The complement rule</strong></p>
+<p>Here is an important consequence of axiom 3. Let <span class="math inline">\(A\)</span> be an event in <span class="math inline">\(\Omega\)</span>. The <em>complement</em> of <span class="math inline">\(A\)</span>, written as <span class="math inline">\(A^C\)</span>, consists of all those outcomes in <span class="math inline">\(\Omega\)</span> that are <em>not</em> in <span class="math inline">\(A\)</span>. For example, if we roll a die and define event <span class="math inline">\(A\)</span> as rolling a 3 or higher <span class="math inline">\(\{3, 4, 5, 6\}\)</span>, then the complement <span class="math inline">\(A^C\)</span> is rolling a 2 or lower <span class="math inline">\(\{1, 2\}\)</span>. This leads to the following <strong>complement rule</strong>:</p>
+<p><span class="math display">\[P(A) + P(A^C) =  1\]</span></p>
+<p>Any event will either happen (<span class="math inline">\(A\)</span>) or it won’t (<span class="math inline">\(A^C\)</span>). One of those has to be true. A coin flip has to be either Heads or “not Heads.” A die roll must be either “greater than 3” or “not greater than 3.” This is because <span class="math inline">\(A \cup A^C = \Omega\)</span>, and <span class="math inline">\(A \cap A^C = \emptyset\)</span>.</p>
+<p>It may feel silly, but this is a surprisingly useful rule. Sometimes a probability is really hard to calculate, but its complement is easy to calculate. So you calculate the complement instead, and subtract from 1.</p>
+</div>
+<section id="an-example-using-the-axioms-and-our-favorite-birds-penguins-not-shoebills" class="level3">
+<h3 class="anchored" data-anchor-id="an-example-using-the-axioms-and-our-favorite-birds-penguins-not-shoebills">An example using the axioms and our favorite birds (penguins, not shoebills)</h3>
+<p>Consider the penguins dataset, which has 333 observations, of which 146 are Adelie penguins and 68 are Chinstrap penguins. Suppose we pick a penguin at random. What is the probability that we would pick an Adelie penguin? What about the probability of picking a Gentoo penguin?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>Let <span class="math inline">\(A\)</span> be the event of picking an Adelie penguin, <span class="math inline">\(C\)</span> be the event of picking a Chinstrap penguin, <span class="math inline">\(G\)</span> be the event of picking a Gentoo penguin.</p>
+<p>Assuming that all the penguins are equally likely to be picked, we see that then <span class="math inline">\(P(A) = 146/333\)</span>, and <span class="math inline">\(P(C) = 68/333\)</span>. While we could subtract a bit to find <span class="math inline">\(P(G)\)</span>, we’ll do it with the complement rule.</p>
+<p>Since only one penguin is picked, we see that <span class="math inline">\(A, C\)</span>, and <span class="math inline">\(G\)</span> are <em>mutually exclusive</em>. This means that <span class="math inline">\(P(A)+P(C)+P(G) = 1\)</span>, since <span class="math inline">\(A, C\)</span>, and <span class="math inline">\(G\)</span> together make up all of <span class="math inline">\(\Omega\)</span>.</p>
+<p>Rearranging the algebra a little, we unveil what is, essentially, the <em>complement rule</em>:</p>
+<span class="math display">\[P(G) = 1 - (P(A) + P(C)) = 1 - P(G^C) = 1 - 214/333 = 119/333\]</span>
+</details>
+<div class="callout callout-style-default callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>WARNING!!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We use <span class="math inline">\(A\)</span> to denote an <em>event</em> or a set, while <span class="math inline">\(P(A)\)</span> is a <em>number</em> - you can think of <span class="math inline">\(P(A)\)</span> as representing the relative size of <span class="math inline">\(A\)</span>. This means that <strong>the following types of statements don’t make sense</strong> as we haven’t defined what it means to add sets or union numbers etc.:</p>
+<ul>
+<li><span class="math inline">\(P(A) \cup P(B)\)</span> or <span class="math inline">\(P(A) \cap P(B)\)</span></li>
+<li><span class="math inline">\(A + B\)</span>, or <span class="math inline">\(A - B\)</span>, or <span class="math inline">\(A \times B\)</span> etc</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="some-examples" class="level2">
+<h2 class="anchored" data-anchor-id="some-examples">Some Examples</h2>
+<section id="tossing-a-fair-coin" class="level4">
+<h4 class="anchored" data-anchor-id="tossing-a-fair-coin">1. Tossing a fair coin</h4>
+<p>Suppose we plan to toss a coin twice, but first we want to write down all of the <em>equally likely</em> outcomes. What is <span class="math inline">\(\Omega\)</span>? And looking at this <span class="math inline">\(\Omega\)</span>, what is the chance of at least one head?</p>
+<p><strong>Solution</strong>: <span class="math inline">\(\Omega = \{HH, HT, TH, TT\}\)</span>, where <span class="math inline">\(H\)</span> represents the coin landing heads, and <span class="math inline">\(T\)</span> represents the coin landing tails. Note that since we can get exactly one head and one tail in <strong>two</strong> ways, we have to write out both ways so that all the outcomes are equally likely.</p>
+<p>Now, let <span class="math inline">\(A\)</span> be the event of getting at least one head in two tosses. We can do this by listing the outcomes in <span class="math inline">\(A\)</span>: <span class="math inline">\(\{HH, HT, TH\}\)</span> and so <span class="math inline">\(P(A) = 3/4\)</span>.</p>
+<p>Alternatively, we can consider <span class="math inline">\(A^C\)</span> which is the event of <em>no</em> heads, so <span class="math inline">\(A^C = \{TT\}\)</span> and <span class="math inline">\(P(A^C) = 1/4\)</span>.</p>
+<p>By the complement rule, <span class="math inline">\(P(A) = 1- P(A^C) = 1-1/4 = 3/4\)</span>.</p>
+<p><strong>Now you try</strong>: Let <span class="math inline">\(\Omega\)</span> be the outcome space of tossing a coin <em>three</em> times. What is the probability of at least one head? What about exactly one head?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p><span class="math inline">\(\Omega = \{HHH, HHT, HTH, THH, HTT, THT, TTH, TTT \}\)</span>.</p>
+<p>Let <span class="math inline">\(A\)</span> be the event of at least one head. Then <span class="math inline">\(A^C\)</span> is the event of no heads, so <span class="math inline">\(A^C = \{TTT\}\)</span>, and <span class="math inline">\(P(A^C) = 1/8\)</span>. Therefore <span class="math inline">\(P(A) = 1-1/8 = 7/8\)</span>. Note that this is much quicker than listing and counting the outcomes in <span class="math inline">\(A\)</span>.</p>
+<p>If <span class="math inline">\(B\)</span> is the event of <em>exactly</em> one head, then <span class="math inline">\(B = \{HTT, THT, TTH\}\)</span> and <span class="math inline">\(P(B) = 3/8\)</span>.</p>
+</details>
+</section>
+<section id="a-box-of-tickets" class="level4">
+<h4 class="anchored" data-anchor-id="a-box-of-tickets">2. A box of tickets</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/box-1.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="400"></p>
+</figure>
+</div>
+<p>Consider the box above which has five almost identical tickets. The only difference is the value written on them. Imagine that we shake the box to mix the tickets up, and then draw <em>one</em> ticket without looking so that all the tickets are <em>equally likely</em> to be drawn<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>.</p>
+<p>What is the chance of drawing an even number?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p><strong>Solution</strong>:</p>
+<p>Let <span class="math inline">\(A\)</span> be the event of drawing an even number. Then <span class="math inline">\(A = \{2, 2, 4\}\)</span>: we list 2 twice because there are two tickets marked 2, making it twice as likely as any other number. <span class="math inline">\(P(A) = 3/5\)</span>.</p>
+Note: a “set” in mathematics does not allow for repeated elements. But here, we actually <em>don’t</em> have repeated elements - there are three distinct tickets! We simply wrote their <em>values</em> in set notation for simplicity. There are two different tickets with a 2 on them, so it is a set (of tickets).
+</details>
+</section>
+</section>
+<section id="venn-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="venn-diagrams">Venn Diagrams</h2>
+<p>We often represent events using <em>Venn diagrams</em>. The outcome space <span class="math inline">\(\Omega\)</span> is usually represented as a rectangle, and events are represented as circles inside <span class="math inline">\(\Omega\)</span>. Remember, <span class="math inline">\(\Omega\)</span> is <em>literally everything that could possibly happen</em>. Here is a Venn diagram showing two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, their intersection, and their union:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/venn-diagram-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></p>
+</figure>
+</div>
+<p>Here is a Venn diagram showing two mutually exclusive events (no overlap):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/venn-disjoint.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></p>
+</figure>
+</div>
+</section>
+<section id="the-box-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-box-model">The Box Model</h2>
+<p>One of the simplest ways of understanding probabilities is through the <em>box model</em><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> like the one earlier. A box model consists of a box with numbered tickets, from which tickets are drawn.</p>
+<p>To specify a box model, we have to say:</p>
+<ul>
+<li><em>What</em> tickets go in the box (that is, what are the numbers on the tickets, and how many of each)</li>
+<li><em>How many</em> tickets will we draw from this box</li>
+<li>Whether the tickets will be drawn <em>with or without replacement</em>.
+<ul>
+<li>The difference is this: after drawing a ticket from the box, do we put it back in the box before we draw again (“with replacement”) or leave it out of the box (“without replacement”)?</li>
+<li>If <em>with</em> replacement, note that we could draw the same ticket multiple times.</li>
+<li>If <em>without</em> replacement, note that we will <em>never</em> draw the same ticket twice. And the box <em>changes</em> between draws as tickets are removed.</li>
+</ul></li>
+</ul>
+<section id="a-box-of-tickets-1" class="level3">
+<h3 class="anchored" data-anchor-id="a-box-of-tickets-1">A box of tickets</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/box-1.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="400"></p>
+</figure>
+</div>
+<p>We saw this box earlier. As long as we shake the box up, and don’t look when we draw, each ticket has an equally likely chance to be picked. For example, the chance of drawing a ticket labeled “4” is one in five, as there are five tickets to choose from and only one is labeled “4” etc. We will come back to this box in the next chapter. For now, what is the chance of drawing a ticket labeled “2”?</p>
+</section>
+<section id="with-or-without-replacement" class="level3">
+<h3 class="anchored" data-anchor-id="with-or-without-replacement">With or without replacement?</h3>
+<p>When we make multiple draws at random <em>with</em> replacement, we draw one ticket, and put it back before drawing another ticket. For the box in this section, if we draw twice, both times we will draw from the following box:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/box.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="200"></p>
+</figure>
+</div>
+<p>If we draw twice at random <em>without</em> replacement, then our second draw is from a <em>different</em> box, illustrated below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/no-replace-box.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="300"></p>
+</figure>
+</div>
+<p>The <em>purpose</em> of creating a box model is to understand the variability in a “random process” such as tossing a coin over and over and counting the number of heads, or sampling voters in Texas to ask them if they will vote for James Talarico or Ken Paxton in November’s Senate elections. We do this by having the tickets represent the possible outcomes associated with the random process (of say, sampling voters), and using the variability in the tickets that are drawn, to understand the variability of the random process we are actually interested in.</p>
+<p>Let’s review what we need in order to create a box model that will model a random process. We need to specify:</p>
+<ol type="1">
+<li>The box and tickets (what tickets go in the box, and the values written on them)</li>
+<li>The number of draws</li>
+<li>Whether or not we replace tickets between draws</li>
+<li>How we will summarize the values on the drawn tickets (usually take the sum of the tickets drawn or the average of tickets drawn)</li>
+</ol>
+<p>Note that these tickets should be identical in every way, except the value written on them, and assume that the tickets in the box are <em>equally likely</em> to be drawn (we draw without looking at the box).</p>
+</section>
+<section id="setting-up-a-box-model-examples" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-a-box-model-examples">Setting up a box model: examples</h3>
+<p>Let’s practice creating boxes to model common scenarios. For each of the cases below, we should specify the four items above.</p>
+<section id="example-1-tossing-a-fair-coin-and-counting-the-number-of-heads" class="level4">
+<h4 class="anchored" data-anchor-id="example-1-tossing-a-fair-coin-and-counting-the-number-of-heads">Example 1: Tossing a fair coin and counting the number of heads</h4>
+<p><img src="images/us-quarter.png" class="img-fluid" width="100"></p>
+<p><strong>Tossing a fair coin once</strong></p>
+<p>What box and which tickets would you use to model a <em>single</em> coin toss?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>We could draw one ticket from the box <img src="images/coin_ht.jpeg" class="img-fluid quarto-figure quarto-figure-center" width="100"> but these are not numbered!</p>
+Or we could draw one ticket from the box <img src="images/coin.jpeg" class="img-fluid" width="100"> with the ticket <span class="math inline">\(\fbox{1}\)</span> representing the coin landing heads, and <span class="math inline">\(\fbox{0}\)</span> representing the coin landing tails. This change of numbering the ticket representing the outcome we are counting with a 1 and all other tickets with a 0 is very important, since we are <em>classifying</em> the outcomes into two categories, and counting the instances of one of them (in this case, the coin landing heads).
+</details>
+<p><strong>Tossing a fair coin twice</strong></p>
+<p>How would you use a box model to simulate this?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>We could use the same box as above:</p>
+<p><img src="images/coin.jpeg" class="img-fluid" width="100"></p>
+Remember that the ticket <span class="math inline">\(\fbox{1}\)</span> represents the outcome of a toss landing heads and <span class="math inline">\(\fbox{0}\)</span> represents a toss landing tails (because we are counting the number of heads). We let the box be as above, and draw two tickets at random <em>with replacement</em> from this box. To count the number of heads in two tosses, we add the draws.
+</details>
+<p><strong>Tossing an <em>unfair</em> coin</strong></p>
+<p>How would you use the box model for tossing a coin which has chance of 5/6 landing heads, and counting the number of heads?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>We do the same trick, of representing the outcome of heads with <span class="math inline">\(\fbox{1}\)</span>, and tails with <span class="math inline">\(\fbox{0}\)</span>. Since the coin lands heads 5 times out of 6, the box is given by:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/unfair-coin.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="500"></p>
+</figure>
+</div>
+We draw as many times as the number of tosses, <em>replacing the ticket each time</em>,and sum up the values on the tickets drawn.
+</details>
+</section>
+<section id="example-2-rolling-a-fair-die-and-summing-the-spots" class="level4">
+<h4 class="anchored" data-anchor-id="example-2-rolling-a-fair-die-and-summing-the-spots">Example 2: Rolling a fair die and summing the spots</h4>
+<p><img src="images/dice.png" class="img-fluid" width="100"><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><strong>Rolling a fair die once</strong></p>
+<p>How would you use a box to represent this experiment?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>The box will have six tickets as shown below, and we would draw one ticket from this box. The chance of any one of the tickets is <span class="math inline">\(1/6\)</span>.</p>
+<img src="images/die.jpeg" class="img-fluid" width="200">
+</details>
+<p><strong>Rolling a fair die twice</strong></p>
+<p>How would you use a box to represent this experiment?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>We would use the same box as in the previous example, draw <em>twice</em> at random <em>with replacement</em> from this box, then add the draws.</p>
+<p><img src="images/two-dice.jpeg" class="img-fluid" width="450"></p>
+</details>
+</section>
+<section id="example-3-betting-on-red-in-roulette" class="level4">
+<h4 class="anchored" data-anchor-id="example-3-betting-on-red-in-roulette">Example 3: Betting on red in roulette</h4>
+<p><img src="images/roulette-us.jpg" class="img-fluid quarto-figure quarto-figure-center" width="200"><a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
+<p>An American roulette wheel has 38 pockets, of which 18 are red, 18 black, and 2 are green. The wheel is spun, and a small ball is thrown on the wheel so that it is equally likely to land in any of the 38 pockets. Players bet on which colored or numbered pocket the ball will come to rest in. If you bet one dollar that the ball will land on red, and it does, you get your dollar back, and you win one dollar, so your <em>gain</em> is $1. If it doesn’t, and lands on a black or green number, you lose your dollar, and your “gain” is -$1. What would be the box model for your <strong>gain</strong> from a single spin?</p>
+<p><strong>Gain from a single spin</strong></p>
+<p>How would you set up a box to represent this experiment?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>We would use the box shown below marked “Gain”. In the top box, there are 38 tickets, each representing a numbered pocket on the wheel. Draw one ticket to represent the ball landing in a particular pocket. In the second row each ticket represents a colored pocket, and we see that there are 18 red pockets, 18 black, and 2 green. We only care about the outcome <em>ball lands in red pocket</em>, and our gain from this. We would draw once from it, with the ticket marked <span class="math inline">\(\fbox{+1}\)</span> representing our gain if the ball lands on a red pocket, and the ticket <span class="math inline">\(\fbox{-1}\)</span> representing our loss if the ball doesn’t land on red. We can see that the chance of drawing a <span class="math inline">\(\fbox{+1}\)</span> is 18 out of 38.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/roulette-bet.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="300"></p>
+</figure>
+</div>
+</details>
+<p><strong>Gain from 10 spins</strong></p>
+<p>How would we use a box model to represent our <em>net gain</em> or winnings from 10 spins (we bet $1 on each spin, and either lose it or get it back plus $1)?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+Use the same box as above, with 18 tickets marked <span class="math inline">\(\fbox{+1}\)</span> and 20 marked <span class="math inline">\(\fbox{-1}\)</span>, draw 10 times <em>with replacement</em> and sum the draws.
+</details>
+</section>
+<section id="example-4-antarctic-penguins" class="level4">
+<h4 class="anchored" data-anchor-id="example-4-antarctic-penguins">Example 4: Antarctic penguins</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/penguins.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="300"></p>
+</figure>
+</div>
+<p>You have seen the penguins data, which measured 8 variables on a sample of 333. Here the box will contain 333 tickets, and we will draw 50 tickets at random without replacement. Note that each ticket in the box represents one penguin in the sample and has information for multiple variables measured on that penguin, and we would consider only the information we are interested in. Suppose we wanted sex, species, and flipper length, to compare the flipper lengths of males and females, grouped by species.</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>The box would have 333 tickets, one for each penguin. Each ticket would have <strong>three</strong> things written on it: the species, sex, and flipper length in mm of the penguin. We would draw 50 tickets at random without replacement. Below is an example ticket. The left hand side has values for all 8 variables for one of the sampled penguins, but we only care about 3 of the variables. So when we draw our tickets from the box, we can think about them looking like the right hand side ticket. Now we can summarize the sample data to look at the average flipper length for males and females of each species.</p>
+<img src="images/penguin-ticket.jpeg" class="img-fluid quarto-figure quarto-figure-center" width="400">
+</details>
+</section>
+<section id="example-5-weighing-a-donkey-in-the-kenyan-countryside" class="level4">
+<h4 class="anchored" data-anchor-id="example-5-weighing-a-donkey-in-the-kenyan-countryside">Example 5: Weighing a donkey in the Kenyan countryside</h4>
+<p><img src="images/kenyan-donkey.jpeg" class="img-fluid quarto-figure quarto-figure-center" width="200"><a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+<p>Donkeys are economically vital in rural Kenya, being cheaper than horses or cattle, and playing all kinds of roles - used for transport, farming etc. When they fall sick, it is crucial for veterinarians to know their weight to dose their medications correctly. The problem is that they don’t usually have scales. A study showed that the vet can obtain the weight indirectly using a statistical method called a <em>nomogram</em>, that is, the weight of the donkey is estimated using measurements that were easier to obtain. The study obtained the data by measuring donkeys at 17 sites in 2010<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a>.</p>
+<p><strong>Four</strong> body measurements were made for each donkey: liveweight (kg), heart girth (cm), height (cm), and length (cm), and in addition, sex and body condition score (BCS) were recorded (the BCS categorized the donkeys according to their condition, ranging from “emaciated” to “obese”).</p>
+<p>Suppose I want to sample 50 donkeys from this dataset, to compute their average weight and average girth (girth or heart girth is the circumference of the body, measured just behind the front legs.)</p>
+<p>How would you use a box model to represent this process (sampling donkeys)?</p>
+<details>
+<summary>
+Check your answer
+</summary>
+<p>The box has 544 tickets, one for each donkey. The ticket has information from all 8 variables recorded (3 categorical and 5 numerical). We only need 2 variables, so the tickets will have those two variables recorded. We draw 50 tickets from this box at random <em>without</em> replacement, and compute 2 averages from the draws.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/donkey-tkt.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="400"></p>
+</figure>
+</div>
+</details></section>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>In this lecture, we introduced equally likely outcomes, and defined the outcome space of an experiment.</li>
+<li>Then, using equally likely outcomes, we defined the probability of an event as the ratio of the number of outcomes in the event to the number of total outcomes in the outcome space.</li>
+<li>We wrote down the axioms (fundamental rules) of probability, after defining unions, intersections, and mutually exclusive events and Venn diagrams.</li>
+<li>We also encountered an extremely useful construct: The box model. You will see how useful this is already when you go through the tutorial, but we will see the real power of the box model when we study variability.</li>
+</ul>
+<div class="tutorial-part-nav tutorial-part-nav-bottom">
+<p><a href="../../3-generalization/01-prob-foundations/tutorial.html" class="tutorial-nav-next">Continue on to the tutorial ⮕</a></p>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>You might have heard of a website called FiveThirtyEight, which was begun by Nate Silver. That was where he originally published his pollster rankings, but ABC News (and Disney+) bought FiveThirtyEight, and then eventually shut it down. Nate Silver had moved away by then, and begun his <a href="https://www.natesilver.net/p/pollster-ratings-silver-bulletin">newsletter</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The singular is <em>die</em> and the plural is <em>dice</em>. If we use the word “die” without any qualifiers, we will mean a fair, six-sided die.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>We call the tickets equally likely when each ticket has the same chance of being drawn. That is, if there are <span class="math inline">\(n\)</span> tickets in the box, each has a chance of <span class="math inline">\(1/n\)</span> to be drawn. We also refer to this as drawing a ticket <em>uniformly at random</em>, because the chance of drawing each ticket is the same, or <em>uniform</em>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>The box model was introduced by Freedman, Pisani, and Purves in their textbook <a href="https://wwnorton.com/books/9780393929720"><em>Statistics</em></a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Photo via unsplash.com<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Photo via unsplash.com<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><a href="https://people.maths.bris.ac.uk/~mazjcr/#donkeys" class="uri">https://people.maths.bris.ac.uk/~mazjcr/#donkeys</a>
+
+<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></li>
+<li id="fn8"><p>K. Milner and J.C. Rougier, 2014. <em>How to weigh a donkey in the Kenyan countryside</em>. Significance, 11(4), 40–43. 74, 115 <a href="https://rss.onlinelibrary.wiley.com/doi/full/10.1111/j.1740-9713.2014.00768.x" class="uri">https://rss.onlinelibrary.wiley.com/doi/full/10.1111/j.1740-9713.2014.00768.x</a><a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/stat20\.berkeley\.edu\/fall-2026");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../3-generalization/notes.html" class="pagination-link" aria-label="Generalization">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Generalization</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../3-generalization/02-computing-probs/notes.html" class="pagination-link" aria-label="Computing Probabilities">
+        <span class="nav-page-text">Computing Probabilities</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../../license.html">
+<p>License</p>
+</a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

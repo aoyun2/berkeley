@@ -1,0 +1,804 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Discussion 9: Gleam Data | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Discussion 9: Gleam Data" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/discussions/disc09/" />
+<meta property="og:url" content="https://cs61a.org/fa26/discussions/disc09/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Discussion 9: Gleam Data" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Discussion 9: Gleam Data","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/discussions/disc09/"},"url":"https://cs61a.org/fa26/discussions/disc09/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Discussion 9: Gleam Data<a class="print-button" href="print.html" title="Printable version" aria-label="Printable version">🖨️</a>
+  
+  
+</h1>
+    </header>
+<h2 id="attendance">
+  
+  
+    <a href="#attendance" class="anchor-heading" aria-labelledby="attendance"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attendance
+  
+  
+</h2>
+    
+<p>Your TA will come around during discussion to check you in. You can start on
+the worksheet before being checked in; you don't need to wait for your TA to
+get started.</p>
+<p>If you didn't attend for a good reason (such as being sick), fill out this
+form (within 2 weeks of your discussion):
+<a href="https://links.cs61a.org/attendance">attendance form</a></p>
+<h2 id="getting-started">
+  
+  
+    <a href="#getting-started" class="anchor-heading" aria-labelledby="getting-started"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started
+  
+  
+</h2>
+    
+<p>Say your name and something you've practiced for a while, such as playing an
+instrument, juggling, or martial arts. Did you discover any common interests
+among your group members?</p>
+<h2 id="lists-in-gleam">
+  
+  
+    <a href="#lists-in-gleam" class="anchor-heading" aria-labelledby="lists-in-gleam"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Lists in Gleam
+  
+  
+</h2>
+    
+<p>A Gleam list is either empty (<code>[]</code>) or a first element followed by the rest of
+the list (<code>[first, ..rest]</code>). A <code>case</code> expression can match these patterns to
+choose between a base case and a recursive case.</p>
+<p>For example, here's a function that sums a list of numbers.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// The sum of the elements of s.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Int</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">[]</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">[</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="p">..</span><span class="n">rest</span><span class="p">]</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Some useful sections from the Gleam appendix of Composing Programs:</p>
+<ul>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#lists">Lists</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#list-patterns">List patterns</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#list-recursion">List recursion</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-functions-and-control/#multiple-subjects">Multiple subjects</a></li>
+</ul>
+<h3 id="q1-interleave">
+  
+  
+    <a href="#q1-interleave" class="anchor-heading" aria-labelledby="q1-interleave"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: Interleave
+  
+  
+</h3>
+    
+<p>Implement <code>interleave</code>, which takes two lists <code>s</code> and <code>t</code> and returns a new list
+that alternates elements from both, starting with <code>s</code>.</p>
+<p>If one list is shorter than the other, <code>interleave</code> takes elements from both
+until the shorter one runs out, then appends the remaining elements of the
+longer list to the end. If either list is empty, it returns the other.</p>
+<p>For example:</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="w"> </span><span class="n">interleave</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">]</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">interleave</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">]</span>
+</code></pre></div></div>
+<div class="code-editor" data-language="gleam" data-question="interleave">
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// A new list that alternates elements from s and t, starting with s.</span>
+<span class="sd">/// When one list runs out, the remaining elements of the other are appended</span>
+<span class="sd">/// to the end. If either list is empty, the other is returned.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">interleave</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">t</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-language="gleam" data-question="interleave" data-module="interleave" data-template="// @discuss-editor interleave" data-test-module="interleave_test" data-test="//// Tests for `interleave`.&#10;&#10;import interleave.{interleave}&#10;&#10;pub fn interleave_same_length_test() {&#10;  assert interleave([1, 2, 3], [4, 5, 6]) == [1, 4, 2, 5, 3, 6]&#10;}&#10;&#10;pub fn interleave_different_length_test() {&#10;  assert interleave([7, 8, 9, 10], [11, 12]) == [7, 11, 8, 12, 9, 10]&#10;  assert interleave([1], [2, 3, 4, 5]) == [1, 2, 3, 4, 5]&#10;}&#10;&#10;// When one list is empty, the other comes back untouched.&#10;pub fn interleave_empty_test() {&#10;  assert interleave([], [1, 2, 3]) == [1, 2, 3]&#10;  assert interleave([1, 2, 3], []) == [1, 2, 3]&#10;  assert interleave([], []) == []&#10;}&#10;" data-tests="interleave_same_length_test interleave_different_length_test interleave_empty_test" data-visualize="false"></div>
+<h3 id="q2-no-repeats">
+  
+  
+    <a href="#q2-no-repeats" class="anchor-heading" aria-labelledby="q2-no-repeats"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: No Repeats
+  
+  
+</h3>
+    
+<p>Implement <code>no_repeats</code>, which takes a list of numbers <code>s</code> and returns a list of
+all the unique elements of <code>s</code> in the order they first appear, with no repeats.
+In other words, remove every duplicate while keeping the first occurrence.</p>
+<p>For example:</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="w"> </span><span class="n">no_repeats</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">])</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span>
+</code></pre></div></div>
+<div class="code-editor" data-language="gleam" data-question="no_repeats">
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span><span class="w"> </span><span class="n">gleam</span><span class="o">/</span><span class="n">list</span>
+
+<span class="sd">/// A list of the unique elements of s in the order of first appearance.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">no_repeats</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Int</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-language="gleam" data-question="no_repeats" data-module="no_repeats" data-template="// @discuss-editor no_repeats" data-test-module="no_repeats_test" data-test="//// Tests for `no_repeats`.&#10;&#10;import no_repeats.{no_repeats}&#10;&#10;pub fn no_repeats_example_test() {&#10;  assert no_repeats([5, 4, 5, 4, 2, 2]) == [5, 4, 2]&#10;}&#10;&#10;pub fn no_repeats_order_preserved_test() {&#10;  assert no_repeats([1, 2, 3, 4]) == [1, 2, 3, 4]&#10;  assert no_repeats([3, 1, 3, 2, 1]) == [3, 1, 2]&#10;}&#10;&#10;pub fn no_repeats_edges_test() {&#10;  assert no_repeats([]) == []&#10;  assert no_repeats([7, 7, 7, 7]) == [7]&#10;}&#10;" data-tests="no_repeats_example_test no_repeats_order_preserved_test no_repeats_edges_test" data-visualize="false"></div>
+<details class="hint"><summary>Hint: Removing Repeats</summary><div>
+<p>You may use <code>list.filter</code> together with an anonymous function to remove repeats.
+<code>list.filter(xs, keep)</code> returns the elements of <code>xs</code> for which <code>keep</code> returns
+<code>True</code>, and <code>x != first</code> is <code>True</code> when <code>x</code> is not equal to <code>first</code>.</p>
+</div></details>
+<h2 id="results-dictionaries-and-records">
+  
+  
+    <a href="#results-dictionaries-and-records" class="anchor-heading" aria-labelledby="results-dictionaries-and-records"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Results, Dictionaries, and Records
+  
+  
+</h2>
+    
+<p>Some more useful sections from the Gleam appendix of Composing Programs:</p>
+<ul>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#results">Results</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#dict-module">Dict module</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#records">Records</a></li>
+<li><a href="https://composingprograms.com/3ed/gleam-lists-and-data/#record-updates">Record updates</a></li>
+</ul>
+<h3 id="q3-find-repeated">
+  
+  
+    <a href="#q3-find-repeated" class="anchor-heading" aria-labelledby="q3-find-repeated"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: Find Repeated
+  
+  
+</h3>
+    
+<p>A function that might not successfully return a value can return a
+<a href="https://composingprograms.com/3ed/gleam-lists-and-data/#results"><code>Result</code></a>,
+which is either <code>Ok(value)</code> or an <code>Error</code>. <code>Error(Nil)</code> means there is no
+additional data about the error (which is common).</p>
+<p>Implement <code>find_repeated</code>, which takes a list <code>s</code> and a positive integer <code>n</code>. It
+returns <code>Ok(x)</code>, where <code>x</code> is the first item to appear at least <code>n</code> times, or
+<code>Error(Nil)</code> if no item appears <code>n</code> or more times.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="w"> </span><span class="n">find_repeated</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w">  </span><span class="c1">// 2 appears twice before 1 does</span>
+<span class="k">assert</span><span class="w"> </span><span class="n">find_repeated</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Error</span><span class="p">(</span><span class="n">Nil</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Its helper <code>finder</code> keeps track of how many times each item has
+appeared using a <a href="https://composingprograms.com/3ed/gleam-lists-and-data/#dict-module"><code>Dict</code></a>. Here
+are the only functions you need:</p>
+<ul>
+<li><code>dict.new()</code> returns an empty <code>Dict</code>.</li>
+<li><code>dict.get(d, key)</code> returns <code>Ok(value)</code> if <code>key</code> is stored in <code>d</code> with <code>value</code>,
+or <code>Error(Nil)</code> if it isn't.</li>
+<li><code>dict.insert(d, key, value)</code> returns a new <code>Dict</code> that also stores <code>value</code> for
+<code>key</code>, replacing any value stored there before. It doesn't change <code>d</code>.</li>
+</ul>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="w"> </span><span class="n">counts</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="k">dict</span><span class="p">.</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Error</span><span class="p">(</span><span class="n">Nil</span><span class="p">)</span>
+</code></pre></div></div>
+<div class="code-editor" data-language="gleam" data-question="find_repeated">
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span><span class="w"> </span><span class="n">gleam</span><span class="o">/</span><span class="k">dict</span><span class="p">.{</span><span class="k">type</span><span class="w"> </span><span class="n">Dict</span><span class="p">}</span>
+
+<span class="sd">/// Ok of the first item to appear n times in s, or Error(Nil) if no item</span>
+<span class="sd">/// appears n times, where n is positive.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">find_repeated</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Result</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Nil</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">finder</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">new</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="sd">/// counts holds the number of times that each item has already appeared.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">finder</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">,</span><span class="w"> </span><span class="n">counts</span><span class="p">:</span><span class="w"> </span><span class="n">Dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Int</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Result</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Nil</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-language="gleam" data-question="find_repeated" data-module="find_repeated" data-template="// @discuss-editor find_repeated" data-test-module="find_repeated_test" data-test="//// Tests for `find_repeated`.&#10;&#10;import find_repeated.{find_repeated}&#10;&#10;pub fn find_repeated_examples_test() {&#10;  assert find_repeated([1, 2, 2, 1], 2) == Ok(2)&#10;    as &quot;2 appears twice before 1 does&quot;&#10;  assert find_repeated([1, 2, 3], 2) == Error(Nil) as &quot;No item appears twice&quot;&#10;  assert find_repeated([&quot;a&quot;, &quot;b&quot;, &quot;a&quot;, &quot;a&quot;], 3) == Ok(&quot;a&quot;)&#10;    as &quot;\&quot;a\&quot; appears three times&quot;&#10;}&#10;&#10;pub fn find_repeated_counts_accumulate_test() {&#10;  assert find_repeated([3, 1, 3, 1, 1, 3], 3) == Ok(1)&#10;    as &quot;1 appears three times before 3 does&quot;&#10;  assert find_repeated([1, 2, 1, 2], 3) == Error(Nil)&#10;    as &quot;No item appears three times&quot;&#10;}&#10;&#10;pub fn find_repeated_edges_test() {&#10;  assert find_repeated([], 1) == Error(Nil) as &quot;An empty list has no items&quot;&#10;  assert find_repeated([5, 6], 1) == Ok(5)&#10;    as &quot;The first item appears once right away&quot;&#10;}&#10;" data-tests="find_repeated_examples_test find_repeated_counts_accumulate_test find_repeated_edges_test" data-visualize="false"></div>
+<details class="hint"><summary>Hint: Template</summary><div>
+<p>If <code>s</code> isn't empty, look up its first item (<code>x</code> in the template below) in
+<code>counts</code> to find how many times it has already appeared, which is 0 if it isn't
+there. Then, bind <code>k</code> to the number of times that first item has appeared
+including this time. Finally, either return or call <code>finder</code> with updated
+<code>counts</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">finder</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">Int</span><span class="p">,</span><span class="w"> </span><span class="n">counts</span><span class="p">:</span><span class="w"> </span><span class="n">Dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Int</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Result</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Nil</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">[]</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">...</span>
+<span class="w">    </span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="p">..</span><span class="n">rest</span><span class="p">]</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">case</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">True</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">...</span>
+<span class="w">        </span><span class="n">False</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">finder</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div></details>
+<h3 id="q4-email">
+  
+  
+    <a href="#q4-email" class="anchor-heading" aria-labelledby="q4-email"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Email
+  
+  
+</h3>
+    
+<p>An email system has one server, which stores each person's inbox and a list of
+emails it could not deliver. Gleam values are immutable, so sending an email
+can't change an inbox. Instead, each function below takes a <code>Server</code> and returns
+a new <code>Server</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Email</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">from</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">Inbox</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Inbox</span><span class="p">(</span><span class="n">owner</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">emails</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Email</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Server</span><span class="p">(</span><span class="n">boxes</span><span class="p">:</span><span class="w"> </span><span class="n">Dict</span><span class="p">(</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Inbox</span><span class="p">),</span><span class="w"> </span><span class="n">undelivered</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">(</span><span class="n">Email</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>A <em>record update</em> creates a new record that copies an existing record's fields,
+except the ones it names. For example, <code>Inbox(..inbox, emails: [])</code> is an <code>Inbox</code>
+with the same <code>owner</code> as <code>inbox</code> and no emails. Use record updates in <code>add_inbox</code>
+and <code>send</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Server</span><span class="p">(</span><span class="k">dict</span><span class="p">.</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="p">[])</span>
+<span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">add_inbox</span><span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eumaeus&quot;</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">add_inbox</span><span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;odysseus&quot;</span><span class="p">)</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">ask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Email</span><span class="p">(</span><span class="s">&quot;Bringing vengeance?&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eumaeus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;odysseus&quot;</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">send</span><span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="w"> </span><span class="n">ask</span><span class="p">)</span>
+<span class="k">assert</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="k">server</span><span class="p">.</span><span class="n">boxes</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;odysseus&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="n">Inbox</span><span class="p">(</span><span class="s">&quot;odysseus&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">ask</span><span class="p">]))</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">respond</span><span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="w"> </span><span class="n">ask</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bringing it all!&quot;</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">reply</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Email</span><span class="p">(</span><span class="s">&quot;Bringing it all!&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;odysseus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eumaeus&quot;</span><span class="p">)</span>
+<span class="k">assert</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="k">server</span><span class="p">.</span><span class="n">boxes</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eumaeus&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="n">Inbox</span><span class="p">(</span><span class="s">&quot;eumaeus&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">reply</span><span class="p">]))</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">plea</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Email</span><span class="p">(</span><span class="s">&quot;Vengeance, father!&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;polyphemus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;poseidon&quot;</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">send</span><span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="w"> </span><span class="n">plea</span><span class="p">)</span>
+<span class="k">assert</span><span class="w"> </span><span class="k">server</span><span class="p">.</span><span class="n">undelivered</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="p">[</span><span class="n">plea</span><span class="p">]</span>
+</code></pre></div></div>
+<div class="code-editor" data-language="gleam" data-question="email">
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sd">/// Add an empty inbox for this owner to the server.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">add_inbox</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">Server</span><span class="p">,</span><span class="w"> </span><span class="n">owner</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+
+<span class="sd">/// Add the email to the front of the inbox of the person it is to. If that</span>
+<span class="sd">/// person has no inbox, add the email to the front of the undelivered list.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">send</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">Server</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">:</span><span class="w"> </span><span class="n">Email</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="k">s</span><span class="p">.</span><span class="n">boxes</span><span class="p">,</span><span class="w"> </span><span class="k">email</span><span class="p">.</span><span class="n">to</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">    </span><span class="n">Ok</span><span class="p">(</span><span class="n">inbox</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="k">todo</span>
+<span class="w">    </span><span class="n">Error</span><span class="p">(</span><span class="n">Nil</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="p">(..</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">undelivered</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="p">..</span><span class="k">s</span><span class="p">.</span><span class="n">undelivered</span><span class="p">])</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="sd">/// Send a reply to the email with the given message. The reply is from the</span>
+<span class="sd">/// person the email was to, and it is to the person the email was from.</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">respond</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">Server</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">:</span><span class="w"> </span><span class="n">Email</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// YOUR CODE HERE (replace the code below)</span>
+<span class="w">  </span><span class="k">todo</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-language="gleam" data-question="email" data-module="email" data-template="import gleam/dict.{type Dict}&#10;&#10;pub type Email {&#10;  Email(msg: String, from: String, to: String)&#10;}&#10;&#10;pub type Inbox {&#10;  Inbox(owner: String, emails: List(Email))&#10;}&#10;&#10;pub type Server {&#10;  Server(boxes: Dict(String, Inbox), undelivered: List(Email))&#10;}&#10;&#10;&#10;// @discuss-editor email&#10;" data-test-module="email_test" data-test="//// Tests for `add_inbox`, `send`, and `respond`.&#10;&#10;import email.{Email, Inbox, Server, add_inbox, respond, send}&#10;import gleam/dict&#10;&#10;fn two_inboxes() {&#10;  add_inbox(add_inbox(Server(dict.new(), []), &quot;ann&quot;), &quot;ben&quot;)&#10;}&#10;&#10;pub fn add_inbox_test() {&#10;  let server = two_inboxes()&#10;  assert dict.get(server.boxes, &quot;ann&quot;) == Ok(Inbox(&quot;ann&quot;, []))&#10;    as &quot;ann should have an empty inbox&quot;&#10;  assert dict.get(server.boxes, &quot;ben&quot;) == Ok(Inbox(&quot;ben&quot;, []))&#10;    as &quot;ben should have an empty inbox&quot;&#10;  assert dict.get(server.boxes, &quot;cam&quot;) == Error(Nil) as &quot;cam was never added&quot;&#10;}&#10;&#10;pub fn add_inbox_keeps_undelivered_test() {&#10;  let lost = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;cam&quot;)&#10;  let server = add_inbox(Server(dict.new(), [lost]), &quot;ann&quot;)&#10;  assert server.undelivered == [lost]&#10;    as &quot;Adding an inbox should not change the undelivered list&quot;&#10;}&#10;&#10;pub fn send_delivers_to_receiver_test() {&#10;  let hi = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;ben&quot;)&#10;  let server = send(two_inboxes(), hi)&#10;  assert dict.get(server.boxes, &quot;ben&quot;) == Ok(Inbox(&quot;ben&quot;, [hi]))&#10;    as &quot;ben should receive the email&quot;&#10;  assert dict.get(server.boxes, &quot;ann&quot;) == Ok(Inbox(&quot;ann&quot;, []))&#10;    as &quot;ann&#x27;s inbox should not change&quot;&#10;  assert server.undelivered == [] as &quot;The email was delivered&quot;&#10;}&#10;&#10;pub fn send_keeps_earlier_emails_test() {&#10;  let hi = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;ben&quot;)&#10;  let bye = Email(&quot;bye&quot;, &quot;ann&quot;, &quot;ben&quot;)&#10;  let server = send(send(two_inboxes(), hi), bye)&#10;  assert dict.get(server.boxes, &quot;ben&quot;) == Ok(Inbox(&quot;ben&quot;, [bye, hi]))&#10;    as &quot;The latest email should be first in the inbox&quot;&#10;}&#10;&#10;pub fn send_without_inbox_test() {&#10;  let hi = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;cam&quot;)&#10;  let server = send(two_inboxes(), hi)&#10;  assert server.undelivered == [hi]&#10;    as &quot;cam has no inbox, so the email should be undelivered&quot;&#10;  assert dict.get(server.boxes, &quot;cam&quot;) == Error(Nil)&#10;    as &quot;Sending an email should not add an inbox for cam&quot;&#10;  assert dict.get(server.boxes, &quot;ann&quot;) == Ok(Inbox(&quot;ann&quot;, []))&#10;    as &quot;ann&#x27;s inbox should not change&quot;&#10;}&#10;&#10;pub fn send_delivered_keeps_undelivered_test() {&#10;  let lost = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;cam&quot;)&#10;  let server = send(send(two_inboxes(), lost), Email(&quot;hi&quot;, &quot;ann&quot;, &quot;ben&quot;))&#10;  assert server.undelivered == [lost]&#10;    as &quot;Delivering an email should not change the undelivered list&quot;&#10;}&#10;&#10;pub fn respond_flips_sender_and_receiver_test() {&#10;  let hi = Email(&quot;hi&quot;, &quot;ann&quot;, &quot;ben&quot;)&#10;  let server = respond(send(two_inboxes(), hi), hi, &quot;bye&quot;)&#10;  assert dict.get(server.boxes, &quot;ann&quot;)&#10;    == Ok(Inbox(&quot;ann&quot;, [Email(&quot;bye&quot;, &quot;ben&quot;, &quot;ann&quot;)]))&#10;    as &quot;The reply should go from ben to ann&quot;&#10;  assert dict.get(server.boxes, &quot;ben&quot;) == Ok(Inbox(&quot;ben&quot;, [hi]))&#10;    as &quot;ben&#x27;s inbox should not change&quot;&#10;}&#10;" data-tests="add_inbox_test add_inbox_keeps_undelivered_test send_delivers_to_receiver_test send_keeps_earlier_emails_test send_without_inbox_test send_delivered_keeps_undelivered_test respond_flips_sender_and_receiver_test" data-visualize="false"></div>
+<details class="hint"><summary>Hint: add_inbox</summary><div>
+<p>Use a record update that changes only the <code>boxes</code> field. Its new value is
+<code>s.boxes</code> with an empty <code>Inbox</code> inserted for <code>owner</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">add_inbox</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">Server</span><span class="p">,</span><span class="w"> </span><span class="n">owner</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Server</span><span class="p">(..</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">boxes</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div></details>
+<details class="hint"><summary>Hint: send</summary><div>
+<p>First create a new <code>Inbox</code> with the email at the front of its <code>emails</code>. Then,
+create a new <code>Server</code> with that <code>Inbox</code> inserted into <code>boxes</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Ok</span><span class="p">(</span><span class="n">inbox</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">let</span><span class="w"> </span><span class="n">updated</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Inbox</span><span class="p">(..</span><span class="n">inbox</span><span class="p">,</span><span class="w"> </span><span class="n">emails</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="p">..</span><span class="n">_</span><span class="p">])</span>
+<span class="w">  </span><span class="n">Server</span><span class="p">(..</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">boxes</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div></details>
+<details class="hint"><summary>Hint: respond</summary><div>
+<p>Call <code>send</code> with a new <code>Email</code>. The arguments to <code>Email</code> are <code>msg</code>, then <code>from</code>,
+then <code>to</code>.</p>
+<div class="language-gleam highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="n">respond</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="n">Server</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">:</span><span class="w"> </span><span class="n">Email</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">:</span><span class="w"> </span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">send</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">Email</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</div></details>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

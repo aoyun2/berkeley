@@ -1,0 +1,243 @@
+Source: https://cs61a.org/resources/guides/fa26/61a-mt1-study-guide.pdf
+Retrieved:2026-11-06
+PDF text extraction; consult original PDF for figures and exact layout.
+
+CS 61A Midterm 1 Study Guide – Page 1
+                                                                                                                                        Pure Functions
+                                                                                                          208
+       Import statement
+                                                                                mul(add(2, mul(4, 6)), add(3, 5))                           -2     abs(number):
+                                                                                                                                                                                                                        2
+                                       Name               Value
+                                                                        mul                26                                 8          2, 10     pow(x, y):
+     Assignment statement                     Binding                           add(2, mul(4, 6))                       add(3, 5)                                                                                       1024
+
+Code (left):                           Frames (right):                                                                                  Non-Pure Functions
+                                                                        add     2               24                add         3     5
+Statements and expressions             A name is bound to a value
+Red arrow points to next line.                                                            mul(4, 6)                                         -2     print(...):
+Gray arrow points to the line          In a frame, there is at most                                                                                                                                                     None
+just executed                          one binding per name
+                                                                                    mul         4           6                                       display “-2”
+
+
+
+                                              Built-in function                       Formal parameter
+                                                                       Defining:                                           Return
+                                                                                                                         expression
+                                                                                    >>> def square( x ):
+
+                                                                            Def                          return mul(x, x)
+ Intrinsic name of
+                                                                         statement                                                      A and B:
+  function called
+                                                                                                     Body (return statement)              True if A is True and B is True
+                                                        User-defined                                                                    A or B:
+                                    Local frame           function                                                                        True if A is True or B is True
+                                                                       Call expression:         square(2+2) operand: 2+2                not A:
+   Formal parameter                                                                                         argument: 4                   True if A is False
+       bound to                    Return value is                                                                                        False if A is True
+       argument                                                        operator: square
+                                   not a binding!                      function: func square(x)
+                                                                                                                                                        def abs_value(x):
+                                                                       Calling/Applying:                                                 1 statement,
+                                                                                                     4     square( x ):                                     if x > 0:
+                                                                                 Argument                                                3 clauses,             return x
+                                   2                                                                            return mul(x, x) 16      3 headers,         elif x == 0:
+                                                                                 Intrinsic name                                          3 suites,              return 0
+                                                                                                                     Return value        2 boolean          else:
+                                                                                                                                           contexts             return -x
+  A name evaluates to
+  the value bound to
+  that name in the                                                                                          “y” is
+  earliest frame of                                                                                       not found
+  the current                      1
+  environment in which                                                                                               2
+  that name is found.                                                                                       Error
+
+
+Evaluation rule for call expressions:
+                                                                                                                                             • An environment is a
+                                                                                                                                                 sequence of frames
+ 1.Evaluate the operator and operand subexpressions.
+ 2.Apply the function that is the value of the operator                                                                                      • An environment for a
+   subexpression to the arguments that are the values of the                                                                                     non-nested function
+   operand subexpressions.                                                                                                                       (no def within def)
+                                                                                                                     1
+                                                                                                                                                 consists of one local
+Applying user-defined functions:                                                                                                                 frame, followed by the
+                                                                                                           “y” is                                global frame
+ 1.Create a new local frame with the same parent as the
+                                                                                                         not found
+   function that was applied.
+ 2.Bind the arguments to the function's formal parameter
+   names in that frame.
+ 3.Execute the body of the function in the environment                                                                    1
+
+
+
+
+                                                                                                                                                                                                                        argument value or returns a function as a return value
+                                                                                                                                                                                                                        Higher-order function: A function that takes a function as an
+   beginning at that frame.                                                                                               A
+
+
+
+
+                                                                                                                                                                function bodies are bound to names in the local frame
+                                                                                                                                                                Nested def statements: Functions defined within other
+Execution rule for def statements:
+ 1.Create a new function value with the specified name,                                              B                    2
+   formal parameters, and function body.                                        A                                         B
+ 2.Its parent is the first frame of the current environment.                                                              1
+ 3.Bind the name of the function to the function value in the           A call expression and the body
+   first frame of the current environment.                              of the function being called
+Execution rule for assignment statements:                               are evaluated in different
+ 1.Evaluate the expression(s) on the right of the equal sign.           environments
+ 2.Simultaneously bind the names on the left to those values,
+   in the first frame of the current environment.
+                                                                       def fib(n):
+Execution rule for conditional statements:                             hof.py
+                                                                           """Compute the nth Fibonacci number, for N >= 1."""
+ Each clause is considered in order.                                       pred, curr = 0, 1   # Zeroth and first Fibonacci numbers
+                                                                           k = 1               # curr is the kth Fibonacci number
+ 1.Evaluate the header's expression.                                          return total
+                                                                           while k < n:
+ 2.If it is a true value, execute the suite, then skip the                     pred, curr = curr, pred + curr
+ remaining clauses in the statement.                                   def identity(k):
+                                                                               k = k + 1
+Evaluation rule for or expressions:                                        return curr
+                                                                           return k
+ 1.Evaluate the subexpression <left>.
+ 2.If the result is a true value v, then the expression                                                                     Function of a single
+   evaluates to v.                                                     def cube(k):                                      argument (not called term)
+ 3.Otherwise, the expression evaluates to the value of the                 return pow(k, 3)
+   subexpression <right>.                                                                                                 A formal parameter that
+Evaluation rule for and expressions:                                   def summation(n, term):will be bound to a function
+ 1.Evaluate the subexpression <left>.                                      """Sum the first n terms of a sequence.
+ 2.If the result is a false value v, then the expression
+   evaluates to v.
+ 3.Otherwise, the expression evaluates to the value of the
+                                                                              >>> summation(5, cube)
+   subexpression <right>.                                                     225
+                                                                              """               The cube function is passed
+Evaluation rule for not expressions:                                                                as an argument value
+ 1.Evaluate <exp>; The value is True if the result is a false                 total, k = 0, 1
+   value, and False otherwise.                                                while k <= n:
+Execution rule for while statements:                                              total, k = total + term(k), k + 1
+ 1. Evaluate the header’s expression.                                         return total
+ 2. If it is a true value, execute the (whole) suite, then                                                               The function bound to term
+                                                                          0 + 13 + 23 + 33 + 43 + 55
+ return to step 1.                                                     def pi_term(k):            gets called here
+                                                                           return 8 / (k * 4  3) / (k * 4  1)
+
+                                                                       # Local function definitions; returning functions
+CS 61A Midterm 1 Study Guide – Page 2
+                                                                                                                      def square(x):
+square = lambda x,y: x * y
+                                                                             square = lambda x: x * x        VS           return x * x
+                                 Evaluates to a function.
+                                   No "return" keyword!                     • Both create a function with the same domain, range, and behavior.
+           A function
+               with formal parameters x and y                               • Both functions have as their parent the environment in which they
+                    that returns the value of "x * y"                         were defined.
+
+                  Must be a single expression                               • Both bind that function to the name square.
+
+                                                                            • Only the def statement gives the function an intrinsic name.
+                      A function that returns a function
+def make_adder(n):
+    """Return a function that takes one argument k and returns k + n.       When a function is defined:
+                                                                            1. Create a function value: func <name>(<formal parameters>)
+   >>> add_three = make_adder(3)        The name add_three is               2. Its parent is the current frame.
+   >>> add_three(4)                      bound to a function
+   7
+   """                    A local
+   def adder(k):       def statement
+                                                                            3. Bind <name> to the function value in the current frame
+       return k + n                                                            (which is the first frame of the current environment).
+   return adder        Can refer to names in
+                       the enclosing function                               When a function is called:
+                                                                             1. Add a local frame, titled with the <name> of the function being
+                                                                                called.
+• Every user-defined function has                                            2. Copy the parent of the function to the local frame: [parent=<label>]
+ a parent frame (often global)
+                                             A function’s signature          3. Bind the <formal parameters> to the arguments in the local frame.
+• The parent of a function is the                                            4. Execute the body of the function in the environment that starts with
+  frame in which it was defined              has all the information
+                                             to create a local frame            the local frame.
+• Every local frame has a parent
+  frame (often global)
+• The parent of a frame is the                                                                        >>> min(2, 1, 4, 3)          >>> 2 + 3
+  parent of the function called     3                                                                 1                            5
+                                                                                                      >>> max(2, 1, 4, 3)          >>> 2 * 3
+                                                                                                      4                            6
+                                                                                                      >>> abs(-2)                  >>> 2 ** 3
+                                                                                                      2                            8
+  Nested
+   def                                                                                                >>> pow(2, 3)                >>> 5 / 3
+                                                                                                      8                            1.6666666666666667
+                                    2
+                                                                                                      >>> len('word')              >>> 5 // 3
+                                                                                                      4                            1
+                                                                                                      >>> round(1.75)              >>> 5 % 3
+                                                                                                      2                            2
+                                                                                                      >>> print(1, 2)              >>> str(5)
+                                                                                                      1 2                          '5'
+                                                                                                      >>> float(5)                 >>> int('5')
+                                    1
+                                                                                                      5.0                          5
+
+                                                                                                      def search(f):
+                                                                                                          """Return the smallest non-negative
+                                                                                                          integer x for which f(x) is a true value.
+                                                                                                          """
+                                                                                                          x = 0
+                                                                                                          while True:
+                                                                                                              if f(x):
+                                                                                                                  return x
+                                                                                                              x += 1
+
+                                                                                                      def is_three(x):
+                                                                                                          """Return whether x is three.
+
+                                                                                                          >>> search(is_three)
+                                                                                                          3
+                                                                                                          """
+                                                                                                          return x == 3
+                                                                       from math import sqrt          def inverse(f):
+                                                                                                          """Return a function g(y) that returns
+                                                                       def isPrime(n):                    x such that f(x) == y.
+                                                                           i = 2
+                                                                           while i <= int(sqrt(n)):       >>> sqrt = inverse(lambda x: x * x)
+      Return value of make_adder is an
+                                                                               if n % i == 0:             >>> sqrt(16)
+            argument to compose1
+                                                                                   return False           4
+                                                                               i = i + 1                  """
+                                                                           return True                    return lambda y: search(lambda x: f(x)==y)
+
+                                                                                                      False values so far: 0, False, '', None
+                                                                                                      Anything value that's not false is true.
+
+                                                                                                      >>> if 0:                   >>> if 1 and 0:
+                                                                                                      ...     print('*')          ...     print('*')
+                                                                                                      >>> if 1:                   >>> if 1 or 0:
+                                                                                                      ...     print('*')          ...     print('*')
+                                                                                                      *                           *
+                                                                                                      >>> if abs:                 >>> if 1 or 1/0:
+                                                                                                      ...     print('*')          ...     print('*')
+                                                                                                      *                           *
+
+                                                                                     from operator import floordiv, mod
+                                                                                     def divide_exact(n, d):
+                                                                                         """Return the quotient and remainder of dividing N by D.
+
+                                                                                         >>> q, r = divide_exact(2012, 10)       Multiple assignment
+                                                                                         >>> q                                       to two names
+                                                                                         201
+                                                                                         >>> r
+                                                                                         2
+                                                                                         """                                     Two return values,
+                                                                                         return floordiv(n, d), mod(n, d)        separated by commas
+

@@ -1,0 +1,930 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/fa26/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+    .site-nav ul li a {
+      background-image: none;
+    }
+
+  </style>
+
+  
+
+  
+    <script src="/fa26/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/fa26/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/fa26/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Discussion 6: Classes | CS 61A</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Discussion 6: Classes" />
+<meta name="author" content="CS 61A Staff" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<meta property="og:description" content="CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026." />
+<link rel="canonical" href="https://cs61a.org/fa26/discussions/disc06/" />
+<meta property="og:url" content="https://cs61a.org/fa26/discussions/disc06/" />
+<meta property="og:site_name" content="CS 61A" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-11-05T08:04:02+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Discussion 6: Classes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CS 61A Staff"},"dateModified":"2026-11-05T08:04:02+00:00","datePublished":"2026-11-05T08:04:02+00:00","description":"CS 61A: Structure and Interpretation of Computer Programs, UC Berkeley, Fall 2026.","headline":"Discussion 6: Classes","mainEntityOfPage":{"@type":"WebPage","@id":"https://cs61a.org/fa26/discussions/disc06/"},"url":"https://cs61a.org/fa26/discussions/disc06/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- Use this to add global CSS/JS utitlties. -->
+<script>
+  // Quick-set theme to prevent flashing
+  const theme = localStorage.getItem('jtd-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+</script>
+
+  <!-- Roboto is used for the course name in the top left, following cs61a.org. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Loading the v6 core styles and the Solid and Brands styles -->
+  <link href="/fa26/assets/vendor/fontawesome/css/fontawesome.css" rel="stylesheet" />
+  <link href="/fa26/assets/vendor/fontawesome/css/solid.css" rel="stylesheet" />
+  <!-- <link href="/fa26/assets/vendor/fontawesome/css/brands.css" rel="stylesheet" /> -->
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <header class="side-bar">
+  <div class="site-header">
+    <a href="/fa26/" class="site-title lh-tight">
+  CS 61A
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/fa26/" class="nav-list-link">Home</a></li><li class="nav-list-item"><a href="/fa26/calendar/" class="nav-list-link">Weekly Calendar & OH</a></li><li class="nav-list-item"><a href="/fa26/syllabus/" class="nav-list-link">Syllabus</a></li><li class="nav-list-item"><a href="/fa26/staff/" class="nav-list-link">Staff</a></li><li class="nav-list-item"><a href="/fa26/resources/" class="nav-list-link">Resources</a></li><li class="nav-list-item"><a href="/fa26/sections/" class="nav-list-link">Sections</a></li><li class="nav-list-item"><a href="/fa26/textbook/" class="nav-list-link">Textbook</a></li><li class="nav-list-item"><a href="/fa26/articles/contact/" class="nav-list-link">Contact</a></li></ul>
+  
+</nav>
+
+
+<div class="d-md-block d-none site-footer">
+  
+  
+    <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+  
+  </div>
+</header>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search CS 61A" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search CS 61A</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://bcourses.berkeley.edu/courses/1556877/external_tools/90481" class="site-button"
+          
+        >
+          Lecture Recordings
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://edstem.org/us/courses/100850/discussion" class="site-button"
+          
+        >
+          Ed
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://oh.cs61a.org/" class="site-button"
+          
+        >
+          OH Queue
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://links.cs61a.org/extensions" class="site-button"
+          
+        >
+          Extensions
+        </a>
+      </li>
+    
+      <li class="aux-nav-list-item">
+        <a href="https://tutor.cs61a.org" class="site-button"
+          
+        >
+          Python Tutor
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <link rel="stylesheet" href="/fa26/assets/css/assignment.css?v=14018efad923">
+<div class="assignment"><header class="assignment-header">
+<h1>
+  
+  
+    Discussion 6: Classes<a class="print-button" href="print.html" title="Printable version" aria-label="Printable version">🖨️</a>
+  
+  
+</h1>
+    </header>
+<h2 id="attendance">
+  
+  
+    <a href="#attendance" class="anchor-heading" aria-labelledby="attendance"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Attendance
+  
+  
+</h2>
+    
+<p>Your TA will come around during discussion to check you in. You can start on
+the worksheet before being checked in; you don't need to wait for your TA to
+get started.</p>
+<p>If you didn't attend for a good reason (such as being sick), fill out this
+form (within 2 weeks of your discussion):
+<a href="https://links.cs61a.org/attendance">attendance form</a></p>
+<p>If you get stuck, there are <a href="https://www.youtube.com/playlist?list=PLSYOcQ4VVTlE">walkthrough videos</a> (@berkeley.edu login to YouTube required).</p>
+<h2 id="getting-started">
+  
+  
+    <a href="#getting-started" class="anchor-heading" aria-labelledby="getting-started"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started
+  
+  
+</h2>
+    
+<p>In honor of our discussion topic today (Classes), please share your favorite
+class (other than this one) that you are taking this semester. Make sure you know each others' names by saying yours.</p>
+<h2 id="object-oriented-programming">
+  
+  
+    <a href="#object-oriented-programming" class="anchor-heading" aria-labelledby="object-oriented-programming"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Object-Oriented Programming
+  
+  
+</h2>
+    
+<p>A productive approach to defining new classes is to determine what instance
+attributes each object should have and what class attributes each class should
+have. First, describe the type of each attribute and how it will be used, then
+try to implement the class's methods in terms of those attributes.</p>
+<h3 id="q1-smart-fridge">
+  
+  
+    <a href="#q1-smart-fridge" class="anchor-heading" aria-labelledby="q1-smart-fridge"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q1: Smart Fridge
+  
+  
+</h3>
+    
+<p>The <code>SmartFridge</code> class is used by smart refrigerators to track which items are
+in the fridge and let owners know when an item has run out.</p>
+<p>The class internally uses a dictionary to store items, where each key is an item
+name and each value is the current quantity. The <code>add_item</code> method adds the
+given quantity of the given item and reports the current quantity. You may
+assume <code>use_item</code> is only called on items already in the fridge; it uses up the
+given quantity of that item. If the quantity would fall to or below zero, it
+should use only <em>up to</em> the remaining quantity and remind the owner to buy more
+of that item.</p>
+<p>Finish the <code>SmartFridge</code> class definition so that its <code>add_item</code> and <code>use_item</code>
+methods work as specified by the doctests.</p>
+<blockquote>
+<p>You may find Python's formatted string literals, or
+<a href="https://docs.python.org/3/tutorial/inputoutput.html">f-strings</a>, useful:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; feeling = &#x27;love&#x27;
+&gt;&gt;&gt; course = &#x27;61A!&#x27;
+&gt;&gt;&gt; f&#x27;I {feeling} {course}&#x27;
+&#x27;I love 61A!&#x27;
+</code></pre></div></div>
+</blockquote>
+<div class="code-editor" data-language="python" data-question="smart_fridge">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">SmartFridge</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A fridge that tracks how much of each item it holds.</span>
+
+<span class="sd">    &gt;&gt;&gt; fridgey = SmartFridge()</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.add_item(&#39;Mayo&#39;, 1)</span>
+<span class="sd">    &#39;I now have 1 Mayo&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.add_item(&#39;Mayo&#39;, 2)</span>
+<span class="sd">    &#39;I now have 3 Mayo&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.use_item(&#39;Mayo&#39;, 2.5)</span>
+<span class="sd">    &#39;I have 0.5 Mayo left&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.use_item(&#39;Mayo&#39;, 0.5)</span>
+<span class="sd">    &#39;Oh no, we need more Mayo!&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.add_item(&#39;Eggs&#39;, 12)</span>
+<span class="sd">    &#39;I now have 12 Eggs&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.use_item(&#39;Eggs&#39;, 15)</span>
+<span class="sd">    &#39;Oh no, we need more Eggs!&#39;</span>
+<span class="sd">    &gt;&gt;&gt; fridgey.add_item(&#39;Eggs&#39;, 1)</span>
+<span class="sd">    &#39;I now have 1 Eggs&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="smart_fridge"></div>
+<h3 id="q2-keyboard">
+  
+  
+    <a href="#q2-keyboard" class="anchor-heading" aria-labelledby="q2-keyboard"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q2: Keyboard
+  
+  
+</h3>
+    
+<p><strong>Overview:</strong> A keyboard has a button for every letter of the alphabet. When a
+button is pressed, it outputs its letter by calling an <code>output</code> function (such
+as <code>print</code>). Whether that letter is uppercase or lowercase depends on how many
+times the <em>caps lock</em> key has been pressed.</p>
+<p><strong>First</strong>, implement the <code>Button</code> class, which takes a lowercase <code>letter</code> (a
+string) and a one-argument <code>output</code> function, such as <code>Button('c', print)</code>.</p>
+<p>The <code>press</code> method of a <code>Button</code> calls its <code>output</code> attribute (a function) on
+its <code>letter</code> attribute: either uppercase if <code>caps_lock</code> has been pressed an odd
+number of times or lowercase otherwise. The <code>press</code> method also increments
+<code>pressed</code> and returns the button that was pressed. <em>Hint</em>: <code>'hi'.upper()</code>
+evaluates to <code>'HI'</code>.</p>
+<p><strong>Second</strong>, implement the <code>Keyboard</code> class. A <code>Keyboard</code> has a dictionary called
+<code>keys</code> containing a <code>Button</code> (with its <code>letter</code> as its key) for each letter in
+<code>LOWERCASE_LETTERS</code>. It also has a list of the letters <code>typed</code>, which may be a
+mix of uppercase and lowercase letters.</p>
+<p>The <code>type</code> method takes a string <code>word</code> containing only lowercase letters. It
+invokes the <code>press</code> method of the <code>Button</code> in <code>keys</code> for each letter in <code>word</code>,
+which adds a letter (either lowercase or uppercase depending on <code>caps_lock</code>) to
+the <code>Keyboard</code>'s <code>typed</code> list. <strong>Important:</strong> Do not use <code>upper</code> or <code>letter</code> in
+your implementation of <code>type</code>; just call <code>press</code> instead. Do not use <code>append</code> in
+your implementation of <code>type</code> either; you must mutate the list <code>typed</code> only
+using <code>press</code>.</p>
+<p>Read the doctests and talk about:</p>
+<ul>
+<li>Why it's possible to press a button repeatedly with <code>.press().press().press()</code>.</li>
+<li>Why pressing a button repeatedly sometimes prints on only one line and sometimes prints multiple lines.</li>
+<li>Why <code>bored.typed</code> has 10 elements at the end.</li>
+</ul>
+<p><strong>Discussion Time</strong>: Before anyone types anything, have a conversation
+describing the type of each attribute and how it will be used. Start with
+<code>Button</code>: how will <code>letter</code> and <code>output</code> be used? Then discuss <code>Keyboard</code>: how
+will <code>typed</code> and <code>keys</code> be used? How will new letters be added to the list
+called <code>typed</code> each time a <code>Button</code> in <code>keys</code> is pressed? Call the staff if
+you're not sure! Once everyone understands the answers to these questions, you
+can try writing the code together.</p>
+<div class="code-editor" data-language="python" data-question="button" data-file="keyboard">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">LOWERCASE_LETTERS</span> <span class="o">=</span> <span class="s1">&#39;abcdefghijklmnopqrstuvwxyz&#39;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CapsLock</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">press</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Button</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A button on a keyboard.</span>
+
+<span class="sd">    &gt;&gt;&gt; f = lambda c: print(c, end=&#39;&#39;)  # The end=&#39;&#39; argument avoids a new line</span>
+<span class="sd">    &gt;&gt;&gt; k, e, y = Button(&#39;k&#39;, f), Button(&#39;e&#39;, f), Button(&#39;y&#39;, f)</span>
+<span class="sd">    &gt;&gt;&gt; s = e.press().press().press()</span>
+<span class="sd">    eee</span>
+<span class="sd">    &gt;&gt;&gt; caps = Button.caps_lock</span>
+<span class="sd">    &gt;&gt;&gt; t = [x.press() for x in [k, e, y, caps, e, e, k, caps, e, y, e, caps, y, e, e]]</span>
+<span class="sd">    keyEEKeyeYEE</span>
+<span class="sd">    &gt;&gt;&gt; u = Button(&#39;a&#39;, print).press().press().press()</span>
+<span class="sd">    A</span>
+<span class="sd">    A</span>
+<span class="sd">    A</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">caps_lock</span> <span class="o">=</span> <span class="n">CapsLock</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">letter</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">LOWERCASE_LETTERS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">letter</span> <span class="o">=</span> <span class="n">letter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">press</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call output on letter (maybe uppercased), then return this button.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="button"></div>
+<details class="hint"><summary>Button Hint: Uppercasing</summary><div>
+<p>Since <code>self.letter</code> is always lowercase, use <code>self.letter.upper()</code> to produce
+the uppercase version.</p>
+</div></details>
+<details class="hint"><summary>Button Hint: Caps Lock</summary><div>
+<p>The number of times <code>caps_lock</code> has been pressed is either
+<code>self.caps_lock.pressed</code> or <code>Button.caps_lock.pressed</code>.</p>
+</div></details>
+<details class="hint"><summary>Button Hint: Output</summary><div>
+<p>The <code>output</code> attribute is a function that can be called:
+<code>self.output(self.letter)</code> or <code>self.output(self.letter.upper())</code>. You do not
+need to return the result.</p>
+</div></details>
+<div class="code-editor" data-language="python" data-question="keyboard" data-file="keyboard">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">Keyboard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A keyboard.</span>
+
+<span class="sd">    &gt;&gt;&gt; Button.caps_lock.pressed = 0  # Reset the caps_lock key</span>
+<span class="sd">    &gt;&gt;&gt; bored = Keyboard()</span>
+<span class="sd">    &gt;&gt;&gt; bored.type(&#39;hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; bored.typed</span>
+<span class="sd">    [&#39;h&#39;, &#39;e&#39;, &#39;l&#39;, &#39;l&#39;, &#39;o&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; bored.keys[&#39;l&#39;].pressed</span>
+<span class="sd">    2</span>
+
+<span class="sd">    &gt;&gt;&gt; Button.caps_lock.press()</span>
+<span class="sd">    &gt;&gt;&gt; bored.type(&#39;hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; bored.typed</span>
+<span class="sd">    [&#39;h&#39;, &#39;e&#39;, &#39;l&#39;, &#39;l&#39;, &#39;o&#39;, &#39;H&#39;, &#39;E&#39;, &#39;L&#39;, &#39;L&#39;, &#39;O&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; bored.keys[&#39;l&#39;].pressed</span>
+<span class="sd">    4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># Try a dictionary comprehension!</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Press the button for each letter in word.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">w</span> <span class="ow">in</span> <span class="n">LOWERCASE_LETTERS</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">word</span><span class="p">]),</span> <span class="s1">&#39;word must be all lowercase&#39;</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="keyboard"></div>
+<details class="hint"><summary>Keyboard Hint: Keys</summary><div>
+<p>The keys can be created using a dictionary comprehension:
+<code>self.keys = {c: Button(c, ...) for c in LOWERCASE_LETTERS}</code>. The call to
+<code>Button</code> should take <code>c</code> and <strong>an output function that appends to <code>self.typed</code></strong>,
+so that every time one of these buttons is pressed, it appends a letter to
+<code>self.typed</code>.</p>
+</div></details>
+<details class="hint"><summary>Keyboard Hint: Type</summary><div>
+<p>Call the <code>press</code> method of <code>self.keys[w]</code> for each <code>w</code> in <code>word</code>. When you call
+<code>press</code>, the <code>Button</code> is already set up (in the <code>Keyboard.__init__</code> method) to
+output to the <code>typed</code> list of this <code>Keyboard</code>.</p>
+</div></details>
+<p><strong>Description Time</strong>: Describe how new letters are added to <code>typed</code> each time a
+<code>Button</code> in <code>keys</code> is pressed. Instead of just reading your code, say what it
+does (e.g., &quot;When the button of a keyboard is pressed ...&quot;). One short sentence
+is enough.</p>
+<h3 id="q3-bear">
+  
+  
+    <a href="#q3-bear" class="anchor-heading" aria-labelledby="q3-bear"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q3: Bear
+  
+  
+</h3>
+    
+<p>Implement the <code>SleepyBear</code> and <code>WinkingBear</code> classes so that calling their
+<code>print</code> method matches the doctests. Use as little code as possible and try not
+to repeat any logic from <code>Eye</code> or <code>Bear</code>. Each blank can be filled with just two
+short lines.</p>
+<div class="code-editor" data-language="python" data-question="parent-class" data-file="bear">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">Eye</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An eye.</span>
+
+<span class="sd">    &gt;&gt;&gt; Eye().draw()</span>
+<span class="sd">    &#39;0&#39;</span>
+<span class="sd">    &gt;&gt;&gt; print(Eye(False).draw(), Eye(True).draw())</span>
+<span class="sd">    0 -</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="n">closed</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;-&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;0&#39;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Bear</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A bear.</span>
+
+<span class="sd">    &gt;&gt;&gt; Bear().print()</span>
+<span class="sd">    ? 0o0?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nose_and_mouth</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_eye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Eye</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_eye</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_eye</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;? &#39;</span> <span class="o">+</span> <span class="n">left</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nose_and_mouth</span> <span class="o">+</span> <span class="n">right</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span>
+</code></pre></div></div>
+</div>
+<div class="code-editor" data-language="python" data-question="child-class" data-file="bear">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">SleepyBear</span><span class="p">(</span><span class="n">Bear</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A bear with closed eyes.</span>
+
+<span class="sd">    &gt;&gt;&gt; SleepyBear().print()</span>
+<span class="sd">    ? -o-?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WinkingBear</span><span class="p">(</span><span class="n">Bear</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A bear whose left eye is different from its right eye.</span>
+
+<span class="sd">    &gt;&gt;&gt; WinkingBear().print()</span>
+<span class="sd">    ? -o0?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_eye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;*** YOUR CODE HERE ***&quot;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="child-class"></div>
+<details class="hint"><summary>Hint: Inheritance</summary><div>
+<p>A subclass can override a method like <code>next_eye</code> just by defining it again. If the
+subclass defines its own method, but still needs the parent's version, you can
+call the parent's method with <code>super().method_name(...)</code>.</p>
+</div></details>
+<h2 id="exam-practice">
+  
+  
+    <a href="#exam-practice" class="anchor-heading" aria-labelledby="exam-practice"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Exam Practice
+  
+  
+</h2>
+    
+<p>Object-oriented programming problems often appear on exams.</p>
+<h3 id="q4-counter">
+  
+  
+    <a href="#q4-counter" class="anchor-heading" aria-labelledby="q4-counter"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q4: Counter
+  
+  
+</h3>
+    
+<p>Fall 2024 Final Exam Question 4(a): Implement the <code>Counter</code> class. A <code>Counter</code>
+has a <code>count</code> of the number of times <code>inc</code> has been invoked on itself or any of
+its offspring. Its offspring are the Counters created by its <code>spawn</code> method or
+the <code>spawn</code> method of any of its offspring.</p>
+<div class="code-editor" data-language="python" data-question="counter" data-file="counter">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">Counter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Counts how many times inc has been called on itself or any of its spawn.</span>
+
+<span class="sd">    &gt;&gt;&gt; total = Counter()</span>
+<span class="sd">    &gt;&gt;&gt; odd, even = total.spawn(), total.spawn()</span>
+<span class="sd">    &gt;&gt;&gt; one, three = odd.spawn(), odd.spawn()</span>
+<span class="sd">    &gt;&gt;&gt; for c in [one, even, three, even, odd, even]:</span>
+<span class="sd">    ...     c.inc()</span>
+<span class="sd">    &gt;&gt;&gt; [c.count for c in [one, three, even, odd, total]]</span>
+<span class="sd">    [1, 1, 3, 3, 6]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="n">_______________</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">inc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">_______________</span><span class="p">:</span>
+            <span class="n">_______________</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_______________</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="counter"></div>
+<h3 id="q5-missdict">
+  
+  
+    <a href="#q5-missdict" class="anchor-heading" aria-labelledby="q5-missdict"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Q5: MissDict
+  
+  
+</h3>
+    
+<p>Fall 2024 Final Exam Question 4(b): Implement the <code>MissDict</code> class. A
+<code>MissDict</code> has a dictionary <code>d</code>. Its <code>get</code> method takes an iterable <code>keys</code>,
+returns a list of all values in <code>d</code> that correspond to those <code>keys</code>, and counts
+the number of <code>keys</code> that did not appear in <code>d</code> (called <em>misses</em>). Printing a
+<code>MissDict</code> displays a fraction in which:</p>
+<ul>
+<li>The numerator is the number of misses during all calls to <code>get</code> for that
+particular <code>MissDict</code> instance.</li>
+<li>The denominator is the number of misses during all calls to <code>get</code> for any
+<code>MissDict</code> instance.</li>
+</ul>
+<p><strong>Reminder</strong>: When you print an object (or call <code>str</code> on it), Python calls that
+object's <code>__str__</code> method and displays the string it returns.</p>
+<p>Assume <code>Counter</code> is implemented correctly.</p>
+<div class="code-editor" data-language="python" data-question="missdict" data-file="counter">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span><span class="w"> </span><span class="nc">MissDict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Has a dict, gets a list of values for an iterable of keys, and counts keys that are not in the dict.</span>
+
+<span class="sd">    &gt;&gt;&gt; double = MissDict({1: 2, 2: 4, 3: 6, 5: 10})</span>
+<span class="sd">    &gt;&gt;&gt; half = MissDict({2: 1.0, 3: 1.5, 4: 2.0})</span>
+<span class="sd">    &gt;&gt;&gt; double.get([1, 3, 5, 2, 4])  # No value for key 4 (1 miss)</span>
+<span class="sd">    [2, 6, 10, 4]</span>
+<span class="sd">    &gt;&gt;&gt; double.get([5, 4, 3, 0, 4])  # No value for keys 0 or either 4 (3 misses)</span>
+<span class="sd">    [10, 6]</span>
+<span class="sd">    &gt;&gt;&gt; half.get([1, 3, 5, 2, 4])    # No value for keys 1 or 5 (2 misses)</span>
+<span class="sd">    [1.5, 1.0, 2.0]</span>
+<span class="sd">    &gt;&gt;&gt; print(double)</span>
+<span class="sd">    4/6 of the misses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misses</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">misses</span> <span class="o">=</span> <span class="n">_______________</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">:</span>
+                <span class="n">_______________</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_______________</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;_______________________________ of the misses&#39;</span>
+</code></pre></div></div>
+</div>
+<div class="discuss-check" data-question="missdict"></div>
+
+
+</div>
+<script src="/fa26/assets/js/assignment.js?v=14018efad923"></script>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+    <p><a href="#top" id="back-to-top">Back to Top</a></p>
+  
+
+  <!-- This file comes from Just The Docs.
+ This footer should be included on all EECS/DS sites.
+--><p class="text-small text-grey-dk-100 my-1">
+  <a rel="nofollow noopener" href="https://dap.berkeley.edu/get-help/report-web-accessibility-issue" target="_blank" class="pr-2">Accessibility</a>
+  <a rel="nofollow noopener" href="https://ophd.berkeley.edu/policies-and-procedures/nondiscrimination-policy-statement" target="_blank" class="px-2">Nondiscrimination</a>
+</p>
+
+<!-- Use this to add additional content. -->
+<p class="text-small text-lighter m-0">
+  Copyright ©2026, Regents of the University of California and respective authors.
+</p>
+
+<p class="fs-1 text-lighter my-1">
+  This site is built following the <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Berkeley Class Site</a> template, which is generously based on the <a href="https://github.com/kevinlin1/just-the-class" target="_blank" rel="noopener">Just the Class</a>, and <a href="https://github.com/just-the-docs/just-the-docs" target="_blank" rel="noopener">Just the Docs</a> templates.
+</p>
+
+
+  
+    <div class="d-flex mt-2">
+      
+      
+    </div>
+  <div class="d-md-none mt-4 fs-2">
+    
+    
+      <!-- This file adds links at the bottom of the sidebar on the left. -->
+
+
+<section class="py-2" aria-label="Footer: site archive">
+  <a href="https://inst.eecs.berkeley.edu/~cs61a/archives.html"
+    target="_blank" rel="noopener nofollow">View all course offerings
+  </a>
+</section>
+
+
+
+  <div class="m-1 py-4">
+    
+
+<span class="fs-3">
+  <button type="button"
+    class="btn js-toggle-dark-mode btn-outline"
+    style="margin-right: -3px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+    aria-label="Switch to Dark Mode">🌙 Dark Mode</button>
+  <button type="button"
+    class="btn js-unset-color-scheme btn-outline px-2"
+    style="margin-left: -3px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    aria-label="Use system appearance"
+    ><i class="fa-solid fa-rotate" title="Use system appearance"></i></button>
+</span>
+
+<script>
+(function() {
+  // Prevent double-loading
+  if (window.themeScriptRan) return;
+  window.themeScriptRan = true;
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Check if JTD is actually loaded
+    if (typeof jtd === 'undefined') {
+      console.error("JTD is not defined. Check if jtd.js is loading.");
+      return; 
+    }
+
+    const toggleSchemeBtn = document.querySelector('.js-toggle-dark-mode');
+    const unsetColorScheme = document.querySelector('.js-unset-color-scheme');
+
+    function updateButtonUI(theme) {
+      if (!toggleSchemeBtn) return;
+      if (theme === 'dark') {
+        toggleSchemeBtn.textContent = '🔆 Light Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Light Mode';
+      } else {
+        toggleSchemeBtn.textContent = '🌙 Dark Mode';
+        toggleSchemeBtn.ariaLabel = 'Switch to Dark Mode';
+      }
+    }
+
+    // Apply theme before button listeners
+    const savedTheme = localStorage.getItem('jtd-theme');
+    const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    jtd.setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateButtonUI(initialTheme);
+
+    // Toggle Logic
+    jtd.addEvent(toggleSchemeBtn, 'click', function() {
+      const current = document.documentElement.getAttribute('data-theme') || jtd.getTheme();
+      const nextTheme = (current === 'dark') ? 'light' : 'dark';
+
+      console.log("Toggling from", current, "to", nextTheme);
+
+      jtd.setTheme(nextTheme);
+      localStorage.setItem('jtd-theme', nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      updateButtonUI(nextTheme);
+    });
+
+    // Reset Logic (Sync with system preference)
+    if (unsetColorScheme) {
+      jtd.addEvent(unsetColorScheme, 'click', function() {
+        // Clear the manual override
+        localStorage.removeItem('jtd-theme');
+
+        // Determine what the system wants
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const newTheme = systemDark ? 'dark' : 'light';
+
+        // Apply it immediately without reloading
+        jtd.setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        updateButtonUI(newTheme);
+        
+        console.log("Reset to system preference:", newTheme);
+      });
+    }
+  });
+})();
+</script>
+  </div>
+
+
+    
+  </div>
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

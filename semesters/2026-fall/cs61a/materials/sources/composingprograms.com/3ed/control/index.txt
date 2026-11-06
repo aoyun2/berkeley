@@ -1,0 +1,436 @@
+Source: https://composingprograms.com/3ed/control/
+Retrieved: 2026-11-06
+
+Downloads
+1.5 Control
+from pytutor import env_diagram
+from operator import mul
+The expressive power of the functions that we can define at this point is very limited because we have not introduced a way to make comparisons and to perform different operations depending on the result of a comparison.
+Control statements
+give us this ability. They are statements that control the flow of a program’s execution based on the results of logical comparisons.
+Control statements differ from the expressions that we have studied so far. They don’t have a value like an expression does. Instead, executing a control statement determines what the interpreter should do next.
+Statements
+¶
+We have seen three kinds of statements already: assignment,
+def
+, and
+return
+statements. These lines of Python code are not themselves expressions, although they all contain expressions as components.
+Rather than being evaluated, statements are
+executed
+. Each statement describes some change to the interpreter state, and executing a statement applies that change. As we have seen for
+return
+and assignment statements, executing statements can involve evaluating subexpressions contained within them.
+The body of a function is a sequence of statements. In Python, an expression can be written on a line by itself, in which case it is treated as a statement and called an
+expression statement
+. The value of such an expression is discarded.
+For example, leaving out the
+return
+keyword in the example below makes
+mul(x, x)
+an expression statement, and so
+x
+is multiplied by itself, but the result is discarded rather than returned.
+>>> def square(x):
+        mul(x, x) # Watch out! This call doesn't return a value.
+
+>>> print(square(3))
+None
+>>> y = square(4)
+>>> print(y)
+None
+In order to do something with the value of an expression, it must be part of some larger statement, such as an assignment or return statement.
+>>> def square(x):
+        return mul(x, x)
+
+>>> print(square(3))
+9
+>>> y = square(4)
+>>> print(y)
+16
+Sometimes it does make sense to have a function whose body is an expression, when a non-pure function like
+print
+is called. However, displaying a value with
+print
+does not return it, and so that value is not available to be assigned or otherwise combined further.
+>>> def print_square(x):
+        print(mul(x, x))
+>>> print_square(3)
+9
+>>> y = print_square(4)
+16
+>>> print(y)
+None
+The Python interpreter’s job is to execute programs, which are sequences of statements. However, much of the interesting work of computation comes from evaluating expressions. Statements control which expressions are evaluated in a program, what environments they are evaluated in, and what happens to their results.
+Compound Statements
+¶
+A simple statement is a single line that doesn’t end in a colon. A compound statement is so called because it is composed of other statements (both simple and compound). Compound statements typically span multiple lines and start with a one-line header ending in a colon, which identifies the type of statement. Together, a header and an indented suite of statements is called a clause. A compound statement consists of one or more clauses:
+<header>:
+    <statement>
+    <statement>
+    ...
+<separating header>:
+    <statement>
+    <statement>
+    ...
+...
+We can understand the statements we have already introduced in these terms.
+Expression statements, return statements, and assignment statements are simple statements.
+A
+def
+statement is a compound statement. The suite that follows the
+def
+header defines the function body.
+Specialized evaluation rules for each kind of header dictate when and if the statements in its suite are executed. We say that the header controls its suite. For example, in the case of
+def
+statements, we saw that the return expression is not evaluated immediately, but instead stored for later use when the defined function is eventually called.
+We can also understand multi-line programs now.
+To execute a sequence of statements, execute the first statement. If that statement does not redirect control, then proceed to execute the rest of the sequence of statements, if any remain.
+This definition exposes the essential structure of a recursively defined
+sequence
+: a sequence can be decomposed into its first item and the rest of its items. The
+rest
+of a sequence of statements is itself a sequence of statements! Thus, we can recursively apply this execution rule.
+The important consequence of this rule is that statements are executed in order, but later statements may never be reached if control is redirected.
+Practical guidance.
+When indenting a suite, all lines must be indented the same amount and in the same way (use spaces, not tabs). Any variation in indentation will cause an error.
+Local Assignment
+¶
+Originally, we stated that the body of a user-defined function consisted only of a
+return
+statement with a single return expression. In fact, functions can define a sequence of operations that extends beyond a single expression.
+Whenever a user-defined function is applied, the sequence of clauses in the suite of its definition is executed in an environment starting with a local frame that is created by calling that function. A
+return
+statement redirects control: the process of function application ends whenever the first
+return
+statement is executed, and the value of the
+return
+expression is the returned value of the function being applied.
+Assignment statements can appear within a function body. For instance, this function returns the absolute difference between two quantities as a percentage of the first, using a two-step calculation:
+env_diagram(r'''
+def percent_difference(x, y):
+    difference = abs(x-y)
+    return 100 * difference / x
+result = percent_difference(40, 50)
+''', cumulative=True, labels=False)
+Loading...
+The effect of an assignment statement is to bind a name to a value in the first frame of the current environment. As a consequence, assignment statements within a function body cannot affect the global frame. The fact that functions can only manipulate their local frame greatly simplifies programming. Pure functions interact only via the values they take and return, rather than affecting the behavior of other functions.
+Of course, the
+percent_difference
+function could be written as a single expression, as shown below, but the return expression is more complex.
+>>> def percent_difference(x, y):
+        return 100 * abs(x-y) / x
+>>> percent_difference(40, 50)
+25.0
+So far, local assignment hasn’t increased the expressive power of our function definitions. It will do so when combined with other control statements. It can still be useful on its own to clarify the meaning of complex expressions by assigning names to intermediate quantities.
+Conditional Statements
+¶
+Python has a built-in function for computing absolute values.
+>>> abs(-2)
+2
+We would like to be able to implement such a function ourselves, but doing so requires a comparison and a choice. We would like to express that if
+x
+is negative,
+abs(x)
+returns
+-x
+. Furthermore, if
+x
+is 0,
+abs(x)
+returns 0. Otherwise,
+x
+is positive and so
+abs(x)
+returns
+x
+. In Python, we can express this choice with a conditional statement.
+env_diagram(r'''
+def absolute_value(x):
+    """Compute abs(x)."""
+    if x < 0:
+        return -x
+    elif x == 0:
+        return 0
+    else:
+        return x
+
+result = absolute_value(-2)
+''', cumulative=True, labels=False)
+Loading...
+A conditional statement in Python consists of a series of headers and suites: a required
+if
+clause, an optional sequence of
+elif
+clauses, and finally an optional
+else
+clause:
+if <expression>:
+    <suite>
+elif <expression>:
+    <suite>
+else:
+    <suite>
+When executing a conditional statement, each clause is considered in order. The computational process of executing a conditional clause follows.
+Evaluate the header’s expression.
+If it is a true value, execute the suite. Then, skip over all subsequent clauses in the conditional statement.
+If the
+else
+clause is reached (which only happens if all
+if
+and
+elif
+expressions evaluate to false values), its suite is executed.
+Boolean Values and Operators
+¶
+Boolean contexts.
+Above, the execution procedures mention “a false value” and “a true value.” The expressions inside the header statements of conditional blocks are said to be in
+boolean contexts
+: their truth values matter to control flow, but otherwise their values are not assigned or returned. Python includes several false values, including 0,
+None
+, and the
+boolean
+value
+False
+. All other numbers are true values. In Chapter 2, we will see that every built-in kind of data in Python has both true and false values.
+Boolean values.
+Python has two boolean values, called
+True
+and
+False
+. Boolean values represent truth values in logical expressions. The built-in comparison operations,
+>, <, >=, <=, ==, !=
+, return these values.
+>>> 4 < 2
+False
+>>> 5 >= 5
+True
+This second example reads “5 is greater than or equal to 5”, and corresponds to the function
+ge
+in the
+operator
+module.
+>>> 0 == -0
+True
+This final example reads “0 equals -0”, and corresponds to
+eq
+in the
+operator
+module. Notice that Python distinguishes assignment (
+=
+) from equality comparison (
+==
+), a convention shared across many programming languages.
+Boolean operators.
+Three basic logical operators are also built into Python:
+>>> True and False
+False
+>>> True or False
+True
+>>> not False
+True
+Logical expressions have corresponding evaluation procedures. These procedures exploit the fact that the truth value of a logical expression can sometimes be determined without evaluating all of its subexpressions, a feature called
+short-circuiting
+.
+To evaluate the expression
+<left> and <right>
+:
+Evaluate the subexpression
+<left>
+.
+If the result is a false value
+v
+, then the expression evaluates to
+v
+.
+Otherwise, the expression evaluates to the value of the subexpression
+<right>
+.
+To evaluate the expression
+<left> or <right>
+:
+Evaluate the subexpression
+<left>
+.
+If the result is a true value
+v
+, then the expression evaluates to
+v
+.
+Otherwise, the expression evaluates to the value of the subexpression
+<right>
+.
+To evaluate the expression
+not <exp>
+:
+Evaluate
+<exp>
+; the value is
+True
+if the result is a false value, and
+False
+otherwise.
+These values, rules, and operators provide us with a way to combine the results of comparisons. Functions that perform comparisons and return boolean values typically begin with
+is
+, not followed by an underscore (e.g.,
+isfinite
+,
+isdigit
+,
+isinstance
+, etc.).
+Iteration
+¶
+In addition to selecting which statements to execute, control statements are used to express repetition. If each line of code we wrote were only executed once, programming would be a very unproductive exercise. Only through repeated execution of statements do we unlock the full potential of computers. We have already seen one form of repetition: a function can be applied many times, although it is only defined once. Iterative control structures are another mechanism for executing the same statements many times.
+Consider the sequence of Fibonacci numbers, in which each number is the sum of the preceding two:
+0, 1, 1, 2, 3, 5, 8, 13, 21, ...
+Each value is constructed by repeatedly applying the sum-previous-two rule. The zeroth and first are fixed to 0 and 1, so that 1 is the second item. For instance, the eighth Fibonacci number is 21.
+We can use a
+while
+statement to compute the
+n
+th Fibonacci number. We need to track which value we’ve reached (
+k
+), along with the kth value (
+curr
+) and its predecessor (
+pred
+). Step through this function and observe how the Fibonacci numbers evolve one by one, bound to
+curr
+.
+env_diagram(r'''
+def fib(n):
+    """Compute the nth Fibonacci number, for n >= 1."""
+    pred, curr = 0, 1   # Fibonacci numbers 0 and 1
+    k = 1               # Which Fib number is curr?
+    while k < n:
+        pred, curr = curr, pred + curr
+        k = k + 1
+    return curr
+
+result = fib(8)
+''', step=1, cumulative=False, labels=False)
+Loading...
+Remember that commas separate multiple names and values in an assignment statement. The line:
+pred, curr = curr, pred + curr
+has the effect of rebinding the name
+pred
+to the value of
+curr
+, and simultaneously rebinding
+curr
+to the value of
+pred + curr
+. All of the expressions to the right of
+=
+are evaluated before any rebinding takes place.
+This order of events -- evaluating everything on the right of
+=
+before updating any bindings on the left -- is essential for correctness of this function.
+A
+while
+clause contains a header expression followed by a suite:
+while <expression>:
+    <suite>
+To execute a
+while
+clause:
+Evaluate the header’s expression.
+If it is a true value, execute the suite, then return to step 1.
+In step 2, the entire suite of the
+while
+clause is executed before the header expression is evaluated again.
+In order to prevent the suite of a
+while
+clause from being executed indefinitely, the suite should always change some binding in each pass.
+A
+while
+statement that does not terminate is called an infinite loop. Press
+<Control>-C
+to force Python to stop looping.
+Testing
+¶
+Testing
+a function is the act of verifying that the function’s behavior matches expectations. Our language of functions is now sufficiently complex that we need to start testing our implementations.
+A
+test
+is a mechanism for systematically performing this verification. Tests typically take the form of another function that contains one or more sample calls to the function being tested. The returned value is then verified against an expected result. Unlike most functions, which are meant to be general, tests involve selecting and validating calls with specific argument values. Tests also serve as documentation: they demonstrate how to call a function and what argument values are appropriate.
+Assertions
+¶
+Programmers use
+assert
+statements to verify expectations, such as the output of a function being tested. An
+assert
+statement has an expression in a boolean context, followed by a quoted line of text (single or double quotes are both fine, but be consistent) that will be displayed if the expression evaluates to a false value.
+>>> assert fib(8) == 21, 'The 8th Fibonacci number should be 21'
+When the expression being asserted evaluates to a true value, executing an assert statement has no effect. When it is a false value,
+assert
+causes an error that halts execution.
+A test function for
+fib
+should test several arguments, including extreme values of
+n
+.
+>>> def fib_test():
+        assert fib(1) == 1, 'The 1st Fibonacci number should be 1'
+        assert fib(3) == 2, 'The 3rd Fibonacci number should be 2'
+        assert fib(50) == 12586269025, 'Error at the 50th Fibonacci number'
+When writing Python in files, rather than directly into the interpreter, tests are typically written in the same file or a neighboring file with the suffix
+_test.py
+.
+Doctests
+¶
+Python provides a convenient method for placing simple tests directly in the docstring of a function. The first line of a docstring should contain a one-line description of the function, followed by a blank line. A detailed description of arguments and behavior may follow. In addition, the docstring may include a sample interactive session that calls the function:
+>>> def sum_naturals(n):
+        """Return the sum of the first n natural numbers.
+
+        >>> sum_naturals(10)
+        55
+        >>> sum_naturals(100)
+        5050
+        """
+        total, k = 0, 1
+        while k <= n:
+            total = total + k
+            k = k + 1
+        return total
+Then, the interaction can be verified via the
+doctest module
+.
+>>> from doctest import testmod
+>>> testmod()
+TestResults(failed=0, attempted=2)
+To verify the doctest interactions for only a single function, we use a
+doctest
+function called
+run_docstring_examples
+. This function is (unfortunately) a bit complicated to call. Its first argument is the function to test. The second should always be the result of the expression
+globals()
+, a built-in function that returns the global environment. The third argument is
+True
+to indicate that we would like “verbose” output: a catalog of all tests run.
+>>> from doctest import run_docstring_examples
+>>> run_docstring_examples(sum_naturals, globals(), True)
+Finding tests in NoName
+Trying:
+    sum_naturals(10)
+Expecting:
+    55
+ok
+Trying:
+    sum_naturals(100)
+Expecting:
+    5050
+ok
+When the return value of a function does not match the expected result, the
+run_docstring_examples
+function will report this problem as a test failure.
+When writing Python in files, all doctests in a file can be run by starting Python with the doctest command line option:
+python3 -m doctest <python_source_file>
+The key to effective testing is to write (and run) tests immediately after implementing new functions. It is even good practice to write some tests before you implement, in order to have some example inputs and outputs in your mind. A test that applies a single function is called a
+unit test
+. Exhaustive unit testing is a hallmark of good program design.
+Chapter 1: Functions
+1.4 Designing Functions
+Chapter 1: Functions
+1.6 Higher-Order Functions
