@@ -105,3 +105,29 @@ assert (A-s.eye(3))*s.Matrix([-3,2,4])==s.zeros(3,1)
 assert (A-3*s.eye(3))*(A-s.eye(3))==s.Matrix([[0,2,-1],[0,0,0],[0,0,0]])
 expectmp(A,(x-3)**2*(x-1))
 print('Week 8 exact source matrices, kernels, Jordan bases, block counts, powers, square roots, and all HW/exam answers passed.')
+# Restored kernel equations, coordinate columns, shifted ranks and roots.
+T=s.Matrix([[0,4,0],[0,0,0],[0,0,5]])
+assert (T-5*s.eye(3))**3==s.Matrix([[-125,300,0],[0,-125,0],[0,0,0]])
+A=s.Matrix([[6,3,4],[0,6,2],[0,0,7]])
+assert (A-6*s.eye(3))**2==s.Matrix([[0,0,10],[0,0,2],[0,0,1]])
+A=s.Matrix([[3,-1,-1],[2,0,-1],[2,-1,0]])
+assert A-s.eye(3)==s.Matrix([[2,-1,-1],[2,-1,-1],[2,-1,-1]])
+B=s.Matrix([[3,-2,0],[1,1,-1],[0,2,-1]])
+assert (B-s.eye(3))**2==s.Matrix([[2,-4,2],[2,-4,2],[2,-4,2]])
+# Integer coefficients give the same power in small positive characteristic.
+for prime in [2,3,5]:
+    for m in range(1,12):
+        expected=s.Matrix([[1,m,s.binomial(m,2)],[0,1,m],[0,0,1]])
+        assert (J(3,1)**m-expected).applyfunc(lambda z:int(z)%prime)==s.zeros(3)
+# Finite coefficient matching constructs every positive integer root tested.
+for k in range(1,6):
+    coeff=[s.Integer(1)]
+    for j in range(1,6):
+        before=sum((coeff[i]*x**i for i in range(j)),s.Integer(0))
+        known=s.Poly(s.expand(before**k),x).coeff_monomial(x**j)
+        coeff.append(((1 if j==1 else 0)-known)/k)
+    for r in range(1,7):
+        N=J(r,0);Q=sum((coeff[j]*N**j for j in range(r)),s.zeros(r))
+        assert Q**k==s.eye(r)+N
+assert [min(k,3)+min(k,2) for k in range(5)]==[0,2,4,5,5]
+print('Week8 restored coordinate, kernel, characteristic-field and integer-root checks passed.')

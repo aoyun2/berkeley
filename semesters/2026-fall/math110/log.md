@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Regenerated Week8 (Notes14–15, HW8):14-page handout and2-page solutions. Shared stabilization, splitting, chain and block-count arguments; actual kernel/basis calculations and compact chain/nullity/block illustrations; field conditions corrected. Full source/HW/real-exam coverage, exact checks, fresh independent correctness and ideas/reference/layout reviews, and every-page inspection passed.
+
 - 2026-11-06: Regenerated Week7 (Notes12–13, HW7):18-page handout and3-page solutions. Shared polynomial-relation, invariant-part and interpolation arguments; restored computing methods, actual examples and saved exams; compact illustrative figures. Exact checks, fresh independent correctness/coverage and ideas/reference/layout reviews, and every-page inspection passed.
 
 - 2026-11-06: Regenerated Week6 (Notes11, HW6):12-page handout and2-page solutions. Explicit invariance/polynomial/first-dependence/independence/complex-direction/column-sum arguments, full source/HW coverage, actual modulus and dampedPageRank figures, exact checks, fresh independent correctness and ideas/reference reviews, and every-page inspection passed.
