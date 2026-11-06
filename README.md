@@ -1,4 +1,4 @@
-# College
+# Berkeley
 
 Courses, materials and weekly handouts for UC Berkeley, Fall 2026 onward.
 
