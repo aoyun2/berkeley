@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Regenerated Week6 (Notes11, HW6):12-page handout and2-page solutions. Explicit invariance/polynomial/first-dependence/independence/complex-direction/column-sum arguments, full source/HW coverage, actual modulus and dampedPageRank figures, exact checks, fresh independent correctness and ideas/reference reviews, and every-page inspection passed.
+
 - 2026-11-06: Regenerated Week5 (Notes9–10, HW5) under the ideas/reconstruction goal:12-page handout and3-page solutions. Shared quotient-factorization, dual-coordinate, extension/separation and precomposition arguments; restored actual textbook examples and real dual-basis/inclusion review problems; compact coset/coordinate/dual figures. Exact checks, fresh independent correctness/coverage and ideas/reference/layout reviews, and every-page inspection passed.
 
 - 2026-11-06: Consolidated Week4 under the ideas/reconstruction goal:13-page handout and3 unchanged solutions pages. Shared basis-pairing, inverse, component and point-difference arguments; explicit basis-image/one-sided/matrix/transition/directness criteria; complete source/HW/real-exam coverage. Exact checks, fresh independent math/ideas/reference reviews and every-page inspection passed.

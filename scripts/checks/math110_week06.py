@@ -38,4 +38,6 @@ a,b,c,d=s.symbols('a b c d');A=s.Matrix([[a,b],[c,d]])
 assert s.expand((t*s.eye(2)-A).det()-(t*t-(a+d)*t+a*d-b*c))==0
 assert s.expand(((1+s.I)/s.sqrt(2))**2)==s.I
 assert s.expand(7*x*x-3*s.diff(x*x,x)+5*s.diff(x*x,x,2))==7*x*x-6*x+10
+assert G*s.Matrix([1,-1])==-s.Matrix([1,-1])/2
+assert s.Rational(2,3)*s.Rational(1,2)==s.Rational(1,3)
 print('Week6 exact eigenvectors, polynomial identities, derivatives, stationary distributions and PageRank checks passed.')
