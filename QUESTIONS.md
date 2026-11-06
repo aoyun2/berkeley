@@ -3,13 +3,14 @@
 ## Current regeneration — following Aaron's supplied PDF
 
 - **MATH 110 week 1 (2026-08-31): revised again to follow the supplied PDF directly**, with a 15-page [handout](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf) and 4-page [solutions](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/solutions.pdf). Compact static illustrations replace the staged full-page figures; the unrequested interactive supplement is removed. Proof motivations are shorter and the worked mathematics remains explicit. A fresh independent reviewer read the full reference and sources and checked all final pages; requested source/proof/layout corrections passed recheck. The [audit](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/audit.md) records this version. Prior figure approvals were superseded by Aaron's feedback.
-- **MATH 110 weeks 2–10: not yet regenerated**, previous versions remain rejected. An unreviewed Week 2 handout draft is preserved locally; its solutions and release review remain unfinished.
+- **MATH 110 week 2 (2026-09-07): revised**, with a 13-page [handout](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/solutions.pdf). Fresh source/reference review, exact computation checks and final-page inspection passed after the recorded corrections.
+- **MATH 110 weeks 3–10: not yet regenerated**, previous versions remain rejected; Week 3 is next.
 - CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. Production follows the MATH 110 rework in that order, using the supplied PDF as the presentation standard.
 
 
 ## Previous MATH 110 release — rejected; revision required
 
-Aaron rejected the previous packets for unclear prose, insufficient explanatory figures, and vague claims. **These are the rejected original versions. Week 1 has since been replaced as described above; Weeks 2–10 still require revision and review.** The previous files were built and pushed in week order. Each folder contains `handout.tex`, `handout.pdf`, `solutions.tex`, and `solutions.pdf`. Total: **20 PDFs, 151 pages** (131 handout pages and 20 solution pages).
+Aaron rejected the previous packets for unclear prose, insufficient explanatory figures, and vague claims. **These are the rejected original versions. Weeks 1–2 have since been replaced as described above; Weeks 3–10 still require revision and review.** The previous files were built and pushed in week order. Each folder contains `handout.tex`, `handout.pdf`, `solutions.tex`, and `solutions.pdf`. Total: **20 PDFs, 151 pages** (131 handout pages and 20 solution pages).
 
 | Week | Start | Topics | Handout pages | Solutions pages |
 |---|---|---|---:|---:|

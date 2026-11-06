@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Regenerated week of 2026-09-07 (Notes Ch. 3–4, HW2): 13-page handout and 2-page solutions following the supplied PDF. Explicit basis algorithms and textbook examples, compact static illustrations, complete dimension bound/directness criterion, and all six HW problems plus real exam Q1. Exact checks, fresh independent source/reference review and all-page inspection passed after corrections.
+
 - 2026-11-06: Followed Aaron's correction to use the supplied PDF directly. Replaced the staged figures with compact static illustrations, removed the interactive supplement, shortened proof motivations, and completed exact textbook examples/domains. Current Week 1 is a 15-page handout and 4-page solutions. Fresh independent source/reference review, exact checks and all-page inspection passed after corrections. Earlier Week 1 visual approvals are superseded; Weeks 2–10 remain unfinished.
 
 - 2026-11-06 (superseded by the correction above): Replaced all five Week 1 figures after Aaron's further feedback: changing image/preimage selections, reciprocal selection/cancellation/normalization, union closure failure, direct-sum trials and uniqueness, and changing three-line decompositions. Current handout is 19 pages; solutions remain 4 pages. Added the offline direct-sum explorer. Independent visual review, exact checks, 81-state browser tests and inspection of all final pages passed after explanatory and layout corrections. This is the revised Week 1 only; Weeks 2–10 remain unfinished.
