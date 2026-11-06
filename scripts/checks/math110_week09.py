@@ -78,3 +78,26 @@ assert s.simplify(s.trace(T)-inner(w,v))==0
 assert (1+2+3+4)*(s.Integer(1)+s.Rational(1,2)+s.Rational(1,3)+s.Rational(1,4))==s.Rational(125,6)>16
 assert (2*4)*(s.Rational(1,2)*4)==16
 print('Week 9 exact traces/eigenpairs, inner products/integrals, polarization, attention matrices/weights and all HW/practice computations passed.')
+# Restored rectangular-product illustration and perpendicular decomposition.
+A=s.Matrix([[1,2]]);B=s.Matrix([3,4])
+assert A*B==s.Matrix([[11]]) and B*A==s.Matrix([[3,6],[4,8]])
+assert s.trace(A*B)==s.trace(B*A)==11
+u=s.Matrix([2,1]);v=s.Matrix([1,0]);a=inner(u,v)/sq(v);z=u-a*v
+assert a==2 and z==s.Matrix([0,1]) and inner(z,v)==0
+assert sq(u)==sq(a*v)+sq(z)==5 and sq(a*v)==4 and sq(z)==1
+# First-linear convention also gives the decomposition in a complex example.
+u=s.Matrix([1+s.I,2]);v=s.Matrix([2,s.I]);a=inner(u,v)/sq(v);z=u-a*v
+assert s.simplify(inner(z,v))==0
+assert s.simplify(sq(u)-s.Abs(inner(u,v))**2/sq(v)-sq(z))==0
+U=s.Matrix([[1,s.I],[s.I,1]])/s.sqrt(2)
+assert (s.conjugate(U).T*U).applyfunc(s.simplify)==s.eye(2)
+A=s.Matrix([[1,2+s.I],[3-s.I,4]])
+assert s.simplify(sum(inner(A*U[:,j],U[:,j]) for j in range(2))-s.trace(A))==0
+# Matrix units used in the trace characterization.
+for n in range(1,5):
+ for i in range(n):
+  for j in range(n):
+   E=s.zeros(n);E[i,j]=1;F=s.zeros(n);F[j,i]=1;D=s.zeros(n);D[i,i]=1
+   assert E*F==D
+   if i!=j:assert D*E==E and E*D==s.zeros(n)
+print('Week9 restored rectangular products, perpendicular components, orthonormal trace and matrix-unit computations passed.')
