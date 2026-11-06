@@ -15,7 +15,11 @@ Every handout, review packet and solutions file, in every course, follows this. 
 - **No forward references.** Never use a term, notation or result before the handout defines or proves it (e.g. no "largest Jordan block" in the minimal polynomial section when Jordan form comes later). A fact that needs later material goes in the later section, where everything it uses is already defined. This also applies to a cut-down handout: anything referring to a section that was cut is removed or rewritten.
 - Every claim derivable from first principles. Any fact used is proved in the handout or in a "Tools" list with its own reason. Deep results that need outside machinery (e.g. the fundamental theorem of algebra) are marked as cited.
 
-## Every result
+## Arguments and their consequences
+
+Aaron's latest goal is to understand the ideas, intuition and motivations and reconstruct every LADR result from memory. A longer packet is not evidence of better teaching. Group results by the argument that produces them. Prove each central argument once, with a concise motivation explaining why to choose it; derive related results immediately in short, explicit steps. Do not repeat the same argument in a green box and again in a long proof for every consequence. Preserve every statement, hypothesis, source identifier and necessary derivation; keep detailed coverage accounting in audit.md, outside the student packet. A result that is only implicit in another theorem must still be stated clearly when it is a useful organizing criterion.
+
+For a distinct central argument:
 1. **Statement** in a theorem box, labelled with the notes number and textbook number.
 2. **"Where the proof comes from"** box (`motive`), with labelled lines:
    - *Want.* what has to be shown, concretely.
@@ -27,6 +31,8 @@ Every handout, review packet and solutions file, in every course, follows this. 
 3. **Proof as numbered steps**, one or two lines each, each citing what it uses.
 - Results built from parts: give the parts descriptive names that say what they are ("Step B: if b^2 < 4c then dim null p(T) is even") and a *Plan* line saying how they connect. Never bare "Lemma"/"Theorem" inside running text.
 - Never cram reasoning into one paragraph or into small or italic print. Any reason longer than a sentence becomes numbered steps.
+
+Immediate consequences can share the central motivation and use a short derivation; they do not require duplicate motivation boxes. Retain the compact static figures from the supplied PDF wherever they explain the mathematical idea. Use real homework/exam questions to test reconstruction, rather than adding a separate long study-method section.
 
 ## Each section
 - Opens with a **"The question."** box: the problem the section solves, with a small example.

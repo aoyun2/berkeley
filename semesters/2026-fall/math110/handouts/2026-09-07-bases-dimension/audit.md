@@ -1,28 +1,28 @@
-# Week 2 revised packet — independent review
+# Week 2 — ideas and reconstruction revision
 
-Current version: 13 handout pages and 2 solutions pages. Earlier release approval is superseded. The revised version follows Aaron's supplied reference PDF directly: concise motivations, explicit calculations and compact illustrative figures.
+Current version: 11 handout pages and 2 unchanged solutions pages. This supersedes the earlier 13-page presentation after Aaron clarified that the goal is to understand ideas, intuition and motivations and reconstruct every LADR result from memory. Page count alone is not the quality criterion.
 
-## Sources and scope
+## Organizing arguments and coverage
 
-Read Notes Chapters 3–4, Definitions 7–10, Propositions 8–17, Examples 10–20, including the optional infinite-set assertions (cited with choice), combination-map criterion, single-vector summands and the nonzero-generator qualification. Matching LADR 2A–2C definitions, results and examples are included: span/minimal subspace; dependence lemma, basis extraction, replacement/extension; basis existence and complements; polynomial spaces; dimension tests; sum/intersection formula and the general dimension bound with its directness equality criterion. Actual textbook vectors and shifted-polynomial examples are used.
+The packet explains four reusable arguments: subtract two representations to test uniqueness; solve a nontrivial relation for an entry to delete it; replace entries in a spanning list to bound independent-list length; choose an intersection basis first and count it once. Immediate consequences now use concise derivations instead of repeating a green motivation and the same full argument. Related basis/subspace/complement tests share one statement and proof. Actual source examples remain, with their equations and field restrictions.
 
-All six HW2 problems and their parts remain. Extra practice is the actual saved practice-midterm1.pdf Q1, with the four original generators and target (2,1,3,0). No rank–nullity, determinants or later linear-map theory is used in teaching the Week 2 methods. Determinants in computational checks only verify arithmetic independently. Numeric textbook examples using divisions retain their R/C field restrictions.
+Coverage remains Notes Chapters 3–4, Definitions 7–10, Propositions 8–17, Examples 10–20 and optional cited infinite-set assertions; matching LADR 2A–2C results and standard examples; all six HW2 problems and subparts; and the actual saved Practice Midterm 1 Question 1. Formal polynomial versus function distinctions, degree of zero, nonzero-generator qualification, finite-dimensional hypotheses and R/C restrictions on numerical divisions remain explicit. No rank–nullity or later linear-map theory is introduced.
 
-## Revisions and review findings
+## Two-of-three criterion
 
-- Replaced generic motivations with the actual coefficient equations and reasons for deleting/replacing/extending vectors. Worked basis extraction, parameter dependence, extension, coordinate tests, polynomial coefficients and intersection calculations are explicit.
-- Compact illustrations show vector coordinates, a short basis-replacement chain, the finite-support versus all-ones sequence array, and a common basis counted once in a sum. All align with the adjacent examples.
-- A fresh independent reviewer read all 22 reference pages, original notes/homework and matching textbook, then all revised source and rendered pages. Correctness/coverage and reference-style teaching/layout were judged separately.
-- Added the missing general inequality dim(sum Ui)<=sum dim Ui and its equality iff direct converse; retained the notes' induction explanation. Added source identifiers and the three-lines consequence. Corrected the distinct-degree shortcut to require nonzero polynomials, because deg0 is defined as minus infinity.
-- Clarified the P5/P6 solution Ideas. Removed an unnecessary later-topic aside. Repaired an isolated final Traps page by allowing the problem set to follow it. Reviewer rechecked these corrections and approved both verdicts with no remaining blocker.
+The previous packet only stated one implication in Shortcuts. The complete organizing criterion is now a prominent boxed statement on page 9: for subspaces U,W of finite-dimensional V, any two of dimU+dimW=dimV, U intersection W={0}, and U+W=V imply the third. All three implications are derived explicitly from the dimension formula, using the full-dimension subspace test where needed. The statement and its proof stay on one page.
+
+The compact array on page 10 distinguishes the common basis, the U-only and W-only extensions, and directions missing from U+W. Its caption derives (r+k)+(r+l)=r+k+l+s iff r=s; zero intersection means r=0, and full sum means s=0. This supplies an explanation of why any two conditions force the third, beyond merely memorizing a test. HW2 P5 now points at the full criterion. Dimension is introduced in Week 2 in this schedule, which explains its placement here rather than in Week 1 before its prerequisites.
+
+## Separate independent reviews
+
+The reviewer reread the updated standards and original notes, then the entire revised source and all final rendered pages. Correctness/coverage PASS: all original claims, examples, field safeguards, homework/exam parts remain; the grouped proofs and full criterion are valid. Ideas/reconstruction and direct-reference style/layout PASS: the shared arguments produce the short consequences, the common/missing basis figure explains the criterion, and the compact figures/labels/pages are readable. Four unnumbered proof paragraphs were converted to concise numbered steps as requested; no extra motive boxes were restored. Further grouping of the dimension tests and shorter deletion/span calculations was reread and approved.
+
+Every final page was inspected by root and reviewer. Final3 handout pages 1–8 are pixel-identical to inspected final2; pages 9–11 were re-inspected after the atomic statement/proof grouping. That layout correction avoids guessed space reservations and keeps the entire problem set on page 11. Handout renders: /tmp/math110-w02-ideas-final3/handout-01.png through handout-11.png. Solutions: /tmp/math110-w02-ideas-final2/solutions-01.png and solutions-02.png; the PDF is byte-identical to the prior reviewed version.
 
 ## Verification
 
-`python3 scripts/checks/math110_week02.py` passes with the local SymPy environment. Checks cover the actual numeric and symbolic textbook examples, parameter dependence, basis extraction and extension, polynomial derivatives/coordinates, all-field intersection/sum arithmetic and the exam decomposition. The independent reviewer separately verified the main arithmetic.
+`python3 scripts/checks/math110_week02.py` passes all exact numeric/symbolic textbook, homework and exam calculations; the reviewer independently ran it. The revised handout builds with no errors and zero overfull boxes. Source coverage accounting and field checks were independent of compilation. Original materials and Weak spots remain unchanged.
 
-Both PDFs built with scripts/build.sh: no errors, zero overfull boxes. Root inspected every final page; the reviewer also inspected every page and rechecked final changes. Final handout renders are /tmp/math110-w02-final/handout-01.png through handout-13.png; solutions renders are /tmp/math110-w02-review/solutions-1.png and solutions-2.png. Unchanged candidate pages were verified byte-identical after the final two fixes.
-
-Handout SHA-256: 59ddd3f4cd6bc9fddd73bde95e5f462781a88bf431e93042992019dc93d63808.
+Handout SHA-256: 1d9b913ad3d72bed7606b499f4103fef9b0926235fda291fdcaafac675834f03.
 Solutions SHA-256: 8fbe478c142f2dea5c49577fa907ef8dc7979a2af1b4815c8ada8f87ad64d0e7.
-
-Shared layout correction: figures and captions remain in one minipage; heading space uses immediate Needspace checks instead of reserving large synthetic glue. This carries the Week 1 layout repair into later packets without changing the reference's typography. Original materials and Weak spots are preserved.

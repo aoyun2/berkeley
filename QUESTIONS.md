@@ -1,9 +1,17 @@
 # Backfill restart status and questions
 
+## Latest goal — ideas and reconstruction
+
+Aaron clarified that the goal is to understand ideas, intuition and motivations and derive every LADR result from memory. Routine consequences should share the argument that produces them; repeated prose and longer packets do not establish better teaching. The supplied reference still governs the compact illustrative figures.
+
+- Week 2 now follows this clarification: **11-page handout + 2-page solutions**, full two-of-three criterion on page 9, common/missing basis figure on page 10, grouped consequences and complete source coverage. Independent math/coverage and ideas/reference/layout reviews passed; see its audit below.
+- Weeks 1, 3 and 4 retain their previous complete revisions but need the same consolidation under this clarified goal. Their earlier approvals concern the preceding presentation standard.
+- Week 5's expanded draft is saved and paused, not released. Revise the earlier packets before continuing the remaining historical backfill in course order. Preserve all source results while explaining their derivations through the central arguments.
+
 ## Current regeneration — following Aaron's supplied PDF
 
 - **MATH 110 week 1 (2026-08-31): revised again to follow the supplied PDF directly**, with a 15-page [handout](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf) and 4-page [solutions](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/solutions.pdf). Compact static illustrations replace the staged full-page figures; the unrequested interactive supplement is removed. Proof motivations are shorter and the worked mathematics remains explicit. A fresh independent reviewer read the full reference and sources and checked all final pages; requested source/proof/layout corrections passed recheck. The [audit](semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/audit.md) records this version. Prior figure approvals were superseded by Aaron's feedback.
-- **MATH 110 week 2 (2026-09-07): revised**, with a 13-page [handout](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/solutions.pdf). Fresh source/reference review, exact computation checks and final-page inspection passed after the recorded corrections.
+- **MATH 110 week 2 (2026-09-07): revised**, with an 11-page [handout](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/solutions.pdf). Fresh source/reference review, exact computation checks and final-page inspection passed after the recorded corrections.
 - **MATH 110 week 3 (2026-09-14): revised**, with a 14-page [handout](semesters/2026-fall/math110/handouts/2026-09-14-linear-maps-matrices/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-09-14-linear-maps-matrices/solutions.pdf). Restored textbook examples, explicit proof choices and compact static illustrations; exact checks, fresh independent review and every-page inspection passed.
 - **MATH 110 week 4 (2026-09-21): revised**, with a 14-page [handout](semesters/2026-fall/math110/handouts/2026-09-21-isomorphisms-products-quotients/handout.pdf) and 3-page [solutions](semesters/2026-fall/math110/handouts/2026-09-21-isomorphisms-products-quotients/solutions.pdf). Fresh independent correctness/coverage and reference-style/layout reviews, exact checks and every-page inspection passed.
 - **MATH 110 weeks 5–10: not yet regenerated**, previous versions remain rejected; Week 5 is next.

@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-06: Aaron clarified that the goal is ideas, intuition, motivations and reconstructing every LADR result from memory; growing packets were not necessarily better. Revised Week 2 around four shared arguments and short consequences; added the complete two-of-three complement criterion with all implications and a common/missing basis illustration. Current Week 2 is 11 handout pages and 2 unchanged solutions pages. Complete source coverage, exact checks, independent ideas/reference review and every-page inspection passed. Earlier Weeks 1, 3–4 need the same consolidation; the expanding Week 5 draft is paused and unreleased.
+
 - 2026-11-06: Regenerated week of 2026-09-21 (Notes Ch. 7–8, HW4): 14-page handout and 3-page solutions following the supplied PDF. Concrete inverse/change-of-basis proofs, restored textbook examples, interpolation/basis/product/coset illustrations, all homework including corrected optional wording and actual exam/review problems. Exact checks, fresh independent source/reference review and every-page inspection passed.
 
 - 2026-11-06: Regenerated week of 2026-09-14 (Notes Ch. 5–6, HW3): 14-page handout and 2-page solutions following the supplied PDF. Concrete proof motivations, restored actual textbook examples and intermediate calculations, compact kernel/range, matrix-column and transition figures; all homework including optional and real exam Q2. Exact checks, fresh independent source/reference review and every-page inspection passed.
