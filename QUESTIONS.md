@@ -10,5 +10,5 @@
 
 - Removed the two obsolete MATH 110 packet directories requested by Aaron. Preserved all materials and the Weak spots section of the log.
 - Corrected `scripts/build.sh` so an explicitly requested handout or solutions source takes precedence over a template with the same filename, and TeX failures propagate.
-- Completed MATH 110 week of 2026-08-31: handout (10 pages), solutions (2 pages), exact computation checks, independent audit and all-page inspection. Remaining MATH 110 weeks are in progress. Other courses remain blocked on source access.
+- Completed and pushed MATH 110 weeks 1–5 (2026-08-31 through 2026-09-28): paired handouts and solutions, exact computation checks, independent audits and all-page inspections. Week 6 is drafted and under review; weeks 7–10 remain in progress. Other courses remain blocked on source access.
 - Added the two MATH 54 midterm dates supplied in the request; weekly schedules still need the inaccessible source pages.
