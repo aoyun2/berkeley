@@ -96,3 +96,21 @@ u=s.Matrix([a+s.I*b,c+s.I*d]);w=s.Matrix([e0+s.I*f,g+s.I*h])
 mixed=s.expand(ip(u,w));den=sq(w);t=-mixed/den
 assert s.simplify(sq(u+t*w)-sq(u)+s.expand_complex(mixed*s.conjugate(mixed))/den)==0
 print('Week 10 exact checks passed: ON/GS, Fourier, Riesz, complements, projections, sine approximation, pseudoinverse, all HW/practice computations.')
+# Restored actual normalized-monomial example, GS arithmetic and Riesz system.
+unit_only=[1/s.sqrt(2),s.sqrt(R(3,2))*x,s.sqrt(R(5,2))*x*x]
+assert [polyip(t,t) for t in unit_only]==[1,1,1]
+assert polyip(unit_only[0],unit_only[2])==s.sqrt(5)/3
+assert R(1,5)-R(1,2)+R(4,9)-R(1,6)+R(1,36)==R(1,180)
+assert R(2,5)-R(4,9)+R(2,9)==R(8,45)
+G5=2*s.Matrix([[1,R(1,3),R(1,5)],[R(1,3),R(1,5),R(1,7)],[R(1,5),R(1,7),R(1,9)]])
+c5=s.Matrix([s.expand(r5).coeff(x,j) for j in [0,2,4]])
+b5=s.Matrix([0,-4/s.pi**2,-8/s.pi**2+48/s.pi**4])
+assert zero(G5*c5-b5)
+# The mixed-coordinate formula, including conjugation in complex coordinates.
+U=s.Matrix([[1,s.I],[s.I,1]])/s.sqrt(2)
+vec=s.Matrix([1+2*s.I,3]);other=s.Matrix([2,1-s.I])
+a=s.Matrix([ip(vec,U[:,j]) for j in range(2)])
+b=s.Matrix([ip(other,U[:,j]) for j in range(2)])
+assert s.simplify(ip(vec,other)-ip(a,b))==0
+assert ip([1,1],[1,0])==1 and s.Matrix([1,1])-s.Matrix([1,0])==s.Matrix([0,1])
+print('Week10 restored normalized-monomial, GS arithmetic, polynomial Riesz system and mixed-coordinate checks passed.')

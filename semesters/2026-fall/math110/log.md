@@ -2,6 +2,8 @@
 
 ## Regeneration against Aaron's reference packet
 
+- 2026-11-07: Regenerated Week10 (Notes18, HW10):14-page handout and2-page solutions. Shared coefficient/remainder/Gram–Schmidt arguments; restored textbook examples/formulas and explicit Riesz/integral calculations; concrete GS/approximation/pseudoinverse figures. Complete source/HW coverage, exact checks, fresh independent correctness and ideas/reference/layout reviews, and every-page inspection passed. All ten historical MATH110 weeks are now regenerated.
+
 - 2026-11-06: Regenerated Week9 (Notes16–17, HW9):12-page handout and2-page solutions. Shared trace and perpendicular-decomposition arguments, restored textbook orthogonality/Pythagoras/orthonormal trace, explicit polarization and actual attention calculations; full optional notes/HW coverage. Exact checks, fresh independent correctness and ideas/reference/layout reviews, and every-page inspection passed.
 
 - 2026-11-06: Regenerated Week8 (Notes14–15, HW8):14-page handout and2-page solutions. Shared stabilization, splitting, chain and block-count arguments; actual kernel/basis calculations and compact chain/nullity/block illustrations; field conditions corrected. Full source/HW/real-exam coverage, exact checks, fresh independent correctness and ideas/reference/layout reviews, and every-page inspection passed.
