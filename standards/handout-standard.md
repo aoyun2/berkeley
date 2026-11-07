@@ -21,13 +21,13 @@ Aaron's latest goal is to understand the ideas, intuition and motivations and re
 
 For a distinct central argument:
 1. **Statement** in a theorem box, labelled with the notes number and textbook number.
-2. **"Where the proof comes from"** box (`motive`), with labelled lines:
+2. **Explain the choice of argument**, using a green box (`motive`) when it helps. The labels below are optional; they must not become a repeated form to fill in:
    - *Want.* what has to be shown, concretely.
    - *Know.* the facts available that are relevant.
    - *First try.* the obvious attempt and exactly why it fails (when there is one).
    - *Key step.* the idea that works, and why it is the natural thing to try given the above.
    - *Example.* a small case that shows the idea (when it helps).
-   The point is how someone would come up with the proof, not a restatement of it.
+   The point is how someone would come up with the proof, not a restatement of it. Work a small case before introducing index choices when those choices are the difficult step. Show what each operation changes. A sentence such as “choose the smallest nonzero coefficient and apply the right power” does not explain how to discover either choice. Do not put the same proof in the box and again below it.
 3. **Proof as numbered steps**, one or two lines each, each citing what it uses.
 - Results built from parts: give the parts descriptive names that say what they are ("Step B: if b^2 < 4c then dim null p(T) is even") and a *Plan* line saying how they connect. Never bare "Lemma"/"Theorem" inside running text.
 - Never cram reasoning into one paragraph or into small or italic print. Any reason longer than a sentence becomes numbered steps.

@@ -1,5 +1,11 @@
 # Teaching quality for the regenerated backfill
 
+## November 7 correction: the explanation must make the choice understandable
+
+Aaron rejected the current MATH 110 packets again: “this ‘where the proof comes from’ is not adding any value”. The new primary reference is [the newly attached 23-page packet](reference/math110-quiz-minpoly-geneig_1.pdf). Earlier audit passes do not answer this criticism. Pause the other-course backfill while revising MATH 110.
+
+Judge each explanation by the reasoning it supplies, not its labels or colours. Before an abstract index trick, show a small calculation that makes the operation and its purpose visible. Explain why the obvious attempt is insufficient when that is the obstacle. Keep a general proof after the example only to establish what the example cannot establish. Remove repeated goal statements and proof paraphrases. A fresh review must quote the old weak passage and assess the mathematical information added by its replacement, using this new attachment directly.
+
 Read alongside handout-standard.md. Aaron rejected the earlier backfill for opaque language, inadequate figures and vague explanations. Its old audit approvals do not approve it for use. Every existing handout and solutions file must be re-reviewed and revised or regenerated.
 
 The positive reference is Aaron's supplied [quiz packet](reference/math110-quiz-minpoly-geneig.pdf). Read the PDF itself, including the worked computations and the figures on pages 5, 13 and 14. Match its concrete explanations and useful diagrams while retaining the existing rules against metaphors and forward references. The reference is a cumulative review; its later-topic content does not belong in an earlier weekly packet.

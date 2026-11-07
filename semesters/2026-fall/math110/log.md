@@ -61,6 +61,8 @@ The following entries describe the rejected release and its previous checks. The
 
 - 2026-11-06: Backfilled week of 2026-11-02 (Notes Ch. 18, LADR 6B–6C, HW10): 15-page handout and 2-page solutions; exact computation checks, fresh independent source/content review and inspection of every final page passed. Includes all optional homework, deferred orthogonality/trace facts, exact polynomial and sine approximations, Riesz methods and pseudoinverse computations; analytic Fourier/l2 tools are explicitly cited.
 
+- 2026-11-07: Revised Week 8 against the newly attached 23-page reference after Aaron rejected the earlier explanations. Three-vector relation before the general chain-independence proof; explicit lifted-chain relations, kernel stabilization/splitting choices, and finite square-root coefficient calculation. 14-page handout + 2-page solutions; fresh separate source/correctness and teaching/reference reviews, exact computations and every final-page inspection passed. Earlier teaching approval superseded.
+
 ## Weak spots
 - Midterm 2 (26/30): Q2(c) lost points for claiming p(T)v = 0 makes v an eigenvector (counterexample T = diag(1,2), v = (1,1), p = (z-1)(z-2)). Q1(b) part wrong.
 - Time pressure on 50-minute exams.
