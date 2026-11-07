@@ -2,6 +2,8 @@
 
 - 2026-11-07: Backfilled week starting 2026-08-24 (Welcome/Functions, CP1.1–1.3, Discussion0/Lab0/HW1): 10-page handout and separate 3-page solutions. Actual evaluation/frame/output/loop figures, assignment constraints and real Fa25MT1 Q1(a) excerpt. Exact code/property/exhaustive-search checks, fresh independent correctness/coverage and reference/teaching/layout reviews, and inspection of every final page passed after corrections; see the week audit. CP1.4–1.5 complete scheduled coverage remains explicitly Week2. Corrected instructor metadata to John DeNero and Kay Ousterhout from Welcome slide2. Original materials preserved.
 
+- 2026-11-07: Backfilled week starting 2026-08-31 (Control/HOF/Environments, full CP1.4–1.6, Lab1/Discussion1/HW2/Hog P0–P12): 20-page handout and separate 14-page solutions. Compact actual state/frame/alias and Newton-tangent figures; executable code and exact exam skeletons/examples. Checker passes1116 official examples plus16 lecture examples and independent properties. Fresh independent correctness/source and teaching/reference/layout PASS, root and reviewer every-final-page inspections, zero overfull boxes; exact hashes and corrections in audit.md. Lab1Q8 syllabus form requires sign-in; question text unavailable and answers not invented, with additive source evidence saved. Original materials and Weak spots preserved.
+
 ## Weak spots
 
 No graded CS 61A work supplied.
