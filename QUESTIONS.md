@@ -21,7 +21,7 @@ Aaron clarified that the goal is to understand ideas, intuition and motivations 
 - **MATH 110 week 8 (2026-10-19): regenerated**, with a 14-page [handout](semesters/2026-fall/math110/handouts/2026-10-19-generalized-eigenvectors-jordan/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-10-19-generalized-eigenvectors-jordan/solutions.pdf). Explicit kernel/chain/block calculations and compact illustrations, complete source/HW/real-exam coverage, exact checks, both independent reviews and every-page inspection passed.
 - **MATH 110 week 9 (2026-10-26): regenerated**, with a 12-page [handout](semesters/2026-fall/math110/handouts/2026-10-26-trace-inner-products/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-10-26-trace-inner-products/solutions.pdf). Shared trace/perpendicular arguments, restored textbook results and concrete attention illustrations, complete optional/source/HW coverage, exact checks, both independent reviews and every-page inspection passed.
 - **MATH 110 week 10 (2026-11-02): regenerated**, with a 14-page [handout](semesters/2026-fall/math110/handouts/2026-11-02-orthogonality-projections/handout.pdf) and 2-page [solutions](semesters/2026-fall/math110/handouts/2026-11-02-orthogonality-projections/solutions.pdf). Shared coefficient/remainder arguments, explicit GS/Riesz/projection calculations and compact illustrative figures, complete source/HW coverage, exact checks, both independent reviews and every-page inspection passed.
-- CS 61A, STAT 20, MATH 54: validated sources/schedules collected; no handouts built. MATH 110 rework is complete; production now continues in that order, using the supplied PDF as the presentation standard.
+- **CS 61A week 1 (2026-08-24): backfilled**, with a 10-page [handout](semesters/2026-fall/cs61a/handouts/2026-08-24-functions/handout.pdf) and 3-page [solutions](semesters/2026-fall/cs61a/handouts/2026-08-24-functions/solutions.pdf). Actual code/WWPD, frame/evaluation/loop illustrations, every assigned question and real past-exam excerpt; code checks and fresh independent dual reviews/every-page inspection passed. Remaining CS weeks2–11, then STAT20 and MATH54, are in progress.
 
 
 ## Previous MATH 110 release — rejected; revision required
@@ -56,7 +56,7 @@ Source caveats are identified explicitly in the packets: missing linearity hypot
 
 ## Remaining: CS 61A, STAT 20, MATH 54
 
-Network access is now restored: all five supplied course pages returned HTTP 200 in the newly published environment. Source collection has begun, but no new course packets have been produced or committed. Their source caches are preserved locally. This restart first revises MATH 110 weeks 1–10, then proceeds through CS 61A, STAT 20 and MATH 54. The reference packet and explicit release criteria are in `standards/reference/` and `standards/teaching-quality.md`.
+Network access is restored and source caches are preserved. MATH110 weeks1–10 and CS61A week1 have passed the revised release criteria. Continue CS61A weeks2–11, then STAT20 and MATH54. The reference packet and explicit release criteria are in `standards/reference/` and `standards/teaching-quality.md`.
 
 The exact source URLs are:
 
@@ -70,7 +70,7 @@ No lecture topics, week starts, homework exercise lists or inaccessible course m
 
 ## Source collection since internet access was restored
 
-The three remaining courses now have full-term schedules transcribed from their official pages: 15 Monday-based weeks each, with 11 historical weeks from August 24 through November 2. A separate source reviewer checked the dates, assignments, source identities and cached content. This source review does **not** approve any handout or teaching quality. No packets for these courses have been built.
+The three remaining courses now have full-term schedules transcribed from their official pages: 15 Monday-based weeks each, with 11 historical weeks from August 24 through November 2. A separate source reviewer checked the dates, assignments, source identities and cached content. This source review does **not** approve any handout or teaching quality. CS61A week1 is now built and reviewed; the remaining historical packets are pending.
 
 - CS 61A: the Fall 2026 curriculum uses Gleam in the later historical weeks. Official lectures, readings, assignments, starter code, and real exams are cached with provenance. Legacy exam filenames were checked against PDF titles rather than assumed to identify the exam. HW8 and both Project4 specifications for the week starting November2 are not yet published, so that week cannot be claimed to have complete assignment coverage. The optional Hog Strategy Contest is preserved in the schedule.
 - STAT 20: all historical public notes, worksheets, labs, tutorials, embedded R code and relevant source figures are cached. The final is December16, 7–10p.m. The homepage and syllabus disagree about the Quiz4-retake closing date; both dates are retained in the source index. Week2's class-survey CSV and question PDF are private Ed resources; Week10 Arbuthnot Lab questions1–3 require an image only on bCourses. Numerical answers dependent on those missing inputs must not be invented.
