@@ -4,6 +4,8 @@
 
 - 2026-11-07: Backfilled week starting 2026-08-31 (Control/HOF/Environments, full CP1.4–1.6, Lab1/Discussion1/HW2/Hog P0–P12): 20-page handout and separate 14-page solutions. Compact actual state/frame/alias and Newton-tangent figures; executable code and exact exam skeletons/examples. Checker passes1116 official examples plus16 lecture examples and independent properties. Fresh independent correctness/source and teaching/reference/layout PASS, root and reviewer every-final-page inspections, zero overfull boxes; exact hashes and corrections in audit.md. Lab1Q8 syllabus form requires sign-in; question text unavailable and answers not invented, with additive source evidence saved. Original materials and Weak spots preserved.
 
+- 2026-11-07: Backfilled week starting 2026-09-07 (Abstraction/Function Examples, Lab2 Q1–Q8, Discussion2 Q1–Q8, actual lecture-reproduced and Fa26 exams): 13-page handout and separate 7-page solutions. Both authentic ratio demos distinguished; compact actual parent-frame, alias, digit-pair, prime-search and print-wrapper diagrams. Original image-only funsquare question restored. Checker passes52 original lab/discussion examples,45 exact WWPD inputs, original06.py output/doctest and independent digit/cycle/prime/exam checks. Fresh independent correctness/source and teaching/reference/layout PASS, root and reviewer every-final-page inspections, zero overfull boxes; see audit.md for hashes, corrections and source accounting. Quiz1 has no public question sheet; Lab2Q7 survey is closed and its questions/passphrase unavailable, recorded without invented answers. Original materials and Weak spots preserved.
+
 ## Weak spots
 
 No graded CS 61A work supplied.

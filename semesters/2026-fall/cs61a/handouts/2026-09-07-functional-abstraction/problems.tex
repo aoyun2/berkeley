@@ -1,0 +1,151 @@
+\section{Problem set}
+\begin{prob}
+\textbf{Lab 2 Q1: The Truth Will Prevail.} Predict every prompt display, including output effects, returned strings and errors. The session continues after an error. These are the original lab inputs; each blank is an output line.
+\lstinputlisting{short_circuit.txt}
+\hint{Use the short-circuit rule; only not must return a Boolean.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q2: Higher-Order Functions.} Trace the following session. Write FUNCTION for a function value and distinguish the printed lines from returned values.
+\lstinputlisting{hof_wwpd.txt}
+\hint{Follow the current global bindings of cake, more\_cake and chocolate at each call.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q3: Lambda.} Predict each display in this original session. A bare None value produces no display at the interactive prompt.
+\lstinputlisting{lambda_wwpd.txt}
+\hint{Creating a lambda does not execute its expression; count how many argument lists are supplied.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q4: Piecewise.} Return a one-argument function using \py{f(x)} for $x<b$ and \py{g(x)} otherwise. With negate, identity and $b=0$, inputs 6 and $-1$ give 6 and 1.\par
+\hint{Retain f,g,b in the defining frame; make the choice inside the returned function.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q5: Count Cond.} Return a one-argument function counting indices $1\le i\le n$ with \py{condition(n,i)} true. Use it to recover \py{count\_fives}, where \py{sum\_digits(n*i)==5}, and \py{count\_primes}, where \py{is\_prime(i)}. Provided sum\_digits accepts nonnegative integers; provided is\_prime accepts positive integers. Source checks: fives at 10/50 give 1/4; primes at 2/3/4/5/20 give 1/2/2/3/8. The source's initial direct loops also give \py{count\_primes(6)=3} and \py{count\_primes(13)=6}.\par
+\hint{Keep the index and count inside each call of the returned function.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q6: HOF Diagram Practice.} Draw all frames, values, parent links and function objects after this code. There is no submitted code for this question.
+\codeblock{lab_diagram}
+\hint{Evaluate the right side of f=f(g,n) using the old f; then evaluate g's right side before rebinding g.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q7: Week 3 Survey.} The assignment asks you to complete the \href{https://forms.gle/nbhRwerW4MQEWWDB8}{official Week 3 Survey} and place its completion passphrase in the starter's \py{passphrase} string. The form is now closed; its questions and completion passphrase are unavailable here.\par
+\hint{This is a personal administrative submission; the worksheet supplies no answer or passphrase.}
+\end{prob}
+\begin{prob}
+\textbf{Lab 2 Q8 (optional): I Heard You Liked Functions.} Implement \py{cycle(f1,f2,f3)} returning \py{g(n)}, which returns \py{h(x)} applying exactly $n\ge0$ functions in cyclic order f1,f2,f3,f1,\ldots. With add1, times2, add3, source checks are $n,x$: $(0,5)\mapsto5$, $(2,1)\mapsto4$, $(3,2)\mapsto9$, $(4,2)\mapsto10$, $(6,1)\mapsto19$.\par
+\hint{Use the application counter modulo 3 to choose the next function.}
+\end{prob}
+
+Use \py{python3 -m pytest -k piecewise} for the corresponding code test; replace the final name with \py{count\_cond}, \py{cycle} or \py{week3\_survey} as appropriate. For the three WWPD groups use \py{short\_circuit}, \py{hof\_wwpd}, or \py{lambda\_wwpd} with \py{--unlock}. WWPD responses are not submitted. Prepare the submission bundle with the Provenance command in VS Code and upload its zip to Gradescope.
+
+\subsection{Discussion 2}
+\begin{prob}
+\textbf{Q1: Warm Up.} Find \py{result=(lambda x:2*(lambda x:3)(4)*x)(5)}.\par
+\hint{The inner and outer x belong to different calls.}
+\end{prob}
+\begin{prob}
+\textbf{Q2: Teamwork.} Draw the complete environment diagram and determine the final global bindings.
+\codeblock{teamwork}
+\hint{The call to team reads global t=abs; the dream call's local t is separate.}
+\end{prob}
+\begin{prob}
+\textbf{Q3: Make Keeper.} For positive integer $n$, return a function taking cond and printing each integer 1 through $n$ with \py{cond(i)} true, one per line. Source tests at $n=5$: even test prints 2,4; always-true prints 1--5; always-false prints nothing.\par
+\hint{Choose which argument is retained before the scanning function is returned.}
+\end{prob}
+\begin{prob}
+\textbf{Q4: Digit Finder.} For positive integer $k$, return a function giving the $k$th digit from the right of positive integer $x$, or 0 if absent. Retain the given \py{assert k>0}; use a single lambda return expression, no strings or indexing. Source checks $(k,x)=(2,3456),(2,5678),(1,10),(4,789)$ give 5,7,0,0.\par
+\hint{Remove k-1 rightmost digits, then take remainder 10.}
+\end{prob}
+\begin{prob}
+\textbf{Q5: Match Maker.} Return \py{check(x)} testing whether every pair of digits $k$ places apart agrees. Use positive integer $k,x$; no strings/indexing; find\_digit is allowed. Source true cases: $(2,1010),(1,1),(3,123123)$; false: $(2,2010),(1,1010),(1,2111111111111111),(2,123123)$. Fill the source template:
+\begin{lstlisting}
+def match_k(k):
+    def check(x):
+        while x // (10**k) > 0:
+            if ____________________:
+                return ____________
+            x //= 10
+        ___________________________
+    _______________________________
+\end{lstlisting}
+\hint{Compare only pairs with both digits present; one failure is decisive.}
+\end{prob}
+\begin{prob}
+\textbf{Q6 (optional; Spring 2024 MT 1Q1(b)): Which One.} What does \py{which()()} display?
+\codeblock{which}
+\hint{Follow the stored parent and stop at each executed return.}
+\end{prob}
+\begin{prob}
+\textbf{Q7 (optional; Fall 2023 MT 1Q4(b)): Choose Wisely.} A digit test takes an integer 0--9 and returns a Boolean. Return a function that tests whether it is true for every digit of a positive integer. The original last two blanks were multiple choice; here fill the worksheet's blanks:
+\begin{lstlisting}
+def every(t):
+    def digit(n):
+        assert n > 0
+        while n:
+            if ____________________:
+                ___________________
+            n = n // 10
+        return ____________________
+    return ________________________
+\end{lstlisting}
+Source tests: odd-digit predicate gives true for 37511, false for 2023.\par
+\hint{Return false on the first failing digit; reaching zero proves every digit passed.}
+\end{prob}
+\begin{prob}
+\textbf{Q8 (optional; Spring 2024 MT 1Q4(b,c)): Nice Dice.} Fill the count\_if predicate and count\_at\_least argument. The latter blank was multiple choice on the exam. Input $n$ is positive; threshold $k$ is positive.
+\begin{lstlisting}
+def count_if(f):
+    def g(n):
+        count = 0
+        while n:
+            if ____________________:
+                count += 1
+            n = n // 10
+        return count
+    return g
+
+def count_at_least(k):
+    return count_if(_______________)
+\end{lstlisting}
+For 431663334231, count of 3s is 5 and count of digits at least 3 is 9.\par
+\hint{Supply a digit predicate to reuse the existing scan.}
+\end{prob}
+
+\subsection{Actual exam practice}
+\begin{prob}
+\textbf{Fall 2022 MT 1Q4(a), reproduced in Lecture 6 slide 13.} Choose all implementations of funsquare that take one argument f and return a one-argument function computing \py{f(f(x))}. The original example defines \py{triple=lambda x:3*x} and requires \py{funsquare(triple)(5)=45}. The option suffixes below merely distinguish the six separate original alternatives; each was originally named funsquare.
+\codeblock{funsquare}
+\hint{Check both signatures before testing triple(5); defer both calls to f until x arrives.}
+\end{prob}
+\begin{prob}
+\textbf{Fall 2026 MT 1Q2: New Print, p3.} Write every printed line. Run this source code in its own namespace; the display is the same in a file or at the prompt.
+\codeblock{new_print}
+\begin{lstlisting}
+og = print
+print = new_print(print)
+print = new_print(print)
+og('print returned', print(2))
+\end{lstlisting}
+\hint{Name the original print P0 and the two returned functions P1,P2. Record each function's retained print separately.}
+\end{prob}
+\begin{prob}
+\textbf{Fall 2026 MT 1Q4.3: Make Gap, p6 (optional zero-point A+ question).} Use the supplied gap and f helpers. The returned function takes $n$ and term, selects those indices 1 through $n$ with \py{use(i)} true, and returns the largest absolute difference between consecutive selected term values. Assume at least two indices pass and use gives a stable truth result at each index on repeated calls.
+\codeblock{gap_tool}
+\begin{lstlisting}
+def f(use, go, then):
+    y, i = 0, 0
+    while go(y, i):
+        i += 1
+        if use(i):
+            y += 1
+    return then(y, i)
+
+def make_gap(use):
+    return lambda n, term: gap(__________)
+\end{lstlisting}
+No \py{for, :=, [, ], if, else, and, or, map, filter, range} in your answer. Source example: odd indices with $n=8$, \py{term=lambda x:x\%5}, give 1,3,0,2 and result 3.\par
+\hint{Call f once to count selected indices, then use another call to locate the jth selected index.}
+\end{prob}
+\textbf{Continuing assignments.} HW 2 is due September 10, Hog Phase 1 through P5 September 10, full Hog September 17. Their complete statements and solutions are in Week 2; no new homework is assigned this week. Lab 2 is due September 9 at 11:59p.m. Quiz 1 Functions is listed September 8, but no public question sheet is linked.
+
+\textbf{Attribution.} Official Fall 2026 CS 61A lectures, labs, discussions and saved real exams; lecture-reproduced earlier exams are identified above. The supplied code is preserved in the source cache. Exact coverage, execution checks and source limitations are recorded in audit.md.
