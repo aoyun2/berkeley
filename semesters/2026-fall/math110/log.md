@@ -66,3 +66,4 @@ The following entries describe the rejected release and its previous checks. The
 ## Weak spots
 - Midterm 2 (26/30): Q2(c) lost points for claiming p(T)v = 0 makes v an eigenvector (counterexample T = diag(1,2), v = (1,1), p = (z-1)(z-2)). Q1(b) part wrong.
 - Time pressure on 50-minute exams.
+- 2026-11-10: Week 8 (generalized eigenvectors, Jordan form) rebuilt to the revised standard as the quality sample.
