@@ -23,3 +23,4 @@ Create `semesters/<yyyy-term>/<course>/` with `course.toml` (`status = "active"`
 ## Rules
 - Aaron's preferences live in Claude's memory and in the standard; both apply.
 - Never delete Aaron's materials. Never commit secrets.
+- Textbooks are not stored in this repo. Do not add textbook PDFs or text. Work from the lecture notes, homework and exams in `materials/`; if a textbook is needed, tell Aaron which sections and ask him to provide it in the conversation.
