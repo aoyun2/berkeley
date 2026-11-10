@@ -1,161 +1,318 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-\DeclareMathOperator{\im}{range}\DeclareMathOperator{\tr}{tr}
-\title{MATH 110 --- Week 10}
-\subtitle{Notes Chapter 18; Homework 10}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+\title{Math 110 --- Week 10}
+\subtitle{Orthogonality (Notes Ch.~18, LADR 6B--6C, HW10)}
 \author{}\date{}\ihead{}
-\begin{document}\maketitle
-\section{Orthogonal and orthonormal lists}
-\begin{qbox}When do squared lengths add without mixed terms? For $(a,0)$ and $(0,b)$ in the standard product on $\mathbb R^2$, the squared length of their sum is $a^2+b^2$.\end{qbox}
-\begin{prob}\textbf{Tools and conventions.} Throughout, $F=\mathbb R$ or $\mathbb C$, and inner products are linear in the first argument.\begin{itemize}\ii Week 9: $\|v\|^2=\langle v,v\rangle$, $\langle u,av\rangle=\overline a\langle u,v\rangle$, and $|\langle u,v\rangle|\le\|u\|\|v\|$ by solving $\langle u-av,v\rangle=0$ for $a$ and applying the nonnegative squared norm of the remainder. If $\langle u,v\rangle=0$, expansion gives $\|u+v\|^2=\|u\|^2+\|v\|^2$ because both mixed terms vanish. For $u\ne0$, the equation $\langle v-au,u\rangle=0$ uniquely gives $a=\langle v,u\rangle/\|u\|^2$.\ii Weeks 2--5: independent lists extend to bases; dimensions add in a direct sum; finite-dimensional injective maps between equal-dimensional spaces are isomorphisms by rank-nullity.\ii Weeks 6--8: for $T\in L(V)$ with finite-dimensional $V$, polynomial evaluation commutes with $T$; $m_T$ divides every annihilating polynomial by division with remainder; its roots are eigenvalues. Week 7: upper-triangular form means invariant initial spans. It exists iff $m_T$ splits into linear factors over $F$: a product of diagonal shifts successively sends those spans to zero; conversely, a root $\lambda$ gives the smaller invariant subspace $U=\im(T-\lambda I)$, whose triangular basis extends because $Tv=(T-\lambda I)v+\lambda v$. The restriction's minimal polynomial divides $m_T$, since $m_T(T|_U)u=m_T(T)u=0$ for $u\in U$; hence induction preserves splitting.\ii Week 9: trace is the sum of the diagonal in any basis, because cyclic interchange of matrix factors proves invariance under similarity.\end{itemize}\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 46; LADR 6.10, 6.22, 6.27]Vectors $u,v$ are orthogonal, written $u\perp v$, if $\langle u,v\rangle=0$. A list is orthogonal if every two distinct members are orthogonal; its members need not be nonzero unless stated. It is orthonormal if $\langle e_i,e_j\rangle=\delta_{ij}$, where $\delta_{ij}$ is 1 for $i=j$ and 0 otherwise. An orthonormal basis is a vector-space basis which is orthonormal; vector-space basis means every vector is a finite linear combination.\end{definition*}\end{prob}
-\Needspace{14\baselineskip}\begin{proposition*}[Notes Proposition 84; LADR 6.24]For an orthonormal list $e_1,\ldots,e_m$ and scalars $a_j$, $\|\sum_ja_je_j\|^2=\sum_j|a_j|^2$.\end{proposition*}
-\begin{motive}\ii[Want.] Compute a linear combination's length from its coefficients.\ii[Know.] Every cross inner product in an orthonormal list is zero.\ii[Key step.] Expand the finite double sum and retain only diagonal terms.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Sesquilinearity gives $\langle\sum_i a_ie_i,\sum_j a_je_j\rangle=\sum_{i,j}a_i\overline{a_j}\langle e_i,e_j\rangle$.\ii Substitute $\langle e_i,e_j\rangle=\delta_{ij}$ to obtain $\sum_j a_j\overline{a_j}=\sum_j|a_j|^2$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 85; LADR 6.25, 6.28]An orthonormal list is independent. On an $n$-dimensional space, an orthonormal list of length $n$ is therefore an orthonormal basis.\end{proposition*}
+\begin{document}
+\maketitle
+\section{Facts used from earlier weeks}
+$V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Shorthand: ``$S$ kills $v$'' means $Sv=0$, and ``$q$ kills $T$'' means $q(T)=0$. From Week 9: inner products and norms, the orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (LADR 6.13), Pythagoras, and Cauchy--Schwarz.
 
-\begin{prob}\begin{proof}\begin{steps}\ii If $\sum_ja_je_j=0$, Proposition 84 gives $0=\sum_j|a_j|^2$, hence every $a_j=0$.\ii An independent length-$n$ list in dimension $n$ is a basis by Week 2.\end{steps}\end{proof}\end{prob}
-\begin{example*}[LADR 6.23: coordinate and function examples]\begin{steps}\ii The standard coordinate vectors are orthonormal because their dot products are $\delta_{ij}$. The vectors $(1,1,1)/\sqrt3$, $(-1,1,0)/\sqrt2$ and $(1,1,-2)/\sqrt6$ also form an orthonormal basis of $F^3$: their squared norms are 1 and their pairwise dot products are 0.\ii On $[-\pi,\pi]$ with the integral product, the real list $1/\sqrt{2\pi}$, $\cos(kx)/\sqrt\pi$, $\sin(kx)/\sqrt\pi$ for $k=1,2,\ldots$ is orthonormal.\ii Indeed, the product-to-sum trigonometric identities and integration give $\int\cos(kx)\cos(\ell x)=\pi\delta_{k\ell}$, $\int\sin(kx)\sin(\ell x)=\pi\delta_{k\ell}$ and every sine--cosine integral 0 for positive integers $k,\ell$; each integral here is over $[-\pi,\pi]$. Also $\int1=2\pi$ and every nonconstant sine/cosine has integral 0. These calculations use elementary calculus and trigonometric identities.
-\ii On $\mathcal P_2(\mathbb R)$ with the $[-1,1]$ integral product, dividing $1,x,x^2$ by their norms gives $1/\sqrt2,\sqrt{3/2}x,\sqrt{5/2}x^2$. Each has norm 1, but
-\[\left\langle\frac1{\sqrt2},\sqrt{\frac52}x^2\right\rangle
-=\frac{\sqrt5}{2}\int_{-1}^1x^2\,dx=\frac{\sqrt5}{3}\ne0.\]
-Normalization alone therefore does not give an orthonormal list (LADR 6.23(e)).
-\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 86; LADR 6.30]For an orthonormal basis $e_1,\ldots,e_n$, $v=\sum_j\langle v,e_j\rangle e_j$ and $\|v\|^2=\sum_j|\langle v,e_j\rangle|^2$. Also $\langle u,v\rangle=\sum_j\langle u,e_j\rangle\overline{\langle v,e_j\rangle}$ for every $u,v\in V$.\end{proposition*}
+\begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
+  \ii \tool{Rank--nullity.} For linear $T\colon V\to W$: $\dim V=\dim\nul T+\dim\range T$.
+  \why{\begin{steps}
+    \ii Extend a basis $u_1,\dots,u_k$ of $\nul T$ to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. It suffices to show $Tv_1,\dots,Tv_r$ is a basis of $\range T$.
+    \ii Spanning: $T$ of any vector is a combination of the $Tu_i$ (which are $0$) and the $Tv_j$.
+    \ii Independent: if $\sum c_jTv_j=0$, then $\sum c_jv_j\in\nul T$ is a combination of the $u_i$, and independence of the basis of $V$ gives all $c_j=0$.
+  \end{steps}}
+  \ii \tool{Dimension shortcuts.}
+  \begin{enumerate}[(a)]
+    \ii An independent list of $n$ vectors is a basis.
+    \ii A subspace of dimension $n$ is all of $V$.
+    \ii If $U\cap W=\{0\}$ and $\dim U+\dim W=n$, then $V=U\oplus W$.
+    \ii $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a), (b): an independent list extends to a basis, and every basis has length $n$.
+    \ii (c): a basis of $U$ followed by a basis of $W$ is independent (a relation gives $u=-w\in U\cap W=\{0\}$) and has length $n$, so it is a basis by (a).
+    \ii (d): extend a basis $x_1,\dots,x_k$ of $U\cap W$ to a basis $x_i,u_j$ of $U$ and, separately, to a basis $x_i,w_l$ of $W$. Together the $x_i,u_j,w_l$ span $U+W$; it remains to show they are independent.
+    \ii If $x+u+w=0$ ($x,u,w$ combinations of the $x_i$, $u_j$, $w_l$), then $w=-x-u\in U\cap W$, so $w$ is a combination of the $x_i$. The basis $x_i,w_l$ of $W$ is independent, so $w=0$. Then $x+u=0$, and independence of $x_i,u_j$ gives $x=u=0$.
+  \end{steps}}
+  \ii \tool{Products of operators.} If $S,T$ are injective, so is $ST$. So if a product sends some $v\ne0$ to $0$, some factor is not injective.
+  \why{$STv=0\Rightarrow Tv=0\Rightarrow v=0$.}
+  \ii \tool{Polynomials in $T$ commute.} $p(T)q(T)=q(T)p(T)$. Hence $\nul p(T)$ and $\range p(T)$ are $T$-invariant.
+  \why{Both products equal $(pq)(T)$. If $p(T)v=0$, then $p(T)(Tv)=T\,p(T)v=0$. And $T\bigl(p(T)u\bigr)=p(T)(Tu)\in\range p(T)$.}
+  \ii \tool{Fundamental theorem of algebra.} A nonconstant $p\in\PP(\CC)$ factors as $c(z-\lambda_1)\cdots(z-\lambda_m)$ (cited). Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$.
+  \why{Divide $p$ by $z-\lambda$: the remainder is a constant, and evaluating at $\lambda$ shows it equals $p(\lambda)$.}
+  \ii \tool{Eigenvalues.}
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is an eigenvalue $\iff T-\lambda I$ is not injective.
+    \ii If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$.
+    \ii Eigenvectors for distinct eigenvalues are independent (Prop.~54).
+    \ii Over $\CC$ with $V\ne0$, every operator has an eigenvalue.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a) is the definition: $Tv=\lambda v$ with $v\ne0$ means $(T-\lambda I)v=0$ with $v\ne0$.
+    \ii (b): $T^kv=\lambda^kv$ by induction; add up the terms of $p$.
+    \ii (d): take $v\ne0$. The $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $p(T)v=0$ for some $p\ne0$; $p$ is not constant since $v\ne0$.
+    \ii Factor $p=c(z-\lambda_1)\cdots(z-\lambda_m)$ (T5). The product $c(T-\lambda_1I)\cdots(T-\lambda_mI)$ sends $v\ne0$ to $0$, so some $T-\lambda_jI$ is not injective (T3).
+  \end{steps}}
+  \ii \tool{Upper-triangular matrices.} $\MM(T)$ is upper-triangular in $v_1,\dots,v_n$ $\iff$ every $\spn(v_1,\dots,v_j)$ is invariant. Then the eigenvalues of $T$ are the diagonal entries. Over $\CC$ every operator has an upper-triangular matrix.
+  \why{\begin{steps}
+    \ii Column $j$ holds the coordinates of $Tv_j$, so ``upper-triangular'' means $Tv_j\in\spn(v_1,\dots,v_j)$ for every $j$.
+    \ii If $a_{jj}=\lambda$: $T-\lambda I$ maps $\spn(v_1,\dots,v_j)$ into $\spn(v_1,\dots,v_{j-1})$, a smaller space, so it is not injective (T1). So $\lambda$ is an eigenvalue.
+    \ii If no $a_{jj}$ equals $\lambda$: $\MM(T-\lambda I)$ is triangular with nonzero diagonal. Its columns are independent: in a relation, the right-most column used is the only one with a nonzero entry in its own diagonal row. So $T-\lambda I$ is injective.
+    \ii Existence over $\CC$, by induction on $n$: take an eigenvalue $\lambda$ (T6(d)). $U=\range(T-\lambda I)$ is invariant (T4) and $\dim U<n$, since $T-\lambda I$ is not injective (T1).
+    \ii By induction $U$ has a basis $u_1,\dots,u_m$ with every $\spn(u_1,\dots,u_j)$ invariant. Extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_k$ of $V$.
+    \ii $Tv_j=(T-\lambda I)v_j+\lambda v_j\in U+\spn(v_j)\subseteq\spn(u_1,\dots,u_m,v_1,\dots,v_j)$. So every span of an initial part of the list is invariant.
+  \end{steps}}
+\end{enumerate}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Write $v=\sum_ja_je_j$. Then $\langle v,e_k\rangle=\sum_ja_j\langle e_j,e_k\rangle=a_k$. Substitute these coefficients.\ii Apply Proposition 84 to the expansion for the norm formula. Expanding both $u,v$ and using $\langle e_i,e_j\rangle=\delta_{ij}$ gives $\langle u,v\rangle=\sum_j\langle u,e_j\rangle\overline{\langle v,e_j\rangle}$, the mixed-coordinate formula (LADR 6.30(c)).\end{steps}\end{proof}\end{prob}
-\begin{prob}\method{Read coordinates in an orthonormal basis (LADR 6.29, 6.31)}\begin{steps}\ii Use the four columns $e_1=(1,1,1,1)/2$, $e_2=(1,1,-1,-1)/2$, $e_3=(1,-1,-1,1)/2$, $e_4=(-1,1,-1,1)/2$. Direct dot products give the identity matrix of pairwise inner products, hence an orthonormal basis.\ii For $v=(1,2,4,7)$, its four dot products are $7,-4,1,2$, so $v=7e_1-4e_2+e_3+2e_4$.\ii The norm check is $\|v\|^2=1+4+16+49=70=49+16+1+4$, as Proposition 86 predicts.\end{steps}\end{prob}
-\begin{proposition*}[LADR 6.26: Bessel's inequality]For an orthonormal list $e_1,\ldots,e_m$, $\sum_j|\langle v,e_j\rangle|^2\le\|v\|^2$, with equality exactly when $v\in\operatorname{span}(e_1,\ldots,e_m)$.\end{proposition*}
-\begin{motive}\ii[Want.] Bound the coefficients even when the list is not a basis.\ii[Know.] Subtracting the indicated components leaves a vector orthogonal to the list.\ii[Key step.] Seek $u=\sum_ja_je_j$ with $v-u$ perpendicular to every $e_k$. The equations give $0=\langle v,e_k\rangle-a_k$, determining the coefficients. Pythagoras then writes the unused squared norm explicitly as $\|v-u\|^2\ge0$; equality holds just when this remainder is zero.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Put $u=\sum_j\langle v,e_j\rangle e_j$ and $z=v-u$. Taking inner products with $e_k$ gives $\langle z,e_k\rangle=0$; by conjugate linearity, $z\perp u$.\ii Pythagoras and Proposition 84 give $\|v\|^2=\|u\|^2+\|z\|^2=\sum_j|\langle v,e_j\rangle|^2+\|z\|^2$.\ii Equality holds exactly when $z=0$. This implies $v$ lies in the span, and the coefficient formula proves the converse for such $v$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[LADR 8.55: trace in an orthonormal basis]For finite-dimensional $V$, $\tr T=\sum_j\langle Te_j,e_j\rangle$ in any orthonormal basis.\end{proposition*}
+\section{This week}
+\subsection{Orthogonality (Ch.~18)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Proposition 86 applied to $Te_j$ shows its $j$th coordinate is $\langle Te_j,e_j\rangle$.\ii These are precisely the matrix's diagonal entries; summing gives its trace, which is basis independent by Week 9.\end{steps}\end{proof}\end{prob}
-\begin{prob}\textbf{Cited analytic tools for the notes' Fourier aside.}
-For $f(x)=x$ on $[0,1]$, the analytic Fourier/Parseval theorem gives coefficients $c_n=\int_0^1f(x)e^{-2\pi i n x}\,dx$ and the identity $\int_0^1|f(x)|^2\,dx=\sum_{n\in\mathbb Z}|c_n|^2$. The functions $e^{2\pi i n x}$ are orthonormal because $\int_0^1e^{2\pi i(n-m)x}\,dx$ is 1 for $n=m$ and 0 otherwise. Completeness and infinite-series convergence are cited analytic inputs, not consequences of the finite identity above. A Fourier series permits infinite sums and is not a Hamel-basis expansion.
-\end{prob}
-\begin{prob}\method{Apply the cited Parseval theorem (Notes Chapter 18)}\begin{steps}\ii For $f(x)=x$, integration gives $c_0=1/2$. Integration by parts gives $c_n=-1/(2\pi i n)$ for $n\ne0$, since $e^{-2\pi i n}=1$.\ii The corresponding Fourier series is $x=1/2-(2\pi i)^{-1}\sum_{n\ne0}e^{2\pi i n x}/n$ for $0<x<1$ (the interior convergence statement is also a cited Fourier theorem).\ii Parseval gives $1/4+(4\pi^2)^{-1}\sum_{n\ne0}1/n^2=\int_0^1x^2\,dx=1/3$. The terms at $n$ and $-n$ agree, so $\sum_{n=1}^\infty1/n^2=\pi^2/6$.\end{steps}\end{prob}
-\begin{shortcuts}\ii In an orthonormal basis, coordinates are $\langle v,e_j\rangle$ and squared length is their squared-modulus sum.\ii Bessel's inequality detects whether the list accounts for all of a given vector: equality means it lies in the list's span.\end{shortcuts}
-\begin{trapbox}\ii An orthogonal list containing zero need not be independent; the list $(e_1,0)$ is a counterexample. Unit norm excludes zero for orthonormal lists.\ii In a complex space, the Pythagorean equality does not force orthogonality: $u=1,v=i$ give $|1+i|^2=2=|1|^2+|i|^2$, but $\langle1,i\rangle=-i\ne0$.\end{trapbox}
-\section{Gram--Schmidt and orthonormal triangular bases}
-\begin{qbox}How can one turn a basis into an orthonormal basis without changing its initial spans? Starting with $1,x$ on $[0,1]$, subtracting the component $1/2$ from $x$ gives $x-1/2$, orthogonal to 1.\end{qbox}
-\Needspace{18\baselineskip}\begin{proposition*}[Notes Proposition 87; LADR 6.32, 6.35]For an independent list $v_1,\ldots,v_n$, define $r_j=v_j-\sum_{i<j}\langle v_j,e_i\rangle e_i$ and $e_j=r_j/\|r_j\|$, with the empty sum at $j=1$. These vectors are well defined and orthonormal, and their first $j$ spans equal $\operatorname{span}(v_1,\ldots,v_j)$. In particular a finite-dimensional inner-product space has an orthonormal basis.\end{proposition*}
-\begin{motive}\ii[Want.] Orthogonalize one vector while preserving all earlier directions.\ii[Know.] Orthonormal coefficients are obtained by inner products.\ii[First try.] Normalizing alone leaves mixed products: $(1,0)$ and $(1,1)/\sqrt2$ have product $1/\sqrt2$.\ii[Key step.] For $r_j=v_j-\sum_{i<j}a_ie_i$, the conditions $\langle r_j,e_k\rangle=0$ give $a_k=\langle v_j,e_k\rangle$ separately for each $k$. Subtract exactly those components, then normalize. Independence prevents a zero remainder; adding back the subtracted components recovers $v_j$, preserving each initial span.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Induct on $j$. For $j=1$, $v_1\ne0$ and division by its norm produces a unit vector with the same span.\ii Assume the preceding list is orthonormal with the required spans. For $k<j$, $\langle r_j,e_k\rangle=\langle v_j,e_k\rangle-\langle v_j,e_k\rangle=0$.\ii If $r_j=0$, then $v_j$ is in the preceding span, contradicting independence. Thus $e_j$ is defined, unit length, and orthogonal to the preceding list.\ii The formula puts $e_j$ in the first $j$ original span and gives $v_j=\|r_j\|e_j+\sum_{i<j}\langle v_j,e_i\rangle e_i$. Both span inclusions follow, completing the induction.\end{steps}\end{proof}\end{prob}
-\begin{fig}\begin{tikzpicture}[x=1.8cm,y=1.2cm,>=stealth]
-\draw[->,gray](-.2,0)--(2,0);\draw[->,blue,thick](0,0)--(1,1) node[above]{$v_2=(1,1)$};
-\draw[->,red,thick](0,0)--(1,0) node[midway,below]{$\langle v_2,e_1\rangle e_1=(1,0)$};
-\draw[->,green!45!black,thick](1,0)--(1,1) node[midway,right]{$r_2=(0,1)$};\draw(.88,0)--(.88,.12)--(1,.12);
-\end{tikzpicture}\figcap{Starting with $v_1=e_1=(1,0)$, subtract the component along $e_1$ from $v_2$. The remainder is perpendicular and has norm 1, so it is already $e_2$.}\end{fig}
-\begin{prob}\method{Normalize shifted Legendre polynomials (Notes Example 70)}\begin{steps}\ii On $\mathcal P_2(\mathbb C)$ with $\langle p,q\rangle=\int_0^1p\overline q$, start with $1,x,x^2$. Since $\|1\|=1$, $e_1=1$.\ii $r_2=x-\langle x,1\rangle=x-1/2$, with $\|r_2\|^2=\int_0^1(x-1/2)^2\,dx=1/3-1/2+1/4=1/12$. Thus $e_2=\sqrt3(2x-1)$.\ii The coefficients for $x^2$ are $\langle x^2,e_1\rangle=1/3$ and $\langle x^2,e_2\rangle=\sqrt3\int_0^1(2x^3-x^2)\,dx=\sqrt3(1/2-1/3)=\sqrt3/6$. Hence $r_3=x^2-1/3-(2x-1)/2=x^2-x+1/6$.\ii Expanding the integral gives $\|r_3\|^2=1/5-1/2+4/9-1/6+1/36=1/180$, so $e_3=\sqrt5(6x^2-6x+1)$. The three pairwise products and norms give the identity matrix of pairwise inner products.\end{steps}\end{prob}
-\begin{prob}\method{Use unnormalized orthogonal vectors (LADR 6.34; HW10 P1)}\begin{steps}\ii One may first form $u_j=v_j-\sum_{i<j}\langle v_j,u_i\rangle u_i/\|u_i\|^2$, then normalize each $u_j$. This is the same subtraction as Gram--Schmidt because $e_i=u_i/\|u_i\|$.\ii On $[-1,1]$ for $1,x,x^2$, symmetry gives $u_1=1$, $u_2=x$, $u_3=x^2-1/3$, with $\langle x^2,1\rangle=2/3$ and $\|1\|^2=2$, giving the coefficient $1/3$. The squared norms are $2,2/3$ and
-\[\int_{-1}^1(x^2-1/3)^2\,dx=2/5-4/9+2/9=8/45.\]\ii Normalizing gives $1/\sqrt2$, $\sqrt{3/2}\,x$, $\sqrt{5/8}(3x^2-1)$. Their first spans agree with the monomial initial spans.\end{steps}\end{prob}
-\begin{proposition*}[LADR 6.36: extension]Every orthonormal list in a finite-dimensional inner-product space extends to an orthonormal basis.\end{proposition*}
+\begin{qbox}
+  In a general basis, finding coordinates means solving a linear system. If the basis vectors are perpendicular unit vectors, each coordinate is one inner product. We want such bases, a way to build them, and to use them to split spaces into perpendicular pieces.
+\end{qbox}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Extend the independent list to a basis by Week 2.\ii Apply Proposition 87. On each given initial vector, all preceding coefficients are zero and the norm is 1, so it remains unchanged; the full output is the desired basis.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[LADR 6.37--6.38: orthonormal triangular form and Schur's theorem]For finite-dimensional $V$ and $T\in L(V)$, there exists an orthonormal basis in which $T$ has an upper-triangular matrix if and only if $m_T$ splits into linear factors over $F$. In particular this holds for every complex finite-dimensional operator.\end{proposition*}
+\begin{definition*}[Def.~46]
+  $u\perp v$ if $\ip uv=0$. $e_1,\dots,e_m$ is \vocab{orthonormal} if $\ip{e_i}{e_j}=\delta_{ij}$.
+\end{definition*}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Week 7's splitting criterion, recalled in Tools, supplies a triangular basis when $m_T$ splits. Its initial spans are invariant by Week 7.\ii Proposition 87 gives an orthonormal basis with the same initial spans, so its matrix is still upper triangular.\ii Conversely an orthonormal triangular basis is a triangular basis, so Week 7's splitting criterion applies. Over $\mathbb C$, the fundamental theorem of algebra from Week 6 ensures splitting, giving Schur's theorem.\end{steps}\end{proof}\end{prob}
-\begin{prob}\textbf{Orthogonal polynomial context from the notes.} Repeating Gram--Schmidt on the monomials with the $[0,1]$ integral product produces the shifted Legendre family; $[-1,1]$ gives the usual Legendre family. A Gaussian weight on the real line gives the Hermite family. The family identifications and their differential-equation properties are cited classical facts here; the first three Legendre calculations above are explicitly proved.\end{prob}
-\begin{example*}[Notes Chapter 18: no orthogonal Hamel basis in $\ell^2$]Let $\ell^2$ consist of sequences $a$ with $\sum_j|a_j|^2<\infty$, and use $\langle a,b\rangle=\sum_ja_j\overline{b_j}$. A Hamel basis means a vector-space basis with only finite sums allowed. This space has no orthogonal Hamel basis.\begin{steps}\ii Finite Cauchy--Schwarz bounds each partial sum $\sum_{j\le N}|a_jb_j|$ by $(\sum_{j\le N}|a_j|^2)^{1/2}(\sum_{j\le N}|b_j|^2)^{1/2}\le\|a\|\|b\|$. These nonnegative partial sums increase and are bounded, hence converge by the cited bounded-monotone convergence fact. This proves absolute convergence of the product; taking limits of finite Cauchy--Schwarz also proves its infinite version. The standard coordinate sequences are independent, so $\ell^2$ has infinite dimension. We cite the analytic completeness of $\ell^2$: every Cauchy sequence in its norm converges there.\ii Suppose an orthogonal Hamel basis existed. Normalize its nonzero vectors to unit length and choose a countably infinite sublist $e_1,e_2,\ldots$. The partial sums $s_N=\sum_{j=1}^N2^{-j}e_j$ are Cauchy, because Proposition 84 gives $\|s_M-s_N\|^2=\sum_{j=N+1}^M4^{-j}\to0$. Completeness supplies a limit $v\in\ell^2$.\ii For fixed $j$, Cauchy--Schwarz gives $|\langle v-s_N,e_j\rangle|\le\|v-s_N\|\to0$, so $\langle v,e_j\rangle=2^{-j}\ne0$.\ii Any finite expansion in the entire orthonormal family has zero inner product with all but finitely many members of this sublist. Thus it cannot equal $v$, contradicting the Hamel-basis property. The argument applies to a sublist of any cardinal-sized basis.\end{steps}\end{example*}
-\begin{shortcuts}\ii For polynomial Gram--Schmidt, use parity on symmetric intervals before integrating; odd products have zero integral.\ii Delay square roots by forming unnormalized orthogonal remainders, then normalize once at the end.\ii Gram--Schmidt preserves invariant initial spans, so it preserves upper-triangular form.\end{shortcuts}
-\begin{trapbox}\ii Dividing by a zero remainder is invalid. For the dependent input $v_1=(1,0),v_2=(2,0)$, the second remainder is zero; remove dependent inputs before applying the independent-list theorem.\ii Schur form is triangular, and need not be diagonal: $J_2(1)=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$ has no eigenbasis, even though its standard basis is orthonormal and its matrix triangular.\end{trapbox}
-\section{Functionals and orthogonal complements}
-\begin{qbox}How can an inner product represent a linear functional? On $\mathbb C$, $\varphi(z)=iz$ equals $\langle z,-i\rangle$, so conjugating the representative's coefficient is essential.\end{qbox}
-\begin{prob}\begin{definition*}[LADR 6.39]
-A linear functional on $V$ is a linear map $\varphi:V\to F$. The dual space is $V'=L(V,F)$, with pointwise vector operations. In a finite basis, arbitrary values on its vectors determine exactly one functional by linear extension, so $\dim V'=\dim V$.
-\end{definition*}\end{prob}
-\Needspace{18\baselineskip}\begin{proposition*}[Notes Proposition 88; LADR 6.42, 6.58: Riesz representation]On finite-dimensional $V$, every $\varphi\in V'$ has a unique $r\in V$ with $\varphi(u)=\langle u,r\rangle$. The map $\Gamma:V\to V'$, $\Gamma(r)(u)=\langle u,r\rangle$, is a real-linear isomorphism (regarding complex spaces as real). Over $\mathbb C$ it is conjugate-linear, $\Gamma(ar)=\overline a\Gamma(r)$.\end{proposition*}
-\begin{motive}\ii[Want.] Identify each functional with one vector without choosing coordinates permanently.\ii[Know.] A vector orthogonal to itself is zero; the dual has the same dimension.\ii[Key step.] Prove injectivity by evaluating at the proposed representative, then use equal real dimensions.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii First-position linearity makes $\Gamma(r)$ a linear functional. Second-position conjugate linearity gives $\Gamma(ar+bs)=\overline a\Gamma(r)+\overline b\Gamma(s)$, hence real linearity.\ii If $\Gamma(r)=0$, evaluate it at $r$: $0=\langle r,r\rangle$ implies $r=0$. Thus $\Gamma$ is injective.\ii Over $\mathbb R$, $V$ and $V'$ have the same dimension. Over $\mathbb C$, both underlying real dimensions are $2\dim_{\mathbb C}V$. Rank-nullity makes the real-linear injection surjective and proves uniqueness.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Riesz computing formula; LADR 6.43]In an orthonormal basis, the representative is $r=\sum_j\overline{\varphi(e_j)}e_j$.\end{proposition*}
+\begin{proposition*}[Prop.~84--86 / LADR 6.24, 6.25, 6.30]
+  For an orthonormal list: $\|\sum a_ie_i\|^2=\sum|a_i|^2$, and the list is independent. For an orthonormal basis:
+  \[ v=\sum_i\ip v{e_i}e_i,\qquad\|v\|^2=\sum_i|\ip v{e_i}|^2. \]
+\end{proposition*}
+\begin{ideabox}
+Norm: Pythagoras handles two perpendicular vectors, and $a_me_m$ is perpendicular to $a_1e_1+\dots+a_{m-1}e_{m-1}$. So add one term at a time.
 
-\begin{prob}\begin{proof}\begin{steps}\ii If $r=\sum_ja_je_j$, then $\langle e_k,r\rangle=\overline{a_k}$. Thus $a_k=\overline{\varphi(e_k)}$.\ii For $u=\sum_kc_ke_k$, first-position linearity gives $\langle u,r\rangle=\sum_kc_k\varphi(e_k)=\varphi(u)$, verifying the formula.\end{steps}\end{proof}\end{prob}
-\begin{prob}\method{Compute coordinate and polynomial representatives (LADR 6.40--6.41, 6.44)}\begin{steps}\ii For $\varphi(z_1,z_2,z_3)=2z_1-5z_2+z_3$, the standard orthonormal basis gives $r=(2,-5,1)$. If instead $\varphi(z)=iz_1$, its representative is $(-i,0,0)$, because the formula conjugates $i$.\ii For $\varphi(p)=\int_{-1}^1p(x)\cos(\pi x)\,dx$ on $\mathcal P_2(\mathbb R)$, the monomial values are $0,0,-4/\pi^2$, by integration by parts and parity.\ii Seek $r=a+bx+cx^2$. The equations $\langle1,r\rangle=0$, $\langle x,r\rangle=0$, $\langle x^2,r\rangle=-4/\pi^2$ are $2a+2c/3=0$, $2b/3=0$, $2a/3+2c/5=-4/\pi^2$. Solving gives $r=15(1-3x^2)/(2\pi^2)$.\ii On $\mathcal P_5(\mathbb R)$, the same functional from LADR 6.41 has an even representative of degree 4. Writing $r=a+cx^2+ex^4$, the three even-monomial tests give the explicit system
-\[
-2\begin{pmatrix}1&1/3&1/5\\1/3&1/5&1/7\\1/5&1/7&1/9\end{pmatrix}
-\begin{pmatrix}a\\c\\e\end{pmatrix}
-=\begin{pmatrix}0\\-4/\pi^2\\-8/\pi^2+48/\pi^4\end{pmatrix}.
-\]
-Solving gives
-\[r(x)=\frac{105(27-2\pi^2)}{8\pi^4}+\frac{315(4\pi^2-45)}{4\pi^4}x^2+\frac{1575(21-2\pi^2)}{8\pi^4}x^4.\]
-Its products with the odd monomials vanish by parity; the three even products equal the corresponding integrals against $\cos(\pi x)$, verifying all six basis tests.\end{steps}\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 47; LADR 6.46]For any subset $S\subseteq V$, define $S^\perp=\{v:\langle v,s\rangle=0\text{ for every }s\in S\}$. By conjugate symmetry the reversed inner products also vanish. For a subspace $U$, this is its orthogonal complement.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Definition 47; LADR 6.48: complement properties]$S^\perp$ is a subspace and equals $(\operatorname{span}S)^\perp$. Also $\{0\}^\perp=V$, $V^\perp=\{0\}$; $S\cap S^\perp\subseteq\{0\}$ for any subset $S$, with equality when $S$ is a subspace; and $S\subseteq T$ implies $T^\perp\subseteq S^\perp$.\end{proposition*}
+Independence: If $\sum a_ie_i=0$, its norm $\sqrt{\sum|a_i|^2}$ is $0$, so every $a_i=0$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii If $v,w$ are orthogonal to every $s$, then $\langle av+bw,s\rangle=a0+b0=0$; zero also satisfies the equations. Thus $S^\perp$ is a subspace.\ii If $v$ is orthogonal to each $s\in S$, conjugate linearity makes it orthogonal to every finite combination of the $s$. This proves the span equality.\ii Zero is orthogonal to all vectors; a vector orthogonal to all of $V$, or one in $S\cap S^\perp$, is orthogonal to itself and therefore zero.\ii More vectors in $T$ impose at least all the equations imposed by $S\subseteq T$, proving the reversed inclusion.\end{steps}\end{proof}\end{prob}
-\Needspace{18\baselineskip}\begin{proposition*}[Notes Proposition 89; LADR 6.49, 6.51]For a finite-dimensional subspace $U$ of any inner-product space $V$, $V=U\oplus U^\perp$. If $V$ is finite-dimensional, $\dim U^\perp=\dim V-\dim U$.\end{proposition*}
+Coordinates: To find $a_k$ in $v=\sum a_ie_i$, take the inner product with $e_k$: the terms with $i\ne k$ give $0$, and the $k$-th gives $a_k$. This is the reason to want orthonormal bases: coordinates without solving a linear system.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $e_m\perp a_1e_1+\dots+a_{m-1}e_{m-1}$, so Pythagoras adds $|a_m|^2$; induct.
+    \ii $\sum a_ie_i=0\Rightarrow\sum|a_i|^2=0\Rightarrow$ all $a_i=0$.
+    \ii If $v=\sum a_ie_i$, then $\ip v{e_k}=\sum a_i\ip{e_i}{e_k}=a_k$.
+  \end{steps}
+\end{proof}
+\needspace{7\baselineskip}\textbf{Parseval} (infinite-dimensional version): for $f(x)=\sum c_ne^{2\pi inx}$ on $[0,1]$, $\sum|c_n|^2=\int_0^1|f|^2$. With $f(x)=x=\frac12-\frac1{2\pi i}\sum_{n\ne0}\frac1ne^{2\pi inx}$ this gives $\frac14+\frac1{4\pi^2}\sum_{n\ne0}\frac1{n^2}=\frac13$, so $\sum_{n\ge1}\frac1{n^2}=\frac{\pi^2}6$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii Choose an orthonormal basis $e_1,\ldots,e_m$ of $U$, explicitly using Proposition 87. For $v\in V$ put $u=\sum_j\langle v,e_j\rangle e_j$.\ii For every $k$, $\langle v-u,e_k\rangle=0$, so $v-u\in U^\perp$ by the span property. Thus $v=u+(v-u)$ is in the sum.\ii The zero intersection proves directness and uniqueness. When $V$ is finite-dimensional, the direct-sum dimension formula gives the stated dimension.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 90; LADR 6.52, 6.54]For finite-dimensional $U$, $(U^\perp)^\perp=U$. In particular $U^\perp=\{0\}$ exactly when $U=V$. In finite-dimensional $V$, for subspaces $U,W$, $(U+W)^\perp=U^\perp\cap W^\perp$ and $(U\cap W)^\perp=U^\perp+W^\perp$.\end{proposition*}
+\begin{theorem*}[Prop.~87 / LADR 6.32: Gram--Schmidt]
+  For independent $v_1,\dots,v_n$: $e_1=v_1/\|v_1\|$, and for $j\ge2$
+  \[ w_j=v_j-\sum_{k<j}\ip{v_j}{e_k}e_k,\qquad e_j=w_j/\|w_j\|. \]
+  Then $e_1,\dots,e_n$ is orthonormal and $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
+\end{theorem*}
+\begin{ideabox}
+To show: Orthonormal $e_1,\dots,e_n$ with $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii Conjugate symmetry gives $U\subseteq(U^\perp)^\perp$. If $v$ belongs to the latter, decompose $v=u+w$ with $u\in U,w\in U^\perp$. Then $w=v-u$ also belongs to $(U^\perp)^\perp$, so $\langle w,w\rangle=0$ and $w=0$.\ii This proves equality. If $U^\perp=0$, take complements to get $U=\{0\}^\perp=V$; the converse follows from $V^\perp=0$.\ii A vector is orthogonal to every $u+w$ exactly when it is orthogonal separately to $U$ and $W$ (set one summand zero, then use conjugate linearity). This proves the sum identity.\ii Apply the sum identity to $U^\perp,W^\perp$ and then take complements. In finite-dimensional $V$ every subspace involved is finite-dimensional, so the double-complement equalities give the intersection identity.\end{steps}\end{proof}\end{prob}
-\method{Compute a complement by equations (LADR 6.47)}\begin{steps}\ii In $\mathbb R^3$, the complement of the point set $\{(2,3,5)\}$ is the plane $2x+3y+5z=0$, by its defining dot product. The plane's complement is the line $\mathbb R(2,3,5)$: the vector belongs to it, and the dimension formula gives dimension 1. More generally in $\mathbb R^3$, the complement of a plane through zero is a perpendicular line, and the complement of a line through zero is a perpendicular plane, since $\dim U^\perp=3-\dim U$.\ii In $F^5$, the coordinate plane $U=\{(a,b,0,0,0)\}$ has $U^\perp=\operatorname{span}(e_3,e_4,e_5)$, since orthogonality to $e_1,e_2$ sets the first two coordinates to zero.\ii If an orthonormal basis is $e_1,\ldots,e_m,f_1,\ldots,f_k$, the same coefficient test gives $\operatorname{span}(e_1,\ldots,e_m)^\perp=\operatorname{span}(f_1,\ldots,f_k)$.\end{steps}
-\begin{prob}\method{Use the kernel complement to find a representative (LADR 6.58)}
-Any representative must be perpendicular to $\ker\varphi$, since its inner product with every kernel vector is zero. For nonzero $\varphi$, rank--nullity and the complement dimension formula make this perpendicular space one-dimensional. Thus choose one nonzero vector in it and determine its scalar multiple.
-\begin{steps}\ii For nonzero $\varphi$, choose $w\ne0$ in $(\ker\varphi)^\perp$, possible because the finite-dimensional kernel is proper and has a complementary nonzero space. Then $\varphi(w)\ne0$, since the kernel meets its complement only at zero.\ii For any $u$, the vector $u-\varphi(u)w/\varphi(w)$ is in the kernel and orthogonal to $w$. Thus $\langle u,w\rangle=\varphi(u)\|w\|^2/\varphi(w)$.\ii Therefore $r=\overline{\varphi(w)}w/\|w\|^2$ satisfies $\langle u,r\rangle=\varphi(u)$; for $\varphi=0$ use $r=0$. For example $\varphi(x,y)=2x-y$ has kernel $\mathbb R(1,2)$, choose $w=(2,-1)$, and obtain $r=5w/5=(2,-1)$.\end{steps}\end{prob}
-\begin{prob}\textbf{Annihilators and complements.} In finite dimension, $\Gamma$ from Proposition 88 identifies $U^\perp$ with the annihilator $U^0=\{\varphi\in V':\varphi(u)=0\text{ for every }u\in U\}$ from Week 5: $\Gamma(v)(u)=\langle u,v\rangle=0$ for all $u\in U$ exactly when $v\in U^\perp$. This is a real-linear identification over $\mathbb C$, with the same underlying conjugate-linear convention as $\Gamma$.\end{prob}
-\begin{shortcuts}\ii Test orthogonality against a basis of the subspace; linearity extends the zero equations to every vector.\ii Use a full orthonormal basis extending one for $U$; its remaining vectors give a basis of $U^\perp$.\ii In a complex Riesz calculation conjugate the functional's values on an orthonormal basis.\end{shortcuts}
-\begin{trapbox}\ii Complex $\Gamma$ is not complex-linear: $\Gamma(ir)=-i\Gamma(r)$. For $\varphi(z)=iz$, the representative is $-i$, not $i$.\ii Complement reverses sums: for the two coordinate lines in $\mathbb R^2$, $(U\cap W)^\perp=\mathbb R^2$, whereas $U^\perp\cap W^\perp=\{0\}$.\end{trapbox}
-\section{Orthogonal projections and best approximation}
-\begin{qbox}Which vector in a subspace is closest to a given vector? For $v=(2,3)$ and $U=\mathbb R(1,0)$, the closest point is $(2,0)$, with orthogonal error $(0,3)$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 48; LADR 6.55]For finite-dimensional $U$, write the unique decomposition $v=u+w$ with $u\in U,w\in U^\perp$. The orthogonal projection onto $U$ is $P_Uv=u$. A projector is a linear operator $P$ with $P^2=P$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 91]Every projector satisfies $V=\ker P\oplus\im P$. It is the projection onto its range along its kernel.\end{proposition*}
+For a unit vector $e$, $v-\ip ve\,e\perp e$ (LADR 6.13 with $\|e\|=1$). Subtracting a combination of $e_1,\dots,e_{j-1}$ from $v_j$ does not change the span of $e_1,\dots,e_{j-1},v_j$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii $P(v-Pv)=Pv-P^2v=0$, so $v-Pv\in\ker P$ and $Pv\in\im P$. Thus the two subspaces sum to $V$.\ii If $w=Pv\in\ker P$, then $w=P^2v=P(Pv)=Pw=0$, so the intersection is zero. On its range $P$ is identity; on its kernel it is zero, identifying the projection.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 92; LADR 6.57: orthogonal projection properties]The map $P_U$ is linear, has range $U$ and kernel $U^\perp$, fixes $U$, and is zero on $U^\perp$. Also $P_U^2=P_U$, $v-P_Uv\in U^\perp$, and $\|P_Uv\|\le\|v\|$. For an orthonormal basis $e_1,\ldots,e_m$ of $U$, $P_Uv=\sum_j\langle v,e_j\rangle e_j$. It is the unique projector with range $U$ and kernel $U^\perp$.\end{proposition*}
+Build one vector at a time: from $v_j$ subtract its component $\ip{v_j}{e_k}e_k$ along each earlier $e_k$. Since the earlier $e_k$ are perpendicular to each other, the subtraction for $e_k$ does not change the inner products with the other $e_i$. Then divide by the length.
 
-\begin{prob}\begin{proof}\begin{steps}\ii For $v_i=u_i+w_i$ and scalars $a,b$, $av_1+bv_2=(au_1+bu_2)+(aw_1+bw_2)$ is the unique decomposition. Thus $P_U(av_1+bv_2)=aP_Uv_1+bP_Uv_2$.\ii The decompositions $u=u+0$ and $w=0+w$ show that the map fixes $U$ and is zero on $U^\perp$, giving range, kernel and idempotence. The definition gives $v-P_Uv\in U^\perp$.\ii Since $\langle v,e_j\rangle=\langle P_Uv,e_j\rangle$, Proposition 86 on $U$ gives the stated coefficient formula.\ii Pythagoras gives $\|v\|^2=\|P_Uv\|^2+\|v-P_Uv\|^2\ge\|P_Uv\|^2$, proving the norm bound.\ii Any projector with that range/kernel fixes its range by idempotence and is zero on its kernel. Thus its value at $u+w$ must be $u$, proving uniqueness.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Chapter 18; LADR 6.56]\begin{steps}\ii For $U=Fu$ with $u\ne0$, normalize $e=u/\|u\|$ in Proposition 92 to get $P_Uv=\langle v,u\rangle u/\|u\|^2$.\ii On $\mathbb R^2$, the notes' $P(x,y)=(0,y)$ is the orthogonal projection onto $\mathbb Re_2$, with kernel $\mathbb Re_1$. In contrast $N(x,y)=(y,0)$ has $N^2=0$ and is not a projector since $N\ne0$.\end{steps}\end{example*}
-\begin{prob}\method{Project a polynomial (Notes Example 71)}\begin{steps}\ii On $[0,1]$ project $x^3$ onto $U=\operatorname{span}(1,x)$ using the orthonormal basis $1,\sqrt3(2x-1)$ from Example 70.\ii The coefficients are $\int_0^1x^3\,dx=1/4$ and $\sqrt3\int_0^1(2x^4-x^3)\,dx=\sqrt3(2/5-1/4)=3\sqrt3/20$, so $P_Ux^3=1/4+(3\sqrt3/20)\sqrt3(2x-1)=9x/10-1/5$.\ii Testing the residual against $1,x$ gives $1/4-9/20+1/5=0$ and $1/5-3/10+1/10=0$, confirming the remainder is orthogonal to $U$. It is therefore also orthogonal to the projected polynomial.\end{steps}\end{prob}
-\begin{prob}\method{Project using any basis, without orthonormalizing}\begin{steps}\ii For a basis $u_1,\ldots,u_m$ of $U$, solve $\sum_jc_j\langle u_j,u_i\rangle=\langle v,u_i\rangle$ for each $i$. The equations say $v-\sum_jc_ju_j\in U^\perp$, so their solution gives $P_Uv=\sum_jc_ju_j$.\ii The coefficient matrix is invertible: a solution of the homogeneous system would give a vector in $U\cap U^\perp=0$, whose basis coefficients are all zero. Finite-dimensional invertibility then gives a unique solution.\ii For the preceding example with $u_1=1,u_2=x$, the system is $c_1+c_2/2=1/4$, $c_1/2+c_2/3=1/5$. It gives $(c_1,c_2)=(-1/5,9/10)$, matching the orthonormal calculation.\end{steps}\end{prob}
-\Needspace{18\baselineskip}\begin{proposition*}[LADR 6.61: best approximation]For finite-dimensional $U$, $\|v-P_Uv\|\le\|v-u\|$ for all $u\in U$, with equality exactly when $u=P_Uv$.\end{proposition*}
-\begin{motive}\ii[Want.] Prove a global minimum and its uniqueness.\ii[Know.] The residual $v-P_Uv$ is orthogonal to $U$.\ii[Key step.] Compare an arbitrary $u\in U$ with $P_Uv$: $v-u=(v-P_Uv)+(P_Uv-u)$. The first term is fixed and perpendicular to the second, so Pythagoras makes every change of candidate add the nonnegative squared term $\|P_Uv-u\|^2$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Write $v-u=(v-P_Uv)+(P_Uv-u)$; the two terms are orthogonal, because the first is in $U^\perp$ and the second in $U$.\ii Pythagoras gives $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$. The last term is nonnegative and is zero exactly at $u=P_Uv$, proving both claims.\end{steps}\end{proof}\end{prob}
-\begin{fig}\begin{tikzpicture}[x=1.5cm,y=.8cm,>=stealth]
-\draw[->,gray](-.2,0)--(4,0)node[right]{$U$};\coordinate(p)at(2,0);\coordinate(v)at(2,3);\coordinate(u)at(.5,0);
-\fill(u)circle(1.5pt)node[below]{$u$};\fill(p)circle(1.5pt)node[below]{$P_Uv=(2,0)$};\fill(v)circle(1.5pt)node[above]{$v=(2,3)$};
-\draw[->,blue,thick](u)--(p)node[midway,above]{$P_Uv-u$};
-\draw[->,red,thick](p)--(v)node[midway,right]{$v-P_Uv$};
-\draw[->,green!45!black,thick](u)--(v)node[midway,left]{$v-u$};\draw(1.85,0)--(1.85,.2)--(2,.2);
-\end{tikzpicture}\figcap{For any candidate $u\in U$, $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$. Changing $u$ adds the squared horizontal term to the fixed perpendicular error.}\end{fig}
-\method{Best degree-5 sine approximation (LADR 6.63)}\begin{steps}\ii In the real space $C[-\pi,\pi]$ of continuous real-valued functions with $\langle f,g\rangle=\int_{-\pi}^\pi fg$, project $\sin x$ onto $\mathcal P_5(\mathbb R)$. Odd and even polynomials are orthogonal by parity, and $\sin x$ is orthogonal to every even polynomial, so the projection has the form $c_1x+c_3x^3+c_5x^5$.\ii For $r,s\in\{1,3,5\}$ the coefficient matrix entries are $G_{rs}=2\pi^{r+s+1}/(r+s+1)$. Integration by parts gives the right side $b=(2\pi,2\pi(\pi^2-6),2\pi(\pi^4-20\pi^2+120))^{\mathsf T}$. Solve $Gc=b$ as in the preceding method.\ii The exact solution is
-\begin{align*}c_1&=\frac{105(\pi^4-153\pi^2+1485)}{8\pi^6},\\c_3&=-\frac{315(\pi^4-125\pi^2+1155)}{4\pi^8},\\c_5&=\frac{693(\pi^4-105\pi^2+945)}{8\pi^{10}}.\end{align*}
-\ii Thus the best polynomial is approximately $0.987862136x-0.155271411x^3+0.005643118x^5$. It minimizes the squared integral error by LADR 6.61; its value is about $0.000116169$.\ii The degree-5 Taylor polynomial $x-x^3/6+x^5/120$ has squared integral error about $0.118702$ on this interval. At $x=3$ the absolute errors are respectively about $0.001416$ and $0.383880$, illustrating the difference between approximation over an interval and matching derivatives at a point.\end{steps}
-\begin{fig}\begin{tikzpicture}\begin{axis}[width=.87\linewidth,height=5.5cm,domain=-3.141592654:3.141592654,samples=160,xlabel={$x$},ymin=-1.2,ymax=1.2,legend style={at={(.5,-.28)},anchor=north,legend columns=3,font=\small}]\addplot[red,thick]{sin(deg(x))};\addlegendentry{$\sin x$}\addplot[blue,dashed,thick]{.9878621356*x-.1552714106*x^3+.005643117976*x^5};\addlegendentry{best degree 5}\addplot[black,dotted,thick]{x-x^3/6+x^5/120};\addlegendentry{Taylor degree 5}\end{axis}\end{tikzpicture}\figcap{The best polynomial approximates sine over the entire interval in squared integral error. The Taylor polynomial matches derivatives at zero. At $x=3$, the absolute errors are $0.001416$ for the best polynomial and $0.383880$ for Taylor.}\end{fig}
-\begin{shortcuts}\ii For a line, divide by $\|u\|^2$ when the spanning vector is not normalized.\ii A candidate projection is verified by membership in $U$ and an orthogonal residual; uniqueness follows from the direct sum.\ii A general basis gives a square system of inner-product equations, avoiding square roots from orthonormalization.\end{shortcuts}
-\begin{trapbox}\ii A projector need not be orthogonal: $P(x,y)=(x+y,0)$ has $P^2=P$ but range $\mathbb Re_1$ and kernel $\mathbb R(-1,1)$ are not orthogonal. It sends $(1,1)$ to $(2,0)$, increasing norm from $\sqrt2$ to 2.\ii Omitting the denominator for a nonunit line vector gives a wrong projection: for $u=(2,0)$ and $v=(1,1)$, $\langle v,u\rangle u=(4,0)$, whereas dividing by $\|u\|^2=4$ gives $(1,0)$.\end{trapbox}
-\section{Pseudoinverse and least-squares solutions}
-\begin{qbox}How can one select a best approximate solution when a linear system is inconsistent? For $T(a,b,c,d)=(a+b+c,2c+d,0)$, a target $(x,y,z)$ with $z\ne0$ cannot be attained, but $(x,y,0)$ can.\end{qbox}
-\Needspace{18\baselineskip}\begin{proposition*}[LADR 6.67]For finite-dimensional $V$ and $T\in L(V,W)$ between inner-product spaces, the restriction $T|_{(\ker T)^\perp}:(\ker T)^\perp\to\im T$ is an isomorphism.\end{proposition*}
-\begin{motive}\ii[Want.] Obtain an invertible map from an arbitrary linear map.\ii[Know.] The kernel has an orthogonal complement and their direct sum is $V$.\ii[Key step.] If $v=k+u$ with $k\in\ker T$ and $u\in(\ker T)^\perp$, then $Tv=Tu$. Restricting to these $u$ therefore keeps every range value while removing the entire kernel ambiguity. Two such preimages can differ only by a vector in $\ker T\cap(\ker T)^\perp=\{0\}$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii A vector in the restriction's kernel belongs to both $\ker T$ and its orthogonal complement, so is zero. Thus the restriction is injective.\ii If $w=Tv$, decompose $v=k+u$ with $k\in\ker T$ and $u\in(\ker T)^\perp$. Then $Tu=Tv=w$, proving surjectivity onto $\im T$.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[LADR 6.68]For such $T$, its pseudoinverse is the linear map $T^\dagger:W\to V$ given by $T^\dagger=(T|_{(\ker T)^\perp})^{-1}P_{\im T}$. The projection exists because $\im T$ is finite-dimensional. Thus $T^\dagger w=0$ on $(\im T)^\perp$; for $w\in\im T$, it is the unique preimage in $(\ker T)^\perp$, directly by the projection and restricted inverse.\end{definition*}\end{prob}
-\begin{proposition*}[LADR 6.69]If $T$ is invertible, $T^\dagger=T^{-1}$. In general $TT^\dagger=P_{\im T}$ and $T^\dagger T=P_{(\ker T)^\perp}$. Consequently surjective $T$ has $TT^\dagger=I$, and injective $T$ has $T^\dagger T=I$.\end{proposition*}
+Only risk: $w_j=0$, which would put $v_j$ in $\spn(v_1,\dots,v_{j-1})$; independence rules it out.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $w_j=0$, then $v_j\in\spn(e_1,\dots,e_{j-1})=\spn(v_1,\dots,v_{j-1})$, contradicting independence.
+    \ii For $k<j$: $\ip{w_j}{e_k}=\ip{v_j}{e_k}-\ip{v_j}{e_k}=0$. And $\|e_j\|=1$.
+    \ii $e_j\in\spn(v_1,\dots,v_j)$, so the spans are nested; both have dimension $j$, so they are equal.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Every finite-dimensional inner product space has an orthonormal basis; every orthonormal list extends to one (extend to a basis, then Gram--Schmidt; the first vectors do not change) (LADR 6.35, 6.36).
+  \ii An orthonormal list of length $\dim V$ is an orthonormal basis (Prop.~85, T2).
+  \ii If the $v_j$ are dependent, $w_j=0$ exactly when $v_j\in\spn(v_1,\dots,v_{j-1})$: skip it and continue.
+  \ii \textbf{Schur (LADR 6.38):} over $\CC$, $T$ is upper-triangular in some \emph{orthonormal} basis. Take a triangular basis (T7) and apply Gram--Schmidt: it keeps the spans $\spn(v_1,\dots,v_j)$, which are invariant, so the matrix stays triangular.
+\end{itemize}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Applying $T$ after its restricted inverse gives $TT^\dagger w=P_{\im T}w$.\ii For $v=k+u$ with $k\in\ker T$ and $u\in(\ker T)^\perp$, $Tv=Tu\in\im T$. The restricted inverse gives $T^\dagger Tv=u=P_{(\ker T)^\perp}v$.\ii If $T$ is invertible, its kernel is zero and its range is $W$, so the definition reduces to $T^{-1}$. In the surjective or injective cases the corresponding projection is the identity, proving the final claims.\end{steps}\end{proof}\end{prob}
-\Needspace{18\baselineskip}\begin{proposition*}[LADR 6.70]For $b\in W$, the vector $x_0=T^\dagger b$ minimizes $\|Tx-b\|$. Every minimizer is $x_0+k$, $k\in\ker T$. Among these minimizers, $x_0$ is the unique one with least norm.\end{proposition*}
+\begin{example*}[Ex.~70: Gram--Schmidt on $\PP_2$, $\ip pq=\int_0^1p\bar q$]
+  \begin{steps}
+    \ii $\|1\|=1$: $e_1=1$.
+    \ii $w_2=x-\ip x1=x-\frac12$, $\|w_2\|^2=\frac1{12}$: $e_2=\sqrt3(2x-1)$.
+    \ii $w_3=x^2-\frac13-\frac12(2x-1)=x^2-x+\frac16$, $\|w_3\|=\frac1{6\sqrt5}$: $e_3=\sqrt5(6x^2-6x+1)$.
+  \end{steps}
+  Order of work: $w_j$, then $\|w_j\|^2$, then divide. Check $w_j\perp$ the earlier $e$'s. (These are the shifted Legendre polynomials; on $[-1,1]$, HW10 P1, the Legendre polynomials.)
+\end{example*}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Decompose $Tx-b=(Tx-P_{\im T}b)+(P_{\im T}b-b)$. The first term lies in $\im T$, the second in its orthogonal complement.\ii Pythagoras gives $\|Tx-b\|^2=\|Tx-P_{\im T}b\|^2+\|P_{\im T}b-b\|^2$. The minimum occurs exactly when $Tx=Tx_0$, equivalently $x-x_0\in\ker T$.\ii For $x=x_0+k$ with $k\in\ker T$, orthogonality gives $\|x\|^2=\|x_0\|^2+\|k\|^2$, minimized uniquely at $k=0$.\end{steps}\end{proof}\end{prob}
-\begin{prob}\method{Compute the pseudoinverse by equations (LADR 6.71)}\begin{steps}\ii For $T:F^4\to F^3$, $T(a,b,c,d)=(a+b+c,2c+d,0)$, the range is the first coordinate plane. Its projection sends $(x,y,z)$ to $(x,y,0)$. Solving $T(a,b,c,d)=0$ gives the kernel basis $(-1,1,0,0),(-1,0,1,-2)$.\ii The least-norm preimage of $(x,y,0)$ satisfies the image equations $a+b+c=x$, $2c+d=y$, and the two orthogonality equations $-a+b=0$, $-a+c-2d=0$.\ii Solving gives
-\[T^\dagger(x,y,z)=\frac1{11}(5x-2y,\ 5x-2y,\ x+4y,\ -2x+3y).\]
-\ii For example at $(1,2,3)$ this is $(1,1,9,4)/11$, whose image is $(1,2,0)$ and residual norm is 3. Every other minimizer adds a vector in the displayed kernel, increasing squared norm by that vector's squared norm.\end{steps}\end{prob}
-\begin{fig}\begin{tikzpicture}[>=stealth]
-\node(a)at(0,0){$(1,2,3)$};\node(b)at(3.7,0){$(1,2,0)$};\node(c)at(8.4,0){$(1,1,9,4)/11$};
-\draw[->](a)--node[above]{$P_{\im T}$}(b);\draw[->](b)--node[above]{inverse restriction}(c);
-\end{tikzpicture}\figcap{For the displayed map, first select the closest attainable target (residual norm 3), then its unique preimage perpendicular to the kernel. Adding a nonzero kernel vector keeps the image but increases the squared norm.}\end{fig}
-\begin{shortcuts}\ii To compute $T^\dagger b$, project $b$ to the range, solve the image equation, and impose orthogonality to a kernel basis.\ii All least-squares solutions differ by a kernel vector, because their images equal the unique best range approximation.\end{shortcuts}
-\begin{trapbox}\ii A pseudoinverse is defined even when an inverse is not: the displayed $T$ is neither injective nor surjective.\ii $TT^\dagger$ need not be identity: in this example it sends $(0,0,1)$ to zero, because that vector lies outside the range.\end{trapbox}
+\begin{proposition*}[Prop.~88 / LADR 6.42, 6.58: Riesz representation]
+  For finite-dimensional $V$, every $\psi\in V'$ is $\psi(u)=\ip uv$ for a unique $v$. In an orthonormal basis, $v=\sum_j\overline{\psi(e_j)}e_j$.
+\end{proposition*}
+\begin{ideabox}
+To show: A vector $v$ with $\psi(u)=\ip uv$ for all $u$.
+
+On $\RR^n$ a functional is $\psi(u)=a\cdot u$ for a row vector $a$, so $v=a$. A linear functional is determined by its values on a basis.
+
+Write the unknown $v=\sum a_je_j$ in an orthonormal basis and test on $e_i$: $\ip{e_i}v=\bar a_i$ must equal $\psi(e_i)$. So $a_i=\overline{\psi(e_i)}$, and this $v$ works because both sides agree on a basis.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii With $v=\sum\overline{\psi(e_j)}e_j$: $\ip{e_i}v=\psi(e_i)$. Two linear functionals equal on a basis are equal.
+    \ii Unique: if $\ip uv=\ip u{v'}$ for all $u$, take $u=v-v'$ to get $\|v-v'\|^2=0$.
+  \end{steps}
+  (The notes use $\Gamma(v)=\ip-v$: real-linear, not complex-linear since $\Gamma(iv)=-i\Gamma(v)$, injective, and $\dim_\RR V=\dim_\RR V'$.)
+\end{proof}
+
+\begin{definition*}[Def.~47 / LADR 6.46, 6.47]
+  $U^\perp=\{v:\ip vu=0\text{ for all }u\in U\}$, a subspace (linearity in the first slot).
+\end{definition*}
+\begin{itemize}
+  \ii $\{0\}^\perp=V$; $V^\perp=\{0\}$; $U\cap U^\perp=\{0\}$ (a vector perpendicular to itself is $0$).
+  \ii $U\subseteq W\Rightarrow W^\perp\subseteq U^\perp$.
+  \ii $(U+W)^\perp=U^\perp\cap W^\perp$ (perpendicular to all $u+w$ iff to all $u$ and all $w$).
+  \ii $(U\cap W)^\perp=U^\perp+W^\perp$ (finite dim., HW10 P4): take $\perp$ of $(U^\perp+W^\perp)^\perp=U\cap W$ (Prop.~90).
+  \ii Finite dim.: $U^\perp=\{0\}\iff U=V$; $U^\perp=V\iff U=\{0\}$ (Prop.~89).
+  \ii \textbf{Computing $U^\perp$:} require $\ip v{u_i}=0$ for a spanning list of $U$ and solve the linear system. Under Riesz, $U^\perp$ matches the annihilator $U^0$.
+\end{itemize}
+
+\begin{theorem*}[Prop.~89 / LADR 6.49, 6.50]
+  If $U$ is finite-dimensional, $V=U\oplus U^\perp$. If $V$ is finite-dimensional, $\dim U^\perp=\dim V-\dim U$.
+\end{theorem*}
+\begin{ideabox}
+To show: Every $v$ is $u+w$ with $u\in U$ and $w\perp U$, in exactly one way.
+
+For a line $U=\spn(e)$, $\|e\|=1$, this is LADR 6.13: $u=\ip ve\,e$.
+
+For a subspace, take an orthonormal basis $e_1,\dots,e_m$ of $U$ and use all the components: $u=\sum\ip v{e_k}e_k$. Then $\ip{v-u}{e_k}=0$ for every $k$, so $v-u\perp U$. Uniqueness: $U\cap U^\perp=0$, since a vector perpendicular to itself is $0$.
+
+Dimension: $\dim U^\perp=\dim V-\dim U$ then follows from the direct sum.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Direct: if $u\in U\cap U^\perp$, then $\ip uu=0$, so $u=0$.
+    \ii Take an orthonormal basis $e_1,\dots,e_m$ of $U$ (Gram--Schmidt). Set $u=\sum\ip v{e_k}e_k\in U$, $w=v-u$.
+    \ii $\ip w{e_k}=\ip v{e_k}-\ip v{e_k}=0$ for each $k$, so $w\perp U$, and $v=u+w$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~90 / LADR 6.52]
+  If $U$ is finite-dimensional, $(U^\perp)^\perp=U$.
+\end{proposition*}
+\begin{ideabox}
+To show: $(U^\perp)^\perp=U$. The inclusion $U\subseteq(U^\perp)^\perp$ is immediate from the definitions; the work is showing that $(U^\perp)^\perp$ is not bigger.
+
+Finite dimension: Count: $\dim(U^\perp)^\perp=n-(n-\dim U)=\dim U$ (Prop.~89 twice), and a subspace of the same dimension is equal (T2).
+
+Take $v\in(U^\perp)^\perp$ and split $v=u+w$ (Prop.~89). Then $w\in U^\perp$, and also $w=v-u\in(U^\perp)^\perp$. So $w$ is perpendicular to itself, and $w=0$.
+\end{ideabox}
+\begin{proof}
+  $U\subseteq(U^\perp)^\perp$: every $u\in U$ is perpendicular to every element of $U^\perp$. Conversely let $v\in(U^\perp)^\perp$, $v=u+w$ ($u\in U$, $w\in U^\perp$). Then $w=v-u\in(U^\perp)^\perp$ and $w\in U^\perp$, so $\ip ww=0$ and $w=0$.
+\end{proof}
+
+\begin{definition*}[Def.~48 / LADR 6.55]
+  For finite-dimensional $U$, the \vocab{orthogonal projection} is $P_U(u+w)=u$ ($u\in U$, $w\in U^\perp$). It is the unique projector with $\range P=U$, $\nul P=U^\perp$.
+\end{definition*}
+\begin{itemize}
+  \ii \textbf{Uniqueness:} if $P^2=P$, $\range P=U$, $\nul P=U^\perp$, then $u=Px$ gives $Pu=P^2x=u$, so $P(u+w)=u$.
+  \ii \textbf{Properties} (LADR 6.57), all from $v=P_Uv+(v-P_Uv)$:
+  \begin{itemize}
+    \ii $P_U$ is linear; $P_U^2=P_U$; $\range P_U=U$; $\nul P_U=U^\perp$; $v-P_Uv\in U^\perp$.
+    \ii $\|P_Uv\|\le\|v\|$ (Pythagoras).
+    \ii $I-P_U=P_{U^\perp}$ if $V$ is finite-dimensional ($V=U^\perp\oplus U$).
+  \end{itemize}
+  \ii \textbf{Any projector} ($P^2=P$) has $V=\nul P\oplus\range P$ (Prop.~91). Idea: $Pv$ is the obvious range part, and $P(v-Pv)=Pv-P^2v=0$. If $w=Pv\in\nul P$, then $w=P^2v=Pw=0$.
+  \ii It is orthogonal only when $\nul P\perp\range P$: $P(x,y)=(0,y)$ is $P_{\spn(e_2)}$; $P(x,y)=(x+y,0)$ is not orthogonal.
+\end{itemize}
+
+\begin{proposition*}[Prop.~92 / LADR 6.57(i)]
+  If $e_1,\dots,e_m$ is an orthonormal basis of $U$: $P_Uv=\sum_k\ip v{e_k}e_k$.
+\end{proposition*}
+\begin{ideabox}
+To show: The coordinates of $P_Uv$ in an orthonormal basis $e_1,\dots,e_m$ of $U$.
+
+Coordinates in an orthonormal basis are inner products: $P_Uv=\sum\ip{P_Uv}{e_k}e_k$ (Prop.~86 in $U$).
+
+$v-P_Uv\perp e_k$, so $\ip v{e_k}=\ip{P_Uv}{e_k}$. The coordinates can be computed from $v$, without knowing $P_Uv$ first.
+\end{ideabox}
+\begin{proof}
+  $v=u+w$: $\ip v{e_k}=\ip u{e_k}$, so $P_Uv=u=\sum\ip u{e_k}e_k=\sum\ip v{e_k}e_k$ (Prop.~86 in $U$).
+\end{proof}
+
+\begin{proposition*}[HW10 P5, LADR 6.61: best approximation]
+  For $u\in U$: $\|v-P_Uv\|\le\|v-u\|$, equality only at $u=P_Uv$. So the distance from $v$ to $U$ is $\|v-P_Uv\|$.
+\end{proposition*}
+\begin{ideabox}
+To show: Among $u\in U$, $\|v-u\|$ is smallest at $u=P_Uv$.
+
+Split the error: $v-u=(v-P_Uv)+(P_Uv-u)$. The first part is in $U^\perp$ and does not depend on $u$; the second is in $U$. They are perpendicular, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$, which is smallest exactly when the second term is $0$.
+\end{ideabox}
+\begin{proof}
+  $v-u=(v-P_Uv)+(P_Uv-u)$ with pieces in $U^\perp$ and $U$, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$.
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}[scale=1.15,>=Stealth]
+  \draw[thick] (-0.6,0) -- (4.6,0) node[right] {$U$};
+  \fill (2,1.8) circle (1.8pt) node[above] {$v$};
+  \fill (2,0) circle (1.8pt) node[below] {$P_Uv$};
+  \fill (3.8,0) circle (1.8pt) node[below] {$u$};
+  \draw[OliveGreen,thick] (2,0) -- (2,1.8);
+  \node[OliveGreen!70!black,left] at (2,0.9) {$v-P_Uv\perp U$};
+  \draw[red,thick,dashed] (3.8,0) -- (2,1.8);
+  \node[red,right] at (2.95,1.0) {$v-u$};
+  \draw (2,0.18) -- (2.18,0.18) -- (2.18,0);
+\end{tikzpicture}
+\figcap{$v-u$ is the hypotenuse of a right triangle. One leg, $v-P_Uv$, does not depend on $u$; the other, $P_Uv-u$, lies in $U$ and is $0$ only when $u=P_Uv$.}
+\end{fig}
+
+\begin{itemize}
+  \ii \textbf{Bessel:} for any orthonormal $e_1,\dots,e_m$, $\sum|\ip v{e_k}|^2\le\|v\|^2$. The left side is $\|P_Uv\|^2$ with $U=\spn(e_k)$.
+  \ii \textbf{HW10 P7:} a projector is orthogonal iff $\|Pv\|\le\|v\|$ for all $v$. Idea for $\Leftarrow$: suppose $u\in\range P$ and $w\in\nul P$ are not perpendicular. The point of the line $u+tw$ closest to $0$ has $t=-\ip uw/\|w\|^2\ne0$ and is shorter than $u$. But $P(u+tw)=u$, so $\|P(u+tw)\|>\|u+tw\|$. (Details in the solutions.)
+  \ii \textbf{Computing $P_Uv$:} (1) Gram--Schmidt on $U$, then Prop.~92. (2) Or write $P_Uv=\sum c_iu_i$ for a basis $u_i$ and solve $\ip{v-\sum c_iu_i}{u_j}=0$ for all $j$. Check that $v-P_Uv\perp$ each $u_j$.
+\end{itemize}
+
+\begin{example*}[Ex.~71]
+  $P_U(x^3)$, $U=\spn(1,x)$, $\ip pq=\int_0^1pq$. With $e_1=1$, $e_2=\sqrt3(2x-1)$: $\ip{x^3}{e_1}=\frac14$, $\ip{x^3}{e_2}=\frac{3\sqrt3}{20}$, so $P_U(x^3)=\frac14+\frac9{20}(2x-1)=\frac9{10}x-\frac15$. Check: $x^3-\frac9{10}x+\frac15$ is perpendicular to $1$ and $x$.
+\end{example*}
+
+\begin{trapbox}
+  \ii Orthogonal vectors are independent only if nonzero.
+  \ii $P^2=P$ does not make $P$ orthogonal: $P(x,y)=(x+y,0)$ has $\|P(1,1)\|=2>\sqrt2$.
+  \ii $V=U\oplus U^\perp$ can fail for infinite-dimensional $U$: in $\ell^2$, the finitely supported sequences have $U^\perp=\{0\}$. Also $\ell^2$ has no orthonormal (Hamel) basis.
+  \ii Gram--Schmidt depends on the order and on the inner product; normalize only after subtracting.
+  \ii Riesz over $\CC$: the coefficients are conjugated.
+\end{trapbox}
+
+\clearpage
+
 \section{Problem set}
-\begin{qbox}Construct orthonormal bases, solve complement equations and verify projections by orthogonal errors. For a line $F(1,0)$ in $F^2$, the complement is $F(0,1)$ and the projection sends $(a,b)$ to $(a,0)$.\end{qbox}
-\begin{prob}\textbf{HW10 P1.} On $\mathcal P_2(\mathbb R)$ with $\langle p,q\rangle=\int_{-1}^1pq$, apply Gram--Schmidt to $1,x,x^2$ to obtain an orthonormal basis.\\\emph{Hint:} Use Proposition 87 or its unnormalized version, with parity.\end{prob}
-\begin{prob}\textbf{HW10 P2.} In standard $\mathbb R^4$, let $W=\operatorname{span}((1,-1,1,0),(0,2,1,0))$. Find a basis of $W^\perp$.\\\emph{Hint:} Use the basis-test equations from Definition 47.\end{prob}
-\begin{prob}\textbf{HW10 P3.} On $\mathcal P_2(\mathbb R)$ with the same product, let $W=\operatorname{span}(x+1)$. Find a basis of $W^\perp$.\\\emph{Hint:} Set $\langle a+bx+cx^2,x+1\rangle=0$, then use the complement dimension formula.\end{prob}
-\begin{prob}\textbf{HW10 P4.} Prove $(U\cap W)^\perp=U^\perp+W^\perp$ for subspaces of finite-dimensional $V$.\\\emph{Hint:} Apply the sum-complement identity and Proposition 90 twice.\end{prob}
-\begin{prob}\textbf{HW10 P5.} For an orthonormal basis $e_1,\ldots,e_m$ of $U$, prove (a) $P_Uv=\sum_j\langle v,e_j\rangle e_j$; (b) $\|v-P_Uv\|\le\|v-u\|$ for every $u\in U$, and determine equality.\\\emph{Hint:} Use the direct decomposition and Pythagoras as in Proposition 92 and LADR 6.61.\end{prob}
-\begin{prob}\textbf{HW10 P6 (optional).} On $\mathcal P_1(\mathbb R)$ with $\langle f,g\rangle=\int_{-1}^1fg$, find the unique $p$ such that $\int_0^2f(x)\,dx=\langle f,p\rangle$ for all $f\in\mathcal P_1(\mathbb R)$.\\\emph{Hint:} Use Riesz representation, testing $1,x$.\end{prob}
-\begin{prob}\textbf{HW10 P7 (optional).} For a linear projector $P$ on finite-dimensional $V$, prove it is an orthogonal projection exactly when $\|Pv\|\le\|v\|$ for all $v$.\\\emph{Hint:} In Proposition 91's decomposition, test $v=u+tw$ with $u\in\im P$, $w\in\ker P$, choosing $t$ to make any nonzero mixed inner product contradict the norm bound.\end{prob}
-\begin{prob}\textbf{Additional practice (LADR 6A Exercise 11).} Find $u,v\in\mathbb R^2$ with $u\in\mathbb R(1,3)$, $v\perp(1,3)$ and $(1,2)=u+v$.\\\emph{Hint:} Apply the line-projection formula, then subtract.\end{prob}
-\begin{prob}\textbf{Additional practice (LADR 6A Exercise 6).} Prove $\langle u,v\rangle=0$ if and only if $\|u\|\le\|u+av\|$ for every $a\in F$.\\\emph{Hint:} Expand the squared norm; if $v\ne0$, choose $a=-\langle u,v\rangle/\|v\|^2$.\end{prob}
+
+\begin{prob}
+\textbf{HW10 P1. }\ On $\PP_2(\RR)$ use the inner product $\ip pq=\int_{-1}^1p(x)q(x)\,dx$. Apply the Gram--Schmidt procedure to the ordered basis $1,x,x^2$ to obtain an orthonormal basis of $\PP_2(\RR)$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P2. }\ Let $W=\spn\big((1,-1,1,0),(0,2,1,0)\big)\subseteq\RR^4$ with the standard inner product. Find a basis of $W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P3. }\ On $\PP_2(\RR)$ use the same inner product as in Problem 1, and let $W=\spn(x+1)$. Find a basis of $W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P4. }\ Let $U$ and $W$ be subspaces of a finite-dimensional inner-product space $V$. Prove $(U\cap W)^\perp=U^\perp+W^\perp$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P5. }\ Let $U$ be a subspace of a finite-dimensional inner-product space $V$, and let $e_1,\dots,e_m$ be an orthonormal basis of $U$.
+\begin{enumerate}[(a)]
+  \ii Prove that $P_Uv=\sum_{j=1}^m\ip v{e_j}e_j$.
+  \ii Prove the best-approximation property $\|v-P_Uv\|\le\|v-u\|$ for every $u\in U$, and determine when equality holds.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P6. (optional)}\ On $\PP_1(\RR)$ use the inner product $\ip fg=\int_{-1}^1f(x)g(x)\,dx$. Find the unique polynomial $p\in\PP_1(\RR)$ such that $\int_0^2f(x)\,dx=\ip fp$ for every $f\in\PP_1(\RR)$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW10 P7. (optional)}\ Let $P$ be a projector on a finite-dimensional inner-product space, so $P^2=P$. Prove that $P$ is an orthogonal projection if and only if $\|Pv\|\le\|v\|$ for every $v$.
+\end{prob}
+
+\begin{prob}
+\textbf{O1. }\ Find the polynomial $p\in\PP_1(\RR)$ that minimizes $\int_0^1\big(x^2-p(x)\big)^2dx$, and the minimum value.
+\end{prob}
+
+\begin{prob}
+\textbf{O2. }\ In $\RR^4$ with the dot product let $U=\spn\big((1,1,1,1)\big)$ and $v=(1,2,3,4)$. Find $P_Uv$, a basis of $U^\perp$, and the distance from $v$ to $U$.
+\end{prob}
+
+\begin{prob}
+\textbf{O3. Reflections.}\ Let $U$ be a subspace of a finite-dimensional inner product space and $R=I-2P_U$. Prove that $\|Rv\|=\|v\|$ for all $v$ and that $R^2=I$.
+\end{prob}
+
 \end{document}
