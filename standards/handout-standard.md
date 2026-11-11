@@ -37,6 +37,9 @@ Bad (rejected): "*Want.* Decide whether the available eigenspaces provide a full
 
 Good: "One vector is easy: v, Tv, …, Tⁿv are n + 1 vectors in an n-dimensional space, so q(T)v = 0 for some q of degree ≤ n. The problem is that q(T) may not be 0 on other vectors. So collect every vector q(T) sends to 0 into U = null q(T). A polynomial p that is 0 for the quotient T/U sends every vector into U, and a polynomial r that is 0 on U then sends it to 0. So r(T)p(T) = 0, and its degree is at most dim U + dim V/U = n."
 
+### Proof steps are full sentences
+Every proof step states what is being assumed, what is being shown, and the reason, in complete sentences. No noun-phrase shorthand that the reader has to decode ("Existence is spanning", "Same argument", "the other inclusion is clear", "swap the roles"). When a proof has two directions, each direction opens with its assumption in bold ("Assume the list is a basis.") and labels each sub-goal ("The list spans V."). If a step repeats an earlier argument, write it out again.
+
 ## 4. Writing
 - Complete sentences, ordinary words, literal statements. No metaphors ("kills", "dies", "survives", "machinery", "bridge", "shadow"). A shorthand is allowed only if defined once in plain words (e.g. "q kills T means q(T) = 0").
 - Never hide an argument behind a name: not "by invariance", "by degree", "by an adapted basis", "repeat the argument". Say which subspace, degree or basis, and show the step.

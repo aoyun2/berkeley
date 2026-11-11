@@ -72,3 +72,4 @@ The following entries describe the rejected release and its previous checks. The
 - 2026-11-10: Week 1 rebuilt from the notes to the revised standard.
 - 2026-11-10: Week 2 rebuilt from the notes to the revised standard.
 - 2026-11-11: Week 2 handout: enlarged the dim(U+W) figure. Week 3 (Ch. 5-6, HW3) handout and solutions rebuilt by hand to the standard; replaces the earlier draft.
+- 2026-11-11: Week 2 handout: proofs rewritten in full sentences after Aaron found 'Existence is spanning' unreadable (basis = unique representation, Props. 12-14, complement criterion). Standard: added 'Proof steps are full sentences'. Week 3: Props. 20, 26 proofs expanded. Week 4 (Ch. 7-8, HW4) handout and solutions rebuilt by hand.

@@ -45,18 +45,30 @@
   $v_1,\dots,v_m$ is a basis of $V$ $\iff$ every $v\in V$ can be written as $\lambda_1v_1+\dots+\lambda_mv_m$ in exactly one way.
 \end{proposition*}
 \begin{ideabox}
-Spanning says a representation exists. Independence is what makes it unique, and the reason is one subtraction: two representations of the same vector differ by a representation of $0$.
-
-The notes package this with the map $\Phi\colon\FF^m\to V$, $\Phi(\lambda_1,\dots,\lambda_m)=\lambda_1v_1+\dots+\lambda_mv_m$: the list spans exactly when $\Phi$ is surjective, is independent exactly when $\Phi$ is injective, and is a basis exactly when $\Phi$ is bijective. The inverse of $\Phi$ sends a vector to its coordinates.
+The statement has two halves, and each half of the definition of a basis takes care of one of them.
+\begin{itemize}
+  \ii ``Every $v$ can be written as $\lambda_1v_1+\dots+\lambda_mv_m$'' is, word for word, the definition of ``the list spans $V$''.
+  \ii ``In only one way'' is what independence gives. Suppose $v$ could be written with coefficients $\lambda_k$ and also with coefficients $\mu_k$. Subtract one expression from the other: the left sides give $v-v=0$, the right sides give $\sum(\lambda_k-\mu_k)v_k$. So we have a combination equal to $0$, and independence says its coefficients $\lambda_k-\mu_k$ are all $0$.
+\end{itemize}
+Example: in $\RR^2$ with the basis $(1,1),(1,-1)$, the vector $(3,1)$ is $2(1,1)+1(1,-1)$, and no other pair of coefficients works.
 \end{ideabox}
 \begin{proof}
+  \textbf{($\Rightarrow$) Assume $v_1,\dots,v_m$ is a basis.} Let $v\in V$.
   \begin{steps}
-    \ii ($\Rightarrow$) Existence is spanning. If $v=\sum\lambda_kv_k=\sum\mu_kv_k$, subtract: $0=\sum(\lambda_k-\mu_k)v_k$. Independence gives $\lambda_k=\mu_k$ for all $k$.
-    \ii ($\Leftarrow$) Existence of representations is spanning. $0=0v_1+\dots+0v_m$ is one representation of $0$; by uniqueness it is the only one, which is independence.
+    \ii \emph{$v$ can be written as a combination.} The list spans $V$, which means exactly that every vector of $V$ is a linear combination of $v_1,\dots,v_m$.
+    \ii \emph{Only one way.} Suppose $v=\lambda_1v_1+\dots+\lambda_mv_m$ and also $v=\mu_1v_1+\dots+\mu_mv_m$. Subtracting, $0=(\lambda_1-\mu_1)v_1+\dots+(\lambda_m-\mu_m)v_m$.
+    \ii The list is independent, so every coefficient $\lambda_k-\mu_k$ is $0$. So $\lambda_k=\mu_k$ for all $k$: the two ways are the same.
+  \end{steps}
+  \textbf{($\Leftarrow$) Assume every $v\in V$ can be written as a combination in exactly one way.}
+  \begin{steps}
+    \ii \emph{The list spans $V$.} Every $v$ can be written as a combination; that is the definition of spanning.
+    \ii \emph{The list is independent.} Suppose $\lambda_1v_1+\dots+\lambda_mv_m=0$. We also have $0v_1+\dots+0v_m=0$. These are two ways of writing the vector $0$. By assumption there is only one way, so $\lambda_k=0$ for all $k$.
   \end{steps}
 \end{proof}
 \begin{itemize}
-  \ii Same statement in terms of sums: $v_1,\dots,v_m$ (all nonzero) is independent $\iff$ the sum $\FF v_1+\dots+\FF v_m$ is direct (W2 and W3).
+  \ii The unique coefficients $\lambda_1,\dots,\lambda_m$ are called the \vocab{coordinates} of $v$ in the basis.
+  \ii The notes say the same thing with the map $\Phi\colon\FF^m\to V$, $\Phi(\lambda_1,\dots,\lambda_m)=\lambda_1v_1+\dots+\lambda_mv_m$. The list spans $V$ exactly when $\Phi$ is surjective (every $v$ is hit). It is independent exactly when $\Phi$ is injective (no $v$ is hit twice). It is a basis exactly when $\Phi$ is bijective.
+  \ii Connection with direct sums: if all $v_k\ne0$, the list $v_1,\dots,v_m$ is independent exactly when the sum of the lines $\FF v_1+\dots+\FF v_m$ is direct. Reason: by (W2) the sum is direct when $\lambda_1v_1+\dots+\lambda_mv_m=0$ forces every \emph{term} $\lambda_kv_k$ to be $0$, and by (W3) $\lambda_kv_k=0$ with $v_k\ne0$ means $\lambda_k=0$.
 \end{itemize}
 
 \begin{proposition*}[Prop.~8 / LADR 2.19: linear dependence lemma]
@@ -77,7 +89,7 @@ Example: $(1,0),(0,1),(1,1),(2,0)$. One relation is $1\cdot(1,0)+1\cdot(0,1)-1\c
   \begin{steps}
     \ii Take $\lambda_1v_1+\dots+\lambda_mv_m=0$ with not all $\lambda_k=0$. Let $j$ be the largest index with $\lambda_j\ne0$. The relation is $\lambda_1v_1+\dots+\lambda_jv_j=0$.
     \ii Divide by $\lambda_j$: $v_j=-\frac{\lambda_1}{\lambda_j}v_1-\dots-\frac{\lambda_{j-1}}{\lambda_j}v_{j-1}\in\spn(v_1,\dots,v_{j-1})$. (If $j=1$ this says $v_1=0$, and $\spn$ of the empty list is $\{0\}$.)
-    \ii For (ii): write $v_j=c_1v_1+\dots+c_{j-1}v_{j-1}$. In any combination $\lambda_1v_1+\dots+\lambda_mv_m$, replace $v_j$ by this expression. The result uses only the other vectors. So $\spn(v_1,\dots,v_m)\subseteq\spn(\text{list without }v_j)$; the other inclusion is clear.
+    \ii For (ii): write $v_j=c_1v_1+\dots+c_{j-1}v_{j-1}$. In any combination $\lambda_1v_1+\dots+\lambda_mv_m$, replace $v_j$ by this expression. The result uses only the other vectors. So every vector in $\spn(v_1,\dots,v_m)$ is also in the span of the list without $v_j$. Conversely, a combination of the shorter list is a combination of the full list (give $v_j$ the coefficient $0$). So the two spans are equal.
   \end{steps}
 \end{proof}
 
@@ -109,7 +121,7 @@ Example in $\RR^2$ with $e_1=(1,1)$, $e_2=(1,-1)$ and $f_1=(1,0)$, $f_2=(0,1)$: 
 \begin{proof}
   If $m=0$ there is nothing to prove. Claim $P(k)$, for $1\le k\le\min(m,n)$: after relabelling the $f$'s, the list $L_k=(e_1,\dots,e_k,f_{k+1},\dots,f_n)$ spans $V$.
   \begin{steps}
-    \ii $P(1)$: write $e_1=\lambda_1f_1+\dots+\lambda_nf_n$. Since $e_1\ne0$, some $\lambda$ is nonzero; relabel so that $\lambda_1\ne0$. Then $f_1=\frac1{\lambda_1}(e_1-\lambda_2f_2-\dots-\lambda_nf_n)$ is in $\spn(e_1,f_2,\dots,f_n)$, so that span contains all the $f$'s and is $V$.
+    \ii $P(1)$: write $e_1=\lambda_1f_1+\dots+\lambda_nf_n$. Since $e_1\ne0$, some $\lambda$ is nonzero; relabel so that $\lambda_1\ne0$. Then $f_1=\frac1{\lambda_1}(e_1-\lambda_2f_2-\dots-\lambda_nf_n)$ is in $\spn(e_1,f_2,\dots,f_n)$. So this span contains $f_1,f_2,\dots,f_n$. It is a subspace, so it contains every combination of the $f$'s, and those are all of $V$.
     \ii $P(k-1)\Rightarrow P(k)$: since $L_{k-1}$ spans, $e_k=\lambda_1e_1+\dots+\lambda_{k-1}e_{k-1}+\mu_kf_k+\dots+\mu_nf_n$.
     \ii Some $\mu$ is nonzero: otherwise $e_k\in\spn(e_1,\dots,e_{k-1})$, contradicting independence of the $e$'s. Relabel so that $\mu_k\ne0$.
     \ii Solve for $f_k$ in terms of $e_1,\dots,e_k,f_{k+1},\dots,f_n$. So $\spn(L_k)$ contains every vector of $L_{k-1}$, and $L_k$ spans $V$.
@@ -133,7 +145,7 @@ Put the two lists together: $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$. Now remove 
 \end{proof}
 \begin{itemize}
   \ii Ex.~11: no three vectors in $\FF^2$ are independent, since $e_1,e_2$ spans. This is why three lines in $\RR^2$ never form a direct sum.
-  \ii \textbf{Every subspace has a complement (LADR 2.33).} If $U$ is a subspace of finite-dimensional $V$, there is a subspace $W$ with $V=U\oplus W$: extend a basis $u_1,\dots,u_k$ of $U$ to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$ and let $W=\spn(w_1,\dots,w_l)$. Then $U+W=V$, and $U\cap W=\{0\}$: a vector in both is $\sum a_iu_i=\sum b_jw_j$, and independence of the whole basis forces all coefficients to be $0$. (That $U$ has a basis is Prop.~14 below.)
+  \ii \textbf{Every subspace has a complement (LADR 2.33).} If $U$ is a subspace of finite-dimensional $V$, there is a subspace $W$ with $V=U\oplus W$: extend a basis $u_1,\dots,u_k$ of $U$ to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$ and let $W=\spn(w_1,\dots,w_l)$. Then $U+W=V$, because every vector is a combination of the whole basis, and such a combination is (a combination of the $u$'s) $+$ (a combination of the $w$'s). And $U\cap W=\{0\}$: if $x$ is in both, then $x=\sum a_iu_i$ and $x=\sum b_jw_j$, so $\sum a_iu_i-\sum b_jw_j=0$. The whole basis is independent, so all $a_i$ and $b_j$ are $0$, and $x=0$. (That $U$ has a basis is Prop.~14 below.)
 \end{itemize}
 
 \textbf{Infinite-dimensional spaces (Def.~9, optional in the notes).} For an infinite set $M\subseteq V$: $M$ is linearly independent if every finite subset is; $M$ spans if every vector is a \emph{finite} combination of elements of $M$; a basis is both.
@@ -149,7 +161,7 @@ Put the two lists together: $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$. Now remove 
   Any two bases of a finite-dimensional $V$ have the same length. This length is the \vocab{dimension} $\dim V$.
 \end{proposition*}
 \begin{proof}
-  Let $B_1,B_2$ be bases. $B_1$ is independent and $B_2$ spans, so $\operatorname{length}B_1\le\operatorname{length}B_2$ (Prop.~10). Swap the roles for the other inequality.
+  Let $B_1$ and $B_2$ be two bases. A basis is both independent and spanning. Use Prop.~10 with $B_1$ as the independent list and $B_2$ as the spanning list: $\operatorname{length}B_1\le\operatorname{length}B_2$. Use it again with $B_2$ as the independent list and $B_1$ as the spanning list: $\operatorname{length}B_2\le\operatorname{length}B_1$. So the lengths are equal.
 \end{proof}
 \begin{itemize}
   \ii Ex.~14--16: $\dim\FF^n=n$. $\dim\PP_r(\FF)=r+1$ (basis $1,x,\dots,x^r$). $\dim\{0\}=0$.
@@ -160,12 +172,18 @@ Put the two lists together: $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$. Now remove 
   Let $d=\dim V$. (i) Any linearly independent list of $d$ vectors is a basis. (ii) Any spanning list of $d$ vectors is a basis.
 \end{proposition*}
 \begin{ideabox}
-This is the counting principle from Week 1 (a map between finite sets of equal size is injective exactly when it is surjective), with dimension in place of the number of elements. An independent list of $d$ vectors has no room to grow; a spanning list of $d$ vectors has nothing to lose. On an exam it halves the work: with the right number of vectors, check only one of the two properties.
+A basis has to pass two tests, independence and spanning. This proposition says that when the list already has exactly $\dim V$ vectors, passing one test is enough; the other follows. On an exam this halves the work.
+
+Why it is true. We know two procedures: an independent list can be made into a basis by adding vectors (Prop.~11), and a spanning list can be made into a basis by deleting vectors (Prop.~9). The result of either procedure is a basis, so it has exactly $d$ vectors. If the list we started with already had $d$ vectors, the procedure cannot have added or deleted anything. So the list we started with was already a basis.
+
+It is the same counting principle as in Week 1: a map between two finite sets of the same size is injective exactly when it is surjective.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Extend the independent list to a basis (Prop.~11). Every basis has length $d$, so nothing was added.
-    \ii Reduce the spanning list to a basis (Prop.~9). Every basis has length $d$, so nothing was removed.
+    \ii (i) Let $v_1,\dots,v_d$ be independent. By Prop.~11 we can add vectors to it (possibly none) to get a basis of $V$.
+    \ii That basis has exactly $d$ vectors, because every basis of $V$ does (Prop.~12). The list $v_1,\dots,v_d$ already has $d$ vectors, so no vectors were added. So $v_1,\dots,v_d$ is itself the basis.
+    \ii (ii) Let $v_1,\dots,v_d$ span $V$. By Prop.~9 we can delete vectors from it (possibly none) to get a basis of $V$.
+    \ii That basis has exactly $d$ vectors, so no vectors were deleted. So $v_1,\dots,v_d$ is itself the basis.
   \end{steps}
 \end{proof}
 
@@ -174,9 +192,11 @@ This is the counting principle from Week 1 (a map between finite sets of equal s
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii Independent lists in $U$ are independent in $V$, so they have length $\le\dim V$ (Prop.~10). Choose an independent list $u_1,\dots,u_k$ in $U$ of the largest possible length.
-    \ii It spans $U$: if some $u\in U$ were not in its span, $u_1,\dots,u_k,u$ would be independent (in a relation the coefficient of $u$ must be $0$, and then the others are), contradicting maximality. So it is a basis of $U$, and $\dim U=k\le\dim V$.
-    \ii If $\dim U=\dim V$, this basis of $U$ is an independent list of $\dim V$ vectors in $V$, so it is a basis of $V$ (Prop.~13). Then $U=\spn=V$.
+    \ii \emph{Independent lists in $U$ cannot be long.} A list of vectors of $U$ that is independent is also an independent list in $V$, so its length is at most $\dim V$ (Prop.~10). So among all independent lists in $U$ there is one of largest length. Call it $u_1,\dots,u_k$; then $k\le\dim V$.
+    \ii \emph{This list spans $U$.} Suppose not: some $u\in U$ is not in $\spn(u_1,\dots,u_k)$. We show that then $u_1,\dots,u_k,u$ is independent, which contradicts the choice of $k$ as the largest length.
+    \ii Take a relation $\lambda_1u_1+\dots+\lambda_ku_k+\mu u=0$. If $\mu\ne0$, solve for $u$: $u=-\frac1\mu(\lambda_1u_1+\dots+\lambda_ku_k)$, so $u$ would be in the span. So $\mu=0$. The relation is then $\lambda_1u_1+\dots+\lambda_ku_k=0$, and all $\lambda_i=0$ because $u_1,\dots,u_k$ is independent.
+    \ii So $u_1,\dots,u_k$ is independent and spans $U$: it is a basis of $U$. Hence $U$ is finite-dimensional and $\dim U=k\le\dim V$.
+    \ii \emph{Equality.} If $\dim U=\dim V$, then $u_1,\dots,u_k$ is an independent list of $\dim V$ vectors in $V$, so it is a basis of $V$ (Prop.~13). Then every vector of $V$ is a combination of $u_1,\dots,u_k$, and those combinations are in $U$. So $V\subseteq U$, i.e.\ $U=V$. Conversely, if $U=V$ the dimensions are equal.
   \end{steps}
 \end{proof}
 \begin{itemize}
@@ -222,7 +242,13 @@ Putting the three groups together clearly spans $U+W$. The step that needs an ar
   \begin{center}(a) $\dim U+\dim W=\dim V$ \qquad (b) $U\cap W=\{0\}$ \qquad (c) $U+W=V$.\end{center}
 \end{proposition*}
 \begin{proof}
-  By the theorem, $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$. (a),(b) give $\dim(U+W)=\dim V$, so $U+W=V$ (Prop.~14). (a),(c) give $\dim(U\cap W)=0$. (b),(c) give $\dim V=\dim U+\dim W$.
+  All three cases use the formula $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$. Note that (b) says $\dim(U\cap W)=0$, and (c) says $\dim(U+W)=\dim V$ (a subspace of $V$ with the same dimension as $V$ is $V$, Prop.~14).
+  \begin{steps}
+    \ii \emph{(a) and (b) give (c).} The formula gives $\dim(U+W)=\dim U+\dim W-0=\dim V$. So $U+W=V$.
+    \ii \emph{(a) and (c) give (b).} The formula gives $\dim V=\dim V-\dim(U\cap W)$. So $\dim(U\cap W)=0$, and a space of dimension $0$ is $\{0\}$.
+    \ii \emph{(b) and (c) give (a).} The formula gives $\dim V=\dim U+\dim W-0$.
+  \end{steps}
+  When all three hold, $U+W=V$ and $U\cap W=\{0\}$, which is the definition of $V=U\oplus W$ (W2).
 \end{proof}
 
 \begin{example*}[Ex.~19: two planes in $\FF^3$]
@@ -267,7 +293,7 @@ Putting the three groups together clearly spans $U+W$. The step that needs an ar
   \ii A basis of $V$ need not contain a basis of a given subspace $U$: $e_1,e_2$ contains no basis of $\spn((1,1))$.
   \ii $\dim(U_1+U_2+U_3)$ has no inclusion--exclusion formula.
   \ii The dimension depends on the field: $\dim_\RR\CC=2$.
-  \ii In infinite dimensions an independent set need not extend to a basis by adding nothing: $\{e_1,e_2,\dots\}$ in $\FF^\infty$ does not span.
+  \ii Prop.~13 has no infinite-dimensional version: $\{e_1,e_2,\dots\}$ in $\FF^\infty$ is an infinite independent set in an infinite-dimensional space, and it is not a basis.
 \end{trapbox}
 
 \section{Problem set}
