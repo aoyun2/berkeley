@@ -1,183 +1,363 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-\DeclareMathOperator{\im}{range}
-\input{figures.tex}
-\title{MATH 110 --- Week 5}
-\subtitle{Notes Chapters 9--10; Homework 5}
+\DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
+\newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}\newcommand{\T}{\mathsf T}
+\newcommand{\Tt}{\widetilde T}
+\title{Math 110 --- Week 5}
+\subtitle{Quotient maps, isomorphism theorems, dual spaces (Notes Ch.~9--10, LADR 3E--3F, HW5)}
 \author{}\date{}\ihead{}
-\begin{document}\maketitle
-\section{Quotient maps and the first isomorphism theorem}\begin{qbox}Which information about a vector is determined by its image under a linear map? For $T(x,y)=x$, inputs with the same first coordinate have the same image; their differences lie in $\ker T=\mathbb R(0,1)$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 25; LADR 3.104]For a subspace $U\subseteq V$, the quotient map is $\pi:V\to V/U$, $\pi(v)=v+U$. Cosets form a vector space: $(v+U)+(w+U)=(v+w)+U$ and $a(v+U)=av+U$, with zero coset $U$. Changing representatives changes either result by an element of $U$, so these operations are well-defined. Also $v+U=w+U$ iff $v-w\in U$: membership of $v$ in $w+U$ proves one direction, and $v+u=w+(v-w+u)$ gives one inclusion; exchanging $v,w$ gives equality (Week 4 Proposition 39).\end{definition*}\end{prob}
-\method{Earlier tools used below}
-\begin{steps}
-\ii For a finite-dimensional domain, $\dim V=\dim\ker T+\dim\im T$ (Week 3 Proposition 24). Extending a kernel basis by $v_j$ gives a range basis $Tv_j$: a relation among these images puts the same combination of the $v_j$ in the kernel, forcing every coefficient to zero; expanding a domain vector proves spanning.
-\ii A linear bijection is an isomorphism (Week 4 Proposition 29): if $S$ is its set inverse, both $S(aw_1+w_2)$ and $aSw_1+Sw_2$ have image $aw_1+w_2$, so injectivity proves $S$ linear. Between equal finite dimensions, zero kernel forces full range by the preceding dimension equation and the full-dimension subspace criterion (Week 2 Proposition 14).
-\end{steps}
-\begin{proposition*}[Notes Definition 25; LADR 3.104]The quotient map is linear and surjective, with kernel $U$.\end{proposition*}
+\begin{document}
+\maketitle
 
-\begin{prob}\begin{proof}\begin{steps}\ii $\pi(av+w)=(av+w)+U=a(v+U)+(w+U)=a\pi(v)+\pi(w)$. Every coset is $\pi(v)$ for some $v$, giving surjectivity.\ii $v\in\ker\pi$ iff $v+U=U$, which by Week 4 Proposition 39 is equivalent to $v\in U$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 40; LADR 3.105]If $V$ is finite-dimensional, $\dim(V/U)=\dim V-\dim U$.\end{proposition*}
+\section{Facts used from Weeks 1--4}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii An independent list extends to a basis. A linear map can be defined by choosing its values on a basis, and two linear maps that agree on a basis are equal (Weeks 2, 3).
+  \ii Rank--nullity: $\dim V=\dim\nul T+\dim\range T$. $T$ is injective $\iff\nul T=\{0\}$ (Week 3).
+  \ii If $\dim V=\dim W<\infty$, then injective $\iff$ surjective $\iff$ isomorphism. Finite-dimensional spaces are isomorphic exactly when their dimensions are equal (Week 4).
+  \ii $\dim\LL(V,W)=\dim V\cdot\dim W$. The matrix of $T$: column $j$ holds the coordinates of $Tv_j$ (Week 3).
+  \ii Quotient space $V/U$: its elements are the sets $v+U$; $v+U=w+U\iff v-w\in U$; $(v+U)+(w+U)=(v+w)+U$, $\lambda(v+U)=\lambda v+U$. A formula that uses the name $v$ must be checked to be \emph{well-defined}: renaming the same set must not change the answer (Week 4).
+  \ii A stochastic matrix $P$ has entries $\ge0$ and columns summing to $1$; a distribution $p$ becomes $Pp$ after one step (Week 3).
+\end{enumerate}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Week 3 rank--nullity gives $\dim V=\dim\ker\pi+\dim\im\pi$.\ii Substitute $\ker\pi=U$ and $\im\pi=V/U$, then rearrange. The range is finite-dimensional because it is the image of a finite-dimensional domain.\end{steps}\end{proof}\end{prob}
-\method{Construct a quotient basis}\begin{steps}\ii Extend a basis $u_1,\ldots,u_k$ of $U$ to a basis $u_1,\ldots,u_k,v_1,\ldots,v_r$ of $V$.\ii The cosets $v_1+U,\ldots,v_r+U$ span: in a basis expansion, the $u_i$ terms belong to the zero coset.\ii If $\sum a_j(v_j+U)=U$, then $\sum a_jv_j\in U$, producing a relation in the full basis; all $a_j=0$. Thus the cosets form a basis.\ii For $U=\operatorname{span}(e_1,e_2)\subseteq\mathbb R^3$, the single coset $e_3+U$ is a quotient basis.\end{steps}
-\begin{proposition*}[Notes Proposition 42]If $T:V\to W$ is linear, $U_1\subseteq V$ and $U_2\subseteq W$ are subspaces, and $T(U_1)\subseteq U_2$, then $\overline T:V/U_1\to W/U_2$, $\overline T(v+U_1)=Tv+U_2$, is well-defined and linear. This condition is also necessary for that rule to be well-defined.\end{proposition*}
-\begin{motive}\ii[Want.] Ensure $v+U_1\mapsto Tv+U_2$ is a function on cosets.
-\ii[Key step.] Changing $v$ by $u\in U_1$ changes $Tv$ by $Tu$. That leaves the output coset unchanged exactly when $Tu\in U_2$ for every such $u$. This explains the condition $T(U_1)\subseteq U_2$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $v+U_1=w+U_1$, then $v-w\in U_1$, hence $Tv-Tw\in U_2$. Thus $Tv+U_2=Tw+U_2$.\ii On representative combinations, $\overline T((av+w)+U_1)=T(av+w)+U_2=a(Tv+U_2)+(Tw+U_2)$, proving linearity.\ii Conversely, if the rule is well-defined, for $u\in U_1$ the equality $u+U_1=0+U_1$ forces $Tu+U_2=U_2$, hence $Tu\in U_2$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[An induced map with nonzero outputs]
-For $T(x,y,z)=(2x,3y,4z)$ on $\mathbb R^3$ and $U=\mathbb Re_1$, changing $(x,y,z)$ to $(x+t,y,z)$ changes the output by $(2t,0,0)\in U$. Identifying $V/U$ with the coordinates $(y,z)$ therefore gives the induced rule $(y,z)\mapsto(3y,4z)$.
-\end{example*}
-\begin{proposition*}[Factorization through a quotient; HW5 P2]
-For linear $T:V\to W$ and the quotient map $\pi:V\to V/U$, there is a unique linear $\widetilde T:V/U\to W$ with $T=\widetilde T\pi$ iff $U\subseteq\ker T$. Its rule is $\widetilde T(v+U)=Tv$, and
-\[\ker\widetilde T=(\ker T)/U,\qquad\im\widetilde T=\im T.\]
+\section{This week}
+
+\subsection{The quotient map and the dimension of a quotient (Ch.~9.1)}
+
+\begin{definition*}[Def.~25 / LADR 3.104]
+  For a subspace $U\subseteq V$, the \vocab{quotient map} is $\pi\colon V\to V/U$, $\pi(v)=v+U$.
+\end{definition*}
+\begin{itemize}
+  \ii $\pi$ is linear: $\pi(\lambda v+w)=(\lambda v+w)+U=\lambda(v+U)+(w+U)$ by the definition of the operations (W5).
+  \ii $\pi$ is surjective: every element of $V/U$ is $v+U=\pi(v)$ for some $v$.
+  \ii $\nul\pi=U$: $\pi(v)$ is the zero element $0+U$ exactly when $v-0\in U$ (W5).
+\end{itemize}
+\begin{proposition*}[Prop.~40 / LADR 3.105: dimension of a quotient]
+  If $V$ is finite-dimensional, $\dim(V/U)=\dim V-\dim U$.
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii If $T=\widetilde T\pi$, then $u\in U$ gives $Tu=\widetilde T(U)=0$, proving necessity. Conversely $v-w\in U\subseteq\ker T$ gives $Tv=Tw$, the same representative test as Proposition 42 with target subspace zero.
-\ii The rule is linear since $T(av+w)=aTv+Tw$. Every coset equals $\pi(v)$, so $T=\widetilde T\pi$ forces this rule and proves uniqueness.
-\ii $\widetilde T(v+U)=0$ iff $v\in\ker T$, giving exactly the displayed kernel cosets. The outputs are precisely the vectors $Tv$, giving the range formula.
-\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 41; LADR 3.106--3.107]For $T:V\to W$ linear, the rule $\overline T:V/\ker T\to\im T$, $\overline T(v+\ker T)=Tv$, is an isomorphism. If $\iota:\im T\to W$ is the inclusion $w\mapsto w$, then $T=\iota\overline T\pi$.\end{proposition*}
+\begin{proof}
+  Apply rank--nullity (W2) to $\pi$. Its null space is $U$ and its range is all of $V/U$. So $\dim V=\dim U+\dim(V/U)$.
+\end{proof}
+\begin{itemize}
+  \ii \textbf{A basis of $V/U$.} Let $u_1,\dots,u_k$ be a basis of $U$ and extend it to a basis $u_1,\dots,u_k,x_1,\dots,x_r$ of $V$. Then $x_1+U,\dots,x_r+U$ is a basis of $V/U$. Reason: $\pi$ sends the basis of $V$ to a spanning list of $V/U$; the $u_i$ go to zero, so $\pi(x_1),\dots,\pi(x_r)$ already span; and there are $r=\dim V-\dim U=\dim(V/U)$ of them.
+  \ii If $V$ is infinite-dimensional, $V/U$ can be finite- or infinite-dimensional.
+\end{itemize}
 
-\begin{prob}\begin{proof}\begin{steps}
-\ii Apply the factorization criterion with $U=\ker T$. It gives a linear map whose kernel is $(\ker T)/(\ker T)=\{\ker T\}$, the zero subspace of the quotient. Hence it is injective.
-\ii Its range is $\im T$; choosing this as the codomain makes it onto, hence an isomorphism. For every $v$, $\iota\overline T\pi(v)=Tv$, proving the factorization with inclusion.
-\end{steps}\end{proof}\end{prob}
-\FirstIsomorphismFigure
-\begin{example*}[Notes Example 43]Differentiation $D:\mathcal P(\mathbb R)\to\mathcal P(\mathbb R)$ is onto and has kernel the constants $\mathbb R$, as proved in Week 4.
-\begin{steps}\ii Proposition 41 gives $\overline D:\mathcal P(\mathbb R)/\mathbb R\to\mathcal P(\mathbb R)$, $p+\mathbb R\mapsto p^{\prime}$.
-\ii Its inverse sends $q$ to the coset $r+\mathbb R$ of any antiderivative $r$ of $q$. Such an $r$ exists by termwise integration; any two differ by a constant, so the coset is unique.
-\ii For $q=x^2$, the inverse image is $\frac13x^3+\mathbb R$. Thus the indefinite integral denotes one quotient vector rather than one chosen polynomial.\end{steps}\end{example*}
-\begin{prob}\textbf{Maps and subspaces.}\begin{steps}\ii An injective $T:V\to W$ gives an isomorphism $V\to\im T$ by restricting its codomain; it is onto that range by definition.\ii A surjective $T:V\to W$ gives $V/\ker T\cong W$ by Proposition 41.\ii In finite dimension, $\dim(V/\ker T)=\dim V-\dim\ker T=\dim\im T$. This recovers the rank--nullity equality, but is not an independent proof because Proposition 40 used rank--nullity.\end{steps}\end{prob}
-\begin{shortcuts}\ii To find a quotient basis, extend a subspace basis and retain the added cosets: the relation test above proves independence. For $\mathbb R^3/\operatorname{span}(e_1,e_2)$ this retains $e_3+U$.\ii To identify a quotient with a concrete space, find a surjective map with the specified subspace as kernel; Proposition 41 supplies the isomorphism.\end{shortcuts}\begin{trapbox}\ii The rule $v+U\mapsto Tv$ need not be well-defined unless $U\subseteq\ker T$: with $T=I$ on $\mathbb R^2$ and $U=\mathbb Re_1$, the same coset $U=0+U=e_1+U$ would have different images.\ii Infinite-dimensional $V$ need not give an infinite-dimensional quotient: evaluation $p\mapsto p(0)$ identifies $\mathcal P(\mathbb R)/x\mathcal P(\mathbb R)$ with $\mathbb R$ by Proposition 41. On the other hand, $\mathcal P(\mathbb R)/\{0\}\cong\mathcal P(\mathbb R)$ is infinite-dimensional: the cosets of all monomials remain independent.\end{trapbox}
-\section{Successive quotients}\begin{qbox}In $\mathbb R^3$, first identify vectors differing in the $x$ coordinate, then identify changes in $y$. Both $(2,3,5)$ and $(9,-1,5)$ then represent the same final element, determined by $z=5$. How can one quotient give the same identification?\end{qbox}
-\begin{proposition*}[Notes Proposition 43: second isomorphism theorem]For subspaces $U,W\subseteq V$, $\phi:U/(U\cap W)\to(U+W)/W$, $\phi(u+(U\cap W))=u+W$, is an isomorphism. In finite dimension it gives $\dim U-\dim(U\cap W)=\dim(U+W)-\dim W$.\end{proposition*}
+\subsection{The first isomorphism theorem (Ch.~9.1)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Every target is $(u+w)+W=u+W$, so use $R:U\to(U+W)/W$, $Ru=u+W$. It is linear by quotient operations; this choice already reaches every target.\ii Two choices $u,u'\in U$ give the same target iff $u-u'\in W$, equivalently $u-u'\in U\cap W$. Thus the source quotient identifies exactly the inputs with equal output.\ii $Ru=W$ iff $u\in W$; since the domain is $U$, $\ker R=U\cap W$. Proposition 41 supplies the stated isomorphism.\ii If the spaces are finite-dimensional, apply Proposition 40 to both quotients and use equal dimensions of isomorphic spaces.\end{steps}\end{proof}\end{prob}
-\begin{prob}\textbf{Meaning of the chosen isomorphism.} Here the formula for $\phi$ is specified directly by the subspaces, without choosing bases or complements. This is the sense in which these isomorphisms are called natural in the notes.\end{prob}
-\begin{proposition*}[Notes Proposition 44: third isomorphism theorem]For subspaces $W\subseteq U\subseteq V$, $U/W$ is the subspace $\{u+W:u\in U\}$ of $V/W$, and $\phi:(V/W)/(U/W)\to V/U$, $\phi((v+W)+(U/W))=v+U$, is an isomorphism.\end{proposition*}
+\begin{qbox}
+  A linear map $T\colon V\to W$ can fail to be an isomorphism in two ways: it sends different vectors to the same place, and it misses part of $W$. Can both failures be removed by changing the domain and the target, without changing what $T$ does?
+\end{qbox}
+\begin{theorem*}[Prop.~41 / LADR 3.107: first isomorphism theorem]
+  Let $T\in\LL(V,W)$. The formula
+  \[ \Tt\colon V/\nul T\to\range T,\qquad\Tt(v+\nul T)=Tv \]
+  defines an isomorphism. Moreover $T=\iota\circ\Tt\circ\pi$, where $\pi\colon V\to V/\nul T$ is the quotient map and $\iota\colon\range T\to W$, $\iota(w)=w$, is the inclusion.
+\end{theorem*}
+\begin{ideabox}
+\textbf{Surjectivity is repaired by shrinking the target.} Replace $W$ by $\range T$; then everything in the target is reached.
 
-\begin{prob}\begin{proof}\begin{steps}\ii The set $U/W$ contains the zero coset and is closed under linear combinations because $U$ is a subspace, so it is a subspace of $V/W$.\ii Since $I(W)\subseteq U$, Proposition 42 gives the linear map $R:V/W\to V/U$, $R(v+W)=v+U$. It is onto because every $v+U$ has this form.\ii $R(v+W)=U$ iff $v\in U$, so $\ker R=U/W$. Proposition 41 gives the displayed formula and isomorphism.\ii For finite-dimensional $V$, its source dimension is $(\dim V-\dim W)-(\dim U-\dim W)=\dim V-\dim U$, agreeing with the target.\end{steps}\end{proof}\end{prob}
-\method{Identify successive quotients in coordinates}\begin{steps}\ii In $V=\mathbb R^3$, take $W=\mathbb Re_1$ and $U=\operatorname{span}(e_1,e_2)$. A coset of $W$ is determined by coordinates $(y,z)$: representative differences in $W$ change only $x$.\ii The subspace $U/W$ consists of pairs $(y,0)$. A coset modulo it is determined by $z$.\ii Directly, a coset in $V/U$ is also determined by $z$, and Proposition 44 identifies the two descriptions by keeping that coordinate.\end{steps}
-\NestedQuotientFigure
-\begin{shortcuts}\ii For an induced map, check $T(U_1)\subseteq U_2$ before doing any calculations.\ii To prove a quotient isomorphism, start from a linear map on the original space and identify its kernel and range.\end{shortcuts}\begin{trapbox}\ii Nested quotients require $W\subseteq U$: for $U=\mathbb Re_1$ and $W=\mathbb Re_2$ in $\mathbb R^2$, the set $W$ is not a subspace of $U$, so the quotient $U/W$ is not defined.\ii Equal dimensions do not prove a specified map is invertible: the zero map $\mathbb R\to\mathbb R$ has equal domain and codomain dimensions but is not an isomorphism.\end{trapbox}
-\section{Linear functionals and dual bases}\begin{qbox}How can a vector be described by linear scalar values? On $F^n$, the $j$th coordinate is a linear functional, and all coordinates together determine the vector.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 26; LADR 3.108, 3.110]A linear functional on $V$ is a linear map $\varphi:V\to F$. The dual space is $V^{\prime}=L(V,F)$; its elements are also called linear forms, covectors or one-forms. For functionals $\varphi,\psi$, their pointwise combination satisfies $(a\varphi+\psi)(bv+w)=b(a\varphi+\psi)(v)+(a\varphi+\psi)(w)$; the zero map is linear. Thus $V^{\prime}$ is a vector space (Week 3 Proposition 18). The prime on $V^{\prime}$ denotes duality, not differentiation of a polynomial.\end{definition*}\end{prob}
-\begin{example*}[LADR 3.109: functionals]\begin{steps}\ii On $F^n$, $\varphi(x_1,\ldots,x_n)=\sum_j a_jx_j$ is linear by distributivity, for any fixed scalars $a_j$.
-For example, on $\mathbb R^3$, $\varphi(x,y,z)=4x-5y+2z$, so $\varphi(1,2,3)=4-10+6=0$.
-\ii The polynomial functional $\varphi(p)=3p''(5)+7p(4)$ is linear by differentiation and evaluation linearity. For $p=x^2$, it gives $3\cdot2+7\cdot16=118$.
-\ii On $\mathcal P(\mathbb R)$, evaluation $p\mapsto p(c)$ and integration $p\mapsto\int_0^1p(t)\,dt$ are linear by coefficient evaluation and the elementary integral linearity cited in Week 3.
-\ii If a functional is nonzero, choose $v$ with $\varphi(v)=a\ne0$. For any $b\in F$, $\varphi((b/a)v)=b$, so the functional is onto.\end{steps}\end{example*}
-\begin{prob}\begin{definition*}[Notes Definition 27; LADR 3.112]For an ordered basis $v_1,\ldots,v_n$ of $V$, its dual list is $\varphi_1,\ldots,\varphi_n\in V^{\prime}$ with $\varphi_j(v_k)=\delta_{jk}$, where $\delta_{jk}=1$ for $j=k$ and $0$ otherwise. Explicitly, $\varphi_j(\sum_k a_kv_k)=a_j$. Unique coordinates make this a function; coordinates of a combination add and scale, so it is linear. Any functional with the prescribed basis values must have this formula (Week 3 Proposition 21). We next show this list is a basis, called the dual basis.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 45; LADR 3.111, 3.114, 3.116]The dual list is a basis of $V^{\prime}$, so $\dim V^{\prime}=\dim V=n$. For every $v\in V$ and $\psi\in V^{\prime}$, $v=\sum_j\varphi_j(v)v_j$ and $\psi=\sum_j\psi(v_j)\varphi_j$.\end{proposition*}
-\begin{motive}\ii[Want.] Obtain expansions in the original and dual bases.
-\ii[Key step.] If $v=\sum a_jv_j$, then $\varphi_k(v)=a_k$ because all other basis values are zero. For functionals, evaluation at $v_k$ gives $\sum_j b_j\varphi_j(v_k)=b_k$, so choosing $b_k=\psi(v_k)$ forces agreement with $\psi$ on the whole basis.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Write $v=\sum a_jv_j$. Applying $\varphi_k$ gives $\varphi_k(v)=a_k$, proving the first expansion.\ii If $\sum b_j\varphi_j=0$, evaluation at $v_k$ gives $b_k=0$. Thus the dual list is independent.\ii The functional $\sum_j\psi(v_j)\varphi_j$ agrees with $\psi$ at every $v_k$, so the two linear maps agree everywhere. This gives the second expansion and proves spanning. The dual basis has $n$ vectors, so $\dim V^{\prime}=n=\dim V$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 44; LADR 3.113]\begin{steps}\ii In the standard basis of $F^n$, a functional has row representation $(a_1\ \cdots\ a_n)$ acting on a coordinate column by $\sum a_jx_j$.
-\ii The dual basis consists of the coordinate rows with a single $1$ in position $j$, because applying the $j$th row to $e_k$ gives $\delta_{jk}$.\end{steps}\end{example*}
-\method{Compute a nonstandard dual basis}\begin{steps}\ii In $\mathbb R^2$, use $v_1=(1,1),v_2=(1,-1)$. Solve $(x,y)=av_1+bv_2$ to obtain $a=(x+y)/2$, $b=(x-y)/2$.\ii The coordinate functionals are $\varphi_1(x,y)=(x+y)/2$ and $\varphi_2(x,y)=(x-y)/2$. The four values are $\varphi_1(v_1)=1$, $\varphi_1(v_2)=0$, $\varphi_2(v_1)=0$, and $\varphi_2(v_2)=1$, by substituting $(1,1)$ and $(1,-1)$.\ii Equivalently, if $Q$ has columns $v_1,v_2$ in the standard basis, the rows of $Q^{-1}$ are the dual functionals, because $Q^{-1}Q=I$.\end{steps}
-\DualBasisFigure
-\begin{example*}[Notes Chapter 10: a choice-dependent identification]Equal finite dimensions give $V\cong V^{\prime}$, but sending a basis to its dual depends on the chosen basis.
-\begin{steps}\ii For $V=\mathbb R$ with basis $(1)$, the dual basis is $\varphi(x)=x$. Sending $1$ to $\varphi$ sends $v$ to the functional $x\mapsto vx$.
-\ii With basis $(2)$, the dual basis is $\psi(x)=x/2$. Sending $2$ to $\psi$ sends $v=(v/2)2$ to $(v/2)\psi$, namely $x\mapsto vx/4$.
-\ii The two maps differ, for instance at $v=1$. Thus this construction requires a basis choice.\end{steps}\end{example*}
-\begin{shortcuts}\ii Dual basis functionals return the original basis coefficients, so solving coordinates computes the dual basis.\ii To prove an identity of functionals, evaluate both sides on a basis; equality there implies equality everywhere.\end{shortcuts}\begin{trapbox}\ii The dual basis does not generally have the same coordinate rows as the original basis columns: $(1,1),(1,-1)$ gives rows $(1/2,1/2),(1/2,-1/2)$.\ii The prime in $V^{\prime}$ does not mean differentiation; a functional such as $p\mapsto p(2)$ returns a scalar, whereas differentiation returns a polynomial.\end{trapbox}
-\section{Double duals and separation}\begin{qbox}Do all linear functional values distinguish vectors? For $e_1=(1,0)$, the functional $(x,y)\mapsto x$ takes value $1$, distinguishing $e_1$ from zero.\end{qbox}
-\begin{proposition*}[Basis extension and separation tools for Notes Propositions 46, 50--51]Every linear functional on a subspace $U\subseteq V$ extends to one on $V$. If $v\notin U$, there is $\varphi\in V^{\prime}$ with $\varphi(U)=\{0\}$ and $\varphi(v)=1$. For arbitrary infinite-dimensional spaces these statements use the basis-extension form of choice cited in Week 2.\end{proposition*}
-\begin{motive}\ii[Want.] Extend a functional and prescribe a value outside $U$.
-\ii[Key step.] Its values on a basis of $U$ are already fixed. Extend that basis to $V$ and prescribe zero on the added vectors. To separate $v\notin U$, include $v$ among the added basis vectors and prescribe value $1$ there; independence is exactly what prevents a conflicting value.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Choose a basis of $U$ and extend it to a basis of $V$. Prescribe the given functional values on the first basis and zero on all added basis vectors.\ii For each finite basis expansion, define the new functional by the same coefficient-weighted sum of prescribed values. Unique expansions make it well-defined; adding and scaling expansions proves linearity. Its restriction equals the original functional.\ii If $v\notin U$, adjoining $v$ to a basis of $U$ is independent: a relation with nonzero coefficient on $v$ would put $v$ in $U$. Extend that list to a basis of $V$.\ii Prescribe $0$ on the basis of $U$, $1$ on $v$, and $0$ on the other basis vectors. The preceding construction gives the separating functional.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 10: double dual]The double dual is $V^{\prime\prime}=(V^{\prime})^{\prime}$. Define $j_V(v):V^{\prime}\to F$ by $j_V(v)(\varphi)=\varphi(v)$, and $j_V:V\to V^{\prime\prime}$ by $v\mapsto j_V(v)$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 10: linearity of evaluation]
-For every $v\in V$, $j_V(v)\in V^{\prime\prime}$, and the map $j_V:V\to V^{\prime\prime}$ is linear.
+\textbf{Injectivity is repaired by the quotient.} Two vectors have the same image exactly when their difference is in $\nul T$: $Tv=Tw\iff T(v-w)=0\iff v-w\in\nul T$. And $v-w\in\nul T$ is exactly the condition for $v$ and $w$ to give the same element of $V/\nul T$ (W5). So the vectors that $T$ cannot tell apart are precisely the ones that the quotient declares equal. After passing to the quotient there is nothing left to confuse.
+
+That single chain of equivalences is the whole proof. Read left to right it says the formula $\Tt(v+\nul T)=Tv$ is well-defined (same set $\Rightarrow$ same value). Read right to left it says $\Tt$ is injective (same value $\Rightarrow$ same set).
+
+Picture: $V$ is cut into the parallel sets $v+\nul T$. $T$ is constant on each set, and takes different values on different sets. So ``sets $\leftrightarrow$ values'' is a bijection.
+\end{ideabox}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth]
+  \node (V) at (0,2) {$V$}; \node (W) at (5,2) {$W$};
+  \node (Q) at (0,0) {$V/\nul T$}; \node (R) at (5,0) {$\range T$};
+  \draw[->] (V) -- node[above]{$T$} (W);
+  \draw[->] (V) -- node[right]{$\pi$} node[left,font=\footnotesize,align=right]{surjective: forget\\differences in $\nul T$} (Q);
+  \draw[->] (Q) -- node[above]{$\Tt$} node[below,font=\footnotesize]{isomorphism} (R);
+  \draw[->] (R) -- node[left]{$\iota$} node[right,font=\footnotesize,align=left]{injective:\\inclusion} (W);
+\end{tikzpicture}
+\figcap{Every linear map is: a quotient map (surjective), then an isomorphism, then an inclusion (injective). Going down, across and up gives the same result as $T$.}
+\end{fig}
+\begin{proof}
+  \begin{steps}
+    \ii \emph{Well-defined.} Suppose $v+\nul T=w+\nul T$. Then $v-w\in\nul T$ (W5), so $Tv-Tw=T(v-w)=0$, so $Tv=Tw$. The value $\Tt(v+\nul T)$ does not depend on the name $v$.
+    \ii \emph{Linear.} $\Tt\bigl(\lambda(v+\nul T)+(w+\nul T)\bigr)=\Tt\bigl((\lambda v+w)+\nul T\bigr)=T(\lambda v+w)=\lambda Tv+Tw$.
+    \ii \emph{Injective.} Suppose $\Tt(v+\nul T)=0$. Then $Tv=0$, so $v\in\nul T$, so $v+\nul T=0+\nul T$ is the zero element of the quotient.
+    \ii \emph{Surjective onto $\range T$.} Every element of $\range T$ is $Tv=\Tt(v+\nul T)$ for some $v$.
+    \ii \emph{Factorisation.} $\iota(\Tt(\pi(v)))=\iota(\Tt(v+\nul T))=\iota(Tv)=Tv$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Dimensions: $\dim V-\dim\nul T=\dim(V/\nul T)=\dim\range T$. This is rank--nullity again (not a new proof, since Prop.~40 used rank--nullity).
+  \ii Ex.~43: differentiation $D\colon\PP(\RR)\to\PP(\RR)$ is surjective with null space the constants $\RR$. The induced isomorphism is $\PP(\RR)/\RR\to\PP(\RR)$, $p+\RR\mapsto p'$. Its inverse is the indefinite integral $q\mapsto\int q\,dx$, whose value is a polynomial ``$+\,C$'', i.e.\ an element of $\PP(\RR)/\RR$.
+  \ii Remark from the notes: a subspace $U$ comes with an injective map (its inclusion), and every injective map $i\colon U\to V$ identifies $U$ with the subspace $i(U)$. In the same way a quotient $V/U$ comes with a surjective map $\pi$, and every surjective $T\colon V\to W$ identifies $W$ with the quotient $V/\nul T$.
+\end{itemize}
+
+\subsection{Induced maps; second and third isomorphism theorems (Ch.~9.2--9.3)}
+
+\begin{proposition*}[Prop.~42: when a map passes to quotients]
+  Let $T\colon V\to W$ be linear, $U_1\subseteq V$ and $U_2\subseteq W$ subspaces with $T(U_1)\subseteq U_2$. Then $\Tt\colon V/U_1\to W/U_2$, $\Tt(v+U_1)=Tv+U_2$, is a well-defined linear map.
 \end{proposition*}
+\begin{ideabox}
+The formula uses the name $v$, so the only thing to prove is that renaming does not matter. Two names $v,w$ of the same set differ by an element of $U_1$. Their images $Tv,Tw$ then differ by an element of $T(U_1)$. For the outputs to be the same set we need that difference to be in $U_2$. So the hypothesis $T(U_1)\subseteq U_2$ is exactly what is required, no more and no less.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose $v+U_1=w+U_1$. Then $v-w\in U_1$, so $Tv-Tw=T(v-w)\in T(U_1)\subseteq U_2$, so $Tv+U_2=Tw+U_2$.
+    \ii Linearity: $\Tt(\lambda(v+U_1)+(w+U_1))=T(\lambda v+w)+U_2=\lambda(Tv+U_2)+(Tw+U_2)$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Special case $U_2=\{0\}$ (HW5 P2): if $U\subseteq\nul T$, then $T$ induces $\Tt\colon V/U\to W$, $\Tt(v+U)=Tv$. The first isomorphism theorem is the case $U=\nul T$.
+\end{itemize}
+\begin{theorem*}[Prop.~43: second isomorphism theorem]
+  For subspaces $U,W\subseteq V$ there is an isomorphism
+  \[ \varphi\colon U/(U\cap W)\to(U+W)/W,\qquad\varphi\bigl(u+(U\cap W)\bigr)=u+W. \]
+\end{theorem*}
+\begin{ideabox}
+The plan for every statement ``quotient $\cong$ something'' is the same: find a surjective linear map from the numerator onto the something, compute its null space, and apply the first isomorphism theorem. Here the numerator is $U$ and the target is $(U+W)/W$, and the only reasonable map is $u\mapsto u+W$.
 
-\begin{prob}\begin{proof}\begin{steps}
-\ii For fixed $v$, $j_V(v)(a\varphi+\psi)=(a\varphi+\psi)(v)=a\varphi(v)+\psi(v)$. Thus $j_V(v)$ is a linear functional on $V^{\prime}$.
-\ii For every $\varphi$, $j_V(av+w)(\varphi)=\varphi(av+w)=a\varphi(v)+\varphi(w)=(aj_V(v)+j_V(w))(\varphi)$. Equality on every functional proves linearity of $j_V$.
-\end{steps}\end{proof}\end{prob}
-\begin{example*}[Evaluating a double-dual vector]
-For $v=(2,-1)\in\mathbb R^2$, put $\varphi_1(x,y)=x$, $\varphi_2(x,y)=y$ and $\psi=3\varphi_1+4\varphi_2$.
-\[
-\begin{array}{c|ccc}
-\text{input to }j_V(v)&\varphi_1&\varphi_2&\psi\\\hline
-\text{value at }v&2&-1&3\cdot2+4(-1)=2
-\end{array}
-\]
-The vector $v$ is fixed; $j_V(v)$ takes a functional as its input and returns that functional's value at $v$.
-\end{example*}
-\begin{proposition*}[Notes Proposition 46; LADR §3F Exercise 32(a,c)]The map $j_V:V\to V^{\prime\prime}$ is injective for every vector space. If $V$ is finite-dimensional, it is an isomorphism.\end{proposition*}
+In finite dimensions the theorem gives $\dim U-\dim(U\cap W)=\dim(U+W)-\dim W$, which is the formula for $\dim(U+W)$ from Week 2.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Define $S\colon U\to(U+W)/W$ by $S(u)=u+W$. It is linear (it is the quotient map of $U+W$ restricted to $U$).
+    \ii \emph{$S$ is surjective.} An element of $(U+W)/W$ is $(u+w)+W$ with $u\in U$, $w\in W$. Since $(u+w)-u=w\in W$, this equals $u+W=S(u)$.
+    \ii \emph{$\nul S=U\cap W$.} For $u\in U$: $S(u)=0+W\iff u\in W\iff u\in U\cap W$.
+    \ii By the first isomorphism theorem, $U/\nul S\to\range S$, i.e.\ $U/(U\cap W)\to(U+W)/W$, $u+(U\cap W)\mapsto u+W$, is an isomorphism.
+  \end{steps}
+\end{proof}
+\begin{theorem*}[Prop.~44: third isomorphism theorem]
+  Let $W\subseteq U\subseteq V$ be subspaces. Then $U/W$ is a subspace of $V/W$ (the sets $u+W$ with $u\in U$), and
+  \[ (V/W)\big/(U/W)\;\cong\;V/U. \]
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii The identity map of $V$ sends $W$ into $U$. By Prop.~42 it induces $S\colon V/W\to V/U$, $S(v+W)=v+U$.
+    \ii $S$ is surjective: every $v+U$ is $S(v+W)$.
+    \ii $\nul S=U/W$: $S(v+W)=0+U\iff v\in U\iff v+W\in U/W$.
+    \ii The first isomorphism theorem gives $(V/W)/(U/W)\cong V/U$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Dimension check: $(\dim V-\dim W)-(\dim U-\dim W)=\dim V-\dim U$.
+  \ii ``Natural'' in the notes means: the isomorphism is given by a formula that uses only the subspaces themselves, with no choice of basis or complement.
+  \ii Use in induction proofs: if $W\ne\{0\}$, then $V/W$ has smaller dimension than $V$.
+\end{itemize}
 
-\begin{prob}\begin{proof}\begin{steps}\ii For $v\ne0$, apply separation with $U=\{0\}$ to obtain $\varphi(v)=1$. Then $j_V(v)(\varphi)=1$, so $j_V(v)\ne0$. Thus $j_V$ has zero kernel and is injective.\ii If $V$ is finite-dimensional, $\dim V^{\prime\prime}=\dim V^{\prime}=\dim V$. Week 4 Proposition 31 makes this injective map invertible.\ii Consequently if $\varphi(v)=\varphi(w)$ for all $\varphi\in V^{\prime}$, then $j_V(v-w)=0$, and injectivity gives $v=w$.\end{steps}\end{proof}\end{prob}
-\begin{shortcuts}\ii To prove $v=0$, it suffices to prove $\varphi(v)=0$ for every linear functional, by separation.\ii To construct a functional with constraints, choose a basis containing the constrained independent vectors and prescribe its values there.\end{shortcuts}\begin{trapbox}\ii One functional usually cannot distinguish every vector: on $\mathbb R^2$, $(x,y)\mapsto x$ cannot distinguish $(0,0)$ from $(0,1)$.\ii $V\cong V^{\prime}$ from a basis choice is different from the specified map $j_V:V\to V^{\prime\prime}$: the former varied in the one-dimensional example, while $j_V(v)(\varphi)=\varphi(v)$ contains no basis choice.\end{trapbox}
-\section{Dual maps, transposes and observables}\begin{qbox}How does a functional on the output give a functional on the input? For $T(t)=2t$ and $\varphi(s)=3s$, the input functional is $(\varphi\circ T)(t)=6t$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 28; LADR 3.118]For $T:V\to W$ linear, the dual map is $T^{\prime}:W^{\prime}\to V^{\prime}$, $T^{\prime}(\varphi)=\varphi\circ T$. Indeed, $(\varphi\circ T)(av+w)=\varphi(aTv+Tw)=a\varphi(Tv)+\varphi(Tw)$, so the composition is a linear functional. The domain and codomain are reversed.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 47; LADR 3.120]The map $T^{\prime}$ is linear. The assignment $\mathcal D:L(V,W)\to L(W^{\prime},V^{\prime})$, $\mathcal D(T)=T^{\prime}$, is linear, and for $T:U\to V$, $S:V\to W$, $(ST)^{\prime}=T^{\prime}S^{\prime}$.\end{proposition*}
-\begin{motive}\ii[Want.] Compute duals of combinations and compositions.
-\ii[Key step.] The defining value is $(T'\varphi)(v)=\varphi(Tv)$. Linearity of $\varphi$ handles combinations of maps, and pointwise addition handles combinations of functionals. For a composition, $\varphi(S(Tv))$ first forms $S'\varphi$ and then $T'(S'\varphi)$, explaining the reversed order.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii For $\varphi,\psi\in W^{\prime}$, $T^{\prime}(a\varphi+\psi)(v)=(a\varphi+\psi)(Tv)=a\varphi(Tv)+\psi(Tv)$. Thus $T^{\prime}$ is linear.\ii For $T_1,T_2:V\to W$, $((aT_1+T_2)^{\prime}\varphi)(v)=\varphi(aT_1v+T_2v)=a\varphi(T_1v)+\varphi(T_2v)$. This proves $\mathcal D(aT_1+T_2)=a\mathcal D(T_1)+\mathcal D(T_2)$.\ii For $\varphi\in W^{\prime}$, $(ST)^{\prime}\varphi=\varphi\circ S\circ T=T^{\prime}(S^{\prime}\varphi)$, giving the reversed product.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 45; LADR 3.119]\begin{steps}\ii Let $Tp=xp$ on $\mathcal P(\mathbb R)$ and $\varphi(p)=p(2)$. Then $(T^{\prime}\varphi)(p)=(xp)(2)=2p(2)$, so $T^{\prime}\varphi=2\varphi$.
-\ii For differentiation $Dp=p^{\prime}$ and $\psi(p)=p(3)$, $(D^{\prime}\psi)(p)=p^{\prime}(3)$.
-\ii If $\eta(p)=\int_0^1p(t)\,dt$, then $(D^{\prime}\eta)(p)=\int_0^1p^{\prime}(t)\,dt=p(1)-p(0)$ by termwise integration.\end{steps}\end{example*}
-\begin{prob}\textbf{Dualizing the assignment itself (Notes Chapter 10).}\begin{steps}
-\ii For $\mathcal D:T\mapsto T^{\prime}$ above, its dual has domain $L(W^{\prime},V^{\prime})^{\prime}$ and codomain $L(V,W)^{\prime}$ by the definition of a dual map.
-\ii That definition gives $\mathcal D^{\prime}(\Lambda)=\Lambda\circ\mathcal D$, hence $(\mathcal D^{\prime}\Lambda)(T)=\Lambda(T^{\prime})$ for each $T$.
-\end{steps}\end{prob}
-\begin{proposition*}[Notes Proposition 48: double-dual compatibility]For every linear map $T:V\to W$, $T^{\prime\prime}j_V=j_WT$, where $T^{\prime\prime}=(T^{\prime})^{\prime}:V^{\prime\prime}\to W^{\prime\prime}$. This compatibility, together with its basis-free formula, is why $j_V$ is called canonical.\end{proposition*}
+\subsection{Dual space and dual basis (Ch.~10.1)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii For $v\in V$ and $\psi\in W^{\prime}$, $(T^{\prime\prime}j_V(v))(\psi)=j_V(v)(T^{\prime}\psi)=(T^{\prime}\psi)(v)=\psi(Tv)$.\ii The last expression is $j_W(Tv)(\psi)$. Since this holds for every $\psi$, the two elements of $W^{\prime\prime}$ agree, proving the identity.\ii In finite dimension, the $j$ maps are isomorphisms by Proposition 46, so this identity identifies the double-dual map with $T$ through those specified maps.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 49; LADR 3.132]For finite-dimensional $V,W$, if $A=M_C^B(T)$, then $M_{B^{\prime}}^{C^{\prime}}(T^{\prime})=A^{\mathsf T}$, where $B^{\prime},C^{\prime}$ are the dual bases. The transpose, defined in Week 3, exchanges rows and columns.\end{proposition*}
+\begin{qbox}
+  A vector can be studied through numbers that depend linearly on it: a coordinate, the value of a polynomial at a point, an integral. What is the space of all such linear measurements, and how is it related to $V$?
+\end{qbox}
+\begin{definition*}[Def.~26, 27 / LADR 3.108--3.112]
+  A \vocab{linear functional} on $V$ is a linear map $\varphi\colon V\to\FF$. The \vocab{dual space} is $V'=\LL(V,\FF)$. If $v_1,\dots,v_n$ is a basis of $V$, its \vocab{dual basis} is the list $\varphi_1,\dots,\varphi_n\in V'$ with
+  \[ \varphi_j(v_k)=\delta_{jk}=\begin{cases}1&j=k\\0&j\ne k.\end{cases} \]
+\end{definition*}
+\begin{itemize}
+  \ii $V'$ has nothing to do with derivatives. Other books (and the practice midterm) write $V^*$.
+  \ii $\varphi_j$ exists and is unique because a linear map is determined by its values on a basis (W1).
+  \ii \textbf{What $\varphi_j$ does:} $\varphi_j(a_1v_1+\dots+a_nv_n)=a_j$. It reads off the $j$-th coordinate.
+  \ii Ex.~44: for $\FF^n$ (columns) a functional is a row vector, acting by row times column. The dual basis of $e_1,\dots,e_n$ is the list of rows $(1,0,\dots,0),\dots,(0,\dots,0,1)$.
+  \ii $\dim V'=\dim V\cdot\dim\FF=\dim V$ (W4). So $V'\cong V$ when $V$ is finite-dimensional. But an isomorphism has to be chosen (for example $v_j\mapsto\varphi_j$), and a different basis gives a different one.
+\end{itemize}
+\begin{proposition*}[Prop.~45 / LADR 3.116: the dual basis is a basis of $V'$]
+\end{proposition*}
+\begin{ideabox}
+The one technique for functionals: \emph{to get information out of an equation between functionals, evaluate both sides on basis vectors.} Evaluating $\lambda_1\varphi_1+\dots+\lambda_n\varphi_n$ at $v_k$ makes every term vanish except the $k$-th, and returns $\lambda_k$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $\dim V'=n$, so it is enough to prove that $\varphi_1,\dots,\varphi_n$ is independent (Week 2: $n$ independent vectors in dimension $n$).
+    \ii Suppose $\lambda_1\varphi_1+\dots+\lambda_n\varphi_n=0$ (the zero functional). Evaluate at $v_k$: $0=\lambda_1\varphi_1(v_k)+\dots+\lambda_n\varphi_n(v_k)=\lambda_k$. This holds for every $k$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii \textbf{Coordinates of a vector:} $v=\sum_j\varphi_j(v)\,v_j$. \textbf{Coordinates of a functional:} $\psi=\sum_j\psi(v_j)\,\varphi_j$ (HW5 P4). The coefficient of $\varphi_j$ is found by evaluating $\psi$ at $v_j$.
+\end{itemize}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Write $B=(v_1,\ldots,v_n)$, $C=(w_1,\ldots,w_m)$, with dual bases $\varphi_k,\psi_j$. Then $Tv_k=\sum_i a_{ik}w_i$.\ii $(T^{\prime}\psi_j)(v_k)=\psi_j(Tv_k)=a_{jk}$. By the functional expansion, $T^{\prime}\psi_j=\sum_k a_{jk}\varphi_k$.\ii Thus entry $(k,j)$ of the dual matrix is $a_{jk}$, exactly entry $(k,j)$ of $A^{\mathsf T}$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 46]Let $A=\begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$ represent $\mathbb R^3\to\mathbb R^2$.
-\begin{steps}\ii A functional on $\mathbb R^2$ is a row $(x\ y)$. Precomposing with $A$ gives $(x\ y)A=(x+4y,2x+5y,3x+6y)$.
-\ii In dual coordinate columns, the same map is $\begin{pmatrix}1&4\\2&5\\3&6\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}$, confirming the transpose formula.\end{steps}\end{example*}
-\begin{prob}\textbf{Probability convention.} A probability column has nonnegative entries summing to $1$. A column-stochastic matrix has nonnegative entries and each column sums to $1$; entry $P_{ij}$ is the next-state probability of $i$ given present state $j$. Then $(Pp)_i\ge0$ and $\sum_i(Pp)_i=\sum_j(\sum_iP_{ij})p_j=1$, so $Pp$ is again a probability column. A reward column lists the scalar value assigned to each state; its mean under $p$ is the weighted sum $\sum_i f_ip_i$.\end{prob}
-\begin{proposition*}[Notes Chapter 10: distributions and observables]For a column-stochastic matrix $P$, let a probability column $p$ describe the present state and let the real column $f$ list rewards $f_i$ at each state. Their mean reward is $f^{\mathsf T}p=\sum_i f_ip_i$. After one step it is $f^{\mathsf T}Pp=(P^{\mathsf T}f)^{\mathsf T}p$. The value $(P^{\mathsf T}f)_j=\sum_iP_{ij}f_i$ is the conditional mean reward when the present state is $j$.\end{proposition*}
+\subsection{The double dual (Ch.~10.2)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii After one step the distribution is $Pp$, so the mean is $\sum_i f_i\sum_jP_{ij}p_j=\sum_j(\sum_iP_{ij}f_i)p_j$.\ii The inner sum is the mean of the rewards weighted by the conditional probabilities in column $j$. These inner sums are exactly the entries of $P^{\mathsf T}f$, proving the identity.\ii For the row convention, put $A=P^{\mathsf T}$ and initial distribution row $\lambda^{\mathsf T}$. For integers $k\ge0$, with $A^0=I$ and $A^k$ the repeated product defined in Week 3, $\lambda^{\mathsf T}A^kf$ is the mean after $k$ steps, by repeated multiplication and transposition.\end{steps}\end{proof}\end{prob}
-For matrices of compatible sizes, the dual composition identity gives $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$: the matrix of the dual is the transpose in corresponding dual bases, and $(AB)'=B'A'$. This also follows entrywise because both $(i,j)$ entries are $\sum_k a_{jk}b_{ki}$.
-\method{Compute an expected reward in two ways}\begin{steps}\ii Use Week 3's $P=\left(\begin{smallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{smallmatrix}\right)$, initial $p=e_1$, and rewards $f=(0,1,4)^{\mathsf T}$. Then $Pp=(1/2,1/2,0)^{\mathsf T}$ and $f^{\mathsf T}Pp=1/2$.\ii Alternatively, its entries are $(1/2)0+(1/2)1=1/2$, $(1/4)0+(1/2)1+(1/4)4=3/2$, and $(1/2)1+(1/2)4=5/2$. Thus $P^{\mathsf T}f=(1/2,3/2,5/2)^{\mathsf T}$; its first entry gives the same mean from state 1.\end{steps}
-\begin{shortcuts}\ii Compute a dual map by precomposition; its matrix in dual bases is the transpose, so no new matrix solving is needed.\ii For expected rewards, choose whichever is shorter: update $p$ by $P$ or update $f$ by $P^{\mathsf T}$.\end{shortcuts}\begin{trapbox}\ii Dual maps reverse direction: a $2\times3$ matrix gives a dual matrix of size $3\times2$, not $2\times3$.\ii Transposition does not reverse entries within a row; it exchanges indices. Example 46 explicitly gives the correct array.\ii Unreversed dual products may be undefined: for $T:\mathbb R\to\mathbb R^2$ and $S:\mathbb R^2\to\mathbb R^3$, $T^{\prime}S^{\prime}$ is defined, but $S^{\prime}T^{\prime}$ has mismatched intermediate spaces.\end{trapbox}
-\section{Annihilators and rank of the dual map}\begin{qbox}Which functionals vanish on a specified subspace? For the plane spanned by $(1,1,0),(0,1,1)$, the row $(-1,1,-1)$ vanishes on both generators, hence on the whole plane.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 29; LADR 3.121]The annihilator of a subspace $U\subseteq V$ is $U^0=\{\varphi\in V^{\prime}:\varphi(u)=0\text{ for every }u\in U\}$. The same definition makes sense for any subset $U$ (the textbook convention), and the subspace proof below still applies. The ambient space $V$ determines which functionals are allowed. Hereafter $U$ is a subspace unless specified otherwise.\end{definition*}\end{prob}
-\begin{example*}[LADR 3.122--3.123]
-\begin{steps}
-\ii Let $U=x^2\mathcal P(\mathbb R)\subseteq\mathcal P(\mathbb R)$ and $\varphi(p)=p'(0)$. If $p=x^2q$, then $p'(0)=(2xq+x^2q')(0)=0$, so $\varphi\in U^0$. It is a nonzero functional, since $\varphi(x)=1$.
-\ii In $\mathbb R^5$, let $U=\operatorname{span}(e_1,e_2)$ and let $\varphi_j$ be the standard coordinate functionals. A row $(a_1,a_2,a_3,a_4,a_5)$ vanishes on $e_1,e_2$ exactly when $a_1=a_2=0$. Thus
-\[U^0=\operatorname{span}(\varphi_3,\varphi_4,\varphi_5),\qquad
-\psi=\underbrace{0\varphi_1+0\varphi_2}_{\text{forced by }\psi(U)=0}
-+\underbrace{a_3\varphi_3+a_4\varphi_4+a_5\varphi_5}_{\text{arbitrary coefficients}}.\]
-The three remaining coordinate functionals are independent by evaluating at $e_3,e_4,e_5$.
-\end{steps}\end{example*}
-\begin{proposition*}[LADR 3.124--3.125, 3.127]$U^0$ is a subspace of $V^{\prime}$. In finite dimension, $\dim U^0=\dim V-\dim U$. The extreme-case conclusions extend LADR 3.127 to all dimensions using separation: $U^0=\{0\}$ iff $U=V$, and $U^0=V^{\prime}$ iff $U=\{0\}$.\end{proposition*}
+\begin{qbox}
+  There is no preferred isomorphism $V\to V'$. Is there one from $V$ to $V''=(V')'$?
+\end{qbox}
+\begin{definition*}
+  For $v\in V$ let $j_V(v)\in V''$ be ``evaluate at $v$'': $j_V(v)(\varphi)=\varphi(v)$ for $\varphi\in V'$. This gives $j_V\colon V\to V''$.
+\end{definition*}
+\begin{itemize}
+  \ii $j_V(v)$ is linear in $\varphi$: $(\lambda\varphi+\psi)(v)=\lambda\varphi(v)+\psi(v)$. So $j_V(v)\in V''$.
+  \ii $j_V$ is linear in $v$: $\varphi(\lambda v+w)=\lambda\varphi(v)+\varphi(w)$.
+  \ii The definition uses no basis and no inner product.
+\end{itemize}
+\begin{proposition*}[Prop.~46 / LADR 3F.32]
+  $j_V$ is injective. If $V$ is finite-dimensional, $j_V$ is an isomorphism.
+\end{proposition*}
+\begin{ideabox}
+Injective means: if $v\ne0$ then $j_V(v)\ne0$, i.e.\ some functional $\varphi$ has $\varphi(v)\ne0$. So the task is to build a functional that does not vanish at a given nonzero vector. Functionals are built by prescribing values on a basis, so make $v$ a basis vector and give it the value $1$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii The zero functional annihilates $U$, and if $\varphi,\psi$ do, then $(a\varphi+\psi)(u)=0$ for every $u\in U$. Thus $U^0$ is a subspace.\ii In finite dimension, extend a basis $u_1,\ldots,u_k$ of $U$ to $u_1,\ldots,u_n$ in $V$ and take its dual basis $\varphi_1,\ldots,\varphi_n$. A functional annihilates $U$ iff its first $k$ coefficients in this dual basis are zero. Thus $\varphi_{k+1},\ldots,\varphi_n$ is a basis of $U^0$, of length $n-k$.\ii If $U=V$, only the zero functional vanishes everywhere. If $U\ne V$, separation supplies a nonzero functional annihilating $U$, so $U^0\ne\{0\}$.\ii If $U=\{0\}$, every functional vanishes there. If $U$ contains a nonzero $u$, separation supplies a functional with value $1$ at $u$, so $U^0\ne V^{\prime}$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 47]Let $U=\operatorname{span}((1,1,0),(0,1,1))\subseteq\mathbb Q^3$.
-\begin{steps}\ii A row $(a,b,c)$ annihilates both generators iff $a+b=0$ and $b+c=0$.
-\ii Thus $(a,b,c)=b(-1,1,-1)$, so $U^0=\operatorname{span}((-1,1,-1))$.
-\ii The two generators are independent by their first and last coordinates, so $\dim U=2$ and $\dim U^0=1$, verifying $2+1=3$.\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 50; LADR 3.128(a), 3.130(b)]For any linear $T:V\to W$, $\ker T^{\prime}=(\im T)^0$ and $\im T^{\prime}=(\ker T)^0$. The general-dimensional statement uses the functional-extension tool above.\end{proposition*}
-\begin{motive}\ii[Want.] Express the kernel and range of $T'$ using $T$.
-\ii[Key step.] $T'\psi=0$ means $\psi(Tv)=0$ for every $v$, exactly vanishing on $\im T$. To obtain $\varphi=T'\eta$, the required values must be $\eta(Tv)=\varphi(v)$. If $Tv=Tw$, then $v-w\in\ker T$, so a functional $\varphi$ vanishing there assigns the same value. Define $\eta$ on $\im T$ this way and extend it to $W$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii $\psi\in\ker T^{\prime}$ iff $\psi(Tv)=0$ for all $v$, exactly $\psi\in(\im T)^0$.\ii If $\varphi=T^{\prime}\psi$ and $v\in\ker T$, then $\varphi(v)=\psi(Tv)=\psi(0)=0$. Thus $\im T^{\prime}\subseteq(\ker T)^0$.\ii For $\varphi\in(\ker T)^0$, define $\eta:\im T\to F$ by $\eta(Tv)=\varphi(v)$. If $Tv=Tw$, then $v-w\in\ker T$, so $\varphi(v)=\varphi(w)$; the rule is well-defined.\ii It is linear: $\eta(aTv+Tw)=\eta(T(av+w))=\varphi(av+w)=a\varphi(v)+\varphi(w)$. Extend $\eta$ to $\widetilde\eta\in W^{\prime}$ by the extension tool. Then $T^{\prime}\widetilde\eta(v)=\widetilde\eta(Tv)=\varphi(v)$, proving the reverse inclusion.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 51; LADR 3.129, 3.131]For a linear map $T:V\to W$, $T$ is injective iff $T^{\prime}$ is surjective; $T$ is surjective iff $T^{\prime}$ is injective.\end{proposition*}
+Restated: if $\varphi(v)=\varphi(w)$ for every $\varphi\in V'$, then $v=w$. A vector is determined by the results of all linear measurements.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Let $v\ne0$. The list $v$ is independent; extend it to a basis $v,v_2,\dots$ of $V$ (W1).
+    \ii Let $\varphi$ be the functional with $\varphi(v)=1$ and $\varphi(v_k)=0$ for the other basis vectors.
+    \ii Then $j_V(v)(\varphi)=\varphi(v)=1\ne0$, so $j_V(v)\ne0$. Hence $\nul j_V=\{0\}$.
+    \ii If $\dim V<\infty$: $\dim V''=\dim V'=\dim V$, and an injective map between spaces of equal finite dimension is an isomorphism (W3).
+  \end{steps}
+\end{proof}
+In coordinates: vectors of $\FF^n$ are columns, functionals are rows, and functionals on rows are columns again. $j_V$ is the basis-free version of ``transpose twice''.
 
-\begin{prob}\begin{proof}\begin{steps}\ii $T$ injective $\iff\ker T=\{0\}\iff(\ker T)^0=V^{\prime}\iff\im T^{\prime}=V^{\prime}\iff T^{\prime}$ surjective.\ii $T$ surjective $\iff\im T=W\iff(\im T)^0=\{0\}\iff\ker T^{\prime}=\{0\}\iff T^{\prime}$ injective.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[LADR 3.128(b), 3.130(a), 3.133]For a linear map $T:V\to W$ between finite-dimensional spaces, $\operatorname{rank}T^{\prime}=\operatorname{rank}T$ and $\dim\ker T^{\prime}=\dim\ker T+\dim W-\dim V$. Consequently row rank equals column rank for every finite matrix.\end{proposition*}
+\subsection{The dual map and the transpose (Ch.~10.3)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii $\dim\im T^{\prime}=\dim(\ker T)^0=\dim V-\dim\ker T=\operatorname{rank}T$.\ii $\dim\ker T^{\prime}=\dim(\im T)^0=\dim W-\operatorname{rank}T=\dim W-\dim V+\dim\ker T$.\ii For a matrix $A$, its column rank is the rank of its map by Week 3. The dual matrix is $A^{\mathsf T}$, whose column rank is the row rank of $A$. Equality of map ranks gives the equality of matrix ranks, confirming Week 3's factorization proof.\end{steps}\end{proof}\end{prob}
-\begin{shortcuts}\ii To compute an annihilator, write a general row and set its value on each subspace basis vector equal to zero.\ii Finite-dimensional annihilator dimensions supply a quick check: subspace dimension plus annihilator dimension equals ambient dimension.\end{shortcuts}\begin{trapbox}\ii Annihilator containment reverses subspace containment: more vectors to vanish on means fewer functionals. For $0\subset\mathbb Re_1\subset\mathbb R^2$, the annihilators are all rows, rows $(0,b)$, and zero.\ii Equal rank of $T$ and $T^{\prime}$ does not give equal nullity when domain and codomain dimensions differ: the map $\mathbb R^2\to\mathbb R$, $(x,y)\mapsto x$, has nullity $1$, but its dual has nullity $0$.\end{trapbox}
+\begin{definition*}[Def.~28 / LADR 3.118]
+  For $T\in\LL(V,W)$ the \vocab{dual map} is $T'\colon W'\to V'$, $T'(\varphi)=\varphi\circ T$.
+\end{definition*}
+\begin{ideabox}
+Why does the direction reverse? A functional $\varphi$ on $W$ measures vectors of $W$. Given $T\colon V\to W$, we can use $\varphi$ to measure a vector $v$ of $V$: first send it to $W$, then measure. That is $\varphi\circ T$, a functional on $V$. So $T$ converts measurements on $W$ into measurements on $V$. There is no way to go the other way: a functional on $V$ gives no information about vectors of $W$ outside the range.
+
+The defining equation to use in every computation: $(T'\varphi)(v)=\varphi(Tv)$.
+\end{ideabox}
+\begin{itemize}
+  \ii Ex.~45: $T\colon\PP(\RR)\to\PP(\RR)$, $Tp=xp$, and $\varphi(p)=p(2)$. Then $(T'\varphi)(p)=\varphi(xp)=2p(2)$, so $T'\varphi=2\varphi$.
+  \ii Practice Midterm 2: $T(x,y)=2x-y$ from $\RR^2$ to $\RR$ and $\ell(t)=3t$. Then $(T'\ell)(x,y)=\ell(2x-y)=6x-3y$.
+\end{itemize}
+\begin{proposition*}[Prop.~47 / LADR 3.120: algebra of dual maps]
+  $(\lambda T_1+T_2)'=\lambda T_1'+T_2'$, and $(ST)'=T'S'$ for $T\in\LL(U,V)$, $S\in\LL(V,W)$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii For $\varphi\in W'$ and $v\in V$: $\bigl((\lambda T_1+T_2)'\varphi\bigr)(v)=\varphi(\lambda T_1v+T_2v)=\lambda\varphi(T_1v)+\varphi(T_2v)=\bigl(\lambda T_1'\varphi+T_2'\varphi\bigr)(v)$.
+    \ii $(ST)'\varphi=\varphi\circ(S\circ T)=(\varphi\circ S)\circ T=(S'\varphi)\circ T=T'(S'\varphi)$.
+  \end{steps}
+\end{proof}
+\begin{proposition*}[Prop.~48: $j$ is compatible with every linear map]
+  For $T\colon V\to W$: $T''\circ j_V=j_W\circ T$.
+\end{proposition*}
+\begin{proof}
+  For $v\in V$ and $\psi\in W'$, unwind the definitions one at a time: $\bigl(T''(j_V(v))\bigr)(\psi)=j_V(v)(T'\psi)=(T'\psi)(v)=\psi(Tv)=j_W(Tv)(\psi)$.
+\end{proof}
+This is what ``canonical'' means for $j$: under the identifications $V\cong V''$, $W\cong W''$, the map $T''$ is $T$.
+
+\begin{theorem*}[Prop.~49 / LADR 3.132: the matrix of the dual map is the transpose]
+  Let $B=(v_1,\dots,v_n)$, $C=(w_1,\dots,w_m)$ be bases of $V,W$ with dual bases $B'=(v_1',\dots,v_n')$, $C'=(w_1',\dots,w_m')$. If $A=\MM(T)$ with respect to $B,C$, then $\MM(T')$ with respect to $C',B'$ is $A^\T$, where $(A^\T)_{ij}=a_{ji}$.
+\end{theorem*}
+\begin{ideabox}
+Column $j$ of $\MM(T')$ must hold the coordinates of the functional $T'(w_j')=w_j'\circ T$ in the basis $v_1',\dots,v_n'$. What does $w_j'\circ T$ do? It sends $v$ to the $j$-th coordinate of $Tv$. In coordinates, the $j$-th coordinate of $Ax$ is $a_{j1}x_1+\dots+a_{jn}x_n$: the coefficients are \emph{row $j$ of $A$}. So row $j$ of $A$ becomes column $j$ of $\MM(T')$. That is the transpose.
+
+To prove it, find the coordinates of $T'(w_j')$ by evaluating at each $v_k$ (the technique from Prop.~45).
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii By definition of $A$: $Tv_k=\sum_{l=1}^ma_{lk}w_l$.
+    \ii Evaluate $T'(w_j')$ at $v_k$: $T'(w_j')(v_k)=w_j'(Tv_k)=w_j'\bigl(\sum_la_{lk}w_l\bigr)=a_{jk}$.
+    \ii The coordinates of a functional $\psi$ in the dual basis are its values $\psi(v_k)$. So $T'(w_j')=\sum_{k=1}^na_{jk}v_k'$.
+    \ii So column $j$ of $\MM(T')$ is $(a_{j1},\dots,a_{jn})^\T$, which is row $j$ of $A$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Ex.~46: $A=\begin{psmallmatrix}1&2&3\\4&5&6\end{psmallmatrix}\colon\RR^3\to\RR^2$. The dual map sends a row $(x\ y)$ to the row $(x\ y)A$; its matrix in the standard dual bases is $A^\T=\begin{psmallmatrix}1&4\\2&5\\3&6\end{psmallmatrix}$.
+  \ii $(AB)^\T=B^\T A^\T$, because $(ST)'=T'S'$.
+  \ii \textbf{Distributions and observables.} For a Markov chain with stochastic matrix $P$ (W6), let $f$ assign a reward $f_i$ to state $i$. The mean reward under a distribution $p$ is $f^\T p=\sum f_ip_i$, a linear functional of $p$. After one step it is $f^\T Pp=(P^\T f)^\T p$. So $P$ moves distributions forward, $p\mapsto Pp$, and the dual map moves reward functions, $f\mapsto P^\T f$, with $(P^\T f)_j=\sum_iP_{ij}f_i=$ the expected reward one step later, given the present state is $j$. This is why some books use rows and $P^\T$.
+\end{itemize}
+
+\subsection{Annihilators (Ch.~10.4)}
+
+\begin{definition*}[Def.~29 / LADR 3.121]
+  The \vocab{annihilator} of a subspace $U\subseteq V$ is $U^0=\{\varphi\in V':\varphi(u)=0\text{ for all }u\in U\}$. It is a subspace of $V'$.
+\end{definition*}
+\begin{itemize}
+  \ii It is enough to check $\varphi$ on a spanning list of $U$.
+  \ii Ex.~47: $U=\spn\bigl((1,1,0),(0,1,1)\bigr)$. A row $(a\ b\ c)$ is in $U^0$ when $a+b=0$ and $b+c=0$, i.e.\ $(a\ b\ c)=b(-1\ \ 1\ \ {-1})$. So $U^0=\spn\bigl((-1\ \ 1\ \ {-1})\bigr)$.
+  \ii $\{0\}^0=V'$ and $V^0=\{0\}$.
+\end{itemize}
+\begin{proposition*}[LADR 3.125: dimension of the annihilator]
+  If $V$ is finite-dimensional, $\dim U^0=\dim V-\dim U$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Let $u_1,\dots,u_k$ be a basis of $U$; extend to a basis $u_1,\dots,u_k,x_1,\dots,x_r$ of $V$, with dual basis $\varphi_1,\dots,\varphi_k,\chi_1,\dots,\chi_r$.
+    \ii Any $\psi\in V'$ is $\psi=\sum_i\psi(u_i)\varphi_i+\sum_j\psi(x_j)\chi_j$ (coordinates of a functional).
+    \ii $\psi\in U^0$ exactly when $\psi(u_i)=0$ for all $i$, i.e.\ exactly when $\psi\in\spn(\chi_1,\dots,\chi_r)$.
+    \ii So $\chi_1,\dots,\chi_r$ is a basis of $U^0$, and $r=\dim V-\dim U$.
+  \end{steps}
+\end{proof}
+\begin{theorem*}[Prop.~50 / LADR 3.128, 3.130: null space and range of the dual map]
+  For $T\in\LL(V,W)$: \quad(i) $\nul T'=(\range T)^0$;\qquad(ii) $\range T'=(\nul T)^0$.
+\end{theorem*}
+\begin{ideabox}
+(i) is a translation. $T'\varphi=0$ means $\varphi(Tv)=0$ for all $v$, which says $\varphi$ vanishes on every vector of the form $Tv$, i.e.\ on $\range T$.
+
+(ii) has an easy half and a half that needs a construction. Easy: a functional $\psi\circ T$ vanishes wherever $T$ does. Harder: given $\varphi\in V'$ that vanishes on $\nul T$, we must produce $\psi\in W'$ with $\psi\circ T=\varphi$. The equation tells us what $\psi$ has to be on $\range T$: $\psi(Tv)=\varphi(v)$. Is that a valid definition? The same vector of $\range T$ can be $Tv$ and $Tw$; then $v-w\in\nul T$, and $\varphi(v)=\varphi(w)$ precisely because $\varphi$ vanishes on $\nul T$. So the hypothesis is exactly the well-definedness condition. Outside $\range T$ the equation imposes nothing, so extend $\psi$ in any way.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (i) $\varphi\in\nul T'\iff\varphi\circ T=0\iff\varphi(Tv)=0$ for all $v\in V\iff\varphi\in(\range T)^0$.
+    \ii (ii), $\subseteq$. Let $\varphi=T'\psi=\psi\circ T$. For $v\in\nul T$: $\varphi(v)=\psi(Tv)=\psi(0)=0$. So $\varphi\in(\nul T)^0$.
+    \ii (ii), $\supseteq$. Let $\varphi\in(\nul T)^0$. Define $\psi_0\colon\range T\to\FF$ by $\psi_0(Tv)=\varphi(v)$. Well-defined: if $Tv=Tw$ then $v-w\in\nul T$, so $\varphi(v)-\varphi(w)=\varphi(v-w)=0$. It is linear.
+    \ii Extend a basis of $\range T$ to a basis of $W$, and let $\psi\in W'$ equal $\psi_0$ on the basis vectors of $\range T$ and $0$ on the added ones. Then $\psi=\psi_0$ on $\range T$.
+    \ii $T'\psi=\psi\circ T$ sends $v$ to $\psi(Tv)=\psi_0(Tv)=\varphi(v)$. So $T'\psi=\varphi$ and $\varphi\in\range T'$.
+  \end{steps}
+\end{proof}
+\begin{proposition*}[Prop.~51 / LADR 3.129, 3.131]
+  $T$ is injective $\iff T'$ is surjective. \quad$T$ is surjective $\iff T'$ is injective.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii $T$ injective $\iff\nul T=\{0\}\iff(\nul T)^0=V'\iff\range T'=V'$. (For the middle step in the direction $\Leftarrow$: if $\nul T$ contained some $v\ne0$, the functional built in Prop.~46 has $\varphi(v)=1$, so it is not in $(\nul T)^0$.)
+    \ii $T$ surjective $\iff\range T=W\iff(\range T)^0=\{0\}\iff\nul T'=\{0\}$. (Middle step, $\Leftarrow$: if $\range T\ne W$, extend a basis of $\range T$ by at least one vector $x$; the functional that is $1$ on $x$ and $0$ on the other basis vectors is a nonzero element of $(\range T)^0$.)
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii \textbf{$\dim\range T'=\dim\range T$} (finite dimensions): $\dim\range T'=\dim(\nul T)^0=\dim V-\dim\nul T=\dim\range T$. For a matrix: $A$ and $A^\T$ have the same rank, i.e.\ the span of the rows and the span of the columns have the same dimension.
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{Proving ``quotient $\cong X$''}: write a surjective linear map from the numerator onto $X$, find its null space, quote the first isomorphism theorem. No need to check well-definedness by hand.
+  \ii \textbf{Defining a map out of $V/U$}: the formula $v+U\mapsto Tv$ is valid exactly when $U\subseteq\nul T$.
+  \ii \textbf{Basis of $V/U$}: extend a basis of $U$ to a basis of $V$; the added vectors $+\,U$ are a basis. $\dim V/U=\dim V-\dim U$.
+  \ii \textbf{Basis of $V/\nul T$ when $T$ is onto $\FF^k$}: pick $p_1,\dots,p_k$ with $Tp_i=e_i$; then $p_i+\nul T$ is a basis (HW5 P1, Practice Midterm 2 Q1).
+  \ii \textbf{Equation between functionals}: evaluate on a basis. The $j$-th coordinate of $\psi$ in the dual basis is $\psi(v_j)$.
+  \ii \textbf{Dual basis in $\FF^n$}: put the basis vectors as the columns of $M$; the dual basis is the rows of $M^{-1}$ (because $M^{-1}M=I$ says row $j$ times column $k$ is $\delta_{jk}$).
+  \ii \textbf{A nonzero functional is surjective}, so its null space has dimension $\dim V-1$ (HW5 P3).
+  \ii \textbf{Matrix of $T'$}: transpose. $(AB)^\T=B^\T A^\T$. $\operatorname{rank}A^\T=\operatorname{rank}A$.
+  \ii \textbf{Annihilator in $\FF^n$}: rows $(a_1\ \dots\ a_n)$ with (row)$\cdot u=0$ for each spanning vector $u$ of $U$; a linear system. Expect dimension $n-\dim U$.
+  \ii \textbf{Injective/surjective swap under the dual}; $\nul T'=(\range T)^0$, $\range T'=(\nul T)^0$.
+\end{shortcuts}
+\begin{trapbox}
+  \ii Elements of $V/U$ are sets. A basis of $V/U$ consists of elements like $x+U$, not vectors $x$.
+  \ii The dual basis depends on the whole basis: changing $v_2$ can change $\varphi_1$.
+  \ii $V\cong V'$ in finite dimensions, but not by a preferred map; $V\cong V''$ by the preferred map $j_V$. In infinite dimensions $j_V$ is injective but need not be surjective.
+  \ii $T'$ goes from $W'$ to $V'$, and $(ST)'=T'S'$: orders reverse.
+  \ii $U^0$ is a subspace of $V'$, not of $V$.
+  \ii $V'$ is not a derivative; $T'$ is not the derivative of $T$.
+\end{trapbox}
+
 \section{Problem set}
-\begin{prob}\textbf{HW5 P1.} Let $T:\mathcal P_3(\mathbb R)\to\mathbb R^2$, $Tp=(p(0),p(1))$. (a) Determine $\ker T$ and prove surjectivity. (b) Describe the induced isomorphism $\mathcal P_3(\mathbb R)/\ker T\to\mathbb R^2$. (c) Find a quotient basis. \emph{Additional asks from the same map in Practice Midterm 2, Question 1:} verify linearity and specify the images of the quotient-basis elements.\\\emph{Hint:} Factor polynomials vanishing at 0 and 1; use linear polynomials for arbitrary outputs.\end{prob}
-\begin{prob}\textbf{HW5 P2.} If $T:V\to W$ is linear and $U$ is a subspace of $V$ with $U\subseteq\ker T$, prove there is a unique linear $\widetilde T:V/U\to W$ with $\widetilde T(v+U)=Tv$. Determine its kernel.\\\emph{Hint:} Use Proposition 42 with target subspace zero, then test the zero output.\end{prob}
-\begin{prob}\textbf{HW5 P3 (LADR 3F.1).} Prove every linear functional $\varphi:V\to F$ is either zero or surjective.\\\emph{Hint:} Scale a vector where the value is nonzero.\end{prob}
-\begin{prob}\textbf{HW5 P4.} For a basis $v_1,\ldots,v_n$ and its dual basis $\varphi_1,\ldots,\varphi_n$, prove (a) $v=\sum_j\varphi_j(v)v_j$ for each $v\in V$ and (b) $\psi=\sum_j\psi(v_j)\varphi_j$ for each $\psi\in V^{\prime}$.\\\emph{Hint:} Apply a dual functional to a basis expansion, then evaluate the second identity on each $v_k$.\end{prob}
-\begin{prob}\textbf{HW5 P5.} Let $T:V\to W$ be linear between finite-dimensional spaces and let $A$ represent it in bases $B,C$. Prove $T^{\prime}:W^{\prime}\to V^{\prime}$ has matrix $A^{\mathsf T}$ in the corresponding dual bases.\\\emph{Hint:} Compute $(T^{\prime}\psi_i)(v_j)$, as in Proposition 49.\end{prob}
-\begin{prob}\textbf{HW5 P6.} Let $U=\operatorname{span}((1,1,0),(0,1,1))\subseteq\mathbb R^3$. (a) Find $U^0$, identifying functionals with rows. (b) Verify $\dim U+\dim U^0=3$.\\\emph{Hint:} A general row must vanish on both generators.\end{prob}
-\begin{prob}\textbf{HW5 P7 (optional).} For $j_V(v)(\varphi)=\varphi(v)$, prove $j_V:V\to V^{\prime\prime}$ is injective, and is an isomorphism when $V$ is finite-dimensional.\\\emph{Hint:} Use separation to detect a nonzero vector and the equality of dual dimensions.\end{prob}
-\begin{prob}\textbf{Exam practice (practice-midterm2.pdf, Question 2).} Let $V,W,Z$ be finite-dimensional real vector spaces, and let $T:V\to W$, $S:W\to Z$ be linear. (a) Define the dual map $T^*:W^*\to V^*$ and prove it is linear. (b) Prove $(S\circ T)^*=T^*\circ S^*$. (c) Prove that if $T$ is surjective, then $T^*$ is injective. (d) For $V=\mathbb R^2$, $W=\mathbb R$, $T(x,y)=2x-y$, and $\ell(t)=3t$, compute $T^*\ell$. In this exam, $*$ denotes the same dual-space and dual-map notation as our prime.\\\emph{Hint:} Use precomposition for (a,b), and evaluate a functional on all outputs of $T$ for (c).\end{prob}
-\begin{prob}\textbf{Exam review (Midterm 2 Review, Problem 1).} Let $V=\operatorname{span}(1,\sin x,\sin2x)$ on $[-\pi,\pi]$. Define $\delta_0(f)=f(0)$, $\delta_{\pi/2}(f)=f(\pi/2)$ and $\delta'_0(f)=f'(0)$. (a) Prove these three functionals form a basis of $V'$. (b) Find the dual basis $\varphi_1,\varphi_2,\varphi_3$ to $(1,\sin x,\sin2x)$ as combinations of those functionals. (c) Express $L(f)=\pi^{-1}\int_0^\pi f(x)\,dx$ in both functional bases.\\\emph{Hint:} For $f=a+b\sin x+c\sin2x$, compute the three values and solve for $a,b,c$.\end{prob}
-\begin{prob}\textbf{Exam review (Midterm 2 Review, Problem 2).} Let finite-dimensional $V$ contain a subspace $U$. Let $i:U\to V$ be inclusion and $\pi:V\to V/U$ the quotient map. (a) Find $\ker i'$, $\im i'$, $\ker\pi'$ and $\im\pi'$ as subspaces/annihilators. (b) Construct an isomorphism $U'\to V'/\im\pi'$.\\\emph{Hint:} The dual of inclusion restricts a functional to $U$; extend a functional on $U$ and take the coset of that extension.\end{prob}
-\begin{prob}\textbf{Exam review (Midterm 2 Review, Problem 8, dual-map assertion).} True or false: if $T$ is injective, then $T'$ is injective. Prove it or give a counterexample.\\\emph{Hint:} Consider $T:\mathbb R\to\mathbb R^2$, $T(t)=(t,0)$, and write out precomposition of a general row.\end{prob}
+
+\begin{prob}\textbf{HW5 P1.}\ Define $T\colon\PP_3(\RR)\to\RR^2$, $T(p)=(p(0),p(1))$. (a) Determine $\nul T$ and prove that $T$ is surjective. (b) Describe explicitly the induced isomorphism $\PP_3(\RR)/\nul T\to\RR^2$ from the first isomorphism theorem. (c) Find a basis of $\PP_3(\RR)/\nul T$.
+
+\emph{Hint:} a polynomial with zeros at $0$ and $1$ is divisible by $x(x-1)$. For (c), an isomorphism carries a basis back to a basis.
+\end{prob}
+\begin{prob}\textbf{HW5 P2.}\ Let $T\colon V\to W$ be linear and $U$ a subspace of $V$ contained in $\nul T$. Prove that there is a unique linear map $\Tt\colon V/U\to W$ with $\Tt(v+U)=Tv$ for every $v$. Determine $\nul\Tt$ in terms of $\nul T$ and $U$.
+
+\emph{Hint:} well-definedness is the only issue for existence.
+\end{prob}
+\begin{prob}\textbf{HW5 P3 (LADR 3F, Exercise 1).}\ Prove that every linear functional $\varphi\colon V\to\FF$ is either the zero map or surjective.
+
+\emph{Hint:} $\range\varphi$ is a subspace of the one-dimensional space $\FF$; or scale a vector with $\varphi(v)\ne0$.
+\end{prob}
+\begin{prob}\textbf{HW5 P4.}\ Let $v_1,\dots,v_n$ be a basis of $V$ with dual basis $\varphi_1,\dots,\varphi_n$. (a) Prove $v=\sum_{j=1}^n\varphi_j(v)v_j$ for every $v\in V$. (b) Prove $\psi=\sum_{j=1}^n\psi(v_j)\varphi_j$ for every $\psi\in V'$.
+
+\emph{Hint:} (a) apply $\varphi_j$ to $v=\sum a_kv_k$. (b) evaluate both sides at $v_k$.
+\end{prob}
+\begin{prob}\textbf{HW5 P5.}\ Let $T\colon V\to W$ be linear between finite-dimensional spaces with matrix $A$ in bases $B$, $C$. Prove that the matrix of $T'\colon W'\to V'$, $T'(\psi)=\psi\circ T$, in the dual bases is $A^\T$.
+
+\emph{Hint:} evaluate $T'(w_j')$ at $v_k$.
+\end{prob}
+\begin{prob}\textbf{HW5 P6.}\ Let $U=\spn\bigl((1,1,0),(0,1,1)\bigr)\subseteq\RR^3$. (a) Determine $U^0\subseteq(\RR^3)'$, writing functionals as row vectors. (b) Verify that $\dim U+\dim U^0=3$.
+\end{prob}
+\begin{prob}\textbf{HW5 P7 (optional).}\ Let $j_V\colon V\to V''$, $j_V(v)(\varphi)=\varphi(v)$. Prove that $j_V$ is injective, and an isomorphism when $V$ is finite-dimensional.
+\end{prob}
+\begin{prob}\textbf{R1 (Practice Midterm 2, Question 1).}\ Let $V=\PP_3(\RR)$, $E\colon V\to\RR^2$, $E(p)=(p(0),p(1))$, $U=\nul E$. (a) Prove that $E$ is linear and surjective. (b) Find a basis of $U$. (c) Prove that $\widetilde E(p+U)=E(p)$ defines a linear isomorphism $V/U\to\RR^2$. (d) Give a basis of $V/U$ and the images of its elements under $\widetilde E$.
+\end{prob}
+\begin{prob}\textbf{R2 (Practice Midterm 2, Question 2).}\ Let $T\colon V\to W$, $S\colon W\to Z$ be linear maps between finite-dimensional real spaces, with dual maps $T^*\colon W^*\to V^*$, $S^*\colon Z^*\to W^*$. (a) Give the definition of $T^*$ and prove it is linear. (b) Prove $(S\circ T)^*=T^*\circ S^*$. (c) Prove that if $T$ is surjective then $T^*$ is injective. (d) For $T\colon\RR^2\to\RR$, $T(x,y)=2x-y$ and $\ell(t)=3t$, compute $T^*\ell$.
+\end{prob}
+\begin{prob}\textbf{E1 (dual basis computation).}\ Find the dual basis of the basis $v_1=(1,1)$, $v_2=(1,-1)$ of $\RR^2$, as row vectors. Then write the functional $\psi(x,y)=3x+y$ in that dual basis.
+\end{prob}
+
 \end{document}
