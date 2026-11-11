@@ -8,6 +8,7 @@ This repo holds every course Aaron takes at UC Berkeley (Fall 2026 to Spring 203
 - `semesters/<yyyy-term>/<course>/handouts/<week-start-date>-<short-name>/`: built handouts (`handout.tex/.pdf`, `solutions.tex/.pdf`).
 - `semesters/<yyyy-term>/<course>/log.md`: one line per thing built or sent, and notes on Aaron's weak spots (from graded work).
 - `standards/`, `templates/` (evan.sty, handout.sty, starter .tex files), `scripts/due.py`, `scripts/build.sh`.
+- `scripts/build_site.py`, `site.toml`, `.github/workflows/pages.yml`: the public course website (same plain style as the Putnam course site). It is rebuilt and deployed by GitHub Actions on every push to `main`; it lists each course's weeks from `course.toml` and links the handout PDFs that exist. It never copies anything from `materials/`. Solutions are published only if `publish_solutions = true` in `site.toml`; do not change that setting without Aaron saying so.
 
 ## Weekly run (scheduled every Saturday morning, Pacific time)
 1. `python3 scripts/due.py` lists, for every active course: weeks starting in the next 7 days (TO BUILD or BUILT), exams in the next 21 days, and courses with no schedule.
