@@ -69,6 +69,14 @@ Theory and written problems are not enough. Every week's folder also has `exerci
 - **Before every quiz and exam**: a timed set that mixes writing code by hand with code to run, covering each topic on that quiz.
 - Run every solution and every test before committing.
 
+## 5b. Graded work and each course's rules on AI tools
+The handouts exist so Aaron can do the graded work himself. Each course's own rule decides what a handout may contain; read the syllabus in `materials/` when adding a course and record its rule here.
+- **CS 61A** (syllabus: "Do not use AI tools such as Github Copilot or ChatGPT to fill in or correct your code"; "Do not post your solutions publicly during or after the semester"; homework says "do not use AI tools other than Preceptor"): never write solutions, partial solutions or problem-specific hints for a homework, lab or project question, whether or not it is past due. Teach the week's ideas with the lecture's own examples and with original exercises of the same kind; use official past exams (with their published solutions) for exam practice. `exercises/` and `solutions/` contain only original exercises.
+- **MATH 54** (syllabus: GenAI "may be used as a learning aid ... should not be used to complete graded work for you"): no solutions or problem-specific hints for assigned homework exercises that are not yet past due. Use worked examples of the same type with different numbers. Past-due homework may be solved for review.
+- **STAT 20** (syllabus: AI help with concepts and coding errors is allowed; copying AI output into a solution is not): the same rule as MATH 54 for worksheets and labs.
+- **MATH 110**: homework is not collected or graded (grading is quizzes and exams), so homework solutions are included.
+- The public website never publishes solutions unless Aaron sets `publish_solutions = true`, and never publishes solutions to CS 61A assignments.
+
 ## 6. Checks before sending
 1. Verify every number and answer by computation (sympy; for code, run it).
 2. Render every page and look at it: intact boxes, readable labels, no overfull lines, no large gaps.

@@ -23,5 +23,6 @@ Create `semesters/<yyyy-term>/<course>/` with `course.toml` (`status = "active"`
 
 ## Rules
 - Aaron's preferences live in Claude's memory and in the standard; both apply.
+- Follow each course's rule on AI tools and graded work (standard, Section 5b): no solutions or problem-specific hints for CS 61A homework, labs or projects at all, and none for MATH 54 or STAT 20 graded work before its due date.
 - Never delete Aaron's materials. Never commit secrets.
 - Textbooks are not stored in this repo. Do not add textbook PDFs or text. Work from the lecture notes, homework and exams in `materials/`; if a textbook is needed, tell Aaron which sections and ask him to provide it in the conversation.
