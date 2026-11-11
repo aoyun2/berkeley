@@ -50,19 +50,18 @@ def spread(a, b, c):
     return max(a, b, c) - min(a, b, c)
 
 
-def middle(a, b, c):
-    """Return the number among a, b, c that is neither the largest nor the smallest
-    (if values repeat, the middle one in sorted order). Use a single return statement
-    and no sorting.
+def clamp(x, low, high):
+    """Return x if low <= x <= high, low if x is below low, and high if x is above high.
+    Assume low <= high. Use a single return statement.
 
-    >>> middle(3, 10, 5)
+    >>> clamp(5, 0, 10)
     5
-    >>> middle(7, 7, 2)
-    7
-    >>> middle(1, 9, 9)
-    9
+    >>> clamp(-3, 0, 10)
+    0
+    >>> clamp(42, 0, 10)
+    10
     """
-    return a + b + c - max(a, b, c) - min(a, b, c)
+    return max(low, min(x, high))
 
 
 def distance(x1, y1, x2, y2):

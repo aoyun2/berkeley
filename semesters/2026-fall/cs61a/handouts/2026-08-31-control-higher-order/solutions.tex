@@ -1,0 +1,86 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\title{CS 61A --- Week 2}
+\subtitle{Solutions to the handout problems (code for the exercises is in \texttt{solutions/})}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}
+\begin{steps}
+  \ii \cd{0 or 5 and 3} is \cd{0 or (5 and 3)}. \cd{0} is false, so evaluate \cd{5 and 3}: \cd{5} is true, so the value is \cd{3}. Displays \cd{3}.
+  \ii \cd{not 0 and None} is \cd{(not 0) and None}. \cd{not 0} is \cd{True}, so the value is that of the right side, \cd{None}. Nothing is displayed.
+  \ii \cd{1 / 0 or 2}: the left side is evaluated first and is an \cd{ERROR}.
+  \ii \cd{2 or 1 / 0}: \cd{2} is true, evaluation stops. Displays \cd{2}; the division never happens.
+  \ii \cd{print(3) or print(4) and 5} is \cd{print(3) or (print(4) and 5)}. \cd{print(3)} displays \cd{3}, value \cd{None} (false), so continue. \cd{print(4)} displays \cd{4}, value \cd{None} (false), so the \cd{and} stops with \cd{None}. The whole value is \cd{None}: nothing more is displayed.
+  \ii \cd{'' or 0}: both false; the value is the last one, \cd{0}. Displays \cd{0}.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P2.}\ As written: \cd{5 > 3}, so \cd{a} is displayed and \cd{x} becomes \cd{2}. The second \cd{if} is a separate statement: \cd{2 > 1}, so \cd{b} is displayed. Output: \cd{a}, \cd{b}. With \cd{elif}, the three clauses are one statement and only the first true clause runs: output \cd{a} only.
+\end{prob}
+
+\begin{prob}\textbf{P3.}\ \cd{n} takes the values 37, 18, 9, 4, 2, 1, then 0. The odd ones are printed as they occur: \cd{37}, \cd{9}, \cd{1}. Six passes were made, so the last line is \cd{6}.
+\end{prob}
+
+\begin{prob}\textbf{P4.}\ Compare the last digit with the one before it; stop at the first pair with equal parity. The loop needs at least two digits, so the condition is \cd{n >= 10}.
+\begin{py}
+def alternates(n):
+    while n >= 10:
+        if n % 2 == n // 10 % 2:
+            return False
+        n = n // 10
+    return True
+\end{py}
+\cd{n \% 2} is the parity of the last digit (the parity of a number is the parity of its last digit), and \cd{n // 10 \% 2} is the parity of the digit before it. The \cd{return False} inside the loop ends the function at the first failure; \cd{return True} is reached only if no pair failed.
+\end{prob}
+
+\begin{prob}\textbf{P5.}
+\begin{steps}
+  \ii \cd{h = twice(inc)}: \cd{h} is the function \cd{g} whose \cd{f} is \cd{inc}.
+  \ii \cd{h(0)} is \cd{inc(inc(0))}: inner call displays \cd{inc 0}, returns \cd{1}; outer displays \cd{inc 1}, returns \cd{2}. \cd{print} displays \cd{2}.
+  \ii \cd{twice(twice(inc))} is a function that applies \cd{twice(inc)} twice, so it applies \cd{inc} four times. On \cd{10}: displays \cd{inc 10}, \cd{inc 11}, \cd{inc 12}, \cd{inc 13}; value \cd{14}.
+\end{steps}
+Displayed: \cd{inc 0}, \cd{inc 1}, \cd{2}, \cd{inc 10}, \cd{inc 11}, \cd{inc 12}, \cd{inc 13}, \cd{14}.
+\end{prob}
+
+\begin{prob}\textbf{P6.}
+\begin{steps}
+  \ii Global: \cd{x} is \cd{10}; \cd{outer} is \cd{func outer(x) [parent=Global]}.
+  \ii \cd{outer(1)}: frame \cd{f1: outer [parent=Global]}, \cd{x} is \cd{1}. The inner \cd{def} creates \cd{func inner(y) [parent=f1]}. Then \cd{x = x * 2} rebinds \cd{x} in \cd{f1} to \cd{2}. Returns the \cd{inner} function; global \cd{f} is bound to it.
+  \ii \cd{x = 100} rebinds the \emph{global} \cd{x}.
+  \ii \cd{f(5)}: frame \cd{f2: inner [parent=f1]}, \cd{y} is \cd{5}. \cd{x} is not in \cd{f2}; it is found in \cd{f1}, where it is now \cd{2}. Returns \cd{7}.
+\end{steps}
+Displayed: \cd{7}. The global \cd{x} (\cd{100}) is never reached, and the value of \cd{x} at the time \cd{inner} was defined (\cd{1}) is not remembered: lookup happens when the body runs.
+\end{prob}
+
+\begin{prob}\textbf{E1 (published answer: three lines).}\ Name the functions. \cd{og} is the built-in print. The first \cd{new\_print(print)} returns a function, call it \cd{f\_A}, whose \cd{print} (found in its parent frame) is the built-in. The second \cd{new\_print(print)} is called with \cd{f\_A} as its argument and returns \cd{f\_B}, whose \cd{print} is \cd{f\_A}. The global name \cd{print} is now \cd{f\_B}.
+\begin{steps}
+  \ii The last line calls \cd{og} with operands \cd{'print returned'} and \cd{print(2)}; the second operand is \cd{f\_B(2)}.
+  \ii In \cd{f\_B(2)}: \cd{value = print(x)} calls \cd{f\_A(2)}.
+  \ii In \cd{f\_A(2)}: \cd{value = print(x)} calls the built-in: displays \cd{2}, \cd{value} is \cd{None}. The \cd{if} is skipped; returns \cd{2}.
+  \ii Back in \cd{f\_B}: \cd{value} is \cd{2}, which is not \cd{None}, so it returns \cd{print('What?')}, i.e.\ \cd{f\_A('What?')}.
+  \ii In \cd{f\_A('What?')}: the built-in displays \cd{What?}; returns \cd{'What?'}. So \cd{f\_B(2)} returns \cd{'What?'}.
+  \ii \cd{og('print returned', 'What?')} displays \cd{print returned What?}.
+\end{steps}
+Displayed:
+\begin{plain}
+2
+What?
+print returned What?
+\end{plain}
+The lesson is the one from the environments section: inside each \cd{f}, the name \cd{print} means whatever is bound in the frame where that \cd{f} was defined.
+\end{prob}
+
+\begin{prob}\textbf{E2 (published answer for (b): \cd{n \% 2 != n // 10 \% 2}; (a): \cd{group\_size == k}).}
+\begin{steps}
+  \ii Say what the names mean. The loop reads digits from the right. \cd{group\_size} is the number of digits read so far in the current group. \cd{count} is the answer so far.
+  \ii (b) When does a group end? When the current last digit and the next digit have different parity: \cd{n \% 2 != n // 10 \% 2}. Then \cd{group\_size} is reset to \cd{0}.
+  \ii (a) Each group must be counted \emph{once}. If we counted whenever \cd{group\_size >= k}, a group of 4 digits with \cd{k = 3} would be counted twice (at sizes 3 and 4). Counting exactly when \cd{group\_size == k} counts every group that reaches size \cd{k} one time.
+  \ii At the leftmost digit, \cd{n // 10} is \cd{0}, which is even; whether or not the reset happens no longer matters because the loop ends.
+\end{steps}
+Check on \cd{15732429999} with \cd{k = 4}: \cd{9999} reaches size 4 (count 1); \cd{242} reaches only 3; \cd{1573} reaches 4 (count 2).
+\end{prob}
+
+\end{document}
