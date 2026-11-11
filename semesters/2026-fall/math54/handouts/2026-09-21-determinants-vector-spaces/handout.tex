@@ -1,0 +1,218 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\usepackage{multicol}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\adj}{adj}
+\title{Math 54 --- Week 5}
+\subtitle{Properties of determinants; Cramer's rule and volume; vector spaces; null and column spaces (Lay 3.2--3.3, 4.1--4.2)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--4}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii $\det A$ by cofactor expansion along any row or column; for a triangular matrix, the product of the diagonal entries.
+  \ii An elementary matrix $E$ performs a row operation: $EA$ is $A$ after that operation.
+  \ii Invertible matrix theorem: for square $A$, invertible $\iff$ $n$ pivots $\iff$ $A\vv x=\vv0$ only trivially $\iff$ columns span $\RR^n$, etc.
+  \ii The solution set of $A\vv x=\vv0$ is the span of the vectors in its parametric vector form. $A\vv x=\vv b$ is consistent $\iff$ $\vv b$ is a combination of the columns of $A$.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Properties of determinants (Lay 3.2)}
+\begin{qbox}
+  Cofactor expansion of a $10\times10$ matrix takes millions of multiplications. Row reduction takes a few hundred. How does each row operation change the determinant, so that row reduction can compute it?
+\end{qbox}
+\begin{theorem*}[Row operations and the determinant]
+  Let $A$ be square.
+  \begin{enumerate}[(a)]
+    \ii If a multiple of one row is added to another row to give $B$, then $\det B=\det A$.
+    \ii If two rows are interchanged to give $B$, then $\det B=-\det A$.
+    \ii If one row is multiplied by $k$ to give $B$, then $\det B=k\det A$.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+Start with (c): expand along the scaled row; every term of the expansion picks up the factor $k$. For (b) and (a), check $2\times2$ first: swapping rows of $\begin{bmatrix}a&b\\c&d\end{bmatrix}$ gives $cb-da=-(ad-bc)$; adding $k$ times row 1 to row 2 gives $a(d+kb)-b(c+ka)=ad-bc$. For larger matrices, expand along a row that the operation did not touch: each cofactor is the determinant of a smaller matrix on which the same operation was performed, so the claim for size $n$ follows from the claim for size $n-1$ (induction). (For $n\ge3$ every one of these operations involves at most two rows, so an untouched row exists.)
+\end{ideabox}
+\textbf{Consequences.}
+\begin{itemize}
+  \ii \textbf{Determinant by row reduction}: reduce $A$ to an echelon form $U$ using only replacements and $r$ interchanges. $U$ is triangular, so
+  \[ \det A=(-1)^r\cdot(\text{product of the diagonal entries of }U). \]
+  \ii Example: $\begin{bmatrix}1&-4&2\\-2&8&-9\\-1&7&0\end{bmatrix}\xrightarrow[R_3+R_1]{R_2+2R_1}\begin{bmatrix}1&-4&2\\0&0&-5\\0&3&2\end{bmatrix}\xrightarrow{R_2\leftrightarrow R_3}\begin{bmatrix}1&-4&2\\0&3&2\\0&0&-5\end{bmatrix}$. One interchange: $\det A=-(1)(3)(-5)=15$.
+  \ii A matrix with two equal rows, or a zero row, has determinant $0$ (subtract one equal row from the other to get a zero row; expand along a zero row).
+\end{itemize}
+\begin{theorem*}[Invertible $\iff$ nonzero determinant]
+  A square matrix $A$ is invertible if and only if $\det A\ne0$.
+\end{theorem*}
+\begin{proof}
+  In the formula $\det A=(-1)^r\cdot$(product of the diagonal of $U$), the diagonal of a square echelon form $U$ consists of the pivots if there are $n$ of them; otherwise the last diagonal entry is $0$. So $\det A\ne0$ $\iff$ $U$ has $n$ pivots $\iff$ $A$ is invertible (W3).
+\end{proof}
+This adds a statement to the invertible matrix theorem: $\det A\ne0$.
+\begin{theorem*}[Transpose and product]
+  $\det A^T=\det A$, and $\det(AB)=(\det A)(\det B)$ for $n\times n$ matrices $A,B$.
+\end{theorem*}
+\begin{ideabox}
+$\det A^T=\det A$: expanding $A^T$ along a row is expanding $A$ along a column, and the cofactor expansion theorem allows both (induction on $n$). It follows that \emph{column} operations change the determinant exactly as row operations do.
+
+$\det(AB)$: if $A$ is not invertible, neither is $AB$ (if $AB$ had an inverse $C$, then $A(BC)=I$, making $A$ invertible), so both sides are $0$. If $A$ is invertible, write $A=E_p\cdots E_1$ as a product of elementary matrices. By the row-operation theorem, $\det(EM)=\det(E)\det(M)$ for every elementary $E$ (with $\det E=1$, $-1$ or $k$); apply this $p$ times to both $AB$ and $A$.
+\end{ideabox}
+\begin{itemize}
+  \ii Consequences: $\det(A^{-1})=1/\det A$ (from $\det(A)\det(A^{-1})=\det I=1$); $\det(A^k)=(\det A)^k$; $\det(cA)=c^n\det A$ for $n\times n$ $A$ (each of the $n$ rows is scaled).
+  \ii $\det(A+B)\ne\det A+\det B$ in general.
+  \ii \textbf{Linearity in one column}: with all other columns fixed, $\vv x\mapsto\det[\,\vv a_1\cdots\vv x\cdots\vv a_n\,]$ is a linear function of $\vv x$ (expand down that column).
+\end{itemize}
+
+\subsection{Cramer's rule, the inverse formula, and volume (Lay 3.3)}
+\textbf{Notation.} $A_i(\vv b)$ is $A$ with column $i$ replaced by $\vv b$.
+\begin{theorem*}[Cramer's rule]
+  If $A$ is invertible $n\times n$, the unique solution of $A\vv x=\vv b$ has entries $x_i=\dfrac{\det A_i(\vv b)}{\det A}$.
+\end{theorem*}
+\begin{ideabox}
+The identity matrix with column $i$ replaced by $\vv x$, namely $I_i(\vv x)$, has determinant $x_i$: expand along row $i$, whose only nonzero entry is $x_i$ in the diagonal position, and deleting row $i$ and column $i$ leaves $I_{n-1}$. Multiplying by $A$ turns each column $\vv e_j$ into $\vv a_j$ and the column $\vv x$ into $A\vv x=\vv b$. So $AI_i(\vv x)=A_i(\vv b)$. Take determinants.
+\end{ideabox}
+\begin{proof}
+  $AI_i(\vv x)=[\,A\vv e_1\cdots A\vv x\cdots A\vv e_n\,]=[\,\vv a_1\cdots\vv b\cdots\vv a_n\,]=A_i(\vv b)$. So $(\det A)(\det I_i(\vv x))=\det A_i(\vv b)$, and $\det I_i(\vv x)=x_i$ (expand along row $i$). Divide by $\det A\ne0$.
+\end{proof}
+Example: $2x_1+x_2=7$, $-3x_1+4x_2=6$. $\det A=8+3=11$; $\det\begin{bmatrix}7&1\\6&4\end{bmatrix}=22$; $\det\begin{bmatrix}2&7\\-3&6\end{bmatrix}=33$. So $x_1=2$, $x_2=3$.
+\begin{theorem*}[Inverse formula]
+  If $A$ is invertible, $A^{-1}=\dfrac{1}{\det A}\adj A$, where the \vocab{adjugate} $\adj A$ is the \emph{transpose} of the matrix of cofactors: $(\adj A)_{ij}=C_{ji}$.
+\end{theorem*}
+\begin{proof}
+  Column $j$ of $A^{-1}$ solves $A\vv x=\vv e_j$. By Cramer's rule its entry $i$ is $\det A_i(\vv e_j)/\det A$, and expanding $A_i(\vv e_j)$ down column $i$ (a single $1$ in row $j$) gives $(-1)^{i+j}\det A_{ji}=C_{ji}$.
+\end{proof}
+Useful mainly for $2\times2$ (it gives the formula from Week 4) and for theory; for numbers, row reduce $[\,A\ \ I\,]$.
+
+\textbf{Determinants as area and volume.}
+\begin{theorem*}[Area and volume]
+  If $A$ is $2\times2$, $|\det A|$ is the area of the parallelogram determined by the columns of $A$. If $A$ is $3\times3$, $|\det A|$ is the volume of the parallelepiped determined by the columns.
+\end{theorem*}
+\begin{ideabox}
+For a diagonal matrix the parallelogram is a rectangle with sides $|a|$ and $|d|$, and $|\det|=|ad|$. A column replacement $\vv a_2\to\vv a_2+c\vv a_1$ slides the parallelogram along the direction of $\vv a_1$: same base, same height, same area; and it does not change $\det$ either (column version of (a)). Swapping columns changes neither the area nor $|\det|$. Column operations reduce any matrix to diagonal form (or produce a zero column, area $0$, $\det 0$), so area and $|\det|$ agree.
+\end{ideabox}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,scale=0.95]
+  \draw[->,gray] (-0.5,0) -- (5.5,0); \draw[->,gray] (0,-0.5) -- (0,3.5);
+  \fill[blue!12] (0,0) -- (3,0) -- (3,2) -- (0,2) -- cycle; \draw[blue,thick] (0,0) -- (3,0) -- (3,2) -- (0,2) -- cycle;
+  \fill[red!12,opacity=0.8] (0,0) -- (3,0) -- (5,2) -- (2,2) -- cycle; \draw[red,thick] (0,0) -- (3,0) -- (5,2) -- (2,2) -- cycle;
+  \draw[->,thick] (0,0) -- (3,0) node[below,font=\small]{$\vv a_1$};
+  \draw[->,thick,blue] (0,0) -- (0,2) node[left,font=\small]{$\vv a_2$};
+  \draw[->,thick,red] (0,0) -- (2,2) node[above left,font=\small]{$\vv a_2+c\vv a_1$};
+  \node[anchor=west,font=\small,text width=6cm] at (6.2,1.2) {Same base $\vv a_1$, same height: the slanted parallelogram has the same area as the rectangle, and the column replacement did not change $\det$.};
+\end{tikzpicture}
+\figcap{Why area equals $|\det A|$.}
+\end{fig}
+\begin{itemize}
+  \ii A parallelogram with vertices $\vv p,\vv p+\vv u,\vv p+\vv v,\vv p+\vv u+\vv v$: translate $\vv p$ to the origin; area $=|\det[\,\vv u\ \ \vv v\,]|$.
+  \ii \textbf{Linear transformations scale area by $|\det A|$}: if $T(\vv x)=A\vv x$ and $S$ is a parallelogram (or any region with finite area) in $\RR^2$, then $\operatorname{area}(T(S))=|\det A|\cdot\operatorname{area}(S)$. In $\RR^3$, the same with volume. Example: the ellipse $x_1^2/a^2+x_2^2/b^2\le1$ is the image of the unit disk under $\begin{bmatrix}a&0\\0&b\end{bmatrix}$, so its area is $\pi ab$.
+\end{itemize}
+
+\subsection{Vector spaces and subspaces (Lay 4.1)}
+\begin{qbox}
+  Polynomials, functions and matrices can all be added and scaled like vectors in $\RR^n$. What exactly is needed for the ideas of span and linear combination to work for them too?
+\end{qbox}
+\begin{definition*}
+  A \vocab{vector space} is a nonempty set $V$ with an addition and a multiplication by real scalars such that, for all $\vv u,\vv v,\vv w$ in $V$ and scalars $c,d$:
+  \begin{multicols}{2}
+  \begin{enumerate}[(1),itemsep=1pt]
+    \ii $\vv u+\vv v$ is in $V$;
+    \ii $\vv u+\vv v=\vv v+\vv u$;
+    \ii $(\vv u+\vv v)+\vv w=\vv u+(\vv v+\vv w)$;
+    \ii there is a $\vv0$ in $V$ with $\vv u+\vv0=\vv u$;
+    \ii each $\vv u$ has a $-\vv u$ with $\vv u+(-\vv u)=\vv0$;
+    \ii $c\vv u$ is in $V$;
+    \ii $c(\vv u+\vv v)=c\vv u+c\vv v$;
+    \ii $(c+d)\vv u=c\vv u+d\vv u$;
+    \ii $c(d\vv u)=(cd)\vv u$;
+    \ii $1\vv u=\vv u$.
+  \end{enumerate}
+  \end{multicols}
+\end{definition*}
+\begin{itemize}
+  \ii Examples: $\RR^n$; $\mathbb P_n$, the polynomials of degree at most $n$; all real-valued functions on a set; the $m\times n$ matrices. In each, the operations are the familiar ones, and the axioms reduce to rules for numbers.
+  \ii From the axioms: $0\vv u=\vv0$, $c\vv0=\vv0$, $-\vv u=(-1)\vv u$.
+\end{itemize}
+\begin{definition*}
+  A \vocab{subspace} of $V$ is a subset $H$ with: (a) $\vv0\in H$; (b) $\vv u+\vv v\in H$ whenever $\vv u,\vv v\in H$; (c) $c\vv u\in H$ whenever $\vv u\in H$. A subspace is itself a vector space (the other axioms are inherited from $V$).
+\end{definition*}
+\begin{itemize}
+  \ii $\{\vv0\}$ and $V$ are subspaces. A line through the origin in $\RR^2$ is a subspace; a line not through the origin is not (it misses $\vv0$). $\RR^2$ is \emph{not} a subspace of $\RR^3$ (its vectors have two entries, not three); the plane $\{(s,t,0)\}$ in $\RR^3$ is.
+  \ii $\{p\in\mathbb P_2: p(1)=0\}$ is a subspace of $\mathbb P_2$: the zero polynomial vanishes at $1$, and sums and multiples of polynomials vanishing at $1$ vanish at $1$.
+\end{itemize}
+\begin{theorem*}[A span is a subspace]
+  If $\vv v_1,\dots,\vv v_p$ are in $V$, then $\spn\{\vv v_1,\dots,\vv v_p\}$ is a subspace of $V$.
+\end{theorem*}
+\begin{proof}
+  $\vv0=0\vv v_1+\dots+0\vv v_p$. The sum of $\sum c_i\vv v_i$ and $\sum d_i\vv v_i$ is $\sum(c_i+d_i)\vv v_i$, and $k\sum c_i\vv v_i=\sum(kc_i)\vv v_i$; both are again combinations.
+\end{proof}
+\textbf{Shortcut for subspace questions}: if you can write $H$ as a span (or, below, as a null space or column space), it is a subspace with no axioms to check.
+
+\subsection{Null spaces, column spaces, row spaces (Lay 4.2)}
+\begin{definition*}
+  For an $m\times n$ matrix $A$: the \vocab{null space} $\Nul A=\{\vv x\in\RR^n: A\vv x=\vv0\}$; the \vocab{column space} $\Col A=\spn\{\text{columns of }A\}\subseteq\RR^m$; the \vocab{row space} $\Row A=\spn\{\text{rows of }A\}$ (rows written as vectors in $\RR^n$).
+\end{definition*}
+\begin{theorem*}[Null spaces and column spaces are subspaces]
+  $\Nul A$ is a subspace of $\RR^n$ and $\Col A$ is a subspace of $\RR^m$.
+\end{theorem*}
+\begin{proof}
+  $A\vv0=\vv0$. If $A\vv u=\vv0$ and $A\vv v=\vv0$, then $A(\vv u+\vv v)=\vv0$ and $A(c\vv u)=\vv0$. $\Col A$ is a span.
+\end{proof}
+\textbf{An explicit description of $\Nul A$.} Solve $A\vv x=\vv0$ in parametric vector form; the vectors attached to the free variables span $\Nul A$. For $A=\begin{bmatrix}1&-2&0&-1&3\\0&0&1&2&-2\\2&-4&1&0&4\end{bmatrix}$, the RREF is $\begin{bmatrix}1&-2&0&-1&3\\0&0&1&2&-2\\0&0&0&0&0\end{bmatrix}$, so $x_1=2x_2+x_4-3x_5$, $x_3=-2x_4+2x_5$ and
+\[ \Nul A=\spn\left\{\begin{bmatrix}2\\1\\0\\0\\0\end{bmatrix},\begin{bmatrix}1\\0\\-2\\1\\0\end{bmatrix},\begin{bmatrix}-3\\0\\2\\0\\1\end{bmatrix}\right\}. \]
+Each of these vectors has a $1$ in its own free-variable slot and $0$ in the other free slots, so none is a combination of the others: the spanning set produced this way is always linearly independent.
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{0.44\linewidth}p{0.44\linewidth}}
+\toprule
+$\Nul A$ & $\Col A$\\\midrule
+subspace of $\RR^n$ (inputs) & subspace of $\RR^m$ (outputs)\\
+defined implicitly: a condition $A\vv x=\vv0$ & defined explicitly: you can write down members\\
+finding members takes row reduction & the columns are members; no work\\
+$\vv v\in\Nul A$? Compute $A\vv v$. & $\vv v\in\Col A$? Row reduce $[\,A\ \ \vv v\,]$.\\
+$\Nul A=\{\vv0\}$ $\iff$ $A\vv x=\vv0$ only trivially & $\Col A=\RR^m$ $\iff$ pivot in every row\\\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Linear transformations between vector spaces.} $T\colon V\to W$ is linear if $T(\vv u+\vv v)=T(\vv u)+T(\vv v)$ and $T(c\vv u)=cT(\vv u)$. Its \vocab{kernel} $\{\vv u: T(\vv u)=\vv0\}$ and \vocab{range} $\{T(\vv x)\}$ are subspaces of $V$ and $W$. For $T(\vv x)=A\vv x$ they are $\Nul A$ and $\Col A$. Example: differentiation $D\colon\mathbb P_3\to\mathbb P_2$, $D(p)=p'$, is linear; its kernel is the constant polynomials.
+
+\begin{shortcuts}
+  \ii \textbf{Determinant by row reduction}: only replacements and swaps; count the swaps; multiply the diagonal. Factor out a common factor of a row first if it saves fractions (it multiplies $\det$).
+  \ii \textbf{Combine expansion and reduction}: create zeros in one column with replacements, then expand down that column.
+  \ii \textbf{Determinant rules}: $\det(AB)=\det A\det B$, $\det A^{-1}=1/\det A$, $\det A^T=\det A$, $\det(cA)=c^n\det A$.
+  \ii \textbf{Invertible for which $h$?} Compute $\det$ as a polynomial in $h$ and find its zeros.
+  \ii \textbf{Cramer's rule} is fastest for $2\times2$, or for one single entry $x_i$ of a $3\times3$ solution.
+  \ii \textbf{Area of a triangle} with vertices $\vv0,\vv u,\vv v$: $\tfrac12|\det[\,\vv u\ \vv v\,]|$.
+  \ii \textbf{Is $H$ a subspace?} First check $\vv0\in H$; if not, stop. If $H$ is described by homogeneous linear equations, it is a null space; if it is ``all vectors of the form \dots'' with linear expressions in parameters, it is a span.
+  \ii \textbf{Spanning set for $\Nul A$}: one vector per free variable, from the parametric vector form.
+\end{shortcuts}
+\begin{trapbox}
+  \ii Scaling a row by $k$ multiplies $\det$ by $k$; when you scale during row reduction, divide it back out.
+  \ii $\det(cA)=c^n\det A$, not $c\det A$. $\det(A+B)\ne\det A+\det B$.
+  \ii The adjugate is the \emph{transpose} of the cofactor matrix.
+  \ii Area is $|\det|$; the sign of $\det$ records orientation.
+  \ii A set defined by $x_1+x_2=1$, or by $x_1x_2\ge0$, is not a subspace (first misses $\vv0$; second is not closed under addition: $(1,0)+(0,-1)$).
+  \ii $\Nul A$ lives in $\RR^n$, $\Col A$ in $\RR^m$: different spaces when $m\ne n$.
+\end{trapbox}
+
+\section{Homework this week}
+HW4, Section 3.2: 2, 3, 5, 9, 15, 19, 20, 23, 24, 27, 29, 31. Section 3.3: 3, 5, 9, 11, 21, 27, 29, 30. Section 4.1: 2, 3, 6, 7, 10, 11, 20, 23, 28, 32. HW5, Section 4.2: 1, 5, 9, 13, 15, 17, 24, 25, 31, 32, 36, 38, 40, 43, 46.
+
+\section{Problem set}
+\begin{prob}\textbf{P1.}\ Compute $\det\begin{bmatrix}2&4&-2&6\\1&3&0&2\\-1&-1&4&1\\3&8&1&5\end{bmatrix}$ by row reduction.
+\end{prob}
+\begin{prob}\textbf{P2.}\ $A$ and $B$ are $3\times3$ with $\det A=3$ and $\det B=-2$. Find $\det(AB)$, $\det(A^{-1})$, $\det(A^T)$, $\det(2A)$, $\det(B^TA^{-1}B)$.
+\end{prob}
+\begin{prob}\textbf{P3.}\ For which $h$ is $\begin{bmatrix}1&2&h\\2&5&1\\0&1&3\end{bmatrix}$ invertible?
+\end{prob}
+\begin{prob}\textbf{P4.}\ Use Cramer's rule to solve $5x_1+2x_2=1$, $3x_1+x_2=4$.
+\end{prob}
+\begin{prob}\textbf{P5.}\ Find the area of the parallelogram with vertices $(-1,0)$, $(0,5)$, $(1,-4)$, $(2,1)$. Then find the area of its image under $T(\vv x)=\begin{bmatrix}2&1\\1&3\end{bmatrix}\vv x$.
+\end{prob}
+\begin{prob}\textbf{P6.}\ Which are subspaces? (a) $\{(a,b,c)\in\RR^3: a+b=0\}$. (b) $\{(a,b)\in\RR^2: ab\ge0\}$. (c) $\{p\in\mathbb P_2: p(0)=1\}$. (d) $\{(s-2t,\ s,\ 3t)\}$, $s,t$ real. (e) The set of $2\times2$ matrices $A$ with $A^T=A$.
+\end{prob}
+\begin{prob}\textbf{P7.}\ For $A=\begin{bmatrix}1&-3&-4\\-4&6&-2\\-3&7&6\end{bmatrix}$: find a spanning set for $\Nul A$, and decide whether $\vv b=(3,3,-4)$ is in $\Col A$.
+\end{prob}
+\begin{prob}\textbf{P8.}\ For $A=\begin{bmatrix}2&4&-2&1\\-2&-5&7&3\\3&7&-8&6\end{bmatrix}$, $\vv u=(3,-2,-1,0)$, $\vv v=(3,-1,3)$: is $\vv u$ in $\Nul A$? Is $\vv v$ in $\Col A$? Could $\vv u$ be in $\Col A$?
+\end{prob}
+
+\end{document}
