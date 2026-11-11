@@ -9,3 +9,4 @@ No graded MATH 54 work supplied.
 - 2026-11-11: Week 3 (Lay 1.7-1.9) handout and solutions built.
 - 2026-11-11: Week 4 (Lay 2.1-2.3, 3.1) handout and solutions built. Lay 3.2 (calendar Sep 18 and Sep 21) is placed whole in Week 5.
 - 2026-11-11: Week 5 (Lay 3.2-3.3, 4.1-4.2) handout and solutions built.
+- 2026-11-11: Page-by-page review at 80 dpi of Weeks 1-6 (Aaron found touching matrix brackets in the Week 3 table). Fixed: Week 3 table row spacing; inline large matrices moved to displays (Weeks 2, 4, 5, 6); orphaned run-in headings (Weeks 4, 5); unclear trap in Week 1; metaphors removed (Week 4). Standard: added the page-by-page visual review. Week 6 (Lay 4.3, 4.5) handout and solutions built.

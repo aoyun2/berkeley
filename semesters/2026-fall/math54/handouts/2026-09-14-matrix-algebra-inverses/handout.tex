@@ -41,7 +41,14 @@ The definition is chosen so that $(AB)\vv x=A(B\vv x)$. Write $B\vv x=x_1\vv b_1
   \ii \textbf{Properties}: $A(BC)=(AB)C$; $A(B+C)=AB+AC$; $(B+C)A=BA+CA$; $r(AB)=(rA)B=A(rB)$; $I_mA=A=AI_n$. Associativity holds because both sides are the composition ``first $C$, then $B$, then $A$''.
   \ii $A^k$ means $A\cdots A$ ($k$ factors); $A^0=I$.
 \end{itemize}
-\textbf{Warnings.} (1) $AB\ne BA$ in general: with $C=\begin{bmatrix}1&2\\0&1\end{bmatrix}$, $D=\begin{bmatrix}1&0\\3&1\end{bmatrix}$, $CD=\begin{bmatrix}7&2\\3&1\end{bmatrix}$ but $DC=\begin{bmatrix}1&2\\3&7\end{bmatrix}$. (2) $AB=AC$ does not imply $B=C$. (3) $AB=0$ does not imply $A=0$ or $B=0$: $\begin{bmatrix}0&1\\0&0\end{bmatrix}^2=0$.
+\Needspace{12\baselineskip}
+\textbf{Three warnings.}
+\begin{enumerate}[(1)]
+  \ii $AB\ne BA$ in general. With $C=\begin{bmatrix}1&2\\0&1\end{bmatrix}$ and $D=\begin{bmatrix}1&0\\3&1\end{bmatrix}$:
+  \[ CD=\begin{bmatrix}7&2\\3&1\end{bmatrix},\qquad DC=\begin{bmatrix}1&2\\3&7\end{bmatrix}. \]
+  \ii $AB=AC$ does not imply $B=C$.
+  \ii $AB=0$ does not imply $A=0$ or $B=0$: $\begin{bmatrix}0&1\\0&0\end{bmatrix}\begin{bmatrix}0&1\\0&0\end{bmatrix}=\begin{bmatrix}0&0\\0&0\end{bmatrix}$.
+\end{enumerate}
 
 \textbf{Transpose.} $A^T$ has the rows of $A$ as its columns: $(A^T)_{ij}=a_{ji}$. Rules: $(A^T)^T=A$, $(A+B)^T=A^T+B^T$, $(rA)^T=rA^T$, and
 \[ (AB)^T=B^TA^T. \]
@@ -66,14 +73,16 @@ Why the order reverses: entry $(i,j)$ of $(AB)^T$ is entry $(j,i)$ of $AB$, whic
 \begin{proof}
   $A(A^{-1}\vv b)=\vv b$, so it is a solution. If $A\vv u=\vv b$, multiply by $A^{-1}$: $\vv u=A^{-1}A\vv u=A^{-1}\vv b$.
 \end{proof}
-Example: $\begin{bmatrix}3&4\\5&6\end{bmatrix}^{-1}=\frac1{18-20}\begin{bmatrix}6&-4\\-5&3\end{bmatrix}=\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}$, so the solution of $3x_1+4x_2=3$, $5x_1+6x_2=7$ is $\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}\begin{bmatrix}3\\7\end{bmatrix}=\begin{bmatrix}5\\-3\end{bmatrix}$.
+Example: solve $3x_1+4x_2=3$, $5x_1+6x_2=7$.
+\[ \begin{bmatrix}3&4\\5&6\end{bmatrix}^{-1}=\frac1{18-20}\begin{bmatrix}6&-4\\-5&3\end{bmatrix}=\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix},\qquad
+\vv x=\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}\begin{bmatrix}3\\7\end{bmatrix}=\begin{bmatrix}5\\-3\end{bmatrix}. \]
 \begin{theorem*}[Algebra of inverses]
   If $A,B$ are invertible $n\times n$: $(A^{-1})^{-1}=A$; $(AB)^{-1}=B^{-1}A^{-1}$; $(A^T)^{-1}=(A^{-1})^T$.
 \end{theorem*}
 \begin{proof}
   Check the definition. $(AB)(B^{-1}A^{-1})=A(BB^{-1})A^{-1}=AA^{-1}=I$, and similarly in the other order. $A^T(A^{-1})^T=(A^{-1}A)^T=I^T=I$, using $(XY)^T=Y^TX^T$.
 \end{proof}
-The order reverses for the same reason as for socks and shoes: to undo ``first $B$, then $A$'', undo $A$ first.
+The order reverses because $AB$ means ``first $B$, then $A$''; to undo it, undo $A$ first and then $B$.
 
 \textbf{Elementary matrices.} An \vocab{elementary matrix} $E$ is obtained by doing one row operation to $I$. Then $EA$ is the result of doing that same row operation to $A$ (check on the rows: row $i$ of $EA$ is (row $i$ of $E$)$A$). Every elementary matrix is invertible: its inverse is the elementary matrix of the reverse operation.
 \begin{theorem*}[Invertible $\iff$ row equivalent to $I$; the inverse algorithm]
@@ -149,18 +158,21 @@ For a square matrix, ``a pivot in every row'' and ``a pivot in every column'' ar
   \[ \det A=a_{11}C_{11}+a_{12}C_{12}+\dots+a_{1n}C_{1n}, \]
   with $\det[a]=a$ for $1\times1$ matrices.
 \end{definition*}
-For $n=2$ this gives $a_{11}a_{22}-a_{12}a_{21}=ad-bc$. The signs $(-1)^{i+j}$ form a checkerboard $\begin{bmatrix}+&-&+\\-&+&-\\+&-&+\end{bmatrix}$.
+For $n=2$ this gives $a_{11}a_{22}-a_{12}a_{21}=ad-bc$. The signs $(-1)^{i+j}$ alternate like a checkerboard, starting with $+$ in the top left:
+\[ \begin{bmatrix}+&-&+\\-&+&-\\+&-&+\end{bmatrix}. \]
 \begin{theorem*}[Cofactor expansion along any row or column]
   $\det A$ can be computed by expanding along any row $i$, $\det A=a_{i1}C_{i1}+\dots+a_{in}C_{in}$, or any column $j$, $\det A=a_{1j}C_{1j}+\dots+a_{nj}C_{nj}$.
 \end{theorem*}
-(Lay states this without proof.) The point is speed: expand along the row or column with the most zeros, because each zero entry kills a whole sub-determinant.
+(Lay states this without proof.) The point is speed: expand along the row or column with the most zeros, because a zero entry $a_{ij}$ makes the term $a_{ij}C_{ij}$ zero, so that cofactor never has to be computed.
 \begin{theorem*}[Triangular matrices]
   If $A$ is triangular (all entries below the diagonal are $0$, or all above), $\det A$ is the product of the diagonal entries.
 \end{theorem*}
 \begin{proof}
   For upper triangular $A$, expand down the first column: only $a_{11}$ is nonzero, so $\det A=a_{11}\det A_{11}$, and $A_{11}$ is again upper triangular. Repeat. (For lower triangular, expand along the first row.)
 \end{proof}
-Example: $\det\begin{bmatrix}2&0&0\\7&-3&0\\5&1&4\end{bmatrix}=2(-3)(4)=-24$. Next week: how row operations change $\det$, which gives a fast method and the theorem $\det A\ne0\iff A$ invertible.
+Example:
+\[ \det\begin{bmatrix}2&0&0\\7&-3&0\\5&1&4\end{bmatrix}=2\cdot(-3)\cdot4=-24. \]
+Next week: how row operations change $\det$, which gives a fast method and the theorem $\det A\ne0\iff A$ invertible.
 
 \begin{shortcuts}
   \ii \textbf{Size check before multiplying}: $(m\times n)(n\times p)$. If the inner numbers differ, the product is undefined.

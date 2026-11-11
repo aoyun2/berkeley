@@ -82,3 +82,14 @@ The handouts exist so Aaron can do the graded work himself. Each course's own ru
 2. Render every page and look at it: intact boxes, readable labels, no overfull lines, no large gaps.
 3. One fresh review pass against the sources and this standard: (a) correctness and coverage, (b) teaching quality: quote each passage where a reader would have to fill a gap, and fix it.
 4. Append to the course `log.md`; commit, `git pull --rebase`, push. One week per commit.
+
+
+### Page-by-page visual review (required before sending)
+A low-resolution montage only catches gross layout problems. Before sending, render every page of the handout and the solutions at 80 dpi or more (two pages side by side is fine) and look at each page for:
+- elements touching or overlapping: matrix brackets in table rows, figure labels on lines or on each other, arrows through text;
+- matrices larger than a single column vector, or any $3\times3$ or larger matrix, set inline in a sentence: put them in a display;
+- a run-in heading (bold "Example." / "Consequences." / "Three warnings.") or a section title left alone at the bottom of a page: add `\Needspace`;
+- a step list or box split so that its first line is alone on one page;
+- text running into the margin, or a line stretched with large gaps;
+- wording that breaks the writing rules (metaphors such as "kills", "socks and shoes").
+Fix everything found, rebuild, and look at the changed pages again.
