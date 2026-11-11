@@ -1,164 +1,310 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-\DeclareMathOperator{\im}{range}
-\title{MATH 110 --- Week 6}
-\subtitle{Notes Chapter 11; Homework 6}
+\DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
+\newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}\newcommand{\T}{\mathsf T}
+\newcommand{\one}{\mathbf 1}
+\title{Math 110 --- Week 6}
+\subtitle{Invariant subspaces, eigenvalues and eigenvectors, PageRank (Notes Ch.~11, LADR 5A, HW6)}
 \author{}\date{}\ihead{}
-\begin{document}\maketitle
-\section{Invariant subspaces and eigenvectors}\begin{qbox}Which subspaces remain inside themselves when an operator acts? For $T(x,y)=(x,2y)$, each coordinate axis is preserved.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 30; LADR 5.1--5.2]An operator $T\in L(V)$ is a linear map $T:V\to V$. A subspace $U\subseteq V$ is invariant under an operator $T\in L(V)$ if $T(U)\subseteq U$. Its restriction $T|_U:U\to U$ is then an operator. By Week 5 Proposition 42 it also induces an operator $T/U:V/U\to V/U$, $(T/U)(v+U)=Tv+U$.\end{definition*}\end{prob}
-\begin{proposition*}[Testing invariance on generators]
-If $U=\operatorname{span}(u_1,\ldots,u_k)$, then $U$ is invariant under $T$ iff $Tu_j\in U$ for every $j$.
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--5}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii In a space of dimension $n$, any $n+1$ vectors are dependent, and an independent list has at most $n$ vectors (Week 2).
+  \ii Dependence lemma: in a dependent list $v_1,\dots,v_m$ some $v_k$ lies in $\spn(v_1,\dots,v_{k-1})$ (Week 2).
+  \ii For an operator $T$ on a finite-dimensional space: injective $\iff$ surjective $\iff$ invertible. $T$ is injective $\iff\nul T=\{0\}$ (Weeks 3, 4).
+  \ii $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ is invertible $\iff\det A=ad-bc\ne0$ (Week 4).
+  \ii $\MM(T)\MM(v)=\MM(Tv)$: applying $T$ multiplies the coordinate column by the matrix (Week 3).
+  \ii A stochastic matrix $P$ has entries $\ge0$ and each column sums to $1$. If $p$ is a probability vector, so is $Pp$ (Week 3).
+  \ii If $T(U_1)\subseteq U_2$, then $v+U_1\mapsto Tv+U_2$ is a well-defined linear map $V/U_1\to W/U_2$ (Week 5).
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Invariant subspaces, eigenvectors, eigenspaces (Ch.~11.1)}
+
+\begin{qbox}
+  An operator $T\colon V\to V$ maps a space to itself, so it can be applied repeatedly. To understand $T$ we try to cut $V$ into smaller pieces that $T$ maps into themselves, and study $T$ on each piece. What are the smallest such pieces?
+\end{qbox}
+
+\begin{definition*}[Def.~30 / LADR 5.2]
+  Let $T\in\LL(V)$. A subspace $U\subseteq V$ is \vocab{invariant under $T$} if $Tu\in U$ for every $u\in U$.
+\end{definition*}
+\begin{itemize}
+  \ii To check invariance it is enough to check $Tu\in U$ for $u$ in a spanning list of $U$.
+  \ii If $U$ is invariant, $T$ gives two smaller operators: the \vocab{restriction} $T|_U\colon U\to U$, and the \vocab{quotient operator} $T/U\colon V/U\to V/U$, $(T/U)(v+U)=Tv+U$ (well-defined by (W7) with $U_1=U_2=U$).
+  \ii Ex.~48: $\{0\}$, $V$, $\nul T$ and $\range T$ are always invariant. ($u\in\nul T\Rightarrow Tu=0\in\nul T$. $u\in\range T\Rightarrow Tu\in\range T$ because $Tu$ is an output of $T$.)
+\end{itemize}
+
+\begin{definition*}[Def.~31, 32 / LADR 5.5, 5.8, 5.52]
+  A \emph{nonzero} vector $v$ is an \vocab{eigenvector} of $T$ if $Tv=\lambda v$ for some $\lambda\in\FF$. The scalar $\lambda$ is the \vocab{eigenvalue} of $v$. The \vocab{eigenspace} of $\lambda$ is
+  \[ E(\lambda,T)=\nul(T-\lambda I)=\{v:Tv=\lambda v\}. \]
+\end{definition*}
+\begin{itemize}
+  \ii \textbf{An eigenvector is the same as a one-dimensional invariant subspace.} If $\spn(v)$ is invariant, then $Tv\in\spn(v)$, so $Tv=\lambda v$. Conversely if $Tv=\lambda v$ then $T(cv)=c\lambda v\in\spn(v)$.
+  \ii $\lambda$ is determined by $v$: if $\lambda v=\mu v$ with $v\ne0$ then $\lambda=\mu$.
+  \ii $E(\lambda,T)$ consists of $0$ and all eigenvectors with eigenvalue $\lambda$. It is a subspace (a null space), and it is invariant: if $Tv=\lambda v$ then $T(Tv)=\lambda(Tv)$.
+  \ii $\lambda$ is an eigenvalue of $T$ exactly when $E(\lambda,T)\ne\{0\}$.
+\end{itemize}
+\begin{proposition*}[LADR 5.7: four ways to say ``$\lambda$ is an eigenvalue'']
+  Let $V$ be finite-dimensional. The following are equivalent: (a) $\lambda$ is an eigenvalue of $T$; (b) $T-\lambda I$ is not injective; (c) $T-\lambda I$ is not surjective; (d) $T-\lambda I$ is not invertible.
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}\ii Invariance implies the stated containment because each $u_j$ belongs to $U$.
-\ii Conversely, $T(\sum_j a_ju_j)=\sum_j a_jTu_j\in U$ by linearity and closure of $U$, proving invariance.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 48; LADR 5.4]\begin{steps}\ii The spaces $\{0\}$ and $V$ are invariant: $T0=0$, and every output belongs to $V$.
-\ii If $v\in\ker T$, then $Tv=0\in\ker T$, so the kernel is invariant.
-\ii If $w=Tv\in\im T$, then $Tw=T(Tv)\in\im T$, so the range is invariant.\end{steps}\end{example*}
-\begin{example*}[LADR 5.3, 5.6]\begin{steps}\ii Differentiation on $\mathcal P(\mathbb R)$ preserves $\mathcal P_4(\mathbb R)$ because differentiating a degree-at-most 4 polynomial gives degree at most 3.\ii For $T(x,y,z)=(7x+3z,3x+6y+9z,-6y)$, direct substitution gives $T(3,1,-1)=(18,6,-6)=6(3,1,-1)$. Thus the line spanned by $(3,1,-1)$ is invariant.\end{steps}\end{example*}
-\begin{prob}\begin{definition*}[Notes Definitions 31--32; LADR 5.5, 5.8, 5.52]A nonzero $v\in V$ is an eigenvector if $Tv=\lambda v$ for some scalar $\lambda\in F$; that scalar is its eigenvalue. Equivalently the line $Fv$ is invariant. The scalar is unique because $(\lambda-\mu)v=0$ and $v\ne0$ force $\lambda=\mu$. For any scalar $\lambda$, the eigenspace is $E(\lambda,T)=\ker(T-\lambda I)$. It contains zero, and its nonzero elements are precisely the eigenvectors with eigenvalue $\lambda$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Definition 32; LADR 5.7]$E(\lambda,T)$ is an invariant subspace. For finite-dimensional $V$, the following are equivalent: $\lambda$ is an eigenvalue; $T-\lambda I$ is not injective; $T-\lambda I$ is not surjective; $T-\lambda I$ is not invertible.\end{proposition*}
+\begin{proof}
+  $Tv=\lambda v$ is the same equation as $(T-\lambda I)v=0$. So (a) says $\nul(T-\lambda I)\ne\{0\}$, which is (b). For an operator on a finite-dimensional space, (b), (c), (d) are equivalent (W3).
+\end{proof}
+In particular: \textbf{$0$ is an eigenvalue of $T$ $\iff$ $T$ is not invertible}, and $E(0,T)=\nul T$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii A kernel is a subspace by Week 3. If $v\in E(\lambda,T)$, then $Tv=\lambda v$ belongs to the same subspace, proving invariance.\ii The equation $Tv=\lambda v$ for nonzero $v$ is equivalent to $(T-\lambda I)v=0$ for nonzero $v$, precisely failure of injectivity.\ii Rank--nullity for $T-\lambda I$ says $\dim V=\dim\ker(T-\lambda I)+\dim\im(T-\lambda I)$. Zero kernel is therefore equivalent to full range, and a linear bijection has a linear inverse (Week 4 Proposition 31). This proves the remaining equivalences.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 49; quarter-turn: LADR 5.9]Every nonzero proper subspace of $\mathbb R^2$ is a line by Week 2; invariant lines therefore correspond to real eigenvectors.
-\begin{steps}\ii For $A=\operatorname{diag}(1,2)$, $A(x,y)=\lambda(x,y)$ gives $(1-\lambda)x=0$ and $(2-\lambda)y=0$. A nonzero solution has either $\lambda=1,y=0$ or $\lambda=2,x=0$. Thus the invariant subspaces are $\{0\},\mathbb Re_1,\mathbb Re_2,\mathbb R^2$.
-\ii For $R=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$, $R^2=-I$. An eigenvector would satisfy $\lambda^2v=-v$, hence $\lambda^2=-1$, impossible over $\mathbb R$. Only $\{0\},\mathbb R^2$ are invariant.
-\ii For $N=\left(\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\right)$, $N^2=0$, so an eigenvalue satisfies $\lambda^2=0$ and hence $\lambda=0$. Its kernel and range are both $\mathbb Re_1$: $N(x,y)=(y,0)$. Thus the invariant subspaces are $\{0\},\mathbb Re_1,\mathbb R^2$; $\mathbb Re_2$ is not invariant because $Ne_2=e_1$.\end{steps}
-\begin{center}\begin{tikzpicture}[>=stealth]\node(a)at(0,0){$e_2$};\node(b)at(2,0){$e_1$};\node(c)at(4,0){$0$};\draw[->](a)--node[above]{$N$}(b);\draw[->](b)--node[above]{$N$}(c);\end{tikzpicture}\\The chain $\{0\}\subset\mathbb Re_1\subset\mathbb R^2$ consists of invariant subspaces.\end{center}\end{example*}
-\begin{prob}\begin{definition*}[Notes Chapter 11: triangular matrix convention]A square matrix is upper triangular when every entry below its main diagonal is zero. For an ordered basis $v_1,\ldots,v_n$, put $U_j=\operatorname{span}(v_1,\ldots,v_j)$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 11, invariant initial-span observation]The matrix of $T$ in the ordered basis $v_1,\ldots,v_n$ is upper triangular if and only if every $U_j$ is invariant under $T$.\end{proposition*}
-
-\begin{prob}\begin{proof}\begin{steps}\ii If every $U_j$ is invariant, then $Tv_j\in U_j$. Its coordinates in positions $i>j$ vanish, so the entries below the diagonal in column $j$ are zero.\ii Conversely, an upper-triangular matrix has $Tv_k\in U_k\subseteq U_j$ for $k\le j$. Applying $T$ to any linear combination of $v_1,\ldots,v_j$ therefore stays in $U_j$.\end{steps}\end{proof}\end{prob}
-\begin{prob}A probability column has nonnegative real entries summing to $1$. A column-stochastic matrix has nonnegative entries with each column summing to $1$. It preserves probability columns: $(Pp)_i=\sum_jP_{ij}p_j\ge0$ and $\sum_i(Pp)_i=\sum_j(\sum_iP_{ij})p_j=\sum_jp_j=1$ (Week 3).
-\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 11: stationary distribution]A probability vector $\pi$ is stationary for a column-stochastic matrix $P$ when $P\pi=\pi$. It is an eigenvector with eigenvalue $1$, because its entries sum to $1$ and therefore it is nonzero. Induction gives $P^k\pi=\pi$ for all $k\ge0$.\end{definition*}\end{prob}
-\begin{example*}[Notes Chapter 11: the three-state distribution]
-For $P=\left(\begin{smallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{smallmatrix}\right)$, let $\pi=(1/4,1/2,1/4)^{\mathsf T}$.
-\begin{steps}\ii The product is $P\pi=(1/8+1/8,\;1/8+1/4+1/8,\;1/8+1/8)^{\mathsf T}=(1/4,1/2,1/4)^{\mathsf T}=\pi$. Its nonnegative entries sum to 1, so it is a stationary distribution and an eigenvector with eigenvalue 1.
-\ii Existence, uniqueness, convergence from other starts, and the convergence rate are separate questions. For example $I_2$ fixes every distribution, giving nonuniqueness.
-\ii The swap matrix $\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$ fixes the unique probability vector $(1/2,1/2)^{\mathsf T}$, since its fixed vectors have equal coordinates. Yet it alternates $e_1,e_2$ forever, showing failure of convergence.\end{steps}\end{example*}
-
-\begin{shortcuts}\ii Test invariance on a subspace basis: linearity extends containment from those images to every vector.\ii An invariant line is an eigenvector line; in dimension 2 this classifies all proper nonzero invariant subspaces.\end{shortcuts}\begin{trapbox}\ii An eigenspace contains zero, but zero is never an eigenvector by definition.\ii An eigenvalue depends on the field: the quarter-turn has no real eigenvalue, while over $\mathbb C$, $R(1,-i)=i(1,-i)$ gives an eigenvector.\ii Invariant does not mean fixed pointwise: $\mathbb Re_2$ is invariant under $\operatorname{diag}(1,2)$ but $e_2$ is sent to $2e_2$.\end{trapbox}
-\section{Complex roots and the fundamental theorem of algebra}\begin{qbox}For $z=a+bi$, write $|z|=\sqrt{a^2+b^2}$. Why can a complex direction reveal a root that real inputs miss? For $q(z)=1+z^2$, $|q(t)|=1+t^2$ on the real axis, but $|q(it)|=1-t^2<1$ when $0<t<1$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Chapter 11: modulus and polar form]For $z=a+bi$, let $\overline z=a-bi$ and $|z|=\sqrt{a^2+b^2}=\sqrt{z\overline z}$. Write $\operatorname{Re}z=a$ and $\operatorname{Im}z=b$. A nonzero complex number has polar form $z=r(\cos\theta+i\sin\theta)$, with $r=|z|>0$. The angle $\theta$ is called an argument of $z$; the real pair $(a/r,b/r)$ lies on the unit circle. We cite the elementary parametrization of that circle, the trigonometric addition identities, and the existence of positive real $k$th roots (from continuity of $t\mapsto t^k$).\end{definition*}\end{prob}
-\begin{proposition*}[Complex arithmetic tools for Notes Proposition 52]$|zw|=|z||w|$ and $|z+w|\le|z|+|w|$. Every nonzero complex number has a $k$th root for each positive integer $k$.\end{proposition*}
-
-\begin{prob}\begin{proof}\begin{steps}\ii For $z=a+bi,w=c+di$, multiplication gives $\overline{zw}=(ac-bd)-i(ad+bc)=\overline z\,\overline w$, and $|\overline w|=\sqrt{c^2+(-d)^2}=|w|$. Hence $|zw|^2=zw\overline z\overline w=|z|^2|w|^2$; both sides are nonnegative, giving multiplicativity. Also $\operatorname{Re}u\le|u|$ because $|u|^2=(\operatorname{Re}u)^2+(\operatorname{Im}u)^2$.\ii $|z+w|^2=|z|^2+2\operatorname{Re}(z\overline w)+|w|^2\le|z|^2+2|z||w|+|w|^2$. Taking square roots proves the triangle inequality; iteration gives it for finite sums. Also $|z|\le|z+w|+|w|$ gives the reverse bound $|z+w|\ge|z|-|w|$.\ii By induction using the addition identities, $(\cos\phi+i\sin\phi)^k=\cos(k\phi)+i\sin(k\phi)$. Thus if $z=r(\cos\theta+i\sin\theta)$, then $r^{1/k}(\cos(\theta/k)+i\sin(\theta/k))$ has $k$th power $z$.\end{steps}\end{proof}\end{prob}
-\method{Compute a complex square root}\begin{steps}\ii The number $i$ has modulus 1 and argument $\pi/2$, so one square root is $\cos(\pi/4)+i\sin(\pi/4)=(1+i)/\sqrt2$.\ii Directly, $((1+i)/\sqrt2)^2=(1+2i+i^2)/2=i$, verifying the result.\end{steps}
-\begin{prob}\textbf{Analytic tools used in the next proof (cited).} A continuous real function on a closed bounded disk in $\mathbb R^2$ attains its minimum (the extreme-value theorem). Polynomials and modulus are continuous by elementary real analysis. These are the analytic inputs; the decrease from a nonzero minimum is proved explicitly below.\end{prob}
-\begin{proposition*}[Notes Proposition 52; LADR 4.12: fundamental theorem of algebra]Every nonconstant polynomial with complex coefficients has a complex root.\end{proposition*}
-\begin{motive}\ii[Want.] Force the smallest polynomial modulus to be zero.\ii[Know.] The leading term dominates for large modulus, and a continuous function attains a minimum on a closed disk.\ii[Key step.] At a hypothetical nonzero minimum, normalize to $q(z)=1+a_kz^k+\cdots$ with $a_k\ne0$. Choose $a_k\beta^k=-1$, giving $q(t\beta)=1-t^k+\text{remainder}$. The proof bounds that remainder by $Ct^{k+1}$; choosing $Ct<1$ makes it smaller than the decrease $t^k$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Write $p(z)=\sum_{j=0}^m c_jz^j$, $c_m\ne0$, $m\ge1$. For $|z|\ge1$, put $C_0=\sum_{j<m}|c_j|$; the triangle inequality gives $|p(z)|\ge |c_m||z|^m-C_0|z|^{m-1}$. For sufficiently large $|z|$ this tends to infinity.\ii Choose a closed disk outside which $|p(z)|>|p(0)|$. On the disk $|p|$ attains a minimum at $\zeta$ by the cited theorem; since $0$ is in the disk, this is a global minimum.\ii Suppose $p(\zeta)\ne0$. Define $q(z)=p(\zeta+z)/p(\zeta)=1+a_kz^k+\cdots+a_mz^m$, with $a_k\ne0$ and $k\ge1$. The minimum condition gives $|q(z)|\ge1$ for every $z$.\ii Choose $\beta$ with $\beta^k=-1/a_k$, using the proved root tool. For $0<t<1$, $q(t\beta)=1-t^k+\sum_{j>k}a_j\beta^jt^j$; the remainder has modulus at most $Ct^{k+1}$, where $C=\sum_{j>k}|a_j\beta^j|$.\ii Choose $0<t<1$ also satisfying $Ct<1$. Then $1-t^k>0$, and $|q(t\beta)|\le1-t^k+Ct^{k+1}=1-t^k(1-Ct)<1$, a contradiction. Thus $p(\zeta)=0$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Chapter 11; LADR 4.13: complex factorization]If $p$ has degree $m$ over $\mathbb C$, then $p(z)=c\prod_{j=1}^m(z-\lambda_j)$, with $c\ne0$ and roots repeated as needed. This property is called algebraic closure of $\mathbb C$.\end{proposition*}
-
-\begin{prob}\begin{proof}\begin{steps}\ii If $p(\lambda)=0$, the identity $z^r-\lambda^r=(z-\lambda)\sum_{j=0}^{r-1}z^{r-1-j}\lambda^j$ applied to $p(z)-p(\lambda)$ gives $p=(z-\lambda)q$ of degree $m-1$.\ii Apply Proposition 52 to each nonconstant remaining factor. After $m$ steps only a nonzero constant $c$ remains, proving the formula.\end{steps}\end{proof}\end{prob}
-\begin{fig}\begin{tikzpicture}[x=4cm,y=1.5cm,>=stealth,font=\small]
-\draw[->,gray](-.03,0)--(1.16,0)node[right]{$t$};
-\draw[->,gray](0,-.05)--(0,2.05)node[above]{$|q|$};
-\draw[gray,dashed](0,1)--(1.05,1);\node[left]at(0,1){$1$};
-\draw[blue,thick,domain=0:1,samples=60]plot(\x,{1+\x*\x})node[right]{$|q(t)|=1+t^2$};
-\draw[red,thick,domain=0:1,samples=60]plot(\x,{1-\x*\x});\node[red]at(.43,.3){$|q(it)|=1-t^2$};
-\fill(0,1)circle(.7pt);\node[below]at(1,0){$1$};
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,scale=0.62]
+  \draw[->,gray] (-1.2,0) -- (7,0); \draw[->,gray] (0,-2.2) -- (0,6.6);
+  \draw[blue!50,thick] (-1,-1) -- (6.4,6.4) node[right,blue,font=\small]{$E(3,A)$};
+  \draw[red!50,thick] (-1.2,1.2) -- (2.2,-2.2) node[right,red,font=\small]{$E(1,A)$};
+  \draw[->,very thick,blue] (0,0) -- (1.5,1.5) node[midway,above left,font=\small]{$v$};
+  \draw[->,thick,blue,dashed] (0,0) -- (4.5,4.5) node[above left,font=\small]{$Av=3v$};
+  \draw[->,very thick,red] (0,0) -- (1.5,-1.5) node[below left,font=\small]{$w=Aw$};
+  \draw[->,very thick] (0,0) -- (2,0) node[below,font=\small]{$e_1$};
+  \draw[->,thick,dashed] (0,0) -- (4,2) node[right,font=\small]{$Ae_1=(2,1)$};
+  \node[anchor=west,text width=6.2cm,font=\small] at (8,2.4) {$A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$.\\[3pt] $v=(1,1)$: $Av=(3,3)=3v$. The line through $v$ is mapped into itself.\\[3pt] $w=(1,-1)$: $Aw=(1,-1)=w$.\\[3pt] $e_1=(1,0)$: $Ae_1=(2,1)$ is not a multiple of $e_1$. The line through $e_1$ is not invariant.};
 \end{tikzpicture}
-\figcap{For $q(z)=1+z^2$ and $0<t<1$, real inputs increase the modulus above $1$, while imaginary inputs decrease it below $1$. Thus $0$ cannot be a minimum over the complex plane.}
+\figcap{Eigenvectors are the vectors whose direction is kept. Solid arrows are vectors, dashed arrows their images.}
 \end{fig}
 
-\begin{shortcuts}\ii To find a $k$th root of a nonzero complex number, use polar form and divide an argument by $k$.\ii The first nonzero term after a constant controls the local decrease in the FTA proof; the higher terms are bounded by one extra factor of $t$.\end{shortcuts}\begin{trapbox}\ii A nonconstant real polynomial need not have a real root: $x^2+1>0$ for all real $x$.\ii Minimizing only over real directions is insufficient: for $1+z^2$, real motion increases the modulus at 0, but imaginary motion decreases it.\ii The theorem asserts existence, not a formula in radicals. Such formulas fail for general degree 5 polynomials (a cited algebraic result), without contradicting root existence.\end{trapbox}
-\section{Polynomials of operators and existence of eigenvectors}\begin{qbox}Can a polynomial identity constrain eigenvalues? If $T^2=I$ and $Tv=\lambda v$ with $v\ne0$, then $\lambda^2v=v$, so $\lambda^2=1$.\end{qbox}
-\begin{prob}\begin{definition*}[LADR 5.13--5.14, 5.16]For an operator $T$, $T^0=I$ and $T^k$ is the repeated composition for $k\ge1$. If $T$ is invertible, define $T^{-k}=(T^{-1})^k$. For $p(z)=\sum_{j=0}^m a_jz^j$, define $p(T)=\sum_{j=0}^m a_jT^j$. Polynomial multiplication is ordinary multiplication and collection of equal powers: the coefficient of $z^r$ in $pq$ is $\sum_{j+k=r}a_jb_k$.\end{definition*}\end{prob}
-\begin{proposition*}[LADR 5.13, 5.17]Powers satisfy $T^jT^k=T^{j+k}$ and $(T^j)^k=T^{jk}$ for nonnegative integers, and for all integers when $T$ is invertible. Polynomial evaluation satisfies $(p+q)(T)=p(T)+q(T)$, $(ap)(T)=ap(T)$, and $(pq)(T)=p(T)q(T)=q(T)p(T)$.\end{proposition*}
-\begin{motive}\ii[Want.] Use ordinary polynomial algebra for expressions in one operator.\ii[Know.] Composition is associative and distributive, and $TT^{-1}=T^{-1}T=I$ when defined.\ii[Key step.] Expand the finite sums and collect powers of $T$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii For nonnegative powers, concatenating the repeated compositions gives $T^jT^k=T^{j+k}$. For negative powers, cancel adjacent pairs $TT^{-1}$ or $T^{-1}T$ until only the required power remains. Grouping $k$ copies of $T^j$ gives $(T^j)^k=T^{jk}$ for nonnegative exponents; the same cancellation proves the integer case when $T$ is invertible.\ii The addition and scalar identities follow coefficientwise. For products, $p(T)q(T)=\sum_{j,k}a_jb_kT^{j+k}=\sum_r(\sum_{j+k=r}a_jb_k)T^r=(pq)(T)$.\ii Polynomials commute under multiplication over the field, so $(pq)(T)=(qp)(T)=q(T)p(T)$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[LADR 5.15: compute a polynomial of differentiation]
-Let $Dq=q^{\prime}$ and $p(z)=7-3z+5z^2$.
-\begin{steps}\ii By definition, $p(D)q=7q-3q^{\prime}+5q^{\prime\prime}$.
-\ii For $q(x)=x^2$, the power rule gives $p(D)q=7x^2-6x+10$.\end{steps}\end{example*}
-\begin{proposition*}[LADR 5.18; polynomial action on eigenvectors]For $S,T\in L(V)$ with $ST=TS$, $\ker S$ and $\im S$ are invariant under $T$. In particular, $\ker p(T)$ and $\im p(T)$ are invariant under $T$. If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$. In particular, if $p(T)=0$, every eigenvalue is a root of $p$.\end{proposition*}
+\begin{example*}[Ex.~49: all invariant subspaces of three operators on $\RR^2$]
+  In $\RR^2$ the subspaces are $\{0\}$, lines, and $\RR^2$. An invariant line is $\spn(v)$ with $v$ an eigenvector. So finding invariant subspaces means finding eigenvectors.
+  \begin{steps}
+    \ii $\begin{psmallmatrix}1&0\\0&2\end{psmallmatrix}$: $(x,y)\mapsto(x,2y)$ is a multiple of $(x,y)$ only if $x=0$ or $y=0$. Invariant: $\{0\}$, $\spn(e_1)$, $\spn(e_2)$, $\RR^2$.
+    \ii $\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ (rotation by $90^\circ$): no nonzero vector is mapped to a multiple of itself. Invariant: only $\{0\}$ and $\RR^2$.
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $N(x,y)=(y,0)=\lambda(x,y)$ forces $\lambda y=0$ and $y=\lambda x$, so $y=0$ (and $\lambda=0$). Invariant: $\{0\}$, $\spn(e_1)$, $\RR^2$. The line $\spn(e_2)$ is not invariant because $Ne_2=e_1$.
+  \end{steps}
+\end{example*}
+For $N$ the chain $\{0\}\subset\spn(e_1)\subset\RR^2$ consists of invariant subspaces. Chains of invariant subspaces $\spn(v_1)\subset\spn(v_1,v_2)\subset\dots$ are what Week 7 uses to bring a matrix to triangular form.
 
-\begin{prob}\begin{proof}\begin{steps}\ii If $ST=TS$ and $Sv=0$, then $S(Tv)=T(Sv)=0$. Thus $T$ preserves $\ker S$.\ii If $w=Sv$, then $Tw=TSv=STv\in\im S$. Take $S=p(T)$, which commutes with $T$ by the polynomial product formula, to obtain the stated polynomial cases.\ii Induction gives $T^jv=\lambda^jv$ for $j\ge0$. Hence $p(T)v=\sum a_j\lambda^jv=p(\lambda)v$.\ii If also $p(T)=0$ and $v\ne0$, then $p(\lambda)v=0$ forces $p(\lambda)=0$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 53; LADR 5.19]Every operator on a nonzero finite-dimensional complex vector space has an eigenvector.\end{proposition*}
-\begin{motive}\ii[Want.] Find a nonzero vector satisfying a first-degree operator equation.\ii[Know.] A list longer than the dimension is dependent, and every nonconstant complex polynomial has a root.\ii[Key step.] A relation $p(T)v=0$ is not yet an eigenvector equation. After factoring $p(z)=(z-\lambda)q(z)$, the candidate is $w=q(T)v$; it must be nonzero. Choosing the first dependence makes every lower-degree $q(T)v$ nonzero, while the factorization gives $(T-\lambda I)w=0$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Let $n=\dim V$ and choose $v\ne0$. The list $v,Tv,\ldots,T^nv$ is dependent, so choose a nonzero polynomial $p$ of smallest degree with $p(T)v=0$. Its degree is at least 1 because a nonzero scalar multiple of $v$ is nonzero.\ii By Proposition 52, $p$ has a root $\lambda$, so $p(z)=(z-\lambda)q(z)$ with nonzero $q$ of smaller degree.\ii Put $w=q(T)v$. Minimality of the degree of $p$ gives $w\ne0$.\ii By the polynomial product identity, $(T-\lambda I)w=p(T)v=0$. Hence $Tw=\lambda w$, proving that $w$ is an eigenvector.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Chapter 11; LADR 5.20: necessary hypotheses]\begin{steps}\ii Over $\mathbb R$, the quarter-turn matrix has no eigenvector by Example 49, despite its finite dimension.
-\ii On $\mathcal P(\mathbb C)$, $Tp=xp$ has no eigenvector: if $xp=\lambda p$ for nonzero $p$, then $(x-\lambda)p=0$, impossible because its leading coefficient is nonzero and its degree is one larger.
-\ii The zero-dimensional space has no nonzero vector, so it has no eigenvector. These examples explain all three hypotheses in Proposition 53.\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 54; LADR 5.11]Eigenvectors for pairwise distinct eigenvalues are linearly independent. Consequently, the sum of the eigenspaces for distinct eigenvalues is direct.\end{proposition*}
-\begin{motive}\ii[Want.] Rule out a relation among vectors scaled by different factors.\ii[Know.] The first vector dependent on its predecessors has independent predecessors (Week 2 linear-dependence lemma).\ii[Key step.] A dependence does not yet isolate any coefficient. Applying $T$ scales its terms by different $\lambda_j$; subtracting $\lambda_k$ times the original relation removes $v_k$. The remaining independent predecessors have coefficients $a_j(\lambda_j-\lambda_k)$, whose nonzero eigenvalue differences force $a_j=0$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Suppose the eigenvectors $v_1,\ldots,v_m$ are dependent. Let $k$ be the first index with $v_k=\sum_{j<k}a_jv_j$; the preceding vectors are independent. Since each eigenvector is nonzero, $k\ge2$.\ii Apply $T$ to obtain $\lambda_kv_k=\sum_{j<k}a_j\lambda_jv_j$. Subtract $\lambda_k$ times the original relation to get $\sum_{j<k}a_j(\lambda_j-\lambda_k)v_j=0$.\ii Independence forces $a_j(\lambda_j-\lambda_k)=0$. All eigenvalue differences are nonzero, so every $a_j=0$, giving $v_k=0$, a contradiction.\ii In a zero sum of vectors from distinct eigenspaces, discard zero summands. Every remaining summand is an eigenvector with a distinct eigenvalue; their independence forces that list to be empty. This is the zero-relation criterion for a direct sum.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 50]A smooth function on $\mathbb R$ has derivatives of every order. On their real vector space, let $Tf=f^{\prime\prime}$.
-\begin{steps}\ii Elementary calculus gives $T(\sin(jx))=-j^2\sin(jx)$ for $j\ge1$. Each function is nonzero, for example at $x=\pi/(2j)$.
-\ii The scalars $-1^2,\ldots,-N^2$ are distinct. Proposition 54 therefore proves $\sin x,\sin2x,\ldots,\sin Nx$ independent for every positive integer $N$.\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 55; LADR 5.12]An operator on a finite-dimensional space has at most $\dim V$ distinct eigenvalues.\end{proposition*}
+\textbf{Stationary distributions are eigenvectors.} For the stochastic matrix $P=\begin{psmallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{psmallmatrix}$ of Week 3, the probability vector $\pi=(\frac14,\frac12,\frac14)$ satisfies $P\pi=\pi$: it is an eigenvector with eigenvalue $1$. A probability vector with $P\pi=\pi$ is called a \vocab{stationary distribution}; then $P^k\pi=\pi$ for all $k$. Four separate questions: does one exist, is it unique, does $P^kp_0$ converge to it, and how fast.
 
-\begin{prob}\begin{proof}\begin{steps}\ii Choose one nonzero eigenvector for each of any $m$ distinct eigenvalues. Proposition 54 makes the list independent.\ii Week 2 gives $m\le\dim V$. Thus more than $\dim V$ distinct eigenvalues are impossible.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Chapter 11: infinite-dimensional cardinality]For the shift $S(a_0,a_1,\ldots)=(a_1,a_2,\ldots)$ on real sequences, each $\lambda\in\mathbb R$ gives eigenvector $v_\lambda=(1,\lambda,\lambda^2,\ldots)$; at $\lambda=0$ this means $(1,0,0,\ldots)$.
-\begin{steps}\ii Coordinate comparison gives $Sv_\lambda=\lambda v_\lambda$, and the first coordinate makes $v_\lambda\ne0$.
-\ii Every finite list with distinct parameters is independent by Proposition 54. Thus the whole indexed family is independent, since a dependence is a finite relation.
-\ii The basis-extension/choice principle cited in Week 2 extends this independent family to a basis. Hence the dimension as a cardinal is at least the cardinality of $\mathbb R$, a stronger conclusion than merely infinite dimension.\end{steps}\end{example*}
-\begin{shortcuts}\ii An identity such as $T^2=I$ restricts eigenvalues by replacing $T$ with $\lambda$ on an eigenvector.\ii Distinct eigenvalues prove independence without solving a dependence system.\end{shortcuts}\begin{trapbox}\ii $p(T)v=0$ does not generally make $v$ an eigenvector: $T=\operatorname{diag}(1,2)$, $p(z)=(z-1)(z-2)$ and $v=(1,1)$ give $p(T)v=0$, but $Tv=(1,2)$ is not a scalar multiple of $v$.\ii A root of a relation $p(T)=0$ need not occur as an eigenvalue: $T=I$ satisfies $(T-I)(T-2I)=0$, but $2$ is not an eigenvalue over $\mathbb R$. \ii Polynomial operators in one $T$ commute, but arbitrary operators need not: Week3 gave $DX-XD=I$.\end{trapbox}
-\section{Computing eigenvalues and eigenspaces}\begin{qbox}How do we turn an operator equation into coordinate equations? For $T(x,y)=(x,2y)$ and $\lambda=1$, the equation $Tv=v$ gives $y=0$. In general the coordinate equation is $(M(T)-\lambda I)[v]=0$.\end{qbox}
-\begin{proposition*}[Notes Proposition 56]Let $T\in L(V)$ with $V$ finite-dimensional, and fix an ordered basis of $V$. Then $Tv=\lambda v$ with $v\ne0$ iff $M(T)[v]=\lambda[v]$ with $[v]\ne0$. Thus the operator and its matrix have the same eigenvalues and corresponding eigenspaces under the coordinate isomorphism.\end{proposition*}
+\subsection{Complex numbers and the Fundamental Theorem of Algebra (Ch.~11.2)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Unique basis coefficients make $v\mapsto[v]$ a linear bijection: an output coordinate column specifies exactly one vector. Thus $Tv=\lambda v$ iff $[Tv]=[\lambda v]$.\ii The two sides equal $M(T)[v]$ and $\lambda[v]$, respectively. Also $v\ne0$ iff $[v]\ne0$, completing the equivalence.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 11: two-by-two characteristic polynomial]For $A=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)$, define its characteristic polynomial by $\chi_A(t)=\det(tI-A)$, using only the two-by-two determinant from Week 4. Expanding gives $\chi_A(t)=(t-a)(t-d)-bc=t^2-(a+d)t+(ad-bc)$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 11; HW6 P4]For a two-by-two matrix, $\lambda\in F$ is an eigenvalue iff $\chi_A(\lambda)=0$.\end{proposition*}
+\begin{qbox}
+  Does every operator have an eigenvector? Rotation of $\RR^2$ by $90^\circ$ has none. What changes over $\CC$?
+\end{qbox}
+\begin{itemize}
+  \ii For $z=a+bi$: $|z|=\sqrt{a^2+b^2}=\sqrt{z\bar z}$, the distance from $z$ to $0$. $|zw|=|z||w|$ and $|z+w|\le|z|+|w|$.
+  \ii Polar form: $z=r(\cos\theta+i\sin\theta)$ with $r=|z|$. De Moivre: $z^k=r^k(\cos k\theta+i\sin k\theta)$. So every nonzero $z$ has a $k$-th root: $r^{1/k}\bigl(\cos\frac\theta k+i\sin\frac\theta k\bigr)$.
+\end{itemize}
+\begin{theorem*}[Prop.~52: Fundamental Theorem of Algebra]
+  Every nonconstant polynomial with complex coefficients has a zero in $\CC$.
+\end{theorem*}
+\begin{ideabox}
+Look at the size $|p(z)|$. Far from $0$ it is large, so it has a smallest value somewhere, at a point $\zeta$. We want to show that smallest value is $0$. Suppose it is not. Then we will find a nearby point where $|p|$ is even smaller, a contradiction.
 
-\begin{prob}\begin{proof}\begin{steps}\ii $Av=\lambda v$ for nonzero $v$ iff $(\lambda I-A)v=0$ for nonzero $v$, so $\lambda I-A$ is not injective and hence not invertible.\ii The two-by-two inverse criterion says this occurs exactly when $\det(\lambda I-A)=\chi_A(\lambda)=0$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 51]\begin{steps}\ii For $R=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$, $\chi_R(t)=t^2+1$. There are no real roots. Over $\mathbb C$ the roots are $i,-i$, and solving $Rv=\lambda v$ gives $E(i,R)=\mathbb C(1,-i)$, $E(-i,R)=\mathbb C(1,i)$.
-\ii For $F=\left(\begin{smallmatrix}0&1\\1&1\end{smallmatrix}\right)$, $\chi_F(t)=t^2-t-1$. Completing the square gives roots $\lambda_\pm=(1\pm\sqrt5)/2$.
-\ii The equation $F(x,y)=\lambda(x,y)$ gives $y=\lambda x$, with the second equation following from $\lambda^2=\lambda+1$. Thus $E(\lambda_\pm,F)=\mathbb R(1,\lambda_\pm)$.\end{steps}\end{example*}
-\begin{example*}[Notes Example 52: transpose operator]On $\mathbb C^{2,2}$, let $T(A)=A^{\mathsf T}$. Write $E_{ij}$ for the matrix with a single $1$ at entry $(i,j)$ and zeros elsewhere.
-\begin{steps}\ii Since $T^2=I$, any eigenvalue satisfies $\lambda^2=1$, so it is $1$ or $-1$.
-\ii The condition $A^{\mathsf T}=A$ says $A=\left(\begin{smallmatrix}a&b\\b&d\end{smallmatrix}\right)$, the symmetric matrices. Hence $E(1,T)$ has basis $E_{11},E_{12}+E_{21},E_{22}$; comparing entries proves independence.
-\ii The condition $A^{\mathsf T}=-A$ forces the diagonal entries zero and the off-diagonal entries opposite. These skew-symmetric matrices form $E(-1,T)=\mathbb C(E_{12}-E_{21})$. Both eigenspaces are nonzero, so both possible eigenvalues occur.\end{steps}\end{example*}
-\method{Solve a repeated-eigenvalue example}\begin{steps}\ii For $A=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$, $\chi_A(t)=(t-1)^2$, so the only eigenvalue is $1$.\ii Solving $(A-I)(x,y)=(y,0)=0$ gives $E(1,A)=\mathbb Re_1$.\ii An eigenvector basis would need two independent vectors, but all eigenvectors lie in this one-dimensional space. Therefore no basis of eigenvectors exists.\end{steps}
-\begin{shortcuts}\ii After finding each scalar eigenvalue, solve the homogeneous kernel equations; roots alone do not determine the eigenvectors.\ii Use a relation $p(T)=0$ or a visible invariant subspace before expanding a characteristic polynomial.\end{shortcuts}\begin{trapbox}\ii A repeated root does not guarantee enough eigenvectors: the matrix $\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$ above has only one independent eigenvector.\ii Over $\mathbb R$, a quadratic with no real roots gives no eigenvectors for a two-by-two operator; using complex roots silently changes the field.\end{trapbox}
-\section{PageRank and stochastic eigenvalues}\begin{qbox}How can a link network determine a unique probability ranking? Plain transitions may fail: $I_2$ has many stationary distributions, and the swap matrix has a unique stationary distribution but alternates $e_1,e_2$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Chapter 11: link transitions]For $n$ pages, a directed edge $i\to j$ means page $i$ links to page $j$. The adjacency matrix is $C_{ij}=1$ when that edge exists and $0$ otherwise. A directed walk of length $k$ follows $k$ consecutive edges, with repetitions allowed. Let $d_i=\sum_jC_{ij}$ be the number of outgoing links. When all $d_i>0$, put $D=\operatorname{diag}(d_1,\ldots,d_n)$, $A=D^{-1}C$, and $P=A^{\mathsf T}=C^{\mathsf T}D^{-1}$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 11: walks and transition conventions]$(C^k)_{ij}$ counts length-$k$ walks from $i$ to $j$ for $k\ge1$. The matrix $A$ is row-stochastic and $P$ is column-stochastic, with $P_{ij}=1/d_j$ if $j\to i$ and $0$ otherwise. Thus $P$ describes choosing an outgoing link uniformly from the current page.\end{proposition*}
-\begin{motive}\ii[Want.] Relate the network description to the course column-vector convention.\ii[Know.] Matrix multiplication sums over the intermediate index.\ii[Key step.] Partition walks by their penultimate vertex and normalize each outgoing row.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii For $k=1$, $C_{ij}$ counts the possible single edge. If the formula holds for $k$, a length-$(k+1)$ walk to $j$ consists uniquely of a length-$k$ walk to some $\ell$ followed by edge $\ell\to j$. Its count is $\sum_\ell(C^k)_{i\ell}C_{\ell j}=(C^{k+1})_{ij}$.\ii Row $i$ of $D^{-1}C$ has $d_i$ entries equal to $1/d_i$, hence nonnegative entries summing to 1. Transposing makes these the columns of $P$, proving the stated entries and column sums.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 11: damping and dangling pages]A page with no outgoing links is dangling. For a chosen probability vector $v$, define column $j$ by $P_{ij}=C_{ji}/d_j$ when $d_j>0$, and set column $j$ equal to $v$ when $d_j=0$. Thus $P$ is column-stochastic even with dangling pages. Fix $0<\alpha<1$, the damping parameter. PageRank seeks $r$ satisfying $r=\alpha Pr+(1-\alpha)v$: with probability $\alpha$ follow a link, and with probability $1-\alpha$ choose a page from the restart distribution $v$.\end{definition*}\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 11: the 1-norm]For $x\in\mathbb C^n$, define $\|x\|_1=\sum_j|x_j|$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 11: 1-norm properties]
-$\|x\|_1=0$ iff $x=0$, $\|ax\|_1=|a|\|x\|_1$, and $\|x+y\|_1\le\|x\|_1+\|y\|_1$.
+Why can we always go lower from a nonzero value? Try $q(z)=1+z^2$ at $z=0$, where $|q|=1$. Moving along the real axis, $q(t)=1+t^2$ gets bigger. Moving along the imaginary axis, $q(it)=1-t^2$ gets smaller. The term $z^2$ can be made to point in any direction by choosing the direction of $z$; choose it so that $z^2$ points opposite to the constant $1$.
+
+In general, after moving $\zeta$ to the origin and dividing by $p(\zeta)$, the polynomial is $q(z)=1+a_kz^k+(\text{higher powers})$ with $a_k\ne0$. Choose the direction $\beta$ of $z$ so that $a_k\beta^k=-1$ (possible because $k$-th roots exist in $\CC$). Along $z=t\beta$ the polynomial is $1-t^k+(\text{terms of size about }t^{k+1})$, and for small $t$ the term $-t^k$ wins.
+\end{ideabox}
+\begin{proof}
+  Let $p(z)=c_0+c_1z+\dots+c_mz^m$ with $m\ge1$, $c_m\ne0$.
+  \begin{steps}
+    \ii \emph{$|p(z)|$ is large far away.} By the triangle inequality $|p(z)|\ge|c_m||z|^m-\sum_{j<m}|c_j||z|^j$, and the right side tends to $\infty$ as $|z|\to\infty$. So there is a radius $R$ with $|p(z)|>|p(0)|$ whenever $|z|>R$.
+    \ii \emph{A global minimum exists.} On the closed disk $|z|\le R$ the continuous real function $|p|$ attains a minimum, at some $\zeta$. That minimum is $\le|p(0)|$, and outside the disk $|p|$ is larger than $|p(0)|$. So $|p(\zeta)|\le|p(z)|$ for all $z\in\CC$.
+    \ii \emph{Suppose $p(\zeta)\ne0$.} Let $q(z)=p(\zeta+z)/p(\zeta)$. Then $q(0)=1$ and $|q(z)|\ge1$ for all $z$.
+    \ii $q$ is a nonconstant polynomial, so $q(z)=1+a_kz^k+a_{k+1}z^{k+1}+\dots+a_mz^m$ where $a_kz^k$ is the first nonzero term after the constant.
+    \ii Choose $\beta\in\CC$ with $\beta^k=-1/a_k$. For real $t>0$: $q(t\beta)=1-t^k+a_{k+1}\beta^{k+1}t^{k+1}+\dots+a_m\beta^mt^m$.
+    \ii For $0<t<1$ the tail has absolute value at most $Ct^{k+1}$, where $C=\sum_{j>k}|a_j\beta^j|$. So $|q(t\beta)|\le(1-t^k)+Ct^{k+1}=1-t^k(1-Ct)$.
+    \ii For $t$ small enough that $Ct<1$, this is $<1$. That contradicts $|q|\ge1$. Hence $p(\zeta)=0$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii \textbf{Factorisation.} If $p(\lambda)=0$ then $p(z)=(z-\lambda)q(z)$ with $\deg q=\deg p-1$. Applying the theorem repeatedly: $p(z)=c(z-\lambda_1)\cdots(z-\lambda_m)$, roots listed with multiplicity. $\CC$ is called \vocab{algebraically closed}.
+  \ii $\RR$ is not: $x^2+1$ has no real zero.
+  \ii The only analytic input is that a continuous function on a closed bounded set attains its minimum.
+\end{itemize}
+
+\subsection{Existence and independence of eigenvectors (Ch.~11.2)}
+
+\begin{theorem*}[Prop.~53 / LADR 5.19: operators on complex spaces have eigenvectors]
+  Every operator on a nonzero finite-dimensional complex vector space has an eigenvector.
+\end{theorem*}
+\begin{ideabox}
+We need a polynomial so that the Fundamental Theorem can be used, but so far $T$ has no polynomial attached to it. Finite dimension produces one. Take any $v\ne0$ and keep applying $T$: the vectors $v,Tv,T^2v,\dots,T^nv$ are $n+1$ vectors in a space of dimension $n$, so they satisfy a relation $a_0v+a_1Tv+\dots+a_mT^mv=0$. Read that as ``$p(T)v=0$'' for the polynomial $p(z)=a_0+a_1z+\dots+a_mz^m$.
+
+Now factor: $p(z)=(z-\lambda)q(z)$. Then $(T-\lambda I)\bigl(q(T)v\bigr)=p(T)v=0$. So $w=q(T)v$ satisfies $Tw=\lambda w$. It is an eigenvector provided $w\ne0$. To guarantee that, take the relation of \emph{smallest} degree at the start: $q$ has smaller degree than $p$, so $q(T)v=0$ would be a shorter relation.
+
+Example: $T=$ rotation by $90^\circ$ on $\CC^2$, $v=e_1$. $Te_1=e_2$, $T^2e_1=-e_1$, so $T^2v+v=0$: $p(z)=z^2+1=(z-i)(z+i)$. Take $\lambda=i$, $q(z)=z+i$: $w=Te_1+ie_1=(i,1)$, and $Tw=(-1,i)=i\cdot(i,1)$.
+\end{ideabox}
+\begin{proof}
+  Let $n=\dim V$ and choose $v\ne0$.
+  \begin{steps}
+    \ii $v,Tv,\dots,T^nv$ are $n+1$ vectors, so they are dependent (W1). Among all nontrivial relations $a_0v+a_1Tv+\dots+a_mT^mv=0$ ($a_m\ne0$) choose one with $m$ as small as possible. Then $m\ge1$, because $a_0v=0$ with $a_0\ne0$ is impossible.
+    \ii Let $p(z)=a_0+a_1z+\dots+a_mz^m$. It has a zero $\lambda\in\CC$, so $p(z)=(z-\lambda)q(z)$ with $q(z)=b_0+\dots+b_{m-1}z^{m-1}$, $b_{m-1}=a_m\ne0$.
+    \ii Let $w=b_0v+b_1Tv+\dots+b_{m-1}T^{m-1}v$. Then $w\ne0$: otherwise this would be a nontrivial relation of degree $m-1<m$.
+    \ii Multiplying out $(z-\lambda)q(z)=p(z)$ with $T$ in place of $z$: $(T-\lambda I)w=a_0v+a_1Tv+\dots+a_mT^mv=0$.
+    \ii So $Tw=\lambda w$ with $w\ne0$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Complex is needed: rotation by $90^\circ$ on $\RR^2$. Finite-dimensional is needed: $T(p)=xp$ on $\PP(\CC)$ has no eigenvector, since $xp=\lambda p$ fails by comparing degrees.
+\end{itemize}
+
+\begin{theorem*}[Prop.~54 / LADR 5.11: eigenvectors for distinct eigenvalues are independent]
+  If $v_1,\dots,v_m$ are eigenvectors of $T$ with distinct eigenvalues $\lambda_1,\dots,\lambda_m$, then $v_1,\dots,v_m$ is linearly independent.
+\end{theorem*}
+\begin{ideabox}
+Start with two. Could $v_2=av_1$? Apply $T$ to both sides: $\lambda_2v_2=a\lambda_1v_1$. Multiply both sides by $\lambda_2$ instead: $\lambda_2v_2=a\lambda_2v_1$. The left sides are equal, so $a(\lambda_1-\lambda_2)v_1=0$, so $a=0$, so $v_2=0$, which an eigenvector is not.
+
+The trick: \emph{applying $T$ and multiplying by $\lambda_k$ do the same thing to $v_k$ but different things to the other eigenvectors.} Subtracting removes $v_k$ and leaves a relation among fewer vectors, with each coefficient multiplied by a nonzero number $\lambda_i-\lambda_k$. For the general case we want the shorter relation to be among independent vectors; so pick the \emph{first} $v_k$ that depends on the earlier ones.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose the list is dependent. By (W2) there is a smallest $k$ with $v_k\in\spn(v_1,\dots,v_{k-1})$. Because $k$ is smallest, $v_1,\dots,v_{k-1}$ is independent.
+    \ii Write $v_k=a_1v_1+\dots+a_{k-1}v_{k-1}$.
+    \ii Apply $T$: $\lambda_kv_k=a_1\lambda_1v_1+\dots+a_{k-1}\lambda_{k-1}v_{k-1}$.
+    \ii Multiply step 2 by $\lambda_k$: $\lambda_kv_k=a_1\lambda_kv_1+\dots+a_{k-1}\lambda_kv_{k-1}$.
+    \ii Subtract: $0=a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}$.
+    \ii $v_1,\dots,v_{k-1}$ is independent, so each $a_i(\lambda_i-\lambda_k)=0$. The eigenvalues are distinct, so each $a_i=0$.
+    \ii Then $v_k=0$ by step 2, contradicting that eigenvectors are nonzero.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii \textbf{Prop.~55 / LADR 5.12.} An operator on a finite-dimensional $V$ has at most $\dim V$ distinct eigenvalues: eigenvectors for distinct eigenvalues are independent, and an independent list has at most $\dim V$ vectors (W1).
+  \ii Ex.~50: $\sin x,\sin2x,\dots,\sin Nx$ are independent, because they are eigenvectors of $f\mapsto f''$ with the distinct eigenvalues $-1,-4,\dots,-N^2$.
+  \ii The shift $(a_1,a_2,\dots)\mapsto(a_2,a_3,\dots)$ on $\RR^\infty$ has every real $\lambda$ as an eigenvalue, with eigenvector $(1,\lambda,\lambda^2,\dots)$.
+\end{itemize}
+
+\subsection{Computing eigenvalues (Ch.~11.2)}
+
+\begin{proposition*}[Prop.~56: eigenvalues of an operator are eigenvalues of its matrix]
+  Fix a basis of $V$. Then $Tv=\lambda v\iff\MM(T)\MM(v)=\lambda\MM(v)$.
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}\ii A sum of nonnegative moduli is zero exactly when each coordinate is zero.\ii $\|ax\|_1=\sum_j|ax_j|=|a|\sum_j|x_j|=|a|\|x\|_1$.\ii Summing $|x_j+y_j|\le|x_j|+|y_j|$ over $j$ gives the triangle inequality.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 57]For a column-stochastic matrix $P$ and any $x\in\mathbb C^n$, $\|Px\|_1\le\|x\|_1$. Every complex eigenvalue $\lambda$ of $P$ satisfies $|\lambda|\le1$.\end{proposition*}
-\begin{motive}\ii[Want.] Bound eigenvalues without computing them.\ii[Know.] Entries of $P$ are nonnegative and each column sums to 1.\ii[Key step.] Absolute values prevent direct cancellation in each output coordinate. First bound $|\sum_jP_{ij}x_j|\le\sum_jP_{ij}|x_j|$, then sum over $i$. Each $|x_j|$ is multiplied by column sum $\sum_iP_{ij}=1$, giving $\|Px\|_1\le\|x\|_1$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii $\|Px\|_1=\sum_i|\sum_jP_{ij}x_j|\le\sum_{i,j}P_{ij}|x_j|=\sum_j(\sum_iP_{ij})|x_j|=\|x\|_1$.\ii If $Px=\lambda x$ and $x\ne0$, then $|\lambda|\|x\|_1=\|Px\|_1\le\|x\|_1$. Divide by the positive quantity $\|x\|_1$ to obtain the bound.\end{steps}\end{proof}\end{prob}
-\begin{prob}\textbf{Series tools (cited elementary analysis).} For $0<\alpha<1$, $\sum_{k=0}^{\infty}\alpha^k=1/(1-\alpha)$ and $\alpha^k\to0$. A series dominated termwise in absolute value by a convergent nonnegative series converges; finite linear combinations commute with these limits. These facts justify the coordinate series below.\end{prob}
-\begin{proposition*}[Notes Proposition 58: existence and uniqueness of PageRank]For a column-stochastic $P$, probability vector $v$, and $0<\alpha<1$, there is a unique $r\in\mathbb R^n$ with $r=\alpha Pr+(1-\alpha)v$. It is a probability vector, with $r=(1-\alpha)\sum_{k=0}^{\infty}\alpha^kP^kv$.\end{proposition*}
-\begin{motive}\ii[Want.] Prove uniqueness, existence, nonnegativity, and total probability 1.\ii[Know.] Proposition 57 bounds eigenvalues; Week 4 turns injectivity into invertibility in finite dimension; stochastic maps preserve probability vectors.\ii[Key step.] The eigenvalue bound excludes $1/\alpha$, so $I-\alpha P$ is invertible. This gives a unique solution but says nothing about its signs. Substituting $r=\alpha Pr+(1-\alpha)v$ repeatedly suggests $r=(1-\alpha)\sum_{k\ge0}\alpha^kP^kv$. Every $P^kv$ is a probability vector, and these nonnegative geometric weights sum to $1$, explaining why this expression proves nonnegativity and normalization.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $(I-\alpha P)x=0$ and $x\ne0$, then $Px=\alpha^{-1}x$ would give eigenvalue $\alpha^{-1}>1$, contradicting Proposition 57. Thus $I-\alpha P$ has zero kernel and is invertible.\ii Therefore $(I-\alpha P)r=(1-\alpha)v$ has exactly one real solution. To identify its signs, set $s=(1-\alpha)\sum_{k\ge0}\alpha^kP^kv$.\ii Each $P^kv$ is a probability vector, so each coordinate is between 0 and 1. Thus each coordinate series converges by comparison with $(1-\alpha)\sum\alpha^k$, and every coordinate of $s$ is nonnegative.\ii Let $\mathbf1=(1,\ldots,1)^{\mathsf T}$. Then $\mathbf1^{\mathsf T}s=(1-\alpha)\sum_{k\ge0}\alpha^k\mathbf1^{\mathsf T}P^kv=(1-\alpha)\sum_{k\ge0}\alpha^k=1$.\ii Shifting the absolutely convergent coordinate series gives $\alpha Ps+(1-\alpha)v=(1-\alpha)\sum_{k\ge1}\alpha^kP^kv+(1-\alpha)v=s$. By uniqueness $s=r$, proving the assertions.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Chapter 11: iterative convergence]From any initial probability vector $r_0$, define $r_{k+1}=\alpha Pr_k+(1-\alpha)v$. Every iterate is a probability vector and $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1$, hence $r_k\to r$. The map $F(x)=\alpha Px+(1-\alpha)v$ is a contraction: $\|F(x)-F(y)\|_1\le\alpha\|x-y\|_1$.\end{proposition*}
+\begin{proof}
+  $\MM(T)\MM(v)=\MM(Tv)$ (W5) and $\MM(\lambda v)=\lambda\MM(v)$; two vectors are equal exactly when their coordinate columns are equal.
+\end{proof}
+\textbf{The $2\times2$ characteristic polynomial.} For $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$:
+\begin{steps}
+  \ii $\lambda$ is an eigenvalue $\iff\lambda I-A$ is not invertible $\iff\det(\lambda I-A)=0$ (W4).
+  \ii $\det(tI-A)=(t-a)(t-d)-bc=t^2-(a+d)t+(ad-bc)$. Call it $\chi_A(t)$.
+  \ii So the eigenvalues of $A$ are the zeros of $\chi_A$ in $\FF$. Their sum is $a+d$ and their product is $ad-bc$.
+  \ii Eigenvectors for $\lambda$: solve $(A-\lambda I)x=0$. The two rows are proportional, so use one: $(a-\lambda)x+by=0$ gives $(b,\ \lambda-a)$; or $cx+(d-\lambda)y=0$ gives $(\lambda-d,\ c)$. Use whichever is nonzero.
+\end{steps}
+(Only the $2\times2$ formula is available for now; the characteristic polynomial in general comes later in the course.)
+\begin{itemize}
+  \ii Ex.~51: $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$, $\chi_R=t^2+1$: no real eigenvalues; over $\CC$, $\pm i$. The Fibonacci matrix $F=\begin{psmallmatrix}0&1\\1&1\end{psmallmatrix}$, $\chi_F=t^2-t-1$: eigenvalues $\frac{1\pm\sqrt5}2$.
+  \ii \textbf{Ex.~52: use the structure, not a determinant.} $T(A)=A^\T$ on $\CC^{2,2}$ satisfies $T^2=I$. If $TA=\lambda A$ with $A\ne0$, then $A=T^2A=\lambda^2A$, so $\lambda^2=1$. $E(1,T)$ is the symmetric matrices, spanned by $\begin{psmallmatrix}1&0\\0&0\end{psmallmatrix},\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix},\begin{psmallmatrix}0&0\\0&1\end{psmallmatrix}$; $E(-1,T)$ is spanned by $\begin{psmallmatrix}0&1\\-1&0\end{psmallmatrix}$.
+\end{itemize}
 
-\begin{prob}\begin{proof}\begin{steps}\ii If $r_k$ is a probability vector, so are $Pr_k$ and $v$; the weighted sum with nonnegative weights $\alpha,1-\alpha$ has nonnegative entries and sum 1. Induction proves the first claim.\ii $r_{k+1}-r=\alpha P(r_k-r)$, so Proposition 57 gives $\|r_{k+1}-r\|_1\le\alpha\|r_k-r\|_1$. Induction yields the bound, and the cited geometric limit gives convergence.\ii For arbitrary $x,y$, $F(x)-F(y)=\alpha P(x-y)$, giving the contraction inequality. A contraction here means exactly such an inequality with a constant less than 1; no general fixed-point theorem is needed for this proof.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[Notes Chapter 11: Google matrix]Let $G=\alpha P+(1-\alpha)v\mathbf1^{\mathsf T}$ and $H=\{x\in\mathbb R^n:\mathbf1^{\mathsf T}x=0\}$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 11: invariant decomposition for PageRank]$G$ is column-stochastic and $Gx=\alpha Px+(1-\alpha)v$ for probability vectors $x$, so $Gr=r$. The space $H$ is invariant under both $P$ and $G$, with $G|_H=\alpha P|_H$. Moreover $\mathbb R^n=\operatorname{span}(r)\oplus H$, and $G$ is the identity on $\operatorname{span}(r)$.\end{proposition*}
+\subsection{PageRank (Ch.~11.3)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Each column of $v\mathbf1^{\mathsf T}$ equals $v$, so each column of $G$ is a probability vector by its weights $\alpha,1-\alpha$. For probability $x$, $\mathbf1^{\mathsf T}x=1$, giving $Gx=\alpha Px+(1-\alpha)v$ and hence $Gr=r$.\ii $H$ is the kernel of the linear functional $x\mapsto\mathbf1^{\mathsf T}x$, hence a subspace. For $x\in H$, $\mathbf1^{\mathsf T}Px=\mathbf1^{\mathsf T}x=0$, so $Px\in H$.\ii For $x\in H$, $Gx=\alpha Px+(1-\alpha)v\mathbf1^{\mathsf T}x=\alpha Px\in H$, proving both the invariance and restriction formula.\ii Every $x$ equals $(\mathbf1^{\mathsf T}x)r+[x-(\mathbf1^{\mathsf T}x)r]$; the bracketed vector has coordinate sum 0 and lies in $H$.\ii If $cr\in H$, then $0=\mathbf1^{\mathsf T}(cr)=c$, so the intersection is zero. This proves directness. Since $Gr=r$, linearity gives $G(cr)=cr$.\end{steps}\end{proof}\end{prob}
-\method{Compute PageRank in a two-state example}\begin{steps}\ii Take the graph $1\to2$, $2\to1$. Its adjacency and transition matrices coincide: $C=P=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, and $C^2=I$ counts one length 2 walk from each state to itself. Choose $v=e_1$ and $\alpha=1/2$. The equations are $r_1=\frac12r_2+\frac12$, $r_2=\frac12r_1$.\ii Substitution gives $r=(2/3,1/3)^{\mathsf T}$. The Google matrix is $G=\left(\begin{smallmatrix}1/2&1\\1/2&0\end{smallmatrix}\right)$, and multiplication verifies $Gr=r$.\ii From $r_0=e_1$, the first iterates are $(1/2,1/2)^{\mathsf T}$ and $(3/4,1/4)^{\mathsf T}$; their 1-norm errors are $1/3$ and $1/6$, exactly half at each step in this example.\end{steps}
-\begin{fig}\begin{tikzpicture}[>=stealth,font=\small]
-\node[draw,circle](a)at(0,0){1};\node[draw,circle](b)at(3,0){2};
-\draw[->,bend left=25,blue](a)to node[above]{$1/2$}(b);
-\draw[->,bend left=25,blue](b)to node[below]{$1$}(a);
-\draw[->,loop above,red](a)to node[above]{$1/2$}(a);
-\node[below=18pt]at(a){$r_1=2/3$};\node[below=18pt]at(b){$r_2=1/3$};
-\end{tikzpicture}
-\figcap{These are the transitions of $G$, after the restart rule is included. From state 1, half the probability stays and half moves to state 2; state 2 always moves to state 1. At this distribution, the probability moving from 1 to 2 equals that moving from 2 to 1: $(2/3)(1/2)=(1/3)1$.}
-\end{fig}
+\begin{qbox}
+  Rank $n$ web pages by importance using only the links, where a page is important if important pages link to it.
+\end{qbox}
+\textbf{Setting up.}
+\begin{itemize}
+  \ii Adjacency matrix: $C_{ij}=1$ if page $i$ links to page $j$, else $0$. $(C^k)_{ij}$ counts directed walks of length $k$ from $i$ to $j$.
+  \ii Let $d_j$ be the number of links out of page $j$ (assume $d_j>0$). Define $P_{ij}=1/d_j$ if page $j$ links to page $i$, else $0$. Column $j$ sums to $1$, so $P$ is stochastic. In matrix form $P=C^\T D^{-1}$ with $D=\operatorname{diag}(d_1,\dots,d_n)$.
+  \ii A ``random surfer'' on page $j$ follows one of its links uniformly at random; if $p$ is the distribution of the surfer's position, $Pp$ is the distribution one step later.
+  \ii First attempt: rank by a stationary distribution $\pi=P\pi$. Coordinate $i$ says $\pi_i=\sum_jP_{ij}\pi_j$: the importance of page $i$ is collected from the pages linking to it.
+  \ii Problems: a page with no outgoing links (a \vocab{dangling page}) gives a zero column; the stationary distribution may not be unique; $P^kp_0$ may not converge. Dangling columns are replaced by the vector $v$ below.
+\end{itemize}
+Small example: pages $1,2,3$ with links $1\to2$, $1\to3$, $2\to3$, $3\to1$. $P=\begin{psmallmatrix}0&0&1\\1/2&0&0\\1/2&1&0\end{psmallmatrix}$. Solving $P\pi=\pi$: $\pi_1=\pi_3$, $\pi_2=\frac12\pi_1$, so $\pi=(\frac25,\frac15,\frac25)$.
 
-\begin{prob}\textbf{Historical context from the notes.} Page and Brin developed PageRank as a link-based component of search ranking; query relevance was a separate component. The often-used damping value 0.85 and uniform restart vector describe an early convention, not a claim about present search-engine parameters. A nonuniform $v$ gives a personalized restart distribution.\end{prob}
-\begin{shortcuts}\ii Solve $(I-\alpha P)r=(1-\alpha)v$ directly for small examples; invertibility is already guaranteed.\ii For iteration, the error decreases by at least a factor $\alpha$ in the 1-norm, providing a bound without computing eigenvectors.\ii Check a candidate by its fixed-point equation, nonnegative entries, and coordinate sum 1.\end{shortcuts}\begin{trapbox}\ii A stochastic matrix need not have a unique stationary distribution: $P=I_2$ fixes every probability vector.\ii An eigenvector for $1$ need not be a probability vector: $I_2(1,-1)=(1,-1)$, but its coordinates are not nonnegative. \ii Unique stationary distribution does not imply convergence: the swap matrix fixes only $(1/2,1/2)$ among probability vectors but alternates $e_1,e_2$.\ii A PageRank vector need not be strictly positive if $v$ has zero entries: $P=I_2,v=e_1$ gives $r=e_1$.\ii Do not divide by zero outgoing degree: a dangling page requires replacing its transition column before the stochastic arguments apply.\end{trapbox}
+\textbf{The PageRank equation.} Fix a \vocab{damping parameter} $0<\alpha<1$ and a probability vector $v$. At each step the surfer follows a link with probability $\alpha$, and with probability $1-\alpha$ jumps to a page chosen according to $v$. The PageRank vector $r$ is the solution of
+\[ r=\alpha Pr+(1-\alpha)v,\qquad\text{equivalently}\qquad(I-\alpha P)r=(1-\alpha)v. \]
+
+\begin{proposition*}[Prop.~57: eigenvalues of a stochastic matrix have absolute value at most $1$]
+\end{proposition*}
+\begin{ideabox}
+A stochastic matrix redistributes mass without creating any. Measure the total mass of a (possibly complex) vector by $\|x\|_1=|x_1|+\dots+|x_n|$. Then $\|Px\|_1\le\|x\|_1$. An eigenvector is scaled by $|\lambda|$, so $|\lambda|\le1$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $\|Px\|_1=\sum_i\bigl|\sum_jP_{ij}x_j\bigr|\le\sum_i\sum_jP_{ij}|x_j|$, by the triangle inequality and $P_{ij}\ge0$.
+    \ii Exchange the sums: $\sum_j\bigl(\sum_iP_{ij}\bigr)|x_j|=\sum_j|x_j|=\|x\|_1$, because each column sums to $1$.
+    \ii If $Px=\lambda x$ with $x\ne0$: $|\lambda|\,\|x\|_1=\|Px\|_1\le\|x\|_1$, and $\|x\|_1>0$, so $|\lambda|\le1$.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Prop.~58: existence and uniqueness of PageRank]
+  For a stochastic $P$, a probability vector $v$ and $0<\alpha<1$, there is exactly one $r\in\RR^n$ with $r=\alpha Pr+(1-\alpha)v$, and $r$ is a probability vector.
+\end{theorem*}
+\begin{ideabox}
+The equation is the linear system $(I-\alpha P)r=(1-\alpha)v$, so everything follows if $I-\alpha P$ is invertible. For a square matrix it is enough to show injectivity (W3). And $(I-\alpha P)x=0$ says $Px=\frac1\alpha x$: that would make $\frac1\alpha>1$ an eigenvalue of $P$, which Prop.~57 forbids. Uniqueness gives existence.
+
+To see that $r$ is a probability vector, write the solution explicitly. Substituting the equation into itself: $r=(1-\alpha)v+\alpha Pr=(1-\alpha)v+\alpha(1-\alpha)Pv+\alpha^2P^2r=\dots$, which suggests $r=(1-\alpha)\sum_{k\ge0}\alpha^kP^kv$. This is a weighted average of the probability vectors $P^kv$ with weights $(1-\alpha)\alpha^k$ that sum to $1$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \emph{$I-\alpha P$ is injective.} If $(I-\alpha P)x=0$ with $x\ne0$, then $Px=\frac1\alpha x$, so $\frac1\alpha>1$ is an eigenvalue of $P$, contradicting Prop.~57.
+    \ii \emph{Unique solution.} An injective operator on $\RR^n$ is invertible (W3). So $(I-\alpha P)r=(1-\alpha)v$ has exactly one solution.
+    \ii \emph{The series.} Let $s=(1-\alpha)\sum_{k=0}^\infty\alpha^kP^kv$. Each $P^kv$ is a probability vector (W6), so each coordinate of each term lies in $[0,(1-\alpha)\alpha^k]$ and the series converges by comparison with a geometric series. The coordinates of $s$ are $\ge0$.
+    \ii \emph{Sum of coordinates.} $\one^\T s=(1-\alpha)\sum_k\alpha^k\,\one^\T P^kv=(1-\alpha)\sum_k\alpha^k=1$. So $s$ is a probability vector.
+    \ii \emph{$s$ solves the equation.} $\alpha Ps+(1-\alpha)v=(1-\alpha)\sum_{k\ge1}\alpha^kP^kv+(1-\alpha)v=s$. By uniqueness $s=r$.
+  \end{steps}
+\end{proof}
+\textbf{Computing $r$ by iteration.} Start from any probability vector $r_0$ and set $r_{k+1}=\alpha Pr_k+(1-\alpha)v$.
+\begin{steps}
+  \ii Subtract $r=\alpha Pr+(1-\alpha)v$: $r_{k+1}-r=\alpha P(r_k-r)$.
+  \ii By step 1--2 of Prop.~57, $\|r_{k+1}-r\|_1\le\alpha\|r_k-r\|_1$. So $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1\to0$: the error shrinks by a factor $\alpha$ each step.
+  \ii The map $F(x)=\alpha Px+(1-\alpha)v$ satisfies $\|F(x)-F(y)\|_1\le\alpha\|x-y\|_1$; such a map is a \vocab{contraction} (Banach fixed point theorem in analysis).
+\end{steps}
+\textbf{The Google matrix.} Let $\one=(1,\dots,1)^\T$ and $G=\alpha P+(1-\alpha)v\one^\T$.
+\begin{itemize}
+  \ii For a probability vector $x$, $\one^\T x=1$, so $Gx=\alpha Px+(1-\alpha)v$. The PageRank equation is $Gr=r$: $r$ is an eigenvector of $G$ with eigenvalue $1$.
+  \ii Let $H=\{x\in\RR^n:x_1+\dots+x_n=0\}$. $P$ keeps the sum of coordinates, so $H$ is invariant under $P$. For $x\in H$, $\one^\T x=0$ and $Gx=\alpha Px\in H$. So $H$ is invariant under $G$, and on $H$ the matrix $G$ acts as $\alpha P$.
+  \ii $\RR^n=\spn(r)\oplus H$: $r\notin H$ since its coordinates sum to $1$, and $\dim H=n-1$. So $G$ fixes the direction $r$ and shrinks the invariant complement $H$ by at least the factor $\alpha$.
+  \ii History: Brin and Page used $\alpha=0.85$ and uniform $v$; a non-uniform $v$ gives personalised PageRank.
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{$2\times2$}: $\chi_A(t)=t^2-(a+d)t+(ad-bc)$. Eigenvector for $\lambda$: $(b,\lambda-a)$ or $(\lambda-d,c)$.
+  \ii \textbf{Polynomial equation for $T$ gives the candidates}: if $Tv=\lambda v$ then $T^kv=\lambda^kv$, so $p(T)v=p(\lambda)v$. If $p(T)=0$, every eigenvalue is a root of $p$. ($P^2=P$: $\lambda\in\{0,1\}$. $T^2=I$: $\lambda=\pm1$. $N^2=0$: $\lambda=0$.)
+  \ii \textbf{$n$ distinct eigenvalues in dimension $n$}: the eigenvectors form a basis (Prop.~54 and counting). No further check needed.
+  \ii \textbf{$0$ is an eigenvalue $\iff$ not invertible.}
+  \ii \textbf{Real matrix, complex eigenvalue}: if $Av=\lambda v$ then $A\bar v=\bar\lambda\bar v$ (take complex conjugates). Find one eigenvector and conjugate it.
+  \ii \textbf{Stochastic matrix}: $1$ is always an eigenvalue. Reason: $P-I$ has columns summing to $0$, so its range lies in $H$, so it is not surjective, so it is not injective (W3). If $P$ is also symmetric (rows sum to $1$ too), the uniform vector is stationary.
+  \ii \textbf{Conjugate operators}: $S^{-1}TS$ has the same eigenvalues as $T$, with eigenspaces $S^{-1}E(\lambda,T)$ (HW6 P3).
+  \ii \textbf{Degree arguments on polynomial spaces}: differentiation lowers degree, so $p'=\lambda p$ forces $\lambda=0$ (HW6 P2).
+  \ii \textbf{Invariant subspace check}: apply $T$ to a spanning list.
+\end{shortcuts}
+\begin{trapbox}
+  \ii An eigenvector is nonzero by definition; an eigenvalue may be $0$.
+  \ii The sum of two eigenvectors with different eigenvalues is not an eigenvector. (Within one eigenspace, sums are fine.)
+  \ii Over $\RR$ an operator may have no eigenvalue. In infinite dimensions an operator may have none even over $\CC$.
+  \ii Independence needs \emph{distinct} eigenvalues. Two eigenvectors with the same eigenvalue can be dependent.
+  \ii $\nul T$ and $\range T$ are invariant, but an invariant subspace need not have an invariant complement: for $N$, the only invariant line is $\spn(e_1)$.
+  \ii $|\lambda|\le1$ for stochastic matrices is about absolute values: $\lambda=-1$ or complex $\lambda$ with $|\lambda|=1$ can occur (permutation matrices).
+\end{trapbox}
+
 \section{Problem set}
-\begin{prob}\textbf{Operator convention.} In HW6 P1, P3 and P6 the source omits some explicit linearity assumptions. The intended maps $P,S,T$ are linear operators. Without that assumption, P1 is false: on $\mathbb R$, $P(x)=|x|$ satisfies $P^2=P$ but its range $[0,\infty)$ is not a subspace. The original idempotent equation is retained below with the needed operator hypothesis stated.\end{prob}
-\begin{prob}\textbf{HW6 P1.} Let the linear operator $P:V\to V$ satisfy $P^2=P$. (a) Prove each eigenvalue is in $\{0,1\}$. (b) Prove $V=\ker P\oplus\im P$.\\\emph{Hint:} Apply $P^2=P$ to an eigenvector; decompose $v=(v-Pv)+Pv$.\end{prob}
-\begin{prob}\textbf{HW6 P2.} For differentiation $D:\mathcal P_n(F)\to\mathcal P_n(F)$, $F=\mathbb R$ or $\mathbb C$, (a) find all eigenvalues and eigenspaces. (b) Explain the difference on smooth functions on $\mathbb R$.\\\emph{Hint:} Compare degrees for polynomials; use exponential functions for smooth eigenfunctions.\end{prob}
-\begin{prob}\textbf{HW6 P3.} Let $S,T\in L(V)$ with $S$ invertible and put $R=S^{-1}TS$. Prove $E(\lambda,R)=S^{-1}E(\lambda,T)$ for every scalar $\lambda$, hence equal sets of eigenvalues.\\\emph{Hint:} Multiply the equation $Rv=\lambda v$ by $S$.\end{prob}
-\begin{prob}\textbf{HW6 P4.} For $A=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)$, use only the two-by-two determinant formula to prove $\det(tI-A)=t^2-(a+d)t+(ad-bc)$. Prove $\lambda$ is an eigenvalue iff it is a root of this polynomial.\\\emph{Hint:} Expand the two-by-two determinant and use failure of invertibility.\end{prob}
-\begin{prob}\textbf{HW6 P5.} Find eigenvalues, eigenspaces, and whether an eigenvector basis exists for $A_1=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$ first over $\mathbb R$ then $\mathbb C$; $A_2=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$ over $\mathbb R$; and $A_3=\left(\begin{smallmatrix}0&1\\1&1\end{smallmatrix}\right)$ over $\mathbb R$.\\\emph{Hint:} Use the two-by-two characteristic polynomial, then solve each kernel.\end{prob}
-\begin{prob}\textbf{HW6 P6 (optional).} For $T\in L(V)$ and $v\ne0$, define the cyclic subspace $C(v,T)=\operatorname{span}(v,Tv,T^2v,\ldots)$, meaning finite combinations of the listed iterates. (a) Prove it is invariant. (b) If $V$ is finite-dimensional, show $C(v,T)=\operatorname{span}(v,\ldots,T^{m-1}v)$ for some $m\le\dim V$.\\\emph{Hint:} Take the first dependent initial list, then show the preceding span is preserved.\end{prob}
-\begin{prob}\textbf{HW6 P7 (optional).} For $P=\left(\begin{smallmatrix}1/2&1/2&0\\1/2&0&1/2\\0&1/2&1/2\end{smallmatrix}\right)$, find a probability vector $p$ with $Pp=p$ and explain its Markov-chain meaning.\\\emph{Hint:} Solve the first and third stationary equations, then normalize the sum.\end{prob}
-\begin{prob}\textbf{Exam practice (midterm2-review.pdf, Problem 7).} For $T\in L(V)$, prove $\ker T$ and $\im T$ are invariant under $T$. Further prove their annihilators are invariant under the dual map $T^{\prime}$. Recall from Week 5 that $V^{\prime}=L(V,F)$, $U^0=\{\varphi\in V^{\prime}:\varphi(u)=0\text{ for every }u\in U\}$ and $(T^{\prime}\varphi)(v)=\varphi(Tv)$.\\\emph{Hint:} For any invariant $U$, evaluate $(T^{\prime}\varphi)(u)=\varphi(Tu)$ with $\varphi\in U^0$.\end{prob}\end{document}
+
+\begin{prob}\textbf{HW6 P1.}\ Let $P\colon V\to V$ satisfy $P^2=P$. (a) Prove that every eigenvalue of $P$ belongs to $\{0,1\}$. (b) Prove that $V=\nul P\oplus\range P$.
+
+\emph{Hint:} (a) apply $P$ twice to an eigenvector. (b) $v=(v-Pv)+Pv$.
+\end{prob}
+\begin{prob}\textbf{HW6 P2.}\ Let $D\colon\PP_n(\FF)\to\PP_n(\FF)$ be differentiation, $\FF=\RR$ or $\CC$. (a) Determine all eigenvalues and eigenspaces of $D$. (b) Explain why the answer is different on the space of smooth functions on $\RR$.
+
+\emph{Hint:} compare degrees in $p'=\lambda p$.
+\end{prob}
+\begin{prob}\textbf{HW6 P3.}\ Let $S\colon V\to V$ be invertible and $R=S^{-1}TS$. Prove that $T$ and $R$ have the same eigenvalues; more precisely $E(\lambda,R)=S^{-1}E(\lambda,T)$ for every $\lambda$.
+
+\emph{Hint:} rewrite $Rv=\lambda v$ as a statement about $Sv$.
+\end{prob}
+\begin{prob}\textbf{HW6 P4.}\ Let $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. Using only the $2\times2$ determinant formula, prove $\det(tI-A)=t^2-(a+d)t+(ad-bc)$. Then prove that $\lambda$ is an eigenvalue of $A$ if and only if it is a root of this polynomial.
+\end{prob}
+\begin{prob}\textbf{HW6 P5.}\ Find the eigenvalues and eigenspaces over the indicated field, and decide whether there is a basis of eigenvectors: $A_1=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ (over $\RR$, then over $\CC$), $A_2=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ over $\RR$, $A_3=\begin{psmallmatrix}0&1\\1&1\end{psmallmatrix}$ over $\RR$.
+\end{prob}
+\begin{prob}\textbf{HW6 P6 (optional).}\ Let $T\colon V\to V$ and $v\ne0$. Define $C(v,T)=\spn(v,Tv,T^2v,\dots)$. (a) Prove that $C(v,T)$ is $T$-invariant. (b) If $V$ is finite-dimensional, prove there is $m\le\dim V$ with $C(v,T)=\spn(v,Tv,\dots,T^{m-1}v)$.
+
+\emph{Hint:} (b) take the first power $T^mv$ that depends on the earlier ones.
+\end{prob}
+\begin{prob}\textbf{HW6 P7 (optional).}\ For the stochastic matrix $P=\begin{psmallmatrix}1/2&1/2&0\\1/2&0&1/2\\0&1/2&1/2\end{psmallmatrix}$ find a probability vector $p$ with $Pp=p$ and explain its meaning for the three-state Markov chain.
+\end{prob}
+\begin{prob}\textbf{R1 (Midterm 2 review, Problem 3).}\ For a polynomial $p$ and an operator $T$ with $Tv=\lambda v$, show $p(T)v=p(\lambda)v$.
+\end{prob}
+\begin{prob}\textbf{R2 (Midterm 2 review, Problem 7).}\ For any operator $T\colon V\to V$ prove that $\nul T$ and $\range T$ are invariant under $T$, and that their annihilators are invariant under the dual map $T'$.
+\end{prob}
+\begin{prob}\textbf{R3 (Midterm 2 review, true/false).}\ (a) If $v_1,v_2$ are eigenvectors of $T$, then so is $v_1+v_2$. (b) An operator on a real vector space always has an eigenvector.
+\end{prob}
+\begin{prob}\textbf{E1 (PageRank by hand).}\ For the three-page web in the text (links $1\to2$, $1\to3$, $2\to3$, $3\to1$) with $\alpha=\frac12$ and uniform $v$, solve $r=\alpha Pr+(1-\alpha)v$.
+\end{prob}
+
+\end{document}
