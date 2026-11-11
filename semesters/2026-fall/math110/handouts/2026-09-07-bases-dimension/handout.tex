@@ -1,380 +1,306 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-\renewenvironment{fig}{\par\medskip\noindent\begin{minipage}{\linewidth}\centering}{\end{minipage}\par\medskip}
-\title{MATH 110 --- Week 2}
-\subtitle{Notes Chapters 3--4; Homework 2}
-\author{}
-\date{}
-\ihead{}
+\DeclareMathOperator{\spn}{span}
+\newcommand{\PP}{\mathcal P}
+\title{Math 110 --- Week 2}
+\subtitle{Linear independence, span, bases, dimension (Notes Ch.~3--4, LADR 2A--2C, HW2)}
+\author{}\date{}\ihead{}
 \begin{document}
 \maketitle
 
-\section{Independence, span and bases}
-\begin{qbox}For $v_1=(1,0)$ and $v_2=(1,1)$, can we write $(3,2)=av_1+bv_2$? The coordinate equations are $a+b=3$, $b=2$, so $a=1$. We want to decide both whether such coefficients exist for every target and whether they are unique.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definitions 7--8; LADR 2.4, 2.9, 2.13, 2.15, 2.26]
-We use the field and vector-space operations from Week 1. A linear combination of a list $v_1,\ldots,v_m$ is $a_1v_1+\cdots+a_mv_m$, with $a_j\in F$. Its span, $\operatorname{span}(v_1,\ldots,v_m)$, is the set of all these combinations. The empty combination is zero; the empty list spans $\{0\}$ and is independent, since there are no nonzero coefficients in an empty list. A list is ordered and may contain repeated entries; its length is its number of entries.
-A list is linearly independent if $\sum_{j=1}^m a_jv_j=0$ implies every $a_j=0$; otherwise it is dependent. Here $\sum$ abbreviates the displayed sum. The list spans $V$ if its span is $V$, and is a basis of $V$ if it is independent and spans $V$. A space is finite-dimensional if some finite list spans it; otherwise it is infinite-dimensional.
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Definition 8 and combination map; LADR 2.28 (equation 2.29)]
-A list is a basis exactly when every vector has a unique coefficient list. The map $\Phi:F^m\to V$, $\Phi(a_1,\ldots,a_m)=\sum a_jv_j$, is injective exactly when the list is independent, and surjective exactly when it spans.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Separate existence of coefficients from uniqueness.
-\ii[Key step.] Independence concerns a combination equal to zero. To use it on two representations of the same vector, subtract them: $\sum a_jv_j=\sum b_jv_j$ becomes $\sum(a_j-b_j)v_j=0$.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii The image of $\Phi$ is the span, so surjectivity means spanning.
-\ii Independence forces all $a_j-b_j=0$ in the displayed equation, so it means injectivity. Conversely, injectivity compares any zero combination with the all-zero coefficient list.
-\ii Both together mean each vector has exactly one coefficient list: a basis.
-\end{steps}\end{proof}\end{prob}
-
-\begin{proposition*}[Span and single-vector summands; Notes Chapter 3, LADR 2.6]
-The span is the smallest subspace containing the listed vectors. It equals $Fv_1+\cdots+Fv_m$, where $Fv=\{av:a\in F\}$. If every $v_j\ne0$, this sum is direct exactly when the list is independent.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Each $Fv_j$ is a subspace: $a(bv_j)+cv_j=(ab+c)v_j$. Their sum consists exactly of the combinations. Every subspace containing the $v_j$ contains all these combinations, proving minimality.
-\ii Directness says $\sum a_jv_j=0$ forces each summand $a_jv_j=0$ (Week 1 Proposition 7). For nonzero $v_j$, this is exactly $a_j=0$, hence independence. The nonzero hypothesis is needed: $F0$ is direct but $(0)$ is dependent.
-\end{steps}\end{proof}\end{prob}
-
-\begin{proposition*}[One or two vectors, and sublists; LADR 2.16(c,d)]
-A one-vector list is independent exactly when its vector is nonzero. A two-vector list is independent exactly when neither vector is a scalar multiple of the other. Every sublist of an independent list is independent.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii If $v\ne0$, $av=0$ forces $a=0$; if $v=0$, $1v=0$ is nontrivial. For two vectors, solve a nontrivial relation $av+bw=0$ for whichever vector has a nonzero coefficient. Conversely, $v=cw$ gives the relation $v-cw=0$.
-\ii A relation on a sublist is a relation on the whole list with zero coefficients inserted. Independence therefore passes to sublists.
-\end{steps}\end{proof}\end{prob}
-
-\begin{example*}[Notes Example 10]
-\begin{steps}
-\ii The standard list $e_1,\ldots,e_n$ in $F^n$ has a single $1$ in each successive coordinate. The equality $(a_1,\ldots,a_n)=\sum a_je_j$ proves spanning; its $j$th coordinate is $a_j$, so a zero combination forces each $a_j=0$. This proves independence.
-\ii The sequences $(1,1,1,\ldots)$ and $(0,1,2,\ldots)$ span exactly the arithmetic sequences $(a,a+d,a+2d,\ldots)$. For a target arithmetic sequence, its first entry is $a$ and its second is $a+d$, so $d$ is the second entry minus the first. In a zero combination the first entry gives $a=0$ and the second gives $a+d=0$, hence $d=0$. Thus these sequences are independent as well. For example $(2,5,8,11,\ldots)=2(1,1,\ldots)+3(0,1,2,\ldots)$.
-\ii The empty list is a basis of $\{0\}$. Any nonempty list there contains zero and is dependent, so this is its only basis.
-\end{steps}\end{example*}
-\begin{prob}
-\method{Testing a target for membership in a span: LADR 2.3 and 2.5}
-For $v=(2,1,-3)$, $w=(1,-2,4)$ in $\mathbb R^3$, $(r,s,t)=av+bw$ requires all three equations $2a+b=r$, $a-2b=s$, $-3a+4b=t$.
-\begin{steps}
-\ii For $r=17,s=-4$, the first two give $5a=30$, hence $(a,b)=(6,5)$. The third then gives $t=-18+20=2$.
-\ii Therefore $(17,-4,2)=6v+5w$, but $(17,-4,5)$ is outside the span. The first two coordinates force coefficients; the remaining equation decides whether they work.
-\end{steps}
-\end{prob}
-\begin{prob}
-\method{Finding every dependence, not just one}
-For $v_1=(1,0)$, $v_2=(1,1)$ and $v_3=(2,1)$ in $\mathbb R^2$,
-\begin{steps}
-\ii The zero combination $av_1+bv_2+cv_3=0$ gives $a+b+2c=0$ and $b+c=0$. Hence $b=-c$ and $a=-c$.
-\ii Every relation therefore has coefficients $(-c,-c,c)$. Choosing $c=-1$ gives $v_1+v_2-v_3=0$, so the three-vector list is dependent.
-\ii For the first two vectors alone, set $c=0$; the equations force $a=b=0$. Moreover $(x,y)=(x-y)v_1+yv_2$, so they form a basis of $\mathbb R^2$.
-\end{steps}\end{prob}
-\begin{fig}\begin{tikzpicture}[scale=.95,>=Stealth,font=\small]
-\draw[->,gray](-.35,0)--(3.8,0)node[right,text=black]{$x$};
-\draw[->,gray](0,-.3)--(0,2.6)node[above,text=black]{$y$};
-\draw[->,blue](0,0)--(1,0)node[midway,below]{$v_1$};
-\draw[->,red](0,0)--(1,1)node[above left]{$v_2$};
-\draw[->,red](1,0)--(3,2)node[midway,right]{$2v_2$};
-\draw[->](0,0)--(3,2)node[above]{$(3,2)$};
-\end{tikzpicture}\figcap{$(3,2)=v_1+2v_2$. For a general target $(x,y)=av_1+bv_2=(a+b,b)$, the second coordinate gives $b=y$, then the first gives $a=x-y$. These coefficients exist and are unique.}\end{fig}
-\begin{example*}[LADR 2.16(a), 2.18: independence and a parameter]
-\begin{steps}
-\ii In $F^4$, $a(1,0,0,0)+b(0,1,0,0)+c(0,0,1,0)=(a,b,c,0)$. A zero result forces $a=b=c=0$, so this list is independent, though it does not span the fourth coordinate.
-\ii Over $\mathbb R$ or $\mathbb C$, let $u=(2,3,1)$, $v=(1,-1,2)$ and $w_c=(7,3,c)$. A relation $au+bv+dw_c=0$ gives $2a+b+7d=0$ and $3a-b+3d=0$, hence $5a+10d=0$, $a=-2d$, $b=-3d$.
-\ii Its last coordinate is then $a+2b+cd=(c-8)d=0$. If $c\ne8$, this forces $d=0$ and then $a=b=0$. If $c=8$, $2u+3v-w_8=0$ is nontrivial. Thus dependence occurs exactly for $c=8$.
-\end{steps}
-\end{example*}
-\begin{shortcuts}\ii A list containing zero or a repeated vector is dependent: write a relation with coefficient $1$ on zero, or coefficients $1,-1$ on equal entries.
-\ii To test independence, equate the combination to zero and compare coordinates; to test spanning, equate it to a general target.
-\ii A unique solution for every target proves both properties simultaneously by the combination-map criterion.\end{shortcuts}
-\begin{trapbox}\ii Nonzero vectors need not be independent: $(1,0),(2,0)$ are dependent over $\mathbb R$.
-\ii The statement about direct sums requires the nonzero hypothesis: the one-term sum $F0=\{0\}$ is direct, but the list $(0)$ is dependent.\end{trapbox}
-
-\section{Deleting, replacing and extending vectors}
-\begin{qbox}Start with $(1,2),(3,6),(4,7),(5,9)$ in $\mathbb R^2$. Which entries can be deleted without changing the span? Here $(3,6)=3(1,2)$ and $(5,9)=(1,2)+(4,7)$. The remaining pair is a candidate basis.\end{qbox}
-\begin{proposition*}[Notes Proposition 8; LADR 2.19]
-For a dependent list $v_1,\ldots,v_m$, some $v_j$ belongs to $\operatorname{span}(v_1,\ldots,v_{j-1})$. Deleting any such $v_j$ preserves the span.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Express one entry using earlier entries, so it can be deleted without changing the span.
-\ii[Know.] Dependence gives $\sum_k a_kv_k=0$ with some $a_k\ne0$.
-\ii[Key step.] Choose the last nonzero coefficient $a_j$. Solving for $v_j$ then uses only earlier vectors. Substitute that expression whenever $v_j$ occurs in a combination.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Choose a nontrivial relation $\sum_k a_kv_k=0$ and its last nonzero coefficient $a_j$. Then $v_j=-\sum_{k<j}(a_k/a_j)v_k$ uses only earlier entries.
-\ii Substitute this expression wherever $v_j$ occurs in any combination: the shortened list still expresses every vector in the original span. The reverse inclusion holds because the shortened list is a sublist. This includes $j=1$, when $v_1=0$.
-\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 9; LADR 2.30--2.31]
-Every finite spanning list can be reduced to a basis by deleting vectors. Consequently every finite-dimensional space has a basis.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii While the list is dependent, Proposition 8 deletes an entry without changing the span. Its finite length decreases, so this ends at an independent spanning list: a basis.
-\ii A finite-dimensional space has a finite spanning list, to which this procedure applies.
-\end{steps}\end{proof}\end{prob}
-
-\begin{prob}\method{Carrying out basis extraction: the example preceding LADR 2.30}
-Let $v_1=(1,2)$, $v_2=(3,6)$, $v_3=(4,7)$ and $v_4=(5,9)$ over $\mathbb R$.
-\begin{steps}
-\ii Delete $v_2=3v_1$. Next, solving $av_1+bv_3=v_4$ gives $a+4b=5$, $2a+7b=9$. Subtracting twice the first equation gives $-b=-1$, so $b=1,a=1$. Delete $v_4=v_1+v_3$.
-\ii For the remaining pair, $av_1+bv_3=0$ gives $a+4b=0$, $2a+7b=0$. Subtracting twice the first equation gives $-b=0$, then $a=0$; they are independent.
-\ii To see spanning directly, a general target $(x,y)$ requires $a+4b=x$, $2a+7b=y$. Thus $b=2x-y$, $a=4y-7x$, so every target has a representation. The initial list and final pair both span $\mathbb R^2$.
-\end{steps}\end{prob}
-\begin{prob}\method{Finding the earliest removable entry: LADR 2.21}
-For $(1,2,3),(6,5,4),(15,16,17),(8,9,7)$ in $\mathbb R^3$:
-\begin{steps}
-\ii The first vector is nonzero. The second is not its multiple: the first coordinate would give multiplier $6$, but the second would then be $12\ne5$.
-\ii For the third, $a+6b=15$ and $2a+5b=16$ give $-7b=-14$, hence $b=2,a=3$. The last coordinate checks: $3a+4b=9+8=17$.
-\ii Thus the first removable entry is the third, because $(15,16,17)=3(1,2,3)+2(6,5,4)$. The fourth vector's value does not affect this earliest index.
-\end{steps}\end{prob}
-\begin{proposition*}[Notes Proposition 10; LADR 2.22]
-If $e_1,\ldots,e_m$ is independent and $f_1,\ldots,f_n$ spans the same space, then $m\le n$.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Insert $m$ prescribed independent vectors into an $n$-entry spanning list.
-\ii[Know.] The next $e_k$ can be expressed using the current spanning list, but not using only $e_1,\ldots,e_{k-1}$.
-\ii[Key step.] Its expression must use a remaining $f_j$ with nonzero coefficient. Solve for that $f_j$ and replace it by $e_k$; the new list still spans. After $n$ replacements there are no $f$'s left, so a further independent $e$ is impossible.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Suppose $e_1,\ldots,e_{k-1},f_k,\ldots,f_n$ spans after relabelling unused $f$'s. Write $e_k$ as its combination.
-\ii Some coefficient of $f_k,\ldots,f_n$ is nonzero; otherwise $e_k$ lies in the span of preceding $e$'s, contrary to independence.
-\ii Write $e_k=\sum_{i<k}a_ie_i+\sum_{j=k}^n b_jf_j$, relabelling the remaining $f$'s so $b_k\ne0$. Then
-\[
-f_k=b_k^{-1}\left(e_k-\sum_{i<k}a_ie_i-\sum_{j>k}b_jf_j\right).
-\]
-The replacement list expresses the deleted $f_k$ and already contains all other entries, so still spans.
-\ii Starting with the original $f$ list repeats this process. If $m>n$, the first $n$ replacements make $e_1,\ldots,e_n$ span, contradicting independence when $e_{n+1}$ is expressed in that span. Thus $m\le n$.
-\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 11; LADR 2.32]
-Every independent list in a finite-dimensional space extends to a basis. The added vectors may be selected from any specified finite spanning list.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Append the specified finite spanning list $f_1,\ldots,f_n$ after the given independent list $e_1,\ldots,e_m$. The combined list spans.
-\ii Any nontrivial relation must use an $f$, since the $e$'s are independent. Its last nonzero coefficient is on an $f$, which Proposition 8 deletes without changing the span. Repeat until independent. No $e$ is removed, and every added vector is an original $f$.
-\end{steps}\end{proof}\end{prob}
-
-\begin{example*}[Notes Example 11]
-No three vectors in $F^2$ are independent because $(1,0),(0,1)$ spans and Proposition 10 bounds every independent list by $2$. Thus three lines in $F^2$ cannot form a direct sum: choosing a nonzero vector on each would give an independent three-vector list by the single-vector-summand criterion, which is impossible.
-\end{example*}
-\begin{prob}\method{Two replacements with their equations}
-Over $\mathbb R$, start from $f_1=(1,0),f_2=(0,1)$ and prescribe $e_1=(1,1),e_2=(1,-1)$.
-\begin{steps}
-\ii $e_1=f_1+f_2$ gives $f_1=e_1-f_2$, so replace $f_1$ by $e_1$.
-\ii In the new list, $e_2=e_1-2f_2$, hence $f_2=(e_1-e_2)/2$. Replace $f_2$ by $e_2$. Each old vector can still be expressed, so each displayed list spans.
-\ii A relation $ae_1+be_2=(a+b,a-b)=0$ gives $a+b=a-b=0$, hence $a=b=0$. The final pair is a basis.
-\end{steps}\end{prob}
-\begin{fig}\begin{tikzpicture}[>=Stealth,font=\small]
-\node[draw,align=center] (a) at (0,0) {$f_1,f_2$};
-\node[draw,align=center] (b) at (4,0) {$e_1,f_2$};
-\node[draw,align=center] (c) at (8,0) {$e_1,e_2$};
-\draw[->](a)--node[above]{replace $f_1$}(b);
-\draw[->](b)--node[above]{replace $f_2$}(c);
-\end{tikzpicture}\figcap{$f_1=e_1-f_2$ and $f_2=(e_1-e_2)/2$ express each deleted vector using the new list. Each list therefore spans the same plane.}\end{fig}
-\begin{example*}[The example following LADR 2.32]
-Over $\mathbb R$ or $\mathbb C$, extend $u=(2,3,4),v=(9,6,8)$ using coordinate vectors.
-\begin{steps}
-\ii $au+bv=0$ gives $2a+9b=0$, $3a+6b=0$. Twice the second minus three times the first gives $-15b=0$, so $b=a=0$.
-\ii The candidate $(1,0,0)$ is already in their span: $-\frac25u+\frac15v=(1,0,0)$. It adds nothing.
-\ii The candidate $(0,1,0)$ is outside their span: $au+bv=(0,1,0)$ would give $3a+6b=1$ and $4a+8b=0$, but multiplying the first by $4$ and the second by $3$ gives equal left sides and unequal right sides $4$ and $0$.
-\ii Thus $u,v,(0,1,0)$ is independent. The three coordinate equations for $(x,y,z)=au+bv+c(0,1,0)$ give $b=(2x-z)/10$, $a=(9z-8x)/20$, $c=y-3z/4$, so it spans as well.
-\end{steps}
-\end{example*}
-\begin{example*}[LADR 2.23--2.24: length alone can decide failure]
-The standard list of length $3$ spans $\mathbb R^3$, so Proposition 10 makes any four-vector list there dependent, including $(1,2,3),(4,5,8),(9,6,7),(-3,2,8)$. The standard list of length $4$ is independent in $\mathbb R^4$, so no three-vector list spans it, including $(1,2,3,-5),(4,5,8,3),(9,6,7,-1)$.
-\end{example*}
-\begin{shortcuts}\ii Extract a basis from a finite spanning list by deleting vectors expressible in preceding ones; the dependence lemma preserves the span.
-\ii Extend an independent list by appending candidates only when they lie outside the current span; a relation involving the new vector would contradict that test.
-\ii A longer list than a known spanning list must be dependent, without solving any coefficients.\end{shortcuts}
-\begin{trapbox}\ii Removing an arbitrary vector can destroy spanning: deleting $(0,1)$ from the standard basis of $F^2$ does so.
-\ii Adding arbitrary vectors need not extend an independent list: appending $(2,0)$ to $(1,0)$ over $\mathbb R$ creates dependence.\end{trapbox}
-
-\section{Infinite lists and polynomial spaces}
-\begin{qbox}Can the coordinate sequences $e_1,e_2,\ldots$ produce $(1,1,1,\ldots)$ by a finite linear combination? Even $2e_1-e_3=(2,0,-1,0,\ldots)$ is zero past its largest selected index. We must distinguish an infinite set of available vectors from an allowed infinite sum.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 9; polynomial notation: LADR 2.10--2.12]
-A set of vectors is independent if every finite subset is independent, spans $V$ if every vector is a finite combination of members, and is a basis if both hold. No infinite summation or limiting process is part of these definitions.
-Write $\mathcal P(F)$ for formal polynomials over $F$, with coefficientwise addition and the usual multiplication by scalars. Its elements are finite expressions $\sum_{k=0}^n a_kx^k$, with equality defined by equality of coefficients. Write $\mathcal P_n(F)$ for those of degree at most $n$, including zero; degree means the largest exponent with nonzero coefficient for a nonzero polynomial. Set $\deg0=-\infty$, where this symbol is smaller than every integer, so zero belongs to every $\mathcal P_n(F)$. These are formal polynomials as in Week 1. LADR restricts $F$ to $\mathbb R$ or $\mathbb C$ and identifies them with their functions; over a general field we use coefficients to define equality.
-\end{definition*}\end{prob}
-\begin{example*}[Notes Examples 12--13]
-\begin{steps}
-\ii $\{1,x,x^2,\ldots\}$ is a basis of $\mathcal P(F)$: every polynomial has finitely many coefficients, and equality of polynomials is equality of those coefficients.
-\ii In $F^\infty$, let $e_j$ have $1$ in position $j$ and $0$ elsewhere. A finite relation $\sum a_je_j=0$ gives each $a_j=0$ by its coordinate, so the set is independent.
-\ii It does not span $F^\infty$: each finite combination has only finitely many nonzero coordinates, whereas $(1,1,\ldots)$ does not.
-\end{steps}\end{example*}
-\begin{prob}\method{Degree bounds prove infinite dimensionality: LADR 2.14}
-Given any finite list $p_1,\ldots,p_m$ of polynomials, choose an integer $D\ge0$ at least as large as every degree in the list. Each polynomial has zero coefficients above degree $D$, so every combination $\sum a_jp_j$ also has zero coefficients above degree $D$. The polynomial $x^{D+1}$ has coefficient $1$ there, and is outside the span. Thus $\mathcal P(F)$ has no finite spanning list.
-\end{prob}
-\begin{fig}
-$\begin{array}{c|ccc|ccc}
-\text{coordinate}&1&2&3&4&5&\cdots\\\hline
- e_1&1&0&0&0&0&\cdots\\
- e_3&0&0&1&0&0&\cdots\\
- 2e_1-e_3&2&0&-1&\textcolor{blue}{0}&\textcolor{blue}{0}&\cdots\\
- (1,1,1,\ldots)&1&1&1&\textcolor{red}{1}&\textcolor{red}{1}&\cdots
-\end{array}$
-\figcap{The combination $2e_1-e_3$ is zero after index $3$. Every finite combination has a largest selected index and is zero after it, so none equals the all-ones sequence.}\end{fig}
-\begin{proposition*}[Notes Chapter 3, optional infinite-dimensional assertions; cited]
-Assuming the axiom of choice, every independent set extends to a basis, every spanning set contains a basis, and every vector space has a basis. There is an injective map from any independent set into any spanning set. These general assertions use the axiom of choice (often through Zorn's lemma), rather than the finite deletion argument; they are cited here, not needed in subsequent proofs.
-\end{proposition*}
-\method{Proving a space is infinite-dimensional}
-\begin{steps}\ii For any proposed finite spanning list of length $N$ in $F^\infty$, the independent list $e_1,\ldots,e_{N+1}$ violates Proposition 10. \ii Thus no finite list spans. This argument does not assume that the $e_j$ span the entire space.\end{steps}
-\begin{shortcuts}\ii To disprove finite dimensionality, construct independent lists of arbitrarily large finite lengths; Proposition 10 rules out every finite spanning list.
-\ii Polynomial identities can be checked coefficient by coefficient; no evaluation at infinitely many points is required.\end{shortcuts}
-\begin{trapbox}\ii An infinite independent set need not be a basis, as the coordinate sequences show.
-\ii Over a finite field, formal polynomials must not be identified with their functions: $x^2-x$ is nonzero as a formal polynomial over $\mathbb F_2$ but evaluates to zero at both field elements.\end{trapbox}
-
-\section{Dimension and basis tests}
-\begin{qbox}The pairs $(1,0),(0,1)$ and $(1,2),(3,5)$ both describe every vector in $\mathbb R^2$ uniquely. Must any basis of this space have two entries? We compare two bases by using each as an independent list and the other as a spanning list.\end{qbox}
-\begin{proposition*}[Notes Proposition 12; LADR 2.34]
-Any two bases of a finite-dimensional vector space have equal length.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii For bases of lengths $m,n$, Proposition 10 gives $m\le n$: the first is independent and the second spans.
-\ii Reverse their roles to get $n\le m$, hence $m=n$.
-\end{steps}\end{proof}\end{prob}
-
-\begin{prob}\begin{definition*}[Notes Definition 10; LADR 2.35]
-The dimension $\dim V$ of a finite-dimensional space is this common basis length. In the optional infinite-dimensional setting, basis cardinality is called dimension; equality of all infinite basis cardinalities is a cited consequence of choice, not a finite-length argument.
-\end{definition*}\end{prob}
-\begin{example*}[Notes Examples 14--17; LADR 2.36]
-\begin{steps}\ii $\dim F^n=n$ by the standard basis; $\dim\mathcal P_n(F)=n+1$: every $p$ has a unique coefficient list $a_0,\ldots,a_n$ in $p=a_0+a_1x+\cdots+a_nx^n$, so the $n+1$ monomials are a basis.
-\ii $\dim\{0\}=0$ by its empty basis.
-\ii $\mathbb C^2$ has dimension $2$ over $\mathbb C$ with basis $(1,0),(0,1)$. Over $\mathbb R$, the list $(1,0),(i,0),(0,1),(0,i)$ is a basis, because $(a+bi,c+di)=a(1,0)+b(i,0)+c(0,1)+d(0,i)$ with unique $a,b,c,d\in\mathbb R$. Hence its real dimension is $4$.
-\end{steps}\end{example*}
-\begin{proposition*}[Basis and subspace tests: Notes Propositions 13--14; LADR 2.25, 2.33, 2.37--2.39, 2.42]
-Let $\dim V=d<\infty$.
-\begin{enumerate}[label=(\alph*),leftmargin=1.5em]
-\ii An independent list of length $d$, or a spanning list of length $d$, is a basis (Notes 13).
-\ii Every subspace $U\subseteq V$ is finite-dimensional, with $\dim U\le d$; equality holds exactly when $U=V$ (Notes 14).
-\ii Every subspace $U$ has a complement: some $W$ satisfies $V=U\oplus W$ (LADR 2.33).
+\section{Facts used from Week 1}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii A subset $U\subseteq V$ is a subspace if $0\in U$ and $\lambda v+w\in U$ for all $v,w\in U$, $\lambda\in\FF$. Intersections and sums $U+W=\{u+w\}$ of subspaces are subspaces.
+  \ii The sum $U_1+\dots+U_m$ is direct if $U_k\cap(U_1+\dots+U_{k-1})=\{0\}$ for each $k$. Equivalent: the only way to write $0=u_1+\dots+u_m$ with $u_k\in U_k$ is with all $u_k=0$ (Prop.~7). For two subspaces: $U\cap W=\{0\}$.
+  \ii If $av=0$ then $a=0$ or $v=0$.
 \end{enumerate}
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii For (a), extend the independent list or reduce the spanning list to a basis. Its length is already $d$, so no entry can be added or removed.
-\ii For (b), append vectors of $U$ outside the current span, starting with the empty list. Each addition preserves independence; otherwise a relation would express the new vector with earlier ones. Proposition 10 bounds the length by $d$, so the process stops at a basis of $U$.
-\ii If that basis has length $d$, (a) makes it a basis of $V$, so $U=V$. The converse is immediate.
-\ii For (c), extend a basis $u_1,\ldots,u_k$ of $U$ by $w_1,\ldots,w_\ell$ to a basis of $V$, and put $W=\operatorname{span}(w_j)$. Grouping an expansion gives $U+W=V$. If $\sum a_iu_i=\sum b_jw_j$, subtract to get a relation in the full basis. All coefficients vanish, so $U\cap W=\{0\}$.
-\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 18]
-For $a\in\mathbb R$, $1,x-a,\ldots,(x-a)^n$ is a basis of $\mathcal P_n(\mathbb R)$.
-\begin{steps}\ii Suppose $\sum_{j=0}^n c_j(x-a)^j=0$ has a nonzero coefficient, and choose the largest such index $k$. The term $c_k(x-a)^k$ has coefficient $c_k$ on $x^k$; all terms with $j<k$ have zero coefficient on $x^k$. The sum therefore has nonzero $x^k$ coefficient, contradicting equality to zero.
-\ii The list is independent of length $n+1=\dim\mathcal P_n(\mathbb R)$, so Proposition 13 makes it a basis.
-\ii Define $p^{(k)}$ as the $k$th derivative, with $p^{(0)}=p$, and $k!=1\cdot2\cdots k$ with $0!=1$. We cite the elementary-calculus rule $\frac{d}{dx}(x-a)^j=j(x-a)^{j-1}$.
-\ii Differentiate $p(x)=\sum c_j(x-a)^j$ exactly $k$ times. Terms with $j<k$ become zero. The $j=k$ term becomes the constant $k!c_k$. For $j>k$, a positive power of $x-a$ remains and becomes zero at $x=a$. Thus $p^{(k)}(a)=k!c_k$, so $c_k=p^{(k)}(a)/k!$.
-\end{steps}\end{example*}
-\method{Shifted polynomial coordinates}
-For $p(x)=x^2+2x+3$ and $a=1$, $p(1)=6$, $p'(1)=4$, $p''(1)/2=1$, giving $p(x)=6+4(x-1)+(x-1)^2$. Direct expansion verifies all coefficients.
-\begin{example*}[LADR 2.27(b)--(f), 2.36, 2.40]
-Here $F=\mathbb R$ or $\mathbb C$. Each computation gives existence/uniqueness, or independence followed by the dimension test.
-\begin{steps}
-\ii For $(1,2),(3,5)$, the equations $a+3b=x$, $2a+5b=y$ give $b=2x-y$, $a=3y-5x$ uniquely, so this is a basis of $F^2$. Adding $(4,13)$ gives a spanning nonbasis, since $19(1,2)-5(3,5)-(4,13)=0$.
-\ii For $(1,2,-4),(7,-5,6)$, a zero relation gives $a+7b=2a-5b=0$, hence $-19b=0$ and $a=b=0$. This independent pair cannot span the three-dimensional space.
-\ii $(1,1,0),(0,0,1)$ is a basis of $\{(x,x,y)\}$ with unique coefficients $x,y$, so its dimension is $2$.
-\ii For $H=\{(x,y,z):x+y+z=0\}$, $(x,y,z)=(-y)(1,-1,0)+(-z)(1,0,-1)$. Coordinates two and three force those coefficients uniquely. Thus the displayed pair is a basis and $\dim H=2$.
-\ii For $(5,7),(4,3)$, a zero relation gives $5a+4b=7a+3b=0$; seven times the first minus five times the second gives $13b=0$, then $a=0$. The independent pair is a basis of $F^2$.
-\ii For $(7,5),(-4,9)$, the equations $7a-4b=5a+9b=0$ give $83b=0$ by seven times the second minus five times the first, then $a=0$. It too is a basis by its length.
-\end{steps}\end{example*}
-\begin{example*}[LADR 2.41: determining a dimension before finding all coefficients]
-Let $U=\{p\in\mathcal P_3(\mathbb R):p'(5)=0\}$. The zero polynomial belongs, and $(ap+q)'(5)=ap'(5)+q'(5)=0$ for $p,q\in U$, so this is a subspace.
-\begin{steps}
-\ii The list $1,(x-5)^2,(x-5)^3$ lies in $U$, since the respective derivatives at $5$ are $0,2(5-5),3(5-5)^2$. It is independent: the coefficient of $x^3$ in a relation is the third coefficient; after that is zero the coefficient of $x^2$ is the second; the constant coefficient then gives the first.
-\ii Thus $\dim U\ge3$. But $x\notin U$, because its derivative at $5$ is $1$. Hence $U$ is a proper subspace of the four-dimensional space $\mathcal P_3(\mathbb R)$; the subspace test (Notes Proposition 14) gives $\dim U<4$.
-\ii Therefore $\dim U=3$, and the independent three-member list is a basis by the basis test (Notes Proposition 13). Directly, the shifted expansion $p=c_0+c_1(x-5)+c_2(x-5)^2+c_3(x-5)^3$ has $p'(5)=c_1$, so the condition removes exactly the $(x-5)$ term.
-\end{steps}\end{example*}
-\begin{shortcuts}\ii Once the dimension is known, check only independence or spanning for a list of the correct length.
-\ii Nonzero polynomials with distinct degrees are independent, because the coefficient at the highest degree with a nonzero coefficient cannot cancel.\end{shortcuts}
-\begin{trapbox}\ii Always specify the field: $\mathbb C^2$ has two different dimensions above.
-\ii Equal dimension forces equal nested subspaces only in finite dimension: the proper subspace of polynomials with zero constant coefficient and $\mathcal P(\mathbb R)$ both have countably infinite monomial bases.\end{trapbox}
 
-\section{Dimensions of sums and intersections}
-\begin{qbox}For $U=\{(x,y,0)\}$ and $W=\{(x,0,z)\}$ in $\mathbb R^3$, each has a two-vector basis, yet $U+W=\mathbb R^3$ has a three-vector basis. The shared vector $(1,0,0)$ belongs to both plane bases. How do we choose and count basis vectors without duplicating the intersection?\end{qbox}
-\begin{proposition*}[Notes Proposition 15]
-Let $U,W$ be finite-dimensional subspaces of a common space. A basis $v_1,\ldots,v_r$ of $U\cap W$ can be extended to bases $(v_1,\ldots,v_r,u_1,\ldots,u_k)$ of $U$ and $(v_1,\ldots,v_r,w_1,\ldots,w_\ell)$ of $W$. Their joined list with each $v_j$ only once is a basis of $U+W$.
+\section{This week}
+
+\subsection{Linear independence, span, basis (Ch.~3)}
+
+\begin{qbox}
+  When does a finite list of vectors describe a whole vector space? Two things are needed: every vector can be built from the list, and in only one way. In $\RR^2$: $(1,0),(0,1)$ does both. $(1,0),(0,1),(1,1)$ builds everything but not uniquely: $(1,1)=1\cdot(1,0)+1\cdot(0,1)=1\cdot(1,1)$. $(1,0)$ alone builds uniquely but misses $(0,1)$.
+\end{qbox}
+
+\begin{definition*}[Def.~7, 8 / LADR 2.4, 2.15, 2.26, 2.29]
+  Let $v_1,\dots,v_m\in V$. A \vocab{linear combination} is a sum $\lambda_1v_1+\dots+\lambda_mv_m$ with $\lambda_k\in\FF$.
+  \begin{itemize}
+    \ii $\spn(v_1,\dots,v_m)$ is the set of all linear combinations.
+    \ii The list \vocab{spans} $V$ if $\spn(v_1,\dots,v_m)=V$.
+    \ii The list is \vocab{linearly independent} if $\lambda_1v_1+\dots+\lambda_mv_m=0$ forces every $\lambda_k=0$. Otherwise it is \vocab{linearly dependent}.
+    \ii The list is a \vocab{basis} of $V$ if it is linearly independent and spans $V$.
+    \ii $V$ is \vocab{finite-dimensional} if some finite list spans it.
+  \end{itemize}
+\end{definition*}
+\begin{itemize}
+  \ii The \vocab{length} of a list is its number of entries. The empty list has length $0$, is linearly independent, and spans $\{0\}$.
+  \ii A list containing $0$ is dependent: $1\cdot0=0$ with coefficient $1\ne0$.
+  \ii $\spn(v_1,\dots,v_m)=\FF v_1+\dots+\FF v_m$, where $\FF v=\{\lambda v\}$. It is the smallest subspace containing the $v_k$ (W1).
+  \ii Ex.~10: $e_1,\dots,e_n$ is a basis of $\FF^n$. The span of $(1,1,1,\dots)$ and $(0,1,2,3,\dots)$ in $\RR^\infty$ is the set of arithmetic sequences $(a_0,a_0+d,a_0+2d,\dots)$. The only basis of $\{0\}$ is the empty list.
+\end{itemize}
+
+\begin{proposition*}[Basis $=$ unique representation, LADR 2.28]
+  $v_1,\dots,v_m$ is a basis of $V$ $\iff$ every $v\in V$ can be written as $\lambda_1v_1+\dots+\lambda_mv_m$ in exactly one way.
 \end{proposition*}
-\begin{motive}
-\ii[Want.] Count shared directions once, rather than joining two arbitrary bases.
-\ii[Key step.] Start with a basis of $U\cap W$ and extend it inside each space. To test the joined list, move all $W$ terms to one side of a relation. The remaining $U$ terms now lie in the intersection, where the common basis controls them.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Extend the intersection basis in $U$ and $W$ by Proposition 11. The joined list spans their sum by expanding both summands.
-\ii In a relation $\sum a_jv_j+\sum b_ju_j+\sum c_jw_j=0$, the first two sums equal $-\sum c_jw_j$ and belong to both $U$ and $W$.
-\ii Write this common vector as $\sum d_jv_j$. Then $\sum(a_j-d_j)v_j+\sum b_ju_j=0$ is a relation in the chosen $U$ basis. Independence of that basis gives every $b_j=0$ (and $a_j=d_j$).
-\ii The original relation is now in the $W$ basis, so all remaining coefficients vanish.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 16; LADR 2.43]
-For finite-dimensional subspaces $U,W$ of a common space, $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+\begin{ideabox}
+Spanning says a representation exists. Independence is what makes it unique, and the reason is one subtraction: two representations of the same vector differ by a representation of $0$.
+
+The notes package this with the map $\Phi\colon\FF^m\to V$, $\Phi(\lambda_1,\dots,\lambda_m)=\lambda_1v_1+\dots+\lambda_mv_m$: the list spans exactly when $\Phi$ is surjective, is independent exactly when $\Phi$ is injective, and is a basis exactly when $\Phi$ is bijective. The inverse of $\Phi$ sends a vector to its coordinates.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii ($\Rightarrow$) Existence is spanning. If $v=\sum\lambda_kv_k=\sum\mu_kv_k$, subtract: $0=\sum(\lambda_k-\mu_k)v_k$. Independence gives $\lambda_k=\mu_k$ for all $k$.
+    \ii ($\Leftarrow$) Existence of representations is spanning. $0=0v_1+\dots+0v_m$ is one representation of $0$; by uniqueness it is the only one, which is independence.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Same statement in terms of sums: $v_1,\dots,v_m$ (all nonzero) is independent $\iff$ the sum $\FF v_1+\dots+\FF v_m$ is direct (W2 and W3).
+\end{itemize}
+
+\begin{proposition*}[Prop.~8 / LADR 2.19: linear dependence lemma]
+  Let $v_1,\dots,v_m$ be linearly dependent. Then
+  \begin{enumerate}[(i)]
+    \ii there is an index $j$ with $v_j\in\spn(v_1,\dots,v_{j-1})$;
+    \ii for any such $j$, removing $v_j$ does not change the span.
+  \end{enumerate}
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii The shared basis gives dimensions $r+k$, $r+\ell$, $r$, and $r+k+\ell$ for $U,W,U\cap W,U+W$.
-\ii Thus $(r+k)+(r+\ell)-r=r+k+\ell$: subtract the common basis counted twice.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}
-\begin{proposition*}[Two-of-three criterion for complementary subspaces]
-Let $U,W$ be subspaces of a finite-dimensional space $V$. Any two of the following imply the third, and together they say $V=U\oplus W$:
-\[
-\text{(A) }\dim U+\dim W=\dim V,\qquad
-\text{(B) }U\cap W=\{0\},\qquad
-\text{(C) }U+W=V.
-\]
+\begin{ideabox}
+Dependence gives an equation $\lambda_1v_1+\dots+\lambda_mv_m=0$ with some nonzero coefficient. Any vector with a nonzero coefficient can be solved for in terms of the others; that vector is redundant.
+
+Why choose the \emph{last} nonzero coefficient? Because then the other vectors in the equation all come \emph{earlier} in the list. That is a stronger statement than ``$v_j$ is a combination of the others'', and later proofs need it: when a list starts with vectors we want to keep, the redundant vector can be found after them.
+
+Example: $(1,0),(0,1),(1,1),(2,0)$. One relation is $1\cdot(1,0)+1\cdot(0,1)-1\cdot(1,1)+0\cdot(2,0)=0$. The last nonzero coefficient belongs to $(1,1)$, and $(1,1)=(1,0)+(0,1)$ is in the span of the vectors before it.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Take $\lambda_1v_1+\dots+\lambda_mv_m=0$ with not all $\lambda_k=0$. Let $j$ be the largest index with $\lambda_j\ne0$. The relation is $\lambda_1v_1+\dots+\lambda_jv_j=0$.
+    \ii Divide by $\lambda_j$: $v_j=-\frac{\lambda_1}{\lambda_j}v_1-\dots-\frac{\lambda_{j-1}}{\lambda_j}v_{j-1}\in\spn(v_1,\dots,v_{j-1})$. (If $j=1$ this says $v_1=0$, and $\spn$ of the empty list is $\{0\}$.)
+    \ii For (ii): write $v_j=c_1v_1+\dots+c_{j-1}v_{j-1}$. In any combination $\lambda_1v_1+\dots+\lambda_mv_m$, replace $v_j$ by this expression. The result uses only the other vectors. So $\spn(v_1,\dots,v_m)\subseteq\spn(\text{list without }v_j)$; the other inclusion is clear.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~9 / LADR 2.30: a spanning list contains a basis]
+  If $f_1,\dots,f_n$ spans $V$, some of the $f_k$ can be deleted so that what remains is a basis of $V$.
 \end{proposition*}
-\begin{proof}\begin{steps}
-\ii (A)+(B): the dimension formula gives $\dim(U+W)=\dim V$. Since $U+W\subseteq V$, the subspace test (Notes Proposition 14) gives (C).
-\ii (A)+(C): the formula gives $\dim(U\cap W)=\dim V-\dim V=0$, so the intersection is $\{0\}$, giving (B).
-\ii (B)+(C): the same formula reads $\dim V=\dim U+\dim W$, giving (A).
-\end{steps}\end{proof}\end{prob}
+\begin{proof}
+  \begin{steps}
+    \ii If the list is independent, it is a basis.
+    \ii If not, Prop.~8 gives a vector whose removal does not change the span. Remove it. The list still spans $V$ and is one shorter.
+    \ii Repeat. The list is finite, so this stops, and it stops only when the list is independent.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Prop.~10 / LADR 2.22: independent lists are not longer than spanning lists]
+  If $e_1,\dots,e_m$ is linearly independent in $V$ and $f_1,\dots,f_n$ spans $V$, then $m\le n$.
+\end{theorem*}
+\begin{ideabox}
+\textbf{What has to be explained.} Why can $\RR^2$ not contain three independent vectors? There is no formula to compute; we need a mechanism that compares two lists.
+
+\textbf{The mechanism: one in, one out.} Start with the spanning list $f_1,\dots,f_n$ and put $e_1$ into it. Since the $f$'s span, $e_1$ is a combination of them, so the longer list $e_1,f_1,\dots,f_n$ is dependent, and one vector can be removed without changing the span. We want to remove an $f$, not $e_1$. That is possible: $e_1=\lambda_1f_1+\dots+\lambda_nf_n$ with some $\lambda_k\ne0$ (because $e_1\ne0$), and that $f_k$ can be solved for. Now we have a spanning list with $e_1$ and $n-1$ of the $f$'s.
+
+\textbf{Repeat with $e_2$, $e_3$, \dots} Each time, the new $e_k$ is a combination of the current list. Could that combination use only the $e$'s already inserted? No: that would make $e_1,\dots,e_k$ dependent. So it uses some remaining $f$ with a nonzero coefficient, and that $f$ can be exchanged for $e_k$.
+
+\textbf{Why this gives $m\le n$.} Each $e$ that goes in uses up one $f$. If there were more $e$'s than $f$'s, the $f$'s would run out: after $n$ steps the list $e_1,\dots,e_n$ spans $V$, so $e_{n+1}$ is a combination of $e_1,\dots,e_n$, contradicting independence.
+
+Example in $\RR^2$ with $e_1=(1,1)$, $e_2=(1,-1)$ and $f_1=(1,0)$, $f_2=(0,1)$: $e_1=f_1+f_2$, so exchange $f_1$: the list $e_1,f_2$ spans. Then $e_2=e_1-2f_2$ uses $f_2$, so exchange it: $e_1,e_2$ spans. A third independent vector is impossible.
+\end{ideabox}
+\begin{proof}
+  If $m=0$ there is nothing to prove. Claim $P(k)$, for $1\le k\le\min(m,n)$: after relabelling the $f$'s, the list $L_k=(e_1,\dots,e_k,f_{k+1},\dots,f_n)$ spans $V$.
+  \begin{steps}
+    \ii $P(1)$: write $e_1=\lambda_1f_1+\dots+\lambda_nf_n$. Since $e_1\ne0$, some $\lambda$ is nonzero; relabel so that $\lambda_1\ne0$. Then $f_1=\frac1{\lambda_1}(e_1-\lambda_2f_2-\dots-\lambda_nf_n)$ is in $\spn(e_1,f_2,\dots,f_n)$, so that span contains all the $f$'s and is $V$.
+    \ii $P(k-1)\Rightarrow P(k)$: since $L_{k-1}$ spans, $e_k=\lambda_1e_1+\dots+\lambda_{k-1}e_{k-1}+\mu_kf_k+\dots+\mu_nf_n$.
+    \ii Some $\mu$ is nonzero: otherwise $e_k\in\spn(e_1,\dots,e_{k-1})$, contradicting independence of the $e$'s. Relabel so that $\mu_k\ne0$.
+    \ii Solve for $f_k$ in terms of $e_1,\dots,e_k,f_{k+1},\dots,f_n$. So $\spn(L_k)$ contains every vector of $L_{k-1}$, and $L_k$ spans $V$.
+    \ii Suppose $m>n$. Then $P(n)$ says $e_1,\dots,e_n$ spans $V$, so $e_{n+1}\in\spn(e_1,\dots,e_n)$, contradicting independence. Hence $m\le n$.
+  \end{steps}
+  The proof also shows: after all the $e$'s are inserted, $e_1,\dots,e_m,f_{m+1},\dots,f_n$ still spans $V$.
+\end{proof}
+
+\begin{proposition*}[Prop.~11 / LADR 2.32: an independent list extends to a basis]
+  If $V$ is finite-dimensional and $e_1,\dots,e_m$ is linearly independent, there is a basis of $V$ containing $e_1,\dots,e_m$. If $f_1,\dots,f_n$ spans $V$, the added vectors can be taken from the $f_j$.
+\end{proposition*}
+\begin{ideabox}
+Put the two lists together: $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$. Now remove redundant vectors as in Prop.~9. The only worry is that an $e$ gets removed. The dependence lemma removes a vector that is a combination of the vectors \emph{before} it, and the $e$'s come first and are independent, so no $e$ is a combination of the vectors before it. Only $f$'s are removed.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii The list $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$.
+    \ii If it is dependent, Prop.~8 gives a vector in the span of the earlier ones. It is not some $e_i$, because $e_i\notin\spn(e_1,\dots,e_{i-1})$ by independence. So it is an $f_j$; remove it. The span is unchanged.
+    \ii Repeat until the list is independent. It still spans $V$ and still contains every $e_i$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Ex.~11: no three vectors in $\FF^2$ are independent, since $e_1,e_2$ spans. This is why three lines in $\RR^2$ never form a direct sum.
+  \ii \textbf{Every subspace has a complement (LADR 2.33).} If $U$ is a subspace of finite-dimensional $V$, there is a subspace $W$ with $V=U\oplus W$: extend a basis $u_1,\dots,u_k$ of $U$ to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$ and let $W=\spn(w_1,\dots,w_l)$. Then $U+W=V$, and $U\cap W=\{0\}$: a vector in both is $\sum a_iu_i=\sum b_jw_j$, and independence of the whole basis forces all coefficients to be $0$. (That $U$ has a basis is Prop.~14 below.)
+\end{itemize}
+
+\textbf{Infinite-dimensional spaces (Def.~9, optional in the notes).} For an infinite set $M\subseteq V$: $M$ is linearly independent if every finite subset is; $M$ spans if every vector is a \emph{finite} combination of elements of $M$; a basis is both.
+\begin{itemize}
+  \ii Ex.~12: $\{1,x,x^2,\dots\}$ is a basis of $\PP(\RR)$.
+  \ii Ex.~13: in $\FF^\infty$, $\{e_1,e_2,\dots\}$ is independent but not a basis: $(1,1,1,\dots)$ is not a finite combination (HW2 P2).
+  \ii Every vector space has a basis, but the proof for infinite-dimensional spaces needs Zorn's lemma.
+\end{itemize}
+
+\subsection{Dimension (Ch.~4)}
+
+\begin{proposition*}[Prop.~12 / LADR 2.34, Def.~10]
+  Any two bases of a finite-dimensional $V$ have the same length. This length is the \vocab{dimension} $\dim V$.
+\end{proposition*}
+\begin{proof}
+  Let $B_1,B_2$ be bases. $B_1$ is independent and $B_2$ spans, so $\operatorname{length}B_1\le\operatorname{length}B_2$ (Prop.~10). Swap the roles for the other inequality.
+\end{proof}
+\begin{itemize}
+  \ii Ex.~14--16: $\dim\FF^n=n$. $\dim\PP_r(\FF)=r+1$ (basis $1,x,\dots,x^r$). $\dim\{0\}=0$.
+  \ii Ex.~17: the dimension depends on the field. $\dim_\CC\CC^2=2$, but $\dim_\RR\CC^2=4$, with real basis $(1,0),(i,0),(0,1),(0,i)$.
+\end{itemize}
+
+\begin{proposition*}[Prop.~13 / LADR 2.38, 2.42: the right number of vectors]
+  Let $d=\dim V$. (i) Any linearly independent list of $d$ vectors is a basis. (ii) Any spanning list of $d$ vectors is a basis.
+\end{proposition*}
+\begin{ideabox}
+This is the counting principle from Week 1 (a map between finite sets of equal size is injective exactly when it is surjective), with dimension in place of the number of elements. An independent list of $d$ vectors has no room to grow; a spanning list of $d$ vectors has nothing to lose. On an exam it halves the work: with the right number of vectors, check only one of the two properties.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Extend the independent list to a basis (Prop.~11). Every basis has length $d$, so nothing was added.
+    \ii Reduce the spanning list to a basis (Prop.~9). Every basis has length $d$, so nothing was removed.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~14 / LADR 2.25, 2.37, 2.39: subspaces]
+  If $U$ is a subspace of finite-dimensional $V$, then $U$ is finite-dimensional, $\dim U\le\dim V$, and $\dim U=\dim V\iff U=V$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Independent lists in $U$ are independent in $V$, so they have length $\le\dim V$ (Prop.~10). Choose an independent list $u_1,\dots,u_k$ in $U$ of the largest possible length.
+    \ii It spans $U$: if some $u\in U$ were not in its span, $u_1,\dots,u_k,u$ would be independent (in a relation the coefficient of $u$ must be $0$, and then the others are), contradicting maximality. So it is a basis of $U$, and $\dim U=k\le\dim V$.
+    \ii If $\dim U=\dim V$, this basis of $U$ is an independent list of $\dim V$ vectors in $V$, so it is a basis of $V$ (Prop.~13). Then $U=\spn=V$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Ex.~18: $1,x-a,(x-a)^2,\dots,(x-a)^n$ is a basis of $\PP_n(\RR)$. Independent: the degrees are different, so in a relation the highest-degree term with nonzero coefficient cannot cancel. And there are $n+1=\dim\PP_n(\RR)$ of them (Prop.~13). The coordinates are the Taylor coefficients: $p(x)=\sum_k\frac{p^{(k)}(a)}{k!}(x-a)^k$.
+  \ii Finite dimension is needed: $\PP(\RR)$ has the proper subspace $\{p:p(0)=0\}$, and both are infinite-dimensional.
+\end{itemize}
+
+\begin{theorem*}[Prop.~15, 16 / LADR 2.43: dimension of a sum]
+  For subspaces $U,W$ of a finite-dimensional space:
+  \[ \dim(U+W)=\dim U+\dim W-\dim(U\cap W). \]
+  More precisely, if $v_1,\dots,v_r$ is a basis of $U\cap W$, it extends to a basis $v_1,\dots,v_r,u_1,\dots,u_k$ of $U$ and to a basis $v_1,\dots,v_r,w_1,\dots,w_l$ of $W$, and then $v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l$ is a basis of $U+W$.
+\end{theorem*}
+\begin{ideabox}
+For finite sets, $|A\cup B|=|A|+|B|-|A\cap B|$: adding the two sizes counts the common part twice. The same thing happens with bases, provided the bases of $U$ and $W$ are chosen so that their common part is a basis of $U\cap W$. That is why the proof \emph{starts} from a basis of $U\cap W$ and extends it in two directions.
+
+Putting the three groups together clearly spans $U+W$. The step that needs an argument is independence, and the question to ask is: in a relation, could the $u$-part and the $w$-part cancel each other? Move the $w$-part to the other side. Then one vector is written both as an element of $U$ and as an element of $W$, so it lies in $U\cap W$ and is a combination of the $v$'s alone. That forces the $u$-coefficients to be $0$, and then the rest.
+\end{ideabox}
 \begin{fig}
-$\begin{array}{c|cccc}
-&\textcolor{blue}{\text{common}}&\text{only in }U&\text{only in }W&\textcolor{red}{\text{missing from }U+W}\\\hline
-\text{basis of }U&\textcolor{blue}{c_1,\ldots,c_r}&u_1,\ldots,u_k&&\\
-\text{basis of }W&\textcolor{blue}{c_1,\ldots,c_r}&&w_1,\ldots,w_\ell&\\
-\text{basis of }V&\textcolor{blue}{c_1,\ldots,c_r}&u_1,\ldots,u_k&w_1,\ldots,w_\ell&\textcolor{red}{z_1,\ldots,z_s}
-\end{array}$
-\figcap{Choose the common basis first, extend it inside $U,W$, then extend the joined basis to $V$. Condition (A) says $(r+k)+(r+\ell)=r+k+\ell+s$, so $r=s$: the duplicated common entries and missing entries have equal counts. Condition (B) says $r=0$; condition (C) says $s=0$. Any two force the third.}
+\begin{tikzpicture}[>=Stealth]
+  \draw[blue,thick] (-0.9,0) ellipse (1.9 and 1.1);
+  \draw[red,thick] (0.9,0) ellipse (1.9 and 1.1);
+  \node[blue] at (-2.1,1.2) {$U$}; \node[red] at (2.1,1.2) {$W$};
+  \node at (-1.7,0) {$u_1,\dots,u_k$};
+  \node at (0,0) {$v_1,\dots,v_r$};
+  \node at (1.75,0) {$w_1,\dots,w_l$};
+  \node[font=\small] at (0,-1.45) {$\dim(U+W)=r+k+l=(r+k)+(r+l)-r$};
+\end{tikzpicture}
+\figcap{A basis of $U\cap W$ (middle) extended to a basis of $U$ (left two groups) and of $W$ (right two groups). All three groups together are a basis of $U+W$.}
 \end{fig}
+\begin{proof}
+  \begin{steps}
+    \ii Extend $v_1,\dots,v_r$ to bases of $U$ and of $W$ as stated (Prop.~11 in $U$ and in $W$).
+    \ii The combined list spans $U+W$: every $u+w$ is a combination of it.
+    \ii Independence. Suppose $\sum\lambda_iv_i+\sum\mu_ju_j+\sum\nu_tw_t=0$. Then $x=\sum\lambda_iv_i+\sum\mu_ju_j=-\sum\nu_tw_t$. The first expression is in $U$, the second in $W$, so $x\in U\cap W$.
+    \ii So $x=\sum\alpha_iv_i$ for some $\alpha_i$. Then $\sum\alpha_iv_i+\sum\nu_tw_t=0$ is a relation in the basis of $W$, so every $\nu_t=0$.
+    \ii The original relation is now $\sum\lambda_iv_i+\sum\mu_ju_j=0$, a relation in the basis of $U$, so every $\lambda_i=0$ and $\mu_j=0$.
+    \ii Count: $\dim(U\cap W)=r$, $\dim U=r+k$, $\dim W=r+l$, $\dim(U+W)=r+k+l$.
+  \end{steps}
+\end{proof}
 
-\begin{example*}[Notes Example 19: computing the sum and intersection]
-Let $u_1=(1,1,0)$, $u_2=(0,1,1)$, $w_1=(1,2,2)$, $w_2=(2,2,1)$, and $U=\operatorname{span}(u_1,u_2)$, $W=\operatorname{span}(w_1,w_2)$ in $F^3$. The calculations below work over any field.
-\begin{steps}
-\ii $au_1+bu_2=(a,a+b,b)$ is zero only if $a=b=0$. For $cw_1+dw_2=0$, the equations are $c+2d=0$, $2c+2d=0$, $2c+d=0$. The second minus the first gives $c=0$; the third then gives $d=0$. Thus both subspaces have dimension $2$.
-\ii In a relation $au_1+bu_2+cw_1=0$, the first and third coordinates give $a=-c,b=-2c$. The middle becomes $a+b+2c=-c=0$, so all coefficients vanish. These three vectors form a basis of $F^3$ by the basis test (Notes Proposition 13); hence $U+W=F^3$.
-\ii The dimension formula now gives $\dim(U\cap W)=2+2-3=1$. To find an actual generator, equate the two generic combinations:
-\[
-(a,a+b,b)=(c+2d,2c+2d,2c+d).
-\]
-The first and third give $a=c+2d$, $b=2c+d$. Substituting in the middle gives $3c+3d=2c+2d$, so $c+d=0$.
-\ii Set $c=t,d=-t$. Then $a=-t,b=t$, and the common vector is $t(-1,0,1)$. Conversely $(-1,0,1)=-u_1+u_2=w_1-w_2$, so every such multiple is in both subspaces. Therefore $U\cap W=\operatorname{span}((-1,0,1))$.
-\end{steps}\end{example*}
-
-\begin{example*}[Notes Example 20]
-For finite-dimensional subspaces $U_1,U_2,U_3$ of a common space,\begin{steps}\ii applying Proposition 16 twice gives
-\begin{align*}
-\dim(U_1+U_2+U_3)&=\dim U_1+\dim U_2+\dim U_3\\
-&\quad-\dim(U_1\cap U_2)-\dim((U_1+U_2)\cap U_3).
-\end{align*}
-\ii The three lines $F(1,0)$, $F(0,1)$, $F(1,1)$ have zero pairwise intersections but their sum has dimension $2$, not $3$. Hence replacing the last intersection by pairwise intersections is invalid.\end{steps}
-\end{example*}
-\begin{proposition*}[Notes Proposition 17; LADR 3.94 and the comparison in 2C]
-For a finite family of finite-dimensional subspaces,
-\[
-\dim(U_1+\cdots+U_m)\le\sum_{j=1}^m\dim U_j,
-\]
-with equality if and only if their sum is direct.
+\begin{proposition*}[Complement criterion]
+  For subspaces $U,W$ of a finite-dimensional $V$, any two of the following imply the third (and then $V=U\oplus W$):
+  \begin{center}(a) $\dim U+\dim W=\dim V$ \qquad (b) $U\cap W=\{0\}$ \qquad (c) $U+W=V$.\end{center}
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Joining bases gives a spanning list of length $N=\sum_j\dim U_j$, so basis reduction gives $\dim(\sum_jU_j)\le N$.
-\ii A relation in this list, grouped by subspace, is $u_1+\cdots+u_m=0$. Directness forces every $u_j=0$; independence within each factor basis then forces all coefficients zero. The joined list is a basis, so equality holds.
-\ii Conversely, equality makes the length-$N$ spanning list a basis. Expanding any zero sum in these bases then forces every coefficient, and therefore every summand, to be zero. This is directness (Week 1 Proposition 7).
-\end{steps}\end{proof}\end{prob}
+\begin{proof}
+  By the theorem, $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$. (a),(b) give $\dim(U+W)=\dim V$, so $U+W=V$ (Prop.~14). (a),(c) give $\dim(U\cap W)=0$. (b),(c) give $\dim V=\dim U+\dim W$.
+\end{proof}
 
-The notes prove the direct case by induction instead: each $U_k$ meets the preceding sum only at zero, so Proposition 16 gives
-$\dim(U_1+\cdots+U_k)=\dim(U_1+\cdots+U_{k-1})+\dim U_k$.
-Starting at $k=1$ gives the same sum of dimensions.
-\begin{shortcuts}\ii Find a sum basis by joining generators and deleting redundancy. To find an intersection, equate the two generic combinations and solve.
-\ii To prove $V=U\oplus W$, choose whichever two of (A), (B), (C) are easiest. The dimension formula supplies the third; for HW2 P5, (A) is $3+5=8$ and (C) is given.
-\ii A single nonzero intersection vector gives the entire intersection when its dimension is already known to be one.\end{shortcuts}
-\begin{trapbox}\ii Pairwise zero intersections do not make three summands direct: the three lines above give a counterexample.
-\ii Do not subtract the dimension of $U\cup W$: the union need not even be a vector space (Week 1's coordinate axes).\end{trapbox}
+\begin{example*}[Ex.~19: two planes in $\FF^3$]
+  $U=\spn\bigl((1,1,0),(0,1,1)\bigr)$, $W=\spn\bigl((1,2,2),(2,2,1)\bigr)$.
+  \begin{steps}
+    \ii Is $(1,2,2)\in U$? $(1,2,2)=\lambda(1,1,0)+\mu(0,1,1)$ needs $\lambda=1$ (first coordinate) and $\mu=2$ (third), but then the second coordinate is $3\ne2$. No.
+    \ii So $(1,1,0),(0,1,1),(1,2,2)$ are independent: three independent vectors in $\FF^3$, a basis (Prop.~13). Hence $U+W=\FF^3$.
+    \ii $\dim(U\cap W)=2+2-3=1$: the planes meet in a line.
+    \ii To find the line, solve $a(1,1,0)+b(0,1,1)=c(1,2,2)+d(2,2,1)$: $a=c+2d$, $a+b=2c+2d$, $b=2c+d$. Adding the first and third: $a+b=3c+3d$, so $c+d=0$. Take $c=1$, $d=-1$: the vector is $(1,2,2)-(2,2,1)=(-1,0,1)$. So $U\cap W=\spn\bigl((-1,0,1)\bigr)$.
+  \end{steps}
+\end{example*}
+
+\begin{itemize}
+  \ii Ex.~20: for three subspaces apply the formula twice: $\dim(U_1+U_2+U_3)=\dim U_1+\dim U_2+\dim U_3-\dim(U_1\cap U_2)-\dim((U_1+U_2)\cap U_3)$. There is no formula using only the pairwise intersections: three lines in $\FF^2$ have all pairwise intersections $\{0\}$, and $\dim(U_1+U_2+U_3)=2\ne3$.
+\end{itemize}
+\begin{proposition*}[Prop.~17 / LADR 3.94]
+  If the sum $U_1\oplus\dots\oplus U_m$ is direct, then $\dim(U_1\oplus\dots\oplus U_m)=\dim U_1+\dots+\dim U_m$.
+\end{proposition*}
+\begin{proof}
+  Induction on $m$. By the theorem, $\dim((U_1+\dots+U_{m-1})+U_m)=\dim(U_1+\dots+U_{m-1})+\dim U_m-\dim\bigl((U_1+\dots+U_{m-1})\cap U_m\bigr)$, and the last intersection is $\{0\}$ by the definition of a direct sum (W2).
+\end{proof}
+
+\method{Computing with lists in $\FF^n$.}
+\begin{steps}
+  \ii \emph{Independent?} Put the vectors as the columns of a matrix and row reduce. Independent $\iff$ every column has a pivot. The columns with pivots always form a basis of the span.
+  \ii \emph{Basis of $U+W$:} put the two bases together and delete redundant vectors (Prop.~9).
+  \ii \emph{Basis of $U\cap W$:} set a general combination of the basis of $U$ equal to a general combination of the basis of $W$ and solve, as in Ex.~19. First get its dimension from the formula so you know how many vectors to expect.
+\end{steps}
+
+\begin{shortcuts}
+  \ii \textbf{Right number of vectors}: with $\dim V$ vectors, check only independence or only spanning (Prop.~13).
+  \ii \textbf{Too many or too few}: more than $\dim V$ vectors are dependent; fewer than $\dim V$ do not span (Prop.~10). No computation.
+  \ii \textbf{Two vectors} are dependent exactly when one is a multiple of the other.
+  \ii \textbf{Polynomials of different degrees} are independent.
+  \ii \textbf{Direct sum by counting}: if $U+W=V$ and $\dim U+\dim W=\dim V$, the sum is direct (complement criterion); no need to compute $U\cap W$ (HW2 P5).
+  \ii \textbf{Equality of subspaces}: $U\subseteq W$ and $\dim U=\dim W$ give $U=W$ (Prop.~14).
+  \ii \textbf{Subspace given by $k$ independent linear conditions} in an $n$-dimensional space: expect dimension $n-k$ (proved next week by rank--nullity); use this to know when you have found enough basis vectors.
+\end{shortcuts}
+\begin{trapbox}
+  \ii Independence of each list separately says nothing about sums: $v$ and $-v$ are each independent lists, but $v+(-v)=0$ (HW2 P1).
+  \ii ``$v_j$ is not a multiple of any other vector in the list'' does not give independence for three or more vectors: $(1,0),(0,1),(1,1)$.
+  \ii A basis of $V$ need not contain a basis of a given subspace $U$: $e_1,e_2$ contains no basis of $\spn((1,1))$.
+  \ii $\dim(U_1+U_2+U_3)$ has no inclusion--exclusion formula.
+  \ii The dimension depends on the field: $\dim_\RR\CC=2$.
+  \ii In infinite dimensions an independent set need not extend to a basis by adding nothing: $\{e_1,e_2,\dots\}$ in $\FF^\infty$ does not span.
+\end{trapbox}
 
 \section{Problem set}
-\begin{prob}\textbf{HW2 P1 (LADR 2A.11).} Prove or give a counterexample: if $v_1,\ldots,v_n$ and $w_1,\ldots,w_n$ are independent lists in $V$, then $v_1+w_1,\ldots,v_n+w_n$ is independent.\\\emph{Hint:} Try opposite nonzero vectors.\end{prob}
-\begin{prob}\textbf{HW2 P2.} Let $F^\infty$ be all sequences with coordinatewise operations and $e_j$ the $j$th coordinate sequence. (a) Verify the vector-space axioms. (b) Prove the space is infinite-dimensional. (c) Prove the $e_j$ do not span it.\\\emph{Hint:} Use coordinatewise field laws, Proposition 10, and the finite-combination condition.\end{prob}
-\begin{prob}\textbf{HW2 P3 (LADR 2B.5).} If $V=U+W$ is finite-dimensional, prove that $V$ has a basis whose vectors all lie in $U\cup W$.\\\emph{Hint:} Join bases of $U,W$ and apply Proposition 9.\end{prob}
-\begin{prob}\textbf{HW2 P4.} (a) Every nonzero proper subspace of $F^2$ has form $\operatorname{span}(v)$ for some nonzero $v$. (b) Prove that $v,w\in F^2$ form a basis iff neither is a scalar multiple of the other.\\\emph{Hint:} Apply the dimension bound; in a nontrivial dependence solve for a vector with nonzero coefficient.\end{prob}
-\begin{prob}\textbf{HW2 P5 (LADR 2C.12).} Suppose $U,W\subseteq\mathbb R^8$ are subspaces, $\dim U=3$, $\dim W=5$, $U+W=\mathbb R^8$. Prove $\mathbb R^8=U\oplus W$.\\\emph{Hint:} Apply the two-of-three criterion: which two conditions are given?\end{prob}
-\begin{prob}\textbf{HW2 P6.} Let $U=\{p\in\mathcal P_4(\mathbb R):p(1)=p'(1)=0\}$. (a) Prove it is a subspace. (b) Find a basis and its dimension directly, without rank--nullity.\\\emph{Hint:} Expand in $1,x-1,\ldots,(x-1)^4$ and evaluate the first two coefficients.\end{prob}
-\begin{prob}\textbf{Exam practice (Practice Midterm 1, Question 1).} Let $u_1=(1,1,0,0)$, $u_2=(0,1,1,0)$, $w_1=(0,0,1,1)$, $w_2=(1,0,0,-1)$, $U=\operatorname{span}(u_1,u_2)$ and $W=\operatorname{span}(w_1,w_2)$. (a) Prove $\mathbb R^4=U\oplus W$. (b) Write $(2,1,3,0)=u+w$ with $u\in U,w\in W$.\\\emph{Hint:} Compare all four coordinates in $au_1+bu_2+cw_1+dw_2$.\end{prob}
+
+\begin{prob}\textbf{HW2 P1 (LADR 2A.11).}\ Prove or give a counterexample: if $v_1,\dots,v_n$ and $w_1,\dots,w_n$ are linearly independent lists in $V$, then $v_1+w_1,\dots,v_n+w_n$ is linearly independent.
+
+\emph{Hint:} try $n=1$.
+\end{prob}
+\begin{prob}\textbf{HW2 P2.}\ Let $\FF^\infty$ be the space of all sequences $(a_1,a_2,\dots)$, $a_j\in\FF$, and $e_j$ the sequence with $1$ in position $j$ and $0$ elsewhere. (a) Verify that $\FF^\infty$ is a vector space. (b) Prove that it is infinite-dimensional. (c) Prove that $e_1,e_2,\dots$ do not span $\FF^\infty$.
+
+\emph{Hint:} (b) Prop.~10: a finite spanning list bounds the length of independent lists. (c) a finite combination has only finitely many nonzero entries.
+\end{prob}
+\begin{prob}\textbf{HW2 P3 (LADR 2B.5).}\ Suppose $V$ is finite-dimensional and $U,W$ are subspaces with $V=U+W$. Prove that $V$ has a basis all of whose vectors belong to $U\cup W$.
+
+\emph{Hint:} a spanning list contains a basis (Prop.~9).
+\end{prob}
+\begin{prob}\textbf{HW2 P4.}\ (a) Prove that every nonzero proper subspace of $\FF^2$ has the form $\spn(v)$ for some $v\ne0$. (b) Let $v,w\in\FF^2$. Prove that $v,w$ is a basis of $\FF^2$ if and only if neither is a scalar multiple of the other.
+
+\emph{Hint:} dimensions of subspaces (Prop.~14) and Prop.~13.
+\end{prob}
+\begin{prob}\textbf{HW2 P5 (LADR 2C.12).}\ Suppose $U,W$ are subspaces of $\RR^8$ with $\dim U=3$, $\dim W=5$ and $U+W=\RR^8$. Prove that $\RR^8=U\oplus W$.
+
+\emph{Hint:} the dimension formula.
+\end{prob}
+\begin{prob}\textbf{HW2 P6.}\ Let $U=\{p\in\PP_4(\RR):p(1)=p'(1)=0\}$. (a) Prove that $U$ is a subspace. (b) Find a basis of $U$ and determine $\dim U$ directly, without rank--nullity.
+
+\emph{Hint:} write $p$ in the basis $1,(x-1),\dots,(x-1)^4$ of Ex.~18.
+\end{prob}
+\begin{prob}\textbf{R1 (Practice Midterm 1, Question 1).}\ Let $u_1=(1,1,0,0)$, $u_2=(0,1,1,0)$, $w_1=(0,0,1,1)$, $w_2=(1,0,0,-1)$, $U=\spn(u_1,u_2)$, $W=\spn(w_1,w_2)$. (a) Prove that $\RR^4=U\oplus W$. (b) Write $(2,1,3,0)$ as $u+w$ with $u\in U$, $w\in W$.
+\end{prob}
+\begin{prob}\textbf{R2 (Midterm 1 review, Exercise 1).}\ Let $U$ be a subspace of a finite-dimensional $V$. Prove that there is a subspace $W$ with $U\oplus W=V$.
+\end{prob}
+\begin{prob}\textbf{R3 (Midterm 1 review, Exercise 3).}\ Let $V=\{p\in\PP_2(\RR):p'(1)=p(2)\}$. Construct a basis of $V$ and prove it is a basis.
+\end{prob}
+
 \end{document}

@@ -70,3 +70,4 @@ The following entries describe the rejected release and its previous checks. The
 - 2026-11-10: Weeks 8, 9, 10 rebuilt to the revised standard (idea boxes as free text, expanded proofs for Props. 72-75).
 - 2026-11-10: Week 7 rebuilt: diagonalizability (Ch. 12) written from the notes, minimal polynomial (Ch. 13) from the reviewed packet.
 - 2026-11-10: Week 1 rebuilt from the notes to the revised standard.
+- 2026-11-10: Week 2 rebuilt from the notes to the revised standard.
