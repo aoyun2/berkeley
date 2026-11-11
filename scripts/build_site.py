@@ -1,157 +1,255 @@
 #!/usr/bin/env python3
-"""Build the public course website into _site/ (same plain style as the Putnam course site).
+"""Build the course website: one page, in the same layout as the Putnam course site.
 
-Usage: python3 scripts/build_site.py [--out _site]
+Usage: python3 scripts/build_site.py            # writes index.html at the repository root
+       python3 scripts/build_site.py --out _site  # also copies index.html and the linked PDFs into _site/
 
-Reads site.toml and every semesters/<term>/<course>/course.toml. For each [[week]] it links the
-PDFs found in handouts/<start>-*/ and copies only those PDFs into the output. Nothing from
-materials/ is ever copied. Solutions are linked only if publish_solutions = true in site.toml.
+The page lists every active course of the current term. For each course: a short facts list and a
+schedule table (Week, Dates, Topic, Materials). A week's Topic is its `title` in course.toml.
+Materials links the handout (and, if publish_solutions is true in site.toml, the solutions) when the
+handout folder exists; otherwise it says "not yet posted".
+
+Links are relative paths into the repository, so the page works both when GitHub Pages serves the
+branch directly and when the workflow deploys _site/. Nothing from materials/ is linked or copied.
 """
-import argparse, datetime as dt, glob, html, os, shutil, tomllib
+import argparse, datetime as dt, glob, html, os, re, shutil, tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TERMS = {"spring": "Spring", "summer": "Summer", "fall": "Fall"}
+TERM_NAMES = {"spring": "Spring", "summer": "Summer", "fall": "Fall"}
+REPO_URL = "https://github.com/aoyun2/berkeley/tree/main/"
 
 CSS = """
-:root { --bg:#ffffff; --fg:#111111; --muted:#555555; --rule:#bbbbbb; --link:#0000cc; --visited:#551a8b; color-scheme: light dark; }
-@media (prefers-color-scheme: dark) { :root { --bg:#161616; --fg:#e8e8e8; --muted:#a0a0a0; --rule:#444444; --link:#8ab4ff; --visited:#c9a6ff; } }
-body { background:var(--bg); color:var(--fg); font-family:"Palatino Linotype",Palatino,"Book Antiqua","Iowan Old Style",Georgia,serif;
-  font-size:17px; line-height:1.5; max-width:46rem; margin:0 auto; padding:32px 16px 64px; }
-h1 { font-size:1.9em; font-weight:normal; margin:0 0 4px; }
-h2 { font-size:1.25em; font-weight:normal; margin:32px 0 8px; border-bottom:1px solid var(--rule); padding-bottom:2px; }
-a { color:var(--link); } a:visited { color:var(--visited); }
-.sub, .pending, footer { color:var(--muted); }
-dl { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:2px 16px; margin:12px 0; }
-dt { font-style:italic; } dd { margin:0; }
-.tablewrap { overflow-x:auto; }
-table { border-collapse:collapse; width:100%; }
-th, td { text-align:left; vertical-align:top; padding:5px 10px 5px 0; border-bottom:1px solid var(--rule); }
-th { font-weight:normal; font-style:italic; color:var(--muted); }
-td.nw { white-space:nowrap; }
-ul { padding-left:1.3em; }
-footer { margin-top:40px; font-size:.9em; }
-"""
+:root {
+  --bg: #ffffff; --fg: #111111; --muted: #555555; --rule: #bbbbbb;
+  --link: #0000cc; --visited: #551a8b;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161616; --fg: #e8e8e8; --muted: #a0a0a0; --rule: #444444; --link: #8ab4ff; --visited: #c9a6ff; }
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", "Iowan Old Style", Georgia, serif;
+  font-size: 17px; line-height: 1.5;
+  max-width: 44rem; margin: 0 auto; padding: 32px 16px 64px;
+}
+h1 { font-size: 1.9em; font-weight: normal; margin: 0 0 4px; }
+h2 { font-size: 1.25em; font-weight: normal; margin: 32px 0 8px; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+a { color: var(--link); }
+a:visited { color: var(--visited); }
+.sub, .pending { color: var(--muted); }
+dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 16px; margin: 12px 0; }
+dt { font-style: italic; }
+dd { margin: 0; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; vertical-align: top; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--rule); }
+th { font-weight: normal; font-style: italic; color: var(--muted); }
+td.nw, span.nw { white-space: nowrap; }
+ul { padding-left: 1.3em; }
+""".strip()
+
 
 def as_date(x):
-    return x.date() if isinstance(x, dt.datetime) else x
+    if isinstance(x, dt.datetime):
+        return x.date()
+    return x if isinstance(x, dt.date) else None
 
-def esc(x):
-    return html.escape(str(x), quote=True).replace("--", "&ndash;")
 
-def term_name(folder):
-    year, _, term = folder.partition("-")
-    return f"{TERMS.get(term, term.title())} {year}"
+def esc(s):
+    return html.escape(str(s), quote=True)
 
-def date_range(start):
+
+def dash(s):
+    """Escape, use an en dash between numbers (1-2 -> 1–2), and keep a trailing
+    parenthetical such as (Lectures 1–2) on one line."""
+    t = re.sub(r"(?<=\d)-(?=\d)", "&ndash;", esc(s)).replace("–", "&ndash;")
+    return re.sub(r"(\([^()]*\))", r'<span class="nw">\1</span>', t)
+
+
+def day(d):
+    return f"{d.strftime('%a')} {d.day} {d.strftime('%b')}"
+
+
+def week_range(start):
     end = start + dt.timedelta(days=6)
     if start.month == end.month:
         return f"{start.day}&ndash;{end.day} {end.strftime('%b')}"
     return f"{start.day} {start.strftime('%b')}&ndash;{end.day} {end.strftime('%b')}"
 
-def page(title, sub, body, up=None):
-    nav = f'<p class="sub"><a href="{up}">All courses</a></p>' if up else ""
-    return f"""<!doctype html>
+
+def clock(t):
+    h, m = t.hour, t.minute
+    return f"{(h - 1) % 12 + 1}:{m:02d}", ("am" if h < 12 else "pm")
+
+
+def time_range(start, end):
+    a, ap = clock(start)
+    if not end:
+        return f"{a} {ap}"
+    eh, em = (int(x) for x in str(end).split(":"))
+    b, bp = clock(dt.time(eh, em))
+    return f"{a}&ndash;{b} {bp}" if ap == bp else f"{a} {ap}&ndash;{b} {bp}"
+
+
+def first_clause(s):
+    """Plain fact without bookkeeping: drop anything in parentheses and after a semicolon."""
+    s = re.sub(r"\s*\([^)]*\)", "", str(s)).split(";")[0].strip()
+    return s[:1].upper() + s[1:]
+
+
+def exams_text(exams):
+    items = []
+    for e in exams:
+        name = re.sub(r"\s*\([^)]*\)", "", e.get("name", "Exam")).strip()
+        if "retake" in name.lower():
+            continue
+        when = e.get("date")
+        d = as_date(when)
+        if d is None:
+            continue
+        text = f"{esc(name)} {day(d)}"
+        end_d = as_date(e.get("end_date"))
+        if end_d:
+            text = f"{esc(name)} {d.day}&ndash;{end_d.day} {end_d.strftime('%b')}" if end_d.month == d.month else \
+                   f"{esc(name)} {d.day} {d.strftime('%b')}&ndash;{end_d.day} {end_d.strftime('%b')}"
+        if isinstance(when, dt.datetime) and (when.hour or when.minute):
+            text += ", " + time_range(when.time(), e.get("end"))
+        items.append(text)
+    return "; ".join(items)
+
+
+HW = re.compile(r"\b(Homework \d+|HW ?\d+|Worksheet Packet \d+)")
+
+
+def homework_text(w):
+    hw = w.get("homework")
+    if isinstance(hw, list):
+        hw = " ".join(map(str, hw))
+    hw = str(hw or "")
+    m = HW.search(hw)
+    if hw.lower().startswith("no new") or not m:
+        return ""
+    label = m.group(1).replace("Worksheet Packet", "Worksheet packet")
+    due = as_date(w.get("due"))
+    return f"{esc(label)} (due {day(due)})" if due else esc(label)
+
+
+def link(href, text):
+    return f'<a href="{esc(href)}" target="_blank" rel="noopener">{text}</a>'
+
+
+def course_section(term, course, c, publish_solutions, files):
+    rel = f"semesters/{term}/{course}"
+    facts = []
+    if c.get("instructor") or c.get("instructors"):
+        who = c.get("instructor") or c.get("instructors")
+        facts.append(("Instructor" if c.get("instructor") else "Instructors", esc(who)))
+    if c.get("textbook"):
+        facts.append(("Text", esc(first_clause(c["textbook"]))))
+    if c.get("quizzes"):
+        facts.append(("Quizzes", esc(first_clause(c["quizzes"]))))
+    ex = exams_text(c.get("exam", []))
+    if ex:
+        facts.append(("Exams", ex))
+
+    rows = []
+    for i, w in enumerate(c.get("week", []), 1):
+        start = as_date(w["start"])
+        topic = dash(w.get("title") or w.get("topics") or "")
+        folders = sorted(glob.glob(os.path.join(ROOT, rel, "handouts", f"{start.isoformat()}-*")))
+        links = []
+        if folders:
+            name = os.path.basename(folders[0])
+            for fn, label, show in (("handout.pdf", "Handout", True), ("solutions.pdf", "Solutions", publish_solutions)):
+                if show and os.path.exists(os.path.join(folders[0], fn)):
+                    path = f"{rel}/handouts/{name}/{fn}"
+                    files.append(path)
+                    links.append(link(path, label))
+            if os.path.isdir(os.path.join(folders[0], "exercises")):
+                links.append(link(f"{REPO_URL}{rel}/handouts/{name}/exercises", "Exercises"))
+        if links:
+            hw = homework_text(w)
+            cell = "<td>" + ", ".join(links) + (f"; {hw}" if hw else "") + "</td>"
+        else:
+            cell = '<td class="pending">not yet posted</td>'
+        num = w.get("number", i)
+        rows.append(f'    <tr><td>{num}</td><td class="nw">{week_range(start)}</td><td>{topic}</td>\n        {cell}</tr>')
+
+    anchor = course
+    out = [f'<h2 id="{anchor}">{esc(c.get("name", course))}</h2>']
+    if facts:
+        out.append("<dl>")
+        out += [f"  <dt>{k}</dt><dd>{v}</dd>" for k, v in facts]
+        out.append("</dl>")
+    out.append('<div class="tablewrap">\n<table>\n  <thead><tr><th>Week</th><th>Dates</th><th>Topic</th><th>Materials</th></tr></thead>\n  <tbody>')
+    out += rows
+    out.append("  </tbody>\n</table>\n</div>")
+    return "\n".join(out)
+
+
+def term_label(term):
+    year, _, t = term.partition("-")
+    return f"{TERM_NAMES.get(t, t.title())} {year}"
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", help="also copy the page and linked PDFs into this folder")
+    a = ap.parse_args()
+    with open(os.path.join(ROOT, "site.toml"), "rb") as f:
+        cfg = tomllib.load(f)
+    publish = cfg.get("publish_solutions", False)
+
+    terms = sorted(os.path.basename(p) for p in glob.glob(os.path.join(ROOT, "semesters", "*")))
+    term = terms[-1]
+    courses = []
+    for path in sorted(glob.glob(os.path.join(ROOT, "semesters", term, "*", "course.toml"))):
+        with open(path, "rb") as f:
+            c = tomllib.load(f)
+        courses.append((os.path.basename(os.path.dirname(path)), c))
+
+    files, sections = [], []
+    for course, c in courses:
+        sections.append(course_section(term, course, c, publish, files))
+
+    contents = "\n".join(f'  <li><a href="#{course}">{esc(c.get("name", course))}</a></li>' for course, c in courses)
+    page = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{esc(title)}</title>
-<style>{CSS}</style>
+<title>{esc(cfg.get("title", "Courses"))}</title>
+<style>
+{CSS}
+</style>
 </head>
 <body>
-{nav}
-<h1>{esc(title)}</h1>
-<p class="sub">{esc(sub)}</p>
-{body}
+
+<h1>{esc(cfg.get("title", "Courses"))}</h1>
+<p class="sub">{esc(cfg.get("subtitle", ""))}, {term_label(term)}</p>
+
+<ul>
+{contents}
+</ul>
+
+{chr(10).join(sections)}
+
 </body>
 </html>
 """
+    with open(os.path.join(ROOT, "index.html"), "w") as f:
+        f.write(page)
+    if a.out:
+        shutil.rmtree(a.out, ignore_errors=True)
+        os.makedirs(a.out)
+        shutil.copy2(os.path.join(ROOT, "index.html"), os.path.join(a.out, "index.html"))
+        open(os.path.join(a.out, ".nojekyll"), "w").close()
+        for p in files:
+            os.makedirs(os.path.join(a.out, os.path.dirname(p)), exist_ok=True)
+            shutil.copy2(os.path.join(ROOT, p), os.path.join(a.out, p))
+    print("wrote index.html" + (f" and {a.out}/" if a.out else ""))
 
-def link(href, text):
-    return f'<a href="{href}" target="_blank" rel="noopener">{text}</a>'
-
-def build_course(term, course, c, out, publish_solutions):
-    src = os.path.join(ROOT, "semesters", term, course)
-    dst = os.path.join(out, term, course)
-    os.makedirs(dst, exist_ok=True)
-    info = []
-    for key, label in (("instructor", "Instructor"), ("instructors", "Instructors"), ("textbook", "Text"), ("quizzes", "Quizzes"), ("grading", "Grading")):
-        if c.get(key):
-            info.append(f"<dt>{label}</dt><dd>{esc(c[key])}</dd>")
-    rows, built = [], 0
-    for i, w in enumerate(c.get("week", []), 1):
-        start = as_date(w["start"])
-        topic = w.get("topics") or w.get("topic") or w.get("title") or ""
-        material = w.get("material") or ""
-        if isinstance(topic, list): topic = "; ".join(map(str, topic))
-        if isinstance(material, list): material = ", ".join(map(str, material))
-        show_material = material and len(material) <= 60 and "materials/" not in material
-        desc = esc(topic) + (f" ({esc(material)})" if show_material else "")
-        folders = sorted(glob.glob(os.path.join(src, "handouts", f"{start.isoformat()}-*")))
-        links = []
-        if folders:
-            name = os.path.basename(folders[0])
-            wanted = [("handout.pdf", "Handout")] + ([("solutions.pdf", "Solutions")] if publish_solutions else [])
-            for fn, label in wanted:
-                p = os.path.join(folders[0], fn)
-                if os.path.exists(p):
-                    os.makedirs(os.path.join(dst, name), exist_ok=True)
-                    shutil.copy2(p, os.path.join(dst, name, fn))
-                    links.append(link(f"{name}/{fn}", label))
-        hw = w.get("homework")
-        if isinstance(hw, list): hw = ", ".join(map(str, hw))
-        due = w.get("due")
-        extra = ""
-        if hw:
-            short = str(hw).split(" (")[0].split(":")[0].strip()
-            due = as_date(due) if isinstance(due, (dt.date, dt.datetime)) else None
-            extra = esc(short) + (f" due {due.strftime('%a %-d %b')}" if due else "")
-        if links:
-            built += 1
-            cell = "<td>" + ", ".join(links) + (f"; {extra}" if extra else "") + "</td>"
-        else:
-            cell = '<td class="pending">not yet posted' + (f"; {extra}" if extra else "") + "</td>"
-        rows.append(f'<tr><td>{w.get("number", i)}</td><td class="nw">{date_range(start)}</td><td>{desc}</td>{cell}</tr>')
-    exams = []
-    for e in c.get("exam", []):
-        when = e.get("date")
-        when = as_date(when) if isinstance(when, (dt.date, dt.datetime)) else None
-        exams.append(f"<li>{esc(e.get('name', 'Exam'))}" + (f": {when.strftime('%a %-d %b %Y')}" if when else "") + (f", {esc(e['time'])}" if e.get("time") else "") + "</li>")
-    body = ""
-    if info: body += "<dl>\n" + "\n".join(info) + "\n</dl>\n"
-    if exams: body += "<h2>Exams</h2>\n<ul>\n" + "\n".join(exams) + "\n</ul>\n"
-    body += '<h2>Schedule</h2>\n<div class="tablewrap">\n<table>\n<thead><tr><th>Week</th><th>Dates</th><th>Topic</th><th>Materials</th></tr></thead>\n<tbody>\n' + "\n".join(rows) + "\n</tbody>\n</table>\n</div>\n"
-    body += "<footer>Handouts are study notes written for these courses; homework and exam problems quoted in them belong to the course staff.</footer>"
-    with open(os.path.join(dst, "index.html"), "w") as f:
-        f.write(page(c.get("name", course), term_name(term), body, up="../../index.html"))
-    return built, len(c.get("week", []))
-
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(ROOT, "_site"))
-    a = ap.parse_args()
-    with open(os.path.join(ROOT, "site.toml"), "rb") as f:
-        cfg = tomllib.load(f)
-    shutil.rmtree(a.out, ignore_errors=True)
-    os.makedirs(a.out)
-    open(os.path.join(a.out, ".nojekyll"), "w").close()
-    body = ""
-    for tdir in sorted(glob.glob(os.path.join(ROOT, "semesters", "*")), reverse=True):
-        term = os.path.basename(tdir)
-        items = []
-        for path in sorted(glob.glob(os.path.join(tdir, "*", "course.toml"))):
-            course = os.path.basename(os.path.dirname(path))
-            with open(path, "rb") as f:
-                c = tomllib.load(f)
-            built, total = build_course(term, course, c, a.out, cfg.get("publish_solutions", False))
-            status = f"{built} of {total} weekly handouts posted" if total else "schedule not yet entered"
-            items.append(f'<li><a href="{term}/{course}/index.html">{esc(c.get("name", course))}</a> <span class="sub">({status})</span></li>')
-        if items:
-            body += f"<h2>{term_name(term)}</h2>\n<ul>\n" + "\n".join(items) + "\n</ul>\n"
-    body += "<footer>One handout per homework week, built to a common standard. Typeset with evan.sty by Evan Chen.</footer>"
-    with open(os.path.join(a.out, "index.html"), "w") as f:
-        f.write(page(cfg.get("title", "Course handouts"), cfg.get("subtitle", ""), body))
-    print("built", a.out)
 
 if __name__ == "__main__":
     main()
