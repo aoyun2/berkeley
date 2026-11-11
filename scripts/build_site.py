@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build the course website: one page, in the same layout as the Putnam course site.
+"""Build the course website in the layout of the Putnam course site: a home page listing the
+current term's courses, and one page per course (facts and a weekly schedule).
 
 Usage: python3 scripts/build_site.py            # writes index.html at the repository root
        python3 scripts/build_site.py --out _site  # also copies index.html and the linked PDFs into _site/
@@ -47,6 +48,8 @@ th, td { text-align: left; vertical-align: top; padding: 5px 10px 5px 0; border-
 th { font-weight: normal; font-style: italic; color: var(--muted); }
 td.nw, span.nw { white-space: nowrap; }
 ul { padding-left: 1.3em; }
+ul.courses { list-style: none; padding-left: 0; }
+ul.courses li { margin: 0 0 12px; }
 """.strip()
 
 
@@ -139,7 +142,11 @@ def link(href, text):
     return f'<a href="{esc(href)}" target="_blank" rel="noopener">{text}</a>'
 
 
-def course_section(term, course, c, publish_solutions, files):
+def num_of(w, i):
+    return w.get("number", i)
+
+
+def course_section(term, course, c, publish_solutions, files, posted):
     rel = f"semesters/{term}/{course}"
     facts = []
     if c.get("instructor") or c.get("instructors"):
@@ -163,12 +170,12 @@ def course_section(term, course, c, publish_solutions, files):
             name = os.path.basename(folders[0])
             for fn, label, show in (("handout.pdf", "Handout", True), ("solutions.pdf", "Solutions", publish_solutions)):
                 if show and os.path.exists(os.path.join(folders[0], fn)):
-                    path = f"{rel}/handouts/{name}/{fn}"
-                    files.append(path)
-                    links.append(link(path, label))
+                    files.append(f"{rel}/handouts/{name}/{fn}")
+                    links.append(link(f"handouts/{name}/{fn}", label))
             if os.path.isdir(os.path.join(folders[0], "exercises")):
                 links.append(link(f"{REPO_URL}{rel}/handouts/{name}/exercises", "Exercises"))
         if links:
+            posted.append(num_of(w, i))
             hw = homework_text(w)
             cell = "<td>" + ", ".join(links) + (f"; {hw}" if hw else "") + "</td>"
         else:
@@ -176,16 +183,35 @@ def course_section(term, course, c, publish_solutions, files):
         num = w.get("number", i)
         rows.append(f'    <tr><td>{num}</td><td class="nw">{week_range(start)}</td><td>{topic}</td>\n        {cell}</tr>')
 
-    anchor = course
-    out = [f'<h2 id="{anchor}">{esc(c.get("name", course))}</h2>']
+    out = []
     if facts:
         out.append("<dl>")
         out += [f"  <dt>{k}</dt><dd>{v}</dd>" for k, v in facts]
         out.append("</dl>")
-    out.append('<div class="tablewrap">\n<table>\n  <thead><tr><th>Week</th><th>Dates</th><th>Topic</th><th>Materials</th></tr></thead>\n  <tbody>')
+    out.append('<h2>Schedule</h2>\n<div class="tablewrap">\n<table>\n  <thead><tr><th>Week</th><th>Dates</th><th>Topic</th><th>Materials</th></tr></thead>\n  <tbody>')
     out += rows
     out.append("  </tbody>\n</table>\n</div>")
     return "\n".join(out)
+
+
+def html_page(title, body):
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc(title)}</title>
+<style>
+{CSS}
+</style>
+</head>
+<body>
+
+{body}
+
+</body>
+</html>
+"""
 
 
 def term_label(term):
@@ -209,46 +235,48 @@ def main():
             c = tomllib.load(f)
         courses.append((os.path.basename(os.path.dirname(path)), c))
 
-    files, sections = [], []
+    files, pages, rows = [], [], []
     for course, c in courses:
-        sections.append(course_section(term, course, c, publish, files))
+        posted = []
+        body = course_section(term, course, c, publish, files, posted)
+        name = c.get("name", course)
+        rel = f"semesters/{term}/{course}/index.html"
+        pages.append(rel)
+        with open(os.path.join(ROOT, rel), "w") as f:
+            f.write(html_page(name, f'<p class="sub"><a href="../../../index.html">All courses</a></p>\n\n<h1>{esc(name)}</h1>\n<p class="sub">{term_label(term)}</p>\n\n{body}'))
+        final = next((e for e in c.get("exam", []) if e.get("name", "").lower().startswith("final")), None)
+        final_txt = exams_text([final]).split(" ", 1)[1] if final else ""
+        if not posted:
+            got = '<span class="pending">none yet</span>'
+        elif posted == list(range(posted[0], posted[-1] + 1)):
+            got = f"Week {posted[0]}" if len(posted) == 1 else f"Weeks {posted[0]}&ndash;{posted[-1]}"
+        else:
+            got = "Weeks " + ", ".join(map(str, posted))
+        who = c.get("instructor") or c.get("instructors") or ""
+        facts = [esc(who)] if who else []
+        facts.append(f"handouts for {got.lower()}" if posted else "no handouts yet")
+        if final_txt:
+            facts.append(f"final {final_txt}")
+        line = "; ".join(facts)
+        rows.append(f'  <li><a href="{rel}">{esc(name)}</a><br><span class="sub">{line[:1].upper() + line[1:]}</span></li>')
 
-    contents = "\n".join(f'  <li><a href="#{course}">{esc(c.get("name", course))}</a></li>' for course, c in courses)
-    page = f"""<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{esc(cfg.get("title", "Courses"))}</title>
-<style>
-{CSS}
-</style>
-</head>
-<body>
+    body = f"""<h1>{esc(cfg.get("title", "Courses"))}</h1>
+<p class="sub">{esc(cfg.get("subtitle", ""))}</p>
 
-<h1>{esc(cfg.get("title", "Courses"))}</h1>
-<p class="sub">{esc(cfg.get("subtitle", ""))}, {term_label(term)}</p>
-
-<ul>
-{contents}
-</ul>
-
-{chr(10).join(sections)}
-
-</body>
-</html>
-"""
+<h2>{term_label(term)}</h2>
+<ul class="courses">
+{chr(10).join(rows)}
+</ul>"""
     with open(os.path.join(ROOT, "index.html"), "w") as f:
-        f.write(page)
+        f.write(html_page(cfg.get("title", "Courses"), body))
     if a.out:
         shutil.rmtree(a.out, ignore_errors=True)
         os.makedirs(a.out)
-        shutil.copy2(os.path.join(ROOT, "index.html"), os.path.join(a.out, "index.html"))
         open(os.path.join(a.out, ".nojekyll"), "w").close()
-        for p in files:
+        for p in ["index.html"] + pages + files:
             os.makedirs(os.path.join(a.out, os.path.dirname(p)), exist_ok=True)
             shutil.copy2(os.path.join(ROOT, p), os.path.join(a.out, p))
-    print("wrote index.html" + (f" and {a.out}/" if a.out else ""))
+    print("wrote index.html and", len(pages), "course pages" + (f"; copied to {a.out}/" if a.out else ""))
 
 
 if __name__ == "__main__":
