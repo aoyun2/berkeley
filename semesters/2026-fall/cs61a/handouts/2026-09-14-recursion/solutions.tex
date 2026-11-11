@@ -1,0 +1,71 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\title{CS 61A --- Week 4}
+\subtitle{Solutions to the handout problems (code for the exercises is in \texttt{solutions/})}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}\ \cd{f(2)} prints \cd{down 2} before its recursive call, and \cd{f(1)} prints \cd{down 1} before its call. \cd{f(0)} prints \cd{base} and returns \cd{0}. Now the waiting calls finish, innermost first: \cd{f(1)} computes \cd{0 + 1 = 1} and prints \cd{up 1 1}; \cd{f(2)} computes \cd{1 + 2 = 3} and prints \cd{up 2 3}. Finally the outer \cd{print} displays \cd{3}.
+\begin{plain}
+down 2
+down 1
+base
+up 1 1
+up 2 3
+3
+\end{plain}
+\end{prob}
+
+\begin{prob}\textbf{P2.}
+\begin{steps}
+  \ii \cd{sum\_a} has no base case. Once \cd{n} reaches \cd{0}, it keeps calling \cd{sum\_a(0)} forever, which ends in a \cd{RecursionError}.
+  \ii \cd{sum\_b} computes the right value in the recursive case but does not return it, so every call with two or more digits returns \cd{None}.
+  \ii \cd{sum\_c} calls itself on the same \cd{n}, not a smaller one, so it never reaches the base case: \cd{RecursionError}.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P3.}
+\begin{py}
+def count_up(n):
+    if n >= 1:
+        count_up(n - 1)
+        print(n)
+\end{py}
+Leap of faith: assume \cd{count\_up(n - 1)} prints $1,\dots,n-1$ in order. Then printing \cd{n} \emph{after} it gives $1,\dots,n$. If the \cd{print} came first, \cd{n} would be printed before the smaller numbers and the output would be in decreasing order. For \cd{n = 0} nothing is printed, which is the base case.
+\end{prob}
+
+\begin{prob}\textbf{P4.}\ The loop has two changing names, \cd{n} and \cd{result}; they become the helper's parameters. The loop condition \cd{n > 0} becomes the base-case test (reversed), and the starting values \cd{n} and \cd{0} are the first call.
+\begin{py}
+def reverse(n):
+    def helper(n, result):
+        if n == 0:
+            return result
+        return helper(n // 10, result * 10 + n % 10)
+    return helper(n, 0)
+\end{py}
+\end{prob}
+
+\begin{prob}\textbf{P5.}\ Split by the first move. If it climbs 1 step, $n-1$ steps remain; if 3 steps, $n-3$ remain. Reaching exactly 0 is one way; going below 0 is none.
+\begin{py}
+def climb(n):
+    if n == 0:
+        return 1
+    elif n < 0:
+        return 0
+    return climb(n - 1) + climb(n - 3)
+\end{py}
+Table: \cd{climb(0)}$=1$, \cd{climb(1)}$=1$, \cd{climb(2)}$=1$, \cd{climb(3)}$=1+1=2$, \cd{climb(4)}$=2+1=3$, \cd{climb(5)}$=3+1=4$. The four ways for 5 are 1+1+1+1+1, 1+1+3, 1+3+1, 3+1+1.
+\end{prob}
+
+\begin{prob}\textbf{P6.}\ Ask what the first letter is.
+\begin{steps}
+  \ii First letter \cd{a}: the rest is any valid string of length $n-1$: \cd{count\_strings(n - 1)} ways.
+  \ii First letter \cd{b}: the next letter cannot be \cd{b}, so if $n\ge2$ it must be \cd{a}; then the rest is any valid string of length $n-2$: \cd{count\_strings(n - 2)} ways.
+  \ii Base cases: \cd{count\_strings(0) = 1} (the empty string) and \cd{count\_strings(1) = 2} (\cd{a}, \cd{b}). The length-1 case is needed separately because ``\cd{b} then \cd{a}'' needs two letters.
+\end{steps}
+Values: $1, 2, 3, 5, 8$ for lengths $0$ to $4$. So \cd{count\_strings(4) = 8}.
+\end{prob}
+
+\end{document}
