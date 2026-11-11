@@ -11,3 +11,4 @@
 ## Weak spots
 
 No graded CS 61A work supplied.
+- 2026-11-11: Removed the four earlier draft handouts (weeks of 08-24 to 09-14): they contained worked solutions to CS 61A homework and lab questions, which the course's AI-tool policy does not allow (standard, Section 5b), and they were below the standard. To be rebuilt with original exercises.
