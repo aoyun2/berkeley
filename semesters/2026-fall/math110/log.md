@@ -71,3 +71,4 @@ The following entries describe the rejected release and its previous checks. The
 - 2026-11-10: Week 7 rebuilt: diagonalizability (Ch. 12) written from the notes, minimal polynomial (Ch. 13) from the reviewed packet.
 - 2026-11-10: Week 1 rebuilt from the notes to the revised standard.
 - 2026-11-10: Week 2 rebuilt from the notes to the revised standard.
+- 2026-11-11: Week 2 handout: enlarged the dim(U+W) figure. Week 3 (Ch. 5-6, HW3) handout and solutions rebuilt by hand to the standard; replaces the earlier draft.
