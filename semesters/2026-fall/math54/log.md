@@ -7,3 +7,4 @@
 No graded MATH 54 work supplied.
 - 2026-11-11: Week 2 (Lay 1.3-1.5) handout and solutions built. Section 1.7 (calendar Sep 4 and Sep 9) is placed whole in Week 3.
 - 2026-11-11: Week 3 (Lay 1.7-1.9) handout and solutions built.
+- 2026-11-11: Week 4 (Lay 2.1-2.3, 3.1) handout and solutions built. Lay 3.2 (calendar Sep 18 and Sep 21) is placed whole in Week 5.

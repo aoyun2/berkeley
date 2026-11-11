@@ -1,0 +1,205 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\usepackage{multicol}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}
+\title{Math 54 --- Week 4}
+\subtitle{Matrix operations; inverses; the invertible matrix theorem; determinants (Lay 2.1--2.3, 3.1)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--3}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii Row operations are reversible and do not change solution sets.
+  \ii For an $m\times n$ matrix $A$: pivot in every row $\iff$ columns span $\RR^m$ $\iff$ $A\vv x=\vv b$ solvable for every $\vv b$ $\iff$ $\vv x\mapsto A\vv x$ onto. Pivot in every column $\iff$ columns independent $\iff$ $A\vv x=\vv0$ only trivially $\iff$ $\vv x\mapsto A\vv x$ one-to-one.
+  \ii A linear $T$ has standard matrix $[\,T(\vv e_1)\cdots T(\vv e_n)\,]$. $A(\vv u+\vv v)=A\vv u+A\vv v$, $A(c\vv u)=cA\vv u$.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Matrix operations (Lay 2.1)}
+\begin{itemize}
+  \ii $a_{ij}$ is the entry in row $i$, column $j$. The \vocab{diagonal entries} are $a_{11},a_{22},\dots$. The $m\times n$ \vocab{zero matrix} is $0$.
+  \ii Sum $A+B$ (same size) and scalar multiple $rA$ are entry by entry. They satisfy the usual rules: $A+B=B+A$, $(A+B)+C=A+(B+C)$, $A+0=A$, $r(A+B)=rA+rB$, $(r+s)A=rA+sA$, $r(sA)=(rs)A$.
+\end{itemize}
+\begin{qbox}
+  If $B$ sends $\vv x$ to $B\vv x$ and $A$ then sends that to $A(B\vv x)$, is the combined move again given by a single matrix? Which one?
+\end{qbox}
+\begin{definition*}
+  If $A$ is $m\times n$ and $B=[\,\vv b_1\cdots\vv b_p\,]$ is $n\times p$, then $AB=[\,A\vv b_1\ \ A\vv b_2\ \cdots\ A\vv b_p\,]$, an $m\times p$ matrix.
+\end{definition*}
+\begin{ideabox}
+The definition is chosen so that $(AB)\vv x=A(B\vv x)$. Write $B\vv x=x_1\vv b_1+\dots+x_p\vv b_p$. By linearity, $A(B\vv x)=x_1A\vv b_1+\dots+x_pA\vv b_p$, which is the matrix with columns $A\vv b_j$ times $\vv x$. So multiplying matrices is composing the transformations: first $B$, then $A$. Everything else about matrix products follows from this.
+\end{ideabox}
+\begin{itemize}
+  \ii \textbf{Sizes}: $(m\times n)(n\times p)=m\times p$. The inner sizes must agree.
+  \ii \textbf{Row-column rule}: $(AB)_{ij}=a_{i1}b_{1j}+a_{i2}b_{2j}+\dots+a_{in}b_{nj}$ (row $i$ of $A$ dotted with column $j$ of $B$). Example: $\begin{bmatrix}2&-1\\1&3\end{bmatrix}\begin{bmatrix}1&4&0\\-2&1&5\end{bmatrix}=\begin{bmatrix}4&7&-5\\-5&7&15\end{bmatrix}$.
+  \ii Row $i$ of $AB$ is (row $i$ of $A$)$\,B$.
+  \ii \textbf{Properties}: $A(BC)=(AB)C$; $A(B+C)=AB+AC$; $(B+C)A=BA+CA$; $r(AB)=(rA)B=A(rB)$; $I_mA=A=AI_n$. Associativity holds because both sides are the composition ``first $C$, then $B$, then $A$''.
+  \ii $A^k$ means $A\cdots A$ ($k$ factors); $A^0=I$.
+\end{itemize}
+\textbf{Warnings.} (1) $AB\ne BA$ in general: with $C=\begin{bmatrix}1&2\\0&1\end{bmatrix}$, $D=\begin{bmatrix}1&0\\3&1\end{bmatrix}$, $CD=\begin{bmatrix}7&2\\3&1\end{bmatrix}$ but $DC=\begin{bmatrix}1&2\\3&7\end{bmatrix}$. (2) $AB=AC$ does not imply $B=C$. (3) $AB=0$ does not imply $A=0$ or $B=0$: $\begin{bmatrix}0&1\\0&0\end{bmatrix}^2=0$.
+
+\textbf{Transpose.} $A^T$ has the rows of $A$ as its columns: $(A^T)_{ij}=a_{ji}$. Rules: $(A^T)^T=A$, $(A+B)^T=A^T+B^T$, $(rA)^T=rA^T$, and
+\[ (AB)^T=B^TA^T. \]
+Why the order reverses: entry $(i,j)$ of $(AB)^T$ is entry $(j,i)$ of $AB$, which is (row $j$ of $A$)$\cdot$(column $i$ of $B$) $=$ (row $i$ of $B^T$)$\cdot$(column $j$ of $A^T$), entry $(i,j)$ of $B^TA^T$.
+
+\subsection{The inverse of a matrix (Lay 2.2)}
+\begin{qbox}
+  For numbers, $ax=b$ is solved by $x=a^{-1}b$ when $a\ne0$. When can $A\vv x=\vv b$ be solved the same way, and how do we compute $A^{-1}$?
+\end{qbox}
+\begin{definition*}
+  An $n\times n$ matrix $A$ is \vocab{invertible} if there is an $n\times n$ matrix $C$ with $CA=I$ and $AC=I$. Then $C$ is unique (if $B$ also works, $B=BI=B(AC)=(BA)C=IC=C$) and is written $A^{-1}$. A matrix that is not invertible is \vocab{singular}.
+\end{definition*}
+\begin{theorem*}[The $2\times2$ inverse]
+  $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$ is invertible exactly when $ad-bc\ne0$, and then $A^{-1}=\dfrac1{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$. The number $ad-bc$ is the \vocab{determinant} $\det A$.
+\end{theorem*}
+\begin{proof}
+  Multiplying out, $\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}=(ad-bc)I$, and the same in the other order. If $ad-bc\ne0$, divide by it. If $ad-bc=0$, the same product says $A\vv x=\vv0$ for each column $\vv x$ of $\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$. If $A\ne0$, one of those columns is nonzero, so $A\vv x=\vv0$ has a nontrivial solution; an invertible $A$ cannot have one, since $\vv x=A^{-1}A\vv x=A^{-1}\vv0=\vv0$. If $A=0$ it is clearly not invertible.
+\end{proof}
+\begin{theorem*}[Invertible matrices give unique solutions]
+  If $A$ is invertible, then for each $\vv b$ the equation $A\vv x=\vv b$ has the unique solution $\vv x=A^{-1}\vv b$.
+\end{theorem*}
+\begin{proof}
+  $A(A^{-1}\vv b)=\vv b$, so it is a solution. If $A\vv u=\vv b$, multiply by $A^{-1}$: $\vv u=A^{-1}A\vv u=A^{-1}\vv b$.
+\end{proof}
+Example: $\begin{bmatrix}3&4\\5&6\end{bmatrix}^{-1}=\frac1{18-20}\begin{bmatrix}6&-4\\-5&3\end{bmatrix}=\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}$, so the solution of $3x_1+4x_2=3$, $5x_1+6x_2=7$ is $\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}\begin{bmatrix}3\\7\end{bmatrix}=\begin{bmatrix}5\\-3\end{bmatrix}$.
+\begin{theorem*}[Algebra of inverses]
+  If $A,B$ are invertible $n\times n$: $(A^{-1})^{-1}=A$; $(AB)^{-1}=B^{-1}A^{-1}$; $(A^T)^{-1}=(A^{-1})^T$.
+\end{theorem*}
+\begin{proof}
+  Check the definition. $(AB)(B^{-1}A^{-1})=A(BB^{-1})A^{-1}=AA^{-1}=I$, and similarly in the other order. $A^T(A^{-1})^T=(A^{-1}A)^T=I^T=I$, using $(XY)^T=Y^TX^T$.
+\end{proof}
+The order reverses for the same reason as for socks and shoes: to undo ``first $B$, then $A$'', undo $A$ first.
+
+\textbf{Elementary matrices.} An \vocab{elementary matrix} $E$ is obtained by doing one row operation to $I$. Then $EA$ is the result of doing that same row operation to $A$ (check on the rows: row $i$ of $EA$ is (row $i$ of $E$)$A$). Every elementary matrix is invertible: its inverse is the elementary matrix of the reverse operation.
+\begin{theorem*}[Invertible $\iff$ row equivalent to $I$; the inverse algorithm]
+  An $n\times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$. In that case, any sequence of row operations that reduces $A$ to $I_n$ also turns $I_n$ into $A^{-1}$.
+\end{theorem*}
+\begin{ideabox}
+Reducing $A$ to $I$ by row operations $E_1,\dots,E_k$ means $E_k\cdots E_1A=I$. The product $E_k\cdots E_1$ is therefore a left inverse of $A$, and it is invertible (each $E_i$ is), so it is $A^{-1}$. And $E_k\cdots E_1=E_k\cdots E_1I$ is what you get by doing the same row operations to $I$. Writing $A$ and $I$ side by side as $[\,A\ \ I\,]$ does both at once.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $A$ is invertible, $A\vv x=\vv b$ has a unique solution for every $\vv b$, so $A$ has a pivot in every row and every column. A square matrix with a pivot in every column reduces to $I_n$.
+    \ii If $E_k\cdots E_1A=I$, let $C=E_k\cdots E_1$. $C$ is invertible (a product of invertible matrices), and $CA=I$ gives $A=C^{-1}CA=C^{-1}$, so $A$ is invertible with $A^{-1}=C$.
+    \ii $C=CI$ is the result of applying the same row operations to $I$.
+  \end{steps}
+\end{proof}
+\method{Computing $A^{-1}$.} Row reduce $[\,A\ \ I\,]$. If $A$ reduces to $I$, the result is $[\,I\ \ A^{-1}\,]$. If a row of zeros appears in the left half, $A$ is not invertible.
+
+\textbf{Worked example.}
+\[ \aug{rrr|rrr}{1&0&2&1&0&0\\2&1&5&0&1&0\\0&1&2&0&0&1}
+\xrightarrow{R_2-2R_1}\aug{rrr|rrr}{1&0&2&1&0&0\\0&1&1&-2&1&0\\0&1&2&0&0&1}
+\xrightarrow{R_3-R_2}\aug{rrr|rrr}{1&0&2&1&0&0\\0&1&1&-2&1&0\\0&0&1&2&-1&1} \]
+\[ \xrightarrow[R_1-2R_3]{R_2-R_3}\aug{rrr|rrr}{1&0&0&-3&2&-2\\0&1&0&-4&2&-1\\0&0&1&2&-1&1},
+\qquad A^{-1}=\begin{bmatrix}-3&2&-2\\-4&2&-1\\2&-1&1\end{bmatrix}. \]
+Check one entry of $AA^{-1}$: row 2 of $A$ times column 1 of $A^{-1}$ is $2(-3)+1(-4)+5(2)=0$, as required off the diagonal.
+
+\subsection{The invertible matrix theorem (Lay 2.3)}
+\begin{theorem*}[The invertible matrix theorem]
+  For a \emph{square} $n\times n$ matrix $A$, the following are all equivalent (all true or all false):
+  \begin{multicols}{2}
+  \begin{enumerate}[(a)]
+    \ii $A$ is invertible.
+    \ii $A$ is row equivalent to $I_n$.
+    \ii $A$ has $n$ pivot positions.
+    \ii $A\vv x=\vv0$ has only the trivial solution.
+    \ii The columns of $A$ are linearly independent.
+    \ii $\vv x\mapsto A\vv x$ is one-to-one.
+    \ii $A\vv x=\vv b$ has at least one solution for each $\vv b$.
+    \ii The columns of $A$ span $\RR^n$.
+    \ii $\vv x\mapsto A\vv x$ maps $\RR^n$ onto $\RR^n$.
+    \ii There is $C$ with $CA=I$.
+    \ii There is $D$ with $AD=I$.
+    \ii $A^T$ is invertible.
+  \end{enumerate}
+  \end{multicols}
+\end{theorem*}
+\begin{ideabox}
+For a square matrix, ``a pivot in every row'' and ``a pivot in every column'' are the same statement: both say there are $n$ pivots. That single fact merges the onto-list (g)--(i) with the one-to-one list (d)--(f) from (W2), and (b), (c) are just other names for $n$ pivots. A one-sided inverse forces $n$ pivots, which forces a two-sided inverse.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (b)$\iff$(c): a square matrix has $n$ pivots exactly when its RREF is $I_n$. (a)$\iff$(b) is the previous theorem.
+    \ii (c)$\iff$(d)$\iff$(e)$\iff$(f): $n$ pivots in $n$ columns means a pivot in every column; use (W2).
+    \ii (c)$\iff$(g)$\iff$(h)$\iff$(i): $n$ pivots in $n$ rows means a pivot in every row; use (W2).
+    \ii (a)$\Rightarrow$(j) and (a)$\Rightarrow$(k): take $C=D=A^{-1}$.
+    \ii (j)$\Rightarrow$(d): if $CA=I$ and $A\vv x=\vv0$, then $\vv x=CA\vv x=C\vv0=\vv0$.
+    \ii (k)$\Rightarrow$(g): if $AD=I$, then $\vv x=D\vv b$ solves $A\vv x=\vv b$.
+    \ii (a)$\iff$(l): if $A$ is invertible, $(A^{-1})^T$ is the inverse of $A^T$; apply this to $A^T$ for the converse, since $(A^T)^T=A$.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii \textbf{Use it in both directions.} To show $A$ is invertible, check any one statement; to show it is not, find one that fails (two equal columns, a zero row, a free variable).
+  \ii If $AB=I$ for square $A,B$, then automatically $BA=I$ and $B=A^{-1}$ (by (k)$\Rightarrow$(a)).
+  \ii The theorem is only for square matrices. A $2\times3$ matrix can have a pivot in every row without having independent columns.
+  \ii \textbf{Invertible linear transformations.} $T\colon\RR^n\to\RR^n$ with standard matrix $A$ is invertible (there is $S$ with $S(T(\vv x))=\vv x$ and $T(S(\vv x))=\vv x$ for all $\vv x$) exactly when $A$ is invertible, and then $S(\vv x)=A^{-1}\vv x$.
+\end{itemize}
+
+\subsection{Introduction to determinants (Lay 3.1)}
+\begin{qbox}
+  For $2\times2$ matrices, one number $ad-bc$ decides invertibility. Is there such a number for $n\times n$ matrices?
+\end{qbox}
+\begin{definition*}
+  For $n\ge2$, let $A_{ij}$ be the $(n-1)\times(n-1)$ matrix obtained by deleting row $i$ and column $j$ of $A$. The \vocab{$(i,j)$-cofactor} is $C_{ij}=(-1)^{i+j}\det A_{ij}$. The \vocab{determinant} is defined recursively by expanding along the first row:
+  \[ \det A=a_{11}C_{11}+a_{12}C_{12}+\dots+a_{1n}C_{1n}, \]
+  with $\det[a]=a$ for $1\times1$ matrices.
+\end{definition*}
+For $n=2$ this gives $a_{11}a_{22}-a_{12}a_{21}=ad-bc$. The signs $(-1)^{i+j}$ form a checkerboard $\begin{bmatrix}+&-&+\\-&+&-\\+&-&+\end{bmatrix}$.
+\begin{theorem*}[Cofactor expansion along any row or column]
+  $\det A$ can be computed by expanding along any row $i$, $\det A=a_{i1}C_{i1}+\dots+a_{in}C_{in}$, or any column $j$, $\det A=a_{1j}C_{1j}+\dots+a_{nj}C_{nj}$.
+\end{theorem*}
+(Lay states this without proof.) The point is speed: expand along the row or column with the most zeros, because each zero entry kills a whole sub-determinant.
+\begin{theorem*}[Triangular matrices]
+  If $A$ is triangular (all entries below the diagonal are $0$, or all above), $\det A$ is the product of the diagonal entries.
+\end{theorem*}
+\begin{proof}
+  For upper triangular $A$, expand down the first column: only $a_{11}$ is nonzero, so $\det A=a_{11}\det A_{11}$, and $A_{11}$ is again upper triangular. Repeat. (For lower triangular, expand along the first row.)
+\end{proof}
+Example: $\det\begin{bmatrix}2&0&0\\7&-3&0\\5&1&4\end{bmatrix}=2(-3)(4)=-24$. Next week: how row operations change $\det$, which gives a fast method and the theorem $\det A\ne0\iff A$ invertible.
+
+\begin{shortcuts}
+  \ii \textbf{Size check before multiplying}: $(m\times n)(n\times p)$. If the inner numbers differ, the product is undefined.
+  \ii \textbf{One entry of $AB$}: row of $A$ dot column of $B$; you rarely need the whole product.
+  \ii \textbf{$2\times2$ inverse}: swap the diagonal, negate the off-diagonal, divide by $ad-bc$.
+  \ii \textbf{Solving several systems with the same $A$}: row reduce $[\,A\ \ \vv b_1\ \ \vv b_2\,]$ once.
+  \ii \textbf{Invertible or not?} For a square matrix, any one IMT statement settles it: count pivots, spot dependent columns, or compute $\det$ for $2\times2$.
+  \ii \textbf{Reverse order}: $(AB)^{-1}=B^{-1}A^{-1}$ and $(AB)^T=B^TA^T$.
+  \ii \textbf{Determinant by cofactors}: choose the row or column with the most zeros; mind the checkerboard signs. Triangular: multiply the diagonal.
+  \ii \textbf{Check an inverse}: multiply one row of $A$ by a couple of columns of your $A^{-1}$; you should get the corresponding entries of $I$.
+\end{shortcuts}
+\begin{trapbox}
+  \ii $AB\ne BA$; you cannot cancel; $AB=0$ with $A,B\ne0$ happens.
+  \ii $(A+B)^2=A^2+AB+BA+B^2$, not $A^2+2AB+B^2$.
+  \ii $(AB)^{-1}\ne A^{-1}B^{-1}$ in general.
+  \ii The invertible matrix theorem applies only to square matrices.
+  \ii In $[\,A\ \ I\,]$, apply every row operation to the whole row, both halves.
+  \ii Cofactor signs: $C_{ij}=(-1)^{i+j}\det A_{ij}$; forgetting the sign is the most common determinant error.
+\end{trapbox}
+
+\section{Homework this week}
+HW3, Section 2.1: 1, 3, 7, 9, 11, 12, 15, 17, 22, 35. Section 2.2: 1, 5, 7, 9, 12, 17, 18, 19, 20, 23, 29, 31, 33, 41. Section 2.3: 3, 7, 11, 13, 15, 21, 23, 28, 33, 38, 41, 44. HW4, Section 3.1: 1, 5, 11, 13, 21. (The rest of HW4 is in the Week 5 handout.)
+
+\section{Problem set}
+\begin{prob}\textbf{P1.}\ $A=\begin{bmatrix}1&2\\0&1\end{bmatrix}$, $B=\begin{bmatrix}1&0\\3&1\end{bmatrix}$. Compute $AB$, $BA$, $(AB)^T$ and $B^TA^T$.
+\end{prob}
+\begin{prob}\textbf{P2.}\ Compute $X^3$ for $X=\begin{bmatrix}1&-2\\0&1\end{bmatrix}$, and guess $X^k$.
+\end{prob}
+\begin{prob}\textbf{P3.}\ Use the $2\times2$ inverse to solve $3x_1+4x_2=3$, $5x_1+6x_2=7$, and then $3x_1+4x_2=1$, $5x_1+6x_2=0$.
+\end{prob}
+\begin{prob}\textbf{P4.}\ Find $A^{-1}$ for $A=\begin{bmatrix}2&1&0\\1&1&1\\0&1&3\end{bmatrix}$, and check your answer.
+\end{prob}
+\begin{prob}\textbf{P5.}\ Is $\begin{bmatrix}1&-2&3\\2&-4&6\\0&1&5\end{bmatrix}$ invertible? Answer with as little computation as possible.
+\end{prob}
+\begin{prob}\textbf{P6.}\ Compute $\det\begin{bmatrix}3&0&4&1\\2&0&-1&0\\5&7&3&2\\1&0&2&0\end{bmatrix}$ by choosing good rows and columns.
+\end{prob}
+\begin{prob}\textbf{P7.}\ True or false, with a reason (all matrices $n\times n$). (a) If $A\vv x=\vv0$ has a nontrivial solution, then $A$ has fewer than $n$ pivots. (b) If the columns of $A$ span $\RR^n$, then they are linearly independent. (c) If $AB=I$, then $A$ and $B$ are both invertible. (d) If $A$ is invertible, then $A^2$ is invertible.
+\end{prob}
+\begin{prob}\textbf{P8.}\ Suppose $A$ is $n\times n$ and $A^3=0$. Show that $I-A$ is invertible, with inverse $I+A+A^2$.
+\end{prob}
+
+\end{document}
