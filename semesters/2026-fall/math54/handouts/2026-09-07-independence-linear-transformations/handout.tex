@@ -1,0 +1,196 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}
+\title{Math 54 --- Week 3}
+\subtitle{Linear independence; linear transformations; the matrix of a linear transformation (Lay 1.7--1.9)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--2}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii A consistent system has exactly one solution if it has no free variables, infinitely many otherwise. Free variables correspond to non-pivot columns.
+  \ii $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$. $A\vv x=\vv b$ is consistent exactly when $\vv b$ is a combination of the columns.
+  \ii The columns of an $m\times n$ matrix $A$ span $\RR^m$ $\iff$ $A$ has a pivot in every row.
+  \ii $A(\vv u+\vv v)=A\vv u+A\vv v$ and $A(c\vv u)=cA\vv u$.
+  \ii $A\vv x=\vv0$ has a nontrivial solution $\iff$ it has a free variable.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Linear independence (Lay 1.7)}
+\begin{qbox}
+  In Week 2, $\vv a_3=2\vv a_1-\vv a_2$, so $\vv a_3$ added nothing to the span of $\vv a_1,\vv a_2$. How do we detect in general that some vectors in a list are redundant?
+\end{qbox}
+\begin{definition*}
+  $\{\vv v_1,\dots,\vv v_p\}$ in $\RR^n$ is \vocab{linearly independent} if the vector equation $x_1\vv v_1+\dots+x_p\vv v_p=\vv0$ has only the trivial solution. It is \vocab{linearly dependent} if there are weights $c_1,\dots,c_p$, \emph{not all zero}, with $c_1\vv v_1+\dots+c_p\vv v_p=\vv0$; such an equation is a \vocab{linear dependence relation}.
+\end{definition*}
+\begin{itemize}
+  \ii \textbf{Columns of a matrix.} The equation $x_1\vv a_1+\dots+x_n\vv a_n=\vv0$ is $A\vv x=\vv0$. So the columns of $A$ are linearly independent $\iff$ $A\vv x=\vv0$ has only the trivial solution $\iff$ no free variables $\iff$ \textbf{a pivot in every column} (W5).
+\end{itemize}
+\textbf{Worked example.} $\vv v_1=(1,2,3)$, $\vv v_2=(4,5,6)$, $\vv v_3=(2,1,0)$.
+\[ \aug{rrr|r}{1&4&2&0\\2&5&1&0\\3&6&0&0}\to\aug{rrr|r}{1&0&-2&0\\0&1&1&0\\0&0&0&0} \]
+$x_3$ is free, so the set is dependent. Taking $x_3=1$: $x_1=2$, $x_2=-1$. Dependence relation: $2\vv v_1-\vv v_2+\vv v_3=\vv0$. Check: $(2,4,6)-(4,5,6)+(2,1,0)=(0,0,0)$.
+
+\textbf{Small sets.}
+\begin{itemize}
+  \ii One vector: $\{\vv v\}$ is independent $\iff$ $\vv v\ne\vv0$ (since $x\vv v=\vv0$ with $x\ne0$ forces $\vv v=\vv0$).
+  \ii Two vectors: $\{\vv v_1,\vv v_2\}$ is dependent $\iff$ one is a multiple of the other. (If $c_1\vv v_1+c_2\vv v_2=\vv0$ with $c_1\ne0$, then $\vv v_1=-\tfrac{c_2}{c_1}\vv v_2$; and conversely.) Geometrically: dependent exactly when they lie on one line through $\vv0$.
+\end{itemize}
+\begin{theorem*}[Dependence means one vector is a combination of the others]
+  $S=\{\vv v_1,\dots,\vv v_p\}$ with $p\ge2$ is linearly dependent $\iff$ at least one vector in $S$ is a linear combination of the others. In fact, if $S$ is dependent and $\vv v_1\ne\vv0$, then some $\vv v_j$ with $j>1$ is a linear combination of the \emph{preceding} vectors $\vv v_1,\dots,\vv v_{j-1}$.
+\end{theorem*}
+\begin{ideabox}
+A dependence relation is an equation in which some vector has a nonzero weight, and any such vector can be solved for. To get the stronger statement, choose the \emph{last} vector with a nonzero weight: then everything else in the relation comes before it.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $\vv v_j=c_1\vv v_1+\dots$ (the others), move $\vv v_j$ to the other side: a relation with weight $-1\ne0$ on $\vv v_j$. So $S$ is dependent.
+    \ii Conversely, let $c_1\vv v_1+\dots+c_p\vv v_p=\vv0$ with not all $c_i=0$, and let $j$ be the largest index with $c_j\ne0$. If $j=1$, then $c_1\vv v_1=\vv0$, so $\vv v_1=\vv0$, excluded. So $j>1$, and $\vv v_j=-\tfrac{1}{c_j}(c_1\vv v_1+\dots+c_{j-1}\vv v_{j-1})$.
+  \end{steps}
+\end{proof}
+The theorem does \emph{not} say every vector in a dependent set is a combination of the others: in $\{(1,0),(2,0),(0,1)\}$, $(0,1)$ is not.
+
+\begin{theorem*}[Too many vectors are dependent]
+  If $p>n$, any set of $p$ vectors in $\RR^n$ is linearly dependent.
+\end{theorem*}
+\begin{proof}
+  The matrix $A=[\,\vv v_1\cdots\vv v_p\,]$ is $n\times p$. It has at most $n$ pivots (one per row), and $p>n$ columns, so some column has no pivot: a free variable in $A\vv x=\vv0$.
+\end{proof}
+\begin{theorem*}[A set containing $\vv0$ is dependent]
+  If $\vv v_1=\vv0$, then $1\cdot\vv v_1+0\vv v_2+\dots+0\vv v_p=\vv0$ is a dependence relation.
+\end{theorem*}
+\textbf{Geometry in $\RR^3$.} Three vectors are dependent exactly when they lie in a common plane through $\vv0$ (or on a line): by the theorem above, one of them lies in the span of the others.
+
+\subsection{Linear transformations (Lay 1.8)}
+\begin{qbox}
+  Instead of solving $A\vv x=\vv b$ for one $\vv b$, think of $\vv x\mapsto A\vv x$ as a function that moves every vector of $\RR^n$. What kinds of functions arise, and which properties do they share?
+\end{qbox}
+\begin{definition*}
+  A \vocab{transformation} $T\colon\RR^n\to\RR^m$ assigns to each $\vv x$ in $\RR^n$ a vector $T(\vv x)$ in $\RR^m$, the \vocab{image} of $\vv x$. $\RR^n$ is the \vocab{domain}, $\RR^m$ the \vocab{codomain}, and the set of all images is the \vocab{range}. A \vocab{matrix transformation} is $T(\vv x)=A\vv x$ for an $m\times n$ matrix $A$; its range is the span of the columns of $A$.
+\end{definition*}
+\begin{definition*}
+  $T$ is \vocab{linear} if $T(\vv u+\vv v)=T(\vv u)+T(\vv v)$ and $T(c\vv u)=cT(\vv u)$ for all $\vv u,\vv v$ in the domain and all scalars $c$.
+\end{definition*}
+\begin{itemize}
+  \ii Every matrix transformation is linear (W4).
+  \ii \textbf{Consequences.} $T(\vv0)=\vv0$ (take $c=0$). $T(c\vv u+d\vv v)=cT(\vv u)+dT(\vv v)$, and more generally $T(c_1\vv v_1+\dots+c_p\vv v_p)=c_1T(\vv v_1)+\dots+c_pT(\vv v_p)$ (superposition).
+  \ii \textbf{Quick test for non-linearity}: if $T(\vv0)\ne\vv0$, $T$ is not linear. The translation $T(\vv x)=\vv x+\vv b$ with $\vv b\ne\vv0$ is not linear.
+  \ii Examples on $\RR^2$: $A=\begin{bmatrix}1&3\\0&1\end{bmatrix}$ is a \emph{shear} (slides points horizontally by $3\times$ their height); $\begin{bmatrix}1&0\\0&0\end{bmatrix}$ \emph{projects} onto the $x_1$-axis; $rI$ is a \emph{dilation} ($r>1$) or \emph{contraction} ($0\le r<1$).
+\end{itemize}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,scale=0.85]
+  \draw[->,gray] (-0.3,0) -- (2.6,0); \draw[->,gray] (0,-0.3) -- (0,2.6);
+  \fill[blue!15] (0,0) rectangle (2,2); \draw[thick,blue] (0,0) rectangle (2,2);
+  \node[below,font=\small] at (1,-0.4) {unit square (scaled)};
+  \draw[->,thick] (3.2,1) -- node[above,font=\small]{$\begin{bmatrix}1&3\\0&1\end{bmatrix}$} (5.0,1);
+  \begin{scope}[xshift=5.6cm]
+    \draw[->,gray] (-0.3,0) -- (8.6,0); \draw[->,gray] (0,-0.3) -- (0,2.6);
+    \fill[red!15] (0,0) -- (2,0) -- (8,2) -- (6,2) -- cycle; \draw[thick,red] (0,0) -- (2,0) -- (8,2) -- (6,2) -- cycle;
+    \node[below,font=\small] at (4,-0.4) {image: a parallelogram};
+  \end{scope}
+\end{tikzpicture}
+\figcap{A shear. Each point $(x_1,x_2)$ moves to $(x_1+3x_2,\ x_2)$: the bottom edge stays put and the top edge slides right. Lines go to lines and the origin stays fixed, as for every linear transformation.}
+\end{fig}
+
+\subsection{The matrix of a linear transformation (Lay 1.9)}
+\begin{qbox}
+  Is every linear transformation $\RR^n\to\RR^m$ a matrix transformation? If so, how do we find the matrix from a description such as ``rotate by $30^\circ$''?
+\end{qbox}
+\begin{theorem*}[The standard matrix]
+  Let $T\colon\RR^n\to\RR^m$ be linear. Then there is exactly one matrix $A$ with $T(\vv x)=A\vv x$ for all $\vv x$, namely
+  \[ A=[\,T(\vv e_1)\ \ T(\vv e_2)\ \cdots\ T(\vv e_n)\,], \]
+  where $\vv e_j$ is the $j$-th column of $I_n$. $A$ is the \vocab{standard matrix} of $T$.
+\end{theorem*}
+\begin{ideabox}
+Every $\vv x$ is a combination of the standard vectors: $\vv x=x_1\vv e_1+\dots+x_n\vv e_n$. A linear $T$ respects combinations, so $T(\vv x)=x_1T(\vv e_1)+\dots+x_nT(\vv e_n)$. The right side is exactly the matrix with columns $T(\vv e_j)$ times $\vv x$. So knowing where $T$ sends the $n$ standard vectors determines $T$ everywhere.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $\vv x=x_1\vv e_1+\dots+x_n\vv e_n$, so by linearity $T(\vv x)=x_1T(\vv e_1)+\dots+x_nT(\vv e_n)=A\vv x$ with $A$ as stated.
+    \ii Uniqueness: if $T(\vv x)=B\vv x$ for all $\vv x$, then column $j$ of $B$ is $B\vv e_j=T(\vv e_j)$, the same as column $j$ of $A$.
+  \end{steps}
+\end{proof}
+\textbf{Rotation.} $T$ rotates $\RR^2$ counterclockwise by $\varphi$. Then $\vv e_1=(1,0)$ goes to $(\cos\varphi,\sin\varphi)$ and $\vv e_2=(0,1)$ goes to $(-\sin\varphi,\cos\varphi)$:
+\[ A=\begin{bmatrix}\cos\varphi&-\sin\varphi\\\sin\varphi&\cos\varphi\end{bmatrix}. \]
+\textbf{Other standard matrices on $\RR^2$}, found the same way (where do $\vv e_1$ and $\vv e_2$ go?):
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lcl}
+\toprule
+move & $T(\vv e_1),\ T(\vv e_2)$ & matrix\\\midrule
+reflection through the $x_1$-axis & $(1,0),\ (0,-1)$ & $\begin{bmatrix}1&0\\0&-1\end{bmatrix}$\\
+reflection through the $x_2$-axis & $(-1,0),\ (0,1)$ & $\begin{bmatrix}-1&0\\0&1\end{bmatrix}$\\
+reflection through the line $x_2=x_1$ & $(0,1),\ (1,0)$ & $\begin{bmatrix}0&1\\1&0\end{bmatrix}$\\
+reflection through the origin & $(-1,0),\ (0,-1)$ & $\begin{bmatrix}-1&0\\0&-1\end{bmatrix}$\\
+horizontal shear by $k$ & $(1,0),\ (k,1)$ & $\begin{bmatrix}1&k\\0&1\end{bmatrix}$\\
+projection onto the $x_2$-axis & $(0,0),\ (0,1)$ & $\begin{bmatrix}0&0\\0&1\end{bmatrix}$\\\bottomrule
+\end{tabular}
+\end{center}
+There is no need to memorise the table: each row takes a few seconds to re-derive.
+
+\textbf{Existence and uniqueness questions for $T$.}
+\begin{definition*}
+  $T\colon\RR^n\to\RR^m$ is \vocab{onto} $\RR^m$ if each $\vv b$ in $\RR^m$ is the image of \emph{at least one} $\vv x$. It is \vocab{one-to-one} if each $\vv b$ is the image of \emph{at most one} $\vv x$.
+\end{definition*}
+\begin{theorem*}[One-to-one means only $\vv0$ goes to $\vv0$]
+  A linear $T$ is one-to-one $\iff$ $T(\vv x)=\vv0$ has only the trivial solution.
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii If $T$ is one-to-one: $T(\vv0)=\vv0$, so $\vv0$ is the only vector sent to $\vv0$.
+    \ii If only $\vv0$ goes to $\vv0$, and $T(\vv u)=T(\vv v)$, then $T(\vv u-\vv v)=T(\vv u)-T(\vv v)=\vv0$, so $\vv u-\vv v=\vv0$.
+  \end{steps}
+\end{proof}
+\begin{theorem*}[Onto and one-to-one from the standard matrix]
+  Let $A$ be the standard matrix of $T$. (a) $T$ is onto $\iff$ the columns of $A$ span $\RR^m$ $\iff$ $A$ has a pivot in every row. (b) $T$ is one-to-one $\iff$ the columns of $A$ are linearly independent $\iff$ $A$ has a pivot in every column.
+\end{theorem*}
+\begin{proof}
+  (a) Onto says $A\vv x=\vv b$ is consistent for every $\vv b$; use (W3). (b) By the previous theorem, one-to-one says $A\vv x=\vv0$ has only the trivial solution, which is independence of the columns, which is a pivot in every column.
+\end{proof}
+\begin{itemize}
+  \ii If $n>m$ (more columns than rows), $T$ is never one-to-one. If $n<m$, $T$ is never onto.
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{Independence by inspection}: more vectors than entries $\Rightarrow$ dependent; contains $\vv0$ $\Rightarrow$ dependent; two vectors $\Rightarrow$ check for a multiple. Otherwise row reduce $[\,\vv v_1\cdots\vv v_p\,]$ and look for a pivot in every column.
+  \ii \textbf{Finding a dependence relation}: solve $A\vv x=\vv0$, set one free variable to $1$ and the others to $0$.
+  \ii \textbf{Standard matrix}: column $j$ is $T(\vv e_j)$. For compositions of geometric moves, just track $\vv e_1$ and $\vv e_2$ through the moves.
+  \ii \textbf{Is $T$ linear?} First check $T(\vv0)=\vv0$. Formulas with constants added, products of variables, $|x|$, or squares are not linear.
+  \ii \textbf{Pivot in every row} = onto = columns span; \textbf{pivot in every column} = one-to-one = columns independent. One row reduction of $A$ answers both.
+  \ii \textbf{Given $T(\vv u)$ and $T(\vv v)$}, the image of $c\vv u+d\vv v$ is $cT(\vv u)+dT(\vv v)$; no matrix needed.
+\end{shortcuts}
+\begin{trapbox}
+  \ii Independence is about the homogeneous equation; whether $A\vv x=\vv b$ is solvable for some $\vv b$ is a different question.
+  \ii In a dependent set, not every vector is a combination of the others.
+  \ii Three vectors in $\RR^3$, no two of which are multiples, can still be dependent (all in one plane).
+  \ii ``Onto'' and ``one-to-one'' use different pivot conditions (rows versus columns); do not mix them.
+  \ii The range of $T$ is a subset of the codomain; they are equal only when $T$ is onto.
+  \ii Rotation matrices: the minus sign is in the top right for counterclockwise rotation.
+\end{trapbox}
+
+\section{Homework this week}
+HW2, Section 1.7: 1, 6, 10, 13, 21, 24, 26, 33, 36, 38. Section 1.8: 2, 5, 7, 11, 17, 24, 26, 29, 31. Section 1.9: 2, 6, 13, 15, 19, 21, 23, 25, 32, 33. HW3, Section 1.8: 41, 44.
+
+\section{Problem set}
+\begin{prob}\textbf{P1.}\ Are the columns of $\begin{bmatrix}1&-3&2\\3&-8&5\\-2&7&-3\end{bmatrix}$ linearly independent?
+\end{prob}
+\begin{prob}\textbf{P2.}\ For which $h$ are $(1,-1,4)$, $(3,-5,7)$, $(-1,5,h)$ linearly dependent? For that $h$, give a dependence relation.
+\end{prob}
+\begin{prob}\textbf{P3.}\ Decide by inspection, with a reason: (a) $(1,2),(3,1),(0,5)$; (b) $(2,-4,6),(-1,2,-3)$; (c) $(1,0,2),(0,0,0),(5,1,1)$; (d) $(1,2,0),(0,1,3)$.
+\end{prob}
+\begin{prob}\textbf{P4.}\ $T\colon\RR^2\to\RR^2$ first reflects through the $x_1$-axis and then rotates counterclockwise by $90^\circ$. Find its standard matrix, and describe $T$ as a single geometric move.
+\end{prob}
+\begin{prob}\textbf{P5.}\ Let $T(\vv x)=A\vv x$ with $A=\begin{bmatrix}1&-2&3\\0&1&-1\\2&-3&5\end{bmatrix}$. Find all $\vv x$ with $T(\vv x)=(-1,2,0)$. Is $T$ one-to-one? Onto?
+\end{prob}
+\begin{prob}\textbf{P6.}\ Is $T(x_1,x_2)=(x_1+x_2,\ 2x_1-1)$ linear? Is $S(x_1,x_2)=(x_2,\ 3x_1-x_2,\ 0)$?
+\end{prob}
+\begin{prob}\textbf{P7.}\ $T\colon\RR^4\to\RR^3$ has standard matrix $\begin{bmatrix}1&2&0&3\\2&5&1&7\\1&3&2&5\end{bmatrix}$. Is $T$ onto? One-to-one?
+\end{prob}
+\begin{prob}\textbf{P8.}\ $T\colon\RR^2\to\RR^3$ is linear with $T(\vv e_1)=(2,-1,3)$ and $T(\vv e_2)=(0,4,1)$. Find $T(3,-2)$ and the standard matrix of $T$.
+\end{prob}
+
+\end{document}
