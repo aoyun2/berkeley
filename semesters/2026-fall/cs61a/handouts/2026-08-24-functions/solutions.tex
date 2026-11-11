@@ -1,0 +1,78 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\title{CS 61A --- Week 1}
+\subtitle{Solutions to the handout problems (code for the exercises is in \texttt{solutions/})}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}\ The operands of \cd{sub} are evaluated left to right, each from the inside out.
+\begin{steps}
+  \ii \cd{add(1, 2)} is \cd{3}. Then \cd{pow(2, 3)} is \cd{8}.
+  \ii \cd{add(1, 1)} is \cd{2}. Then \cd{mul(2, 2)} is \cd{4}.
+  \ii \cd{sub(8, 4)} is \cd{4}.
+\end{steps}
+Order in which the calls finish: \cd{add(1, 2)}, \cd{pow}, \cd{add(1, 1)}, \cd{mul}, \cd{sub}. Value: \cd{4}.
+\end{prob}
+
+\begin{prob}\textbf{P2.}
+\begin{steps}
+  \ii \cd{a = 3}. \cd{b = a * 2} binds \cd{b} to \cd{6}. \cd{a = b - 1} binds \cd{a} to \cd{5}.
+  \ii \cd{a, b = b, a + b}: both right sides are evaluated first, with the old values: \cd{6} and \cd{5 + 6 = 11}. Then \cd{a} is bound to \cd{6} and \cd{b} to \cd{11}.
+\end{steps}
+Displayed: \cd{6} and then \cd{11}.
+\end{prob}
+
+\begin{prob}\textbf{P3.}
+\begin{steps}
+  \ii \cd{f} is bound to the built-in minimum function.
+  \ii \cd{min = max}: the name \cd{min} is now bound to the maximum function.
+  \ii \cd{max = f}: the name \cd{max} is now bound to the minimum function.
+  \ii \cd{min(1, 2)} is the maximum, \cd{2}. \cd{max(3, 4)} is the minimum, \cd{3}.
+\end{steps}
+Displayed: \cd{5}.
+\end{prob}
+
+\begin{prob}\textbf{P4.}
+\begin{steps}
+  \ii \cd{x = print(1, 2)}: displays \cd{1 2}. \cd{x} is bound to \cd{None}.
+  \ii \cd{x}: the value is \cd{None}, so the interpreter displays nothing.
+  \ii \cd{print(x)}: displays \cd{None}.
+  \ii \cd{print(print(3), 4)}: the operand \cd{print(3)} displays \cd{3} and has value \cd{None}; then the outer call displays \cd{None 4}.
+  \ii \cd{print(7) + 1}: displays \cd{7}; then \cd{None + 1} is an \cd{ERROR} (a \cd{TypeError}).
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P5.}
+\begin{steps}
+  \ii \cd{loud(loud(1))}: the inner call displays \cd{got 1} and returns \cd{2}. The outer call displays \cd{got 2} and returns \cd{4}. The interpreter displays \cd{4}.
+  \ii \cd{quiet(quiet(1))}: the inner call displays \cd{2} and returns \cd{None} (no \cd{return}). The outer call evaluates \cd{2 * None}: \cd{ERROR}.
+\end{steps}
+Displayed: \cd{got 1}, \cd{got 2}, \cd{4}, then \cd{2}, then an error.
+\end{prob}
+
+\begin{prob}\textbf{P6.}
+\begin{steps}
+  \ii Global: \cd{f} bound to \cd{func f(x, y) [parent=Global]}; \cd{x} bound to \cd{3}.
+  \ii \cd{y = f(x, x + 1)}: operands evaluated in the global frame: \cd{3} and \cd{4}.
+  \ii Frame \cd{f1: f [parent=Global]}: \cd{x} is \cd{3}, \cd{y} is \cd{4}.
+  \ii \cd{x = x + y}: in \cd{f1}, \cd{x} becomes \cd{7}. \cd{y = x * 2}: in \cd{f1}, \cd{y} becomes \cd{14}.
+  \ii Return value \cd{14 - 7 = 7}. Global \cd{y} is bound to \cd{7}. Global \cd{x} is still \cd{3}.
+\end{steps}
+Displayed: \cd{3 7}.
+\end{prob}
+
+\begin{prob}\textbf{P7.}
+\begin{steps}
+  \ii The \cd{import} binds \cd{add} to the library function; the \cd{def} then rebinds \cd{add} in the global frame to the new two-parameter function, which returns its second argument.
+  \ii \cd{x = add(1, 2)}: in \cd{f1}, the parameter \cd{add} is \cd{1} and \cd{mul} is \cd{2}. Returns \cd{2}. \cd{print(x)} displays \cd{2}.
+  \ii \cd{add(add, x)}: operands evaluated in the global frame: the function and \cd{2}. In \cd{f2}, \cd{add} is the function and \cd{mul} is \cd{2}. Returns \cd{2}.
+\end{steps}
+Displayed: \cd{2} and \cd{2}.
+\end{prob}
+
+\begin{prob}\textbf{P8.}\ The \cd{def} does not run the body, so no error there. \cd{print(z)} displays \cd{10}. The error (a \cd{NameError}) happens when \cd{h(z)} is called and the body evaluates \cd{undefined\_name}. So \cd{10} is displayed first, then the error.
+\end{prob}
+
+\end{document}
