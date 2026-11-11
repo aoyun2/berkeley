@@ -68,3 +68,4 @@ The following entries describe the rejected release and its previous checks. The
 - Time pressure on 50-minute exams.
 - 2026-11-10: Week 8 (generalized eigenvectors, Jordan form) rebuilt to the revised standard as the quality sample.
 - 2026-11-10: Weeks 8, 9, 10 rebuilt to the revised standard (idea boxes as free text, expanded proofs for Props. 72-75).
+- 2026-11-10: Week 7 rebuilt: diagonalizability (Ch. 12) written from the notes, minimal polynomial (Ch. 13) from the reviewed packet.

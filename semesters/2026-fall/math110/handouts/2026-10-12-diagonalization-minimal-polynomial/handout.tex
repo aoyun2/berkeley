@@ -1,174 +1,788 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-\DeclareMathOperator{\im}{range}
-\title{MATH 110 --- Week 7}
-\subtitle{Notes Chapters 12--13; Homework 7}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+\title{Math 110 --- Week 7}
+\subtitle{Diagonalizability and the minimal polynomial (Notes Ch.~12--13, LADR 5C, 5D, 5B, HW7)}
 \author{}\date{}\ihead{}
-\begin{document}\maketitle
-\section{Upper-triangular matrices}
-\begin{qbox}How does a matrix record a nested family of invariant subspaces? For $A=\left(\begin{smallmatrix}1&2\\0&3\end{smallmatrix}\right)$, the first coordinate line is invariant because $Ae_1=e_1$.\end{qbox}
-\begin{prob}\textbf{Tools from earlier weeks.}\begin{itemize}
-\ii Week 2: extend an independent list to a basis by adding vectors outside its span; basis length defines dimension and an independent list of full length is a basis.
-\ii Weeks 3--4: rank-nullity follows by extending a kernel basis and using the remaining images as a range basis; thus an operator on finite dimension is injective, surjective and invertible under the same conditions.
-\ii Week 6: for $p(x)=\sum_ja_jx^j$, define $p(T)=\sum_ja_jT^j$ with $T^0=I$. Eigenvectors for distinct eigenvalues are independent by applying a shifted operator to a shortest dependence; polynomial evaluation preserves products by distributing finite sums of powers, so polynomials in $T$ commute.
-\ii Weeks 4--6: the root bound follows by successively removing root factors; $\dim(V/U)=\dim V-\dim U$ follows by extending a basis of $U$: the added vectors give a quotient basis; evaluating a polynomial on $T/U$ sends $v+U$ to $p(T)v+U$, by induction on powers.
-\ii Week 6: a probability column has nonnegative real entries summing to $1$; a column-stochastic matrix has nonnegative entries with each column summing to $1$. With $\|x\|_1=\sum_i|x_i|$, such a $P$ satisfy $\|Px\|_1\le\sum_{i,j}P_{ij}|x_j|=\|x\|_1$, by the triangle inequality and column sums 1.\ii Week 6: every operator on a nonzero finite-dimensional complex space has an eigenvalue by factoring a relation among vector iterates and using the fundamental theorem of algebra. That theorem was proved there using the explicitly cited extreme-value theorem; its repeated root extraction gives complex factorization.
-\end{itemize}\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 33; LADR 5.37--5.38, 5.48]Work with linear $T:V\to V$ on finite-dimensional $V$ over $F$, unless otherwise specified. A square matrix $A=(a_{ij})$ is upper triangular when $a_{ij}=0$ for $i>j$, and diagonal when $a_{ij}=0$ for $i\ne j$. The main diagonal consists of the entries $a_{jj}$.\end{definition*}\end{prob}
-\begin{example*}[Notes Example 53]
-\[
-A=\begin{pmatrix}1&2&\textcolor{blue}{3}&4\\\textcolor{gray}{0}&5&\textcolor{blue}{6}&7\\\textcolor{gray}{0}&\textcolor{gray}{0}&\textcolor{blue}{8}&9\\\textcolor{gray}{0}&\textcolor{gray}{0}&\textcolor{blue}{0}&10\end{pmatrix},
-\qquad Tv_3=\textcolor{blue}{3v_1+6v_2+8v_3}.
-\]
-Column $3$ uses only the first three basis vectors; its fourth entry is zero. All entries below the diagonal are zero, so $A$ is upper triangular with diagonal $1,5,8,10$. It is not diagonal, since $a_{12}=2\ne0$.
-\end{example*}
-\begin{proposition*}[Notes Proposition 59; LADR 5.39]For a basis $v_1,\ldots,v_n$, the following are equivalent: the matrix of $T$ is upper triangular; $Tv_j\in\operatorname{span}(v_1,\ldots,v_j)$ for each $j$; every initial span $U_j=\operatorname{span}(v_1,\ldots,v_j)$ is invariant.\end{proposition*}
+\begin{document}
+\maketitle
+\section{Facts used from earlier weeks}
+$V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Shorthand: ``$S$ kills $v$'' means $Sv=0$, and ``$q$ kills $T$'' means $q(T)=0$. From Week 6: eigenvalues, eigenvectors and eigenspaces $E(\lambda,T)=\nul(T-\lambda I)$, and invariant subspaces.
 
-\begin{prob}\begin{proof}\begin{steps}\ii Column $j$ means $Tv_j=\sum_i a_{ij}v_i$. Thus $a_{ij}=0$ for $i>j$ iff $Tv_j\in U_j$, proving the first two conditions equivalent.\ii If $Tv_j\in U_j$, then for $k\le j$, $Tv_k\in U_k\subseteq U_j$; linearity proves $T(U_j)\subseteq U_j$.\ii If $U_j$ is invariant, $v_j\in U_j$ gives $Tv_j\in U_j$.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 60; LADR 5.41]The eigenvalues of an upper-triangular matrix are exactly its diagonal entries, viewed as elements of the underlying field.\end{proposition*}
+\begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
+  \ii \tool{Rank--nullity.} For linear $T\colon V\to W$: $\dim V=\dim\nul T+\dim\range T$.
+  \why{\begin{steps}
+    \ii Extend a basis $u_1,\dots,u_k$ of $\nul T$ to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. It suffices to show $Tv_1,\dots,Tv_r$ is a basis of $\range T$.
+    \ii Spanning: $T$ of any vector is a combination of the $Tu_i$ (which are $0$) and the $Tv_j$.
+    \ii Independent: if $\sum c_jTv_j=0$, then $\sum c_jv_j\in\nul T$ is a combination of the $u_i$, and independence of the basis of $V$ gives all $c_j=0$.
+  \end{steps}}
+  \ii \tool{For operators, injective $\iff$ surjective $\iff$ invertible.}
+  \why{$\nul T=0\iff\dim\range T=n$ (T1) $\iff\range T=V$ (T3).}
+  \ii \tool{Dimension shortcuts.}
+  \begin{enumerate}[(a)]
+    \ii An independent list of $n$ vectors is a basis.
+    \ii A subspace of dimension $n$ is all of $V$.
+    \ii If $U\cap W=\{0\}$ and $\dim U+\dim W=n$, then $V=U\oplus W$.
+    \ii $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a), (b): an independent list extends to a basis, and every basis has length $n$.
+    \ii (c): a basis of $U$ followed by a basis of $W$ is independent (a relation gives $u=-w\in U\cap W=\{0\}$) and has length $n$, so it is a basis by (a).
+    \ii (d): extend a basis $x_1,\dots,x_k$ of $U\cap W$ to a basis $x_i,u_j$ of $U$ and, separately, to a basis $x_i,w_l$ of $W$. Together the $x_i,u_j,w_l$ span $U+W$; it remains to show they are independent.
+    \ii If $x+u+w=0$ ($x,u,w$ combinations of the $x_i$, $u_j$, $w_l$), then $w=-x-u\in U\cap W$, so $w$ is a combination of the $x_i$. The basis $x_i,w_l$ of $W$ is independent, so $w=0$. Then $x+u=0$, and independence of $x_i,u_j$ gives $x=u=0$.
+  \end{steps}}
+  \ii \tool{Products of operators.} If $S,T$ are injective, so is $ST$. So if a product sends some $v\ne0$ to $0$, some factor is not injective.
+  \why{$STv=0\Rightarrow Tv=0\Rightarrow v=0$.}
+  \ii \tool{Polynomials in $T$ commute.} $p(T)q(T)=q(T)p(T)$. Hence $\nul p(T)$ and $\range p(T)$ are $T$-invariant.
+  \why{Both products equal $(pq)(T)$. If $p(T)v=0$, then $p(T)(Tv)=T\,p(T)v=0$. And $T\bigl(p(T)u\bigr)=p(T)(Tu)\in\range p(T)$.}
+  \ii \tool{Fundamental theorem of algebra.} A nonconstant $p\in\PP(\CC)$ factors as $c(z-\lambda_1)\cdots(z-\lambda_m)$ (cited). Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$.
+  \why{Divide $p$ by $z-\lambda$: the remainder is a constant, and evaluating at $\lambda$ shows it equals $p(\lambda)$.}
+  \ii \tool{Eigenvalues.}
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is an eigenvalue $\iff T-\lambda I$ is not injective.
+    \ii If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$.
+    \ii Eigenvectors for distinct eigenvalues are independent (Prop.~54).
+    \ii Over $\CC$ with $V\ne0$, every operator has an eigenvalue.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a) is the definition: $Tv=\lambda v$ with $v\ne0$ means $(T-\lambda I)v=0$ with $v\ne0$.
+    \ii (b): $T^kv=\lambda^kv$ by induction; add up the terms of $p$.
+    \ii (d): take $v\ne0$. The $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $p(T)v=0$ for some $p\ne0$; $p$ is not constant since $v\ne0$.
+    \ii Factor $p=c(z-\lambda_1)\cdots(z-\lambda_m)$ (T6). The product $c(T-\lambda_1I)\cdots(T-\lambda_mI)$ sends $v\ne0$ to $0$, so some $T-\lambda_jI$ is not injective (T4).
+  \end{steps}}
+  \ii \tool{Block diagonal matrices.} If $V=U\oplus W$ with both $T$-invariant, then in a basis of $U$ followed by one of $W$, $\MM(T)=\begin{psmallmatrix}A&0\\0&B\end{psmallmatrix}$, and $\nul T=\nul T|_U\oplus\nul T|_W$.
+  \why{$Tu\in U$ is a combination of the $U$-basis only, so its column is $0$ in the $W$-rows (same for $W$). If $T(u+w)=0$, then $Tu=-Tw\in U\cap W=\{0\}$.}
+  \ii \tool{Change of basis.} If column $j$ of $S$ holds the $B$-coordinates of the $j$-th vector of $B'$, then $\MM_{B'}(T)=S^{-1}\MM_B(T)S$. So similar matrices are exactly the matrices of one operator in two bases.
+  \why{$S$ converts $B'$-coordinates to $B$-coordinates: apply $S$, then $\MM_B(T)$, then convert back with $S^{-1}$. Every invertible $S$ arises this way, since its columns form a basis.}
+  \ii \tool{Quotient operator.} If $U$ is $T$-invariant, then $(T/U)(v+U)=Tv+U$ is a well-defined operator on $V/U$, $\dim V/U=\dim V-\dim U$, and $p(T/U)(v+U)=p(T)v+U$.
+  \why{\begin{steps}
+    \ii Well defined: if $v+U=v'+U$, then $v-v'\in U$, so $Tv-Tv'\in U$ ($U$ is invariant).
+    \ii Dimension: $v\mapsto v+U$ maps $V$ onto $V/U$ with null space $U$; apply (T1).
+    \ii $(T/U)^k(v+U)=T^kv+U$ by induction; add up the terms of $p$.
+  \end{steps}}
+\end{enumerate}
 
-\begin{prob}\begin{proof}\begin{steps}\ii For an upper-triangular $B$ with every diagonal entry nonzero, solve $Bx=y$ from the last row upward: each row determines its new coordinate uniquely by division by $b_{jj}$. Thus $B$ is invertible.\ii If some diagonal entry is zero, let $j$ be the first such index. Put $x_j=1$ and $x_k=0$ for $k>j$; solve the first $j-1$ equations upward in reverse order using their nonzero diagonal entries. Then $Bx=0$ with $x\ne0$.\ii Apply these facts to $B=A-\lambda I$, whose diagonal entries are $a_{jj}-\lambda$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 54]\begin{steps}\ii On $\mathcal P_3(F)$ for $F=\mathbb R$ or $\mathbb C$, the power rule gives differentiation matrix $\left(\begin{smallmatrix}0&1&0&0\\0&0&2&0\\0&0&0&3\\0&0&0&0\end{smallmatrix}\right)$ in $1,x,x^2,x^3$.\ii Its only eigenvalue is $0$ by Proposition 60. Its eigenspace is the constants because $Dp=0$ exactly when every positive-degree coefficient is zero.\end{steps}\end{example*}
-\begin{fig}\begin{tikzpicture}[>=stealth]\node(a)at(0,0){$x^3$};\node(b)at(2,0){$3x^2$};\node(c)at(4,0){$6x$};\node(d)at(6,0){$6$};\node(e)at(8,0){$0$};\draw[->](a)--node[above]{$D$}(b);\draw[->](b)--node[above]{$D$}(c);\draw[->](c)--node[above]{$D$}(d);\draw[->](d)--node[above]{$D$}(e);\end{tikzpicture}\figcap{Differentiation sends each polynomial to a lower-degree initial span.}\end{fig}
-\begin{proposition*}[Notes Proposition 61; LADR 5.47]Every operator on a finite-dimensional complex vector space has an upper-triangular matrix in some basis.\end{proposition*}
-\begin{motive}\ii[Want.] Construct a basis with invariant initial spans.\ii[Know.] Every nonzero finite-dimensional complex space has an eigenvector (Week 6).\ii[Key step.] We need a smaller invariant space whose triangular basis will also control the added vectors. Choose $U=\im(T-\lambda I)$: the eigenvalue makes it proper, and $Tv-\lambda v\in U$ for every $v$. Thus each added basis vector maps into $U$ plus its own line, exactly the required column condition.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Induct on $n=\dim V$; the empty basis handles $n=0$. For $n>0$, choose an eigenvalue $\lambda$ by Week 6.\ii Put $U=\im(T-\lambda I)$. It is proper because $T-\lambda I$ is not surjective; it is invariant because it commutes with $T$.\ii By induction, take a triangular basis $v_1,\ldots,v_m$ for $T|_U$, then extend it to a basis of $V$ (Week 2).\ii For $j>m$, $Tv_j=(T-\lambda I)v_j+\lambda v_j\in U+Fv_j\subseteq U_j$. For $j\le m$ the induction hypothesis gives the same containment. Apply Proposition 59.\end{steps}\end{proof}\end{prob}
-\begin{shortcuts}\ii Triangular eigenvalues are the diagonal entries, because subtracting $\lambda I$ changes only that diagonal.\ii To prove triangular form, check initial-span invariance on basis vectors.\end{shortcuts}
-\begin{trapbox}\ii A triangular matrix need not have a basis of eigenvectors: $\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$ has only the eigenvector line $Fe_1$.\ii Real triangularization can fail: the real quarter-turn has no real eigenvalue, whereas every nonempty real triangular matrix has a diagonal eigenvalue.\end{trapbox}
-\section{Diagonalization and repeated application}
-\begin{qbox}When can repeated application be reduced to scalar powers? For $\operatorname{diag}(2,3)$, its $k$th power sends $(a,b)$ to $(2^ka,3^kb)$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 34; LADR 5.50, 5.52]An operator is diagonalizable over $F$ if its matrix in some basis is diagonal. An eigenbasis is a basis of eigenvectors. Write $E(\lambda,T)=\ker(T-\lambda I)=\{v:Tv=\lambda v\}$ (Week 6); this is $\{0\}$ when $\lambda$ is not an eigenvalue. Its dimension is the geometric multiplicity of $\lambda$.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 62; LADR 5.54--5.55]For any distinct eigenvalues, their eigenspace sum is direct and $\sum_j\dim E(\lambda_j,T)\le\dim V$. For the complete list of distinct eigenvalues $\lambda_1,\ldots,\lambda_r$ of an operator on finite-dimensional $V$, the following are equivalent: $T$ is diagonalizable; $V$ has an eigenbasis; $V=\bigoplus_{j=1}^r E(\lambda_j,T)$; $\dim V=\sum_j\dim E(\lambda_j,T)$.\end{proposition*}
-\begin{motive}\ii[Want.] Decide whether the available eigenspaces provide a full basis.\ii[Know.] Eigenvectors with distinct eigenvalues are independent (Week 6).\ii[Key step.] Group a relation by eigenvalue. Each nonzero grouped sum is itself an eigenvector; distinct-eigenvalue independence makes each group zero. A basis in each eigenspace then gives one independent list, and counting its length decides whether it fills $V$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $w_j\in E(\lambda_j,T)$ and $\sum_jw_j=0$, the nonzero $w_j$ are eigenvectors with distinct eigenvalues; Week 6 forces every $w_j=0$. Thus the sum is direct. Its dimension is the sum of the eigenspace dimensions and is at most $\dim V$, by Week 4.\ii A diagonal matrix has $Tv_j=\lambda_jv_j$ for each basis column, and an eigenbasis has a diagonal matrix. This proves the first two conditions equivalent.\ii Concatenating bases of the distinct eigenspaces gives an independent list by step 1. It is a basis precisely when the eigenspaces span $V$, equivalently when its length equals $\dim V$ (Week 2).\end{steps}\end{proof}\end{prob}
-\begin{example*}[LADR 5.49, 5.51, 5.53]\begin{steps}\ii A diagonal matrix $\operatorname{diag}(8,5,5)$ in basis $v_1,v_2,v_3$ has eigenspaces $E(8,T)=Fv_1$ and $E(5,T)=\operatorname{span}(v_2,v_3)$ over $\mathbb R$ or $\mathbb C$, by solving the coordinate equations.\ii For $A=\left(\begin{smallmatrix}41&7\\-20&74\end{smallmatrix}\right)$, direct multiplication gives $A(1,4)=69(1,4)$ and $A(7,5)=46(7,5)$.\ii The vectors are independent since $a(1,4)+b(7,5)=0$ gives $a=-7b$ and $-23b=0$, hence $a=b=0$ over $\mathbb R$. Thus its matrix in that basis is $\operatorname{diag}(69,46)$.\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 63; LADR 5.58]An operator on an $n$-dimensional space with $n$ distinct eigenvalues is diagonalizable.\end{proposition*}
+\section{This week}
+\subsection{Upper-triangular matrices (Ch.~12.1)}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Choose $v_j\ne0$ with $Tv_j=\lambda_jv_j$. Week 6 gives independence.\ii An independent list of length $n$ is a basis (Week 2), hence an eigenbasis. The empty list handles $n=0$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 55; LADR 5.57]For the textbook case $T(a,b,c)=(b,c,0)$, the standard matrix is $\left(\begin{smallmatrix}0&1&0\\0&0&1\\0&0&0\end{smallmatrix}\right)$. More generally, for $n>1$, let $Tv_1=0$ and $Tv_j=v_{j-1}$ for $j>1$.\begin{steps}\ii The matrix is upper triangular with zero diagonal, so its only eigenvalue is 0 by Proposition 60.\ii Solving $T\sum_ja_jv_j=\sum_{j>1}a_jv_{j-1}=0$ gives $E(0,T)=Fv_1$, of dimension 1.\ii Since $1<n$, Proposition 62 rules out diagonalizability.\end{steps}\end{example*}
-\begin{example*}[Notes Example 56]\begin{steps}\ii For $A=\left(\begin{smallmatrix}1&2\\2&3\end{smallmatrix}\right)$, the Week 6 two-by-two test gives $(t-1)(t-3)-4=t^2-4t-1$, with roots $2\pm\sqrt5$. Each has eigenvector $(2,1\pm\sqrt5)$, verified by multiplication.\ii Thus $A$ is diagonalizable over $\mathbb R$ by Proposition 63. Over $\mathbb Q$ it has no eigenvalue, since the roots are irrational, so it has no eigenbasis.\ii For $R=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$, the eigenvalues over $\mathbb C$ are $i,-i$ with vectors $(1,-i),(1,i)$; over $\mathbb R$ there is no eigenvalue.\end{steps}\end{example*}
-\begin{proposition*}[Notes Proposition 64]If $Tv_j=\lambda_jv_j$ is an eigenbasis and $v=\sum_ja_jv_j$, then $T^kv=\sum_ja_j\lambda_j^kv_j$ for every integer $k\ge0$. Here $\lambda_j^0=1$, including when $\lambda_j=0$.\end{proposition*}
+\begin{qbox}
+  A diagonal matrix is the easiest kind to work with, but not every operator has one. What is the next best shape that every complex operator does have, and what can be read off from it?
+  \begin{itemize}
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ has no diagonal matrix in any basis (Ex.~55 below), but it is upper-triangular, and its only eigenvalue $0$ is visible on the diagonal.
+  \end{itemize}
+\end{qbox}
 
-\begin{prob}\begin{proof}\begin{steps}\ii Induction on $k$ gives $T^kv_j=\lambda_j^kv_j$, with $k=0$ the identity equation.\ii Apply $T^k$ to the finite linear combination for $v$ and distribute by linearity.\end{steps}\end{proof}\end{prob}
-\method{Compute a large power (LADR 5.59)}Over $\mathbb R$ or $\mathbb C$, let $A=\left(\begin{smallmatrix}2&1&0\\0&5&3\\0&0&8\end{smallmatrix}\right)$.
-\begin{steps}\ii In $(A-\lambda I)(x,y,z)^{\mathsf T}=0$, the rows give $(2-\lambda)x+y=0$, $(5-\lambda)y+3z=0$, $(8-\lambda)z=0$. For $\lambda=2$ these force $z=y=0$; for $5$, $z=0,y=3x$; for $8$, $y=z=6x$. Choose $x=1$ to obtain $v_1=(1,0,0)$, $v_2=(1,3,0)$, $v_3=(1,6,6)$.
-\ii For $e_3=av_1+bv_2+cv_3$, the equations are $a+b+c=0$, $3b+6c=0$, $6c=1$. Hence $(a,b,c)=(1/6,-1/3,1/6)$.\ii Proposition 64 gives $A^{100}e_3=\frac16(2^{100}-2\cdot5^{100}+8^{100},\ 6\cdot8^{100}-6\cdot5^{100},\ 6\cdot8^{100})$.\end{steps}
-\method{Recover the Fibonacci formula (Notes Chapter 12; LADR 5D Exercise 21)}
-\begin{steps}\ii Let $V$ be the real sequences satisfying $a_{n+2}=a_{n+1}+a_n$ for $n\ge0$. Sending a sequence to $(a_0,a_1)$ is an isomorphism: the recurrence determines every later term uniquely.\ii The left shift corresponds to $T(x,y)=(y,x+y)$. Its eigenvalues are $\lambda_\pm=(1\pm\sqrt5)/2$, with eigenvectors $(1,\lambda_\pm)$ because $\lambda_\pm^2=\lambda_\pm+1$.\ii For the Fibonacci start $(F_0,F_1)=(0,1)$, $(0,1)=((1,\lambda_+)-(1,\lambda_-))/\sqrt5$. The first coordinate after $n$ shifts is therefore $F_n=(\lambda_+^n-\lambda_-^n)/\sqrt5$.\end{steps}
-\begin{shortcuts}\ii Solve $S c=v$ once, where the columns of $S$ are eigenvectors; then replace each $c_j$ by $\lambda_j^kc_j$.\ii Distinct eigenvalues certify diagonalizability before the eigenvectors are computed.\end{shortcuts}
-\begin{trapbox}\ii A repeated eigenvalue may still allow diagonalization: $I_2$ has only eigenvalue 1 and every basis is an eigenbasis.\ii The field matters: the quarter-turn is diagonalizable over $\mathbb C$, but has no real eigenbasis.\end{trapbox}
-\section{Stochastic powers and convergence rates}
-\begin{qbox}What determines the rate of approach to a stationary distribution? For $P_\epsilon=\left(\begin{smallmatrix}1-\epsilon&\epsilon\\\epsilon&1-\epsilon\end{smallmatrix}\right)$, the difference between the two coordinates is multiplied by $1-2\epsilon$ at each step.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Chapter 12: eigenmodes and spectral gap]In an eigenbasis expansion, an eigenmode means one component $a_jv_j$. Over $\mathbb R$ or $\mathbb C$, its coefficient after $k$ iterations has modulus $|a_j|\,|\lambda_j|^k$ by Proposition 64 and multiplicativity of modulus. For nonzero $a_j$, this tends to zero if $|\lambda_j|<1$, is constant if $|\lambda_j|=1$, and tends to infinity if $|\lambda_j|>1$, by the geometric limits from Week 6 (use reciprocal for growth). For a stochastic operator with a single stationary direction and other eigenvalues of modulus less than 1, its spectral gap is $1-\max_{\lambda\ne1}|\lambda|$. If there are no other eigenvalues, take this maximum to be $0$.\end{definition*}\end{prob}
-\begin{example*}[Notes Chapter 12: the three-state chain]\begin{steps}\ii Let $P=\left(\begin{smallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{smallmatrix}\right)$, $\pi=(1/4,1/2,1/4)$, $u=(-1,0,1)$ and $w=(1,-2,1)$. Multiplication gives $P\pi=\pi$, $Pu=u/2$ and $Pw=0$.\ii These vectors form an eigenbasis because their eigenvalues $1,1/2,0$ are distinct. Solving for the initial distribution gives $e_1=\pi-u/2+w/4$.\ii For $k\ge1$, Proposition 64 gives $P^ke_1=\pi-2^{-(k+1)}u=(1/4+2^{-(k+1)},1/2,1/4-2^{-(k+1)})$.\ii The stationary component stays fixed, the 0-component becomes zero after one step, and the remaining error is halved each step. In particular $\|P^ke_1-\pi\|_1=2^{-k}$ for $k\ge1$.\end{steps}\end{example*}
-\begin{example*}[Notes Chapter 12: a bottleneck]\begin{steps}\ii For $0<\epsilon<1/2$, $P_\epsilon(1,1)=(1,1)$ and $P_\epsilon(1,-1)=(1-2\epsilon)(1,-1)$.\ii Since $e_1=\frac12(1,1)+\frac12(1,-1)$, its $k$th distribution is $\frac12(1,1)+\frac12(1-2\epsilon)^k(1,-1)$.\ii Its gap is $2\epsilon$. Small $\epsilon$ makes transitions between the two states rare and the error factor $1-2\epsilon$ close to 1, hence slow convergence.\end{steps}\end{example*}
-\begin{proposition*}[Notes Chapter 12: PageRank eigenvalues]Let $P$ be column-stochastic, $v$ a probability column and $0<\alpha<1$. Put $\mathbf1=(1,\ldots,1)^{\mathsf T}$ and $G=\alpha P+(1-\alpha)v\mathbf1^{\mathsf T}$. For the unique PageRank probability vector $r$ from Week 6, $\mathbb R^n=\mathbb Rr\oplus H$, where $H=\{x:\mathbf1^{\mathsf T}x=0\}$, $Gr=r$, and $G|_H=\alpha P|_H$. Every complex eigenvalue of the second restriction has modulus at most $\alpha$.\end{proposition*}
+\begin{definition*}[Def.~33]
+  A square matrix $A=(a_{ij})$ is \vocab{upper-triangular} if $a_{ij}=0$ whenever $i>j$. Its \vocab{diagonal} is $a_{11},\dots,a_{nn}$. It is \vocab{diagonal} if every entry off the diagonal is $0$.
+\end{definition*}
+Ex.~53: $\begin{psmallmatrix}1&2&3&4\\0&5&6&7\\0&0&8&9\\0&0&0&10\end{psmallmatrix}$ is upper-triangular with diagonal $1,5,8,10$.
 
-\begin{prob}\begin{proof}\begin{steps}\ii Column sums give $\mathbf1^{\mathsf T}P=\mathbf1^{\mathsf T}$. Thus $H$ is invariant and $Gx=\alpha Px$ on $H$, while $Gr=r$. Every $x=(\mathbf1^{\mathsf T}x)r+[x-(\mathbf1^{\mathsf T}x)r]$ has its bracket in $H$; $cr\in H$ forces $c=0$, proving directness. These equations also hold over $\mathbb C$ with the complex coordinate-sum-zero subspace.\ii If $Gx=\mu x$ for nonzero $x\in H$, then $|\mu|\|x\|_1=\|Gx\|_1=\alpha\|Px\|_1\le\alpha\|x\|_1$. Divide by $\|x\|_1>0$ to obtain $|\mu|\le\alpha$.\ii For probability starts, Week 6 already gives $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1$ directly; no eigenbasis assumption is required.\end{steps}\end{proof}\end{prob}
-\begin{fig}\begin{tikzpicture}[>=stealth]\node[draw,circle](a)at(0,0){1};\node[draw,circle](b)at(4,0){2};\draw[->,bend left=22](a)to node[above]{$\epsilon$}(b);\draw[->,bend left=22](b)to node[below]{$\epsilon$}(a);\draw[->](a)edge[loop left]node{$1-\epsilon$}(a);\draw[->](b)edge[loop right]node{$1-\epsilon$}(b);\end{tikzpicture}\figcap{The two-state matrix has probability $1-\epsilon$ of remaining in its current state when $\epsilon$ is small. Its error factor is $1-2\epsilon$.}\end{fig}
-\begin{shortcuts}\ii Subtract the stationary vector first: only the other eigenmodes remain, so their moduli determine the error rates when an eigenbasis exists.\ii The PageRank 1-norm contraction bound remains valid without diagonalization, by Week 6.\end{shortcuts}
-\begin{trapbox}\ii Stochasticity alone does not imply convergence: $\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$ alternates $e_1$ and $e_2$.\ii A small gap means slow convergence: for $\epsilon=1/100$, the nonstationary factor is $49/50$, not $1/50$.\end{trapbox}
-\section{The minimal polynomial}
-\begin{qbox}For $A=\left(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\right)$, $A^2=4A-3I$. How can we find the first such relation, determine the eigenvalues, and reduce every higher power to a combination of $I,A$?\end{qbox}
-\begin{example*}[LADR 5.20: finite dimension is necessary]\begin{steps}\ii On $\mathcal P(\mathbb C)$, define $(Tp)(x)=xp(x)$. This is linear by distributivity of polynomial multiplication.\ii For $p\ne0$, $\deg(Tp)=\deg p+1$, whereas a nonzero scalar multiple of $p$ has degree $\deg p$ and $0p=0\ne Tp$. Thus $T$ has no eigenvalue. The space is infinite-dimensional because $1,x,x^2,\ldots$ is independent by coefficient comparison.\end{steps}\end{example*}
-\begin{prob}\begin{definition*}[Notes Definition 35; LADR 5.14]For $p(x)=\sum_ja_jx^j$, put $p(T)=\sum_ja_jT^j$, with $T^0=I$. Week 6 proved $(pq)(T)=p(T)q(T)$, linearity of evaluation, and $p(T)v=p(\lambda)v$ when $Tv=\lambda v$.\end{definition*}\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 36; LADR 5.21, 5.24]A polynomial is monic if its leading coefficient is 1. For a finite-dimensional operator, its minimal polynomial $m_T$ is the monic polynomial of smallest degree satisfying $m_T(T)=0$. A nonzero polynomial $p$ satisfying $p(T)=0$ is called an annihilating polynomial. A polynomial $q$ is divisible by $p$ if $q=ph$ for a polynomial $h$. A monic polynomial splits over $F$ if it is a product of linear factors $x-\lambda_j$ with $\lambda_j\in F$. On the zero space, $I=0$ and $m_T=1$.\end{definition*}\end{prob}
-\begin{proposition*}[Existence and uniqueness in Notes Definition 36; LADR 5.22]The minimal polynomial exists and is unique. If $I,T,\ldots,T^{d-1}$ are independent and $T^d=\sum_{j<d}a_jT^j$, then $m_T(x)=x^d-\sum_{j<d}a_jx^j$.\end{proposition*}
-\begin{motive}\ii[Want.] Obtain a first polynomial relation and make it unique.\ii[Know.] Week 3 identifies $L(V)$ with $n\times n$ matrices, $n=\dim V$; the $n^2$ single-entry matrices form a basis, so $\dim L(V)=n^2$.\ii[Key step.] The first dependence has a nonzero coefficient on its last power; divide by it to solve that power in terms of the independent earlier powers. This produces a monic relation, and subtracting two monic relations cancels the last power, which explains uniqueness.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii The list $I,T,T^2,\ldots$ is dependent in $L(V)$. A nonzero relation gives an annihilating polynomial; choose its smallest possible degree and divide by its leading coefficient.\ii Two distinct monic polynomials of that degree would have a nonzero difference of smaller degree, also annihilating $T$, contradicting minimality.\ii Independence of the earlier powers rules out any smaller-degree relation, proving the stated formula. The case $V=\{0\}$ gives the constant polynomial 1.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 57]\begin{steps}\ii On nonzero $F^2$, $m_I=x-1$, since $I-I=0$ and no nonzero constant annihilates $I$.\ii For $A=\left(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\right)$, $A^2=\left(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\right)=4A-3I$. Thus $x^2-4x+3$ annihilates $A$.\ii The matrices $I,A$ are independent because $A$ is not scalar; hence $m_A=x^2-4x+3=(x-1)(x-3)$.\end{steps}\end{example*}
-\begin{proposition*}[Polynomial division; LADR 4.9]If $p\ne0$, every polynomial $q$ has a unique expression $q=ph+r$, where $r=0$ or $\deg r<\deg p$.\end{proposition*}
-\begin{motive}\ii[Want.] Reduce a polynomial relation to a smaller degree.\ii[Know.] Leading coefficients can be divided in a field.\ii[Key step.] Repeatedly cancel the leading term; the degree drops each time.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $\deg q\ge\deg p$, subtract the unique scalar multiple of $x^{\deg q-\deg p}p$ that cancels its leading term. Record that monomial in $h$.\ii Repeat until the remainder is zero or has smaller degree than $p$. The decreasing nonnegative degrees ensure termination.\ii If $ph+r=ph'+r'$, then $p(h-h')=r'-r$. A nonzero left side has degree at least $\deg p$, while the right side has smaller degree; both sides must be zero.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 65; LADR 5.29]For every polynomial $q$, $q(T)=0$ if and only if $m_T$ divides $q$.\end{proposition*}
-
-\begin{prob}\begin{proof}\begin{steps}\ii If $q=m_Th$, Week 6 polynomial multiplication gives $q(T)=m_T(T)h(T)=0$.\ii Conversely, write $q=m_Th+r$. If $q(T)=0$, then $r(T)=0$; a nonzero $r$ normalized to be monic would contradict minimality. Thus $r=0$.\end{steps}\end{proof}\end{prob}
-\input{relations.tex}
-\begin{proposition*}[Notes Proposition 66; LADR 5.27(a)--(b)]The eigenvalues of $T$ are exactly the roots of $m_T$ in the underlying field. Over $\mathbb C$, $m_T=\prod_j(x-\lambda_j)^{k_j}$ for the distinct eigenvalues $\lambda_j$ and positive integers $k_j$ (the zero-space product is empty).\end{proposition*}
-\begin{motive}\ii[Want.] Recover eigenvalues from a polynomial relation of minimal degree.\ii[Know.] Polynomials act on eigenvectors by scalar evaluation; roots give linear factors (Week 4).\ii[Key step.] Factor $m_T=(x-\lambda)q$. Minimality forces $q(T)\ne0$; choose $w$ with $q(T)w\ne0$. Then $(T-\lambda I)q(T)w=0$, explicitly producing an eigenvector.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$, so $m_T(\lambda)=0$.\ii If $m_T(\lambda)=0$, factor $m_T=(x-\lambda)q$. The smaller degree of $q$ forces $q(T)\ne0$ by minimality. Hence some $w$ has $u=q(T)w\ne0$, and $(T-\lambda I)u=m_T(T)w=0$ makes $u$ an eigenvector.
-\ii For a matrix, any nonzero column of $q(A)$ gives such a vector: it is $q(A)e_j$. For $A=\left(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\right)$ and $\lambda=3$, $q(A)=A-I=\left(\begin{smallmatrix}1&1\\1&1\end{smallmatrix}\right)$ gives eigenvector $(1,1)$.
-\ii Over $\mathbb C$, factor $m_T$ by the fundamental theorem of algebra from Week 6, whose analytic input was the cited extreme-value theorem. The preceding equivalence identifies every root as an eigenvalue, giving the product.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Relations on invariant parts; LADR 5.31 and quotient analogue]
-For invariant $U\subseteq V$, put $r=m_{T|_U}$ and $s=m_{T/U}$. Then
-\[r\mid m_T,\qquad s\mid m_T,\qquad m_T\mid rs.\]
+\begin{proposition*}[Prop.~59 / LADR 5.39]
+  Let $v_1,\dots,v_n$ be a basis of $V$. The following are equivalent:
+  \begin{enumerate}[(i)]
+    \ii the matrix of $T$ in $v_1,\dots,v_n$ is upper-triangular;
+    \ii $Tv_j\in\spn(v_1,\dots,v_j)$ for each $j$;
+    \ii $\spn(v_1,\dots,v_j)$ is invariant under $T$ for each $j$.
+  \end{enumerate}
 \end{proposition*}
-\begin{motive}\ii[Want.] Combine a relation valid only on $U$ with one valid on the quotient.
-\ii[Key step.] $s(T/U)=0$ says $s(T)v+U=U$, so $s(T)$ sends every vector into $U$. On $U$, $r(T)$ sends every vector to zero. Thus $r(T)s(T)=0$ on all of $V$. Restricting a global zero relation, or applying it to cosets, gives the opposite divisibility statements.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii For $u\in U$, $m_T(T|_U)u=m_T(T)u=0$. On a coset, $m_T(T/U)(v+U)=m_T(T)v+U=U$. Proposition 65 on the two spaces gives $r,s\mid m_T$.
-\ii For each $v$, $s(T)v\in U$ and then $r(T)s(T)v=0$. Thus $(rs)(T)=0$; Proposition 65 gives $m_T\mid rs$.
-\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Notes Proposition 67; LADR 5.22]For finite-dimensional $V$, $\deg m_T\le\dim V$.\end{proposition*}
-\begin{motive}\ii[Want.] Improve the operator-space bound $(\dim V)^2$ to $\dim V$.\ii[Know.] Vector iterates become dependent within $\dim V+1$ terms, and invariant subspaces have quotient operators (Week 5).\ii[First try.] A relation on one vector need not hold on all vectors: $(T-I)e_1=0$ for $T=\operatorname{diag}(1,2)$, but $T-I\ne0$.\ii[Key step.] Put every vector satisfying the chosen relation into $U=\ker q(T)$, which contains $v$ and is invariant. If $U\ne V$, both $U$ and $V/U$ are smaller. Their relations combine by the preceding result: the quotient relation sends vectors into $U$, then the restriction relation sends those images to zero. Their degree bounds add to $\dim U+\dim(V/U)=\dim V$.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Induct on $n=\dim V$; for $n=0$, $m_T=1$ has degree 0. For $n>0$, choose $v\ne0$. A dependence of $v,Tv,\ldots,T^nv$ gives nonzero $q$ of degree at most $n$ with $q(T)v=0$.\ii Set $U=\ker q(T)$, a nonzero invariant subspace by Week 6. If $U=V$, Proposition 65 gives $m_T\mid q$, proving the bound.\ii Otherwise, $0<\dim U<n$. Induction gives minimal polynomials $r$ for $T|_U$ and $s$ for $T/U$ with $\deg r\le\dim U$, $\deg s\le\dim(V/U)$.\ii The relations-on-parts result gives $m_T\mid rs$: the quotient relation sends vectors into $U$, then the restriction relation sends those images to zero.\ii Consequently $\deg m_T\le\deg r+\deg s\le\dim U+\dim(V/U)=n$, by Week 5.\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Example 58]\begin{steps}\ii On any nonzero space the identity has minimal polynomial $x-1$.\ii For the length-$n$ shift of Example 55, $T^n=0$ but $T^{n-1}v_n=v_1\ne0$. In fact $v_n,Tv_n,\ldots,T^{n-1}v_n$ is a basis, so no polynomial of degree below $n$ annihilates $T$; therefore $m_T=x^n$.\ii For each $1\le d\le n$, let $T$ be a length-$d$ shift on $v_1,\ldots,v_d$ and zero on the remaining basis vectors. Then $T^d=0$, while $v_d,Tv_d,\ldots,T^{d-1}v_d$ are independent. Thus $m_T=x^d$, realizing every degree. For $n=0$, $m_T=1$ has degree $0$.
-\end{steps}\end{example*}
-\method{Find the first relation among matrices}\begin{steps}\ii For $A=\left(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\right)$, try $A=aI$: the off-diagonal entry 1 makes this impossible.\ii Next solve $A^2=aI+bA$ entrywise. Off-diagonal entries give $b=4$, then diagonal entries give $a=-3$. The first relation yields $m_A=x^2-4x+3$.\end{steps}
-\begin{prob}\begin{definition*}[LADR 5B: cyclic vector]A vector $v$ is cyclic for $T$ on an $n$-dimensional space if $v,Tv,\ldots,T^{n-1}v$ is a basis.\end{definition*}\end{prob}
-\begin{proposition*}[LADR 5B: cyclic-vector computation]If $v,Tv,\ldots,T^{n-1}v$ is a basis and $T^nv=-\sum_{j<n}a_jT^jv$, then $m_T=x^n+\sum_{j<n}a_jx^j$.\end{proposition*}
+\begin{ideabox}
+Column $j$ of the matrix lists the coordinates of $Tv_j$: $Tv_j=a_{1j}v_1+\dots+a_{nj}v_n$. ``Upper-triangular'' says the entries of column $j$ below row $j$ are $0$, which is the statement that $Tv_j$ uses only $v_1,\dots,v_j$. So the proposition only translates a statement about zeros in a matrix into a statement about where basis vectors are sent.
 
-\begin{prob}\begin{proof}\begin{steps}\ii For the displayed polynomial $p$, $p(T)v=0$, hence $p(T)T^jv=T^jp(T)v=0$ for every basis vector. Thus $p(T)=0$.\ii No lower-degree nonzero polynomial can annihilate $v$, by independence of the basis iterates. Therefore no such polynomial annihilates $T$ and $p=m_T$.\end{steps}\end{proof}\end{prob}
-\begin{example*}[LADR 5.26, 5.28]Over $\mathbb C$, let $C=\left(\begin{smallmatrix}0&0&0&0&-3\\1&0&0&0&6\\0&1&0&0&0\\0&0&1&0&0\\0&0&0&1&0\end{smallmatrix}\right)$, $e_1,Ce_1,\ldots,C^4e_1=e_1,e_2,\ldots,e_5$ and $C^5e_1=-3e_1+6Ce_1$. The cyclic computation gives $m_C=x^5-6x+3$. Its eigenvalues are its roots by Proposition 66, approximately $-1.67$, $0.51$, $1.40$, $-0.12\pm1.59i$. No root is expressible by arithmetic and radicals over $\mathbb Q$ (a cited result from algebra, beyond this course); the defining polynomial still determines them exactly.\end{example*}
-\input{computations.tex}
-\begin{shortcuts}\ii A cyclic vector turns minimal-polynomial computation into one vector relation, because the relation propagates to its basis iterates.\ii For inverses, isolate the nonzero constant term in $m_T(T)=0$.\ii A root must belong to the chosen field to be an eigenvalue; apply Proposition 66 over that field.\end{shortcuts}
-\begin{trapbox}\ii An arbitrary annihilating polynomial can have extra roots: $(x-1)(x-2)$ annihilates $I$, but 2 is not its eigenvalue.\ii A relation on one vector need not be a global relation: for $T=\operatorname{diag}(1,2)$, $(T-I)e_1=0$ but $T-I\ne0$.\ii The zero-space convention matters: its minimal polynomial is 1, rather than $x-1$.\end{trapbox}
-\section{Distinct roots and diagonalization}
-\begin{qbox}Can a polynomial relation certify an eigenbasis without finding eigenvectors? If $T^2=I$ over $\mathbb C$, then the annihilating polynomial $(x-1)(x+1)$ has distinct roots.\end{qbox}
-\begin{proposition*}[Notes Proposition 68; LADR 5.62]An operator is diagonalizable over $F$ if and only if its minimal polynomial splits into distinct linear factors over $F$. For the zero space, the empty product 1 satisfies this criterion.\end{proposition*}
-\begin{motive}\ii[Want.] Convert a polynomial relation into an eigenspace decomposition.\ii[Know.] Proposition 65 characterizes annihilating polynomials and Proposition 62 tests diagonalization.\ii[Key step.] In $m_T(T)=0$, omit $T-\lambda_jI$ from the product. The remaining product sends every vector into $E(\lambda_j,T)$, because multiplying its output by $T-\lambda_jI$ gives zero. Divide by its nonzero scalar value at $\lambda_j$ so it is identity on that eigenspace. The normalized polynomials add to $1$, giving the full decomposition.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii The zero space has an empty eigenbasis and $m_T=1$, so assume $V\ne\{0\}$. If $T$ has an eigenbasis, let $\lambda_1,\ldots,\lambda_r$ be its distinct eigenvalues. The product $p=\prod_j(x-\lambda_j)$ annihilates every eigenvector, hence $T$. Thus $m_T\mid p$ by Proposition 65, and Proposition 66 ensures all these roots occur in $m_T$; monicity gives $m_T=p$.\ii Conversely suppose $m_T=\prod_j(x-\lambda_j)$ with distinct roots. Define $p_j(x)=\prod_{k\ne j}(x-\lambda_k)/(\lambda_j-\lambda_k)$.\ii The polynomial $\sum_jp_j-1$ has degree at most $r-1$ and vanishes at the $r$ roots, so it is zero by the Week 4 root bound. Hence $\sum_jp_j(T)=I$.\ii Since $(x-\lambda_j)p_j$ is a scalar multiple of $m_T$, its evaluation is zero. Thus $p_j(T)v\in E(\lambda_j,T)$ for each $v$.\ii Every $v=\sum_jp_j(T)v$ therefore belongs to the sum of eigenspaces. Proposition 62 proves diagonalizability. The zero-space case follows from its empty eigenbasis.\end{steps}\end{proof}\end{prob}
-\input{interpolation.tex}
-\begin{prob}\begin{definition*}[Notes Chapter 13: repeated roots and greatest common divisor]A root $\lambda$ has multiplicity $k$ if $p=(x-\lambda)^kq$ and $q(\lambda)\ne0$. A polynomial is squarefree if no root is repeated over $\mathbb C$. For $p=\sum_ja_jx^j$, its formal derivative is $p'=\sum_{j\ge1}ja_jx^{j-1}$. The monic greatest common divisor $\gcd(p,q)$ divides both polynomials and is divisible by every common divisor.\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 13: derivative test]For a nonconstant complex polynomial $p$, its roots are distinct if and only if $\gcd(p,p')=1$. Thus over $\mathbb C$, $T$ is diagonalizable exactly when $\gcd(m_T,m_T')=1$ (with the constant case automatic).\end{proposition*}
-\begin{motive}\ii[Want.] Test repeated roots without solving the polynomial.\ii[Know.] Week 6 factors complex polynomials into linear factors; division gives the Euclidean algorithm.\ii[Key step.] Differentiate a root factorization and track whether the root remains.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii If $p=(x-\lambda)^kq$ with $q(\lambda)\ne0$, then $p'=k(x-\lambda)^{k-1}q+(x-\lambda)^kq'$. For $k=1$, $p'(\lambda)=q(\lambda)\ne0$; for $k>1$, $p'(\lambda)=0$.\ii Hence common roots of $p,p'$ are exactly repeated roots. A nonconstant common factor has a root by Week 6, so there are no common roots exactly when the monic gcd is 1.\ii Compute the gcd by repeated polynomial division: replacing $(p,q)$ by $(q,p-hq)$ preserves common divisors; degree decreases until a zero remainder, whose predecessor normalized to be monic is the gcd. Apply Proposition 68.\end{steps}\end{proof}\end{prob}
+For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $Ne_1=0$ and $Ne_2=e_1$. Each basis vector is sent to a combination of itself and earlier ones, never to a later one.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (i)$\Rightarrow$(ii): $Tv_j=a_{1j}v_1+\dots+a_{nj}v_n$, and $a_{ij}=0$ for $i>j$, so $Tv_j=a_{1j}v_1+\dots+a_{jj}v_j$.
+    \ii (ii)$\Rightarrow$(iii): for $i\le j$, $Tv_i\in\spn(v_1,\dots,v_i)\subseteq\spn(v_1,\dots,v_j)$. So $T$ sends each of $v_1,\dots,v_j$, and hence their span, into $\spn(v_1,\dots,v_j)$.
+    \ii (iii)$\Rightarrow$(i): $Tv_j\in\spn(v_1,\dots,v_j)$, so in $Tv_j=a_{1j}v_1+\dots+a_{nj}v_n$ the coefficients $a_{j+1,j},\dots,a_{nj}$ are $0$ (coordinates in a basis are unique).
+  \end{steps}
+\end{proof}
 
-\input{gcd-worked.tex}
-\begin{example*}[Notes Example 59]Over $\mathbb C$, suppose $T^n=I$ for a positive integer $n$.\begin{steps}\ii Proposition 65 gives $m_T\mid x^n-1$. The derivative of $x^n-1$ is $nx^{n-1}$; its only possible root is 0, which is not a root of $x^n-1$.\ii The derivative test therefore gives distinct roots for $x^n-1$, hence for its divisor $m_T$. Proposition 68 gives an eigenbasis.\end{steps}\end{example*}
+\begin{proposition*}[Prop.~60 / LADR 5.41]
+  If $T$ has an upper-triangular matrix in some basis, the eigenvalues of $T$ are exactly the diagonal entries of that matrix.
+\end{proposition*}
+\begin{ideabox}
+$\lambda$ is an eigenvalue exactly when $T-\lambda I$ is not injective (T7). The matrix of $T-\lambda I$ is again upper-triangular, with diagonal entries $\lambda_k-\lambda$. So the question is: when is an upper-triangular matrix injective?
 
-\begin{example*}[Notes Example 60; LADR 5.65]If $T$ is diagonalizable and $U$ invariant, then $T|_U$ and $T/U$ are diagonalizable.\begin{steps}\ii Their minimal polynomials divide $m_T$, by the restriction and quotient result already proved. Proposition 68 gives distinct linear factors for $m_T$.\ii Each divisor is again a product of distinct linear factors (remove a subset of those factors). Apply Proposition 68 on each space.\end{steps}\end{example*}
-\method{Apply the derivative test to a companion matrix (LADR 5.60)}\begin{steps}\ii For the previous companion matrix, $p=x^5-6x+3$ and $p'=5x^4-6$. If $p(z)=p'(z)=0$, then $z^4=6/5$ and $p(z)=-(24/5)z+3=0$, so $z=5/8$.\ii But $(5/8)^4=625/4096\ne6/5$ since $3125\ne24576$. Thus no common root exists, and the matrix is diagonalizable over $\mathbb C$. This gives an exact justification without relying on approximate roots.\end{steps}
-\method{Detect a repeated factor (LADR 5.61)}\begin{steps}\ii Over $\mathbb R$ or $\mathbb C$, for $B=\left(\begin{smallmatrix}6&3&4\\0&6&2\\0&0&7\end{smallmatrix}\right)$, the eigenvalues are 6 and 7. Proposition 67 bounds $\deg m_B\le3$, and Proposition 66 requires both roots.\ii Compute $(B-6I)(B-7I)=\left(\begin{smallmatrix}0&-3&6\\0&0&0\\0&0&0\end{smallmatrix}\right)\ne0$, whereas $(B-6I)^2(B-7I)=0$. Hence Proposition 65 gives $m_B=(x-6)^2(x-7)$, and Proposition 68 rules out diagonalization.\end{steps}
-\begin{shortcuts}\ii Use the Euclidean algorithm on $m_T,m_T'$ over $\mathbb C$ to avoid computing roots.\ii If an annihilating polynomial splits into distinct factors, so does $m_T$ by divisibility, immediately proving diagonalizability.\end{shortcuts}
-\begin{trapbox}\ii Squarefree alone is insufficient over $\mathbb R$: $x^2+1$ is squarefree but does not split, and the quarter-turn is not diagonalizable over $\mathbb R$.\ii An annihilating polynomial with repeated roots does not rule out an eigenbasis: $(x-1)^2$ annihilates $I$. The criterion concerns the minimal polynomial.\end{trapbox}
-\section{Further eigenvalue tests from the textbook}
-\begin{qbox}Can one guarantee or locate eigenvalues without solving their polynomial? Every real operator in odd dimension has a real eigenvalue, and a matrix's row sizes bound where its eigenvalues can lie.\end{qbox}
-\begin{proposition*}[LADR 5.33: even quadratic kernel]For an operator $T$ on a finite-dimensional real space and real $b,c$ with $b^2<4c$, the dimension of $\ker(T^2+bT+cI)$ is even.\end{proposition*}
-\begin{motive}\ii[Want.] Prove a parity restriction using invariant subspaces.\ii[Know.] $x^2+bx+c=(x+b/2)^2+c-b^2/4$ has no real root.\ii[Key step.] The quadratic relation gives $T^2w=-bTw-cw$, so $\operatorname{span}(w,Tw)$ is invariant. No real root means no invariant line; this span has dimension $2$. If an even-dimensional invariant subspace is not all of the kernel, adjoining such a span adds two dimensions: an intersection of dimension $1$ would be an invariant line. Repeat until the kernel is exhausted.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Restrict $T$ to $K=\ker(T^2+bT+cI)$, invariant by Week 6. On $K$, $T^2+bT+cI=0$, so no nonzero vector is a real eigenvector, by substitution and positivity of the quadratic.\ii Choose an invariant subspace $U\subseteq K$ of largest even dimension; 0 is available and dimensions are bounded integers. If $w\in K\setminus U$, the space $W=\operatorname{span}(w,Tw)$ is invariant because $T^2w=-bTw-cw$, and has dimension 2 because $w$ is not an eigenvector.\ii Since $T(U\cap W)\subseteq T(U)\cap T(W)\subseteq U\cap W$, the intersection is invariant. It cannot have dimension 1 (that would be an invariant line), or 2 (then $w\in U$). Thus it is zero.\ii Then $U+W$ is invariant of even dimension $\dim U+2$, contradicting maximality. Therefore $U=K$ and $\dim K$ is even.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[Real polynomial factorization; LADR 4.16]Every nonconstant real polynomial is a product of a nonzero real constant, real linear factors, and real quadratic factors with negative discriminant.\end{proposition*}
+Try $\begin{psmallmatrix}2&5\\0&3\end{psmallmatrix}\begin{psmallmatrix}x\\y\end{psmallmatrix}=0$. The bottom row says $3y=0$, so $y=0$; then the top row says $2x=0$, so $x=0$. Each row, read from the bottom up, forces one more coordinate to be $0$, as long as the diagonal entry in that row is not $0$. So a nonzero diagonal gives an injective matrix.
 
-\begin{prob}\begin{proof}\begin{steps}\ii For real coefficients, conjugating the finite sum gives $\overline{p(z)}=p(\overline z)$. Thus nonreal roots occur in conjugate pairs, with the same multiplicity, by conjugating their factorization.\ii For $z=a+bi$ with $b\ne0$, the pair contributes $(x-z)(x-\overline z)=x^2-2ax+a^2+b^2$, whose discriminant is $-4b^2<0$.\ii Group these pairs and retain the real roots as linear factors in the complex factorization from Week 6. The leading real coefficient is the remaining constant.\end{steps}\end{proof}\end{prob}
-\begin{proposition*}[LADR 5.34: odd-dimensional real operators]Every operator on a real vector space of positive odd finite dimension has an eigenvalue.\end{proposition*}
-\begin{motive}\ii[Want.] Force a real eigenvalue even though a real polynomial need not have a real root.\ii[Know.] Real factorization gives linear or irreducible quadratic factors; the preceding result gives even quadratic-kernel dimension.\ii[Key step.] Choose the range of the quadratic factor: rank--nullity makes its dimension the odd number $\dim V$ minus an even kernel dimension. Minimality makes that range proper, since an onto quadratic factor would leave a smaller polynomial relation on all of $V$. It is therefore a smaller positive odd-dimensional invariant space where induction applies.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Induct on odd $n$. For $n=1$, every operator is scalar. If $m_T$ has a real linear factor, Proposition 66 gives an eigenvalue.\ii Otherwise real factorization supplies $m_T=qh$ with $q=x^2+bx+c$, $b^2<4c$. Put $W=\im q(T)$, invariant by Week 6.\ii If $W=V$, $h(T)q(T)=0$ would imply $h(T)=0$, contradicting minimality. Thus $W$ is proper.\ii Rank-nullity and the even-kernel result give $\dim W=n-\dim\ker q(T)$ odd, hence positive. It is less than $n$, so induction gives a real eigenvector of $T|_W$, also one of $T$.\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[LADR 5.66: Gershgorin disks]For $F=\mathbb R$ or $\mathbb C$ and a matrix $A\in F^{n\times n}$, its $i$th Gershgorin disk is $D_i=\{z\in F:|z-a_{ii}|\le\sum_{j\ne i}|a_{ij}|\}$. Over $\mathbb R$ these sets are intervals; to locate all complex eigenvalues of a real matrix, regard that matrix over $\mathbb C$.\end{definition*}\end{prob}
-\begin{proposition*}[LADR 5.67: Gershgorin disk theorem]Every eigenvalue of $A$ lies in $\bigcup_iD_i$.\end{proposition*}
-\begin{motive}\ii[Want.] Locate eigenvalues from row entries.\ii[Know.] An eigenvector has a coordinate of maximum nonzero modulus.\ii[Key step.] The row equation contains unknown ratios $x_j/x_i$. Choose $|x_i|$ largest so each ratio has modulus at most $1$; dividing by this nonzero coordinate then leaves a bound involving only the row entries.\end{motive}
-\begin{prob}\begin{proof}\begin{steps}\ii Choose an eigenvector $x\ne0$ and an index $i$ with $|x_i|=\max_j|x_j|>0$. The $i$th row gives $(\lambda-a_{ii})x_i=\sum_{j\ne i}a_{ij}x_j$.\ii The triangle inequality yields $|\lambda-a_{ii}|\le\sum_{j\ne i}|a_{ij}|\,|x_j|/|x_i|\le\sum_{j\ne i}|a_{ij}|$. Thus $\lambda\in D_i$.\end{steps}\end{proof}\end{prob}
-\method{Bound eigenvalues by row sizes}\begin{steps}\ii For $A=\left(\begin{smallmatrix}2&1&0\\0&5&3\\0&0&8\end{smallmatrix}\right)$, the three disks have centers $2,5,8$ and radii $1,3,0$. Thus each eigenvalue belongs to $\{|z-2|\le1\}\cup\{|z-5|\le3\}\cup\{8\}$.\ii The triangular test gives the actual eigenvalues $2,5,8$, and each lies in the stated union. Gershgorin provides bounds for matrices that are not triangular as well.\end{steps}
-\begin{fig}\begin{tikzpicture}[x=.65cm,y=.65cm,>=stealth,font=\small]
-\draw[->,gray](-.3,0)--(9,0)node[right]{$\operatorname{Re}z$};\draw[->,gray](0,-3.4)--(0,3.5)node[above]{$\operatorname{Im}z$};
-\draw[blue,thick](2,0)circle(1);\draw[red,thick](5,0)circle(3);
-\fill[blue](2,0)circle(2pt);\fill[red](5,0)circle(2pt);\fill[OliveGreen](8,0)circle(2pt);
-\node[below]at(2,0){$2$};\node[below]at(5,0){$5$};\node[below right]at(8,0){$8$};
-\node[blue]at(2,1.5){$D_1:\ r=1$};\node[red]at(5,3.4){$D_2:\ r=3$};\node[OliveGreen]at(8,1.1){$D_3=\{8\}$};
+If instead some diagonal entry is $0$, say in position $j$, then $v_j$ is sent into $\spn(v_1,\dots,v_{j-1})$. So $j$ independent vectors $v_1,\dots,v_j$ are all sent into a space of dimension $j-1$, and that cannot be injective.
+\end{ideabox}
+\begin{proof}
+  Let $\lambda_1,\dots,\lambda_n$ be the diagonal entries, in the basis $v_1,\dots,v_n$. Then $\MM(T-\lambda I)$ is upper-triangular with diagonal entries $\lambda_k-\lambda$.
+  \begin{steps}
+    \ii \emph{If $\lambda\ne\lambda_k$ for all $k$, then $T-\lambda I$ is injective.} Suppose $(T-\lambda I)v=0$ with $v=c_1v_1+\dots+c_nv_n$. Only $(T-\lambda I)v_n$ has a $v_n$-component, and it is $(\lambda_n-\lambda)v_n$. So the $v_n$-coefficient of $(T-\lambda I)v$ is $(\lambda_n-\lambda)c_n$, which must be $0$; hence $c_n=0$.
+    \ii Now $v=c_1v_1+\dots+c_{n-1}v_{n-1}$, and the same argument with $v_{n-1}$ gives $c_{n-1}=0$. Continuing, every $c_k=0$. So $\lambda$ is not an eigenvalue.
+    \ii \emph{If $\lambda=\lambda_j$, then $T-\lambda I$ is not injective.} For $i<j$, $(T-\lambda I)v_i\in\spn(v_1,\dots,v_i)$ (Prop.~59). And $(T-\lambda I)v_j\in\spn(v_1,\dots,v_{j-1})$, because its $v_j$-coefficient is $\lambda_j-\lambda=0$.
+    \ii So $T-\lambda I$ maps the $j$-dimensional space $\spn(v_1,\dots,v_j)$ into the $(j-1)$-dimensional space $\spn(v_1,\dots,v_{j-1})$. By (T1) this restriction has a nonzero null space. So $\lambda$ is an eigenvalue.
+  \end{steps}
+\end{proof}
+\begin{example*}[Ex.~54]
+  Differentiation $D$ on $\PP_3(\RR)$ in the basis $1,x,x^2,x^3$ has matrix $\begin{psmallmatrix}0&1&0&0\\0&0&2&0\\0&0&0&3\\0&0&0&0\end{psmallmatrix}$, since $Dx^k=kx^{k-1}$. It is upper-triangular with diagonal $0,0,0,0$, so the only eigenvalue is $0$. Each basis vector is sent to a multiple of the previous one: $x^3\mapsto3x^2\mapsto6x\mapsto6\mapsto0$.
+\end{example*}
+
+\begin{theorem*}[Prop.~61 / LADR 5.47]
+  If $V$ is a finite-dimensional complex vector space, every $T\in\LL(V)$ has an upper-triangular matrix in some basis.
+\end{theorem*}
+\begin{ideabox}
+By Prop.~59 we need a basis in which each $Tv_k$ lies in the span of $v_k$ and the earlier vectors. Induction suggests: find a smaller invariant subspace $U$, take such a basis of $U$ (induction), and then add more vectors. The added vectors $v$ must satisfy $Tv\in U+\spn(v)$.
+
+Which $U$ makes that automatic? Write $Tv=(T-\lambda I)v+\lambda v$. The second term is a multiple of $v$. The first term lies in $\range(T-\lambda I)$, whatever $v$ is. So take $U=\range(T-\lambda I)$: then \emph{every} vector $v$ satisfies $Tv\in U+\spn(v)$.
+
+For induction $U$ has to be smaller than $V$, i.e.\ $T-\lambda I$ must not be surjective, which for operators is the same as not injective (T2). That is exactly the condition that $\lambda$ is an eigenvalue. Over $\CC$ an eigenvalue exists (T7); this is the only place $\CC$ is used.
+\end{ideabox}
+\begin{proof}
+  Induction on $n=\dim V$; for $n=1$ every matrix is upper-triangular.
+  \begin{steps}
+    \ii Take an eigenvalue $\lambda$ of $T$ (T7) and let $U=\range(T-\lambda I)$. $U$ is invariant under $T$ (T5). $T-\lambda I$ is not injective, so it is not surjective (T2), so $\dim U<n$.
+    \ii By induction there is a basis $u_1,\dots,u_m$ of $U$ in which $T|_U$ is upper-triangular: $Tu_i\in\spn(u_1,\dots,u_i)$.
+    \ii Extend to a basis $u_1,\dots,u_m,v_1,\dots,v_k$ of $V$. Then $Tv_j=(T-\lambda I)v_j+\lambda v_j$, with $(T-\lambda I)v_j\in U=\spn(u_1,\dots,u_m)$. So $Tv_j\in\spn(u_1,\dots,u_m,v_1,\dots,v_j)$.
+    \ii By Prop.~59 (ii)$\Rightarrow$(i), the matrix of $T$ in this basis is upper-triangular.
+  \end{steps}
+\end{proof}
+\begin{itemize}
+  \ii Over $\RR$ this can fail. In an upper-triangular basis, $Tv_1\in\spn(v_1)$, so $v_1$ is an eigenvector. The rotation $\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ of $\RR^2$ has no eigenvector, so it has no upper-triangular matrix over $\RR$.
+\end{itemize}
+
+\subsection{Diagonalizable operators (Ch.~12.2)}
+
+\begin{qbox}
+  When is there a basis in which $T$ only rescales each basis vector?
+  \begin{itemize}
+    \ii $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$: $A(1,1)=3(1,1)$ and $A(1,-1)=(1,-1)$. In the basis $(1,1),(1,-1)$ the matrix is $\begin{psmallmatrix}3&0\\0&1\end{psmallmatrix}$.
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: every eigenvector is a multiple of $e_1$, so there are not enough eigenvectors for a basis.
+  \end{itemize}
+\end{qbox}
+
+\begin{definition*}[Def.~34 / LADR 5.50]
+  $T$ is \vocab{diagonalizable} if its matrix in some basis of $V$ is diagonal. A basis of $V$ consisting of eigenvectors of $T$ is an \vocab{eigenbasis}. The \vocab{geometric multiplicity} of $\lambda$ is $\dim E(\lambda,T)=\dim\nul(T-\lambda I)$; it is $0$ when $\lambda$ is not an eigenvalue.
+\end{definition*}
+
+\begin{theorem*}[Prop.~62 / LADR 5.55]
+  Let $\lambda_1,\dots,\lambda_m$ be the distinct eigenvalues of $T$. The following are equivalent:
+  \begin{enumerate}[(i)]
+    \ii $T$ is diagonalizable;
+    \ii $V$ has a basis of eigenvectors of $T$;
+    \ii $V=E(\lambda_1,T)\oplus\dots\oplus E(\lambda_m,T)$;
+    \ii $\dim V=\dim E(\lambda_1,T)+\dots+\dim E(\lambda_m,T)$.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+(i) and (ii) say the same thing: column $j$ of the matrix is the coordinates of $Tv_j$, and that column is $0$ except for the entry $\lambda$ in row $j$ exactly when $Tv_j=\lambda v_j$.
+
+The content is in (iii) and (iv). The eigenspaces for different eigenvalues never overlap: their sum is always direct, because eigenvectors for distinct eigenvalues are independent (T7). So eigenspaces never give \emph{too many} vectors. The only way to fail is to give \emph{too few}, and that is a question of counting dimensions. That is why the single number in (iv) decides diagonalizability.
+
+For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: the only eigenvalue is $0$ and $\dim E(0,N)=1<2$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (i)$\iff$(ii): the matrix in $v_1,\dots,v_n$ is diagonal with entries $\mu_1,\dots,\mu_n$ exactly when $Tv_j=\mu_jv_j$ for every $j$, i.e.\ when every $v_j$ is an eigenvector.
+    \ii \emph{The sum $E(\lambda_1,T)+\dots+E(\lambda_m,T)$ is always direct.} Suppose $u_1+\dots+u_m=0$ with $u_i\in E(\lambda_i,T)$. The nonzero $u_i$ are eigenvectors for distinct eigenvalues, so they are independent (T7); a sum of independent vectors is not $0$. So there are no nonzero $u_i$.
+    \ii (ii)$\Rightarrow$(iii): each vector of an eigenbasis lies in some $E(\lambda_i,T)$, so the sum of the eigenspaces contains a basis of $V$ and equals $V$. It is direct by step 2.
+    \ii (iii)$\Rightarrow$(iv): the dimension of a direct sum is the sum of the dimensions.
+    \ii (iv)$\Rightarrow$(iii): by step 2 the sum of the eigenspaces is direct, so its dimension is $\sum\dim E(\lambda_i,T)=\dim V$. A subspace of full dimension is $V$ (T3).
+    \ii (iii)$\Rightarrow$(ii): choose a basis of each $E(\lambda_i,T)$. Because the sum is direct, together they form a basis of $V$, and every vector in it is an eigenvector.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Ex.~55: an operator that is not diagonalizable]
+  Let $Tv_1=0$ and $Tv_k=v_{k-1}$ for $k\ge2$, with $n\ge2$. The matrix is upper-triangular with zero diagonal, so the only eigenvalue is $0$ (Prop.~60). $\nul T=\spn(v_1)$: if $T(\sum c_kv_k)=\sum_{k\ge2}c_kv_{k-1}=0$, then $c_2=\dots=c_n=0$. So $\sum_\lambda\dim E(\lambda,T)=1\ne n$, and $T$ is not diagonalizable by (iv).
+\end{example*}
+
+\begin{proposition*}[Prop.~63 / LADR 5.58]
+  If $T$ has $n=\dim V$ distinct eigenvalues, then $T$ is diagonalizable.
+\end{proposition*}
+\begin{proof}
+  Choose an eigenvector $v_i$ for each eigenvalue $\lambda_i$. They are independent (T7), and there are $n$ of them, so they form a basis (T3). It is an eigenbasis.
+\end{proof}
+\begin{itemize}
+  \ii The condition is sufficient, not necessary: $I$ has one eigenvalue and is diagonal.
+  \ii Ex.~56: diagonalizability depends on the field. $\begin{psmallmatrix}1&2\\2&3\end{psmallmatrix}$ has eigenvalues $2\pm\sqrt5$ (the roots of $x^2-4x-1$), so it is diagonalizable over $\RR$; over $\mathbb Q$ it has no eigenvalues. $\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ has eigenvalues $\pm i$, so it is diagonalizable over $\CC$ but not over $\RR$.
+\end{itemize}
+
+\method{Deciding diagonalizability and diagonalizing a matrix $A$.}
+\begin{steps}
+  \ii Find the eigenvalues $\lambda_i$ (for a triangular matrix, the diagonal entries).
+  \ii For each, $\dim E(\lambda_i,A)=n-\operatorname{rank}(A-\lambda_iI)$ (T1). $A$ is diagonalizable exactly when these add up to $n$ (Prop.~62).
+  \ii If so, find a basis of each $\nul(A-\lambda_iI)$ and put all these vectors as the columns of $S$. Then $S^{-1}AS=D$ is diagonal, with the eigenvalues in the same order as the columns (T9).
+\end{steps}
+\begin{example*}
+  $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$. $A-3I=\begin{psmallmatrix}-1&1\\1&-1\end{psmallmatrix}$ has null space $\spn((1,1))$; $A-I=\begin{psmallmatrix}1&1\\1&1\end{psmallmatrix}$ has null space $\spn((1,-1))$. Dimensions $1+1=2$. With $S=\begin{psmallmatrix}1&1\\1&-1\end{psmallmatrix}$: $S^{-1}AS=\begin{psmallmatrix}3&0\\0&1\end{psmallmatrix}$, and $A^k=S\begin{psmallmatrix}3^k&0\\0&1\end{psmallmatrix}S^{-1}$.
+\end{example*}
+
+\subsection{Iteration and eigenmodes (Ch.~12.3)}
+
+\begin{proposition*}[Prop.~64: iteration in an eigenbasis]
+  If $v_1,\dots,v_n$ is an eigenbasis with $Tv_j=\lambda_jv_j$ and $v=a_1v_1+\dots+a_nv_n$, then $T^kv=a_1\lambda_1^kv_1+\dots+a_n\lambda_n^kv_n$ for every $k\ge0$.
+\end{proposition*}
+\begin{proof}
+  $T^kv_j=\lambda_j^kv_j$ by induction on $k$; apply $T^k$ to $v$ term by term.
+\end{proof}
+The notes call each $a_jv_j$ an \vocab{eigenmode}. Under repeated application of $T$, a mode with $|\lambda_j|<1$ shrinks to $0$, one with $|\lambda_j|=1$ keeps its size, and one with $|\lambda_j|>1$ grows.
+
+\begin{example*}[Markov chain]
+  $P=\begin{psmallmatrix}1/2&1/4&0\\1/2&1/2&1/2\\0&1/4&1/2\end{psmallmatrix}$, $\pi=\begin{psmallmatrix}1/4\\1/2\\1/4\end{psmallmatrix}$, $u=\begin{psmallmatrix}-1\\0\\1\end{psmallmatrix}$, $w=\begin{psmallmatrix}1\\-2\\1\end{psmallmatrix}$.
+  \begin{steps}
+    \ii Multiplying: $P\pi=\pi$, $Pu=\frac12u$, $Pw=0$. So $\pi,u,w$ is an eigenbasis with eigenvalues $1,\frac12,0$.
+    \ii The start $p_0=(1,0,0)$ is $\pi-\frac12u+\frac14w$ (check the first coordinate: $\frac14+\frac12+\frac14=1$).
+    \ii By Prop.~64, for $k\ge1$: $P^kp_0=\pi-\frac12\cdot\frac1{2^k}u+0=\pi-2^{-(k+1)}u$.
+    \ii So $P^kp_0\to\pi$, and the distance to $\pi$ halves at every step. The eigenvalue $1$ gives the limit; the next largest eigenvalue, $\frac12$, gives the speed.
+  \end{steps}
+\end{example*}
+\begin{itemize}
+  \ii \textbf{Spectral gap.} $P_\varepsilon=\begin{psmallmatrix}1-\varepsilon&\varepsilon\\\varepsilon&1-\varepsilon\end{psmallmatrix}$, $0<\varepsilon<\frac12$, has eigenvectors $(1,1)$ and $(1,-1)$ with eigenvalues $1$ and $1-2\varepsilon$. So $P_\varepsilon^k(1,-1)=(1-2\varepsilon)^k(1,-1)$. When $\varepsilon$ is small (moving between the two states is rare), $1-2\varepsilon$ is close to $1$ and the starting state is forgotten slowly. The number $1-(1-2\varepsilon)=2\varepsilon$ is the \vocab{spectral gap}.
+  \ii \textbf{PageRank} (Week 6): $\RR^n=\spn(r)\oplus H$ with $Gr=r$ and $Gx=\alpha Px$ for $x\in H$. If $x\in H$ is an eigenvector of $P$ with eigenvalue $\lambda$, then $Gx=\alpha\lambda x$. Every eigenvalue of $P$ has modulus $\le1$, so these eigenvalues of $G$ have modulus $\le\alpha$: every mode other than $r$ shrinks by at least the factor $\alpha$ per step.
+\end{itemize}
+\begin{example*}[Fibonacci numbers, LADR 5D Exercise 21]
+  $F_0=0$, $F_1=1$, $F_{k+1}=F_k+F_{k-1}$. Let $T(x,y)=(y,x+y)$, so $T(F_{k-1},F_k)=(F_k,F_{k+1})$ and $T^k(0,1)=(F_k,F_{k+1})$.
+  \begin{steps}
+    \ii $T(1,\lambda)=(\lambda,1+\lambda)$ equals $\lambda(1,\lambda)$ exactly when $\lambda^2=\lambda+1$: $\varphi=\frac{1+\sqrt5}2$ and $\psi=\frac{1-\sqrt5}2$. Two distinct eigenvalues, so $(1,\varphi),(1,\psi)$ is an eigenbasis (Prop.~63).
+    \ii $(0,1)=\frac1{\sqrt5}\bigl((1,\varphi)-(1,\psi)\bigr)$, since $\varphi-\psi=\sqrt5$.
+    \ii By Prop.~64, $T^k(0,1)=\frac1{\sqrt5}\bigl(\varphi^k(1,\varphi)-\psi^k(1,\psi)\bigr)$. First coordinate: $F_k=\dfrac{\varphi^k-\psi^k}{\sqrt5}$.
+  \end{steps}
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Triangular matrix}: the eigenvalues are the diagonal entries (Prop.~60). No computation.
+  \ii \textbf{$n$ distinct eigenvalues}: diagonalizable (Prop.~63). A triangular matrix with distinct diagonal entries is diagonalizable.
+  \ii \textbf{One eigenvalue only}: then $T$ is diagonalizable exactly when $T=\lambda I$ (a diagonal matrix with every diagonal entry $\lambda$ is $\lambda I$). So a triangular matrix with constant diagonal that is not $\lambda I$ is not diagonalizable.
+  \ii \textbf{Dimension of an eigenspace by rank}: $\dim E(\lambda,A)=n-\operatorname{rank}(A-\lambda I)$.
+  \ii \textbf{Powers}: write $v$ in an eigenbasis and multiply each coefficient by $\lambda_j^k$ (Prop.~64); or $A^k=SD^kS^{-1}$.
+\end{shortcuts}
+\begin{trapbox}
+  \ii Repeated diagonal entries decide nothing by themselves: $I$ and $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ both have diagonal $1,1$; the first is diagonalizable, the second is not.
+  \ii Upper-triangular is not the same as diagonalizable. Every complex operator has an upper-triangular matrix; not every one has a diagonal matrix.
+  \ii Over $\RR$ an operator may have no upper-triangular matrix at all (rotation).
+  \ii Diagonalizability depends on the field (Ex.~56).
+  \ii The eigenvalues are the diagonal entries only for a \emph{triangular} matrix: $\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}$ has diagonal $0,0$ but eigenvalues $\pm1$.
+\end{trapbox}
+
+
+
+\subsection{Minimal polynomial (Ch.~13)}
+
+\begin{qbox}
+  Powers of $T$ cannot stay independent forever, so some nonzero polynomial kills $T$. The one of smallest degree tells you the eigenvalues of $T$ and whether $T$ is diagonalizable.
+  \begin{itemize}
+    \ii $T=\begin{psmallmatrix}2&0\\0&3\end{psmallmatrix}$: $(T-2I)(T-3I)=0$, and no polynomial of degree $1$ kills $T$, since $T$ is not a multiple of $I$. The roots $2,3$ are the eigenvalues.
+    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $N^2=0$ but $N\ne0$, so the smallest polynomial is $x^2$. Its repeated root is what stops $N$ from being diagonalizable.
+  \end{itemize}
+\end{qbox}
+
+\begin{definition*}[Def.~35, 36 / LADR 5.14, 5.22, 5.24]
+  For $p(x)=a_mx^m+\dots+a_1x+a_0$, $p(T)=a_mT^m+\dots+a_1T+a_0I$. Let $k$ be the smallest index with $T^k\in\spn(I,T,\dots,T^{k-1})$, and write $T^k=a_{k-1}T^{k-1}+\dots+a_0I$. The \vocab{minimal polynomial} of $T$ is $m_T(x)=x^k-a_{k-1}x^{k-1}-\dots-a_0$. (The notes call it $p$.)
+\end{definition*}
+\begin{itemize}
+  \ii $k$ exists: $\LL(V)$ has dimension $n^2$ (operators are $n\times n$ matrices), so the $n^2+1$ operators $I,T,\dots,T^{n^2}$ are dependent. Solving a dependence for the highest power with a nonzero coefficient puts that power in the span of the lower ones.
+  \ii $I,T,\dots,T^{k-1}$ are independent, by the same argument: a dependence among them would put some $T^j$ with $j<k$ in the span of lower powers. So the $a_i$ are unique.
+  \ii Shorthand used below: $q$ \emph{kills} $T$ means $q(T)=0$; an operator $S$ \emph{kills} $v$ means $Sv=0$.
+  \ii $m_T$ is monic and $m_T(T)=0$. No nonzero polynomial of degree $<k$ kills $T$, since it would be a dependence among $I,\dots,T^{k-1}$. So $m_T$ is the unique monic polynomial of least degree that kills $T$ (two of them would differ by a nonzero polynomial of lower degree that kills $T$).
+  \ii Ex.~57: $m_I=x-1$. For $T=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$, $I,T$ are independent and $T^2=\begin{psmallmatrix}5&4\\4&5\end{psmallmatrix}=4T-3I$, so $m_T=x^2-4x+3=(x-1)(x-3)$.
+\end{itemize}
+
+\begin{proposition*}[Prop.~65 / LADR 5.29]
+  For $q\in\PP(\FF)$: $q(T)=0\iff m_T\mid q$.
+\end{proposition*}
+\begin{ideabox}
+To show: Every polynomial that kills $T$ is a multiple of $m_T$.
+
+$m_T$ has the smallest degree among nonzero polynomials that kill $T$. Polynomials can be divided with remainder, and the remainder has smaller degree than the divisor.
+
+Divide $q$ by $m_T$. The remainder kills $T$ too, and its degree is too small for it to be nonzero.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $q=m_Tr$, then $q(T)=m_T(T)r(T)=0$ (T5).
+    \ii If $q(T)=0$, divide: $q=m_Tr+s$ with $s=0$ or $\deg s<\deg m_T$. Then $s(T)=q(T)-m_T(T)r(T)=0$.
+    \ii A nonzero $s$ of degree $<\deg m_T$ cannot kill $T$. So $s=0$ and $m_T\mid q$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~66 / LADR 5.27]
+  The eigenvalues of $T$ are exactly the roots of $m_T$ in $\FF$. If $m_T=(x-\lambda)s$, then $s(T)\ne0$, and every nonzero vector $s(T)w$ is an eigenvector for $\lambda$.
+\end{proposition*}
+\begin{ideabox}
+To show: $m_T(\lambda)=0$ for each eigenvalue $\lambda$.
+
+On an eigenvector, a polynomial in $T$ acts as the number $p(\lambda)$ (T7). Apply this to $m_T$, which is $0$ as an operator.
+
+To show: An eigenvector for a root $\lambda$, i.e.\ a nonzero vector killed by $T-\lambda I$.
+
+Factor $m_T=(x-\lambda)s$. Then $(T-\lambda I)s(T)=m_T(T)=0$, so $T-\lambda I$ kills every vector of the form $s(T)w$. Such a vector can be chosen nonzero because $s$ has smaller degree than $m_T$, so $s(T)\ne0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$, so $m_T(\lambda)=0$.
+    \ii If $m_T(\lambda)=0$, write $m_T=(x-\lambda)s$ (T6). Since $\deg s<\deg m_T$, $s(T)\ne0$; pick $w$ with $s(T)w\ne0$.
+    \ii $(T-\lambda I)\bigl(s(T)w\bigr)=m_T(T)w=0$, so $s(T)w$ is an eigenvector for $\lambda$.
+  \end{steps}
+  The notes argue the second half by contradiction: if $T-\lambda I$ were invertible, multiplying $0=s(T)(T-\lambda I)$ by $(T-\lambda I)^{-1}$ would give $s(T)=0$.
+\end{proof}
+
+\begin{proposition*}[Prop.~67 / LADR 5.22]
+  $\deg m_T\le n$.
+\end{proposition*}
+\begin{ideabox}
+To show: Some polynomial of degree $\le n$ that kills $T$. Then $m_T$ divides it (Prop.~65).
+
+For one vector $v\ne0$, the $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $q(T)v=0$ for some $q\ne0$ of degree $\le n$. This kills $v$, but not necessarily all of $V$.
+
+The obvious first attempt: Do this for each basis vector and multiply the $q$'s. The product kills $T$, but its degree can be about $n^2$.
+
+Induction on $\dim V$. $U=\nul q(T)$ is invariant and contains $v$. If $U\ne V$, both $U$ and $V/U$ are smaller than $V$. By induction, a polynomial $r$ of degree $\le\dim U$ kills $T$ on $U$, and a polynomial $p$ of degree $\le\dim V/U$ kills $T/U$, which means $p(T)$ sends $V$ into $U$. So $r(T)p(T)$ kills $V$, and its degree is $\le\dim U+\dim V/U=n$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii If $\dim V=1$, $T=cI$ and $m_T=x-c$. In general, fix $v\ne0$ and $q\ne0$ with $\deg q\le n$ and $q(T)v=0$. $U=\nul q(T)$ is invariant (T5).
+    \ii If $q(T)=0$, then $m_T\mid q$, so $\deg m_T\le n$.
+    \ii Otherwise $0<\dim U<n$. By induction, $r=m_{T|_U}$ has $\deg r\le\dim U$ and $p=m_{T/U}$ has $\deg p\le\dim V/U$ (T10).
+    \ii For $v\in V$: $p(T)v+U=p(T/U)(v+U)=0+U$, so $p(T)v\in U$, so $r(T)p(T)v=0$. Hence $m_T\mid rp$, and $\deg(rp)\le\dim U+\dim V/U=n$ (T10).
+  \end{steps}
+\end{proof}
+\needspace{7\baselineskip}\textbf{Second proof (LADR 5.22), without quotient spaces.} Same plan, with $\range q(T)$ in place of $V/U$. Induction on $n$.
+\begin{steps}
+  \ii Fix $v\ne0$ and let $q$ be the monic polynomial of least degree $d$ with $q(T)v=0$; $d\ge1$ since $v\ne0$.
+  \ii $v,Tv,\dots,T^{d-1}v$ are independent (a dependence would be a smaller polynomial killing $v$), and they lie in $\nul q(T)$, because $q(T)T^jv=T^jq(T)v=0$. So $\dim\nul q(T)\ge d$.
+  \ii $W=\range q(T)$ is invariant (T5) and $\dim W\le n-d<n$ (T1). By induction some $s$ of degree $\le n-d$ kills $T|_W$.
+  \ii For every $u$: $q(T)u\in W$, so $s(T)q(T)u=0$. So $sq$ kills $T$, and $\deg(sq)\le n$.
+\end{steps}
+\begin{itemize}
+  \ii Ex.~58: every degree from $1$ to $n$ occurs.
+  \begin{itemize}
+    \ii $m_I=x-1$ in every dimension.
+    \ii The shift $N$ ($Ne_1=0$, $Ne_j=e_{j-1}$) has $m_N=x^n$, since $N^{n-1}e_n=e_1\ne0$ and $N^n=0$.
+    \ii Degree $k$, $1\le k\le n$: let $Ne_1=0$, $Ne_j=e_{j-1}$ for $2\le j\le k$, $Ne_j=0$ for $j>k$. Then $N^k=0$ and $N^{k-1}e_k=e_1\ne0$, so $m_N=x^k$.
+  \end{itemize}
+\end{itemize}
+
+\begin{proposition*}[Prop.~68 / LADR 5.62]
+  $T$ is diagonalizable $\iff m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ with $\lambda_1,\dots,\lambda_m\in\FF$ distinct.
+\end{proposition*}
+\begin{ideabox}
+To show: $\prod_i(T-\lambda_iI)=0$, where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues.
+
+On an eigenvector for $\lambda_j$, the factor $T-\lambda_jI$ gives $0$, and the factors commute, so let that factor act first. There is an eigenbasis, so the product kills $V$. Then $m_T$ divides $\prod(x-\lambda_i)$ and contains every $x-\lambda_i$ (Prop.~66), so it equals it.
+
+To show: Write every $v$ as a sum of eigenvectors.
+
+$(T-\lambda_jI)\prod_{i\ne j}(T-\lambda_iI)=m_T(T)=0$. So every vector of the form $\prod_{i\ne j}(T-\lambda_iI)w$ is in $E(\lambda_j,T)$. This is how to produce eigenvectors.
+
+Scale these so that they add up to $v$. The polynomial $g_j(x)=\prod_{i\ne j}\frac{x-\lambda_i}{\lambda_j-\lambda_i}$ is $1$ at $\lambda_j$ and $0$ at the other $\lambda_i$. Then $\sum_jg_j-1$ has degree $<m$ and $m$ roots, so $\sum_jg_j=1$. Apply both sides to $v$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii ($\Rightarrow$) Let $v_1,\dots,v_n$ be an eigenbasis, $Tv_k=\mu v_k$ with $\mu$ one of the $\lambda_i$. Letting the factor $T-\mu I$ act first, $\prod_i(T-\lambda_iI)v_k=0$ for every $k$ (T5). So $m_T\mid\prod_i(x-\lambda_i)$ (Prop.~65). Each $\lambda_i$ is a root of $m_T$ (Prop.~66), so $m_T=\prod_i(x-\lambda_i)$.
+    \ii ($\Leftarrow$) Define $g_j$ as above. $\sum_jg_j-1$ has degree $\le m-1$ and vanishes at the $m$ points $\lambda_1,\dots,\lambda_m$. A nonzero polynomial of degree $\le m-1$ has at most $m-1$ roots (each root splits off a factor, T6), so $\sum_jg_j=1$.
+    \ii For $v\in V$: $v=\sum_jg_j(T)v$, and $(T-\lambda_jI)g_j(T)v=c_j\,m_T(T)v=0$, where $c_j=\prod_{i\ne j}(\lambda_j-\lambda_i)^{-1}$. So $g_j(T)v\in E(\lambda_j,T)$.
+    \ii So $V=E(\lambda_1,T)+\dots+E(\lambda_m,T)$. This sum is direct (T7), so bases of the eigenspaces together form an eigenbasis.
+  \end{steps}
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}
+\begin{axis}[width=8.6cm,height=5.2cm,xmin=0.6,xmax=3.4,ymin=-1.1,ymax=1.8,axis lines=left,
+  xtick={1,2,3},xticklabels={$\lambda_1=1$,$\lambda_2=2$,$\lambda_3=3$},ytick={0,1},
+  domain=0.6:3.4,samples=80,legend style={font=\small,draw=none,at={(1.03,1)},anchor=north west},legend cell align=left]
+  \addplot[blue,thick] {(x-2)*(x-3)/2}; \addlegendentry{$g_1$}
+  \addplot[red,thick] {-(x-1)*(x-3)}; \addlegendentry{$g_2$}
+  \addplot[OliveGreen,thick] {(x-1)*(x-2)/2}; \addlegendentry{$g_3$}
+  \addplot[black,dashed,thick] {1}; \addlegendentry{$g_1+g_2+g_3$}
+  \addplot[gray,thin] {0};
+  \addplot[only marks,mark=*,mark size=1.6pt,black] coordinates {(1,1) (2,1) (3,1) (1,0) (2,0) (3,0)};
+\end{axis}
 \end{tikzpicture}
-\figcap{The row bounds for the displayed matrix give disks centered at $2,5,8$ with radii $1,3,0$. All three actual eigenvalues lie in the union. Most points of the disks are not eigenvalues; the theorem gives a region to search.}
+\figcap{$g_j$ is $1$ at $\lambda_j$ and $0$ at the other eigenvalues, and $g_1+g_2+g_3=1$. Applying $1=\sum g_j$ to $T$ writes $v=\sum g_j(T)v$, and each $g_j(T)v$ lies in $E(\lambda_j,T)$ (Prop.~68). The same $g_j(T)$ are the projections of F9.}
 \end{fig}
-\begin{shortcuts}\ii A real odd-dimensional operator has a real eigenvalue without any root calculation, by the parity proof.\ii Gershgorin bounds require only diagonal entries and sums of off-diagonal absolute values.\end{shortcuts}
-\begin{trapbox}\ii Even real dimension need not give a real eigenvalue: the quarter-turn on $\mathbb R^2$ has none.\ii Disk membership alone does not characterize eigenvalues: $\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$ has unit disks containing 0, but its only eigenvalues are $\pm1$.\end{trapbox}
+\needspace{7\baselineskip}\textbf{Second proof of ($\Leftarrow$), the one in the notes.} Instead of splitting $v$ into all its eigenvector pieces at once, split off the $\lambda_1$-piece and use induction for the rest. Let $g=\prod_{i\ge2}(x-\lambda_i)$, so $m_T=(x-\lambda_1)g$ and $g(\lambda_1)\ne0$.
+\begin{steps}
+  \ii Dividing by $x-\lambda_1$ leaves the remainder $g(\lambda_1)$ (T6): $g=(x-\lambda_1)q+g(\lambda_1)$.
+  \ii For $v\in V$ let $u=g(T)v/g(\lambda_1)$. Then $(T-\lambda_1I)u=m_T(T)v/g(\lambda_1)=0$, so $u\in\nul(T-\lambda_1I)$, and $v-u=-(T-\lambda_1I)q(T)v/g(\lambda_1)\in\range(T-\lambda_1I)$.
+  \ii So $V=\nul(T-\lambda_1I)+\range(T-\lambda_1I)$. The two dimensions add up to $n$ (T1), so the intersection is $0$ (last item of T3) and the sum is direct.
+  \ii $\range(T-\lambda_1I)$ is invariant, smaller than $V$ (since $\nul(T-\lambda_1I)\ne0$: $\lambda_1$ is an eigenvalue by Prop.~66), and its minimal polynomial divides $m_T$ (F3), so it again has distinct linear factors. By induction $T$ restricted to it has an eigenbasis; add a basis of $E(\lambda_1,T)$.
+\end{steps}
+
+
+\subsubsection*{More facts about $m_T$}
+Throughout, write $m_T=x^d+c_{d-1}x^{d-1}+\dots+c_1x+c_0$.
+
+\begin{proposition*}[F1: invertibility, HW7 P3]
+  $T$ is invertible $\iff c_0\ne0$. In that case $T^{-1}=-\dfrac1{c_0}\bigl(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I\bigr)$, a polynomial in $T$.
+\end{proposition*}
+\begin{ideabox}
+To show: $T^{-1}$ written with powers of $T$.
+
+$m_T(T)=0$, and every term of $m_T(T)$ except $c_0I$ contains a factor $T$.
+
+Move $c_0I$ to the other side and factor out $T$. That gives $T\cdot(\text{something})=-c_0I$, so $\frac{-1}{c_0}(\text{something})$ is the inverse.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $c_0=m_T(0)$. By Prop.~66, $c_0=0\iff0$ is an eigenvalue $\iff T$ is not injective (T7) $\iff T$ is not invertible (T2).
+    \ii If $c_0\ne0$: $m_T(T)=0$ says $T^d+c_{d-1}T^{d-1}+\dots+c_1T=-c_0I$.
+    \ii Factor $T$ out of the left side: $T\bigl(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I\bigr)=-c_0I$. Divide by $-c_0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F2: degree one, M4]
+  If $V\ne\{0\}$: $\deg m_T=1\iff T=cI$ for some $c\in\FF$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii ($\Rightarrow$) $m_T=x-c$ and $m_T(T)=0$ say $T-cI=0$.
+    \ii ($\Leftarrow$) $x-c$ kills $cI$. No polynomial of degree $0$ does: a nonzero constant $a$ gives $aI\ne0$ since $V\ne\{0\}$. So $m_{cI}=x-c$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F3: restrictions and quotients, Ex.~60]
+  Let $U$ be $T$-invariant.
+  \begin{enumerate}[(a)]
+    \ii $m_{T|_U}\mid m_T$ and $m_{T/U}\mid m_T$.
+    \ii A monic divisor of a product $(x-\lambda_1)\cdots(x-\lambda_m)$ of distinct linear factors is the product of some of those factors.
+    \ii So if $T$ is diagonalizable, so are $T|_U$ and $T/U$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii For $u\in U$: $m_T(T|_U)u=m_T(T)u=0$. So $m_T$ kills $T|_U$, and $m_{T|_U}\mid m_T$ by Prop.~65 applied to $T|_U$.
+    \ii For $v+U\in V/U$: $m_T(T/U)(v+U)=m_T(T)v+U=0+U$ (T10). So $m_{T/U}\mid m_T$.
+  \end{steps}
+  (b) Let $s$ be the monic divisor, $st=\prod_{i=1}^m(x-\lambda_i)$.
+  \begin{steps}
+    \ii Each $\lambda_i$ makes the product $0$, so it is a root of $s$ or of $t$. Let $S$ be the set of $\lambda_i$ that are roots of $s$, and $R$ the remaining $\lambda_i$ (roots of $t$).
+    \ii Distinct roots split off one factor each (T6), so $\prod_{\lambda\in S}(x-\lambda)$ divides $s$ and $\prod_{\lambda\in R}(x-\lambda)$ divides $t$. Hence $\deg s\ge|S|$ and $\deg t\ge|R|$.
+    \ii But $\deg s+\deg t=m=|S|+|R|$, so both are equalities. A monic $s$ divisible by a monic polynomial of the same degree equals it: $s=\prod_{\lambda\in S}(x-\lambda)$.
+  \end{steps}
+  (c) $m_T$ is a product of distinct linear factors (Prop.~68). By (a) and (b), so are $m_{T|_U}$ and $m_{T/U}$. Apply Prop.~68 again.
+\end{proof}
+
+\begin{proposition*}[F4: direct sums, block diagonal matrices]
+  If $V=U_1\oplus\dots\oplus U_r$ with every $U_i$ invariant, then $m_T=\operatorname{lcm}\bigl(m_{T|_{U_1}},\dots,m_{T|_{U_r}}\bigr)$. For a block diagonal matrix, $m$ is the lcm of the minimal polynomials of the blocks.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Write $v=u_1+\dots+u_r$ with $u_i\in U_i$. Then $q(T)v=\sum_iq(T|_{U_i})u_i$, so $q(T)=0\iff q(T|_{U_i})=0$ for every $i$.
+    \ii By Prop.~65, that holds $\iff$ every $m_{T|_{U_i}}$ divides $q$.
+    \ii So $m_T$ is the monic polynomial of least degree divisible by all the $m_{T|_{U_i}}$: their lcm. The blocks of the matrix are the matrices of the $T|_{U_i}$ (T8).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F5: similarity, transpose, dual]
+  Similar matrices have the same minimal polynomial. Also $m_{A^{\mathsf T}}=m_A$ and $m_{T'}=m_T$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii $(S^{-1}AS)^k=S^{-1}A^kS$ (the inner factors $SS^{-1}$ cancel), so $p(S^{-1}AS)=S^{-1}p(A)S$. This is $0$ exactly when $p(A)=0$. So the same polynomials kill both, and the minimal polynomials agree.
+    \ii $(A^{\mathsf T})^k=(A^k)^{\mathsf T}$, so $p(A^{\mathsf T})=p(A)^{\mathsf T}$, which is $0$ exactly when $p(A)=0$.
+    \ii In dual bases, $\MM(T')=\MM(T)^{\mathsf T}$; apply step 2.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F6: shifts, scalings, inverses, HW7 P4, M5]
+  With $d=\deg m_T$:
+  \begin{enumerate}[(a)]
+    \ii $m_{T-\lambda I}(x)=m_T(x+\lambda)$;
+    \ii $m_{cT}(x)=c^d\,m_T(x/c)$ for $c\ne0$;
+    \ii if $T$ is invertible, $m_{T^{-1}}(x)=\frac1{c_0}x^dm_T(1/x)$, i.e.\ reverse the list of coefficients of $m_T$ and divide by $c_0$.
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+To show: The minimal polynomial of a new operator built from $T$.
+
+A polynomial in the new operator is a polynomial in $T$ after a substitution: $q(T-\lambda I)$ is $r(T)$ with $r(x)=q(x-\lambda)$.
+
+The substitution can be undone and does not change degrees. So it matches the polynomials that kill the new operator with the polynomials that kill $T$, and the one of least degree goes to the one of least degree.
+\end{ideabox}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii For any $q$, $q(T-\lambda I)=r(T)$ with $r(x)=q(x-\lambda)$.
+    \ii So $q$ kills $T-\lambda I$ $\iff m_T(x)\mid q(x-\lambda)$ (Prop.~65) $\iff m_T(x+\lambda)\mid q(x)$ (replace $x$ by $x+\lambda$ throughout).
+    \ii $m_T(x+\lambda)$ is monic, so it is $m_{T-\lambda I}$.
+  \end{steps}
+  (b) The same three steps with $r(x)=q(cx)$: $q$ kills $cT\iff m_T(x/c)\mid q(x)$. Multiply $m_T(x/c)$ by $c^d$ to make it monic.
+
+  (c)
+  \begin{steps}
+    \ii Let $r(x)=\frac1{c_0}x^dm_T(1/x)=\frac1{c_0}\bigl(c_0x^d+c_1x^{d-1}+\dots+c_{d-1}x+1\bigr)$. It is monic of degree $d$ ($c_0\ne0$ by F1).
+    \ii $r(T^{-1})=\frac1{c_0}\bigl(c_0T^{-d}+c_1T^{-(d-1)}+\dots+I\bigr)=\frac1{c_0}T^{-d}m_T(T)=0$. So $m_{T^{-1}}\mid r$ and $\deg m_{T^{-1}}\le d$.
+    \ii The same argument with $T^{-1}$ in place of $T$ (its inverse is $T$) gives $d\le\deg m_{T^{-1}}$.
+    \ii So $m_{T^{-1}}$ divides $r$ and has the same degree; both are monic, so they are equal.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F7: one vector at a time]
+  For $v\in V$, let $p_v$ be the monic polynomial of least degree with $p_v(T)v=0$.
+  \begin{enumerate}[(a)]
+    \ii $q(T)v=0\iff p_v\mid q$. In particular $p_v\mid m_T$.
+    \ii For a basis $v_1,\dots,v_n$: $m_T=\operatorname{lcm}(p_{v_1},\dots,p_{v_n})$.
+    \ii If $v,Tv,\dots,T^{n-1}v$ is a basis ($v$ is a \vocab{cyclic vector}), then $m_T=p_v$, which has degree $n$.
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+To show: $m_T$ from computations with single vectors, which are cheaper than powers of a matrix.
+
+Polynomials that kill one vector behave like polynomials that kill $T$: the division argument of Prop.~65 works the same way. An operator that is $0$ on a basis is $0$.
+
+Killing $T$ means killing every basis vector, i.e.\ being divisible by every $p_{v_i}$. The least such polynomial is the lcm.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (a) Divide: $q=p_vs+r$ with $\deg r<\deg p_v$ or $r=0$. If $q(T)v=0$, then $r(T)v=q(T)v-s(T)p_v(T)v=0$, so $r=0$ by minimality of $p_v$. Since $m_T(T)v=0$, $p_v\mid m_T$.
+    \ii (b) Let $L$ be the lcm. Each $p_{v_i}\mid L$, so $L(T)v_i=0$ by (a); $L(T)$ is $0$ on a basis, so $L(T)=0$ and $m_T\mid L$.
+    \ii Each $p_{v_i}\mid m_T$ by (a), so $L\mid m_T$. Both are monic, so $L=m_T$.
+    \ii (c) $v,\dots,T^{n-1}v$ are independent, so no nonzero polynomial of degree $<n$ kills $v$: $\deg p_v\ge n$. Also $p_v\mid m_T$ and $\deg m_T\le n$ (Prop.~67). So $m_T=p_v$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F8: real versus complex]
+  For a real matrix $A$, $m_A$ is the same over $\RR$ and over $\CC$. So $A$ is diagonalizable over $\CC$ $\iff m_A$ has distinct roots, and diagonalizable over $\RR$ $\iff$ in addition every root is real.
+\end{proposition*}
+\begin{ideabox}
+To show: Computing over $\CC$ cannot give a different answer than over $\RR$.
+
+Def.~36 finds $m_A$ by solving linear equations whose coefficients are entries of powers of $A$, all real. Solving linear equations never leaves the real numbers.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii For each $k$, ``$A^k=a_{k-1}A^{k-1}+\dots+a_0I$'' is a system of $n^2$ linear equations in $a_0,\dots,a_{k-1}$ with real coefficients.
+    \ii Row reduction uses only $+,-,\times,\div$ of real numbers, so the system has a complex solution iff it has a real one.
+    \ii So the first solvable $k$ is the same over $\RR$ and $\CC$, and the solution is unique (Def.~36), hence real. So $m_A$ is the same.
+    \ii The consequences are Prop.~68 over each field: over $\RR$ the linear factors must have real roots.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F9: projections onto eigenspaces, HW7 P7]
+  If $m_T=\prod_{i=1}^m(x-\lambda_i)$ with distinct roots, then $g_j(T)$, with $g_j$ as in Prop.~68, is the projection onto $E(\lambda_j,T)$ along $\bigoplus_{i\ne j}E(\lambda_i,T)$.
+\end{proposition*}
+\begin{proof}
+  On $E(\lambda_i,T)$, $g_j(T)$ acts as the number $g_j(\lambda_i)$ (T7), which is $1$ for $i=j$ and $0$ for $i\ne j$. Since $V=\bigoplus_iE(\lambda_i,T)$, $g_j(T)(v_1+\dots+v_m)=v_j$.
+\end{proof}
+
+\begin{proposition*}[F10: repeated roots, Ex.~59]
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is a repeated root of $p$ $\iff p(\lambda)=p'(\lambda)=0$.
+    \ii The common roots of $p$ and $p'$ are the roots of $\gcd(p,p')$, which the Euclidean algorithm finds without factoring $p$.
+    \ii Over $\CC$, if $T^k=I$ for some $k\ge1$, then $T$ is diagonalizable.
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+To show: A test for repeated roots that does not need the roots.
+
+From calculus: at a double root the graph touches the axis, so the value and the slope are both $0$.
+
+The product rule turns this into algebra: differentiating $(x-\lambda)^2q$ leaves a factor $x-\lambda$.
+\end{ideabox}
+\begin{proof}
+  (a)
+  \begin{steps}
+    \ii If $p=(x-\lambda)^2q$, then $p'=2(x-\lambda)q+(x-\lambda)^2q'$, which is $0$ at $\lambda$.
+    \ii Conversely, if $p(\lambda)=0$, write $p=(x-\lambda)q$ (T6). Then $p'=q+(x-\lambda)q'$, so $p'(\lambda)=q(\lambda)$. If this is $0$, then $(x-\lambda)\mid q$, so $(x-\lambda)^2\mid p$.
+  \end{steps}
+  (b) Divide $p$ by $p'$, then $p'$ by the remainder, and so on. Each remainder is (previous dividend) $-$ (quotient)(previous divisor), so a common root of $p,p'$ is a root of every remainder, in particular of the last nonzero one, $g=\gcd(p,p')$. Conversely, $g$ divides $p$ and $p'$ (work back up the divisions).
+
+  Example: $p=x^3-3x+2$, $p'=3x^2-3$. Then $p=\frac x3\,p'+(-2x+2)$, and $p'=-\frac32(x+1)\cdot(-2x+2)$ with remainder $0$. So $g$ is a multiple of $x-1$, and $1$ is a double root: $p=(x-1)^2(x+2)$.
+
+  (c)
+  \begin{steps}
+    \ii $T^k=I$ means $x^k-1$ kills $T$, so $m_T\mid x^k-1$.
+    \ii $(x^k-1)'=kx^{k-1}$ has only the root $0$, which is not a root of $x^k-1$. By (a), $x^k-1$ has no repeated root, so it is a product of $k$ distinct linear factors.
+    \ii $m_T$ is a monic divisor of it, so it is a product of distinct linear factors (F3(b)). Prop.~68.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F11: odd dimension, LADR 5B]
+  Every operator on an odd-dimensional real vector space has an eigenvalue.
+\end{proposition*}
+\begin{ideabox}
+To show: A real eigenvalue, i.e.\ a real root of $m_T$ (Prop.~66).
+
+Over $\RR$ there may be none: the rotation of $\RR^2$ has $m=x^2+1$. But $\RR^2$ has even dimension.
+
+Plan: Show that ``no real root'' forces the dimension to be even, in three steps. (A) A real polynomial with no real root is a product of quadratics $x^2+bx+c$ with $b^2<4c$. (B) For such a quadratic $p$, $\dim\nul p(T)$ is even: each nonzero $u$ in it comes with $Tu$, and $\spn(u,Tu)$ is $2$-dimensional. (C) Split off $\nul p(T)$ and use induction on the dimension.
+\end{ideabox}
+\needspace{7\baselineskip}\textbf{Step A: real polynomials.} A real polynomial is a product of real linear factors and real quadratics $x^2+bx+c$ with $b^2<4c$.
+\begin{steps}
+  \ii For real $p$, $p(\bar z)=\overline{p(z)}$, so if $z$ is a non-real root, so is $\bar z$.
+  \ii $q=(x-z)(x-\bar z)=x^2-2(\operatorname{Re}z)x+|z|^2$ is real, and $b^2-4c=-4(\operatorname{Im}z)^2<0$.
+  \ii Divide over $\RR$: $p=qs+r$ with $\deg r<2$. Then $r(z)=r(\bar z)=0$, and a polynomial of degree $<2$ with two roots is $0$. So $p=qs$ with $s$ real. Real roots split off real linear factors (T6). Repeat on $s$ (induction on the degree).
+\end{steps}
+\needspace{7\baselineskip}\textbf{Step B: if $b^2<4c$ and $p=x^2+bx+c$, then $\dim\nul p(T)$ is even.} Induction on $\dim\nul p(T)$; let $U=\nul p(T)$, which is invariant (T5).
+\begin{steps}
+  \ii $T|_U$ has no eigenvalue: $Tu=\lambda u$ with $u\in U$, $u\ne0$, gives $0=p(T)u=p(\lambda)u$, but $p(\lambda)=(\lambda+\frac b2)^2+c-\frac{b^2}4>0$.
+  \ii If $U=0$, its dimension $0$ is even. Otherwise pick $u\in U$, $u\ne0$, and let $W=\spn(u,Tu)$. It has dimension $2$, since $u$ is not an eigenvector. It is invariant, since $T(Tu)=-bTu-cu$.
+  \ii The quotient operator $S=T|_U/W$ on $U/W$ satisfies $p(S)=0$ (T10), so $\nul p(S)$ is all of $U/W$, of dimension $\dim U-2$. By induction this is even, so $\dim U$ is even.
+\end{steps}
+\needspace{7\baselineskip}\textbf{Step C: proof of F11.} Induction on the odd number $n=\dim V$; $n=1$ is clear.
+\begin{steps}
+  \ii Suppose $T$ has no eigenvalue. Then $m_T$ has no real root (Prop.~66), so by Step A, $m_T=ps$ with $p=x^2+bx+c$, $b^2<4c$.
+  \ii $s(T)\ne0$ (smaller degree than $m_T$), so some $w$ has $s(T)w\ne0$, and $p(T)\bigl(s(T)w\bigr)=0$. So $\nul p(T)\ne0$, and its dimension is even by Step B.
+  \ii $W=\range p(T)$ is invariant, and $\dim W=n-\dim\nul p(T)$ is odd and less than $n$ (T1). $T|_W$ has no eigenvalue, because an eigenvector of $T|_W$ is one of $T$. This contradicts the induction hypothesis.
+\end{steps}
+
+
+\subsubsection*{Computing $m_T$}
+Over $\CC$, or whenever $m_T$ splits into linear factors, $m_T=\prod_i(x-\lambda_i)^{k_i}$, where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues (Prop.~66), every $k_i\ge1$, and $\sum_ik_i\le n$ (Prop.~67). So the work is finding the eigenvalues and then the exponents. Use whichever method below needs the least computation.
+
+\method{Method 1: from the definition.} Compute $I,A,A^2,\dots$ and stop at the first power that is a combination of the earlier ones. Best for $2\times2$ matrices or when powers are easy.
+\begin{example*}
+  $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$ is not a multiple of $I$, so $I,A$ are independent. $A^2=\begin{psmallmatrix}4&5\\0&9\end{psmallmatrix}$. Solve $A^2=aA+bI$ entry by entry: entry $(1,2)$ gives $a=5$; entry $(1,1)$ gives $4=2a+b$, so $b=-6$; entry $(2,2)$ checks: $9=3a+b$. So $m_A=x^2-5x+6=(x-2)(x-3)$.
+\end{example*}
+
+\method{Method 2: eigenvalues, then test candidates.} Find the eigenvalues (for a triangular matrix, the diagonal entries, Prop.~60). The candidates are $\prod_i(x-\lambda_i)^{k_i}$ with every $k_i\ge1$ and $\sum k_i\le n$. Test them in increasing degree; the first one that kills $A$ is $m_A$. Reason: $m_A$ is one of the candidates, and any candidate $q$ with $q(A)=0$ is a multiple of $m_A$ (Prop.~65), so $\deg q>\deg m_A$ unless $q=m_A$.
+\begin{example*}
+  $A=\begin{psmallmatrix}3&1&1\\0&3&1\\0&0&1\end{psmallmatrix}$ has eigenvalues $3,3,1$. Candidates: degree $2$: $(x-3)(x-1)$; degree $3$: $(x-3)^2(x-1)$ and $(x-3)(x-1)^2$. $(A-3I)(A-I)=\begin{psmallmatrix}0&2&1\\0&0&0\\0&0&0\end{psmallmatrix}\ne0$, and $(A-3I)^2(A-I)=0$. So $m_A=(x-3)^2(x-1)$, and $A$ is not diagonalizable.
+
+  $B=\begin{psmallmatrix}1&0&1\\0&1&0\\0&0&2\end{psmallmatrix}$ has eigenvalues $1,1,2$, and $(B-I)(B-2I)=0$. So $m_B=(x-1)(x-2)$, and $B$ is diagonalizable although it is not diagonal.
+\end{example*}
+
+\method{Method 3: blocks.} For a block diagonal matrix, $m$ is the lcm of the blocks' minimal polynomials (F4). For a block upper-triangular matrix $A=\begin{psmallmatrix}B&*\\0&C\end{psmallmatrix}$: $m_B\mid m_A$, $m_C\mid m_A$ and $m_A\mid m_Bm_C$. So if $m_B$ and $m_C$ have no common root, $m_A=m_Bm_C$.
+\why{\begin{steps}
+  \ii The first block of basis vectors spans an invariant subspace $U$ with $B=\MM(T|_U)$. $C$ is the matrix of $T/U$ in the cosets of the remaining basis vectors.
+  \ii $m_B\mid m_A$ and $m_C\mid m_A$ by F3(a). $m_A\mid m_Bm_C$ by step 4 of the proof of Prop.~67, which shows that $m_{T|_U}m_{T/U}$ kills $T$.
+  \ii ``No common root'' means no common root in $\CC$. Over $\CC$, $m_A=\prod(x-\lambda)^{e_\lambda}$, and each monic divisor of it is $\prod(x-\lambda)^{b_\lambda}$ with $b_\lambda\le e_\lambda$ (its roots are roots of $m_A$; divide out one factor at a time, T6).
+  \ii So $m_B$ and $m_C$ are such products over disjoint sets of $\lambda$'s, and their product divides $m_A$.
+\end{steps}}
+\begin{itemize}
+  \ii $A=\begin{psmallmatrix}1&-2&0&0\\1&-1&0&0\\0&0&2&0\\0&0&0&2\end{psmallmatrix}$: the first block $R$ has $R^2=-I$ and is not a multiple of $I$, so $m_R=x^2+1$; the block $2I$ has $m=x-2$. So $m_A=(x-2)(x^2+1)$. Over $\CC$ the roots $2,\pm i$ are distinct, so $A$ is diagonalizable over $\CC$; over $\RR$ it is not, since $\pm i\notin\RR$ (F8).
+  \ii The matrix $A$ of Method 2 is $\begin{psmallmatrix}B&*\\0&1\end{psmallmatrix}$ with $B=\begin{psmallmatrix}3&1\\0&3\end{psmallmatrix}$, $m_B=(x-3)^2$. The roots $3$ and $1$ differ, so $m_A=(x-3)^2(x-1)$ with no matrix multiplication.
+\end{itemize}
+
+\method{Method 4: follow one vector (F7).} Compute $v,Av,A^2v,\dots$ until the first dependence; it gives $p_v$, which divides $m_A$. If $\deg p_v=n$, then $m_A=p_v$. Otherwise repeat with more basis vectors and take the lcm.
+\begin{example*}
+  $A=\begin{psmallmatrix}0&0&2\\1&0&-1\\0&1&2\end{psmallmatrix}$: $Ae_1=e_2$, $Ae_2=e_3$, so $e_1,Ae_1,A^2e_1$ is a basis. $A^3e_1=Ae_3=(2,-1,2)=2e_1-Ae_1+2A^2e_1$. So $m_A=x^3-2x^2+x-2=(x-2)(x^2+1)$.
+
+  $A=\begin{psmallmatrix}2&0&0\\1&2&0\\0&0&3\end{psmallmatrix}$: $Ae_1=(2,1,0)$, $A^2e_1=(4,4,0)=4Ae_1-4e_1$, so $p_{e_1}=(x-2)^2$. $Ae_3=3e_3$, so $p_{e_3}=x-3$. The lcm $(x-2)^2(x-3)$ has degree $3=n$, so it is $m_A$; there is no need to compute $p_{e_2}$.
+\end{example*}
+The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and $Ae_n=a_0e_1+\dots+a_{n-1}e_n$, then $e_1$ is cyclic and $A^ne_1=Ae_n$, so $m_A=x^n-a_{n-1}x^{n-1}-\dots-a_0$. So every monic polynomial is the minimal polynomial of some matrix.
+
+\method{Method 5: spot a relation.} If you notice $p(A)=0$, then $m_A\mid p$; check which divisors work.
+\begin{itemize}
+  \ii Rank one, $A=uv^{\mathsf T}$ (all columns multiples of $u$): $A^2=u(v^{\mathsf T}u)v^{\mathsf T}=(\tr A)A$, where $\tr A$ is the sum of the diagonal entries, which equals $v^{\mathsf T}u$. For $n\ge2$, $A$ is not a multiple of $I$, so $m_A=x(x-\tr A)$ if $\tr A\ne0$ (diagonalizable) and $m_A=x^2$ if $\tr A=0$ (not diagonalizable). Example: $\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}^2=2\begin{psmallmatrix}1&-1\\-1&1\end{psmallmatrix}$, so $m=x(x-2)$.
+  \ii $A^2=A$: $m_A$ is $x$, $x-1$ or $x(x-1)$. $A^2=I$: $m_A$ is $x-1$, $x+1$ or $(x-1)(x+1)$. Both cases are diagonalizable. $A^k=0$: $m_A=x^j$ for the least $j$ with $A^j=0$.
+  \ii A permutation matrix satisfies $P^k=I$ for some $k\ge1$ (only finitely many permutations, so two powers agree), so it is diagonalizable over $\CC$ (F10).
+\end{itemize}
+
+\method{Method 6: the $2\times2$ formula.} For $2\times2$ $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, with $\tr A=a+d$ and $\det A=ad-bc$: $m_A=x^2-(\tr A)x+\det A$, unless $A=cI$ (then $m_A=x-c$).
+\begin{itemize}
+  \ii Why: for $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, $A^2-(a+d)A=\begin{psmallmatrix}bc-ad&0\\0&bc-ad\end{psmallmatrix}$, so $A^2-(\tr A)A+(\det A)I=0$. If $A\ne cI$, $\deg m_A=2$ and $m_A$ divides this monic quadratic, so they are equal.
+  \ii Example: $A=\begin{psmallmatrix}1&4\\-1&-3\end{psmallmatrix}$: $\tr A=-2$, $\det A=1$, so $m_A=(x+1)^2$; $A\ne-I$, so $A$ is not diagonalizable.
+\end{itemize}
+
+\method{Method 7: operators on function spaces.} Work with the operator directly, or take its matrix in a basis.
+\begin{example*}
+  $D$ on $V=\spn(e^x,xe^x)$: $(D-I)e^x=0$, $(D-I)(xe^x)=e^x\ne0$, and $(D-I)^2(xe^x)=0$. So $(D-I)^2=0$ and $D\ne I$: $m_D=(x-1)^2$, and $D$ is not diagonalizable.
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{No computation needed.} $n$ distinct eigenvalues (e.g.\ a triangular matrix with distinct diagonal entries) $\Rightarrow m=\prod(x-\lambda_i)$ (every eigenvalue is a root and $\deg m\le n$), diagonalizable. One eigenvalue $\lambda$ and $A\ne\lambda I$ $\Rightarrow$ not diagonalizable.
+  \ii \textbf{Testing a candidate}: one nonzero entry is enough to show it fails.
+  \ii \textbf{Inverse} (F1). $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$: $A^2-5A+6I=0$, so $A(5I-A)=6I$ and $A^{-1}=\frac16(5I-A)$.
+  \ii \textbf{High powers.} Divide: $x^k=m(x)q(x)+r(x)$ with $\deg r<\deg m$; then $A^k=r(A)$. Find $r$ by putting each root $\lambda$ of $m$ into this identity: $r(\lambda)=\lambda^k$. For a double root, differentiate as well: $r'(\lambda)=k\lambda^{k-1}$ (the derivative of $(x-\lambda)^2q$ is $2(x-\lambda)q+(x-\lambda)^2q'$, which vanishes at $\lambda$).
+  \begin{itemize}
+    \ii $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$, $r=ax+b$: $2a+b=2^k$, $3a+b=3^k$, so $A^k=(3^k-2^k)A+(3\cdot2^k-2\cdot3^k)I$.
+    \ii $m=(x+1)^2$ (as for $\begin{psmallmatrix}1&4\\-1&-3\end{psmallmatrix}$): $r(-1)=(-1)^k$, $r'(-1)=k(-1)^{k-1}$, so $A^k=(-1)^kI+k(-1)^{k-1}(A+I)$.
+  \end{itemize}
+  \ii \textbf{Any polynomial} $p(A)$ equals $r(A)$, where $r$ is the remainder of $p$ divided by $m_A$. So every polynomial in $A$ is a combination of $I,A,\dots,A^{d-1}$.
+  \ii \textbf{Eigenvectors without solving} (Prop.~66). If $m=(x-\lambda)s$, the nonzero columns of $s(A)$ are eigenvectors for $\lambda$; if $A$ is diagonalizable, they span $E(\lambda)$ (on $E(\mu)$, $s(A)$ is the number $s(\mu)$, which is $0$ for $\mu\ne\lambda$ and nonzero for $\mu=\lambda$). For $A=\begin{psmallmatrix}2&1\\0&3\end{psmallmatrix}$ and $\lambda=3$: $s(A)=A-2I=\begin{psmallmatrix}0&1\\0&1\end{psmallmatrix}$, so $(1,1)$ is an eigenvector for $3$.
+  \ii \textbf{Diagonalizable without finding eigenvalues.} One polynomial that kills $T$ and has distinct roots in $\FF$ is enough, since $m_T$ divides it: $T^2=T$, $T^2=I$, $T^3=T$ (over $\RR$), $T^k=I$ (over $\CC$).
+  \ii \textbf{Not similar}: different minimal polynomials prove it (F5). Equal minimal polynomials do not prove similarity.
+  \ii \textbf{Lower bound}: if $v,Av,\dots,A^{j-1}v$ are independent, then $\deg m_A\ge j$ (F7).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii Only roots in $\FF$ are eigenvalues: over $\RR$, $m=x^2+1$ gives no eigenvalues.
+  \ii A polynomial that kills $T$ need not be $m_T$: $T^2=T$ allows $m_T=x$, $x-1$ or $x^2-x$. Check the divisors.
+  \ii Every eigenvalue is a root of $m_T$, so a candidate that leaves out an eigenvalue never works.
+  \ii $p(T)v=0$ for one $v\ne0$ only gives $p_v\mid p$, not $m_T\mid p$. And $v$ need not be an eigenvector even when $p$ has distinct roots: $T=\operatorname{diag}(1,2)$, $v=(1,1)$, $p=(x-1)(x-2)$. What does follow, if $p$ splits into linear factors over $\FF$ (always true over $\CC$), is that some root of $p$ is an eigenvalue (T4, T6). Over $\RR$ not even that: $T=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$, $p=x^2+1$, $v=e_1$.
+  \ii Over $\RR$, $T^k=I$ does not imply diagonalizable: $R=\begin{psmallmatrix}1&-2\\1&-1\end{psmallmatrix}$ has $R^4=I$ but $m_R=x^2+1$.
+  \ii $m_{T^{-1}}(x)$ is not $m_T(1/x)$, which is not a polynomial. Reverse the coefficients and divide by $c_0$.
+  \ii $\deg m_T=n$ says nothing about diagonalizability: $\operatorname{diag}(1,2)$ and $J_2(0)$ both have degree $2$.
+\end{trapbox}
+
+
+
 \section{Problem set}
-\begin{prob}\textbf{HW7 P1.} Let $A=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$ and $B=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$. (a) Find $m_A$ over $\mathbb R$ and $\mathbb C$. (b) Find $m_B$ over $\mathbb R$. (c) Recover the diagonalizability conclusions of HW6 using Proposition 68.\\\emph{Hint:} Use the first-relation method: square $A$ and $B-I$, then rule out scalar matrices.\end{prob}
-\begin{prob}\textbf{HW7 P2.} For differentiation $D:\mathcal P_3(\mathbb R)\to\mathcal P_3(\mathbb R)$, find its minimal polynomial and decide diagonalizability.\\\emph{Hint:} Use the first-relation method on the iterates of $x^3$.\end{prob}
-\begin{prob}\textbf{HW7 P3.} Let $T$ be invertible on a finite-dimensional space and $m_T=x^d+a_{d-1}x^{d-1}+\cdots+a_1x+a_0$. (a) Prove $a_0\ne0$. (b) Prove $T^{-1}$ is a polynomial in $T$. (c) Over $\mathbb C$, if $m_T=x^4+x^3-x^2-5x+4$, express $T^{-1}$ explicitly, find the eigenvalues, and decide diagonalizability.\\\emph{Hint:} Use LADR 5.32 to isolate $a_0I$; apply Propositions 66 and 68 after factoring.\end{prob}
-\begin{prob}\textbf{HW7 P4 (optional).} Prove $m_{T-\lambda I}(x)=m_T(x+\lambda)$. If $c\ne0$ and $d=\deg m_T$, prove $m_{cT}(x)=c^dm_T(x/c)$.\\\emph{Hint:} Use the minimality definition after affine substitution, then reverse the substitution to exclude smaller degree.\end{prob}
-\begin{prob}\textbf{HW7 P5.} Let $A$ be a two-by-two complex matrix with only eigenvalue $\lambda$. Prove $m_A$ is either $x-\lambda$ or $(x-\lambda)^2$; prove the first case occurs exactly when $A=\lambda I$, and conclude that $A$ is diagonalizable exactly in that case.\\\emph{Hint:} Combine complex factorization, Propositions 66--68, and the degree bound.\end{prob}
-\begin{prob}\textbf{HW7 P6.} For $C=\left(\begin{smallmatrix}2&1&0\\0&2&0\\0&0&3\end{smallmatrix}\right)$, find eigenvalues, eigenspaces and minimal polynomial, and decide diagonalizability.\\\emph{Hint:} Use Proposition 60 and kernel equations, then Proposition 65 to test $(C-2I)(C-3I)$.\end{prob}
-\begin{prob}\textbf{HW7 P7 (optional).} Suppose $m_T=\prod_{j=1}^r(x-\lambda_j)$ with distinct roots. Construct $p_j$ with $p_j(\lambda_j)=1$, $p_j(\lambda_k)=0$ for $k\ne j$, and show that $p_j(T)$ projects onto $E(\lambda_j,T)$ along the other eigenspaces.\\\emph{Hint:} Use the interpolation polynomials in the proof of Proposition 68.\end{prob}
-\begin{prob}\textbf{Exam practice (midterm2-review.pdf, Problem 6; Axler 5C.7).} For $T$ on finite-dimensional $V$ and $v\in V$, prove that there is a unique monic polynomial $p_v$ of smallest degree with $p_v(T)v=0$, and prove $p_v\mid m_T$.\\\emph{Hint:} Use the first-dependence argument and polynomial division on $m_T$ by $p_v$; when $v=0$, use $p_v=1$.\end{prob}
-\input{exam-practice.tex}
+
+\begin{prob}
+\textbf{HW7 P1. }\ Return to the matrices from Homework 6, $A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ and $B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \ii Find the minimal polynomial of $A$ over $\RR$ and over $\CC$.
+  \ii Find the minimal polynomial of $B$ over $\RR$.
+  \ii Use the minimal-polynomial criterion for diagonalizability to recover the conclusions of Homework 6 about whether these operators are diagonalizable over the indicated fields.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P2. }\ Let $D\colon\PP_3(\RR)\to\PP_3(\RR)$ be differentiation.
+\begin{enumerate}[(a)]
+  \ii Find the minimal polynomial of $D$.
+  \ii Decide whether $D$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P3. }\ Let $T$ be an invertible operator on a finite-dimensional vector space, and let $m_T(x)=x^d+a_{d-1}x^{d-1}+\dots+a_1x+a_0$ be its minimal polynomial.
+\begin{enumerate}[(a)]
+  \ii Prove that $a_0\ne0$.
+  \ii Prove that $T^{-1}$ is a polynomial in $T$.
+  \ii Suppose now that $V$ is a complex vector space and that $m_T(x)=x^4+x^3-x^2-5x+4$. Express $T^{-1}$ explicitly as a polynomial in $T$, find the eigenvalues of $T$, and decide whether $T$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P4. (optional)}\ Let $m_T$ be the minimal polynomial of an operator $T$.
+\begin{enumerate}[(a)]
+  \ii Prove that the minimal polynomial of $T-\lambda I$ is $m_T(x+\lambda)$.
+  \ii If $c\ne0$ and $d=\deg m_T$, prove that the minimal polynomial of $cT$ is $c^dm_T(x/c)$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P5. }\ Let $A$ be a $2\times2$ complex matrix whose only eigenvalue is $\lambda$. Prove that its minimal polynomial is either $x-\lambda$ or $(x-\lambda)^2$. Show that the first case occurs exactly when $A=\lambda I$, and conclude that $A$ is diagonalizable if and only if $A=\lambda I$.
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P6. }\ Consider $C=\begin{pmatrix}2&1&0\\0&2&0\\0&0&3\end{pmatrix}$. Find its eigenvalues, eigenspaces, and minimal polynomial. Decide whether $C$ is diagonalizable.
+\end{prob}
+
+\begin{prob}
+\textbf{HW7 P7. (optional)}\ Let $T$ be an operator whose minimal polynomial splits as $m_T(x)=(x-\lambda_1)\cdots(x-\lambda_r)$ with distinct roots. For a fixed $j$, construct a polynomial $p_j$ such that $p_j(\lambda_j)=1$ and $p_j(\lambda_k)=0$ for $k\ne j$, and explain why $p_j(T)$ is the projection onto $E(\lambda_j,T)$ along the sum of the other eigenspaces.
+\end{prob}
+
+\begin{prob}
+\textbf{M1. Computing minimal polynomials.}\ Find the minimal polynomial and decide whether the matrix is diagonalizable.
+\begin{enumerate}[(a)]
+  \ii $A=\begin{pmatrix}1&1&1\\1&1&1\\1&1&1\end{pmatrix}$.
+  \ii $P=\begin{pmatrix}0&0&1\\1&0&0\\0&1&0\end{pmatrix}$, over $\RR$ and over $\CC$.
+  \ii $B=\begin{pmatrix}3&1&0&0\\0&3&0&0\\0&0&3&0\\0&0&0&5\end{pmatrix}$.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{M2. Operators on polynomials.}\ Let $n\ge1$.
+\begin{enumerate}[(a)]
+  \ii Let $T\colon\PP_n(\RR)\to\PP_n(\RR)$, $T(p)=xp'$. Find $m_T$ and decide whether $T$ is diagonalizable.
+  \ii Let $S\colon\PP_n(\RR)\to\PP_n(\RR)$, $(Sp)(x)=p(x+1)$. Prove that $m_S=(x-1)^{n+1}$, and decide whether $S$ is diagonalizable.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{M3. }\ Let $V$ be a finite-dimensional real vector space and $T\in\LL(V)$ with $T^3=T$. Prove that $T$ is diagonalizable and that every eigenvalue of $T$ is $-1$, $0$ or $1$.
+\end{prob}
+
+\begin{prob}
+\textbf{M4. }\ Let $V\ne\{0\}$ be finite-dimensional and $T\in\LL(V)$. Prove that $\deg m_T=1$ if and only if $T=cI$ for some $c\in\FF$.
+\end{prob}
+
+\begin{prob}
+\textbf{M5. Minimal polynomial of the inverse.}\ Let $T$ be invertible with $m_T(x)=x^d+a_{d-1}x^{d-1}+\dots+a_0$. Prove that $m_{T^{-1}}(x)=\frac1{a_0}x^dm_T(1/x)$.
+\end{prob}
+
+\begin{prob}
+\textbf{M9. Using the minimal polynomial to compute.}\ Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$. Find $m_A$, write $A^{-1}$ as a polynomial in $A$, and write $A^3$ as $aA+bI$.
+\end{prob}
+
 \end{document}
