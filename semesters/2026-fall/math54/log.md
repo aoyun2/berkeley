@@ -5,3 +5,4 @@
 ## Weak spots
 
 No graded MATH 54 work supplied.
+- 2026-11-11: Week 2 (Lay 1.3-1.5) handout and solutions built. Section 1.7 (calendar Sep 4 and Sep 9) is placed whole in Week 3.
