@@ -1,0 +1,83 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\title{CS 61A --- Week 3}
+\subtitle{Solutions to the handout problems (code for the exercises is in \texttt{solutions/})}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}
+\begin{steps}
+  \ii \cd{g(f)} is the function \cd{lambda x: f(x, x + 1)}. \cd{g(f)(10)} is \cd{f(10, 11)}, which is \cd{-1}. Displays \cd{-1}.
+  \ii \cd{(lambda: 3)()} is \cd{3}; \cd{(lambda x: x * 2)(4)} is \cd{8}. Displays \cd{11}.
+  \ii \cd{k(5)} displays \cd{5} and returns the value of \cd{print(5)}, which is \cd{None}. \cd{None or 'done'} is \cd{'done'}. The interpreter displays \cd{'done'} (with quotes, since it is a string value).
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P2.}\ (a) Each lambda becomes a \cd{def} that returns the next function:
+\begin{py}
+def make(a):
+    def f(b):
+        def g(c):
+            return a * b + c
+        return g
+    return f
+\end{py}
+(b) The \cd{if} statement becomes a conditional expression: \cd{pick = lambda test: lambda x, y: x if test(x) else y}.
+\end{prob}
+
+\begin{prob}\textbf{P3.}
+\begin{steps}
+  \ii \cd{g = outer(5)}: frame \cd{f1} binds the parameter \cd{n} to \cd{5}; the lambda has parent \cd{f1}.
+  \ii \cd{caller(g)}: \cd{caller}'s frame has \cd{n = 100}, but \cd{g}'s body looks in its own frame, then \cd{f1}: \cd{n} is \cd{5}. Value \cd{15}.
+  \ii The second lambda is written in the global frame, so its parent is global. When it runs, \cd{n} is the global \cd{n}, which is \cd{50} by then. Value \cd{60}.
+\end{steps}
+Displayed: \cd{15 60}. \cd{caller}'s \cd{n = 100} is never used by either function.
+\end{prob}
+
+\begin{prob}\textbf{P4.}
+\begin{steps}
+  \ii \cd{curry(sub)(10)(3)} is \cd{sub(10, 3) = 7}.
+  \ii \cd{reverse(sub)(x, y)} is \cd{sub(y, x)}. So \cd{curry(reverse(sub))(10)(3)} is \cd{sub(3, 10) = -7}.
+  \ii \cd{curry(reverse(sub))(1)} is the function $k\mapsto$ \cd{sub(k, 1)} $=k-1$. \cd{summation(3, ...)} is $0+1+2=3$.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P5.}
+\begin{py}
+def count_where(n, cond):
+    count = 0
+    while n > 0:
+        if cond(n % 10):
+            count = count + 1
+        n = n // 10
+    return count
+
+def has_digit(n, d):
+    return count_where(n, lambda x: x == d) > 0
+\end{py}
+The lambda turns ``is this digit equal to \cd{d}?'' into the one-argument shape \cd{cond} needs; it finds \cd{d} in its parent frame, the frame of \cd{has\_digit}.
+\end{prob}
+
+\begin{prob}\textbf{E1 (published answers: (a) \cd{1}; (b) \cd{None = 0}; (c) \cd{so}; (d) \cd{None + None = zero?}).}
+\begin{steps}
+  \ii \cd{x, y = print(1 or 2), (3 and 0)}. Both right sides are evaluated first. \cd{1 or 2} is \cd{1}, so \cd{print(1)} displays \cd{1}: line (a). Its value \cd{None} goes to \cd{x}. \cd{3 and 0} is \cd{0}, which goes to \cd{y}.
+  \ii The last line is a call to \cd{print} with four operands, evaluated left to right.
+  \ii First operand \cd{print(x, '=', y)}: displays \cd{None = 0}, line (b); value \cd{None}.
+  \ii Third operand \cd{f(print)}: \cd{f} is \cd{lambda g: g(z)}, so this is \cd{print(z)}. \cd{z} is looked up when the body runs: it is \cd{'so'} now, not \cd{'but'}. Displays \cd{so}, line (c); value \cd{None}.
+  \ii The outer call is \cd{print(None, '+', None, '= zero?')}: displays \cd{None + None = zero?}, line (d).
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{E2 (published answers: (a) \cd{k < n}; (b) \cd{max(largest, abs(term(k + 1) - term(k)))}; (c) \cd{lambda k: term(2 * k - 1)}).}
+\begin{steps}
+  \ii What do the names mean? \cd{k} is the index of the left term of the current pair; \cd{largest} is the largest difference seen so far.
+  \ii The pairs are $(1,2),(2,3),\dots,(n-1,n)$, so \cd{k} runs from \cd{1} to \cd{n - 1}: the condition is \cd{k < n}.
+  \ii No \cd{if} is allowed, so the running maximum is updated with \cd{max}: \cd{largest = max(largest, abs(term(k + 1) - term(k)))}.
+  \ii \cd{odd\_gap}: the sequence \cd{term(1)}, \cd{term(3)}, \cd{term(5)}, \dots\ is the sequence $k\mapsto$ \cd{term(2k - 1)} for $k=1,2,3,\dots$ There are \cd{(n + 1) // 2} odd numbers up to \cd{n}, which is the first argument already given. So blank (c) is the function \cd{lambda k: term(2 * k - 1)}.
+\end{steps}
+Check: \cd{odd\_gap(5, square)} is \cd{gap} of the terms 1, 9, 25, whose largest difference is 16.
+\end{prob}
+
+\end{document}

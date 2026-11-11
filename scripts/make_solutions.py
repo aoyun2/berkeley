@@ -15,6 +15,8 @@ def load(path, name):
     m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
 
 folder, module, answers = sys.argv[1], sys.argv[2], sys.argv[3]
+# extra modules: pass further (module, answers file) pairs after the first three arguments
+extra = list(zip(sys.argv[4::2], sys.argv[5::2]))
 marker = '    "*** YOUR CODE HERE ***"'
 src = open(os.path.join(folder, "exercises", module + ".py")).read()
 parts = src.split(marker)
@@ -37,4 +39,12 @@ if os.path.exists(pp):
         assert old in t, k
         t = t.replace(old, '"%s": """%s""",' % (k, buf.getvalue().strip()))
     open(os.path.join(folder, "solutions", "predict.py"), "w").write(t)
+for mod, ansfile in extra:
+    parts = open(os.path.join(folder, "exercises", mod + ".py")).read().split(marker)
+    ans = load(ansfile, "answers_" + mod).ANSWERS
+    assert len(parts) == len(ans) + 1, (mod, len(parts) - 1, len(ans))
+    out = parts[0]
+    for a, p in zip(ans, parts[1:]):
+        out += a.rstrip("\n") + p
+    open(os.path.join(folder, "solutions", mod + ".py"), "w").write(out)
 print("solutions written")
