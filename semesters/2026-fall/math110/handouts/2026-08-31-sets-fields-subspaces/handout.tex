@@ -1,511 +1,329 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
-% Keep each diagram and its explanation on one page.
-\renewenvironment{fig}{\par\medskip\noindent\begin{minipage}{\linewidth}\centering}{\end{minipage}\par\medskip}
-\title{MATH 110 --- Week 1}
-\subtitle{Notes Chapters 1--2; Homework 1}
+\DeclareMathOperator{\spn}{span}
+\title{Math 110 --- Week 1}
+\subtitle{Proofs, sets, fields, vector spaces, subspaces (Notes Ch.~1--2, LADR 1A--1C, HW1)}
 \author{}\date{}\ihead{}
-\usetikzlibrary{calc}
-\input{figures/illustrations.tex}
-\renewcommand{\section}{\Needspace{8\baselineskip}\oldsection}
 \begin{document}
 \maketitle
-\section{Sets and functions}
-\begin{qbox}Let $A=\{1,2,3,4,5,6\}$ and $E=\{x\in A:x\text{ is even}\}$. How do we prove $E=\{2,4,6\}$? Check that each even element of $A$ is on the list, and that each listed element is even. For a function, the related task is to determine which inputs and outputs a condition selects.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 1 and Example 1]
-A \emph{set} is a collection of distinguishable elements. Write $x\in A$ for membership and $B\subseteq A$ when every element of $B$ belongs to $A$. The empty set $\varnothing$ has no elements. Relative to an ambient set $S$, define
-\[
- A^c=\{x\in S:x\notin A\},\quad A\cup B=\{x:x\in A\text{ or }x\in B\},
-\]
-\[
- A\cap B=\{x:x\in A\text{ and }x\in B\},\quad A\setminus B=A\cap B^c.
-\]
-The Cartesian product $A\times B$ consists of ordered pairs $(a,b)$ with $a\in A,b\in B$. Thus $(1,2)\ne(2,1)$. In Notes Example 1, $\{x\in\{1,2,3,4,5,6\}:x\text{ is even}\}=\{2,4,6\}$; order and repetitions do not change a set.
-A list of length $n$ has $n$ ordered entries; repeats are retained, and the length-zero list is empty (LADR 1.8--1.9).
-\end{definition*}\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 2]
-A function $f:A\to B$ assigns exactly one value $f(a)\in B$ to every $a\in A$. It is \emph{injective} if $f(a)=f(a')$ implies $a=a'$, \emph{surjective} if every $b\in B$ equals some $f(a)$, and \emph{bijective} if both hold. For $U\subseteq A$ and $V\subseteq B$, its image and inverse image are
-\[
- f(U)=\{f(u):u\in U\},\qquad f^{-1}(V)=\{a\in A:f(a)\in V\}.
-\]
-Here $f^{-1}(V)$ is defined even when $f$ is not bijective.
-\end{definition*}\end{prob}
-\begin{example*}[Notes Example 2]
-Take $\mathbb N=\{1,2,3,\ldots\}$. The map $f(n)=n+1$ is injective: $m+1=n+1$ implies $m=n$. It is not surjective because $1$ has no preimage.
-\end{example*}
-\begin{proposition*}[Notes Chapter 1, finite-set assertion]
-If finite sets $A,B$ have the same number $n$ of elements, a function $f:A\to B$ is injective if and only if it is surjective.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] For $n$ inputs and $n$ possible outputs, injectivity and surjectivity must agree.
-\ii[Know.] The list $f(a_1),\ldots,f(a_n)$ contains every attained output.
-\ii[Key step.] If no values repeat, the list has $n$ distinct values and exhausts the codomain. If two repeat, it has at most $n-1$ distinct values and misses an output.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii If $n>0$ and $f$ is injective, $f(a_1),\ldots,f(a_n)$ are $n$ distinct elements of $B$. Because $B$ has exactly $n$ elements, every element occurs: $f$ is surjective.
-\ii If $f$ is not injective, at least two entries of this $n$-entry list coincide. It has at most $n-1$ distinct values, so misses an element of $B$. Thus surjectivity implies injectivity as well.
-\ii If $n=0$, both sets are empty. The empty function has no pair of distinct inputs and no missing codomain element, so it has both properties.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}
-\method{Proving a set identity by membership}
-To prove $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$, test an arbitrary element $x$:
+
+\section{This week}
+
+\subsection{How proofs are written (notes, opening section)}
+
+\begin{qbox}
+  A proof is a list of statements in which each one is an assumption, a definition unfolded, or follows from earlier lines by a rule of logic. Which standard shapes do such lists take?
+\end{qbox}
+
+\textbf{Direct proof: unfold the definition, compute, recognise the definition again.} Claim: the product of two odd integers is odd.
 \begin{steps}
-\ii If $x\in A\cap(B\cup C)$, then $x\in A$ and either $x\in B$ or $x\in C$. In the first case $x\in A\cap B$; in the second $x\in A\cap C$. Both cases put $x$ in the right-hand union.
-\ii Conversely, an element of the right-hand union is in $A\cap B$ or $A\cap C$. Either case gives $x\in A$ and $x\in B\cup C$, so $x\in A\cap(B\cup C)$.
+  \ii ``Odd'' means of the form $2k+1$. Write $m=2a+1$, $n=2b+1$.
+  \ii $mn=(2a+1)(2b+1)=2(2ab+a+b)+1$.
+  \ii $2ab+a+b$ is an integer, so $mn$ has the form $2k+1$: it is odd.
 \end{steps}
-The two implications prove both inclusions, hence equality.
-\end{prob}
-\begin{prob}
-\method{Computing images and inverse images by tracing a function}
-Let $X=\{a,b,c,d\}$, $Y=\{p,q,r\}$, with
-\[
-f(a)=p,\qquad f(b)=p,\qquad f(c)=q,\qquad f(d)=q.
-\]
-\begin{steps}
-\ii For $U=\{a,c\}$, use only arrows starting in $U$. Their endpoints give $f(U)=\{p,q\}$.
-\ii For $V=\{q,r\}$, collect \emph{all} inputs whose arrows end in $V$. These are $c,d$, so $f^{-1}(V)=\{c,d\}$. No input maps to $r$.
-\ii Sending these inputs forward gives $f(f^{-1}(V))=\{q\}$, which misses $r\in V$.
-\ii Starting with $U$ instead, $f^{-1}(f(U))=f^{-1}(\{p,q\})=X$. It also contains $b,d$, because they share outputs with $a,c$.
-\end{steps}
-\end{prob}
-\begin{fig}\FunctionIllustration\end{fig}
-\begin{proposition*}[Images, inverse images and equality conditions; HW1 P1]
-For $f:X\to Y$, $U\subseteq X$, $V\subseteq Y$,
-\[f(f^{-1}(V))=V\cap f(X),\qquad
-f^{-1}(f(U))=\{x\in X:\text{some }u\in U\text{ has }f(x)=f(u)\}.\]
-The first equals $V$ iff $V\subseteq f(X)$, and equals $V$ for every $V$ iff $f$ is onto. The second contains $U$ and equals $U$ iff every input sharing an output with a member of $U$ also lies in $U$; equality for every $U$ is equivalent to injectivity.
+The definition is used twice: once to turn the hypothesis into something to calculate with, once to know what the answer has to look like. With $m=n$: $m$ odd $\Rightarrow m^2$ odd.
+
+\textbf{Contrapositive.} $P\Rightarrow Q$ and $\lnot Q\Rightarrow\lnot P$ are true or false together. The contrapositive of ``$m$ odd $\Rightarrow m^2$ odd'' is ``$m^2$ not odd $\Rightarrow m$ not odd'', i.e.\ $m^2$ even $\Rightarrow m$ even, with no new work.
+
+\textbf{If and only if} means two implications, and each may need its own argument. Example: $m$ even $\iff m^2$ even. ($\Leftarrow$) is the contrapositive above. ($\Rightarrow$): $m=2k$ gives $m^2=2(2k^2)$.
+
+\begin{proposition*}[Prop.~1]
+  $\sqrt2$ is irrational.
 \end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii An output in $f(f^{-1}(V))$ is both in $V$ and attained by $f$; conversely an attained output in $V$ comes from an input in $f^{-1}(V)$. This proves the first identity and its equality condition. Taking $V=Y$ proves the onto criterion.
-\ii By definition, $x\in f^{-1}(f(U))$ iff $f(x)=f(u)$ for some $u\in U$. This proves the second identity and its equality condition. If $f$ is injective, such $x$ equals $u$; conversely, equality for $U=\{u\}$ forces any $x$ with $f(x)=f(u)$ to equal $u$.
-\end{steps}\end{proof}\end{prob}
+\begin{ideabox}
+``Irrational'' is a negative statement (there is \emph{no} fraction equal to $\sqrt2$), so there is nothing to compute with directly. Assuming the opposite gives an equation: $\sqrt2=m/n$, so $m^2=2n^2$. The useful property of a fraction is that it can be written in lowest terms, so $m,n$ are not both even. The equation $m^2=2n^2$ talks about evenness, and ``$m^2$ even $\Rightarrow m$ even'' is available. So follow evenness through the equation and aim to show both $m$ and $n$ are even.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose $\sqrt2=m/n$ with integers $m,n$, $n\ne0$, in lowest terms. So at most one of $m,n$ is even.
+    \ii Squaring: $m^2=2n^2$. So $m^2$ is even, hence $m$ is even. Write $m=2r$.
+    \ii Then $4r^2=2n^2$, so $n^2=2r^2$ is even, hence $n$ is even.
+    \ii Both $m$ and $n$ are even, contradicting step 1.
+  \end{steps}
+\end{proof}
+
+\textbf{Equality of sets: two inclusions.} $A=B$ means the same elements, so prove $A\subseteq B$ and $B\subseteq A$, each by taking an arbitrary element. Example: $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$.
+\begin{steps}
+  \ii ($\subseteq$) Let $x\in A\cap(B\cup C)$. Then $x\in A$, and $x\in B$ or $x\in C$. In the first case $x\in A\cap B$, in the second $x\in A\cap C$.
+  \ii ($\supseteq$) Let $x\in(A\cap B)\cup(A\cap C)$. In either case $x\in A$, and $x\in B$ or $x\in C$, so $x\in A\cap(B\cup C)$.
+\end{steps}
+
+\begin{proposition*}[Prop.~2: induction]
+  Let $P(n)$ be a statement for each integer $n\ge1$. If $P(1)$ holds, and $P(n)\Rightarrow P(n+1)$ for every $n\ge1$, then $P(n)$ holds for all $n\ge1$.
+\end{proposition*}
+Use it when the case $n+1$ can be reduced to the case $n$. In this course that is usually induction on a dimension or on the length of a list.
+
+\subsection{Sets and functions (Ch.~1)}
+
+\begin{definition*}[Def.~1, 2]
+  A \vocab{set} is a collection of distinguishable objects, its \vocab{elements}. $x\in M$: $x$ is an element of $M$. $N\subseteq M$: every element of $N$ is in $M$. A \vocab{function} $f\colon M\to N$ assigns an element $f(x)\in N$ to every $x\in M$.
+\end{definition*}
+\begin{itemize}
+  \ii Ex.~1: $\{x: x\in\{1,\dots,6\},\ x\text{ even}\}=\{2,4,6\}$.
+  \ii For subsets $M,N$ of $A$: complement $M^c=\{x\in A:x\notin M\}$; union $M\cup N$ ($x\in M$ or $x\in N$); intersection $M\cap N$ ($x\in M$ and $x\in N$); difference $M\setminus N=M\cap N^c$; product $M\times N=\{(x,y):x\in M,y\in N\}$. Pairs are ordered: $(1,2)\ne(2,1)$.
+  \ii $f$ is \vocab{injective} if $f(x)=f(y)\Rightarrow x=y$; \vocab{surjective} if every $z\in N$ is $f(x)$ for at least one $x$; \vocab{bijective} if both.
+\end{itemize}
+
+\begin{proposition*}[Ex.~2: pigeonhole principle]
+  If $A,B$ are finite sets with the same number of elements and $f\colon A\to B$, then $f$ is injective $\iff f$ is surjective.
+\end{proposition*}
+\begin{ideabox}
+Count the values $f$ takes. Say $A$ and $B$ have $n$ elements. $f$ produces $n$ values $f(a)$, one for each $a$. If two of them coincide, at most $n-1$ different elements of $B$ are reached, so one is missed. If none coincide, $n$ different elements of $B$ are reached, which is all of $B$.
+
+This fails for infinite sets: $f(n)=n+1$ on $\{1,2,3,\dots\}$ is injective but misses $1$. Later, for linear maps between spaces of the same finite dimension, the same equivalence holds, with dimension in the role of the number of elements.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Let $n$ be the number of elements of $A$ and of $B$, and let $k$ be the number of different values among the $f(a)$. So $k\le n$.
+    \ii $f$ is injective exactly when no two values coincide, i.e.\ $k=n$.
+    \ii $f$ is surjective exactly when all $n$ elements of $B$ are values, i.e.\ $k=n$.
+  \end{steps}
+\end{proof}
+
+\subsection{Fields (Ch.~1)}
+
+\begin{qbox}
+  Which number systems are allowed as scalars? We need to add, subtract, multiply, and divide by anything nonzero. $\mathbb Q$, $\RR$, $\CC$ allow this; $\ZZ$ does not ($2$ has no inverse in $\ZZ$).
+\end{qbox}
+
+\begin{definition*}[Def.~3]
+  A \vocab{field} is a set $\FF$ with two different elements $0,1$ and operations $+$, $\cdot$ such that for all $x,y,z\in\FF$:
+  \begin{enumerate}[(i)]
+    \ii $x+y=y+x$ and $xy=yx$;
+    \ii $x+(y+z)=(x+y)+z$ and $x(yz)=(xy)z$;
+    \ii $x+0=x$;
+    \ii $1\cdot x=x$;
+    \ii $x(y+z)=xy+xz$;
+    \ii every $x$ has an additive inverse $-x$ with $(-x)+x=0$;
+    \ii every $x\ne0$ has a multiplicative inverse $x^{-1}$ with $x^{-1}x=1$.
+  \end{enumerate}
+\end{definition*}
+Ex.~3: $\mathbb Q$ and $\RR$ are fields. $\ZZ$ is not: only $\pm1$ have multiplicative inverses in $\ZZ$.
+
+\begin{proposition*}[Uniqueness of identities and inverses]
+  In a field, the additive identity, the multiplicative identity, additive inverses and multiplicative inverses are unique.
+\end{proposition*}
+\begin{ideabox}
+To show there is only one object with a property, take two objects with it and show they are equal. For identities: combine the two candidates, $0+0'$. Read with $0'$ as the identity, this is $0$; read with $0$ as the identity, this is $0'$. For inverses: put $x$ between its two inverses, $(-x)+x+(-x)'$, and group it in two ways.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Let $0'$ also satisfy $x+0'=x$ for all $x$. Then $0=0+0'$ (property of $0'$) $=0'+0$ (axiom (i)) $=0'$ (axiom (iii)).
+    \ii The same argument with multiplication gives $1=1\cdot1'=1'$.
+    \ii If $-x$ and $(-x)'$ are both additive inverses of $x$: $-x=-x+0=-x+(x+(-x)')=(-x+x)+(-x)'=0+(-x)'=(-x)'$.
+    \ii The same argument with multiplication gives uniqueness of $x^{-1}$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[HW1 P3: no zero divisors]
+  In a field, $0\cdot a=0$ for all $a$, and if $ab=0$ then $a=0$ or $b=0$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii $0\cdot a=(0+0)a=0\cdot a+0\cdot a$. Add $-(0\cdot a)$ to both sides: $0=0\cdot a$.
+    \ii Suppose $ab=0$ and $a\ne0$. Multiply by $a^{-1}$: $b=1\cdot b=(a^{-1}a)b=a^{-1}(ab)=a^{-1}\cdot0=0$.
+  \end{steps}
+\end{proof}
+The second step uses axiom (vii). In $\ZZ/6$ (not a field) $2\cdot3=0$.
+
+\textbf{Complex numbers (Ex.~4).} $\CC=\{a+bi:a,b\in\RR\}$ with $i^2=-1$; add and multiply by the usual rules. $\RR\subseteq\CC$ via $x=x+0i$.
+\begin{itemize}
+  \ii $(1+i)^3=1+3i+3i^2+i^3=1+3i-3-i=-2+2i$. \quad $(5+i)(4+3i)=20+15i+4i+3i^2=17+19i$.
+  \ii \vocab{Conjugate}: $\overline{a+bi}=a-bi$. Then $(a+bi)(a-bi)=a^2+b^2$.
+  \ii \textbf{$\CC$ is a field.} The other axioms follow from the rules of arithmetic; inverses need a formula. If $a+bi\ne0$ then $a^2+b^2>0$, and $(a+bi)\cdot\dfrac{a-bi}{a^2+b^2}=\dfrac{a^2+b^2}{a^2+b^2}=1$. Example: $\dfrac1{3+4i}=\dfrac{3-4i}{25}$.
+  \ii \textbf{Why $\CC$ matters.} The cubic $x^3-15x-4=0$ has the real root $4$, but the cubic formula gives $\sqrt[3]{2+11i}+\sqrt[3]{2-11i}$. Since $(2\pm i)^3=2\pm11i$, this is $(2+i)+(2-i)=4$: complex numbers appear inside a calculation whose answer is real. Later: every nonconstant complex polynomial has a complex root (fundamental theorem of algebra), which is why operators on complex spaces always have eigenvalues and operators on real spaces need not.
+\end{itemize}
+
+\begin{proposition*}[Prop.~3: conjugation]
+  For $w,z\in\CC$: (i) $\overline{w+z}=\bar w+\bar z$; (ii) $\overline{wz}=\bar w\,\bar z$; (iii) $\bar z=z\iff z$ is real; (iv) $z\bar z$ is real and $\ge0$.
+\end{proposition*}
+\begin{proof}
+  Write $w=a+bi$, $z=c+di$.
+  \begin{steps}
+    \ii $\overline{w+z}=(a+c)-(b+d)i=(a-bi)+(c-di)$.
+    \ii $wz=(ac-bd)+(ad+bc)i$, and $\bar w\bar z=(a-bi)(c-di)=(ac-bd)-(ad+bc)i$.
+    \ii $z-\bar z=2di$, which is $0$ exactly when $d=0$.
+    \ii $z\bar z=c^2+d^2\ge0$.
+  \end{steps}
+\end{proof}
+
+\textbf{The field $\FF_2$.} $\{0,1\}$ with $1+1=0$ (and the other sums and products as usual) is a field. In it $2x=x+x=0$ for every $x$, so $(x+1)^2=x^2+2x+1=x^2+1$ (HW1 P7). Most theorems of linear algebra hold over any field; the difference between $\RR$ and $\CC$ matters once eigenvalues appear.
+
+\subsection{Vector spaces (Ch.~2)}
+
+\begin{qbox}
+  Tuples, functions, sequences and polynomials can all be added and multiplied by numbers. Which rules about these two operations are enough to prove theorems for all of them at once?
+\end{qbox}
+
+\begin{definition*}[Def.~4 / LADR 1.20]
+  An \vocab{$\FF$-vector space} is a set $V$ with addition $V\times V\to V$ and scalar multiplication $\FF\times V\to V$ such that for all $u,v,w\in V$ and $\lambda,\mu\in\FF$:
+  \begin{enumerate}[(i)]
+    \ii $v+w=w+v$;
+    \ii $(v+w)+u=v+(w+u)$;
+    \ii there is $0\in V$ with $v+0=v$ for all $v$;
+    \ii every $v$ has $-v\in V$ with $v+(-v)=0$;
+    \ii $(\lambda\mu)v=\lambda(\mu v)$;
+    \ii $\lambda(v+w)=\lambda v+\lambda w$ and $(\lambda+\mu)v=\lambda v+\mu v$;
+    \ii $1\cdot v=v$.
+  \end{enumerate}
+\end{definition*}
+\begin{itemize}
+  \ii The zero vector and additive inverses are unique, by the same proofs as for a field (LADR 1.26, 1.27).
+  \ii Axiom (vii) is needed: without it, ``$\lambda v=0$ for all $\lambda,v$'' would satisfy (i)--(vi).
+  \ii Ex.~5: $\FF^n$, lists $(x_1,\dots,x_n)$ with componentwise operations. Zero vector $(0,\dots,0)$; do not confuse it with the number $0$. $\FF=\FF^1$.
+  \ii Ex.~6: $\FF^S$, all functions $f\colon S\to\FF$, with $(f+g)(x)=f(x)+g(x)$ and $(\lambda f)(x)=\lambda f(x)$. Zero vector: the constant function $0$. For $S=\{1,\dots,n\}$ this is $\FF^n$; for $S=\mathbb N$ it is the space of sequences $\FF^\infty$.
+  \ii Ex.~7: $\CC$ is a real vector space (allow only real scalars). $\CC$ and $\RR$ are $\mathbb Q$-vector spaces.
+\end{itemize}
+
+\begin{proposition*}[Prop.~4 / LADR 1.30--1.32]
+  (i) $0\cdot v=0$ for every $v\in V$. (ii) $\lambda\cdot0=0$ for every $\lambda\in\FF$. (iii) $(-1)v=-v$.
+\end{proposition*}
+\begin{ideabox}
+These are not axioms, so they need proofs. The only axiom that connects the number $0$ (or addition of numbers) with vectors is the distributive law (vi). So write $0$ as $0+0$ and distribute: this produces an equation of the form $x=x+x$, and subtracting $x$ leaves $x=0$. For (iii), $-v$ is \emph{defined} as the vector that gives $0$ when added to $v$, so check that $(-1)v$ does that.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $0\cdot v=(0+0)v=0\cdot v+0\cdot v$. Add $-(0\cdot v)$ to both sides: $0=0\cdot v$.
+    \ii $\lambda\cdot0=\lambda(0+0)=\lambda\cdot0+\lambda\cdot0$. Add $-(\lambda\cdot0)$: $0=\lambda\cdot0$.
+    \ii $(-1)v+v=(-1)v+1\cdot v=(-1+1)v=0\cdot v=0$ by (i). So $(-1)v$ is the additive inverse of $v$, which is unique.
+  \end{steps}
+\end{proof}
+\begin{proposition*}[HW1 P4 / LADR 1B.2]
+  If $av=0$ with $a\in\FF$, $v\in V$, then $a=0$ or $v=0$.
+\end{proposition*}
+\begin{proof}
+  If $a\ne0$: $v=1\cdot v=(a^{-1}a)v=a^{-1}(av)=a^{-1}\cdot0=0$ (Prop.~4(ii)).
+\end{proof}
+
+\subsection{Subspaces (Ch.~2)}
+
+\begin{qbox}
+  Which subsets of a vector space are vector spaces themselves, with the same operations? In $\RR^2$: the line $y=2x$ is; the line $y=2x+1$ is not (it misses $0$); the union of the two axes is not ($(1,0)+(0,1)$ leaves it).
+\end{qbox}
+
+\begin{definition*}[Def.~5 / LADR 1.34]
+  A subset $U\subseteq V$ is a \vocab{subspace} if (i) $0\in U$, and (ii) $\lambda v+w\in U$ for all $v,w\in U$, $\lambda\in\FF$.
+\end{definition*}
+\begin{itemize}
+  \ii Condition (ii) is ``closed under addition'' ($\lambda=1$) and ``closed under scalar multiplication'' ($w=0$) together. A subspace is a vector space: the axioms hold in $U$ because they hold in $V$, and $-v=(-1)v\in U$.
+  \ii \textbf{To show a set is a subspace}: check $0$, then take $v,w$ in the set and check $\lambda v+w$. \textbf{To show it is not}: exhibit $0\notin U$, or two specific vectors whose sum leaves $U$, or a specific multiple that leaves $U$.
+  \ii Ex.~8: in $\RR^{(0,1)}$, the continuous functions form a subspace, and so do the differentiable functions (sums and multiples of continuous functions are continuous).
+  \ii Ex.~9: sequences $(a_0,a_1,\dots)$ with $a_{n+2}=a_{n+1}+a_n$ for all $n$ form a subspace of $\RR^{\mathbb N_0}$: if $a$ and $b$ satisfy the recurrence, so does $\lambda a+b$, since $\lambda a_{n+2}+b_{n+2}=(\lambda a_{n+1}+b_{n+1})+(\lambda a_n+b_n)$. The Fibonacci sequence is one element. Each such sequence is determined by $a_0,a_1$.
+\end{itemize}
+
+\begin{proposition*}[Prop.~5 / LADR 1C.10]
+  If $U,W$ are subspaces of $V$, so is $U\cap W$.
+\end{proposition*}
+\begin{proof}
+  $0\in U$ and $0\in W$. If $v,w\in U\cap W$, then $\lambda v+w\in U$ and $\lambda v+w\in W$.
+\end{proof}
+
+\begin{proposition*}[Prop.~6 / LADR 1.40]
+  If $U,W$ are subspaces of $V$, then $U+W=\{u+w:u\in U,w\in W\}$ is a subspace, and it is the smallest subspace containing $U\cup W$.
+\end{proposition*}
+\begin{ideabox}
+The union $U\cup W$ is usually not a subspace: for the two axes in $\RR^2$, $(1,0)+(0,1)$ is in neither. Any subspace containing $U$ and $W$ has to contain every $u+w$. So the set of all such sums is forced; the proposition says that this set is already closed, so nothing more has to be added.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $0=0+0\in U+W$.
+    \ii For $u_1+w_1$, $u_2+w_2\in U+W$: $\lambda(u_1+w_1)+(u_2+w_2)=(\lambda u_1+u_2)+(\lambda w_1+w_2)\in U+W$.
+    \ii It contains $U\cup W$: $u=u+0$ and $w=0+w$.
+    \ii Smallest: if a subspace $X$ contains $U\cup W$, then for $u\in U$, $w\in W$ both lie in $X$, so $u+w\in X$. Hence $U+W\subseteq X$.
+  \end{steps}
+\end{proof}
+\begin{fig}
+\begin{tikzpicture}[scale=0.9,>=Stealth]
+  \draw[blue,thick] (-2,0) -- (2,0) node[right] {$U_2$};
+  \draw[red,thick] (0,-1.6) -- (0,1.6) node[above] {$U_3$};
+  \draw[OliveGreen,thick] (-1.5,-1.5) -- (1.5,1.5) node[right] {$U_1$};
+\end{tikzpicture}
+\figcap{Three different lines through $0$ in $\RR^2$. $U_2+U_3=\RR^2$, so $U_1\cap(U_2+U_3)=U_1$. But $U_1\cap U_2=U_1\cap U_3=\{0\}$, so $(U_1\cap U_2)+(U_1\cap U_3)=\{0\}$. The distributive law for sets fails for subspaces when union is replaced by sum.}
+\end{fig}
+
+\begin{definition*}[Def.~6]
+  The sum of $U$ and $W$ is \vocab{direct}, written $U\oplus W$, if $U\cap W=\{0\}$. A sum $U_1+\dots+U_m=\{u_1+\dots+u_m:u_k\in U_k\}$ is direct, written $U_1\oplus\dots\oplus U_m$, if $U_k\cap(U_1+\dots+U_{k-1})=\{0\}$ for $k=2,\dots,m$.
+\end{definition*}
+
+\begin{theorem*}[Prop.~7 / LADR 1.41, 1.45]
+  For subspaces $U_1,\dots,U_m$ of $V$ the following are equivalent:
+  \begin{enumerate}[(i)]
+    \ii the sum $U_1+\dots+U_m$ is direct;
+    \ii every $v\in U_1+\dots+U_m$ is $u_1+\dots+u_m$ with $u_k\in U_k$ in exactly one way;
+    \ii the only way to write $0=u_1+\dots+u_m$ with $u_k\in U_k$ is with every $u_k=0$.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+Take two subspaces first. If $u+w=u'+w'$, then $u-u'=w'-w$. The left side is in $U$, the right side in $W$, so this vector is in $U\cap W$. If $U\cap W=\{0\}$ it is $0$, and $u=u'$, $w=w'$. So ``intersection $0$'' is exactly what makes the pieces of a vector unique. Conversely a nonzero $x\in U\cap W$ gives two ways to write $0$: $0+0$ and $x+(-x)$.
+
+For $m$ subspaces do the same one subspace at a time, starting from the last: move everything except the $U_m$-parts to one side to get a vector in $U_m\cap(U_1+\dots+U_{m-1})$.
+
+For $m\ge3$, pairwise intersections being $\{0\}$ is \emph{not} enough: the three lines in the figure meet pairwise in $\{0\}$, but $(1,1)=(1,0)+(0,1)$ lies in $U_1\cap(U_2+U_3)$, and $0=(1,1)-(1,0)-(0,1)$ is a nontrivial way to write $0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii (i)$\Rightarrow$(ii). A decomposition exists by the definition of the sum. Suppose $v=u_1+\dots+u_m=\tilde u_1+\dots+\tilde u_m$. Then $u_m-\tilde u_m=(\tilde u_1-u_1)+\dots+(\tilde u_{m-1}-u_{m-1})$. The left side is in $U_m$ and the right side in $U_1+\dots+U_{m-1}$, so both are in $U_m\cap(U_1+\dots+U_{m-1})=\{0\}$. So $u_m=\tilde u_m$.
+    \ii Now $u_1+\dots+u_{m-1}=\tilde u_1+\dots+\tilde u_{m-1}$, and the same argument gives $u_{m-1}=\tilde u_{m-1}$. Continue down to $u_1=\tilde u_1$.
+    \ii (ii)$\Rightarrow$(iii). $0=0+\dots+0$ is one way to write $0$; by (ii) it is the only one.
+    \ii (iii)$\Rightarrow$(i), by contrapositive. If the sum is not direct, some $U_k\cap(U_1+\dots+U_{k-1})$ contains $u_k\ne0$, say $u_k=u_1+\dots+u_{k-1}$. Then $u_1+\dots+u_{k-1}+(-u_k)+0+\dots+0=0$ with $-u_k\ne0$, contradicting (iii).
+  \end{steps}
+\end{proof}
 
 \begin{shortcuts}
-\ii To disprove injectivity, give two different inputs with the same output; this negates its defining implication.
-\ii To disprove surjectivity, give one codomain element with no preimage; a missing output suffices.
-\ii For $f(x)=x^2$ on $\mathbb R$, solve $f(x)\in[1,4]$ as $1\le x^2\le4$. The answer is $[-2,-1]\cup[1,2]$; both signs are needed.
+  \ii \textbf{Subspace test in one line}: $0\in U$ and $\lambda v+w\in U$. For a set defined by equations, it is a subspace exactly when the equations are linear with right side $0$ (e.g.\ $x_1+2x_2=0$ yes; $x_1+2x_2=1$ no; $x_1x_2=0$ no).
+  \ii \textbf{Fastest disproof}: check $0$ first. If $0\notin U$, stop.
+  \ii \textbf{Direct sum of two subspaces}: only $U\cap W=\{0\}$ needs checking. For three or more, check that $0$ has only the trivial decomposition (Prop.~7(iii)); pairwise intersections are not enough.
+  \ii \textbf{Dividing by a complex number}: multiply top and bottom by the conjugate.
+  \ii \textbf{Uniqueness proofs}: take two objects with the property and combine them.
 \end{shortcuts}
 \begin{trapbox}
-\ii Equal images need not mean equal inputs: for $f(x)=x^2$ on $\mathbb R$, $f(1)=f(-1)$.
-\ii The codomain matters: $x\mapsto x^2$ from $\mathbb R$ to $\mathbb R$ is not onto, but the same rule with codomain $[0,\infty)$ is onto.
+  \ii The union of two subspaces is a subspace only when one contains the other (problem E1).
+  \ii $U_1\cap(U_2+U_3)\ne(U_1\cap U_2)+(U_1\cap U_3)$ in general (three lines in $\RR^2$).
+  \ii Pairwise $U_i\cap U_j=\{0\}$ does not make $U_1+U_2+U_3$ direct.
+  \ii Injective and surjective are equivalent only for finite sets of equal size: $n\mapsto n+1$.
+  \ii Whether a set is a subspace depends on the field: $\RR^2$ is closed under real multiples but not under multiplication by $i$ (HW1 P6).
+  \ii $0\cdot v=0$ and $(-1)v=-v$ are theorems, not axioms.
 \end{trapbox}
-
-
-\section{Fields and complex arithmetic}
-\begin{qbox}$2x=1$ has no solution in $\mathbb Z$, but $x=1/2$ works in $\mathbb Q$. The field axioms give the laws that let us solve $ax=b$ whenever $a\ne0$.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 3]
-A field $F$ has addition and multiplication, distinct elements $0,1$, and these laws: both operations are associative and commutative; $a+0=a$ and $1a=a$; $a(b+c)=ab+ac$; every $a$ has an additive inverse $-a$; every nonzero $a$ has a multiplicative inverse $a^{-1}$. Subtraction means addition of the additive inverse; division by $a\ne0$ means multiplication by $a^{-1}$.
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 1, identities, inverses and cancellation]
-Identities and inverses are unique. In a field, $a+b=a+c$ implies $b=c$, $a0=0$, and $ab=0$ implies $a=0$ or $b=0$.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Derive the cancellation rules used to solve equations.
-\ii[Key step.] Add the inverse of a common summand, or multiply by the inverse of a nonzero factor. Distributivity gives $a0=a0+a0$; subtracting $a0$ proves $a0=0$.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Two additive identities satisfy $0=0+0'=0'$. Two multiplicative identities satisfy $1=1\cdot1'=1'$.
-\ii If $b,c$ are additive inverses of $a$, then $b=b+(a+c)=(b+a)+c=c$.
-\ii If $b,c$ are multiplicative inverses of $a$, then $ab=ac=1$ and $b=b\cdot1=b(ac)=(ba)c=1c=c$, by associativity and commutativity.
-\ii Add $-a$ to $a+b=a+c$ to obtain $b=c$ by associativity and the identity law.
-\ii Distributivity gives $a0=a(0+0)=a0+a0$. Comparing $a0+0=a0+a0$ and cancelling the common first term gives $0=a0$.
-\ii If $ab=0$ and $a\ne0$, multiply by $a^{-1}$ to obtain $b=a^{-1}0=0$.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}
-\method{Solving $ax=b$ in a field}
-\begin{steps}
-\ii If $a\ne0$, every solution satisfies $x=a^{-1}(ax)=a^{-1}b$. This candidate works because $a(a^{-1}b)=(aa^{-1})b=b$, so the solution is unique.
-\ii If $a=0$, the left side is always zero: every $x$ solves the equation when $b=0$, and none does when $b\ne0$. Over $\mathbb R$, $2x=1$ gives $x=1/2$, and $2(1/2)=1$ checks it.
-\end{steps}
-\end{prob}
-\begin{example*}[Notes Example 3]
-$\mathbb Q$ and $\mathbb R$ are fields with their usual arithmetic. In $\mathbb Q$, a nonzero $p/q$ has inverse $q/p$. The integers are not a field: $2n=1$ has no integer solution.
-\end{example*}
-\begin{prob}\begin{definition*}[Notes Example 4; complex numbers]
-A complex number has form $a+bi$ with real $a,b$ and $i^2=-1$. Equality means equality of the real and imaginary parts. Identify a real number $a$ with $a+0i$. Addition is componentwise, and
-\[
-(a+bi)(c+di)=(ac-bd)+(ad+bc)i.
-\]
-The conjugate of $z=a+bi$ is $\overline z=a-bi$.
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 3; complex field laws: LADR 1.3]
-For complex $w,z$,
-\[
-\overline{w+z}=\overline w+\overline z,\quad \overline{wz}=\overline w\,\overline z,
-\quad z=\overline z\Longleftrightarrow z\in\mathbb R,\quad z\overline z\ge0.
-\]
-The last quantity is real; it is zero only when $z=0$. For $z\ne0$, $z^{-1}=\overline z/(z\overline z)$. In particular $\mathbb C$ is a field.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Find $c+di$ with $(a+bi)(c+di)=1$.
-\ii[Know.] The product has coordinates $ac-bd$ and $ad+bc$; they must equal $1$ and $0$.
-\ii[Key step.] Choose $c=a$, $d=-b$ to make $ad+bc=0$. The real part is then $a^2+b^2>0$ for $a+bi\ne0$. Dividing by this number gives the inverse. Expanding the coordinates also checks the conjugation laws.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii Write $w=a+bi$, $z=c+di$. Conjugating their sum gives $(a+c)-(b+d)i=\overline w+\overline z$.
-\ii Conjugating their product gives $(ac-bd)-(ad+bc)i=(a-bi)(c-di)$.
-\ii $z=\overline z$ is equivalent to $2di=0$, or $d=0$.
-\ii $z\overline z=c^2+d^2\ge0$, and it is positive if either real coordinate is nonzero.
-\ii Thus $z\,[\overline z/(c^2+d^2)]=1$ for $z\ne0$. The additive inverse is $-c-di$.
-\ii Multiplication is commutative: $ac-bd=ca-db$ and $ad+bc=cb+da$. For distributivity, multiply $a+bi$ by $(c+e)+(d+f)i$: its coordinates are
-\[
-(ac-bd)+(ae-bf),\qquad(ad+bc)+(af+be),
-\]
-which are the sums of the coordinates of $(a+bi)(c+di)$ and $(a+bi)(e+fi)$.
-\ii For associativity, put $w=a+bi$, $z=c+di$, $t=e+fi$. Both $(wz)t$ and $w(zt)$ have real part $ace-adf-bcf-bde$ and imaginary part $acf+ade+bce-bdf$, by the multiplication formula.
-\ii Addition is associative and commutative because each real coordinate adds associatively and commutatively. The real numbers $0,1$ act as identities. Hence all field axioms hold.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}
-\method{Computing powers, products and reciprocals: Notes Example 4}
-\begin{steps}
-\ii Square before computing a cube:
-\[
-(1+i)^2=1+2i+i^2=2i,\qquad (1+i)^3=2i(1+i)=2i+2i^2=-2+2i.
-\]
-\ii Distribute every term, then collect the two coordinates:
-\[
-(5+i)(4+3i)=20+15i+4i+3i^2=(20-3)+(15+4)i=17+19i.
-\]
-LADR 1.2 uses the same rule:
-\[
-(2+3i)(4+5i)=8+10i+12i+15i^2=-7+22i.
-\]
-\ii Multiply numerator and denominator by the denominator's conjugate:
-\[
-\frac1{3+4i}=\frac{3-4i}{(3+4i)(3-4i)}=\frac{3-4i}{9+16}=\frac3{25}-\frac4{25}i.
-\]
-\end{steps}
-\end{prob}
-\begin{fig}\ConjugateIllustration\end{fig}
-\begin{prob}
-\method{A real answer obtained from complex intermediate values: the notes' cubic}
-\begin{steps}
-\ii Compute $(2+i)^2=4+4i+i^2=3+4i$, then
-\[
-(2+i)^3=(3+4i)(2+i)=6+3i+8i+4i^2=2+11i.
-\]
-\ii Likewise $(2-i)^2=3-4i$ and $(2-i)^3=(3-4i)(2-i)=6-3i-8i+4i^2=2-11i$.
-\ii Thus $2+i$ is one cube root of $2+11i$, and $2-i$ is one cube root of $2-11i$. These choices add to $4$; direct substitution gives $4^3-15\cdot4-4=64-60-4=0$.
-\end{steps}
-This verifies a solution of $x^3-15x-4=0$ using the indicated choices of cube roots. It does not say that a complex number has a unique cube root.
-\end{prob}
-\begin{example*}[Notes Chapter 1, the field $\mathbb F_2$]
-$\mathbb F_2=\{0,1\}$ has addition and multiplication modulo $2$:
-\[
-\begin{array}{c|cc}+&0&1\\\hline0&0&1\\1&1&0\end{array}
-\qquad
-\begin{array}{c|cc}\cdot&0&1\\\hline0&0&0\\1&0&1\end{array}.
-\]
-\begin{steps}
-\ii Two integers represent the same element when they differ by an even integer. Replacing $a$ by $a+2k$ changes $a+b$ by $2k$ and $ab$ by $2kb$, both even. Thus taking remainders gives well-defined addition and multiplication.
-\ii Taking the remainder of $(a+b)+c=a+(b+c)$ and $a(b+c)=ab+ac$ proves associativity of addition and distributivity; the integer commutative laws and multiplicative associative law give the corresponding identities in the same way.
-\ii The tables show that $0$ is the additive identity and $1$ is the multiplicative identity. Also $0+0=1+1=0$, so each element is its own additive inverse. The only nonzero element, $1$, has inverse $1$. These verify the remaining field axioms.
-\end{steps}
-A polynomial expression in $x$ is a finite sum of terms $a_kx^k$ with field coefficients, added and multiplied by distributivity and $x^jx^k=x^{j+k}$. The letter $x$ is formal; no numerical value has to be substituted.
-\end{example*}
-\begin{shortcuts}
-\ii Compute $z^{-1}$ by conjugating and dividing by the sum of squares of its real coordinates; their product is real and nonzero.
-\ii Powers of $i$ repeat every four exponents: $i^0=1$, $i^1=i$, $i^2=-1$, $i^3=-i$, $i^4=1$. Thus $i^{11}=i^{4\cdot2+3}=(i^4)^2i^3=-i$.
-\ii In $\mathbb F_2$, $(x+y)^2=x^2+xy+yx+y^2=x^2+y^2$, because $xy=yx$ and $1+1=0$. For example, $(x+1)^2=x^2+1$.
-\end{shortcuts}
-\begin{trapbox}
-\ii $\mathbb Z$ is not a field even though addition and multiplication stay in $\mathbb Z$: $1/2$ is missing.
-\ii In $\mathbb F_2$, cancellation of a nonzero factor works, but division by $2$ does not: $2=0$ in this field.
-\ii Taking real parts need not preserve multiplication. For $w=z=i$, the product $wz=-1$ has real part $-1$, while the product of the real parts is $0\cdot0=0$.
-\end{trapbox}
-
-\section{Vector spaces}
-\begin{qbox}For tuples, $2(1,3)+(4,-1)=(6,5)$. For real functions $f(x)=x$ and $g(x)=1$, the function $2f+g$ has value $2x+1$ at $x$. Which laws let us calculate with these two kinds of objects in the same way?\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 4; notes cite LADR 1.20]
-A vector space $V$ over a field $F$ is a set with addition $V\times V\to V$ and scalar multiplication $F\times V\to V$. Addition is commutative and associative, has a zero vector $0_V$, and every vector has an additive inverse. For $a,b\in F$ and $u,v\in V$,
-\[
-(ab)v=a(bv),\quad a(u+v)=au+av,\quad(a+b)v=av+bv,\quad1v=v.
-\]
-An element of $V$ is a vector; an element of $F$ is a scalar. We write $0$ for either zero when its meaning is clear. Vector subtraction is $u-v=u+(-v)$.
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Chapter 2; LADR 1.26--1.27 as cited there]
-The zero vector and each additive inverse are unique, and vector addition permits cancellation.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii The earlier inverse argument uses only the additive laws, so it applies here: $0=0+0'=0'$, and $u=u+(v+w)=(u+v)+w=w$ for two inverses $u,w$ of $v$.
-\ii If $v+u=v+w$, add $-v$ and regroup to get $u=w$. No multiplication of two vectors is needed.
-\end{steps}\end{proof}\end{prob}
-\begin{example*}[Notes Examples 5--6: tuples, functions and sequences]
-For a set $S$, let $F^S$ be all functions $S\to F$, with pointwise operations
-\[(f+g)(s)=f(s)+g(s),\qquad(af)(s)=af(s).\]
-\textbf{The idea: fix one input.} An identity of functions holds if its values agree at every input. At a fixed $s$, the vector-space identities become the field identities already known.
-\begin{steps}
-\ii Operations stay in $F^S$; the zero function takes value $0$, and $(-f)(s)=-f(s)$. At every $s$,
-\[(a(f+g))(s)=a(f(s)+g(s))=af(s)+ag(s),\quad ((ab)f)(s)=(ab)f(s)=a(bf(s)).\]
-\ii Commutativity and associativity of addition, $(a+b)f=af+bf$, and $1f=f$ follow from the corresponding scalar identities at $s$. Since this holds for every $s$, all vector-space axioms hold.
-\ii For $S=\{1,\ldots,n\}$, record $f$ as the list $(f(1),\ldots,f(n))\in F^n$. The operations are
-\[(x_j)_{j=1}^n+(y_j)_{j=1}^n=(x_j+y_j)_{j=1}^n,\qquad a(x_j)_{j=1}^n=(ax_j)_{j=1}^n.\]
-Zero is $(0,\ldots,0)$, negatives act coordinatewise, and $n=1$ gives $F$. For $S=\mathbb N=\{1,2,\ldots\}$, the same values form a sequence, written $F^\infty$.
-\ii For real functions $f(x)=x$, $g(x)=1$, $2f+g$ is the function $x\mapsto2x+1$; its value at $3$ is $7$. For tuples, $2(1,3)+(4,-1)=(6,5)$ is the same pointwise rule.
-\end{steps}\end{example*}
-\begin{example*}[Notes Example 7: choosing a smaller scalar field]
-$\mathbb C$ is a real vector space with its usual addition and multiplication by real scalars. For instance $2(1+i)-(3-i)=-1+3i\in\mathbb C$.
-\begin{steps}
-\ii Real scaling and addition stay in $\mathbb C$. Its zero and additive inverses are the complex ones. Each required identity is a complex field identity applied to real scalars.
-\ii The same reasoning makes both $\mathbb R$ and $\mathbb C$ vector spaces over $\mathbb Q$: a rational scalar times an element stays in the set, and the field identities still hold.
-\end{steps}
-Changing the scalar field changes the closure question. For example, $\mathbb R$ with its usual multiplication cannot be a vector space over $\mathbb C$, since $i\cdot1\notin\mathbb R$.
-\end{example*}
-\begin{proposition*}[Notes Proposition 4; notes cite LADR 1.30--1.32; HW1 P4]
-For $a\in F$ and $v\in V$, $0v=0_V$, $a0_V=0_V$, $(-1)v=-v$, and $av=0$ iff $a=0$ or $v=0$.
-\end{proposition*}
-Apply the earlier cancellation argument to the two distributive laws:
-
-\begin{prob}\begin{proof}\begin{steps}
-\ii $0v=(0+0)v=0v+0v$; cancelling $0v$ gives $0v=0_V$.
-\ii $a0_V=a(0_V+0_V)=a0_V+a0_V$; cancelling $a0_V$ gives $a0_V=0_V$.
-\ii $(-1)v+v=(-1+1)v=0v=0_V$. Uniqueness of the additive inverse gives $(-1)v=-v$.
-\ii If $av=0$ and $a\ne0$, then $v=(a^{-1}a)v=a^{-1}(av)=a^{-1}0_V=0_V$. Conversely either zero scalar or zero vector gives zero product by the first two identities.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}\method{Checking a proposed scalar multiplication}
-On the usual additive set $\mathbb R$, define $a\mathbin{*}v=0$ for all $a,v$. Most scaling identities hold because both sides are zero, but $1\mathbin{*}1=0\ne1$, so it is not a vector space. For example, $a*(v+w)=0=0+0=a*v+a*w$ does hold, so checking distributivity alone would miss the failure. The unit axiom must be checked as well.\end{prob}
-\begin{shortcuts}
-\ii For tuples, check an arbitrary coordinate: $[a(u+v)]_j=a(u_j+v_j)=au_j+av_j=[au+av]_j$. Since this holds for every $j$, the tuples agree.
-\ii For functions, check an arbitrary input: $(f+g)(s)=f(s)+g(s)=g(s)+f(s)=(g+f)(s)$. Since this holds for every $s$, $f+g=g+f$.
-\ii Check closure first. The positive real numbers fail under usual real scaling because $(-1)\cdot1=-1$ is outside the set; checking the remaining axioms cannot repair that failure.
-\end{shortcuts}
-\begin{trapbox}
-\ii The scalar field cannot be omitted: $\mathbb R\subset\mathbb C$ is closed under real scaling but not complex scaling, since $i\cdot1=i\notin\mathbb R$.
-\ii $0v=0$ does not alone imply $v=0$: any nonzero vector multiplied by the zero scalar is a counterexample.
-\end{trapbox}
-
-\section{Subspaces, sums and direct sums}
-\begin{qbox}In $\mathbb R^2$, let $U=\{(x,y):x+y=0\}$ and $W=\{(x,y):x+y=1\}$. Is each a vector space with the usual operations? The first task is to test $(0,0)$, then to substitute $au+v$ into each equation.\end{qbox}
-\begin{prob}\begin{definition*}[Notes Definition 5; notes cite LADR 1.34]
-A subset $U$ of a vector space $V$ is a subspace if $0\in U$ and $au+v\in U$ whenever $u,v\in U$, $a\in F$. Equivalently it contains zero and is closed under addition and scalar multiplication. A third equivalent test is that $U$ is nonempty and $au+bv\in U$ for all $u,v\in U$ and $a,b\in F$. The sets $\{0\}$ and $V$ are subspaces; the empty set is not, because it does not contain zero.
-\end{definition*}\end{prob}
-\begin{proposition*}[Subspace test; Notes Definition 5 and its consequence]
-The three formulations of the test agree. A subset satisfying the test is a vector space with the inherited operations.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Know which vector-space axioms can fail for $U\subseteq V$.
-\ii[Know.] The identities already hold in $V$. We only need the operations, zero and inverses to stay in $U$.
-\ii[Key step.] In $au+v\in U$, take $a=1$ for addition, $v=0$ for scaling, and then $a=-1$ for additive inverses.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii From $au+v\in U$ and $0\in U$, take $a=1$ for addition and $v=0$ for scaling; conversely these imply $au+v\in U$. Two-scalar closure follows by scaling $v$ by $b$. If instead $U$ is merely nonempty with two-scalar closure, choose $u\in U$ and $a=b=0$ to obtain $0u+0u=0\in U$, so the other tests apply.
-\ii $0\in U$, and $-u=(-1)u\in U$ by scalar closure and Proposition 4.
-\ii The inherited associative, commutative, distributive and unit identities hold because they hold for these elements in $V$.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}
-\method{Why zero right-hand sides recur}
-Suppose a scalar-valued rule $L:V\to F$ satisfies $L(au+v)=aL(u)+L(v)$. Then
-\begin{steps}
-\ii $L(0)=L(0+0)=L(0)+L(0)$, so scalar cancellation gives $L(0)=0$.
-\ii The condition $L(v)=b$ can define a subspace only when $b=0$, since a subspace contains zero. When $b=0$, the same rule gives $L(au+v)=a0+0=0$, proving closure. Thus it is a subspace exactly when $b=0$.
-\end{steps}
-The coordinate, derivative and integral conditions below and in HW1 P5 all use this argument. One must still check that the particular rule $L$ preserves $au+v$.
-\end{prob}
-\begin{prob}
-\method{Substituting into a defining equation}
-\begin{steps}
-\ii The zero vector satisfies $x+y=0$. For $u=(r,-r)$, $v=(s,-s)$ and $a\in\mathbb R$, $au+v=(ar+s,-ar-s)$; its coordinates add to $0$. Thus $U$ in the question box is a subspace.
-\ii The zero vector does not satisfy $x+y=1$. Thus $W$ is not a subspace. Also $(1,0)\in W$ but $2(1,0)=(2,0)\notin W$, a separate failure of scalar closure.
-\end{steps}\end{prob}
-\begin{example*}[LADR 1.35(a): a coordinate equation]
-For $b\in F$, $U_b=\{x\in F^4:x_3=5x_4+b\}$ is a subspace exactly when $b=0$.
-Use $L(x)=x_3-5x_4$:
-\[L(au+v)=(au_3+v_3)-5(au_4+v_4)=a(u_3-5u_4)+(v_3-5v_4)=aL(u)+L(v).\]
-Thus the preceding zero-right-hand-side argument applies over any field.
-\end{example*}
-\begin{example*}[Notes Example 8]
-Continuity means that function values approach the value at each point as the input approaches that point; differentiability means that the difference quotient has a limit, denoted $f'(x)$. The closure and derivative rules below are cited from elementary calculus.
-\begin{steps}\ii Within the space of real functions on $(0,1)$, continuous functions form a subspace: the zero function is continuous and if $f,g$ are continuous and $a\in\mathbb R$, then $af+g$ is continuous. \ii Differentiable functions also form a subspace: the zero function is differentiable, and $(af+g)'=af'+g'$.\end{steps}
-The same closure rules give LADR 1.35(b),(c): continuous functions on $[0,1]$ form a subspace of $\mathbb R^{[0,1]}$, and differentiable functions on $\mathbb R$ form a subspace of $\mathbb R^{\mathbb R}$.
-\end{example*}
-\begin{example*}[LADR 1.35(d): a prescribed derivative]
-For real $b$, let $D_b$ consist of differentiable real functions on $(0,3)$ satisfying $f'(2)=b$.
-\begin{steps}
-\ii Differentiable functions on $(0,3)$ form a vector space by the same cited derivative rules used in Notes Example 8. The rule $L(f)=f'(2)$ satisfies $L(af+g)=af'(2)+g'(2)$ by the cited calculus rule. Hence $D_b$ is a subspace exactly when $b=0$.
-\ii A zero derivative value does not mean a zero function: $f(x)=(x-2)^2$ has $f'(2)=2(2-2)=0$.
-\end{steps}\end{example*}
-\begin{example*}[LADR 1.35(e): complex sequences tending to zero]
-A real sequence $r_n$ \emph{tends to zero} if, for every real $\varepsilon>0$, there is an index $N$ such that $-\varepsilon<r_n<\varepsilon$ whenever $n\ge N$. A complex sequence $z_n=x_n+iy_n$ tends to zero when both real sequences $x_n$ and $y_n$ tend to zero. We cite the elementary real-limit fact that sums and fixed real scalar multiples of sequences tending to zero still tend to zero.
-\begin{steps}
-\ii The zero sequence tends to zero. Suppose $z_n=x_n+iy_n$ and $w_n=s_n+it_n$ tend to zero, and let $a+bi\in\mathbb C$. All four real-coordinate sequences tend to zero, and
-\[
-(a+bi)z_n+w_n=(ax_n-by_n+s_n)+i(ay_n+bx_n+t_n).
-\]
-\ii Each displayed real-coordinate sequence tends to zero by the cited real-limit fact. Thus the complex sequence $(a+bi)z+w$ tends to zero. This proves that these sequences form a subspace of $\mathbb C^\infty$.
-\end{steps}
-\end{example*}
-\begin{example*}[Notes Example 9]
-In $\mathbb R^{\mathbb N_0}$, where $\mathbb N_0=\{0,1,2,\ldots\}$, the sequences satisfying $x_{n+2}=x_{n+1}+x_n$ form a subspace. \begin{steps}\ii The zero sequence satisfies the condition. If $x,y$ satisfy it, then
-\[
-(ax+y)_{n+2}=a(x_{n+1}+x_n)+(y_{n+1}+y_n)=(ax+y)_{n+1}+(ax+y)_n.
-\]
-\ii Starting from $x_0=p,x_1=q$, the recurrence gives
-\[
-x_2=p+q,\quad x_3=p+2q,\quad x_4=2p+3q,\quad x_5=3p+5q.
-\]
-With $(p,q)=(0,1)$, this gives $(0,1,1,2,3,5,8,\ldots)$.
-\ii If two such sequences have the same first two entries, the formula makes their third entries equal; equal consecutive entries make the next entries equal. Induction shows equality at every index. Thus the first two entries determine the entire sequence.\end{steps}
-\end{example*}
-\begin{proposition*}[Notes Proposition 5; notes cite LADR 1C.10]
-The intersection $U\cap W$ of two subspaces of $V$ is a subspace.
-\end{proposition*}
-
-\begin{prob}\begin{proof}\begin{steps}
-\ii Both subspaces contain $0$, hence so does their intersection.
-\ii If $u,v\in U\cap W$, then $au+v$ lies in $U$ and in $W$, hence in $U\cap W$.
-\end{steps}\end{proof}\end{prob}
-\begin{prob}\begin{definition*}[Sum; Notes Proposition 6]
-$U+W=\{u+w:u\in U,w\in W\}$. More generally $U_1+\cdots+U_m$ consists of sums $u_1+\cdots+u_m$ with $u_j\in U_j$. We abbreviate $u_1+\cdots+u_m$ by $\sum_{j=1}^m u_j$, or $\sum_j u_j$ when the range is clear; $\sum_{j<k}$ means indices $1,\ldots,k-1$.
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 6; notes cite LADR 1.40]
-$U+W$ is a subspace and is the smallest subspace containing $U\cup W$. More generally, $U_1+\cdots+U_m$ is the smallest subspace containing every $U_j$.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] The smallest subspace containing both $U$ and $W$.
-\ii[First try.] $U\cup W$ can fail: the coordinate axes contain $(1,0)$ and $(0,1)$ but not $(1,1)$.
-\ii[Key step.] Any such subspace must contain every $u+w$. These sums form a subspace because
-$a(u_1+w_1)+(u_2+w_2)=(au_1+u_2)+(aw_1+w_2)$, with the first summand in $U$ and the second in $W$.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii $0=0+0$ lies in $U+W$. Also $a(u_1+w_1)+(u_2+w_2)=(au_1+u_2)+(aw_1+w_2)\in U+W$.
-\ii Each $u\in U$ equals $u+0$ and each $w\in W$ equals $0+w$, so $U\cup W\subseteq U+W$.
-\ii Any subspace $X$ containing $U\cup W$ contains every $u+w$ by addition closure; hence $U+W\subseteq X$.
-\ii For $m$ subspaces, $0=0+\cdots+0$ is in the sum. Also $a(u_1+\cdots+u_m)+(v_1+\cdots+v_m)=(au_1+v_1)+\cdots+(au_m+v_m)$, with $au_j+v_j\in U_j$ by closure in $U_j$. Thus the same test proves $U_1+\cdots+U_m$ is a subspace. It contains each $U_j$ by taking the other summands zero. Every subspace containing all $U_j$ contains all these sums by repeated addition, proving minimality.
-\end{steps}\end{proof}\end{prob}
-\begin{fig}\UnionIllustration\end{fig}
-\begin{proposition*}[When a union is a subspace]
-For two subspaces $U,W$ of $V$, $U\cup W$ is a subspace iff $U\subseteq W$ or $W\subseteq U$.
-\end{proposition*}
-\begin{prob}\begin{proof}\begin{steps}
-\ii If one contains the other, their union is the larger subspace.
-\ii Otherwise choose $u\in U\setminus W$ and $w\in W\setminus U$. If $u+w\in U$, subtraction gives $w\in U$, a contradiction. If $u+w\in W$, it gives $u\in W$, also a contradiction. Thus the union fails addition closure.
-\end{steps}\end{proof}\end{prob}
-
-\begin{example*}[LADR 1.37: the sum of two coordinate axes]
-In $F^3$, let $U=\{(x,0,0):x\in F\}$ and $W=\{(0,y,0):y\in F\}$. Then
-\[
-U+W=\{(x,y,0):x,y\in F\}.
-\]
-Every sum has third coordinate zero. Conversely, every $(x,y,0)$ is the sum $(x,0,0)+(0,y,0)$, with one summand in each subspace.
-\end{example*}
-\begin{prob}
-\method{Computing a sum from coordinate conditions: LADR Example 1.38 and equation 1.39}
-Let
-\[
-U=\{(a,a,b,b):a,b\in F\},\qquad W=\{(c,c,c,d):c,d\in F\}.
-\]
-Both are subspaces of $F^4$: zero satisfies their coordinate equalities, and, for $\alpha\in F$, $\alpha u+v$ preserves any equality $u_j=u_k$, $v_j=v_k$, because $\alpha u_j+v_j=\alpha u_k+v_k$.
-
-To find $U+W$, first add arbitrary summands to find a necessary coordinate condition. Then construct summands for every vector satisfying that condition; the first calculation alone gives only one inclusion.
-\begin{steps}
-\ii A general sum is
-\[
-(a,a,b,b)+(c,c,c,d)=(a+c,a+c,b+c,b+d).
-\]
-Its first two coordinates are equal. Hence, as in LADR equation 1.39,
-\[
-U+W\subseteq\{(x,x,y,z):x,y,z\in F\}.
-\]
-\ii For the reverse inclusion, start with any $(x,x,y,z)$. Choose $(x,x,y,y)\in U$ to match its first three coordinates. The remaining difference is $(0,0,0,z-y)$, which belongs to $W$ because its first three coordinates are equal. Thus
-\[
-(x,x,y,z)=(x,x,y,y)+(0,0,0,z-y)\in U+W.
-\]
-\ii Both inclusions give $U+W=\{(x,x,y,z):x,y,z\in F\}$. The third and fourth coordinates are unrestricted; their equality in $U$ need not persist after adding an element of $W$.
-\end{steps}
-\end{prob}
-\begin{prob}\begin{definition*}[Notes Definition 6; two-subspace criterion: LADR 1.46]
-The sum of $U,W$ is \emph{direct}, written $U\oplus W$, when $U\cap W=\{0\}$. A sum of $m$ subspaces is direct when
-\[
-U_k\cap(U_1+\cdots+U_{k-1})=\{0\}\qquad(2\le k\le m).
-\]
-\end{definition*}\end{prob}
-\begin{proposition*}[Notes Proposition 7; notes cite LADR 1.41, 1.45]
-For subspaces $U_1,\ldots,U_m$, the following are equivalent: (i) their sum is direct; (ii) every vector in their sum has a unique representation $u_1+\cdots+u_m$, $u_j\in U_j$; (iii) $u_1+\cdots+u_m=0$ implies $u_1=\cdots=u_m=0$.
-\end{proposition*}
-\begin{motive}
-\ii[Want.] Determine when summands can be recovered uniquely from their sum.
-\ii[Key step.] Subtract two decompositions. Their differences lie in the same respective subspaces and sum to zero. Thus uniqueness is exactly the claim that no nonzero choice of summands represents zero. The intersection condition tests this: the last nonzero summand of a zero sum would also belong to the sum of the preceding subspaces.
-\end{motive}
-\begin{prob}\begin{proof}\begin{steps}
-\ii (i)$\Rightarrow$(iii): if $\sum_j u_j=0$ has a last nonzero term $u_k$, then $k=1$ is impossible. For $k\ge2$, $u_k=-\sum_{j<k}u_j\in U_k\cap(U_1+\cdots+U_{k-1})=\{0\}$, also impossible.
-\ii (iii)$\Rightarrow$(i): otherwise choose $0\ne x\in U_k\cap(U_1+\cdots+U_{k-1})$ and write $x=\sum_{j<k}u_j$. Then $u_1+\cdots+u_{k-1}-x+0+\cdots+0=0$ is a nonzero choice of summands, contradicting (iii).
-\ii (iii)$\Rightarrow$(ii): each vector has a decomposition by definition of the sum. If $\sum u_j=\sum v_j$, then $\sum(u_j-v_j)=0$. Each difference lies in $U_j$, so (iii) gives $u_j=v_j$ for every $j$.
-\ii (ii)$\Rightarrow$(iii): compare any representation of zero with $0+\cdots+0$.
-\end{steps}\end{proof}\end{prob}
-\begin{example*}[LADR 1.42--1.44: coordinate direct sums and a nonexample]
-\begin{steps}
-\ii In $F^3$, let $U=\{(x,y,0):x,y\in F\}$ and $W=\{(0,0,z):z\in F\}$. Every vector has the representation
-$(x,y,z)=(x,y,0)+(0,0,z)$. Its coordinates force both summands, so $F^3=U\oplus W$ (1.42).
-\ii In $F^n$, let $U_j$ consist of the vectors whose coordinates outside position $j$ are zero. Then
-\[
-(x_1,\ldots,x_n)=(x_1,0,\ldots,0)+\cdots+(0,\ldots,0,x_n).
-\]
-The $j$th coordinate forces the summand from $U_j$. Thus $F^n=U_1\oplus\cdots\oplus U_n$ (1.43).
-\ii For 1.44, take $U_1=\{(x,y,0)\}$, $U_2=\{(0,0,z)\}$ and $U_3=\{(0,t,t)\}$, with parameters in $F$. The first two already sum to $F^3$, so $U_1+U_2+U_3=F^3$. But
-\[
-(0,1,0)+(0,0,1)+(0,-1,-1)=(0,0,0)
-\]
-is a nonzero choice of summands representing zero. The sum is not direct, by Proposition 7.
-\end{steps}
-\end{example*}
-\begin{prob}
-\method{Finding summands by solving their coordinate equations}
-Let $U=\{(t,t):t\in\mathbb R\}$ and $W=\{(s,-s):s\in\mathbb R\}$. Both are subspaces: zero has parameter zero, and $a(t,t)+(r,r)=(at+r,at+r)$, with the corresponding calculation for $W$.
-\begin{steps}
-\ii To write $(x,y)$ as a sum, solve
-\[
-(x,y)=(t,t)+(s,-s)=(t+s,t-s),\qquad t+s=x,\quad t-s=y.
-\]
-\ii Adding the equations gives $2t=x+y$; subtracting the second from the first gives $2s=x-y$. Thus
-\[
-(x,y)=\left(\frac{x+y}{2},\frac{x+y}{2}\right)
-+\left(\frac{x-y}{2},-\frac{x-y}{2}\right).
-\]
-These values exist and are forced, so $\mathbb R^2=U\oplus W$ by Proposition 7.
-\ii The intersection test gives the same conclusion: $(t,t)=(s,-s)$ requires $t=s$ and $t=-s$. Hence $2t=0$, so $t=s=0$ over $\mathbb R$.
-\ii For $(x,y)=(4,2)$, $2t=6$ and $2s=2$, so $(4,2)=(3,3)+(1,-1)$.
-\end{steps}
-
-\end{prob}
-\begin{fig}\DirectSumIllustration\end{fig}
-\begin{prob}
-\method{Why pairwise intersections do not decide a sum of three subspaces}
-Set $U_1=\{(t,0)\}$, $U_2=\{(0,t)\}$, $U_3=\{(t,t)\}$, with all parameters real. Each is a subspace by the same parameter calculation used above.
-\begin{steps}
-\ii A point on two of these distinct lines has both the relevant zero coordinate and the equation $x=y$ when applicable; in every pair this forces $(x,y)=(0,0)$.
-\ii Nevertheless $(1,1)$ has representations
-\[
-(1,0)+(0,1)+(0,0)=(0,0)+(0,0)+(1,1).
-\]
-The summands in each expression belong in order to $U_1,U_2,U_3$. They differ, so the sum is not direct.
-\ii Specifically, $U_1+U_2=\mathbb R^2$, hence $U_3\cap(U_1+U_2)=U_3\ne\{0\}$. This is the intersection required in Definition 6; pairwise intersections do not check it.
-\ii Also $U_2+U_3=\mathbb R^2$, since $(x,y)=(0,y-x)+(x,x)$. Therefore
-\[
-U_1\cap(U_2+U_3)=U_1,\qquad (U_1\cap U_2)+(U_1\cap U_3)=\{0\}.
-\]
-For example $(1,0)$ belongs to the left side but not the right. Intersection does not distribute over subspace sum.
-\end{steps}\end{prob}
-\begin{fig}\ThreeLineIllustration\end{fig}
-\begin{shortcuts}
-\ii To disprove the subspace property, first test zero. The set $x+y=1$ fails immediately.
-\ii A homogeneous equation $c_1x_1+\cdots+c_nx_n=0$ (right-hand side zero) with fixed field coefficients passes the test: zero satisfies it and $\sum_j c_j(au_j+v_j)=a\sum_jc_ju_j+\sum_jc_jv_j=a0+0=0$. For example, $x-2y=0$ is preserved because $a(2r,r)+(2s,s)=(2(ar+s),ar+s)$.
-\ii For two subspaces, solve $u=w$ to test their intersection, as in $(t,t)=(s,-s)$ above. For more than two, solve $u_1+\cdots+u_m=0$ and use Proposition 7; the three-line example shows why pairwise tests can miss a nonzero solution.
-\end{shortcuts}
-\begin{trapbox}
-\ii A union need not be a subspace: the two coordinate axes contain $(1,0)$ and $(0,1)$ but not their sum $(1,1)$.
-\ii Let $U_1=\{(t,0)\}$, $U_2=\{(0,t)\}$, $U_3=\{(t,t)\}$ (all parameters real). Their pairwise intersections are zero, but $(1,0)+(0,1)+(-1,-1)=0$, so their sum is not direct.
-\ii For these same lines, $U_1\cap(U_2+U_3)=U_1$, while $(U_1\cap U_2)+(U_1\cap U_3)=\{0\}$. Intersection does not distribute over subspace sum.
-\end{trapbox}
-
 
 \section{Problem set}
-\begin{prob}\textbf{HW1 P1.} For $f:X\to Y$, $U\subseteq X$, $V\subseteq Y$, prove (a) $f(f^{-1}(V))\subseteq V$, (b) $U\subseteq f^{-1}(f(U))$. (c) Give strict-inclusion examples and determine exactly when equality holds in each.\\\emph{Hint:} Use the image and inverse-image definitions; distinguish a fixed subset from a statement for every subset.\end{prob}
-\begin{prob}\textbf{HW1 P2 (LADR 1A.7).} Show that $(-1+\sqrt3\,i)/2$ is a cube root of $1$.\\\emph{Hint:} Expand using $i^2=-1$ and square before multiplying once more.\end{prob}
-\begin{prob}\textbf{HW1 P3.} For $a,b\in F$, prove $ab=0$ implies $a=0$ or $b=0$.\\\emph{Hint:} Apply the multiplicative-inverse axiom only in the case $a\ne0$.\end{prob}
-\begin{prob}\textbf{HW1 P4 (LADR 1B.2).} If $a\in F$, $v\in V$ and $av=0$, prove $a=0$ or $v=0$.\\\emph{Hint:} Use scalar associativity and Notes Proposition 4.\end{prob}
-\begin{prob}\textbf{HW1 P5 (LADR 1C.4).} For $b\in\mathbb R$, let $U_b$ consist of continuous real-valued functions $f$ on $[0,1]$ satisfying $\int_0^1f(x)\,dx=b$. Prove that $U_b$ is a subspace of $\mathbb R^{[0,1]}$ if and only if $b=0$.\\\emph{Hint:} Test the zero function, then use the subspace test and linearity of the integral (from calculus).\end{prob}
-\begin{prob}\textbf{HW1 P6 (LADR 1C.5).} Is $\mathbb R^2$ a subspace of the complex vector space $\mathbb C^2$?\\\emph{Hint:} The scalar field is $\mathbb C$; test multiplication by $i$.\end{prob}
-\begin{prob}\textbf{HW1 P7.} In $\mathbb F_2=\mathbb Z/2\mathbb Z$, expand $(x+1)^8$ by first computing $(x+1)^2$ and repeatedly squaring. Explain how this differs from the calculation over $\mathbb R$.\\\emph{Hint:} In $\mathbb F_2$, the coefficient $2$ is zero.\end{prob}
-\begin{prob}\textbf{Exam practice (Midterm 1 review, Section II, Exercise 7).} Prove that the intersection of subspaces is a subspace. What about union?\\\emph{Hint:} Apply Notes Proposition 5, and test the two coordinate axes for union.\end{prob}
+
+\begin{prob}\textbf{HW1 P1.}\ Let $f\colon X\to Y$. For $U\subseteq X$, $V\subseteq Y$ let $f(U)=\{f(x):x\in U\}$ and $f^{-1}(V)=\{x\in X:f(x)\in V\}$.
+\begin{enumerate}[(a)]
+  \ii Prove $f(f^{-1}(V))\subseteq V$. \ii Prove $U\subseteq f^{-1}(f(U))$.
+  \ii Give examples where each inclusion is strict. Determine exactly when equality holds in (a) and in (b).
+\end{enumerate}
+\emph{Hint:} take an arbitrary element and unfold both definitions; for (c) think about surjective and injective.
+\end{prob}
+\begin{prob}\textbf{HW1 P2 (LADR 1A.7).}\ Show that $\dfrac{-1+\sqrt3\,i}{2}$ is a cube root of $1$.
+
+\emph{Hint:} square it first, then multiply once more.
+\end{prob}
+\begin{prob}\textbf{HW1 P3.}\ Let $a,b\in\FF$. Prove that if $ab=0$ then $a=0$ or $b=0$.
+
+\emph{Hint:} multiplicative inverse (field axiom (vii)).
+\end{prob}
+\begin{prob}\textbf{HW1 P4 (LADR 1B.2).}\ If $a\in\FF$, $v\in V$ and $av=0$, prove $a=0$ or $v=0$.
+
+\emph{Hint:} same idea as P3, with Prop.~4(ii).
+\end{prob}
+\begin{prob}\textbf{HW1 P5 (LADR 1C.4).}\ Let $b\in\RR$. Show that the set of continuous $f\colon[0,1]\to\RR$ with $\int_0^1f=b$ is a subspace of $\RR^{[0,1]}$ if and only if $b=0$.
+
+\emph{Hint:} the zero function for one direction, linearity of the integral for the other.
+\end{prob}
+\begin{prob}\textbf{HW1 P6 (LADR 1C.5).}\ Is $\RR^2$ a subspace of the complex vector space $\CC^2$?
+
+\emph{Hint:} which scalars are allowed in $\CC^2$?
+\end{prob}
+\begin{prob}\textbf{HW1 P7.}\ Over $\FF_2$, expand $(x+1)^8$ by computing $(x+1)^2$ and squaring repeatedly. Explain where the calculation differs from the one over $\RR$.
+
+\emph{Hint:} $2=0$ in $\FF_2$.
+\end{prob}
+\begin{prob}\textbf{R1 (Midterm 1 review, Exercise 7).}\ Prove that the intersection of subspaces is a subspace. What about the union?
+\end{prob}
+\begin{prob}\textbf{E1 (LADR 1C.12).}\ Prove that the union of two subspaces of $V$ is a subspace if and only if one of them contains the other.
+\end{prob}
+\begin{prob}\textbf{E2.}\ In $\RR^3$ let $U=\{(x,y,0)\}$, $W=\{(0,y,z)\}$, $X=\{(t,t,t)\}$. Which of the sums $U+W$, $U+X$, $W+X$ are direct? Is $\RR^3=U\oplus X$?
+\end{prob}
+
 \end{document}
