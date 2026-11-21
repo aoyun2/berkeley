@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 4 Review Exercises (Weeks 9-12) &mdash; STAT 20</title>
+<link rel="stylesheet" href="../../../../../assets/exercises.css">
+</head>
+<body>
+
+<p class="top-nav sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">STAT 20</a> &rsaquo; Quiz 4 Review</p>
+
+<h1>Quiz 4 Review Exercises (Weeks 9&ndash;12)</h1>
+<p class="sub">STAT 20 &bull; Fall 2026 &bull; In-Browser Base R Lab</p>
+
+<div class="materials-nav">
+  <strong>Materials:</strong>
+  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/review-weeks-9-12/handout.pdf" target="_blank" rel="noopener">Handout (PDF)</a> &bull;
+  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/review-weeks-9-12/solutions.pdf" target="_blank" rel="noopener">Solutions (PDF)</a> &bull;
+  <a href="exercises.zip" download>Download Offline .zip</a>
+</div>
+
+<p>Base R exercises covering bootstrapping, hypothesis testing, chi-squared tests, least squares regression, logistic regression, classification metrics, and permutation null distributions. Run code and verify all unit tests in your browser using WebR (WebAssembly R). Your progress is automatically saved.</p>
+
+<div class="toolbar">
+  <div class="toolbar-status">
+    <span id="engine-status" class="status-pill loading">&#9679; Loading WebR runtime...</span>
+    <span id="score-badge" class="score-badge">0 / 11 passed</span>
+  </div>
+  <div class="toolbar-actions">
+    <button id="btn-run-all" class="btn btn-primary" disabled>Run All Exercises</button>
+    <button id="btn-download-r" class="btn">Download review.R</button>
+    <button id="btn-reset-all" class="btn">Reset All</button>
+  </div>
+</div>
+
+<div class="view-tabs">
+  <button class="view-tab active" data-tab="cards">Interactive Cards</button>
+  <button class="view-tab" data-tab="full">Full Script (review.R)</button>
+</div>
+
+<!-- Tab 1: Cards View -->
+<div id="view-cards">
+
+  <!-- Ex 1 -->
+  <div class="exercise-card" id="card-ex1">
+    <div class="exercise-header">
+      <h3 class="exercise-title">1. Bootstrap Statistics (<code>boot_stats</code>)</h3>
+      <span class="exercise-status pending" id="status-ex1">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      <code>reps</code> statistics, each <code>stat</code> applied to a resample of <code>x</code> (size <code>length(x)</code>, with replacement). Returns a numeric vector. Must work when <code>x</code> has length 1.<br>
+      <em>Note: For a single number <code>x</code>, <code>sample(x)</code> draws from <code>1:x</code>; index with <code>sample.int(n, size = n, replace = TRUE)</code> instead.</em>
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex1" rows="5" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>n &lt;- length(x); replicate(reps, stat(x[sample.int(n, size = n, replace = TRUE)]))</code></span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex1" disabled>Run Ex 1</button>
+      <button class="btn btn-reset-single" data-target="ex1">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex1" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">boot_stats &lt;- function(x, stat, reps) {
+  n &lt;- length(x)
+  replicate(reps, stat(x[sample.int(n, size = n, replace = TRUE)]))
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 2 -->
+  <div class="exercise-card" id="card-ex2">
+    <div class="exercise-header">
+      <h3 class="exercise-title">2. Percentile Interval (<code>percentile_ci</code>)</h3>
+      <span class="exercise-status pending" id="status-ex2">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      The <code>(1 - level)/2</code> and <code>(1 + level)/2</code> quantiles of <code>stats</code> (use <code>quantile()</code> with its default type). Returns a length-2 numeric vector with no names.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex2" rows="4" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Use <code>unname(quantile(stats, probs = c((1 - level) / 2, (1 + level) / 2)))</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex2" disabled>Run Ex 2</button>
+      <button class="btn btn-reset-single" data-target="ex2">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex2" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">percentile_ci &lt;- function(stats, level) {
+  unname(quantile(stats, probs = c((1 - level) / 2, (1 + level) / 2)))
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 3 -->
+  <div class="exercise-card" id="card-ex3">
+    <div class="exercise-header">
+      <h3 class="exercise-title">3. Two-Sided P-Value (<code>two_sided_p</code>)</h3>
+      <span class="exercise-status pending" id="status-ex3">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Two-sided p-value from a null distribution, as <code>infer</code> computes it: twice the smaller of <code>mean(null_stats &gt;= obs)</code> and <code>mean(null_stats &lt;= obs)</code>, capped at 1. Ties count as extreme.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex3" rows="4" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>min(1, 2 * min(mean(null_stats &gt;= obs), mean(null_stats &lt;= obs)))</code></span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex3" disabled>Run Ex 3</button>
+      <button class="btn btn-reset-single" data-target="ex3">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex3" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">two_sided_p &lt;- function(null_stats, obs) {
+  min(1, 2 * min(mean(null_stats &gt;= obs), mean(null_stats &lt;= obs)))
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 4 -->
+  <div class="exercise-card" id="card-ex4">
+    <div class="exercise-header">
+      <h3 class="exercise-title">4. Chi-Squared Statistic (<code>chisq_stat</code>)</h3>
+      <span class="exercise-status pending" id="status-ex4">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Observed counts and null proportions <code>p</code> (same order, <code>p</code> sums to 1). Formula: <code>&sum; (observed - expected)&sup2; / expected</code> where <code>expected = sum(observed) * p</code>.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex4" rows="5" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Vectorized formula across all categories.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex4" disabled>Run Ex 4</button>
+      <button class="btn btn-reset-single" data-target="ex4">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex4" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">chisq_stat &lt;- function(observed, p) {
+  expected &lt;- sum(observed) * p
+  sum((observed - expected)^2 / expected)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 5 -->
+  <div class="exercise-card" id="card-ex5">
+    <div class="exercise-header">
+      <h3 class="exercise-title">5. Least Squares Coefficients (<code>ls_coef</code>)</h3>
+      <span class="exercise-status pending" id="status-ex5">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Least squares line: <code>c(b0, b1)</code> from the formulas <code>b1 = Sxy / Sxx</code>, <code>b0 = mean(y) - b1 * mean(x)</code>. If all <code>x</code> are equal (<code>Sxx == 0</code>), return <code>c(mean(y), NA)</code>, as <code>lm()</code> does.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex5" rows="7" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>sxx &lt;- sum((x - mean(x))^2); if (sxx == 0) return(c(mean(y), NA))</code></span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex5" disabled>Run Ex 5</button>
+      <button class="btn btn-reset-single" data-target="ex5">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex5" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">ls_coef &lt;- function(x, y) {
+  sxx &lt;- sum((x - mean(x))^2)
+  if (sxx == 0) return(c(mean(y), NA))
+  b1 &lt;- sum((x - mean(x)) * (y - mean(y))) / sxx
+  c(mean(y) - b1 * mean(x), b1)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 6 -->
+  <div class="exercise-card" id="card-ex6">
+    <div class="exercise-header">
+      <h3 class="exercise-title">6. R-Squared (<code>r_squared</code>)</h3>
+      <span class="exercise-status pending" id="status-ex6">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      <code>R&sup2;</code> of predictions <code>y_hat</code> for targets <code>y</code>, with the baseline <code>mean(y)</code> taken from the same <code>y</code>: <code>1 - mean((y - y_hat)&sup2;) / mean((y - mean(y))&sup2;)</code>. (Can be negative on test data).
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex6" rows="4" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>1 - mean((y - y_hat)^2) / mean((y - mean(y))^2)</code></span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex6" disabled>Run Ex 6</button>
+      <button class="btn btn-reset-single" data-target="ex6">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex6" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">r_squared &lt;- function(y, y_hat) {
+  1 - mean((y - y_hat)^2) / mean((y - mean(y))^2)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 7 -->
+  <div class="exercise-card" id="card-ex7">
+    <div class="exercise-header">
+      <h3 class="exercise-title">7. Logistic &amp; Classify (<code>logistic</code>, <code>classify</code>)</h3>
+      <span class="exercise-status pending" id="status-ex7">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Logistic function <code>1 / (1 + exp(-t))</code> and classification with threshold 0.5 (values <code>&gt;= 0.5</code> map to 1, else 0).
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex7" rows="7" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Use <code>ifelse(p_hat &gt;= 0.5, 1, 0)</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex7" disabled>Run Ex 7</button>
+      <button class="btn btn-reset-single" data-target="ex7">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex7" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">logistic &lt;- function(t) {
+  1 / (1 + exp(-t))
+}
+classify &lt;- function(p_hat) {
+  ifelse(p_hat &gt;= 0.5, 1, 0)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 8 -->
+  <div class="exercise-card" id="card-ex8">
+    <div class="exercise-header">
+      <h3 class="exercise-title">8. Classification Metrics (<code>metrics</code>)</h3>
+      <span class="exercise-status pending" id="status-ex8">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Metrics for 0/1 vectors <code>y</code> and <code>y_hat</code>: a named vector <code>c(mcr = ..., precision = ..., recall = ...)</code>. Note: 0/0 gives <code>NaN</code>.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex8" rows="8" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Calculate <code>tp &lt;- sum(y == 1 &amp; y_hat == 1)</code>, <code>fp</code>, and <code>fn</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex8" disabled>Run Ex 8</button>
+      <button class="btn btn-reset-single" data-target="ex8">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex8" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">metrics &lt;- function(y, y_hat) {
+  tp &lt;- sum(y == 1 &amp; y_hat == 1)
+  fp &lt;- sum(y == 0 &amp; y_hat == 1)
+  fn &lt;- sum(y == 1 &amp; y_hat == 0)
+  c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 9 -->
+  <div class="exercise-card" id="card-ex9">
+    <div class="exercise-header">
+      <h3 class="exercise-title">9. Permutation Null Distribution (<code>perm_null</code>)</h3>
+      <span class="exercise-status pending" id="status-ex9">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      <code>reps</code> values of <code>mean(y[g == "a"]) - mean(y[g == "b"])</code> where <code>g</code> is a shuffled copy of <code>group</code> (<code>sample(group)</code> preserves group sizes). <code>group</code> has values <code>"a"</code> and <code>"b"</code>.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex9" rows="8" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Use <code>replicate(reps, { g &lt;- sample(group); mean(y[g == "a"]) - mean(y[g == "b"]) })</code></span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex9" disabled>Run Ex 9</button>
+      <button class="btn btn-reset-single" data-target="ex9">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex9" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">perm_null &lt;- function(y, group, reps) {
+  replicate(reps, {
+    g &lt;- sample(group)
+    mean(y[g == "a"]) - mean(y[g == "b"])
+  })
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 10 -->
+  <div class="exercise-card" id="card-ex10">
+    <div class="exercise-header">
+      <h3 class="exercise-title">10. Train/Test Row Split (<code>split_rows</code>)</h3>
+      <span class="exercise-status pending" id="status-ex10">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Train/test split of rows <code>1..n</code>: shuffle the row numbers, the first <code>floor(n * frac)</code> form the training set, the rest the test set. Returns <code>list(train = ..., test = ...)</code> of row numbers; train may be empty.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex10" rows="7" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>rows &lt;- sample.int(n); k &lt;- floor(n * frac)</code>; use <code>seq_len(k)</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex10" disabled>Run Ex 10</button>
+      <button class="btn btn-reset-single" data-target="ex10">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex10" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">split_rows &lt;- function(n, frac) {
+  rows &lt;- sample.int(n)
+  k &lt;- floor(n * frac)
+  list(train = rows[seq_len(k)], test = rows[setdiff(seq_len(n), seq_len(k))])
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 11 -->
+  <div class="exercise-card" id="card-ex11">
+    <div class="exercise-header">
+      <h3 class="exercise-title">11. Binomial Test Size and Power (<code>binom_test_power</code>)</h3>
+      <span class="exercise-status pending" id="status-ex11">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Exact size and power of the one-sided test of <code>H0: p = p0</code> against <code>HA: p &gt; p0</code> with <code>n</code> tosses that rejects when <code>X &gt;= c</code>, where <code>c</code> is the smallest count with <code>P(X &gt;= c | p0) &lt;= alpha</code>. Returns <code>c(c = ..., size = ..., power = ...)</code> with power computed at <code>p1</code>. If no count qualifies, <code>c</code> is <code>n + 1</code> and size and power are 0.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex11" rows="10" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: <code>P(X &gt;= k) = 1 - pbinom(k - 1, n, p)</code>. Find the smallest <code>k</code> where tail &le; alpha.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex11" disabled>Run Ex 11</button>
+      <button class="btn btn-reset-single" data-target="ex11">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex11" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">binom_test_power &lt;- function(n, p0, p1, alpha) {
+  tail0 &lt;- 1 - pbinom(0:n - 1, n, p0)
+  ok &lt;- which(tail0 &lt;= alpha)
+  if (length(ok) == 0) return(c(c = n + 1, size = 0, power = 0))
+  k &lt;- ok[1] - 1
+  c(c = k, size = 1 - pbinom(k - 1, n, p0), power = 1 - pbinom(k - 1, n, p1))
+}</pre>
+    </details>
+  </div>
+
+</div>
+
+<!-- Tab 2: Full Script View -->
+<div id="view-full" style="display: none;">
+  <div class="exercise-card">
+    <h3 class="exercise-title">Full <code>review.R</code> Editor</h3>
+    <p class="sub">Edit the entire R script at once. Changes sync automatically with the individual exercise cards.</p>
+    <textarea class="code-editor" id="full-script" rows="28" spellcheck="false"></textarea>
+    <div class="card-actions" style="margin-top: 12px;">
+      <button id="btn-run-full" class="btn btn-primary" disabled>Run Script &amp; Check All</button>
+      <button id="btn-sync-from-cards" class="btn">Reload from Cards</button>
+    </div>
+    <div class="console-box" id="full-console" style="display: none;"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Autosaved</div>
+
+<script type="module">
+import { WebR, ChannelType } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+const STARTER_CODE = {
+  ex1: 'boot_stats <- function(x, stat, reps) {\n  stop("todo")\n}',
+  ex2: 'percentile_ci <- function(stats, level) {\n  stop("todo")\n}',
+  ex3: 'two_sided_p <- function(null_stats, obs) {\n  stop("todo")\n}',
+  ex4: 'chisq_stat <- function(observed, p) {\n  stop("todo")\n}',
+  ex5: 'ls_coef <- function(x, y) {\n  stop("todo")\n}',
+  ex6: 'r_squared <- function(y, y_hat) {\n  stop("todo")\n}',
+  ex7: 'logistic <- function(t) {\n  stop("todo")\n}\nclassify <- function(p_hat) {\n  stop("todo")\n}',
+  ex8: 'metrics <- function(y, y_hat) {\n  stop("todo")\n}',
+  ex9: 'perm_null <- function(y, group, reps) {\n  stop("todo")\n}',
+  ex10: 'split_rows <- function(n, frac) {\n  stop("todo")\n}',
+  ex11: 'binom_test_power <- function(n, p0, p1, alpha) {\n  stop("todo")\n}'
+};
+
+const EXERCISE_TESTS = {
+  ex1: `
+set.seed(1)
+b <- tryCatch(boot_stats(c(2, 4, 6, 8), mean, 200), error = function(e) NULL)
+.check("boot_stats: one statistic per resample", length(b) == 200)
+.check("boot_stats: values from resamples", length(b) == 200 && all(b >= 2 & b <= 8))
+.check("boot_stats: all values equal gives one point", all(boot_stats(c(5, 5, 5), mean, 50) == 5))
+.check("boot_stats: n = 1 gives one point", all(boot_stats(7, median, 20) == 7))
+.check("boot_stats: max never exceeds sample max", max(boot_stats(c(1, 9, 3, 4), max, 300)) == 9)
+.check("boot_stats: resamples vary (with replacement)", length(unique(boot_stats(c(2, 4, 6, 8), mean, 200))) > 1)
+.check("boot_stats: resample size is n", all(boot_stats(c(1, 2, 3), length, 20) == 3))
+.check("boot_stats: max can miss sample max", min(boot_stats(c(1, 9, 3, 4), max, 300)) < 9)
+`,
+  ex2: `
+.check("percentile_ci: 95% of 1..101", near(percentile_ci(1:101, 0.95), c(3.5, 98.5)))
+.check("percentile_ci: 99% contains 95%", {
+  s <- rnorm(500); a <- percentile_ci(s, 0.95); w <- percentile_ci(s, 0.99)
+  w[1] <= a[1] && w[2] >= a[2]
+})
+.check("percentile_ci: no names", is.null(names(percentile_ci(1:10, 0.9))))
+`,
+  ex3: `
+null <- c(rep(-3, 40), rep(0, 448), rep(3, 12))
+.check("two_sided_p: right tail smaller", near(two_sided_p(null, 3), 0.048))
+.check("two_sided_p: left tail smaller", near(two_sided_p(null, -3), 0.16))
+.check("two_sided_p: capped at 1", two_sided_p(null, 0) == 1)
+.check("two_sided_p: ties count as extreme", near(two_sided_p(c(1, 2, 3, 4), 4), 0.5))
+`,
+  ex4: `
+.check("chisq_stat: die", near(chisq_stat(c(5, 8, 9, 8, 10, 20), rep(1/6, 6)), 13.4))
+.check("chisq_stat: perfect match is 0", chisq_stat(c(25, 75), c(0.25, 0.75)) == 0)
+`,
+  ex5: `
+.check("ls_coef: hand example", near(ls_coef(1:4, c(2, 3, 5, 6)), c(0.5, 1.4)))
+.check("ls_coef: agrees with lm", near(ls_coef(c(0, 1, 2), c(1, 1, 4)), unname(coef(lm(c(1, 1, 4) ~ c(0, 1, 2))))))
+.check("ls_coef: constant x", {
+  r <- ls_coef(c(3, 3, 3), c(1, 2, 6)); r[1] == 3 && is.na(r[2])
+})
+`,
+  ex6: `
+.check("r_squared: hand example", near(r_squared(c(2, 3, 5, 6), c(1.9, 3.3, 4.7, 6.1)), 0.98))
+.check("r_squared: negative on test data", near(r_squared(c(1, 2, 3), c(3, 3, 3)), -1.5))
+.check("r_squared: baseline gives 0", near(r_squared(c(1, 2, 6), c(3, 3, 3)), 0))
+`,
+  ex7: `
+.check("logistic: values", near(logistic(c(0, 1, -1)), c(0.5, 0.7310586, 0.2689414)))
+.check("classify: 0.5 is 1", length(classify(c(0.49, 0.5, 0.9))) == 3 && all(classify(c(0.49, 0.5, 0.9)) == c(0, 1, 1)))
+`,
+  ex8: `
+m <- tryCatch(metrics(c(rep(1, 10), rep(0, 90)), c(rep(1, 6), rep(0, 4), rep(1, 2), rep(0, 88))), error = function(e) NULL)
+.check("metrics: spam filter", near(m, c(0.06, 0.75, 0.6)) && identical(names(m), c("mcr", "precision", "recall")))
+.check("metrics: no positive predictions", {
+  z <- metrics(c(1, 0, 0, 0), c(0, 0, 0, 0)); near(z[["mcr"]], 0.25) && is.nan(z[["precision"]]) && z[["recall"]] == 0
+})
+.check("metrics: no positive cases", is.nan(metrics(c(0, 0, 0), c(0, 1, 0))[["recall"]]))
+`,
+  ex9: `
+set.seed(2)
+grp <- rep(c("a", "b"), each = 10)
+pn <- tryCatch(perm_null(1:20, grp, 400), error = function(e) NULL)
+.check("perm_null: one value per shuffle", length(pn) == 400)
+.check("perm_null: centered near 0", length(pn) == 400 && abs(mean(pn)) < 1)
+.check("perm_null: values in possible range", length(pn) == 400 && all(pn >= -10 & pn <= 10))
+.check("perm_null: varies", length(unique(pn)) > 1)
+`,
+  ex10: `
+sp <- tryCatch(split_rows(16, 0.8), error = function(e) NULL)
+.check("split_rows: 12 training rows of 16", length(sp$train) == 12 && length(sp$test) == 4)
+.check("split_rows: disjoint and complete", length(intersect(sp$train, sp$test)) == 0 && setequal(c(sp$train, sp$test), 1:16))
+.check("split_rows: shuffled", !is.null(sp) && !identical(sort(sp$train), 1:12))
+.check("split_rows: n = 1 gives empty training set", {
+  z <- split_rows(1, 0.8); length(z$train) == 0 && identical(as.integer(z$test), 1L)
+})
+`,
+  ex11: `
+.check("binom_test_power: n = 10, p1 = 0.8", near(binom_test_power(10, 0.5, 0.8, 0.05), c(9, 11/1024, 0.3758096)))
+.check("binom_test_power: too few tosses", near(binom_test_power(4, 0.5, 0.9, 0.05), c(5, 0, 0)))
+.check("binom_test_power: size at most alpha", binom_test_power(30, 0.5, 0.7, 0.05)[["size"]] <= 0.05)
+.check("binom_test_power: tail equal to alpha allowed", near(binom_test_power(5, 0.5, 0.9, 1/32), c(5, 1/32, 0.9^5)))
+`
+};
+
+let webR = null;
+let passState = { ex1: false, ex2: false, ex3: false, ex4: false, ex5: false, ex6: false, ex7: false, ex8: false, ex9: false, ex10: false, ex11: false };
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function enableTabSupport(textarea) {
+  textarea.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 2;
+      triggerSave();
+    } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      const id = this.id.replace('code-', '');
+      if (id.startsWith('ex')) {
+        runSingleExercise(id);
+      }
+    }
+  });
+  textarea.addEventListener('input', triggerSave);
+}
+
+let saveTimer = null;
+function triggerSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    Object.keys(STARTER_CODE).forEach(k => {
+      const el = document.getElementById('code-' + k);
+      if (el) localStorage.setItem('stat20_rev_' + k, el.value);
+    });
+    showToast('Saved');
+  }, 400);
+}
+
+function loadSaved() {
+  Object.keys(STARTER_CODE).forEach(k => {
+    const el = document.getElementById('code-' + k);
+    const saved = localStorage.getItem('stat20_rev_' + k);
+    el.value = saved !== null ? saved : STARTER_CODE[k];
+    enableTabSupport(el);
+  });
+  enableTabSupport(document.getElementById('full-script'));
+}
+
+function assembleFullScript() {
+  let s = `# STAT 20 review, Weeks 9-12: exercises in base R.\n\n`;
+  for (let i = 1; i <= 11; i++) {
+    const k = 'ex' + i;
+    s += `# --- Exercise ${i} ---\n${document.getElementById('code-' + k).value.trim()}\n\n`;
+  }
+  return s;
+}
+
+function syncCardsFromFullScript(script) {
+  const fns = [
+    { k: 'ex1', fn: 'boot_stats' },
+    { k: 'ex2', fn: 'percentile_ci' },
+    { k: 'ex3', fn: 'two_sided_p' },
+    { k: 'ex4', fn: 'chisq_stat' },
+    { k: 'ex5', fn: 'ls_coef' },
+    { k: 'ex6', fn: 'r_squared' },
+    { k: 'ex7', fn: 'logistic' },
+    { k: 'ex8', fn: 'metrics' },
+    { k: 'ex9', fn: 'perm_null' },
+    { k: 'ex10', fn: 'split_rows' },
+    { k: 'ex11', fn: 'binom_test_power' }
+  ];
+
+  fns.forEach(item => {
+    if (item.k === 'ex7') {
+      const m1 = script.match(/(logistic\s*<-\s*function[\s\S]*?\n})/m);
+      const m2 = script.match(/(classify\s*<-\s*function[\s\S]*?\n})/m);
+      if (m1 && m2) {
+        document.getElementById('code-ex7').value = m1[1].trim() + '\n' + m2[1].trim();
+        localStorage.setItem('stat20_rev_ex7', document.getElementById('code-ex7').value);
+      }
+    } else {
+      const regex = new RegExp(`(${item.fn}\\s*<-\\s*function[\\s\\S]*?\\n})`, 'm');
+      const match = script.match(regex);
+      if (match) {
+        const el = document.getElementById('code-' + item.k);
+        if (el) {
+          el.value = match[1].trim();
+          localStorage.setItem('stat20_rev_' + item.k, el.value);
+        }
+      }
+    }
+  });
+}
+
+function updateScore() {
+  const passed = Object.values(passState).filter(Boolean).length;
+  const badge = document.getElementById('score-badge');
+  badge.textContent = `${passed} / 11 passed`;
+  badge.style.color = passed === 11 ? 'var(--pass-fg)' : '';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function runRCode(rScript) {
+  const shelter = await new webR.Shelter();
+  try {
+    const capture = await shelter.captureR(rScript);
+    return capture;
+  } finally {
+    await shelter.purge();
+  }
+}
+
+async function runSingleExercise(key) {
+  if (!webR) return;
+  const btn = document.querySelector(`.btn-run-single[data-target="${key}"]`);
+  if (btn) btn.disabled = true;
+
+  const statusEl = document.getElementById('status-' + key);
+  const resultsEl = document.getElementById('results-' + key);
+  statusEl.className = 'exercise-status pending';
+  statusEl.textContent = 'Running...';
+  resultsEl.style.display = 'block';
+
+  const userCode = document.getElementById('code-' + key).value;
+  const testScript = EXERCISE_TESTS[key];
+
+  const fullScript = `
+near <- function(a, b, tol = 1e-6) {
+  if (is.null(a) || is.null(b)) return(FALSE)
+  if (length(a) != length(b)) return(FALSE)
+  all(abs(a - b) < tol, na.rm = FALSE)
+}
+
+${userCode}
+
+.test_results <- list()
+.check <- function(name, expr) {
+  res <- tryCatch({
+    val <- isTRUE(expr)
+    list(name = name, pass = val, err = NULL)
+  }, error = function(e) {
+    list(name = name, pass = FALSE, err = e$message)
+  })
+  .test_results <<- c(.test_results, list(res))
+}
+
+${testScript}
+
+.to_json <- function(lst) {
+  items <- sapply(lst, function(item) {
+    err_str <- if (is.null(item$err)) "null" else paste0('"', gsub('"', '\\\\"', item$err), '"')
+    paste0(
+      '{"name": "', gsub('"', '\\\\"', item$name),
+      '", "pass": ', ifelse(item$pass, "true", "false"),
+      ', "err": ', err_str, '}'
+    )
+  })
+  paste0('[', paste(items, collapse = ','), ']')
+}
+cat("\n__TEST_JSON__:", .to_json(.test_results), "\n", sep = "")
+`;
+
+  try {
+    const capture = await runRCode(fullScript);
+    let jsonStr = null;
+    let consoleLines = [];
+
+    capture.output.forEach(out => {
+      const text = out.data;
+      if (text.includes('__TEST_JSON__:')) {
+        const parts = text.split('__TEST_JSON__:');
+        jsonStr = parts[1].trim();
+        if (parts[0].trim()) consoleLines.push(parts[0].trim());
+      } else {
+        consoleLines.push(text);
+      }
+    });
+
+    if (jsonStr) {
+      const tests = JSON.parse(jsonStr);
+      const allPassed = tests.length > 0 && tests.every(t => t.pass);
+      passState[key] = allPassed;
+
+      statusEl.className = 'exercise-status ' + (allPassed ? 'pass' : 'fail');
+      statusEl.textContent = allPassed ? 'PASS' : 'FAIL';
+
+      let html = '';
+      tests.forEach(t => {
+        if (t.pass) {
+          html += `
+            <div class="test-item pass">
+              <span class="test-icon">&#10004;</span>
+              <span><strong>${escapeHtml(t.name)}</strong>: PASS</span>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="test-item fail">
+              <span class="test-icon">&#10008;</span>
+              <span><strong>${escapeHtml(t.name)}</strong>: FAIL</span>
+            </div>
+            ${t.err ? `<div class="test-diff">Error: ${escapeHtml(t.err)}</div>` : ''}
+          `;
+        }
+      });
+
+      if (consoleLines.length > 0 && consoleLines.join('').trim().length > 0) {
+        html += `<div style="margin-top:8px;"><strong>Console Output:</strong><pre class="console-box">${escapeHtml(consoleLines.join('\n'))}</pre></div>`;
+      }
+      resultsEl.innerHTML = html;
+    } else {
+      passState[key] = false;
+      statusEl.className = 'exercise-status fail';
+      statusEl.textContent = 'ERROR';
+      resultsEl.innerHTML = `
+        <div class="test-item fail">
+          <span class="test-icon">&#10008;</span>
+          <span><strong>Execution / Syntax Error:</strong></span>
+        </div>
+        <div class="test-diff">${escapeHtml(consoleLines.join('\n') || 'Execution stopped with error')}</div>
+      `;
+    }
+  } catch (err) {
+    passState[key] = false;
+    statusEl.className = 'exercise-status fail';
+    statusEl.textContent = 'ERROR';
+    resultsEl.innerHTML = `<div class="test-diff">${escapeHtml(err.message || String(err))}</div>`;
+  } finally {
+    if (btn) btn.disabled = false;
+    updateScore();
+  }
+}
+
+async function runAll() {
+  for (const k of Object.keys(STARTER_CODE)) {
+    await runSingleExercise(k);
+  }
+}
+
+// Button listeners
+document.querySelectorAll('.btn-reset-single').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const k = btn.dataset.target;
+    localStorage.removeItem('stat20_rev_' + k);
+    document.getElementById('code-' + k).value = STARTER_CODE[k];
+    document.getElementById('status-' + k).className = 'exercise-status pending';
+    document.getElementById('status-' + k).textContent = 'Not run';
+    document.getElementById('results-' + k).style.display = 'none';
+    passState[k] = false;
+    updateScore();
+    showToast('Reset ' + k.toUpperCase());
+  });
+});
+
+document.querySelectorAll('.btn-run-single').forEach(btn => {
+  btn.addEventListener('click', () => runSingleExercise(btn.dataset.target));
+});
+
+document.getElementById('btn-run-all').addEventListener('click', runAll);
+
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirm('Are you sure you want to reset all 11 exercises to starter code?')) return;
+  Object.keys(STARTER_CODE).forEach(k => {
+    localStorage.removeItem('stat20_rev_' + k);
+    document.getElementById('code-' + k).value = STARTER_CODE[k];
+    document.getElementById('status-' + k).className = 'exercise-status pending';
+    document.getElementById('status-' + k).textContent = 'Not run';
+    document.getElementById('results-' + k).style.display = 'none';
+    passState[k] = false;
+  });
+  updateScore();
+  showToast('Reset all exercises');
+});
+
+document.getElementById('btn-download-r').addEventListener('click', () => {
+  const content = assembleFullScript();
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'review.R';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// View tabs
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    if (target === 'cards') {
+      document.getElementById('view-cards').style.display = 'block';
+      document.getElementById('view-full').style.display = 'none';
+    } else {
+      document.getElementById('view-cards').style.display = 'none';
+      document.getElementById('view-full').style.display = 'block';
+      document.getElementById('full-script').value = assembleFullScript();
+    }
+  });
+});
+
+document.getElementById('btn-sync-from-cards').addEventListener('click', () => {
+  document.getElementById('full-script').value = assembleFullScript();
+  showToast('Synced from cards');
+});
+
+document.getElementById('btn-run-full').addEventListener('click', async () => {
+  syncCardsFromFullScript(document.getElementById('full-script').value);
+  const fullCon = document.getElementById('full-console');
+  fullCon.style.display = 'block';
+  fullCon.textContent = 'Running full test suite in WebR...';
+  await runAll();
+  fullCon.textContent = 'Completed running all tests. View individual test cards for details.';
+});
+
+// Init WebR
+window.addEventListener('DOMContentLoaded', async () => {
+  loadSaved();
+  const statusEl = document.getElementById('engine-status');
+  try {
+    webR = new WebR({
+      channelType: ChannelType.PostMessage
+    });
+    await webR.init();
+    statusEl.className = 'status-pill ready';
+    statusEl.innerHTML = '&#9679; WebR (Base R) Ready';
+    document.getElementById('btn-run-all').disabled = false;
+    document.getElementById('btn-run-full').disabled = false;
+    document.querySelectorAll('.btn-run-single').forEach(b => b.disabled = false);
+  } catch (err) {
+    statusEl.className = 'status-pill error';
+    statusEl.textContent = 'Failed to load WebR';
+    console.error('WebR init error:', err);
+  }
+});
+</script>
+
+</body>
+</html>

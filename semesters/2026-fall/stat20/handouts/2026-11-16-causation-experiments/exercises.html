@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 13 Exercises: Causation &amp; Randomized Experiments &mdash; STAT 20</title>
+<link rel="stylesheet" href="../../../../../assets/exercises.css">
+</head>
+<body>
+
+<p class="top-nav sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">STAT 20</a> &rsaquo; Week 13</p>
+
+<h1>Week 13 Exercises: Causation &amp; Experiments</h1>
+<p class="sub">STAT 20 &bull; Fall 2026 &bull; In-Browser Base R Lab</p>
+
+<div class="materials-nav">
+  <strong>Materials:</strong>
+  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/2026-11-16-causation-experiments/handout.pdf" target="_blank" rel="noopener">Handout (PDF)</a> &bull;
+  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/2026-11-16-causation-experiments/solutions.pdf" target="_blank" rel="noopener">Solutions (PDF)</a> &bull;
+  <a href="exercises.zip" download>Download Offline .zip</a>
+</div>
+
+<p>Original exercises on causation and randomized experiments in base R. Run code and verify unit tests directly in your browser using WebR (WebAssembly R). Your code autosaves to your browser.</p>
+
+<div class="toolbar">
+  <div class="toolbar-status">
+    <span id="engine-status" class="status-pill loading">&#9679; Loading WebR runtime...</span>
+    <span id="score-badge" class="score-badge">0 / 6 passed</span>
+  </div>
+  <div class="toolbar-actions">
+    <button id="btn-run-all" class="btn btn-primary" disabled>Run All Exercises</button>
+    <button id="btn-download-r" class="btn">Download week13.R</button>
+    <button id="btn-reset-all" class="btn">Reset All</button>
+  </div>
+</div>
+
+<div class="view-tabs">
+  <button class="view-tab active" data-tab="cards">Interactive Cards</button>
+  <button class="view-tab" data-tab="full">Full Script (week13.R)</button>
+</div>
+
+<!-- Tab 1: Cards View -->
+<div id="view-cards">
+
+  <!-- Ex 1 -->
+  <div class="exercise-card" id="card-ex1">
+    <div class="exercise-header">
+      <h3 class="exercise-title">1. Average Treatment Effect (<code>ate</code>)</h3>
+      <span class="exercise-status pending" id="status-ex1">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Average treatment effect of units whose two potential outcomes are known: <code>y_c</code> (control) and <code>y_t</code> (treatment).<br>
+      Example: <code>ate(c(3, 4, 2, 5), c(5, 4, 6, 7))</code> is <code>2</code>.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex1" rows="5" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Return the mean difference across all units.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex1" disabled>Run Ex 1</button>
+      <button class="btn btn-reset-single" data-target="ex1">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex1" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">ate &lt;- function(y_c, y_t) {
+  mean(y_t - y_c)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 2 -->
+  <div class="exercise-card" id="card-ex2">
+    <div class="exercise-header">
+      <h3 class="exercise-title">2. Difference in Means (<code>diff_in_means</code>)</h3>
+      <span class="exercise-status pending" id="status-ex2">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Difference in means, treated minus control. <code>treated</code> is a logical vector of <code>TRUE/FALSE</code> for each unit.<br>
+      Example: <code>diff_in_means(c(5, 4, 2, 5), c(TRUE, TRUE, FALSE, FALSE))</code> is <code>1</code>.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex2" rows="5" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Compute <code>mean(y[treated]) - mean(y[!treated])</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex2" disabled>Run Ex 2</button>
+      <button class="btn btn-reset-single" data-target="ex2">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex2" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">diff_in_means &lt;- function(y, treated) {
+  mean(y[treated]) - mean(y[!treated])
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 3 -->
+  <div class="exercise-card" id="card-ex3">
+    <div class="exercise-header">
+      <h3 class="exercise-title">3. All Possible Estimates (<code>all_estimates</code>)</h3>
+      <span class="exercise-status pending" id="status-ex3">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Every estimate an experiment could produce: treat <code>m</code> of the <code>n</code> units in every possible way (using <code>combn</code>), and return the vector of treated-minus-control differences, one per assignment. Unit <code>i</code> shows <code>y_t[i]</code> if treated and <code>y_c[i]</code> if not.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex3" rows="9" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Use <code>combn(n, m)</code> and <code>apply(..., 2, ...)</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex3" disabled>Run Ex 3</button>
+      <button class="btn btn-reset-single" data-target="ex3">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex3" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">all_estimates &lt;- function(y_c, y_t, m) {
+  n &lt;- length(y_c)
+  apply(combn(n, m), 2, function(idx) {
+    treated &lt;- seq_len(n) %in% idx
+    mean(y_t[treated]) - mean(y_c[!treated])
+  })
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 4 -->
+  <div class="exercise-card" id="card-ex4">
+    <div class="exercise-header">
+      <h3 class="exercise-title">4. Standardized Mean Difference (<code>smd</code>)</h3>
+      <span class="exercise-status pending" id="status-ex4">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Standardized mean difference of covariate <code>x</code>, treated minus control, with the pooled standard deviation <code>sqrt(var_t / 2 + var_c / 2)</code>. If <code>binary_std</code> is <code>TRUE</code>, <code>x</code> is 0/1 and each group's variance is <code>p * (1 - p)</code>; otherwise use sample variance <code>var()</code> (n - 1).
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex4" rows="8" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Define a helper variance function that switches on <code>binary_std</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex4" disabled>Run Ex 4</button>
+      <button class="btn btn-reset-single" data-target="ex4">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex4" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">smd &lt;- function(x, treated, binary_std = FALSE) {
+  v &lt;- function(z) if (binary_std) mean(z) * (1 - mean(z)) else var(z)
+  (mean(x[treated]) - mean(x[!treated])) / sqrt(v(x[treated]) / 2 + v(x[!treated]) / 2)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 5 -->
+  <div class="exercise-card" id="card-ex5">
+    <div class="exercise-header">
+      <h3 class="exercise-title">5. Exact Balance-Test P-Value (<code>exact_p_value</code>)</h3>
+      <span class="exercise-status pending" id="status-ex5">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Exact two-sided balance-test p-value for covariate <code>x</code>: the null distribution is the difference in means over every assignment of <code>sum(treated)</code> units to treatment; take the tail on the side of the observed difference (<code>&gt;=</code> if observed is <code>&gt;= 0</code>, else <code>&lt;=</code>), double it, and cap at 1.
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex5" rows="10" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Use <code>diff_in_means</code>, <code>combn(n, sum(treated))</code>, and <code>min(1, 2 * tail)</code>.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex5" disabled>Run Ex 5</button>
+      <button class="btn btn-reset-single" data-target="ex5">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex5" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">exact_p_value &lt;- function(x, treated) {
+  obs &lt;- diff_in_means(x, treated)
+  n &lt;- length(x)
+  null &lt;- apply(combn(n, sum(treated)), 2, function(idx) diff_in_means(x, seq_len(n) %in% idx))
+  eps &lt;- 1e-9
+  tail &lt;- if (obs &gt;= 0) mean(null &gt;= obs - eps) else mean(null &lt;= obs + eps)
+  min(1, 2 * tail)
+}</pre>
+    </details>
+  </div>
+
+  <!-- Ex 6 -->
+  <div class="exercise-card" id="card-ex6">
+    <div class="exercise-header">
+      <h3 class="exercise-title">6. Probability All in Same Group (<code>prob_all_same_group</code>)</h3>
+      <span class="exercise-status pending" id="status-ex6">Not run</span>
+    </div>
+    <div class="exercise-desc">
+      Probability that <code>k</code> special units all land in the same group when <code>m</code> of <code>n</code> units are treated at random (the treated group has <code>m</code> units, control group <code>n - m</code>).
+    </div>
+    <div class="editor-container">
+      <textarea class="code-editor" id="code-ex6" rows="5" spellcheck="false"></textarea>
+      <div class="editor-footer">
+        <span>Tip: Combinatorics with <code>choose()</code>: treated or control.</span>
+        <span>Ctrl+Enter to run</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-run-single" data-target="ex6" disabled>Run Ex 6</button>
+      <button class="btn btn-reset-single" data-target="ex6">Reset</button>
+    </div>
+    <div class="test-results" id="results-ex6" style="display: none;"></div>
+    <details class="solution">
+      <summary>Reveal Solution</summary>
+      <p class="solution-caution">Look only after your function passes or you have spent 15 minutes stuck on this exercise.</p>
+      <pre class="solution-box">prob_all_same_group &lt;- function(n, m, k) {
+  (choose(n - k, m - k) + choose(n - k, m)) / choose(n, m)
+}</pre>
+    </details>
+  </div>
+
+</div>
+
+<!-- Tab 2: Full Script View -->
+<div id="view-full" style="display: none;">
+  <div class="exercise-card">
+    <h3 class="exercise-title">Full <code>week13.R</code> Editor</h3>
+    <p class="sub">Edit the entire R script at once. Changes sync automatically with the individual exercise cards.</p>
+    <textarea class="code-editor" id="full-script" rows="25" spellcheck="false"></textarea>
+    <div class="card-actions" style="margin-top: 12px;">
+      <button id="btn-run-full" class="btn btn-primary" disabled>Run Script &amp; Check All</button>
+      <button id="btn-sync-from-cards" class="btn">Reload from Cards</button>
+    </div>
+    <div class="console-box" id="full-console" style="display: none;"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Autosaved</div>
+
+<script type="module">
+import { WebR, ChannelType } from 'https://webr.r-wasm.org/latest/webr.mjs';
+
+const STARTER_CODE = {
+  ex1: 'ate <- function(y_c, y_t) {\n  # YOUR CODE HERE\n}',
+  ex2: 'diff_in_means <- function(y, treated) {\n  # YOUR CODE HERE\n}',
+  ex3: 'all_estimates <- function(y_c, y_t, m) {\n  # YOUR CODE HERE\n}',
+  ex4: 'smd <- function(x, treated, binary_std = FALSE) {\n  # YOUR CODE HERE\n}',
+  ex5: 'exact_p_value <- function(x, treated) {\n  # YOUR CODE HERE\n}',
+  ex6: 'prob_all_same_group <- function(n, m, k) {\n  # YOUR CODE HERE\n}'
+};
+
+const EXERCISE_TESTS = {
+  ex1: `
+.check("ate (example 1)", ate(c(3, 4, 2, 5), c(5, 4, 6, 7)), 2)
+.check("ate (example 2)", ate(c(1, 3, 2, 6), c(4, 3, 2, 9)), 1.5)
+`,
+  ex2: `
+.check("diff_in_means", diff_in_means(c(5, 4, 2, 5), c(TRUE, TRUE, FALSE, FALSE)), 1)
+`,
+  ex3: `
+.check("all_estimates sorted", sort(all_estimates(c(3, 4, 2, 5), c(5, 4, 6, 7), 2)), c(1, 1, 1, 3, 3, 3))
+.check("unbiased mean", mean(all_estimates(c(1, 3, 2, 6), c(4, 3, 2, 9), 2)), 1.5)
+`,
+  ex4: `
+gpa <- c(3.81, 3.63, 3.20, 2.85, 3.19, 3.80)
+pdf <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+stats_major <- c(1, 0, 0, 1, 0, 1)
+.check("smd GPA", round(smd(gpa, pdf), 4), 0.6566)
+.check("smd major (n-1)", round(smd(stats_major, pdf), 4), -0.5774)
+.check("smd major (p(1-p))", round(smd(stats_major, pdf, binary_std = TRUE), 4), -0.7071)
+`,
+  ex5: `
+gpa <- c(3.81, 3.63, 3.20, 2.85, 3.19, 3.80)
+pdf <- c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+.check("exact p GPA", exact_p_value(gpa, pdf), 0.4)
+.check("exact p P5", exact_p_value(c(10, 12, 14, 20, 30), c(FALSE, FALSE, FALSE, TRUE, TRUE)), 0.2)
+`,
+  ex6: `
+.check("all same group (4, 2, 2)", prob_all_same_group(4, 2, 2), 1/3)
+.check("all same group (20, 10, 4)", prob_all_same_group(20, 10, 4), 28/323)
+`
+};
+
+let webR = null;
+let passState = { ex1: false, ex2: false, ex3: false, ex4: false, ex5: false, ex6: false };
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function enableTabSupport(textarea) {
+  textarea.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 2;
+      triggerSave();
+    } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      const id = this.id.replace('code-', '');
+      if (id.startsWith('ex')) {
+        runSingleExercise(id);
+      }
+    }
+  });
+  textarea.addEventListener('input', triggerSave);
+}
+
+let saveTimer = null;
+function triggerSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    Object.keys(STARTER_CODE).forEach(k => {
+      const el = document.getElementById('code-' + k);
+      if (el) localStorage.setItem('stat20_w13_' + k, el.value);
+    });
+    showToast('Saved');
+  }, 400);
+}
+
+function loadSaved() {
+  Object.keys(STARTER_CODE).forEach(k => {
+    const el = document.getElementById('code-' + k);
+    const saved = localStorage.getItem('stat20_w13_' + k);
+    el.value = saved !== null ? saved : STARTER_CODE[k];
+    enableTabSupport(el);
+  });
+  enableTabSupport(document.getElementById('full-script'));
+}
+
+function assembleFullScript() {
+  return `# STAT 20 Week 13 exercises: fill in each function body (base R only).\n\n` +
+    `# 1. Average treatment effect\n${document.getElementById('code-ex1').value.trim()}\n\n` +
+    `# 2. Difference in means\n${document.getElementById('code-ex2').value.trim()}\n\n` +
+    `# 3. All estimates\n${document.getElementById('code-ex3').value.trim()}\n\n` +
+    `# 4. Standardized mean difference\n${document.getElementById('code-ex4').value.trim()}\n\n` +
+    `# 5. Exact two-sided p-value\n${document.getElementById('code-ex5').value.trim()}\n\n` +
+    `# 6. Probability all same group\n${document.getElementById('code-ex6').value.trim()}\n`;
+}
+
+function syncCardsFromFullScript(script) {
+  const fns = ['ate', 'diff_in_means', 'all_estimates', 'smd', 'exact_p_value', 'prob_all_same_group'];
+  fns.forEach((fn, idx) => {
+    const key = 'ex' + (idx + 1);
+    const regex = new RegExp(`(${fn}\\s*<-\\s*function[\\s\\S]*?\\n})`, 'm');
+    const match = script.match(regex);
+    if (match) {
+      const el = document.getElementById('code-' + key);
+      if (el) {
+        el.value = match[1].trim();
+        localStorage.setItem('stat20_w13_' + key, el.value);
+      }
+    }
+  });
+}
+
+function updateScore() {
+  const passed = Object.values(passState).filter(Boolean).length;
+  const badge = document.getElementById('score-badge');
+  badge.textContent = `${passed} / 6 passed`;
+  badge.style.color = passed === 6 ? 'var(--pass-fg)' : '';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function runRCode(rScript) {
+  const shelter = await new webR.Shelter();
+  try {
+    const capture = await shelter.captureR(rScript);
+    return capture;
+  } finally {
+    await shelter.purge();
+  }
+}
+
+async function runSingleExercise(key) {
+  if (!webR) return;
+  const btn = document.querySelector(`.btn-run-single[data-target="${key}"]`);
+  if (btn) btn.disabled = true;
+
+  const statusEl = document.getElementById('status-' + key);
+  const resultsEl = document.getElementById('results-' + key);
+  statusEl.className = 'exercise-status pending';
+  statusEl.textContent = 'Running...';
+  resultsEl.style.display = 'block';
+
+  // Include diff_in_means definition if running ex5 (since exact_p_value depends on diff_in_means)
+  let prefix = '';
+  if (key === 'ex5') {
+    prefix = document.getElementById('code-ex2').value + '\n';
+  }
+
+  const userCode = document.getElementById('code-' + key).value;
+  const testScript = EXERCISE_TESTS[key];
+
+  const fullScript = `
+${prefix}
+${userCode}
+
+.test_results <- list()
+.check <- function(name, got, expected, tol = 1e-6) {
+  res <- tryCatch({
+    val <- got
+    ok <- !is.null(val) && length(val) == length(expected) && all(abs(val - expected) < tol)
+    list(name = name, pass = isTRUE(ok), got = paste(as.character(val), collapse = ", "),
+         expected = paste(as.character(expected), collapse = ", "), err = NULL)
+  }, error = function(e) {
+    list(name = name, pass = FALSE, got = NULL,
+         expected = paste(as.character(expected), collapse = ", "), err = e$message)
+  })
+  .test_results <<- c(.test_results, list(res))
+}
+
+${testScript}
+
+.to_json <- function(lst) {
+  items <- sapply(lst, function(item) {
+    err_str <- if (is.null(item$err)) "null" else paste0('"', gsub('"', '\\\\"', item$err), '"')
+    paste0(
+      '{"name": "', gsub('"', '\\\\"', item$name),
+      '", "pass": ', ifelse(item$pass, "true", "false"),
+      ', "got": "', gsub('"', '\\\\"', ifelse(is.null(item$got), "", item$got)),
+      '", "expected": "', gsub('"', '\\\\"', ifelse(is.null(item$expected), "", item$expected)),
+      '", "err": ', err_str, '}'
+    )
+  })
+  paste0('[', paste(items, collapse = ','), ']')
+}
+cat("\n__TEST_JSON__:", .to_json(.test_results), "\n", sep = "")
+`;
+
+  try {
+    const capture = await runRCode(fullScript);
+    let jsonStr = null;
+    let consoleLines = [];
+
+    capture.output.forEach(out => {
+      const text = out.data;
+      if (text.includes('__TEST_JSON__:')) {
+        const parts = text.split('__TEST_JSON__:');
+        jsonStr = parts[1].trim();
+        if (parts[0].trim()) consoleLines.push(parts[0].trim());
+      } else {
+        consoleLines.push(text);
+      }
+    });
+
+    if (jsonStr) {
+      const tests = JSON.parse(jsonStr);
+      const allPassed = tests.length > 0 && tests.every(t => t.pass);
+      passState[key] = allPassed;
+
+      statusEl.className = 'exercise-status ' + (allPassed ? 'pass' : 'fail');
+      statusEl.textContent = allPassed ? 'PASS' : 'FAIL';
+
+      let html = '';
+      tests.forEach(t => {
+        if (t.pass) {
+          html += `
+            <div class="test-item pass">
+              <span class="test-icon">&#10004;</span>
+              <span><strong>${escapeHtml(t.name)}</strong>: ok (got ${escapeHtml(t.got)})</span>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="test-item fail">
+              <span class="test-icon">&#10008;</span>
+              <span><strong>${escapeHtml(t.name)}</strong>: FAIL</span>
+            </div>
+            <div class="test-diff"><strong>Expected:</strong> ${escapeHtml(t.expected)}\n<strong>Got:</strong>      ${escapeHtml(t.err ? 'Error: ' + t.err : t.got)}</div>
+          `;
+        }
+      });
+
+      if (consoleLines.length > 0 && consoleLines.join('').trim().length > 0) {
+        html += `<div style="margin-top:8px;"><strong>Console Output:</strong><pre class="console-box">${escapeHtml(consoleLines.join('\n'))}</pre></div>`;
+      }
+      resultsEl.innerHTML = html;
+    } else {
+      // Syntax or runtime error before tests ran
+      passState[key] = false;
+      statusEl.className = 'exercise-status fail';
+      statusEl.textContent = 'ERROR';
+      resultsEl.innerHTML = `
+        <div class="test-item fail">
+          <span class="test-icon">&#10008;</span>
+          <span><strong>Execution / Syntax Error:</strong></span>
+        </div>
+        <div class="test-diff">${escapeHtml(consoleLines.join('\n') || 'Execution stopped with error')}</div>
+      `;
+    }
+  } catch (err) {
+    passState[key] = false;
+    statusEl.className = 'exercise-status fail';
+    statusEl.textContent = 'ERROR';
+    resultsEl.innerHTML = `<div class="test-diff">${escapeHtml(err.message || String(err))}</div>`;
+  } finally {
+    if (btn) btn.disabled = false;
+    updateScore();
+  }
+}
+
+async function runAll() {
+  for (const k of Object.keys(STARTER_CODE)) {
+    await runSingleExercise(k);
+  }
+}
+
+// Reset single
+document.querySelectorAll('.btn-reset-single').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const k = btn.dataset.target;
+    localStorage.removeItem('stat20_w13_' + k);
+    document.getElementById('code-' + k).value = STARTER_CODE[k];
+    document.getElementById('status-' + k).className = 'exercise-status pending';
+    document.getElementById('status-' + k).textContent = 'Not run';
+    document.getElementById('results-' + k).style.display = 'none';
+    passState[k] = false;
+    updateScore();
+    showToast('Reset ' + k.toUpperCase());
+  });
+});
+
+// Single run button
+document.querySelectorAll('.btn-run-single').forEach(btn => {
+  btn.addEventListener('click', () => runSingleExercise(btn.dataset.target));
+});
+
+// Run all
+document.getElementById('btn-run-all').addEventListener('click', runAll);
+
+// Reset all
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirm('Are you sure you want to reset all exercises to starter code?')) return;
+  Object.keys(STARTER_CODE).forEach(k => {
+    localStorage.removeItem('stat20_w13_' + k);
+    document.getElementById('code-' + k).value = STARTER_CODE[k];
+    document.getElementById('status-' + k).className = 'exercise-status pending';
+    document.getElementById('status-' + k).textContent = 'Not run';
+    document.getElementById('results-' + k).style.display = 'none';
+    passState[k] = false;
+  });
+  updateScore();
+  showToast('Reset all exercises');
+});
+
+// Download .R
+document.getElementById('btn-download-r').addEventListener('click', () => {
+  const content = assembleFullScript();
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'week13.R';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// View tabs
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    if (target === 'cards') {
+      document.getElementById('view-cards').style.display = 'block';
+      document.getElementById('view-full').style.display = 'none';
+    } else {
+      document.getElementById('view-cards').style.display = 'none';
+      document.getElementById('view-full').style.display = 'block';
+      document.getElementById('full-script').value = assembleFullScript();
+    }
+  });
+});
+
+document.getElementById('btn-sync-from-cards').addEventListener('click', () => {
+  document.getElementById('full-script').value = assembleFullScript();
+  showToast('Synced from cards');
+});
+
+document.getElementById('btn-run-full').addEventListener('click', async () => {
+  syncCardsFromFullScript(document.getElementById('full-script').value);
+  const fullCon = document.getElementById('full-console');
+  fullCon.style.display = 'block';
+  fullCon.textContent = 'Running full test suite in WebR...';
+  await runAll();
+  fullCon.textContent = 'Completed running all tests. View individual test cards for details.';
+});
+
+// Initialize WebR
+window.addEventListener('DOMContentLoaded', async () => {
+  loadSaved();
+  const statusEl = document.getElementById('engine-status');
+  try {
+    webR = new WebR({
+      channelType: ChannelType.PostMessage
+    });
+    await webR.init();
+    statusEl.className = 'status-pill ready';
+    statusEl.innerHTML = '&#9679; WebR (Base R) Ready';
+    document.getElementById('btn-run-all').disabled = false;
+    document.getElementById('btn-run-full').disabled = false;
+    document.querySelectorAll('.btn-run-single').forEach(b => b.disabled = false);
+  } catch (err) {
+    statusEl.className = 'status-pill error';
+    statusEl.textContent = 'Failed to load WebR';
+    console.error('WebR init error:', err);
+  }
+});
+</script>
+
+</body>
+</html>
