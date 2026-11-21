@@ -3,323 +3,194 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Week 13 Exercises: Tables, SQL, Aggregation &mdash; COMPSCI 61A</title>
+<title>Week 13 exercises &mdash; COMPSCI 61A</title>
 <link rel="stylesheet" href="../../../../../assets/exercises.css">
-<!-- Load sql.js from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
 </head>
 <body>
 
-<p class="top-nav sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">COMPSCI 61A</a> &rsaquo; Week 13</p>
+<p class="sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">COMPSCI 61A</a></p>
 
-<h1>Week 13 Exercises: Tables, SQL, Aggregation</h1>
-<p class="sub">COMPSCI 61A &bull; Fall 2026 &bull; In-Browser SQL Lab</p>
+<h1>Week 13 exercises: tables, SQL, aggregation</h1>
+<p class="sub">Fall 2026</p>
 
-<div class="materials-nav">
-  <strong>Materials:</strong>
-  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/handout.pdf" target="_blank" rel="noopener">Handout (PDF)</a> &bull;
-  <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/solutions.pdf" target="_blank" rel="noopener">Solutions (PDF)</a> &bull;
-  <a href="exercises.zip" download>Download Offline .zip</a>
-</div>
+<p class="sub"><a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/handout.pdf" target="_blank" rel="noopener">Handout</a>, <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/solutions.pdf" target="_blank" rel="noopener">Solutions</a>, <a href="exercises.zip">exercises.zip</a></p>
 
-<p>Original SQL exercises on this week's ideas: tables, select queries, joins, and aggregation with <code>group by</code> and <code>having</code>. Run queries directly in your browser with SQLite WebAssembly. Your progress is automatically saved locally.</p>
-
-<div class="toolbar">
-  <div class="toolbar-status">
-    <span id="engine-status" class="status-pill loading">&#9679; Loading SQLite WASM...</span>
-    <span id="score-badge" class="score-badge">0 / 7 passed</span>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <button id="btn-run-all" disabled>Run all</button>
+    <button id="btn-reset-all">Reset all</button>
+    <button id="btn-download-sql">Download week13.sql</button>
   </div>
-  <div class="toolbar-actions">
-    <button id="btn-run-all" class="btn btn-primary" disabled>Run All Exercises</button>
-    <button id="btn-download-sql" class="btn">Download week13.sql</button>
-    <button id="btn-reset-all" class="btn">Reset All</button>
+  <div class="top-bar-right">
+    <span id="score" class="sub">0 / 7 ok</span>
+    <span id="engine-status" class="sub" style="margin-left: 8px;">loading SQLite...</span>
   </div>
 </div>
 
-<details class="exercise-card" style="margin-bottom: 24px;">
-  <summary style="cursor: pointer; font-weight: 600; user-select: none;">&#128218; View Database Tables &amp; SQL Playground (books, loans)</summary>
-  <div style="margin-top: 14px;">
-    <p class="sub" style="margin: 0 0 10px;">The database is loaded with the two tables from the handout (<code>data.sql</code>):</p>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-      <div>
-        <h4 style="margin: 0 0 6px;"><code>books</code> table</h4>
-        <div class="tablewrap" style="margin:0;">
-          <table class="data-table">
-            <thead><tr><th>title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
-            <tbody>
-              <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
-              <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
-              <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
-              <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
-              <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
-              <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
-              <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div>
-        <h4 style="margin: 0 0 6px;"><code>loans</code> table</h4>
-        <div class="tablewrap" style="margin:0;">
-          <table class="data-table">
-            <thead><tr><th>title</th><th>member</th><th>days</th></tr></thead>
-            <tbody>
-              <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
-              <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
-              <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
-              <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
-              <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
-              <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
-              <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 14px;">
-      <h4 style="margin: 0 0 6px;">Ad-Hoc SQL Query Sandbox</h4>
-      <p class="sub" style="margin: 0 0 8px;">Run any arbitrary SQL query to explore the data:</p>
-      <textarea id="sandbox-sql" class="code-editor" style="min-height: 60px;">select author, count(*) as count from books group by author;</textarea>
-      <div style="margin-top: 8px;">
-        <button id="btn-run-sandbox" class="btn btn-sm btn-primary">Run Query</button>
-      </div>
-      <div id="sandbox-results" style="margin-top: 10px;"></div>
-    </div>
+<details>
+  <summary>Database tables (books, loans)</summary>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>books: title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
+      <tbody>
+        <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
+        <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
+        <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
+        <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
+        <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
+        <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
+        <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>loans: title</th><th>member</th><th>days</th></tr></thead>
+      <tbody>
+        <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
+        <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
+        <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
+        <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
+        <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
+        <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
+        <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
+      </tbody>
+    </table>
   </div>
 </details>
 
-<div class="view-tabs">
-  <button class="view-tab active" data-tab="cards">Interactive Cards</button>
-  <button class="view-tab" data-tab="full">Full Script (week13.sql)</button>
+<!-- E1 -->
+<div class="exercise-block">
+  <h2>E1</h2>
+  <p>Titles of books with more than 260 pages, longest first.</p>
+  <textarea class="code-editor" id="code-e1" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e1">Run</button>
+    <button class="btn-reset" data-target="e1">Reset</button>
+    <span class="exercise-status" id="status-e1"></span>
+  </div>
+  <div class="test-output" id="output-e1" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e1 as
+  select title from books where pages &gt; 260 order by pages desc;</pre>
+  </details>
 </div>
 
-<!-- Tab 1: Cards View -->
-<div id="view-cards">
-  <!-- E1 -->
-  <div class="exercise-card" id="card-e1">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E1. Long books</h3>
-      <span class="exercise-status pending" id="status-e1">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      Titles of books with more than 260 pages, longest first.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e1" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Use <code>where</code> and <code>order by ... desc</code>. You can write either <code>select ...</code> or <code>create table e1 as select ...;</code></span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e1">Run E1</button>
-      <button class="btn btn-reset-single" data-target="e1">Reset</button>
-    </div>
-    <div class="test-results" id="results-e1" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e1 as
-  select title from books where pages &gt; 260 order by pages desc;</pre>
-    </details>
+<!-- E2 -->
+<div class="exercise-block">
+  <h2>E2</h2>
+  <p>Each author with number of books and total pages (authors with at least two books), by author.</p>
+  <textarea class="code-editor" id="code-e2" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e2">Run</button>
+    <button class="btn-reset" data-target="e2">Reset</button>
+    <span class="exercise-status" id="status-e2"></span>
   </div>
-
-  <!-- E2 -->
-  <div class="exercise-card" id="card-e2">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E2. Prolific authors</h3>
-      <span class="exercise-status pending" id="status-e2">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      Each author with number of books and total pages (authors with at least two books), by author.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e2" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Use <code>group by author having count(*) &gt;= 2 order by author</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e2">Run E2</button>
-      <button class="btn btn-reset-single" data-target="e2">Reset</button>
-    </div>
-    <div class="test-results" id="results-e2" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e2 as
+  <div class="test-output" id="output-e2" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e2 as
   select author, count(*) as n, sum(pages) as total from books
     group by author having count(*) &gt;= 2 order by author;</pre>
-    </details>
-  </div>
+  </details>
+</div>
 
-  <!-- E3 -->
-  <div class="exercise-card" id="card-e3">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E3. Loan details</h3>
-      <span class="exercise-status pending" id="status-e3">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      For each loan: member, title, author.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e3" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Join <code>loans</code> with <code>books</code> on <code>title</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e3">Run E3</button>
-      <button class="btn btn-reset-single" data-target="e3">Reset</button>
-    </div>
-    <div class="test-results" id="results-e3" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e3 as
+<!-- E3 -->
+<div class="exercise-block">
+  <h2>E3</h2>
+  <p>For each loan: member, title, author.</p>
+  <textarea class="code-editor" id="code-e3" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e3">Run</button>
+    <button class="btn-reset" data-target="e3">Reset</button>
+    <span class="exercise-status" id="status-e3"></span>
+  </div>
+  <div class="test-output" id="output-e3" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e3 as
   select member, l.title, author from loans as l join books as b on l.title = b.title;</pre>
-    </details>
-  </div>
+  </details>
+</div>
 
-  <!-- E4 -->
-  <div class="exercise-card" id="card-e4">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E4. Pairs of books</h3>
-      <span class="exercise-status pending" id="status-e4">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      Pairs of different books by the same author, each pair once.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e4" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Self-join <code>books as a, books as b</code> where authors match and <code>a.title &lt; b.title</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e4">Run E4</button>
-      <button class="btn btn-reset-single" data-target="e4">Reset</button>
-    </div>
-    <div class="test-results" id="results-e4" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e4 as
+<!-- E4 -->
+<div class="exercise-block">
+  <h2>E4</h2>
+  <p>Pairs of different books by the same author, each pair once.</p>
+  <textarea class="code-editor" id="code-e4" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e4">Run</button>
+    <button class="btn-reset" data-target="e4">Reset</button>
+    <span class="exercise-status" id="status-e4"></span>
+  </div>
+  <div class="test-output" id="output-e4" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e4 as
   select a.title as first, b.title as second from books as a, books as b
     where a.author = b.author and a.title &lt; b.title;</pre>
-    </details>
-  </div>
+  </details>
+</div>
 
-  <!-- E5 -->
-  <div class="exercise-card" id="card-e5">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E5. Most loan days</h3>
-      <span class="exercise-status pending" id="status-e5">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      The member with the most total loan days, and the total.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e5" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Group by <code>member</code>, order by <code>total desc</code>, and <code>limit 1</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e5">Run E5</button>
-      <button class="btn btn-reset-single" data-target="e5">Reset</button>
-    </div>
-    <div class="test-results" id="results-e5" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e5 as
+<!-- E5 -->
+<div class="exercise-block">
+  <h2>E5</h2>
+  <p>The member with the most total loan days, and the total.</p>
+  <textarea class="code-editor" id="code-e5" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e5">Run</button>
+    <button class="btn-reset" data-target="e5">Reset</button>
+    <span class="exercise-status" id="status-e5"></span>
+  </div>
+  <div class="test-output" id="output-e5" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e5 as
   select member, sum(days) as total from loans group by member order by total desc limit 1;</pre>
-    </details>
-  </div>
+  </details>
+</div>
 
-  <!-- E6 -->
-  <div class="exercise-card" id="card-e6">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E6. Authors with multiple borrowers</h3>
-      <span class="exercise-status pending" id="status-e6">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      Authors whose books were borrowed by at least two different members.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e6" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Join books and loans, group by author, having <code>count(distinct member) &gt;= 2</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e6">Run E6</button>
-      <button class="btn btn-reset-single" data-target="e6">Reset</button>
-    </div>
-    <div class="test-results" id="results-e6" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e6 as
+<!-- E6 -->
+<div class="exercise-block">
+  <h2>E6</h2>
+  <p>Authors whose books were borrowed by at least two different members.</p>
+  <textarea class="code-editor" id="code-e6" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e6">Run</button>
+    <button class="btn-reset" data-target="e6">Reset</button>
+    <span class="exercise-status" id="status-e6"></span>
+  </div>
+  <div class="test-output" id="output-e6" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e6 as
   select author from books as b join loans as l on b.title = l.title
     group by author having count(distinct member) &gt;= 2;</pre>
-    </details>
-  </div>
+  </details>
+</div>
 
-  <!-- E7 -->
-  <div class="exercise-card" id="card-e7">
-    <div class="exercise-header">
-      <h3 class="exercise-title">E7. Books by decade</h3>
-      <span class="exercise-status pending" id="status-e7">Not run</span>
-    </div>
-    <div class="exercise-desc">
-      Decade of each book with the number of books from it, oldest first.
-    </div>
-    <div class="editor-container">
-      <textarea class="code-editor" id="code-e7" rows="3" spellcheck="false"></textarea>
-      <div class="editor-footer">
-        <span>Tip: Calculate decade with integer division: <code>year/10*10 as decade</code>.</span>
-        <span>Ctrl+Enter to run</span>
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="btn btn-primary btn-run-single" data-target="e7">Run E7</button>
-      <button class="btn btn-reset-single" data-target="e7">Reset</button>
-    </div>
-    <div class="test-results" id="results-e7" style="display: none;"></div>
-    <details class="solution">
-      <summary>Reveal Solution</summary>
-      <p class="solution-caution">Look only after your query passes or you have spent 15 minutes stuck on this exercise.</p>
-      <pre class="solution-box">create table e7 as
+<!-- E7 -->
+<div class="exercise-block">
+  <h2>E7</h2>
+  <p>Decade of each book with the number of books from it, oldest first.</p>
+  <textarea class="code-editor" id="code-e7" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e7">Run</button>
+    <button class="btn-reset" data-target="e7">Reset</button>
+    <span class="exercise-status" id="status-e7"></span>
+  </div>
+  <div class="test-output" id="output-e7" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre>create table e7 as
   select year/10*10 as decade, count(*) as n from books group by decade order by decade;</pre>
-    </details>
-  </div>
+  </details>
 </div>
-
-<!-- Tab 2: Full Script View -->
-<div id="view-full" style="display: none;">
-  <div class="exercise-card">
-    <h3 class="exercise-title">Full <code>week13.sql</code> Editor</h3>
-    <p class="sub">Edit the entire SQL script at once. Changes sync automatically with the individual exercise cards.</p>
-    <textarea class="code-editor" id="full-script" rows="25" spellcheck="false"></textarea>
-    <div class="card-actions" style="margin-top: 12px;">
-      <button id="btn-run-full" class="btn btn-primary">Run Script &amp; Check All</button>
-      <button id="btn-sync-from-cards" class="btn">Reload from Cards</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="toast">Autosaved</div>
 
 <script>
-const STARTER_QUERIES = {
+const STARTER = {
   e1: 'create table e1 as\n  select "YOUR QUERY HERE" as unfinished;',
   e2: 'create table e2 as\n  select "YOUR QUERY HERE" as unfinished;',
   e3: 'create table e3 as\n  select "YOUR QUERY HERE" as unfinished;',
@@ -363,29 +234,18 @@ const EXPECTED = {
 let SQL_ENGINE = null;
 let passState = { e1: false, e2: false, e3: false, e4: false, e5: false, e6: false, e7: false };
 
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 1500);
-}
-
-// Tab key and auto-indent support for textareas
 function enableTabSupport(textarea) {
   textarea.addEventListener('keydown', function(e) {
     if (e.key === 'Tab') {
       e.preventDefault();
-      const start = this.selectionStart;
-      const end = this.selectionEnd;
-      this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
-      this.selectionStart = this.selectionEnd = start + 2;
+      const s = this.selectionStart, end = this.selectionEnd;
+      this.value = this.value.substring(0, s) + '  ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = s + 2;
       triggerSave();
     } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       const id = this.id.replace('code-', '');
-      if (id.startsWith('e')) {
-        runSingleExercise(id);
-      }
+      runExercise(id);
     }
   });
   textarea.addEventListener('input', triggerSave);
@@ -395,23 +255,20 @@ let saveTimer = null;
 function triggerSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    Object.keys(STARTER_QUERIES).forEach(k => {
+    Object.keys(STARTER).forEach(k => {
       const el = document.getElementById('code-' + k);
       if (el) localStorage.setItem('cs61a_sql_' + k, el.value);
     });
-    showToast('Saved');
   }, 400);
 }
 
 function loadSaved() {
-  Object.keys(STARTER_QUERIES).forEach(k => {
+  Object.keys(STARTER).forEach(k => {
     const el = document.getElementById('code-' + k);
     const saved = localStorage.getItem('cs61a_sql_' + k);
-    el.value = saved !== null ? saved : STARTER_QUERIES[k];
+    el.value = saved !== null ? saved : STARTER[k];
     enableTabSupport(el);
   });
-  enableTabSupport(document.getElementById('full-script'));
-  enableTabSupport(document.getElementById('sandbox-sql'));
 }
 
 function assembleFullScript() {
@@ -425,61 +282,35 @@ function assembleFullScript() {
     `-- E7. Decade of each book with the number of books from it, oldest first.\n${document.getElementById('code-e7').value.trim()}\n`;
 }
 
-function syncCardsFromFullScript(script) {
-  // Regex match each create table ex
-  const regex = /create\s+table\s+(e[1-7])\s+as[\s\S]*?(?=create\s+table\s+e[1-7]|\s*$)/gi;
-  let match;
-  while ((match = regex.exec(script)) !== null) {
-    const key = match[1].toLowerCase();
-    const el = document.getElementById('code-' + key);
-    if (el) {
-      el.value = match[0].trim();
-      localStorage.setItem('cs61a_sql_' + key, el.value);
-    }
-  }
-}
-
-// Convert user code to a valid SQL runnable query
-function normalizeExerciseCode(key, rawCode) {
-  let code = rawCode.trim();
-  if (code.endsWith(';')) code = code.slice(0, -1).trim();
-  if (!code.toLowerCase().startsWith('create table')) {
-    return {
-      execSql: `create table ${key} as ${code};`,
-      querySql: code
-    };
+function normalizeCode(key, raw) {
+  let s = raw.trim();
+  if (s.endsWith(';')) s = s.slice(0, -1).trim();
+  if (!s.toLowerCase().startsWith('create table')) {
+    return { execSql: `create table ${key} as ${s};`, querySql: s };
   } else {
-    // Has create table eX as
-    const selectIdx = code.toLowerCase().indexOf(' as ');
-    const queryOnly = selectIdx !== -1 ? code.substring(selectIdx + 4) : `select * from ${key}`;
-    return {
-      execSql: code + ';',
-      querySql: queryOnly
-    };
+    return { execSql: s + ';', querySql: `select * from ${key}` };
   }
 }
 
-function renderHtmlTable(columns, values) {
-  if (!values || values.length === 0) {
-    return '<p class="sub" style="margin:4px 0;">(0 rows returned)</p>';
-  }
-  let html = '<div class="tablewrap" style="margin:6px 0;"><table class="data-table"><thead><tr>';
-  columns.forEach(col => html += `<th>${escapeHtml(col)}</th>`);
-  html += '</tr></thead><tbody>';
-  values.forEach(row => {
-    html += '<tr>';
-    row.forEach(val => html += `<td>${escapeHtml(val === null ? 'NULL' : String(val))}</td>`);
-    html += '</tr>';
+function renderTable(cols, rows) {
+  if (!rows || rows.length === 0) return '<p class="sub">(0 rows returned)</p>';
+  let h = '<div class="tablewrap"><table><thead><tr>';
+  cols.forEach(c => h += `<th>${escapeHtml(c)}</th>`);
+  h += '</tr></thead><tbody>';
+  rows.forEach(r => {
+    h += '<tr>';
+    r.forEach(v => h += `<td>${escapeHtml(v === null ? 'NULL' : String(v))}</td>`);
+    h += '</tr>';
   });
-  html += '</tbody></table></div>';
-  return html;
+  h += '</tbody></table></div>';
+  return h;
 }
 
-function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function compareResults(got, expected, ordered) {
+function compareRows(got, expected, ordered) {
   if (got.length !== expected.length) return false;
   if (ordered) {
     return got.every((r, i) => JSON.stringify(r) === JSON.stringify(expected[i]));
@@ -491,77 +322,46 @@ function compareResults(got, expected, ordered) {
 }
 
 function updateScore() {
-  const passed = Object.values(passState).filter(Boolean).length;
-  const badge = document.getElementById('score-badge');
-  badge.textContent = `${passed} / 7 passed`;
-  if (passed === 7) {
-    badge.style.color = 'var(--pass-fg)';
-  } else {
-    badge.style.color = '';
-  }
+  const n = Object.values(passState).filter(Boolean).length;
+  document.getElementById('score').textContent = `${n} / 7 ok`;
 }
 
-function runSingleExercise(key) {
+function runExercise(key) {
   if (!SQL_ENGINE) return;
-  const rawCode = document.getElementById('code-' + key).value;
+  const raw = document.getElementById('code-' + key).value;
   const statusEl = document.getElementById('status-' + key);
-  const resultsEl = document.getElementById('results-' + key);
-  resultsEl.style.display = 'block';
+  const outEl = document.getElementById('output-' + key);
+  outEl.style.display = 'block';
 
   let db;
   try {
     db = new SQL_ENGINE.Database();
     db.run(DATA_SQL);
-
-    const norm = normalizeExerciseCode(key, rawCode);
+    const norm = normalizeCode(key, raw);
     db.run(norm.execSql);
 
     const res = db.exec(`select * from ${key};`);
-    let columns = [];
-    let values = [];
-    if (res.length > 0) {
-      columns = res[0].columns;
-      values = res[0].values;
-    }
+    const cols = res.length > 0 ? res[0].columns : [];
+    const vals = res.length > 0 ? res[0].values : [];
 
     const exp = EXPECTED[key];
-    const isPass = compareResults(values, exp.rows, exp.ordered);
-    passState[key] = isPass;
+    const ok = compareRows(vals, exp.rows, exp.ordered);
+    passState[key] = ok;
 
-    if (isPass) {
+    if (ok) {
       statusEl.className = 'exercise-status pass';
-      statusEl.textContent = 'PASS';
-      resultsEl.innerHTML = `
-        <div class="test-item pass">
-          <span class="test-icon">&#10004;</span>
-          <span><strong>All tests passed!</strong> Returned ${values.length} rows as expected.</span>
-        </div>
-        ${renderHtmlTable(columns, values)}
-      `;
+      statusEl.textContent = 'ok';
+      outEl.innerHTML = renderTable(cols, vals);
     } else {
       statusEl.className = 'exercise-status fail';
       statusEl.textContent = 'FAIL';
-      resultsEl.innerHTML = `
-        <div class="test-item fail">
-          <span class="test-icon">&#10008;</span>
-          <span><strong>Result mismatch.</strong> Order matters: ${exp.ordered ? 'Yes' : 'No'}.</span>
-        </div>
-        <div class="test-diff"><strong>Expected:</strong>\n${JSON.stringify(exp.rows, null, 2)}\n\n<strong>Got:</strong>\n${JSON.stringify(values, null, 2)}</div>
-        <div style="margin-top:8px;"><strong>Output Table:</strong></div>
-        ${renderHtmlTable(columns, values)}
-      `;
+      outEl.innerHTML = `<span class="fail-text">FAIL</span>\n   expected: ${JSON.stringify(exp.rows)}${exp.ordered ? ' (in order)' : ''}\n   got:      ${JSON.stringify(vals)}` + renderTable(cols, vals);
     }
-  } catch (err) {
+  } catch (e) {
     passState[key] = false;
     statusEl.className = 'exercise-status fail';
-    statusEl.textContent = 'ERROR';
-    resultsEl.innerHTML = `
-      <div class="test-item fail">
-        <span class="test-icon">&#10008;</span>
-        <span><strong>SQL Error:</strong></span>
-      </div>
-      <div class="test-diff">${escapeHtml(err.message || String(err))}</div>
-    `;
+    statusEl.textContent = 'FAIL';
+    outEl.innerHTML = `<span class="fail-text">error:</span> ${escapeHtml(e.message || String(e))}`;
   } finally {
     if (db) db.close();
     updateScore();
@@ -569,108 +369,48 @@ function runSingleExercise(key) {
 }
 
 function runAll() {
-  Object.keys(STARTER_QUERIES).forEach(k => runSingleExercise(k));
+  Object.keys(STARTER).forEach(k => runExercise(k));
 }
 
-// Sandbox query runner
-document.getElementById('btn-run-sandbox').addEventListener('click', () => {
-  if (!SQL_ENGINE) return;
-  const sql = document.getElementById('sandbox-sql').value;
-  const out = document.getElementById('sandbox-results');
-  let db;
-  try {
-    db = new SQL_ENGINE.Database();
-    db.run(DATA_SQL);
-    const res = db.exec(sql);
-    if (res.length === 0) {
-      out.innerHTML = '<p class="sub">(Query executed successfully, 0 rows returned)</p>';
-    } else {
-      out.innerHTML = renderHtmlTable(res[0].columns, res[0].values);
-    }
-  } catch (err) {
-    out.innerHTML = `<div class="test-diff">${escapeHtml(err.message || String(err))}</div>`;
-  } finally {
-    if (db) db.close();
-  }
+document.querySelectorAll('.btn-run').forEach(b => {
+  b.addEventListener('click', () => runExercise(b.dataset.target));
 });
 
-// View Tabs
-document.querySelectorAll('.view-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const target = tab.dataset.tab;
-    if (target === 'cards') {
-      document.getElementById('view-cards').style.display = 'block';
-      document.getElementById('view-full').style.display = 'none';
-    } else {
-      document.getElementById('view-cards').style.display = 'none';
-      document.getElementById('view-full').style.display = 'block';
-      document.getElementById('full-script').value = assembleFullScript();
-    }
-  });
-});
-
-document.getElementById('btn-sync-from-cards').addEventListener('click', () => {
-  document.getElementById('full-script').value = assembleFullScript();
-  showToast('Synced from cards');
-});
-
-document.getElementById('btn-run-full').addEventListener('click', () => {
-  syncCardsFromFullScript(document.getElementById('full-script').value);
-  runAll();
-  showToast('Ran all queries');
-});
-
-// Download SQL file
-document.getElementById('btn-download-sql').addEventListener('click', () => {
-  const content = assembleFullScript();
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'week13.sql';
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// Reset All
-document.getElementById('btn-reset-all').addEventListener('click', () => {
-  if (!confirm('Are you sure you want to reset all queries to starter code?')) return;
-  Object.keys(STARTER_QUERIES).forEach(k => {
+document.querySelectorAll('.btn-reset').forEach(b => {
+  b.addEventListener('click', () => {
+    const k = b.dataset.target;
     localStorage.removeItem('cs61a_sql_' + k);
-    document.getElementById('code-' + k).value = STARTER_QUERIES[k];
-    document.getElementById('status-' + k).className = 'exercise-status pending';
-    document.getElementById('status-' + k).textContent = 'Not run';
-    document.getElementById('results-' + k).style.display = 'none';
-    passState[k] = false;
-  });
-  updateScore();
-  showToast('Reset all queries');
-});
-
-// Single button handlers
-document.querySelectorAll('.btn-run-single').forEach(btn => {
-  btn.addEventListener('click', () => runSingleExercise(btn.dataset.target));
-});
-
-document.querySelectorAll('.btn-reset-single').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const k = btn.dataset.target;
-    localStorage.removeItem('cs61a_sql_' + k);
-    document.getElementById('code-' + k).value = STARTER_QUERIES[k];
-    document.getElementById('status-' + k).className = 'exercise-status pending';
-    document.getElementById('status-' + k).textContent = 'Not run';
-    document.getElementById('results-' + k).style.display = 'none';
+    document.getElementById('code-' + k).value = STARTER[k];
+    document.getElementById('status-' + k).textContent = '';
+    document.getElementById('output-' + k).style.display = 'none';
     passState[k] = false;
     updateScore();
-    showToast('Reset ' + k.toUpperCase());
   });
 });
 
 document.getElementById('btn-run-all').addEventListener('click', runAll);
 
-// Init SQL.js
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirm('Reset all exercises?')) return;
+  Object.keys(STARTER).forEach(k => {
+    localStorage.removeItem('cs61a_sql_' + k);
+    document.getElementById('code-' + k).value = STARTER[k];
+    document.getElementById('status-' + k).textContent = '';
+    document.getElementById('output-' + k).style.display = 'none';
+    passState[k] = false;
+  });
+  updateScore();
+});
+
+document.getElementById('btn-download-sql').addEventListener('click', () => {
+  const blob = new Blob([assembleFullScript()], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'week13.sql';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
 window.addEventListener('DOMContentLoaded', async () => {
   loadSaved();
   const statusEl = document.getElementById('engine-status');
@@ -678,13 +418,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     SQL_ENGINE = await initSqlJs({
       locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`
     });
-    statusEl.className = 'status-pill ready';
-    statusEl.innerHTML = '&#9679; SQLite WASM Ready';
+    statusEl.textContent = 'ready';
     document.getElementById('btn-run-all').disabled = false;
-  } catch (err) {
-    statusEl.className = 'status-pill error';
-    statusEl.textContent = 'Failed to load SQLite';
-    console.error('SQL init error:', err);
+  } catch (e) {
+    statusEl.textContent = 'SQLite failed to load';
+    console.error(e);
   }
 });
 </script>
