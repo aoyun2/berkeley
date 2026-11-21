@@ -1,0 +1,64 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\title{Math 54 --- Week 1}
+\subtitle{Solutions}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}\par\idea{Clear the first column with row 1, then the second column with row 2.}
+\[ \aug{rrr|r}{1&1&2&9\\2&4&-3&1\\3&6&-5&0}
+\xrightarrow[R_3-3R_1]{R_2-2R_1}\aug{rrr|r}{1&1&2&9\\0&2&-7&-17\\0&3&-11&-27}
+\xrightarrow{2R_3-3R_2}\aug{rrr|r}{1&1&2&9\\0&2&-7&-17\\0&0&-1&-3} \]
+\begin{steps}
+  \ii $-x_3=-3$, so $x_3=3$. Then $2x_2=-17+21=4$, so $x_2=2$. Then $x_1=9-2-6=1$.
+  \ii Check: $1+2+6=9$; $2+8-9=1$; $3+12-15=0$. Solution $(1,2,3)$.
+\end{steps}
+(The step $2R_3-3R_2$ scales row 3 by $2$ and then adds $-3$ times row 2; doing the scaling first avoids fractions.)
+\end{prob}
+
+\begin{prob}\textbf{P2.}\par\idea{Inconsistent exactly when a row becomes $[\,0\ 0\ b\,]$ with $b\ne0$.}
+$R_2+2R_1$ gives $\aug{rr|r}{1&-3&h\\0&0&2h-5}$. The second row is $0=2h-5$. It is consistent exactly when $2h-5=0$, i.e.\ $h=5/2$.
+\end{prob}
+
+\begin{prob}\textbf{P3.}\par\idea{The second pivot is $8-4h$, which may be zero; split into cases.}
+$R_2-4R_1$ gives $\aug{rr|r}{1&h&2\\0&8-4h&k-8}$.
+\begin{steps}
+  \ii If $h\ne2$: $8-4h\ne0$ is a pivot, both variables are basic, and the rightmost column is not a pivot column. Exactly one solution (for every $k$).
+  \ii If $h=2$: the second row is $[\,0\ \ 0\ \ k-8\,]$. If $k\ne8$ it says $0=k-8\ne0$: no solution. If $k=8$ it is a zero row; $x_2$ is free: infinitely many solutions.
+\end{steps}
+(a) $h=2$, $k\ne8$. (b) $h\ne2$. (c) $h=2$, $k=8$.
+\end{prob}
+
+\begin{prob}\textbf{P4.}\par\idea{Forward phase, then backward phase from the rightmost pivot.}
+\begin{steps}
+  \ii $R_3-2R_1$: row 3 becomes $[\,0\ 0\ 2\ {-8}\ 2\ \ 5\,]$. Then $R_3-2R_2$: $[\,0\ 0\ 0\ 0\ {-2}\ \ {-5}\,]$. Echelon form; pivots in columns 1, 3, 5.
+  \ii Scale row 3 by $-\tfrac12$: $[\,0\ 0\ 0\ 0\ 1\ \ \tfrac52\,]$. Clear above it: $R_2-2R_3$ gives $[\,0\ 0\ 1\ {-4}\ 0\ \ 0\,]$.
+  \ii Clear above the pivot in column 3: $R_1+R_2$ gives $[\,1\ {-2}\ 0\ {-1}\ 0\ \ {-2}\,]$.
+\end{steps}
+\[ \text{RREF: }\aug{rrrrr|r}{1&-2&0&-1&0&-2\\0&0&1&-4&0&0\\0&0&0&0&1&\tfrac52} \]
+Basic: $x_1,x_3,x_5$. Free: $x_2,x_4$. Solution: $x_1=-2+2x_2+x_4$, $x_2$ free, $x_3=4x_4$, $x_4$ free, $x_5=\tfrac52$.
+\end{prob}
+
+\begin{prob}\textbf{P5.}
+\begin{steps}
+  \ii (a) False. The coefficient matrix has 3 rows, so at most 3 pivots, but 4 variable columns: at least one free variable. If consistent, infinitely many solutions.
+  \ii (b) False. $\aug{rr|r}{1&0&1\\0&1&2\\0&0&0}$ has a zero row and exactly one solution. Count free variables instead.
+  \ii (c) True. Four pivots in a $4\times4$ coefficient matrix means a pivot in every row. Then the augmented column cannot contain a pivot (each row's leading entry is already in a variable column), so the system is consistent; and there are no free variables, so the solution is unique.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P6.}\par\idea{Each point gives one linear equation in $a_0,a_1,a_2$.}
+$p(1)=4$: $a_0+a_1+a_2=4$. $p(2)=9$: $a_0+2a_1+4a_2=9$. $p(3)=18$: $a_0+3a_1+9a_2=18$.
+\[ \aug{rrr|r}{1&1&1&4\\1&2&4&9\\1&3&9&18}\xrightarrow[R_3-R_1]{R_2-R_1}\aug{rrr|r}{1&1&1&4\\0&1&3&5\\0&2&8&14}\xrightarrow{R_3-2R_2}\aug{rrr|r}{1&1&1&4\\0&1&3&5\\0&0&2&4} \]
+$a_2=2$, $a_1=5-6=-1$, $a_0=4+1-2=3$. So $p(t)=3-t+2t^2$. Check: $p(1)=4$, $p(2)=9$, $p(3)=18$.
+\end{prob}
+
+\begin{prob}\textbf{P7.}\par\idea{Four equations in two unknowns usually have no solution; row reduce to see.}
+\[ \aug{rr|r}{1&2&5\\3&-1&1\\2&3&8\\1&1&3}\to\aug{rr|r}{1&2&5\\0&-7&-14\\0&-1&-2\\0&-1&-2}\to\aug{rr|r}{1&2&5\\0&1&2\\0&0&0\\0&0&0} \]
+(Second step: scale row 2 by $-\tfrac17$, then add it to rows 3 and 4.) No row $[\,0\ 0\ b\,]$ with $b\ne0$: consistent, no free variables. $y=2$, $x=1$. Check all four: $5$, $1$, $8$, $3$.
+\end{prob}
+
+\end{document}

@@ -1,0 +1,321 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\title{CS 61A --- Week 4}
+\subtitle{Recursion, mutual recursion, tree recursion (Lectures 9--10, Composing Programs 1.7)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--3}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii Calling a function creates a new frame, binds the parameters, and runs the body; the call expression's value is the return value.
+  \ii A function's parent is the frame where it was defined; lookup goes local frame, parent, \dots, global.
+  \ii Digit tools: \cd{n \% 10} (last digit), \cd{n // 10} (all but the last digit).
+  \ii \cd{and}/\cd{or} short-circuit and return the last operand evaluated.
+  \ii A helper function defined inside another function can use the outer function's names.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Which frames an expression sees (Lecture 9)}
+You can tell where a name will be found without drawing a diagram:
+\begin{itemize}
+  \ii An expression outside every \cd{def} and \cd{lambda} is evaluated in the global frame only.
+  \ii An expression inside functions is evaluated in an environment with one frame for each enclosing \cd{def}/\cd{lambda}, from innermost to outermost, and then global.
+\end{itemize}
+\begin{py}
+def exp(x):
+    def base(b):
+        return pow(b, x)     # environment: a base frame, an exp frame, global
+    return base
+\end{py}
+In \cd{pow(b, x)}: \cd{b} is found in the \cd{base} frame, \cd{x} in the \cd{exp} frame, \cd{pow} in global. This is how the lecture explained Midterm 1's ``New Print'': inside \cd{f}, the name \cd{print} is always found in a \cd{new\_print} frame.
+
+\subsection{Recursive functions (Lecture 9, CP 1.7)}
+\begin{qbox}
+  A function's body may call the function itself. Why does that not go on forever, and how can a function be used while it is still being written?
+\end{qbox}
+\begin{py}
+def fact(n):
+    """Compute n factorial."""
+    if n == 0 or n == 1:
+        return 1                  # base case
+    else:
+        return fact(n - 1) * n    # recursive case
+\end{py}
+\begin{itemize}
+  \ii A function is \vocab{recursive} if its body calls the function itself, directly or indirectly.
+  \ii \vocab{Base case}: an input simple enough to answer without a recursive call. It is tested first.
+  \ii \vocab{Recursive case}: the answer is built from the answer to a \emph{smaller} instance of the same problem. $5!=5\cdot4!$.
+  \ii Each recursive call must move toward a base case (here \cd{n} decreases by 1).
+\end{itemize}
+\begin{ideabox}
+Nothing new happens in the environment: each call gets its own frame with its own \cd{n} (W1). \cd{fact(3)} opens a frame with \cd{n = 3} and must wait for \cd{fact(2)}; that opens a second frame with \cd{n = 2} and waits for \cd{fact(1)}, which returns \cd{1} at once. Then the waiting calls finish in reverse order: \cd{1 * 2 = 2}, then \cd{2 * 3 = 6}. The frames do not interfere, because each call looks up \cd{n} in its own frame.
+\end{ideabox}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,font=\ttfamily\small,box/.style={draw,thick,minimum width=3.3cm,minimum height=0.8cm}]
+  \node[box] (a) at (0,0) {fact(3): n = 3};
+  \node[box] (b) at (4.6,0) {fact(2): n = 2};
+  \node[box] (c) at (9.2,0) {fact(1): n = 1};
+  \draw[->] (a.north east) to[bend left=25] node[above,font=\rmfamily\footnotesize]{calls} (b.north west);
+  \draw[->] (b.north east) to[bend left=25] node[above,font=\rmfamily\footnotesize]{calls} (c.north west);
+  \draw[->,blue] (c.south west) to[bend left=25] node[below,font=\rmfamily\footnotesize]{returns 1} (b.south east);
+  \draw[->,blue] (b.south west) to[bend left=25] node[below,font=\rmfamily\footnotesize]{returns 1 * 2 = 2} (a.south east);
+  \node[blue,font=\rmfamily\small] at (0,-1.35) {returns 2 * 3 = 6};
+\end{tikzpicture}
+\figcap{Three frames for one call to \cd{fact(3)}. Calls go right; return values come back left.}
+\end{fig}
+
+\method{How to know the recursive case is right (Lecture 10).}
+\begin{itemize}
+  \ii \textbf{Tracing}: follow every call. Possible only for tiny inputs.
+  \ii \textbf{The recursive leap of faith} (induction): \emph{assume} the function already works for every smaller input, and check that the recursive case then gives the right answer for this input. For \cd{fact}: assume \cd{fact(n - 1)} really is $(n-1)!$; then \cd{fact(n - 1) * n} is $n!$. Together with a correct base case, that is a proof.
+\end{itemize}
+The leap of faith is functional abstraction applied to the function you are writing: use it by what it promises, not by how it runs.
+
+\method{How to get started on a recursive function (Lecture 10).}
+\begin{steps}
+  \ii Start with the recursive case. Write down calls on smaller inputs you might make, what they return, and how those values could be combined into the answer.
+  \ii Then find the base cases: follow the recursive calls and see where they end.
+  \ii If the function is easy to write with \cd{while}, write that first and convert (next subsection).
+\end{steps}
+
+\textbf{Worked exam question (Spring 2024 Midterm 1, Q4(e), from Lecture 10).} A \emph{dice integer} is a positive integer whose digits are all from 1 to 6. \cd{streak(n)} returns whether \cd{n} is a dice integer in which all digits are the same: \cd{streak(22222)} and \cd{streak(4)} are \cd{True}; \cd{streak(22322)}, \cd{streak(99999)}, \cd{streak(505)} are \cd{False}.
+\begin{py}
+def streak(n):
+    return (n >= 1 and n <= 6) or (n > 9 and ______ and streak(______))
+\end{py}
+\begin{steps}
+  \ii Smaller instance: \cd{n // 10}, the number without its last digit. For \cd{22222} that is \cd{2222}.
+  \ii How does the answer for \cd{2222} help? In a streak, everything except the last digit is a streak, \emph{and} the last digit matches the digit before it.
+  \ii ``The last two digits match'': \cd{n \% 10 == n // 10 \% 10}.
+  \ii Base case: a single digit from 1 to 6 (already given). A single digit outside 1--6, such as \cd{9}, fails both sides and gives \cd{False}; that is how \cd{99999} is rejected.
+\end{steps}
+\begin{py}
+    return (n >= 1 and n <= 6) or (n > 9 and n % 10 == n // 10 % 10 and streak(n // 10))
+\end{py}
+
+\subsection{Iteration and recursion (Lecture 9)}
+\begin{py}
+def fact_iter(n):
+    result = 1
+    while n > 0:
+        result = result * n
+        n -= 1
+    return result
+\end{py}
+\textbf{Converting a loop to recursion: the state of the loop becomes the arguments.} The loop above has two changing names, \cd{n} and the running total. Pass both:
+\begin{py}
+def fact_k(n, k):
+    """Compute n factorial times k."""
+    if n == 0 or n == 1:
+        return k
+    else:
+        return fact_k(n - 1, k * n)
+
+def fact_tail(n):
+    def f(n, k):
+        if n == 0 or n == 1:
+            return k
+        else:
+            return f(n - 1, k * n)
+    return f(n, 1)
+\end{py}
+\begin{ideabox}
+Two styles of recursion. In \cd{fact}, work is done \emph{after} the recursive call returns (\cd{... * n}): the answer is assembled on the way back. In \cd{fact\_k}, work is done \emph{before} the call (\cd{k * n} is computed and passed along): the answer is carried forward in an argument and the base case returns it finished.
+
+When the function you were asked for has too few parameters to carry the state, define an inner helper with the extra parameters and start it with the initial values: \cd{return f(n, 1)}. The same recipe turns any \cd{while} loop into recursion: one parameter per changing name, the loop condition becomes the base-case test, and the loop body ends with a recursive call on the updated values. (Lecture did this for the twenty-one game: the helper's arguments were the total and whose turn it is.)
+\end{ideabox}
+
+\subsection{The order of events in a recursive call (CP 1.7)}
+Statements before the recursive call run on the way down; statements after it run on the way back, in reverse order.
+\begin{py}
+def cascade(n):
+    print(n)
+    if n >= 10:
+        cascade(n // 10)
+        print(n)
+
+>>> cascade(123)
+123
+12
+1
+12
+123
+\end{py}
+
+\subsection{Helper functions and mutual recursion (Lecture 10)}
+\begin{py}
+def smallest_factor(n):
+    """Return the smallest divisor of n above 1."""
+    def smallest_divisor(k):
+        "Return the smallest divisor of n above or equal to k."
+        if n % k == 0:
+            return k
+        else:
+            return smallest_divisor(k + 1)
+    return smallest_divisor(2)
+\end{py}
+\begin{itemize}
+  \ii The recursion is on a new quantity \cd{k} that the original function does not have, so a helper is needed. The helper's docstring states exactly what it returns; that statement is what the leap of faith assumes.
+  \ii Here ``smaller'' means closer to the end: \cd{k} increases toward a divisor (at the latest \cd{k = n}).
+\end{itemize}
+Two functions are \vocab{mutually recursive} if each calls the other.
+\begin{py}
+def unique_prime_factors(n):
+    """Return the number of unique prime factors of n.
+    >>> unique_prime_factors(576)    # 2*2*2*2*2*2*3*3
+    2
+    """
+    k = smallest_factor(n)
+    def no_k(n):
+        "Return the number of unique prime factors of n other than k."
+        if n == 1:
+            return 0
+        elif n % k != 0:
+            return unique_prime_factors(n)
+        else:
+            return no_k(n // k)
+    return 1 + no_k(n)
+\end{py}
+\begin{steps}
+  \ii Find the smallest factor \cd{k} (it is prime). It counts as one: \cd{1 + ...}.
+  \ii \cd{no\_k} divides \cd{k} out as long as it divides (\cd{no\_k(n // k)}).
+  \ii When \cd{k} no longer divides what is left, the remaining number has only \emph{other} prime factors: count them with \cd{unique\_prime\_factors}. If nothing is left (\cd{n == 1}) there are none.
+\end{steps}
+For $72000=2^6\cdot3^2\cdot5^3$: count 1 for 2, leaving 1125; count 1 for 3, leaving 125; count 1 for 5, leaving 1. Answer 3.
+
+\subsection{Tree recursion (Lecture 10, CP 1.7)}
+\begin{qbox}
+  How many ways are there to do something when each step offers a choice? Listing them is hopeless; counting them is a short function.
+\end{qbox}
+A function is \vocab{tree recursive} if one call makes more than one recursive call. The calls form a tree.
+
+\textbf{Lecture example: parking.} \cd{n} adjacent spots; each is empty (\cd{.}), holds a motorcycle (\cd{\%}), or is half of a car (\cd{<>}, two adjacent spots). Count the arrangements.
+\begin{ideabox}
+Decide what happens at the first spot, and count each possibility separately; the possibilities do not overlap and together cover everything.
+\begin{itemize}
+  \ii The first spot is empty: the remaining $n-1$ spots can be filled in \cd{count\_park(n - 1)} ways.
+  \ii The first spot has a motorcycle: again \cd{count\_park(n - 1)} ways.
+  \ii A car starts at the first spot: it uses two spots, leaving \cd{count\_park(n - 2)} ways.
+\end{itemize}
+Base cases come from following the calls down: with $0$ spots there is exactly one way (do nothing); with a negative number (a car that does not fit) there are none.
+\end{ideabox}
+\begin{py}
+def count_park(n):
+    if n < 0:
+        return 0
+    elif n == 0:
+        return 1
+    else:
+        return 2 * count_park(n - 1) + count_park(n - 2)
+\end{py}
+\cd{count\_park(1) = 2}, \cd{count\_park(2) = 5}, \cd{count\_park(3) = 12}, \cd{count\_park(4) = 29}.
+\begin{fig}
+\begin{tikzpicture}[level distance=10mm,level 1/.style={sibling distance=72mm},level 2/.style={sibling distance=38mm},level 3/.style={sibling distance=26mm},every node/.style={font=\ttfamily\small}]
+  \node {cp(3) = 2*5 + 2 = 12}
+    child {node {cp(2) = 2*2 + 1 = 5}
+      child {node {cp(1) = 2} child {node {cp(0) = 1}} child {node {cp(-1) = 0}}}
+      child {node {cp(0) = 1}}}
+    child {node {cp(1) = 2*1 + 0 = 2}
+      child {node {cp(0) = 1}}
+      child {node {cp(-1) = 0}}};
+\end{tikzpicture}
+\figcap{The tree of calls for \cd{count\_park(3)} (written \cd{cp}). Every leaf is a base case.}
+\end{fig}
+
+\textbf{Lecture example: counting partitions.} \cd{count\_partitions(n, m)} is the number of ways to write \cd{n} as a sum of positive integers, each at most \cd{m}, in non-decreasing order. \cd{count\_partitions(6, 4)} is 9: $2+4$, $1+1+4$, $3+3$, $1+2+3$, $1+1+1+3$, $2+2+2$, $1+1+2+2$, $1+1+1+1+2$, $1+1+1+1+1+1$.
+\begin{ideabox}
+Choose a yes/no question that splits the partitions into two groups, each of which is a smaller instance of the same problem. The question: \emph{is the largest allowed part, \cd{m}, used at least once?}
+\begin{itemize}
+  \ii Yes: remove one \cd{m}. What remains is a partition of \cd{n - m} with parts up to \cd{m} (another \cd{m} may still be used). \cd{count\_partitions(n - m, m)}.
+  \ii No: every part is at most \cd{m - 1}. \cd{count\_partitions(n, m - 1)}.
+\end{itemize}
+For $(6,4)$: with a 4 there are \cd{count\_partitions(2, 4) = 2}; without, \cd{count\_partitions(6, 3) = 7}.
+
+Base cases, by following the two kinds of call: \cd{n} reaches \cd{0} (a complete partition: one way); \cd{n} goes negative (subtracted too much: no way); \cd{m} reaches \cd{0} while \cd{n > 0} (no parts left: no way).
+\end{ideabox}
+\begin{py}
+def count_partitions(n, m):
+    if n == 0:
+        return 1
+    elif n < 0:
+        return 0
+    elif m == 0:
+        return 0
+    else:
+        with_m = count_partitions(n - m, m)
+        without_m = count_partitions(n, m - 1)
+        return with_m + without_m
+\end{py}
+\textbf{Fibonacci (CP 1.7).} \cd{fib(n) = fib(n - 1) + fib(n - 2)} with \cd{fib(0) = 0}, \cd{fib(1) = 1} is the simplest tree recursion. It recomputes the same values many times: the call tree for \cd{fib(n)} has a number of calls that grows exponentially with \cd{n}.
+
+\begin{shortcuts}
+  \ii \textbf{Template for digit recursion}: base case a single digit (\cd{n < 10}); recursive call on \cd{n // 10}; combine with \cd{n \% 10}.
+  \ii \textbf{Counting problems}: split by the first choice (or by a yes/no question about one element), make one recursive call per option, add the results. ``One way'' when nothing is left; ``zero ways'' when you overshoot or run out of options.
+  \ii \textbf{Order of base cases matters}: test ``success'' (\cd{n == 0}) before ``failure'' (\cd{m == 0}), or a finished partition is counted as a failure.
+  \ii \textbf{Need extra state?} Write a helper with more parameters and call it with the starting values.
+  \ii \textbf{One-line recursive booleans}: \cd{base or (guard and local\_check and f(smaller))}, as in \cd{streak}.
+  \ii \textbf{Print before or after?} Lines printed before the recursive call appear in call order; lines printed after appear in reverse.
+  \ii \textbf{Trust the docstring}: when reading or filling in a recursive call, replace it mentally by what the docstring says it returns.
+\end{shortcuts}
+\begin{trapbox}
+  \ii A missing or unreachable base case gives \cd{RecursionError}: for example \cd{fact(-1)}, or recursing on \cd{n} instead of \cd{n - 1}.
+  \ii Forgetting \cd{return} in the recursive case: the call happens, its value is dropped, and the function returns \cd{None}.
+  \ii In tree recursion, the options must not overlap and must cover every case, or you count twice or miss some.
+  \ii \cd{count\_partitions(n - m, m)}, not \cd{(n - m, m - 1)}: after using one \cd{m} you may use \cd{m} again.
+  \ii A helper's \cd{n} can hide the outer function's \cd{n} (as in \cd{no\_k(n)}); check which frame each name belongs to.
+\end{trapbox}
+
+\section{Problem set}
+All problems here are original; the exam question for this week is the worked \cd{streak} example above. Programming exercises are in \cd{exercises/}.
+
+\begin{prob}\textbf{P1 (trace).}\ What is displayed?
+\begin{py}
+def f(n):
+    if n == 0:
+        print('base')
+        return 0
+    print('down', n)
+    result = f(n - 1) + n
+    print('up', n, result)
+    return result
+
+print(f(2))
+\end{py}
+\end{prob}
+\begin{prob}\textbf{P2 (find the bug).}\ Each function is meant to return the sum of the digits of a positive integer. Say what goes wrong with each.
+\begin{py}
+def sum_a(n):
+    return n % 10 + sum_a(n // 10)
+
+def sum_b(n):
+    if n < 10:
+        return n
+    sum_b(n // 10) + n % 10
+
+def sum_c(n):
+    if n < 10:
+        return n
+    return sum_c(n) + n % 10
+\end{py}
+\end{prob}
+\begin{prob}\textbf{P3 (leap of faith).}\ Write \cd{count\_up(n)}, which prints the integers from \cd{1} to \cd{n} in increasing order, one per line, using recursion and no loop. Explain the order of the two statements in the recursive case.
+\end{prob}
+\begin{prob}\textbf{P4 (iteration to recursion).}\ Convert to a recursive function with a helper and no loop:
+\begin{py}
+def reverse(n):
+    result = 0
+    while n > 0:
+        result = result * 10 + n % 10
+        n = n // 10
+    return result
+\end{py}
+\end{prob}
+\begin{prob}\textbf{P5 (tree recursion by hand).}\ A staircase has \cd{n} steps; each move climbs 1 or 3 steps. Write \cd{climb(n)}, the number of different sequences of moves that reach the top exactly. Give \cd{climb(5)} by drawing the tree or tabulating \cd{climb(0)}, \dots, \cd{climb(5)}.
+\end{prob}
+\begin{prob}\textbf{P6 (design the split).}\ \cd{count\_strings(n)} is the number of strings of length \cd{n} made of the letters \cd{a} and \cd{b} that never contain \cd{bb}. Find the recursive case by asking what the first letter is, state the base cases, and compute \cd{count\_strings(4)}.
+\end{prob}
+
+\end{document}

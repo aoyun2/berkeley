@@ -1,0 +1,55 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\title{Math 54 --- Week 4}
+\subtitle{Solutions}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{P1.}
+$AB=\begin{bmatrix}7&2\\3&1\end{bmatrix}$, $BA=\begin{bmatrix}1&2\\3&7\end{bmatrix}$ (different). $(AB)^T=\begin{bmatrix}7&3\\2&1\end{bmatrix}$, and $B^TA^T=\begin{bmatrix}1&3\\0&1\end{bmatrix}\begin{bmatrix}1&0\\2&1\end{bmatrix}=\begin{bmatrix}7&3\\2&1\end{bmatrix}$, as the rule $(AB)^T=B^TA^T$ says.
+\end{prob}
+
+\begin{prob}\textbf{P2.}
+$X^2=\begin{bmatrix}1&-4\\0&1\end{bmatrix}$, $X^3=X^2X=\begin{bmatrix}1&-6\\0&1\end{bmatrix}$. Guess $X^k=\begin{bmatrix}1&-2k\\0&1\end{bmatrix}$: $X$ is a horizontal shear by $-2$, and doing it $k$ times shears by $-2k$. (Induction: $\begin{bmatrix}1&-2k\\0&1\end{bmatrix}\begin{bmatrix}1&-2\\0&1\end{bmatrix}=\begin{bmatrix}1&-2k-2\\0&1\end{bmatrix}$.)
+\end{prob}
+
+\begin{prob}\textbf{P3.}\par\idea{One inverse serves every right-hand side.}
+$A^{-1}=\begin{bmatrix}-3&2\\5/2&-3/2\end{bmatrix}$. First system: $A^{-1}(3,7)=(-9+14,\ 15/2-21/2)=(5,-3)$. Second: $A^{-1}(1,0)=(-3,\ 5/2)$, the first column of $A^{-1}$. Check: $3(-3)+4(5/2)=1$, $5(-3)+6(5/2)=0$.
+\end{prob}
+
+\begin{prob}\textbf{P4.}\par\idea{Row reduce $[\,A\ \ I\,]$; a leading 1 in row 2 is convenient, so swap first.}
+\[ \aug{rrr|rrr}{2&1&0&1&0&0\\1&1&1&0&1&0\\0&1&3&0&0&1}\xrightarrow{R_1\leftrightarrow R_2}\aug{rrr|rrr}{1&1&1&0&1&0\\2&1&0&1&0&0\\0&1&3&0&0&1}\xrightarrow{R_2-2R_1}\aug{rrr|rrr}{1&1&1&0&1&0\\0&-1&-2&1&-2&0\\0&1&3&0&0&1} \]
+\[ \xrightarrow{R_3+R_2}\aug{rrr|rrr}{1&1&1&0&1&0\\0&-1&-2&1&-2&0\\0&0&1&1&-2&1}\xrightarrow[R_1-R_3]{R_2+2R_3}\aug{rrr|rrr}{1&1&0&-1&3&-1\\0&-1&0&3&-6&2\\0&0&1&1&-2&1} \]
+\[ \xrightarrow{-R_2}\aug{rrr|rrr}{1&1&0&-1&3&-1\\0&1&0&-3&6&-2\\0&0&1&1&-2&1}\xrightarrow{R_1-R_2}\aug{rrr|rrr}{1&0&0&2&-3&1\\0&1&0&-3&6&-2\\0&0&1&1&-2&1} \]
+$A^{-1}=\begin{bmatrix}2&-3&1\\-3&6&-2\\1&-2&1\end{bmatrix}$. Check: row 1 of $A$ times the columns of $A^{-1}$: $4-3=1$, $-6+6=0$, $2-2=0$.
+\end{prob}
+
+\begin{prob}\textbf{P5.}\ No. Row 2 is twice row 1, so $R_2-2R_1$ gives a zero row: fewer than 3 pivots, so by the invertible matrix theorem $A$ is not invertible. (Equally, column 2 is $-2$ times column 1, so the columns are dependent.)
+\end{prob}
+
+\begin{prob}\textbf{P6.}\par\idea{Column 2 has a single nonzero entry; after that, use the column of the minor with the most zeros.}
+\begin{steps}
+  \ii Expand down column 2: only $a_{32}=7$ is nonzero, with sign $(-1)^{3+2}=-1$. So $\det A=-7\det\begin{bmatrix}3&4&1\\2&-1&0\\1&2&0\end{bmatrix}$.
+  \ii Expand the $3\times3$ down its column 3: only the top entry $1$ is nonzero, sign $(-1)^{1+3}=+1$: $\det=1\cdot\det\begin{bmatrix}2&-1\\1&2\end{bmatrix}=4+1=5$.
+  \ii $\det A=-7\cdot5=-35$.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P7.}
+\begin{steps}
+  \ii (a) True: a nontrivial solution needs a free variable, i.e.\ a column without a pivot.
+  \ii (b) True for square matrices: (h)$\Rightarrow$(e) in the invertible matrix theorem.
+  \ii (c) True: (k) gives $A$ invertible, and then $B=A^{-1}AB=A^{-1}$, which is invertible.
+  \ii (d) True: $(A^2)^{-1}=A^{-1}A^{-1}$, by the rule for inverses of products.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{P8.}\par\idea{Multiply out and use $A^3=0$; for square matrices one side is enough.}
+$(I-A)(I+A+A^2)=I+A+A^2-A-A^2-A^3=I-A^3=I$. By the invertible matrix theorem ((k)$\Rightarrow$(a)), $I-A$ is invertible and its inverse is $I+A+A^2$. (Compare $\frac{1}{1-a}=1+a+a^2+\dots$ for numbers.)
+\end{prob}
+
+\end{document}
