@@ -11,270 +11,421 @@
 \begin{document}
 \maketitle
 
-\section{Facts used from Weeks 1--4}
+\section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii $\det A$ by cofactor expansion along any row or column; for a triangular matrix, the product of the diagonal entries.
-  \ii An elementary matrix $E$ performs a row operation: $EA$ is $A$ after that operation.
-  \ii Invertible matrix theorem: for square $A$, invertible $\iff$ $n$ pivots $\iff$ $A\vv x=\vv0$ only trivially $\iff$ columns span $\RR^n$, etc.
-  \ii The solution set of $A\vv x=\vv0$ is the span of the vectors in its parametric vector form. $A\vv x=\vv b$ is consistent $\iff$ $\vv b$ is a combination of the columns of $A$.
+  \ii \textbf{Cofactor expansion and triangular determinants (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-3-1}{Lay 3.1 Thm.~1--2}):} $\det A$ can be computed by cofactor expansion across any row or down any column; if $A$ is triangular, $\det A=a_{11}a_{22}\cdots a_{nn}$.
+  \ii \textbf{Elementary matrices (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-7}{Lay 2.2 Thm.~7}):} Performing an elementary row operation on $A$ equals left-multiplying $A$ by the corresponding elementary matrix $E$ (obtained by performing that row operation on $I_n$).
+  \ii \textbf{Invertible Matrix Theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{name-invertible-matrix-theorem}{Lay 2.3 Thm.~8}):} An $n\times n$ matrix $A$ is invertible $\iff A\sim I_n \iff A$ has $n$ pivots $\iff A\vv x=\vv 0$ has only the trivial solution $\iff$ the columns of $A$ are linearly independent and span $\RR^n$.
+  \ii \textbf{Parametric vector form (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-6}{Lay 1.5}):} The solution set of $A\vv x=\vv 0$ is the span of the direction vectors attached to the free variables in its parametric vector form; $A\vv x=\vv b$ is consistent iff $\vv b$ is a linear combination of the columns of $A$.
 \end{enumerate}
 
 \section{This week}
 
-\subsection{Properties of determinants (Lay 3.2)}
+\subsection{Row operations and multiplicative properties of determinants (Lay 3.2)}
+
 \begin{qbox}
-  Cofactor expansion of a $10\times10$ matrix takes millions of multiplications. Row reduction takes a few hundred. How does each row operation change the determinant, so that row reduction can compute it?
+  Computing the determinant of a $10\times 10$ matrix by cofactor expansion requires over $10!=3{,}628{,}800$ multiplications, whereas row reducing a $10\times 10$ matrix to triangular echelon form takes only about $300$ operations. How does each elementary row operation affect $\det A$, so that we can compute $\det A$ rapidly by row reduction?
 \end{qbox}
-\begin{theorem*}[Row operations and the determinant]
-  Let $A$ be square.
+
+\begin{theorem*}[Lay 3.2 Thm.~3: Row operations and the determinant]\target{thm-lay-3-3}
+  Let $A$ be a square $n\times n$ matrix.
   \begin{enumerate}[(a)]
-    \ii If a multiple of one row is added to another row to give $B$, then $\det B=\det A$.
-    \ii If two rows are interchanged to give $B$, then $\det B=-\det A$.
-    \ii If one row is multiplied by $k$ to give $B$, then $\det B=k\det A$.
+    \ii \textbf{Replacement ($R_i\leftarrow R_i+cR_j$, $i\ne j$):} If a multiple of one row of $A$ is added to another row to produce a matrix $B$, then $\det B = \det A$.
+    \ii \textbf{Interchange ($R_i\leftrightarrow R_j$):} If two rows of $A$ are interchanged to produce $B$, then $\det B = -\det A$.
+    \ii \textbf{Scaling ($R_i\leftarrow kR_i$):} If one row of $A$ is multiplied by $k$ to produce $B$, then $\det B = k\,\det A$.
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-Start with (c): expand along the scaled row; every term of the expansion picks up the factor $k$. For (b) and (a), check $2\times2$ first: swapping the rows of the matrix with rows $(a,b)$ and $(c,d)$ gives $cb-da=-(ad-bc)$; adding $k$ times row 1 to row 2 gives $a(d+kb)-b(c+ka)=ad-bc$. For larger matrices, expand along a row that the operation did not touch: each cofactor is the determinant of a smaller matrix on which the same operation was performed, so the claim for size $n$ follows from the claim for size $n-1$ (induction). (For $n\ge3$ every one of these operations involves at most two rows, so an untouched row exists.)
+  Property (c) follows immediately by expanding $\det B$ across the scaled row~$i$: every entry $ka_{ij}$ in row~$i$ shares the factor $k$, while the cofactors $C_{ij}$ of row~$i$ do not involve row~$i$ and are unchanged. For (b) and (a), a direct $2\times 2$ check shows $\det\begin{bmatrix}c&d\\a&b\end{bmatrix}=cb-da=-(ad-bc)$ and $\det\begin{bmatrix}a&b\\c+ka&d+kb\end{bmatrix}=a(d+kb)-b(c+ka)=ad-bc$. For $n\ge 3$, since an interchange or replacement touches only two rows, we can expand $\det B$ across a third row untouched by the operation; each cofactor of that row is an $(n-1)\times(n-1)$ determinant on which the exact same row operation was performed, so induction on $n$ finishes the proof!
 \end{ideabox}
-\Needspace{10\baselineskip}
-\textbf{Consequences.}
-\begin{itemize}
-  \ii \textbf{Determinant by row reduction}: reduce $A$ to an echelon form $U$ using only replacements and $r$ interchanges. $U$ is triangular, so
-  \[ \det A=(-1)^r\cdot(\text{product of the diagonal entries of }U). \]
-  \ii Example:
-  \[ \begin{bmatrix}1&-4&2\\-2&8&-9\\-1&7&0\end{bmatrix}\xrightarrow[R_3+R_1]{R_2+2R_1}\begin{bmatrix}1&-4&2\\0&0&-5\\0&3&2\end{bmatrix}\xrightarrow{R_2\leftrightarrow R_3}\begin{bmatrix}1&-4&2\\0&3&2\\0&0&-5\end{bmatrix}. \]
-  One interchange, so $\det A=-(1)(3)(-5)=15$.
-  \ii A matrix with two equal rows, or a zero row, has determinant $0$ (subtract one equal row from the other to get a zero row; expand along a zero row).
-\end{itemize}
-\begin{theorem*}[Invertible $\iff$ nonzero determinant]
-  A square matrix $A$ is invertible if and only if $\det A\ne0$.
-\end{theorem*}
 \begin{proof}
-  In the formula $\det A=(-1)^r\cdot$(product of the diagonal of $U$), the diagonal of a square echelon form $U$ consists of the pivots if there are $n$ of them; otherwise the last diagonal entry is $0$. So $\det A\ne0$ $\iff$ $U$ has $n$ pivots $\iff$ $A$ is invertible (W3).
+  \begin{steps}
+    \ii For (c), expanding $\det B$ across the scaled row~$i$ gives $\det B=\sum_{j=1}^n (ka_{ij})C_{ij}=k\sum_{j=1}^n a_{ij}C_{ij}=k\,\det A$.
+    \ii We prove (b) and (a) by induction on $n\ge 2$. For $n=2$, swapping rows of $\begin{bmatrix}a&b\\c&d\end{bmatrix}$ gives $cb-da=-(ad-bc)$, and adding $k$ times row~1 to row~2 gives $a(d+kb)-b(c+ka)=ad-bc$ (or adding $k$ times row~2 to row~1 gives $(a+kc)d-(b+kd)c=ad-bc$).
+    \ii For $n\ge 3$, any row interchange or row replacement modifies at most two rows, so we can choose a row~$r$ that is unchanged by the operation. Expanding $\det B$ across row~$r$ expresses $\det B=\sum_{j=1}^n a_{rj}(-1)^{r+j}\det B_{rj}$, where each $(n-1)\times(n-1)$ submatrix $B_{rj}$ is obtained from $A_{rj}$ by the same row interchange or replacement. By the induction hypothesis, $\det B_{rj}=-\det A_{rj}$ for an interchange and $\det B_{rj}=\det A_{rj}$ for a replacement, giving $\det B=-\det A$ and $\det B=\det A$ respectively.
+  \end{steps}
 \end{proof}
-This adds a statement to the invertible matrix theorem: $\det A\ne0$.
-\begin{theorem*}[Transpose and product]
-  $\det A^T=\det A$, and $\det(AB)=(\det A)(\det B)$ for $n\times n$ matrices $A,B$.
+
+\begin{itemize}
+  \ii \textbf{Computing $\det A$ via echelon form:} Suppose $A$ is reduced to an upper-triangular echelon form $U$ using only row replacements and $r$ row interchanges (no row scalings). By \ilink{thm-lay-3-3}{Thm.~3.3} and (W1),
+  \[
+    \det A = (-1)^r \det U = (-1)^r (u_{11}u_{22}\cdots u_{nn}) = \begin{cases} (-1)^r (\text{product of pivots in }U) & \text{if }A\text{ has }n\text{ pivots}, \\ 0 & \text{if }A\text{ has fewer than }n\text{ pivots}. \end{cases}
+  \]
+  \ii \textbf{Worked example:}
+  \[
+    A = \begin{bmatrix} 1 & -4 & 2 \\ -2 & 8 & -9 \\ -1 & 7 & 0 \end{bmatrix}
+    \xrightarrow[R_3+R_1]{R_2+2R_1}
+    \begin{bmatrix} 1 & -4 & 2 \\ 0 & 0 & -5 \\ 0 & 3 & 2 \end{bmatrix}
+    \xrightarrow{R_2\leftrightarrow R_3}
+    \begin{bmatrix} 1 & -4 & 2 \\ 0 & 3 & 2 \\ 0 & 0 & -5 \end{bmatrix} = U.
+  \]
+  Since we used replacements and $r=1$ row interchange, $\det A=(-1)^1(1)(3)(-5)=15$.
+\end{itemize}
+
+\begin{theorem*}[Lay 3.2 Thm.~4: Invertibility criterion via the determinant]\target{thm-lay-3-4}
+  A square matrix $A$ is invertible if and only if $\det A\ne 0$.
 \end{theorem*}
 \begin{ideabox}
-$\det A^T=\det A$: expanding $A^T$ along a row is expanding $A$ along a column, and the cofactor expansion theorem allows both (induction on $n$). It follows that \emph{column} operations change the determinant exactly as row operations do.
-
-$\det(AB)$: if $A$ is not invertible, neither is $AB$ (if $AB$ had an inverse $C$, then $A(BC)=I$, making $A$ invertible), so both sides are $0$. If $A$ is invertible, write $A=E_p\cdots E_1$ as a product of elementary matrices. By the row-operation theorem, $\det(EM)=\det(E)\det(M)$ for every elementary $E$ (with $\det E=1$, $-1$ or $k$); apply this $p$ times to both $AB$ and $A$.
+  In the echelon formula $\det A=(-1)^r u_{11}u_{22}\cdots u_{nn}$, the product of the diagonal entries of the upper-triangular echelon form $U$ is nonzero if and only if every diagonal entry $u_{ii}$ is a nonzero pivot---that is, if and only if $A$ has $n$ pivot positions, which by the Invertible Matrix Theorem (W3) holds if and only if $A$ is invertible.
 \end{ideabox}
-\begin{itemize}
-  \ii Consequences: $\det(A^{-1})=1/\det A$ (from $\det(A)\det(A^{-1})=\det I=1$); $\det(A^k)=(\det A)^k$; $\det(cA)=c^n\det A$ for $n\times n$ $A$ (each of the $n$ rows is scaled).
-  \ii $\det(A+B)\ne\det A+\det B$ in general.
-  \ii \textbf{Linearity in one column}: with all other columns fixed, $\vv x\mapsto\det[\,\vv a_1\cdots\vv x\cdots\vv a_n\,]$ is a linear function of $\vv x$ (expand down that column).
-\end{itemize}
+\begin{proof}
+  \begin{steps}
+    \ii Reduce $A$ to an echelon form $U$ using row replacements and $r$ row interchanges, so $\det A=(-1)^r u_{11}\cdots u_{nn}$.
+    \ii Thus $\det A\ne 0$ if and only if all $n$ diagonal entries $u_{11},\dots,u_{nn}$ of $U$ are nonzero, which holds if and only if $A$ has $n$ pivot positions. By the Invertible Matrix Theorem (W3), this holds if and only if $A$ is invertible.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Lay 3.2 Thm.~5: Determinant of the transpose]\target{thm-lay-3-5}
+  If $A$ is an $n\times n$ matrix, then $\det A^{\mathsf T} = \det A$.
+\end{theorem*}
+\begin{ideabox}
+  Row~$1$ of $A^{\mathsf T}$ is column~$1$ of $A$, and the submatrix $(A^{\mathsf T})_{1j}$ is the transpose of the submatrix $A_{j1}$. Thus expanding $\det A^{\mathsf T}$ across its first row is term-for-term identical to expanding $\det A$ down its first column (by induction on $n$). Consequently, elementary \emph{column} operations on $A$ affect $\det A$ in the exact same way as elementary row operations!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii We induct on $n$. For $n=1$, $A^{\mathsf T}=A$. For $n\ge 2$, expanding $\det A^{\mathsf T}$ across row~1 and using $\det((A^{\mathsf T})_{1j})=\det((A_{j1})^{\mathsf T})=\det A_{j1}$ by the induction hypothesis gives $\det A^{\mathsf T}=\sum_{j=1}^n (A^{\mathsf T})_{1j}(-1)^{1+j}\det((A^{\mathsf T})_{1j})=\sum_{j=1}^n a_{j1}(-1)^{j+1}\det A_{j1}=\det A$ (cofactor expansion of $A$ down column~1).
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Lay 3.2 Thm.~6: Multiplicative property of the determinant]\target{thm-lay-3-6}
+  If $A$ and $B$ are $n\times n$ matrices, then
+  \[
+    \det(AB) = (\det A)(\det B).
+  \]
+\end{theorem*}
+\begin{ideabox}
+  First check the key building block: when $A=E$ is an elementary matrix, $EB$ is the result of applying $E$'s row operation to $B$, so \ilink{thm-lay-3-3}{Thm.~3.3} gives $\det(EB)=1\cdot\det B$, $-\det B$, or $k\det B$, which in all three cases equals $(\det E)(\det B)$ (since taking $B=I_n$ shows $\det E=1,-1,k$ respectively). Next, for a general matrix $A$: if $A$ is not invertible, then $AB$ cannot be invertible either (if $(AB)C=I_n$, then $A(BC)=I_n$ would make $A$ invertible), so both $\det(AB)$ and $(\det A)(\det B)$ are $0$. If $A$ is invertible, then $A=E_p\cdots E_1$ is a product of elementary matrices, and peeling off the elementary matrices one at a time turns $\det(E_p\cdots E_1 B)$ into $(\det E_p)\cdots(\det E_1)(\det B)=(\det A)(\det B)$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii For any elementary matrix $E$ and any $n\times n$ matrix $M$, \ilink{thm-lay-3-3}{Thm.~3.3} applied to $M=I_n$ shows that $\det E$ equals $1$ (replacement), $-1$ (interchange), or $k$ (scaling by $k$), and hence $\det(EM)=(\det E)(\det M)$ for every $M$.
+    \ii If $A$ is not invertible, then $AB$ is not invertible (for if $(AB)C=I_n$, then $A(BC)=I_n$, so $A$ would be invertible by the IMT). By \ilink{thm-lay-3-4}{Thm.~3.4}, $\det(AB)=0$ and $(\det A)(\det B)=0\cdot\det B=0$.
+    \ii If $A$ is invertible, then by \xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-7}{Thm.~2.7}, $A=E_p\cdots E_1$ is a product of elementary matrices. Applying Step~1 repeatedly gives
+    \[
+      \det(AB) = \det(E_p\cdots E_1 B) = (\det E_p)\cdots(\det E_1)(\det B) = \det(E_p\cdots E_1)(\det B) = (\det A)(\det B).
+    \]
+  \end{steps}
+\end{proof}
 
 \subsection{Cramer's rule, the inverse formula, and volume (Lay 3.3)}
-\textbf{Notation.} $A_i(\vv b)$ is $A$ with column $i$ replaced by $\vv b$.
-\begin{theorem*}[Cramer's rule]
-  If $A$ is invertible $n\times n$, the unique solution of $A\vv x=\vv b$ has entries $x_i=\dfrac{\det A_i(\vv b)}{\det A}$.
+
+\begin{qbox}
+  Can we write down an explicit closed-form formula for the $i$-th component $x_i$ of the solution to $A\vv x=\vv b$ (and for every entry of $A^{-1}$) in terms of determinants, and what is the geometric meaning of $|\det A|$ in $\RR^2$ and $\RR^3$?
+\end{qbox}
+
+For any $n\times n$ matrix $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$ and any vector $\vv b\in\RR^n$, let $A_i(\vv b)$ denote the matrix obtained from $A$ by replacing column~$i$ by $\vv b$:
+\[
+  A_i(\vv b) = \begin{bmatrix} \vv a_1 & \cdots & \vv a_{i-1} & \vv b & \vv a_{i+1} & \cdots & \vv a_n \end{bmatrix}.
+\]
+
+\begin{theorem*}[Lay 3.3 Thm.~7: Cramer's Rule]\target{thm-lay-3-7}
+  Let $A$ be an invertible $n\times n$ matrix. For any $\vv b$ in $\RR^n$, the unique solution $\vv x$ of $A\vv x=\vv b$ has entries given by
+  \[
+    x_i = \frac{\det A_i(\vv b)}{\det A}, \qquad i=1,2,\dots,n.
+  \]
 \end{theorem*}
 \begin{ideabox}
-The identity matrix with column $i$ replaced by $\vv x$, namely $I_i(\vv x)$, has determinant $x_i$: expand along row $i$, whose only nonzero entry is $x_i$ in the diagonal position, and deleting row $i$ and column $i$ leaves $I_{n-1}$. Multiplying by $A$ turns each column $\vv e_j$ into $\vv a_j$ and the column $\vv x$ into $A\vv x=\vv b$. So $AI_i(\vv x)=A_i(\vv b)$. Take determinants.
+  Look at the identity matrix $I_n$ with its $i$-th column replaced by $\vv x$: $I_i(\vv x)=[\,\vv e_1\ \ \cdots\ \ \vv x\ \ \cdots\ \ \vv e_n\,]$. Expanding $\det I_i(\vv x)$ across row~$i$ (where the only nonzero entry is $x_i$ on the main diagonal, with submatrix $I_{n-1}$) gives $\det I_i(\vv x)=x_i$. Now multiply $I_i(\vv x)$ on the left by $A$: column-by-column multiplication sends $A\vv e_j=\vv a_j$ and $A\vv x=\vv b$, so $A\,I_i(\vv x)=A_i(\vv b)$! Taking determinants of both sides via \ilink{thm-lay-3-6}{Thm.~3.6} gives $(\det A)x_i=\det A_i(\vv b)$.
 \end{ideabox}
 \begin{proof}
-  $AI_i(\vv x)=[\,A\vv e_1\cdots A\vv x\cdots A\vv e_n\,]=[\,\vv a_1\cdots\vv b\cdots\vv a_n\,]=A_i(\vv b)$. So $(\det A)(\det I_i(\vv x))=\det A_i(\vv b)$, and $\det I_i(\vv x)=x_i$ (expand along row $i$). Divide by $\det A\ne0$.
+  \begin{steps}
+    \ii By the column definition of matrix multiplication and $A\vv x=\vv b$,
+    \[
+      A\,I_i(\vv x) = A\begin{bmatrix} \vv e_1 & \cdots & \vv x & \cdots & \vv e_n \end{bmatrix} = \begin{bmatrix} A\vv e_1 & \cdots & A\vv x & \cdots & A\vv e_n \end{bmatrix} = \begin{bmatrix} \vv a_1 & \cdots & \vv b & \cdots & \vv a_n \end{bmatrix} = A_i(\vv b).
+    \]
+    \ii Expanding $\det I_i(\vv x)$ across row~$i$ gives $\det I_i(\vv x)=x_i\det I_{n-1}=x_i$.
+    \ii Taking determinants of Step~1 via \ilink{thm-lay-3-6}{Thm.~3.6} yields $(\det A)x_i=\det A_i(\vv b)$. Since $A$ is invertible, $\det A\ne 0$ (\ilink{thm-lay-3-4}{Thm.~3.4}), so dividing by $\det A$ gives $x_i=\det A_i(\vv b)/\det A$.
+  \end{steps}
 \end{proof}
-Example: $2x_1+x_2=7$, $-3x_1+4x_2=6$.
-\[ \det A=\det\begin{bmatrix}2&1\\-3&4\end{bmatrix}=11,\quad \det A_1(\vv b)=\det\begin{bmatrix}7&1\\6&4\end{bmatrix}=22,\quad \det A_2(\vv b)=\det\begin{bmatrix}2&7\\-3&6\end{bmatrix}=33, \]
-so $x_1=22/11=2$ and $x_2=33/11=3$.
-\begin{theorem*}[Inverse formula]
-  If $A$ is invertible, $A^{-1}=\dfrac{1}{\det A}\adj A$, where the \vocab{adjugate} $\adj A$ is the \emph{transpose} of the matrix of cofactors: $(\adj A)_{ij}=C_{ji}$.
-\end{theorem*}
-\begin{proof}
-  Column $j$ of $A^{-1}$ solves $A\vv x=\vv e_j$. By Cramer's rule its entry $i$ is $\det A_i(\vv e_j)/\det A$, and expanding $A_i(\vv e_j)$ down column $i$ (a single $1$ in row $j$) gives $(-1)^{i+j}\det A_{ji}=C_{ji}$.
-\end{proof}
-Useful mainly for $2\times2$ (it gives the formula from Week 4) and for theory; for numbers, row reduce $[\,A\ \ I\,]$.
 
-\textbf{Determinants as area and volume.}
-\begin{theorem*}[Area and volume]
-  If $A$ is $2\times2$, $|\det A|$ is the area of the parallelogram determined by the columns of $A$. If $A$ is $3\times3$, $|\det A|$ is the volume of the parallelepiped determined by the columns.
+\begin{theorem*}[Lay 3.3 Thm.~8: An inverse formula via the adjugate]\target{thm-lay-3-8}\target{name-inverse-formula}
+  Let $A$ be an invertible $n\times n$ matrix. Then
+  \[
+    A^{-1} = \frac{1}{\det A}\adj A,
+  \]
+  where the \vocab{adjugate} (or \vocab{classical adjoint}) $\adj A$ is the \textbf{transpose} of the matrix of cofactors of $A$: $(\adj A)_{ij}=C_{ji}$.
 \end{theorem*}
 \begin{ideabox}
-\textbf{Signed volume distortion factor:} The transformation $T(\vv x)=A\vv x$ maps the unit hypercube $[0,1]^n$ (volume $1$) to the parallelepiped spanned by the columns $\vv a_1=A\vv e_1,\dots,\vv a_n=A\vv e_n$. The volume of this parallelepiped is $|\det A|$, and the sign of $\det A$ records whether $T$ preserves or reverses spatial orientation (e.g.\ right-hand rule in $\RR^3$).
-
-\textbf{Why row/column operations preserve volume:} For a diagonal matrix the parallelepiped is a box with sides $|d_i|$, so volume is $\prod|d_i|=|\det A|$. A column replacement $\vv a_2\to\vv a_2+c\vv a_1$ shears the shape parallel to the face spanned by $\vv a_1$: by Cavalieri's principle, the base area and perpendicular height are completely unchanged, so volume is invariant. Swapping columns changes only the ordering (orientation), reversing the sign of $\det$ while preserving volume. Because column operations reduce any matrix to diagonal form (or produce a dependent zero column with volume $0$ and $\det 0$), volume and $|\det|$ agree everywhere.
+  The $j$-th column of $A^{-1}$ is the vector $\vv x$ that solves $A\vv x=\vv e_j$. By Cramer's rule (\ilink{thm-lay-3-7}{Thm.~3.7}), the $i$-th entry of this $j$-th column is $(A^{-1})_{ij}=\det A_i(\vv e_j)/\det A$. Expanding $A_i(\vv e_j)$ down its $i$-th column (which is $\vv e_j$, having a single $1$ in row~$j$ and $0$s elsewhere) gives $\det A_i(\vv e_j)=(-1)^{j+i}\det A_{ji}=C_{ji}$! Notice how the indices $(j,i)$ are reversed, which is why $\adj A$ is the \emph{transpose} of the cofactor matrix.
 \end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii The $j$-th column $\vv x$ of $A^{-1}$ satisfies $A\vv x=\vv e_j$. By Cramer's rule (\ilink{thm-lay-3-7}{Thm.~3.7}), its $i$-th entry is $(A^{-1})_{ij}=\dfrac{\det A_i(\vv e_j)}{\det A}$.
+    \ii Because column~$i$ of $A_i(\vv e_j)$ is $\vv e_j$ (a $1$ in row~$j$, column~$i$ and zeros elsewhere), cofactor expansion of $A_i(\vv e_j)$ down column~$i$ gives $\det A_i(\vv e_j)=1\cdot(-1)^{j+i}\det A_{ji}=C_{ji}=(\adj A)_{ij}$. Thus $A^{-1}=\frac{1}{\det A}\adj A$.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Lay 3.3 Thm.~9--10: Determinants as area, volume, and linear scaling factors]\target{thm-lay-3-9}\target{thm-lay-3-10}
+  \begin{enumerate}[(a)]
+    \ii \textbf{Parallelogram area and parallelepiped volume (Thm.~9):} If $A$ is a $2\times 2$ matrix, the area of the parallelogram determined by the columns of $A$ is $|\det A|$. If $A$ is a $3\times 3$ matrix, the volume of the parallelepiped determined by the columns of $A$ is $|\det A|$.
+    \ii \textbf{Area and volume distortion under linear transformations (Thm.~10):} Let $T\colon\RR^2\to\RR^2$ (or $T\colon\RR^3\to\RR^3$) be the linear transformation with standard matrix $A$. If $S$ is a parallelogram in $\RR^2$ (or parallelepiped in $\RR^3$, or any region of finite area/volume), then
+    \[
+      \operatorname{area}(T(S)) = |\det A|\cdot\operatorname{area}(S) \qquad\text{and}\qquad \operatorname{volume}(T(S)) = |\det A|\cdot\operatorname{volume}(S).
+    \]
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  When $A=\operatorname{diag}(d_1,d_2)$ or $\operatorname{diag}(d_1,d_2,d_3)$ is diagonal, the columns are orthogonal along the axes, forming a rectangle of area $|d_1d_2|=|\det A|$ or a rectangular box of volume $|d_1d_2d_3|=|\det A|$. What happens when we perform an elementary \emph{column} replacement $\vv a_2\leftarrow\vv a_2+c\vv a_1$? Geometrically, adding $c\vv a_1$ to $\vv a_2$ slides the tip of $\vv a_2$ parallel to the base $\vv a_1$, shearing the parallelogram (or parallelepiped) without changing either its base length (or base area) or its perpendicular altitude $h$ (Cavalieri's principle)! And by \ilink{thm-lay-3-3}{Thm.~3.3} and \ilink{thm-lay-3-5}{Thm.~3.5}, column replacements and interchanges also leave $|\det A|$ unchanged. Since column replacements and interchanges reduce any invertible matrix $A$ to a diagonal matrix, area/volume and $|\det A|$ match for every matrix $A$!
+\end{ideabox}
+
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.92]
-  % Panel 1: 2D Area Shear
-  \begin{scope}[xshift=0cm]
-    \draw[->,gray!60] (-0.3,0) -- (3.8,0) node[right,font=\tiny]{$x_1$};
-    \draw[->,gray!60] (0,-0.3) -- (0,2.6) node[above,font=\tiny]{$x_2$};
-    
-    % Rectangle
-    \fill[blue!10] (0,0) -- (2.2,0) -- (2.2,1.8) -- (0,1.8) -- cycle;
-    \draw[blue!70!black,thick] (0,0) -- (2.2,0) -- (2.2,1.8) -- (0,1.8) -- cycle;
-    
-    % Sheared Parallelogram
-    \fill[red!10,opacity=0.7] (0,0) -- (2.2,0) -- (3.2,1.8) -- (1.0,1.8) -- cycle;
-    \draw[red!70!black,thick] (0,0) -- (2.2,0) -- (3.2,1.8) -- (1.0,1.8) -- cycle;
-    
-    \draw[->,very thick] (0,0) -- (2.2,0) node[below,font=\footnotesize]{$\vv a_1$};
-    \draw[->,thick,blue!80!black] (0,0) -- (0,1.8) node[left,font=\footnotesize]{$\vv a_2$};
-    \draw[->,thick,red!80!black] (0,0) -- (1.0,1.8) node[above left,font=\footnotesize]{$\vv a_2+c\vv a_1$};
-    
-    \draw[dashed,gray!70] (2.2,1.8) -- (3.2,1.8);
-    \node[font=\footnotesize\bfseries,align=center] at (1.5,-1.2) {2D Area Invariance\\[1pt]\normalfont\scriptsize Same base $\|\vv a_1\|$, same height $h$};
+\begin{tikzpicture}[>=Stealth]
+  % Left panel: 2D Area invariance under column replacement (shear)
+  \begin{scope}[shift={(0,0)},scale=0.92]
+    \fill[figbg,rounded corners=4pt] (-0.7,-1.0) rectangle (5.6,3.2);
+    \draw[figslate!30,rounded corners=4pt] (-0.7,-1.0) rectangle (5.6,3.2);
+    \node[font=\footnotesize\bfseries,text=figslate] at (2.45,2.85) {(a) 2D Cavalieri shear};
+
+    \draw[figaxis] (-0.4,0) -- (4.9,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.35) -- (0,2.45) node[left,xshift=-1pt,font=\scriptsize] {$x_2$};
+
+    % Original rectangle / parallelogram
+    \fill[figblue!12] (0,0) -- (2.5,0) -- (2.9,1.8) -- (0.4,1.8) -- cycle;
+    \draw[figblue!70,thick] (0,0) -- (2.5,0) -- (2.9,1.8) -- (0.4,1.8) -- cycle;
+
+    % Sheared parallelogram
+    \fill[figred!12,opacity=0.75] (0,0) -- (2.5,0) -- (4.3,1.8) -- (1.8,1.8) -- cycle;
+    \draw[figred!80,thick] (0,0) -- (2.5,0) -- (4.3,1.8) -- (1.8,1.8) -- cycle;
+
+    % Top parallel line
+    \draw[figslate!60,dashed] (0.4,1.8) -- (4.6,1.8);
+
+    % Altitude h dropped cleanly on the right at x = 4.3
+    \draw[figgreen,thick,dashed] (4.3,0) -- (4.3,1.8) node[midway,right,xshift=2pt,font=\footnotesize] {$h$};
+    \draw[figslate,thin] (4.12,0) -- (4.12,0.18) -- (4.3,0.18);
+
+    \draw[figvec,figblue!90!black,very thick] (0,0) -- (2.5,0) node[midway,below,yshift=-2pt] {$\vv a_1$};
+    \draw[figvec,figblue,very thick] (0,0) -- (0.4,1.8) node[above,yshift=1pt,font=\footnotesize] {$\vv a_2$};
+    \draw[figvec,figred,very thick] (0,0) -- (1.8,1.8) node[above right,xshift=1pt,font=\footnotesize] {$\vv a_2+c\vv a_1$};
+
+    \node[font=\scriptsize,text=figslate] at (2.45,-0.68) {Same base $\|\vv a_1\|$ and perpendicular altitude $h$};
   \end{scope}
 
-  % Panel 2: 3D Parallelepiped Volume
-  \begin{scope}[xshift=6.5cm]
-    \coordinate (O) at (0,0);
-    \coordinate (A1) at (2.4,0);
-    \coordinate (A2) at (1.0,0.9);
-    \coordinate (A12) at (3.4,0.9);
-    
-    \coordinate (A3) at (0.6,2.0);
-    \coordinate (A13) at (3.0,2.0);
-    \coordinate (A23) at (1.6,2.9);
-    \coordinate (A123) at (4.0,2.9);
-    
+  % Right panel: 3D Parallelepiped volume
+  \begin{scope}[shift={(6.4,0)},scale=0.92]
+    \fill[figbg,rounded corners=4pt] (-0.6,-1.0) rectangle (6.2,3.2);
+    \draw[figslate!30,rounded corners=4pt] (-0.6,-1.0) rectangle (6.2,3.2);
+    \node[font=\footnotesize\bfseries,text=figslate] at (2.8,2.85) {(b) 3D Parallelepiped volume};
+
+    \coordinate (O) at (0.2,0.05);
+    \coordinate (A1) at (2.6,0.05);
+    \coordinate (A2) at (1.15,0.85);
+    \coordinate (A12) at (3.55,0.85);
+
+    \coordinate (A3) at (0.75,1.65);
+    \coordinate (A13) at (3.15,1.65);
+    \coordinate (A23) at (1.7,2.45);
+    \coordinate (A123) at (4.1,2.45);
+
     % Base parallelogram
-    \fill[blue!15,opacity=0.7] (O) -- (A1) -- (A12) -- (A2) -- cycle;
-    \draw[blue!70!black,thick] (O) -- (A1) -- (A12) -- (A2) -- cycle;
-    
+    \fill[figblue!14] (O) -- (A1) -- (A12) -- (A2) -- cycle;
+    \draw[figblue!70,thick] (O) -- (A1) -- (A12) -- (A2) -- cycle;
+    \node[figblue!85!black,font=\scriptsize] at (2.05,0.42) {Base area};
+
     % Top parallelogram
-    \fill[OliveGreen!15,opacity=0.6] (A3) -- (A13) -- (A123) -- (A23) -- cycle;
-    \draw[OliveGreen!70!black,thick] (A3) -- (A13) -- (A123) -- (A23) -- cycle;
-    
-    % Side faces
-    \fill[red!10,opacity=0.5] (O) -- (A1) -- (A13) -- (A3) -- cycle;
-    \draw[gray!60] (O) -- (A3);
-    \draw[gray!60] (A1) -- (A13);
-    \draw[gray!60] (A12) -- (A123);
-    \draw[gray!60] (A2) -- (A23);
-    
-    % Vectors
-    \draw[->,very thick,blue!80!black] (O) -- (A1) node[below right,font=\footnotesize]{$\vv a_1$};
-    \draw[->,very thick,blue!80!black] (O) -- (A2) node[above left,font=\footnotesize]{$\vv a_2$};
-    \draw[->,very thick,red!80!black] (O) -- (A3) node[above left,font=\footnotesize]{$\vv a_3$};
-    
-    % Height drop
-    \coordinate (Hproj) at (0.6,0.3);
-    \draw[purple!80!black,thick,dashed] (A3) -- (Hproj);
-    \node[purple!80!black,font=\footnotesize,right] at (0.6,1.2) {height $h$};
-    
-    \node[font=\footnotesize\bfseries,align=center] at (1.8,-1.2) {3D Parallelepiped Volume\\[1pt]\normalfont\scriptsize $\text{Vol}=|\det[\vv a_1\ \vv a_2\ \vv a_3]|=\text{Base}\cdot h$};
+    \fill[figgreen!12,opacity=0.75] (A3) -- (A13) -- (A123) -- (A23) -- cycle;
+    \draw[figgreen!75!black,thick] (A3) -- (A13) -- (A123) -- (A23) -- cycle;
+
+    % Vertical edges
+    \draw[figslate!60] (A1) -- (A13);
+    \draw[figslate!60] (A12) -- (A123);
+    \draw[figslate!60,dashed] (A2) -- (A23);
+
+    % Vectors a1, a2, a3 (well separated!)
+    \draw[figvec,figblue,very thick] (O) -- (A1) node[midway,below,yshift=-1pt] {$\vv a_1$};
+    \draw[figvec,figblue,very thick] (O) -- (A2) node[below right,xshift=-2pt,yshift=-1pt,font=\footnotesize] {$\vv a_2$};
+    \draw[figvec,figred,very thick] (O) -- (A3) node[left,xshift=-2pt] {$\vv a_3$};
+
+    % Altitude h dropped cleanly OUTSIDE on the right from A123 to base plane extension!
+    \coordinate (Hfoot) at (4.1,0.85);
+    \draw[figslate!50,dashed] (A12) -- (4.35,0.85);
+    \draw[figpurple,very thick,dashed] (A123) -- (Hfoot) node[midway,right,xshift=2pt,font=\footnotesize] {altitude $h$};
+    \draw[figslate,thin] (3.92,0.85) -- (3.92,1.03) -- (4.1,1.03);
+
+    \node[font=\scriptsize,text=figslate] at (2.8,-0.68) {$\text{Volume} = (\text{Base area})\cdot h = |\det[\,\vv a_1\ \ \vv a_2\ \ \vv a_3\,]|$};
   \end{scope}
 \end{tikzpicture}
-\figcap{Determinants as geometric scaling factors. Left: a column replacement $\vv a_2\to\vv a_2+c\vv a_1$ slides the top edge parallel to $\vv a_1$, leaving the base and height unchanged (Cavalieri's principle). Right: in $\RR^3$, $|\det[\vv a_1\ \vv a_2\ \vv a_3]|$ is the volume of the parallelepiped spanned by the columns; the sign of $\det A$ records whether orientation is preserved.}
+\figcap{(a) Under a column replacement $\vv a_2\leftarrow\vv a_2+c\vv a_1$, the parallelogram is sheared parallel to $\vv a_1$, preserving both its base $\|\vv a_1\|$ and altitude $h$. (b) In $\RR^3$, the columns of a $3\times 3$ matrix $A$ span a parallelepiped of volume $|\det A|=(\text{base area})\cdot h$.}
 \end{fig}
-\begin{itemize}
-  \ii A parallelogram with vertices $\vv p,\vv p+\vv u,\vv p+\vv v,\vv p+\vv u+\vv v$: translate $\vv p$ to the origin; area $=|\det[\,\vv u\ \ \vv v\,]|$.
-  \ii \textbf{Linear transformations scale area by $|\det A|$}: if $T(\vv x)=A\vv x$ and $S$ is a parallelogram (or any region with finite area) in $\RR^2$, then $\operatorname{area}(T(S))=|\det A|\cdot\operatorname{area}(S)$. In $\RR^3$, the same with volume. Example: the ellipse $x_1^2/a^2+x_2^2/b^2\le1$ is the image of the unit disk under $\begin{bmatrix}a&0\\0&b\end{bmatrix}$, so its area is $\pi ab$.
-\end{itemize}
-
-\subsection{Vector spaces and subspaces (Lay 4.1)}
-\begin{qbox}
-  Polynomials, functions and matrices can all be added and scaled like vectors in $\RR^n$. What exactly is needed for the ideas of span and linear combination to work for them too?
-\end{qbox}
-\begin{definition*}
-  A \vocab{vector space} is a nonempty set $V$ with an addition and a multiplication by real scalars such that, for all $\vv u,\vv v,\vv w$ in $V$ and scalars $c,d$:
-  \begin{multicols}{2}
-  \begin{enumerate}[(1),itemsep=1pt]
-    \ii $\vv u+\vv v$ is in $V$;
-    \ii $\vv u+\vv v=\vv v+\vv u$;
-    \ii $(\vv u+\vv v)+\vv w=\vv u+(\vv v+\vv w)$;
-    \ii there is a $\vv0$ in $V$ with $\vv u+\vv0=\vv u$;
-    \ii each $\vv u$ has a $-\vv u$ with $\vv u+(-\vv u)=\vv0$;
-    \ii $c\vv u$ is in $V$;
-    \ii $c(\vv u+\vv v)=c\vv u+c\vv v$;
-    \ii $(c+d)\vv u=c\vv u+d\vv u$;
-    \ii $c(d\vv u)=(cd)\vv u$;
-    \ii $1\vv u=\vv u$.
-  \end{enumerate}
-  \end{multicols}
-\end{definition*}
-\begin{itemize}
-  \ii Examples: $\RR^n$; $\mathbb P_n$, the polynomials of degree at most $n$; all real-valued functions on a set; the $m\times n$ matrices. In each, the operations are the familiar ones, and the axioms reduce to rules for numbers.
-  \ii From the axioms: $0\vv u=\vv0$, $c\vv0=\vv0$, $-\vv u=(-1)\vv u$.
-\end{itemize}
-\begin{definition*}
-  A \vocab{subspace} of $V$ is a subset $H$ with: (a) $\vv0\in H$; (b) $\vv u+\vv v\in H$ whenever $\vv u,\vv v\in H$; (c) $c\vv u\in H$ whenever $\vv u\in H$. A subspace is itself a vector space (the other axioms are inherited from $V$).
-\end{definition*}
-\begin{itemize}
-  \ii $\{\vv0\}$ and $V$ are subspaces. A line through the origin in $\RR^2$ is a subspace; a line not through the origin is not (it misses $\vv0$). $\RR^2$ is \emph{not} a subspace of $\RR^3$ (its vectors have two entries, not three); the plane $\{(s,t,0)\}$ in $\RR^3$ is.
-  \ii $\{p\in\mathbb P_2: p(1)=0\}$ is a subspace of $\mathbb P_2$: the zero polynomial vanishes at $1$, and sums and multiples of polynomials vanishing at $1$ vanish at $1$.
-\end{itemize}
-\begin{theorem*}[A span is a subspace]
-  If $\vv v_1,\dots,\vv v_p$ are in $V$, then $\spn\{\vv v_1,\dots,\vv v_p\}$ is a subspace of $V$.
-\end{theorem*}
-\begin{proof}
-  $\vv0=0\vv v_1+\dots+0\vv v_p$. The sum of $\sum c_i\vv v_i$ and $\sum d_i\vv v_i$ is $\sum(c_i+d_i)\vv v_i$, and $k\sum c_i\vv v_i=\sum(kc_i)\vv v_i$; both are again combinations.
-\end{proof}
-\textbf{Shortcut for subspace questions}: if you can write $H$ as a span (or, below, as a null space or column space), it is a subspace with no axioms to check.
-
-\subsection{Null spaces, column spaces, row spaces (Lay 4.2)}
-\begin{definition*}
-  For an $m\times n$ matrix $A$: the \vocab{null space} $\Nul A=\{\vv x\in\RR^n: A\vv x=\vv0\}$; the \vocab{column space} $\Col A=\spn\{\text{columns of }A\}\subseteq\RR^m$; the \vocab{row space} $\Row A=\spn\{\text{rows of }A\}$ (rows written as vectors in $\RR^n$).
-\end{definition*}
-\begin{theorem*}[Null spaces and column spaces are subspaces]
-  $\Nul A$ is a subspace of $\RR^n$ and $\Col A$ is a subspace of $\RR^m$.
-\end{theorem*}
-\begin{proof}
-  $A\vv0=\vv0$. If $A\vv u=\vv0$ and $A\vv v=\vv0$, then $A(\vv u+\vv v)=\vv0$ and $A(c\vv u)=\vv0$. $\Col A$ is a span.
-\end{proof}
-\textbf{An explicit description of $\Nul A$.} Solve $A\vv x=\vv0$ in parametric vector form; the vectors attached to the free variables span $\Nul A$. For example:
-\[ A=\begin{bmatrix}1&-2&0&-1&3\\0&0&1&2&-2\\2&-4&1&0&4\end{bmatrix}\ \longrightarrow\ \text{RREF }\begin{bmatrix}1&-2&0&-1&3\\0&0&1&2&-2\\0&0&0&0&0\end{bmatrix}. \]
-So $x_1=2x_2+x_4-3x_5$ and $x_3=-2x_4+2x_5$, with $x_2,x_4,x_5$ free, and
-\[ \Nul A=\spn\left\{\begin{bmatrix}2\\1\\0\\0\\0\end{bmatrix},\begin{bmatrix}1\\0\\-2\\1\\0\end{bmatrix},\begin{bmatrix}-3\\0\\2\\0\\1\end{bmatrix}\right\}. \]
-Each of these vectors has a $1$ in its own free-variable slot and $0$ in the other free slots, so none is a combination of the others: the spanning set produced this way is always linearly independent.
-\begin{center}\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{p{0.44\linewidth}p{0.44\linewidth}}
-\toprule
-$\Nul A$ & $\Col A$\\\midrule
-subspace of $\RR^n$ (inputs) & subspace of $\RR^m$ (outputs)\\
-defined implicitly: a condition $A\vv x=\vv0$ & defined explicitly: you can write down members\\
-finding members takes row reduction & the columns are members; no work\\
-$\vv v\in\Nul A$? Compute $A\vv v$. & $\vv v\in\Col A$? Row reduce $[\,A\ \ \vv v\,]$.\\
-$\Nul A=\{\vv0\}$ $\iff$ $A\vv x=\vv0$ only trivially & $\Col A=\RR^m$ $\iff$ pivot in every row\\\bottomrule
-\end{tabular}
-\end{center}
-\textbf{Linear transformations between vector spaces.} $T\colon V\to W$ is linear if $T(\vv u+\vv v)=T(\vv u)+T(\vv v)$ and $T(c\vv u)=cT(\vv u)$. Its \vocab{kernel} $\{\vv u: T(\vv u)=\vv0\}$ and \vocab{range} $\{T(\vv x)\}$ are subspaces of $V$ and $W$. For $T(\vv x)=A\vv x$ they are $\Nul A$ and $\Col A$. Example: differentiation $D\colon\mathbb P_3\to\mathbb P_2$, $D(p)=p'$, is linear; its kernel is the constant polynomials.
 
 \begin{shortcuts}
-  \ii \textbf{Determinant by row reduction}: only replacements and swaps; count the swaps; multiply the diagonal. Factor out a common factor of a row first if it saves fractions (it multiplies $\det$).
-  \ii \textbf{Combine expansion and reduction}: create zeros in one column with replacements, then expand down that column.
-  \ii \textbf{Determinant rules}: $\det(AB)=\det A\det B$, $\det A^{-1}=1/\det A$, $\det A^T=\det A$, $\det(cA)=c^n\det A$.
-  \ii \textbf{Invertible for which $h$?} Compute $\det$ as a polynomial in $h$ and find its zeros.
-  \ii \textbf{Cramer's rule} is fastest for $2\times2$, or for one single entry $x_i$ of a $3\times3$ solution.
-  \ii \textbf{Area of a triangle} with vertices $\vv0,\vv u,\vv v$: $\tfrac12|\det[\,\vv u\ \vv v\,]|$.
-  \ii \textbf{Is $H$ a subspace?} First check $\vv0\in H$; if not, stop. If $H$ is described by homogeneous linear equations, it is a null space; if it is ``all vectors of the form \dots'' with linear expressions in parameters, it is a span.
-  \ii \textbf{Spanning set for $\Nul A$}: one vector per free variable, from the parametric vector form.
+  \ii \textbf{Area of a parallelogram or triangle with shifted vertices:} If a parallelogram has vertices $\vv p$, $\vv q$, $\vv r$, $\vv s$ where $\vv u=\vv q-\vv p$ and $\vv v=\vv r-\vv p$ are the two edges meeting at $\vv p$, translate $\vv p$ to $\vv 0$: the parallelogram has area $|\det[\,\vv u\ \ \vv v\,]|$, and the triangle with vertices $\vv p,\vv q,\vv r$ has area $\frac{1}{2}|\det[\,\vv u\ \ \vv v\,]|$.
+  \ii \textbf{Summary of determinant identities ($A,B$ are $n\times n$):}
+  \[
+    \det(AB)=(\det A)(\det B), \qquad \det(A^{\mathsf T})=\det A, \qquad \det(A^{-1})=\frac{1}{\det A}, \qquad \det(cA)=c^n\det A.
+  \]
 \end{shortcuts}
+
 \begin{trapbox}
-  \ii Scaling a row by $k$ multiplies $\det$ by $k$; when you scale during row reduction, divide it back out.
-  \ii $\det(cA)=c^n\det A$, not $c\det A$. $\det(A+B)\ne\det A+\det B$.
-  \ii The adjugate is the \emph{transpose} of the cofactor matrix.
-  \ii Area is $|\det|$; the sign of $\det$ records orientation.
-  \ii A set defined by $x_1+x_2=1$, or by $x_1x_2\ge0$, is not a subspace (first misses $\vv0$; second is not closed under addition: $(1,0)+(0,-1)$).
-  \ii $\Nul A$ lives in $\RR^n$, $\Col A$ in $\RR^m$: different spaces when $m\ne n$.
+  \ii \textbf{Scaling the whole $n\times n$ matrix $A$ by $c$ multiplies $\det A$ by $c^n$, not $c$:} Because $cA$ scales \emph{all $n$ rows} of $A$ by $c$, \ilink{thm-lay-3-3}{Thm.~3.3(c)} applies $n$ times to give $\det(cA)=c^n\det A$. Also, $\det(A+B)\ne\det A+\det B$ in general!
+  \ii \textbf{When you scale a row by $k$ during row reduction, divide by $k$ afterward:} If you multiply a row by $k$ to clear fractions while reducing $A$ to $U$, remember that $\det U=k\det A$, so $\det A=\frac{1}{k}\det U$. (Using only row replacements $R_i\leftarrow R_i+cR_j$ avoids this factor entirely.)
+\end{trapbox}
+
+\subsection{Vector spaces and subspaces (Lay 4.1)}
+
+\begin{qbox}
+  Polynomials $p(t)=a_0+a_1t+\dots+a_nt^n$, continuous functions $f\in C([a,b])$, and $m\times n$ matrices can all be added and multiplied by scalars just like column vectors in $\RR^n$. Which exact algebraic axioms allow the entire theory of linear combinations and spans to transfer directly to these settings?
+\end{qbox}
+
+\begin{definition*}[Vector space and subspace (Lay 4.1)]
+  A \vocab{vector space} is a nonempty set $V$ of objects, called \vocab{vectors}, on which are defined two operations, called \emph{addition} and \emph{multiplication by scalars} (real numbers), subject to the ten axioms below for all $\vv u,\vv v,\vv w\in V$ and all scalars $c,d\in\RR$:
+  \begin{multicols}{2}
+  \begin{enumerate}[(1),itemsep=1pt]
+    \ii The sum $\vv u+\vv v$ is in $V$.
+    \ii $\vv u+\vv v = \vv v+\vv u$.
+    \ii $(\vv u+\vv v)+\vv w = \vv u+(\vv v+\vv w)$.
+    \ii There is a zero vector $\vv 0$ in $V$ such that $\vv u+\vv 0=\vv u$.
+    \ii For each $\vv u$ in $V$, there is a vector $-\vv u$ in $V$ such that $\vv u+(-\vv u)=\vv 0$.
+    \ii The scalar multiple $c\vv u$ is in $V$.
+    \ii $c(\vv u+\vv v) = c\vv u+c\vv v$.
+    \ii $(c+d)\vv u = c\vv u+d\vv u$.
+    \ii $c(d\vv u) = (cd)\vv u$.
+    \ii $1\vv u = \vv u$.
+  \end{enumerate}
+  \end{multicols}
+  A \vocab{subspace} of a vector space $V$ is a subset $H$ of $V$ that has three properties:
+  \begin{enumerate}[(a)]
+    \ii The zero vector of $V$ is in $H$: $\vv 0\in H$.
+    \ii $H$ is closed under vector addition: for each $\vv u$ and $\vv v$ in $H$, the sum $\vv u+\vv v$ is in $H$.
+    \ii $H$ is closed under multiplication by scalars: for each $\vv u$ in $H$ and each scalar $c$, the vector $c\vv u$ is in $H$.
+  \end{enumerate}
+\end{definition*}
+
+\begin{itemize}
+  \ii \textbf{Consequences of the axioms:} For every $\vv u\in V$ and scalar $c$, $0\vv u=\vv 0$, $c\vv 0=\vv 0$, and $-\vv u=(-1)\vv u$.
+  \ii \textbf{The polynomial space $\mathbb{P}_n$:} For $n\ge 0$, $\mathbb{P}_n$ denotes the vector space of all polynomials of degree at most $n$, of the form $p(t)=a_0+a_1t+\dots+a_nt^n$ (including the zero polynomial $p(t)=0$).
+\end{itemize}
+
+\begin{theorem*}[Lay 4.1 Thm.~1: Any span is a subspace]\target{thm-lay-4-1}
+  If $\vv v_1,\dots,\vv v_p$ are in a vector space $V$, then $\spn\{\vv v_1,\dots,\vv v_p\}$ is a subspace of $V$, called the subspace \vocab{spanned} (or \vocab{generated}) by $\{\vv v_1,\dots,\vv v_p\}$.
+\end{theorem*}
+\begin{ideabox}
+  Check the three subspace axioms directly on linear combinations: setting all weights to $0$ gives $\vv 0=0\vv v_1+\dots+0\vv v_p$; adding two linear combinations $\sum c_i\vv v_i$ and $\sum d_i\vv v_i$ gives $\sum(c_i+d_i)\vv v_i$; and scaling $\sum c_i\vv v_i$ by $k$ gives $\sum(kc_i)\vv v_i$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Since $\vv 0=0\vv v_1+\dots+0\vv v_p$, the zero vector $\vv 0$ lies in $\spn\{\vv v_1,\dots,\vv v_p\}$.
+    \ii For any $\vv u=c_1\vv v_1+\dots+c_p\vv v_p$ and $\vv w=d_1\vv v_1+\dots+d_p\vv v_p$ in $\spn\{\vv v_1,\dots,\vv v_p\}$ and any scalar $k\in\RR$, the vector space axioms give $\vv u+\vv w=(c_1+d_1)\vv v_1+\dots+(c_p+d_p)\vv v_p\in\spn\{\vv v_1,\dots,\vv v_p\}$ and $k\vv u=(kc_1)\vv v_1+\dots+(kc_p)\vv v_p\in\spn\{\vv v_1,\dots,\vv v_p\}$.
+  \end{steps}
+\end{proof}
+
+\subsection{Null spaces, column spaces, row spaces, and linear transformations (Lay 4.2)}
+
+\begin{qbox}
+  Every $m\times n$ matrix $A$ defines two fundamental subsets: the set of inputs $\vv x\in\RR^n$ that $A$ sends to $\vv 0$ ($\Nul A$), and the set of outputs $\vv b\in\RR^m$ that $A$ can produce ($\Col A$). Why are both sets guaranteed to be subspaces, and how do we test membership or construct spanning sets for each?
+\end{qbox}
+
+\begin{definition*}[Null space $\Nul A$, column space $\Col A$, and row space $\Row A$ (Lay 4.2)]
+  For an $m\times n$ matrix $A$:
+  \begin{itemize}
+    \ii The \vocab{null space} of $A$, denoted by $\Nul A$, is the set of all solutions of the homogeneous equation $A\vv x=\vv 0$:
+    \[
+      \Nul A = \{\vv x\in\RR^n : A\vv x = \vv 0\} \subseteq \RR^n.
+    \]
+    \ii The \vocab{column space} of $A$, denoted by $\Col A$, is the set of all linear combinations of the columns of $A$: if $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$, then
+    \[
+      \Col A = \spn\{\vv a_1,\dots,\vv a_n\} = \{\vv b\in\RR^m : \vv b = A\vv x \text{ for some }\vv x\in\RR^n\} \subseteq \RR^m.
+    \]
+    \ii The \vocab{row space} of $A$, denoted by $\Row A$, is the subspace of $\RR^n$ spanned by the rows of $A$ (written horizontally or as column vectors in $\RR^n$, so $\Row A=\Col A^{\mathsf T}\subseteq\RR^n$).
+  \end{itemize}
+\end{definition*}
+
+\begin{theorem*}[Lay 4.2 Thm.~2: The null space of a matrix is a subspace]\target{thm-lay-4-2}
+  The null space of an $m\times n$ matrix $A$ is a subspace of $\RR^n$. Equivalently, the set of all solutions to a system $A\vv x=\vv 0$ of $m$ homogeneous linear equations in $n$ unknowns is a subspace of $\RR^n$.
+\end{theorem*}
+\begin{ideabox}
+  Instead of solving $A\vv x=\vv 0$, use the linearity of matrix--vector multiplication: $A\vv 0=\vv 0$, and if $A\vv u=\vv 0$ and $A\vv v=\vv 0$, then $A(\vv u+\vv v)=A\vv u+A\vv v=\vv 0+\vv 0=\vv 0$ and $A(c\vv u)=c(A\vv u)=c\vv 0=\vv 0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii First, $\vv 0\in\RR^n$ is in $\Nul A$ because $A\vv 0=\vv 0$.
+    \ii Next, let $\vv u,\vv v\in\Nul A$ (so $A\vv u=\vv 0$ and $A\vv v=\vv 0$) and let $c\in\RR$. By linearity of matrix multiplication, $A(\vv u+\vv v)=A\vv u+A\vv v=\vv 0+\vv 0=\vv 0$ and $A(c\vv u)=c(A\vv u)=c\vv 0=\vv 0$. Thus $\vv u+\vv v\in\Nul A$ and $c\vv u\in\Nul A$, so $\Nul A$ is a subspace of $\RR^n$.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Lay 4.2 Thm.~3: The column space of a matrix is a subspace]\target{thm-lay-4-3}
+  The column space of an $m\times n$ matrix $A$ is a subspace of $\RR^m$. Note that $\Col A=\RR^m$ if and only if the equation $A\vv x=\vv b$ has a solution for every $\vv b\in\RR^m$ (if and only if $A$ has a pivot position in every row).
+\end{theorem*}
+\begin{ideabox}
+  By definition, $\Col A=\spn\{\vv a_1,\dots,\vv a_n\}$ is the span of the columns of $A$ in $\RR^m$, and \ilink{thm-lay-4-1}{Thm.~4.1} proves that every span is a subspace!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Since $\Col A=\spn\{\vv a_1,\dots,\vv a_n\}$ where $\vv a_1,\dots,\vv a_n\in\RR^m$, \ilink{thm-lay-4-1}{Thm.~4.1} immediately implies that $\Col A$ is a subspace of $\RR^m$.
+  \end{steps}
+\end{proof}
+
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,scale=0.96]
+  \fill[figbg,rounded corners=4pt] (-6.5,-1.65) rectangle (6.5,1.85);
+  \draw[figslate!30,rounded corners=4pt] (-6.5,-1.65) rectangle (6.5,1.85);
+
+  % Left box: R^n and Nul A
+  \node[figbox,draw=figblue,fill=white,minimum width=4.2cm,minimum height=2.6cm] (Rn) at (-4.0,0.05) {};
+  \node[figblue!85!black,font=\small\bfseries] at (-4.0,1.05) {Domain $\RR^n$ ($n$ entries)};
+  \node[figbox,draw=figred,fill=figred!10,minimum width=3.6cm,minimum height=1.35cm,align=center,font=\scriptsize] (Nul) at (-4.0,-0.32) {\textbf{$\Nul A = \{\vv x\in\RR^n : A\vv x=\vv 0\}$}\\[2pt]Defined \emph{implicitly} by $A\vv x=\vv 0$\\[1pt]Spanning set: solve $A\vv x=\vv 0$};
+
+  % Right box: R^m and Col A
+  \node[figbox,draw=figpurple,fill=white,minimum width=4.2cm,minimum height=2.6cm] (Rm) at (4.0,0.05) {};
+  \node[figpurple!85!black,font=\small\bfseries] at (4.0,1.05) {Codomain $\RR^m$ ($m$ entries)};
+  \node[figbox,draw=figgreen,fill=figgreen!10,minimum width=3.6cm,minimum height=1.35cm,align=center,font=\scriptsize] (Col) at (4.0,-0.32) {\textbf{$\Col A = \spn\{\vv a_1,\dots,\vv a_n\}$}\\[2pt]Defined \emph{explicitly} by cols of $A$\\[1pt]$\vv b\in\Col A \iff [\,A\ \ \vv b\,]$ consistent};
+
+  % Arrows
+  \draw[figvec,figgreen!80!black,very thick] (-1.75,0.55) -- node[above,font=\footnotesize\bfseries] {$\vv x\mapsto A\vv x$} node[below,font=\scriptsize] {onto $\Col A$} (1.75,0.55);
+  \draw[figvec,figred,thick,dashed] (Nul.east) -- node[above,font=\scriptsize] {maps to $\vv 0$} (1.75,-0.32);
+\end{tikzpicture}
+\figcap{Contrast between $\Nul A\subseteq\RR^n$ and $\Col A\subseteq\RR^m$ for an $m\times n$ matrix $A$. When $m\ne n$, $\Nul A$ and $\Col A$ live in completely different ambient spaces!}
+\end{fig}
+
+\begin{itemize}
+  \ii \textbf{General linear transformations $T\colon V\to W$, kernel, and range:} If $V$ and $W$ are any vector spaces, a function $T\colon V\to W$ is a \vocab{linear transformation} if $T(\vv u+\vv v)=T(\vv u)+T(\vv v)$ and $T(c\vv u)=c\,T(\vv u)$ for all $\vv u,\vv v\in V$ and $c\in\RR$. Its \vocab{kernel} (or null space) $\ker T=\{\vv u\in V:T(\vv u)=\vv 0\}$ is a subspace of $V$, and its \vocab{range} $\{T(\vv u):\vv u\in V\}$ is a subspace of $W$. When $T(\vv x)=A\vv x$, $\ker T=\Nul A$ and $\operatorname{range}T=\Col A$.
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{How to prove a subset $H\subseteq V$ is a subspace without checking the $3$ axioms by hand:}
+  \begin{enumerate}[(1)]
+    \ii If $H$ is described as all vectors of a parametric form such as $(s-2t,s,3t)=s(1,1,0)+t(-2,0,3)$, write $H=\spn\{(1,1,0),(-2,0,3)\}$ and cite \ilink{thm-lay-4-1}{Thm.~4.1} ($\Col A$).
+    \ii If $H$ is defined by homogeneous linear equations such as $a+b=0$ in $\RR^3$, write $H=\Nul\begin{bmatrix}1&1&0\end{bmatrix}$ and cite \ilink{thm-lay-4-2}{Thm.~4.2} ($\Nul A$).
+  \end{enumerate}
+  \ii \textbf{Testing $\vv v\in\Nul A$ vs.\ $\vv b\in\Col A$:} To test $\vv v\in\Nul A$, simply multiply $A\vv v$ and check whether $A\vv v=\vv 0$. To test $\vv b\in\Col A$, row reduce $[\,A\ \ \vv b\,]$ and check whether the system is consistent.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Always check ambient dimensions ($\RR^n$ vs.\ $\RR^m$):} If $A$ is $3\times 4$ ($3$ rows, $4$ columns), then $\Nul A$ is a subspace of $\RR^4$ while $\Col A$ is a subspace of $\RR^3$. A vector with $4$ entries can never belong to $\Col A$!
+  \ii \textbf{$\RR^2$ is NOT a subspace of $\RR^3$:} Vectors in $\RR^2$ are ordered pairs $(x_1,x_2)$, whereas vectors in $\RR^3$ are ordered triples $(x_1,x_2,x_3)$. The $x_1x_2$-plane $\{(x_1,x_2,0):x_1,x_2\in\RR\}$ is a subspace of $\RR^3$, but $\RR^2$ itself is not even a subset of $\RR^3$.
 \end{trapbox}
 
 \section{Homework this week}
 HW4, Section 3.2: 2, 3, 5, 9, 15, 19, 20, 23, 24, 27, 29, 31. Section 3.3: 3, 5, 9, 11, 21, 27, 29, 30. Section 4.1: 2, 3, 6, 7, 10, 11, 20, 23, 28, 32. HW5, Section 4.2: 1, 5, 9, 13, 15, 17, 24, 25, 31, 32, 36, 38, 40, 43, 46.
 
 \section{Problem set}
-\begin{prob}\textbf{P1.}\ Compute $\det\begin{bmatrix}2&4&-2&6\\1&3&0&2\\-1&-1&4&1\\3&8&1&5\end{bmatrix}$ by row reduction.
+\begin{prob}\textbf{P1.}\ Compute the determinant below by row reduction:
+\[
+  \det\begin{bmatrix} 2 & 4 & -2 & 6 \\ 1 & 3 & 0 & 2 \\ -1 & -1 & 4 & 1 \\ 3 & 8 & 1 & 5 \end{bmatrix}.
+\]
 \end{prob}
-\begin{prob}\textbf{P2.}\ $A$ and $B$ are $3\times3$ with $\det A=3$ and $\det B=-2$. Find $\det(AB)$, $\det(A^{-1})$, $\det(A^T)$, $\det(2A)$, $\det(B^TA^{-1}B)$.
+\begin{prob}\textbf{P2.}\ $A$ and $B$ are $3\times3$ matrices with $\det A=3$ and $\det B=-2$. Find $\det(AB)$, $\det(A^{-1})$, $\det(A^{\mathsf T})$, $\det(2A)$, and $\det(B^{\mathsf T}A^{-1}B)$.
 \end{prob}
-\begin{prob}\textbf{P3.}\ For which $h$ is $\begin{bmatrix}1&2&h\\2&5&1\\0&1&3\end{bmatrix}$ invertible?
+\begin{prob}\textbf{P3.}\ For which $h$ is the matrix below invertible?
+\[
+  \begin{bmatrix} 1 & 2 & h \\ 2 & 5 & 1 \\ 0 & 1 & 3 \end{bmatrix}.
+\]
 \end{prob}
 \begin{prob}\textbf{P4.}\ Use Cramer's rule to solve $5x_1+2x_2=1$, $3x_1+x_2=4$.
 \end{prob}
 \begin{prob}\textbf{P5.}\ Find the area of the parallelogram with vertices $(-1,0)$, $(0,5)$, $(1,-4)$, $(2,1)$. Then find the area of its image under $T(\vv x)=\begin{bmatrix}2&1\\1&3\end{bmatrix}\vv x$.
 \end{prob}
-\begin{prob}\textbf{P6.}\ Which are subspaces? (a) $\{(a,b,c)\in\RR^3: a+b=0\}$. (b) $\{(a,b)\in\RR^2: ab\ge0\}$. (c) $\{p\in\mathbb P_2: p(0)=1\}$. (d) $\{(s-2t,\ s,\ 3t)\}$, $s,t$ real. (e) The set of $2\times2$ matrices $A$ with $A^T=A$.
+\begin{prob}\textbf{P6.}\ Which of the following are subspaces of the indicated vector space? (a) $\{(a,b,c)\in\RR^3: a+b=0\}$. (b) $\{(a,b)\in\RR^2: ab\ge0\}$. (c) $\{p\in\mathbb P_2: p(0)=1\}$. (d) $\{(s-2t,\ s,\ 3t):s,t\in\RR\}\subseteq\RR^3$. (e) The set of $2\times2$ matrices $A$ with $A^{\mathsf T}=A$.
 \end{prob}
-\begin{prob}\textbf{P7.}\ For $A=\begin{bmatrix}1&-3&-4\\-4&6&-2\\-3&7&6\end{bmatrix}$: find a spanning set for $\Nul A$, and decide whether $\vv b=(3,3,-4)$ is in $\Col A$.
+\begin{prob}\textbf{P7.}\ For the matrix $A$ below, find an explicit spanning set for $\Nul A$, and decide whether $\vv b=(3,3,-4)$ is in $\Col A$:
+\[
+  A = \begin{bmatrix} 1 & -3 & -4 \\ -4 & 6 & -2 \\ -3 & 7 & 6 \end{bmatrix}.
+\]
 \end{prob}
-\begin{prob}\textbf{P8.}\ For $A=\begin{bmatrix}2&4&-2&1\\-2&-5&7&3\\3&7&-8&6\end{bmatrix}$, $\vv u=(3,-2,-1,0)$, $\vv v=(3,-1,3)$: is $\vv u$ in $\Nul A$? Is $\vv v$ in $\Col A$? Could $\vv u$ be in $\Col A$?
+\begin{prob}\textbf{P8.}\ For the matrix $A$ below, let $\vv u=(3,-2,-1,0)$ and $\vv v=(3,-1,3)$. Is $\vv u$ in $\Nul A$? Is $\vv v$ in $\Col A$? Could $\vv u$ be in $\Col A$?
+\[
+  A = \begin{bmatrix} 2 & 4 & -2 & 1 \\ -2 & -5 & 7 & 3 \\ 3 & 7 & -8 & 6 \end{bmatrix}.
+\]
 \end{prob}
 
 \end{document}

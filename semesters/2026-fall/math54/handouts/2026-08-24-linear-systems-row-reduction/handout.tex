@@ -10,208 +10,418 @@
 
 \section{This week}
 
-\subsection{Linear systems and their solution sets (Lay 1.1)}
+\subsection{Systems of linear equations and elementary row operations (Lay 1.1)}
 
 \begin{qbox}
-  Given several linear equations in several unknowns, how do we find every solution, and how can we tell quickly whether there is no solution, exactly one, or infinitely many?
+  Given $m$ linear equations in $n$ unknowns $x_1,\dots,x_n$, how can we systematically simplify the system without losing or gaining a single solution, and why must the number of solutions always be either $0$, $1$, or $\infty$ (never $2$ or $3$)?
 \end{qbox}
 
-\begin{definition*}
-  A \vocab{linear equation} in the variables $x_1,\dots,x_n$ is an equation $a_1x_1+\dots+a_nx_n=b$ with numbers $a_1,\dots,a_n,b$. A \vocab{system of linear equations} (linear system) is a collection of such equations in the same variables. A \vocab{solution} is a list $(s_1,\dots,s_n)$ that makes every equation true when substituted. The \vocab{solution set} is the set of all solutions. Two systems are \vocab{equivalent} if they have the same solution set.
+In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a line in $\RR^2$; in three variables $x_1,x_2,x_3$, an equation $a_1x_1+a_2x_2+a_3x_3=b$ defines a plane in $\RR^3$. Solving a system of linear equations means finding all points $(s_1,\dots,s_n)$ that lie simultaneously on every line or plane in the collection.
+
+\begin{definition*}[Linear equations, linear systems, and consistency (Lay 1.1)]
+  A \vocab{linear equation} in the variables $x_1,\dots,x_n$ is an equation that can be written in the form
+  \[
+    a_1x_1 + a_2x_2 + \dots + a_nx_n = b,
+  \]
+  where the \vocab{coefficients} $a_1,\dots,a_n$ and the constant term $b$ are real (or complex) numbers. A \vocab{system of linear equations} (or \vocab{linear system}) is a collection of one or more linear equations involving the same variables $x_1,\dots,x_n$.
+  \begin{itemize}
+    \ii A \vocab{solution} of the system is a list of numbers $(s_1,s_2,\dots,s_n)$ that makes every equation a true statement when $s_1,\dots,s_n$ are substituted for $x_1,\dots,x_n$.
+    \ii The set of all possible solutions is called the \vocab{solution set} of the linear system. Two linear systems are \vocab{equivalent} if they have the exact same solution set.
+    \ii A linear system is \vocab{consistent} if it has at least one solution (either one or infinitely many), and \vocab{inconsistent} if it has no solution.
+  \end{itemize}
 \end{definition*}
+
 \begin{itemize}
-  \ii $4x_1-5x_2+2=x_1$ is linear (rearrange to $3x_1-5x_2=-2$). $x_2=2\sqrt{x_1}-6$ and $x_1x_2+x_3=4$ are not: a variable appears under a root or multiplied by another variable.
-  \ii A system is \vocab{consistent} if it has at least one solution, \vocab{inconsistent} if it has none.
+  \ii \textbf{Recognizing linear vs.\ nonlinear equations:} The equation $4x_1-5x_2+2=x_1$ is linear because subtracting $x_1$ and $2$ rewrites it in standard form $3x_1-5x_2=-2$. By contrast, $x_2=2\sqrt{x_1}-6$, $x_1x_2+x_3=4$, and $x_1+\sin x_2=1$ are \emph{not} linear because they contain square roots, products of variables, or transcendental functions of the variables.
+  \ii \textbf{The three geometric regimes in $\RR^2$ and $\RR^3$:} Two lines in $\RR^2$ must either intersect at a single point (unique solution), be parallel and distinct (no solution), or coincide (infinitely many solutions along the common line). Similarly, three planes in $\RR^3$ intersect in a single point, a common line, a common plane, or the empty set.
 \end{itemize}
 
-\textbf{Three possibilities, seen with two equations in two unknowns.} Each equation is a line in the plane, and a solution is a point on both lines.
 \begin{fig}
-\begin{tikzpicture}[scale=0.62]
-  \begin{scope}
-    \draw[->,gray] (-0.3,0) -- (3.3,0); \draw[->,gray] (0,-0.3) -- (0,3.3);
-    \draw[thick,blue] (-0.2,0.3) -- (3.2,2.9); \draw[thick,red] (-0.2,2.8) -- (3.1,0.2);
-    \fill (1.48,1.6) circle (2.5pt);
-    \node[font=\small,align=center] at (1.5,-1.1) {lines cross:\\exactly one solution};
+\begin{tikzpicture}[>=Stealth]
+  % Panel (a): Unique solution
+  \begin{scope}[shift={(0,0)},scale=0.88]
+    \fill[figbg,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \draw[figslate!30,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \node[font=\footnotesize\bfseries,text=figslate] at (1.7,3.32) {(a) Unique solution};
+
+    \draw[figaxis] (-0.4,0) -- (3.6,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.35) -- (0,2.75) node[left,xshift=-1pt,font=\scriptsize] {$x_2$};
+
+    \draw[figblue,very thick] (-0.2,0.4) -- (3.4,2.2);
+    \node[figblue,font=\scriptsize,below right] at (2.05,1.55) {$x_1-2x_2=-1$};
+    \draw[figred,very thick] (-0.2,2.6) -- (3.2,0.33);
+    \node[figred,font=\scriptsize,above right] at (0.35,2.2) {$2x_1+3x_2=8$};
+
+    \fill[black] (1.857,1.428) circle (2.2pt);
+    \node[black,font=\scriptsize,above,yshift=2pt] at (1.86,1.48) {$(s_1,s_2)$};
+    \node[font=\scriptsize,text=figslate] at (1.7,-0.85) {Consistent: lines cross at $1$ point};
   \end{scope}
-  \begin{scope}[xshift=6cm]
-    \draw[->,gray] (-0.3,0) -- (3.3,0); \draw[->,gray] (0,-0.3) -- (0,3.3);
-    \draw[thick,blue] (-0.2,0.2) -- (3.2,2.4); \draw[thick,red] (-0.2,1.1) -- (3.2,3.3);
-    \node[font=\small,align=center] at (1.5,-1.1) {parallel lines:\\no solution};
+
+  % Panel (b): No solution
+  \begin{scope}[shift={(4.75,0)},scale=0.88]
+    \fill[figbg,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \draw[figslate!30,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \node[font=\footnotesize\bfseries,text=figslate] at (1.7,3.32) {(b) No solution};
+
+    \draw[figaxis] (-0.4,0) -- (3.6,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.35) -- (0,2.75) node[left,xshift=-1pt,font=\scriptsize] {$x_2$};
+
+    \draw[figblue,very thick] (-0.2,0.25) -- (3.4,2.05);
+    \node[figblue,font=\scriptsize,below right] at (1.45,1.05) {$x_1-2x_2=-1$};
+    \draw[figred,very thick] (-0.2,1.15) -- (3.4,2.95);
+    \node[figred,font=\scriptsize,above left] at (2.1,2.35) {$-x_1+2x_2=3$};
+
+    \node[font=\scriptsize,text=figslate] at (1.7,-0.85) {Inconsistent: distinct parallel lines};
   \end{scope}
-  \begin{scope}[xshift=12cm]
-    \draw[->,gray] (-0.3,0) -- (3.3,0); \draw[->,gray] (0,-0.3) -- (0,3.3);
-    \draw[line width=3pt,red!40] (-0.2,0.4) -- (3.2,2.9); \draw[thick,blue] (-0.2,0.4) -- (3.2,2.9);
-    \node[font=\small,align=center] at (1.5,-1.1) {the same line:\\infinitely many};
+
+  % Panel (c): Infinitely many solutions
+  \begin{scope}[shift={(9.5,0)},scale=0.88]
+    \fill[figbg,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \draw[figslate!30,rounded corners=4pt] (-0.7,-1.25) rectangle (4.1,3.65);
+    \node[font=\footnotesize\bfseries,text=figslate] at (1.7,3.32) {(c) Infinitely many solutions};
+
+    \draw[figaxis] (-0.4,0) -- (3.6,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.35) -- (0,2.75) node[left,xshift=-1pt,font=\scriptsize] {$x_2$};
+
+    \draw[figred!45,line width=3.6pt] (-0.2,0.4) -- (3.4,2.2);
+    \draw[figblue,very thick] (-0.2,0.4) -- (3.4,2.2);
+    \node[figblue,font=\scriptsize,above left] at (2.3,1.72) {$x_1-2x_2=-1$};
+    \node[figred,font=\scriptsize,below right] at (0.85,0.88) {$-2x_1+4x_2=2$};
+
+    \node[font=\scriptsize,text=figslate] at (1.7,-0.85) {Consistent: equations define same line};
   \end{scope}
 \end{tikzpicture}
-\figcap{Two lines meet in one point, in no point, or in every point of a common line. The existence and uniqueness theorem at the end of this handout shows that these are the only possibilities for every linear system, of any size.}
+\figcap{The three solution regimes for two linear equations in two variables: (a) intersecting lines yield a unique solution; (b) parallel distinct lines yield no solution (inconsistent); (c) coincident lines yield infinitely many solutions. The Existence and Uniqueness Theorem (\ilink{thm-lay-1-2}{Thm.~1.2}) proves that these three regimes are the only possibilities for any linear system of any size.}
 \end{fig}
 
-\textbf{Matrix notation.} For the system
-\[ \begin{aligned} x_1-2x_2+x_3&=0\\ 2x_2-8x_3&=8\\ 5x_1-5x_3&=10\end{aligned}
-\qquad\text{coefficient matrix }
-\begin{bmatrix}1&-2&1\\0&2&-8\\5&0&-5\end{bmatrix},\qquad
-\text{augmented matrix }\aug{rrr|r}{1&-2&1&0\\0&2&-8&8\\5&0&-5&10}. \]
-The \vocab{coefficient matrix} holds the coefficients of the variables; the \vocab{augmented matrix} adds the right-hand sides as a last column.
-An $m\times n$ matrix has $m$ rows and $n$ columns. A missing variable has coefficient $0$.
+\needspace{6\baselineskip}\textbf{Matrix notation.} To avoid copying the variable names $x_1,\dots,x_n$ at every algebraic step, we record a linear system in two compact rectangular arrays: the \vocab{coefficient matrix} (containing the coefficients of $x_1,\dots,x_n$) and the \vocab{augmented matrix} (which appends the right-hand side constants as an extra column). A matrix with $m$ rows and $n$ columns has \vocab{size} $m\times n$; any variable absent from an equation has coefficient $0$:
+\[
+  \begin{aligned}
+    x_1 - 2x_2 + x_3 &= 0 \\
+    2x_2 - 8x_3 &= 8 \\
+    5x_1 - 5x_3 &= 10
+  \end{aligned}
+  \qquad\Longleftrightarrow\qquad
+  \text{coefficient matrix }
+  \begin{bmatrix} 1 & -2 & 1 \\ 0 & 2 & -8 \\ 5 & 0 & -5 \end{bmatrix},
+  \qquad
+  \text{augmented matrix }
+  \aug{rrr|r}{1 & -2 & 1 & 0 \\ 0 & 2 & -8 & 8 \\ 5 & 0 & -5 & 10}.
+\]
 
-\subsection{Elementary row operations}
-\begin{definition*}
-  The \vocab{elementary row operations} on a matrix are:
+\begin{definition*}[Elementary row operations and row equivalence (Lay 1.1)]
+  The three \vocab{elementary row operations} on a matrix are:
   \begin{enumerate}[(1)]
-    \ii \textbf{Replacement}: replace a row by itself plus a multiple of another row.
-    \ii \textbf{Interchange}: swap two rows.
-    \ii \textbf{Scaling}: multiply all entries of a row by a \emph{nonzero} constant.
+    \ii \textbf{Replacement ($R_i\leftarrow R_i+cR_j$, $i\ne j$):} replace one row by the sum of itself and a multiple of another row.
+    \ii \textbf{Interchange ($R_i\leftrightarrow R_j$):} interchange two rows.
+    \ii \textbf{Scaling ($R_i\leftarrow cR_i$, $c\ne 0$):} multiply all entries in a row by a \emph{nonzero} constant $c$.
   \end{enumerate}
-  Two matrices are \vocab{row equivalent} if one can be turned into the other by a sequence of elementary row operations.
+  Two matrices are \vocab{row equivalent} if there is a sequence of elementary row operations that transforms one matrix into the other.
 \end{definition*}
 
-\begin{theorem*}[Row operations do not change the solution set]
-  If the augmented matrices of two linear systems are row equivalent, the two systems have the same solution set.
+\begin{theorem*}[Row-operation invariance of the solution set (Lay 1.1)]
+  Elementary row operations are reversible, and if the augmented matrices of two linear systems are row equivalent, then the two systems have the exact same solution set.
 \end{theorem*}
 \begin{ideabox}
-Each row is an equation. A row operation builds new equations from old ones by adding, swapping or rescaling, so anything that satisfied the old equations satisfies the new ones: no solution is lost. Could a solution be \emph{gained}? Only if the operation threw away information. It does not, because every row operation can be undone by another row operation, and the undoing step also loses no solution. So solutions can be neither lost nor gained.
+  Each row of an augmented matrix represents an equation. When we swap two rows, scale an equation by $c\ne 0$, or add $c$ times equation $j$ to equation $i$, any tuple $(s_1,\dots,s_n)$ that made the original equations true automatically makes the new equations true---so no solution is ever lost. Could a row operation accidentally create a \emph{spurious} solution that didn't satisfy the original equations? No, because every elementary row operation has an inverse elementary row operation ($R_i\leftarrow R_i-cR_j$, $R_i\leftrightarrow R_j$, and $R_i\leftarrow \frac{1}{c}R_i$ since $c\ne 0$). Running the inverse operation shows that every solution of the new system also satisfies the original system.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii \emph{Each operation keeps every solution.} Let $(s_1,\dots,s_n)$ satisfy all the equations. Interchange and scaling (by $c\ne0$) produce equations that are the old ones in a different order or multiplied by $c$, so they still hold. For replacement, row $i$ becomes (row $i$) $+\,c\cdot$(row $j$); substituting gives (value of row $i$'s left side) $+\,c\cdot$(value of row $j$'s left side) $=b_i+cb_j$, which is the new right side.
-    \ii \emph{Each operation can be reversed by another row operation.} Undo a replacement by subtracting the same multiple: (row $i$) $-\,c\cdot$(row $j$). Undo an interchange by swapping again. Undo scaling by $c$ by scaling by $1/c$; this is why scaling by $0$ is not allowed.
-    \ii If the new system had a solution that the old one lacked, apply the reversing operations: by step 1 that solution would satisfy the old system. So the solution sets are equal. For a sequence of operations, apply this to each step.
+    \ii Suppose $(s_1,\dots,s_n)$ satisfies the system before a row operation. Interchanging two equations or multiplying an equation $L_i=b_i$ by $c\ne 0$ to get $cL_i=cb_i$ preserves truth at $(s_1,\dots,s_n)$. For replacement, if $L_i(s)=b_i$ and $L_j(s)=b_j$, then $L_i(s)+cL_j(s)=b_i+cb_j$, so $(s_1,\dots,s_n)$ satisfies the new $i$-th equation as well.
+    \ii Every elementary row operation is undone by another elementary row operation of the same type: replacement $R_i\leftarrow R_i+cR_j$ is undone by $R_i\leftarrow R_i-cR_j$; interchange $R_i\leftrightarrow R_j$ is undone by $R_i\leftrightarrow R_j$; and scaling $R_i\leftarrow cR_i$ ($c\ne 0$) is undone by $R_i\leftarrow (1/c)R_i$.
+    \ii By Step~1 applied to the inverse operation, every solution of the new system also satisfies the original system. Hence a single row operation (and by induction any finite sequence of row operations) preserves the solution set exactly.
   \end{steps}
 \end{proof}
 
-\textbf{Worked example: solving by elimination.}
-\[ \aug{rrr|r}{1&2&-1&3\\2&5&1&14\\-1&1&4&9}
-\xrightarrow[R_3+R_1]{R_2-2R_1}
-\aug{rrr|r}{1&2&-1&3\\0&1&3&8\\0&3&3&12}
-\xrightarrow{R_3-3R_2}
-\aug{rrr|r}{1&2&-1&3\\0&1&3&8\\0&0&-6&-12} \]
+\needspace{7\baselineskip}\textbf{Worked example: solving a $3\times 3$ system by triangular elimination.} Solve the system with augmented matrix below:
+\[
+  \aug{rrr|r}{1 & 2 & -1 & 3 \\ 2 & 5 & 1 & 14 \\ -1 & 1 & 4 & 9}
+  \xrightarrow[R_3\leftarrow R_3+R_1]{R_2\leftarrow R_2-2R_1}
+  \aug{rrr|r}{1 & 2 & -1 & 3 \\ 0 & 1 & 3 & 8 \\ 0 & 3 & 3 & 12}
+  \xrightarrow{R_3\leftarrow R_3-3R_2}
+  \aug{rrr|r}{1 & 2 & -1 & 3 \\ 0 & 1 & 3 & 8 \\ 0 & 0 & -6 & -12}.
+\]
 \begin{steps}
-  \ii The aim is triangular form: $x_1$ only in the first equation, $x_2$ not below the second, and so on. Use the first row to clear the first column below it, then the second row to clear the second column below it.
-  \ii The last row says $-6x_3=-12$, so $x_3=2$. Back-substitute: $x_2=8-3x_3=2$, then $x_1=3-2x_2+x_3=1$.
-  \ii Check in the original equations: $1+4-2=3$; $2+10+2=14$; $-1+2+8=9$.
+  \ii \textbf{Forward elimination to triangular form:} Use $x_1$ in row~1 to eliminate $x_1$ from rows~2 and~3, then use $x_2$ in the new row~2 to eliminate $x_2$ from row~3.
+  \ii \textbf{Back-substitution:} The third row now reads $-6x_3=-12$, giving $x_3=2$. Substituting $x_3=2$ into row~2 ($x_2+3x_3=8$) gives $x_2=8-6=2$, and substituting $x_2=2,x_3=2$ into row~1 ($x_1+2x_2-x_3=3$) gives $x_1=3-4+2=1$.
+  \ii \textbf{Verification in the original equations:} $1+2(2)-2=3$, $2(1)+5(2)+2=14$, and $-1+2+4(2)=9$. Thus $(1,2,2)$ is the unique solution.
 \end{steps}
 
-\textbf{Two fundamental questions} about any linear system: (1) \emph{Existence}: is it consistent? (2) \emph{Uniqueness}: if a solution exists, is it the only one? Both are answered by the echelon form below, without finding the solutions.
-
-\subsection{Echelon forms (Lay 1.2)}
-\begin{qbox}
-  Elimination can be done in many orders. Is there a standard final shape that makes the solution set readable at a glance?
-\end{qbox}
-\begin{definition*}
-  The \vocab{leading entry} of a row is its leftmost nonzero entry. A matrix is in \vocab{echelon form} if:
-  \begin{enumerate}[(1)]
-    \ii all nonzero rows are above any rows of all zeros;
-    \ii each leading entry is in a column to the right of the leading entry of the row above it;
-    \ii all entries in a column below a leading entry are zero.
-  \end{enumerate}
-  It is in \vocab{reduced echelon form} (RREF) if in addition:
-  \begin{enumerate}[(1),start=4]
-    \ii the leading entry in each nonzero row is $1$;
-    \ii each leading $1$ is the only nonzero entry in its column.
-  \end{enumerate}
-\end{definition*}
-\[ \text{echelon: }\begin{bmatrix}\blacksquare&*&*&*\\0&\blacksquare&*&*\\0&0&0&\blacksquare\\0&0&0&0\end{bmatrix}
-\qquad\text{reduced echelon: }\begin{bmatrix}1&0&*&0\\0&1&*&0\\0&0&0&1\\0&0&0&0\end{bmatrix}
-\qquad(\blacksquare\ne0,\ *\text{ any number}) \]
-
-\begin{theorem*}[Uniqueness of the reduced echelon form]
-  Each matrix is row equivalent to one and only one reduced echelon matrix.
-\end{theorem*}
-The proof is in Lay, Appendix A. An echelon form is \emph{not} unique (scaling a row changes it), but the RREF is. So the positions of the leading entries are the same in every echelon form of a matrix, and they get a name:
-\begin{definition*}
-  A \vocab{pivot position} of $A$ is a position that holds a leading $1$ in the RREF of $A$. A \vocab{pivot column} is a column containing a pivot position. A \vocab{pivot} is a nonzero number in a pivot position, used to create zeros.
-\end{definition*}
-
-\method{The row reduction algorithm.}
-\begin{steps}
-  \ii \emph{Forward phase.} Take the leftmost nonzero column; it is a pivot column, and its pivot position is at the top.
-  \ii Choose a nonzero entry in that column as pivot, and interchange rows to move it to the top if needed.
-  \ii Use replacement operations to create zeros in every position below the pivot.
-  \ii Cover the row with the pivot (and all rows above it). Repeat steps 1--3 on the rows that remain, until none are left. The matrix is now in echelon form.
-  \ii \emph{Backward phase.} Starting with the rightmost pivot and working up and to the left, create zeros above each pivot; scale each pivot row so the pivot is $1$. The matrix is now in RREF.
-\end{steps}
-\textbf{Why the order matters.} In the forward phase, once a row has been used as a pivot row and covered, later steps never touch it, and the zeros already created stay zero, because later replacements only add multiples of rows that are zero in those columns. In the backward phase, working from the right keeps the zeros to the left.
-
-\subsection{Solutions of linear systems}
-Take an augmented matrix to reduced echelon form and read it back as equations.
-\begin{definition*}
-  The variables corresponding to pivot columns of the coefficient matrix are \vocab{basic variables}. The others are \vocab{free variables}.
-\end{definition*}
-\textbf{Worked example: free variables.}
-\[ \aug{rrrr|r}{1&3&0&-2&1\\2&6&1&-1&5\\-1&-3&1&5&2}
-\xrightarrow[R_3+R_1]{R_2-2R_1}
-\aug{rrrr|r}{1&3&0&-2&1\\0&0&1&3&3\\0&0&1&3&3}
-\xrightarrow{R_3-R_2}
-\aug{rrrr|r}{1&3&0&-2&1\\0&0&1&3&3\\0&0&0&0&0} \]
-\begin{steps}
-  \ii This is already reduced echelon form. Pivot columns: 1 and 3. Basic variables $x_1,x_3$; free variables $x_2,x_4$.
-  \ii Each nonzero row has exactly one basic variable, so solve each row for its basic variable: $x_1=1-3x_2+2x_4$ and $x_3=3-3x_4$.
-  \ii \textbf{Parametric description of the solution set:}
-  \[ x_1=1-3x_2+2x_4,\qquad x_2\text{ is free},\qquad x_3=3-3x_4,\qquad x_4\text{ is free}. \]
-  Every choice of $x_2,x_4$ gives a solution, and every solution arises this way. For example $x_2=x_4=0$ gives $(1,0,3,0)$.
-\end{steps}
-\textbf{Worked example: an inconsistent system.}
-\[ \aug{rrr|r}{1&2&3&1\\2&5&4&2\\3&7&7&4}
-\xrightarrow[R_3-3R_1]{R_2-2R_1}
-\aug{rrr|r}{1&2&3&1\\0&1&-2&0\\0&1&-2&1}
-\xrightarrow{R_3-R_2}
-\aug{rrr|r}{1&2&3&1\\0&1&-2&0\\0&0&0&1} \]
-The last row is the equation $0x_1+0x_2+0x_3=1$, which no numbers satisfy. The system is inconsistent; no further work is needed.
-
-\begin{theorem*}[Existence and uniqueness]
-  A linear system is consistent if and only if the rightmost column of the augmented matrix is \emph{not} a pivot column, that is, if and only if an echelon form of the augmented matrix has no row of the form $[\,0\ \cdots\ 0\ \ b\,]$ with $b\ne0$. If the system is consistent, then its solution set contains either exactly one solution (when there are no free variables) or infinitely many solutions (when there is at least one free variable).
-\end{theorem*}
-\begin{ideabox}
-Read the echelon form as equations. A row $[\,0\ \cdots\ 0\ \ b\,]$ is the equation $0=b$. If $b\ne0$ it is false for every choice of the variables, which is the only way a system in echelon form can fail. Any other nonzero row has a leading entry in a variable column, so it can be solved for that basic variable once the later variables are known. Back-substitution then always succeeds, and the free variables are never constrained: each value of them gives one solution. So there is one solution if nothing is free, and one for each choice of the free variables (infinitely many) otherwise.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii By the row operation theorem, the system has the same solutions as the system of its reduced echelon form, so we may read that form.
-    \ii \emph{Rightmost column is a pivot column.} Then some row is $[\,0\ \cdots\ 0\ \ 1\,]$, the equation $0=1$. No solution.
-    \ii \emph{Rightmost column is not a pivot column.} Then each nonzero row has its leading $1$ in the column of a basic variable, and that basic variable appears in no other row (condition (5) of RREF). So that row expresses the basic variable as a number minus a combination of free variables. Choosing any values for the free variables and computing the basic variables this way satisfies every equation. So the system is consistent.
-    \ii If there are no free variables, step 3 gives each variable one value: exactly one solution. If there is a free variable, different values of it give different solutions: infinitely many.
-  \end{steps}
-\end{proof}
-\method{Using row reduction to solve a linear system.}
-\begin{steps}
-  \ii Write the augmented matrix.
-  \ii Row reduce to echelon form. If there is a row $[\,0\ \cdots\ 0\ \ b\,]$ with $b\ne0$, stop: no solution.
-  \ii Otherwise continue to reduced echelon form.
-  \ii Write each nonzero row as an equation and solve it for its basic variable in terms of the free variables.
-  \ii State the solution parametrically, naming the free variables as free.
-\end{steps}
+\textbf{Two fundamental questions (Existence and Uniqueness):} For any linear system, we ask: (1)~\emph{Is the system consistent} (does at least one solution exist)? (2)~\emph{If a solution exists, is it unique}?
 
 \begin{shortcuts}
-  \ii \textbf{Existence and uniqueness need only an echelon form}, not the RREF: look for a row $[\,0\cdots0\ b\,]$, $b\ne0$, and count pivots among the variable columns.
-  \ii \textbf{Counting}: number of free variables $=$ (number of variables) $-$ (number of pivot columns of the coefficient matrix).
-  \ii \textbf{More variables than equations}: there are at most as many pivots as rows, so a consistent system with more unknowns than equations always has a free variable, hence infinitely many solutions.
-  \ii \textbf{Parameter questions} (``for which $h,k$ is the system consistent?''): row reduce with the letters in place; the answer is decided by the entries that end up in the last row. Watch for a pivot that could be zero, such as $8-4h$: split into the cases $h=2$ and $h\ne2$.
-  \ii \textbf{Check} a solution by substituting it into the \emph{original} equations; this catches arithmetic slips at once.
-  \ii \textbf{Avoid fractions} early: swap a row with a leading $1$ to the top, or scale at the end.
+  \ii \textbf{Verify solutions in the original system:} Always plug your final tuple $(s_1,\dots,s_n)$ into the \emph{original} equations (not the reduced equations) to catch any arithmetic slip during row reduction.
+  \ii \textbf{Swap rows to put a $\pm 1$ on top:} Before dividing by a leading coefficient that creates fractions, check whether a lower row already has $\pm 1$ in that column and interchange rows first.
 \end{shortcuts}
+
 \begin{trapbox}
-  \ii Scaling by $0$ is not a row operation (it cannot be undone).
-  \ii Two operations in one step are safe only if neither uses a row the other changes. Doing $R_2\to R_2-R_1$ and $R_1\to R_1-R_2$ at the same time is not a sequence of row operations, and it can lose solutions.
-  \ii A zero row $[\,0\ \cdots\ 0\ \ 0\,]$ is harmless; it does not by itself mean infinitely many solutions. Count free variables.
-  \ii In the parametric description, each basic variable must be written in terms of free variables only. ``$x_3=1+x_2$'' when $x_2$ is basic does not describe the solution set.
-  \ii An echelon form is not unique; the pivot positions are.
-  \ii Pivot positions are those of the coefficient matrix when you count free variables; the augmented column is not a variable.
+  \ii \textbf{Never scale a row by $0$:} Multiplying a row by $0$ destroys the equation $a_1x_1+\dots+a_nx_n=b$ (turning it into $0=0$) and is \emph{not} reversible.
+  \ii \textbf{Do not use a modified row in the same step that modifies another row:} Combining $R_2\leftarrow R_2-2R_1$ and $R_3\leftarrow R_3+R_2$ in a single step is fine only if you are crystal clear which version of $R_2$ is used; never perform $R_1\leftarrow R_1-R_2$ and $R_2\leftarrow R_2-R_1$ simultaneously, as that replaces both equations by the same difference and loses information.
+\end{trapbox}
+
+\subsection{Row reduction, echelon forms, and existence and uniqueness (Lay 1.2)}
+
+\begin{qbox}
+  Different choices of row operations can reduce the same matrix to many different upper-triangular forms. Is there a single canonical target shape that every matrix reduces to uniquely, and how can we read off from that shape whether a linear system has $0$, $1$, or infinitely many solutions?
+\end{qbox}
+
+\begin{definition*}[Echelon form and reduced echelon form (Lay 1.2)]
+  The \vocab{leading entry} of a nonzero row is the leftmost nonzero entry in that row. A rectangular matrix is in \vocab{echelon form} (or \vocab{row echelon form}, REF) if it satisfies the following three properties:
+  \begin{enumerate}[(1)]
+    \ii All nonzero rows are above any rows of all zeros.
+    \ii Each leading entry of a row is in a column strictly to the right of the leading entry of the row above it.
+    \ii All entries in a column below a leading entry are zeros.
+  \end{enumerate}
+  If a matrix in echelon form satisfies the following two additional conditions, then it is in \vocab{reduced echelon form} (or \vocab{reduced row echelon form}, RREF):
+  \begin{enumerate}[(1),start=4]
+    \ii The leading entry in each nonzero row is $1$.
+    \ii Each leading $1$ is the only nonzero entry in its column.
+  \end{enumerate}
+\end{definition*}
+
+\begin{fig}
+\begin{tikzpicture}[>=Stealth]
+  % Left panel: Echelon Form (REF)
+  \begin{scope}[shift={(0,0)},scale=0.92]
+    \fill[figbg,rounded corners=4pt] (-0.5,-1.15) rectangle (6.5,3.25);
+    \draw[figslate!30,rounded corners=4pt] (-0.5,-1.15) rectangle (6.5,3.25);
+    \node[font=\footnotesize\bfseries,text=figslate] at (2.8,2.9) {(a) Echelon form (REF): pivot staircase};
+
+    % Grid cells for 4x5 matrix (x from 0.8 to 4.8, y from -0.2 to 2.2)
+    \fill[figblue!15] (0.8,1.6) rectangle (1.6,2.2);
+    \fill[figblue!15] (1.6,1.0) rectangle (2.4,1.6);
+    \fill[figblue!15] (3.2,0.4) rectangle (4.0,1.0);
+
+    % Staircase boundary
+    \draw[figblue,very thick] (0.8,2.2) -- (0.8,1.6) -- (1.6,1.6) -- (1.6,1.0) -- (3.2,1.0) -- (3.2,0.4) -- (4.8,0.4);
+
+    % Matrix brackets
+    \draw[thick] (0.95,2.25) -- (0.75,2.25) -- (0.75,-0.25) -- (0.95,-0.25);
+    \draw[thick] (4.65,2.25) -- (4.85,2.25) -- (4.85,-0.25) -- (4.65,-0.25);
+
+    % Entries
+    \node[figblue,font=\small] at (1.2,1.9) {$\blacksquare$};
+    \node[font=\small] at (2.0,1.9) {$*$};
+    \node[font=\small] at (2.8,1.9) {$*$};
+    \node[font=\small] at (3.6,1.9) {$*$};
+    \node[font=\small] at (4.4,1.9) {$*$};
+
+    \node[figslate,font=\small] at (1.2,1.3) {$0$};
+    \node[figblue,font=\small] at (2.0,1.3) {$\blacksquare$};
+    \node[font=\small] at (2.8,1.3) {$*$};
+    \node[font=\small] at (3.6,1.3) {$*$};
+    \node[font=\small] at (4.4,1.3) {$*$};
+
+    \node[figslate,font=\small] at (1.2,0.7) {$0$};
+    \node[figslate,font=\small] at (2.0,0.7) {$0$};
+    \node[figslate,font=\small] at (2.8,0.7) {$0$};
+    \node[figblue,font=\small] at (3.6,0.7) {$\blacksquare$};
+    \node[font=\small] at (4.4,0.7) {$*$};
+
+    \node[figslate,font=\small] at (1.2,0.1) {$0$};
+    \node[figslate,font=\small] at (2.0,0.1) {$0$};
+    \node[figslate,font=\small] at (2.8,0.1) {$0$};
+    \node[figslate,font=\small] at (3.6,0.1) {$0$};
+    \node[figslate,font=\small] at (4.4,0.1) {$0$};
+
+    \node[font=\scriptsize,text=figslate] at (3.0,-0.75) {Zeros below staircase; $\blacksquare\ne 0$ (any nonzero pivot)};
+  \end{scope}
+
+  % Right panel: Reduced Echelon Form (RREF)
+  \begin{scope}[shift={(7.1,0)},scale=0.92]
+    \fill[figbg,rounded corners=4pt] (-0.5,-1.15) rectangle (6.7,3.25);
+    \draw[figslate!30,rounded corners=4pt] (-0.5,-1.15) rectangle (6.7,3.25);
+    \node[font=\footnotesize\bfseries,text=figslate] at (2.8,2.9) {(b) Reduced echelon form (RREF)};
+
+    % Highlight cleared pivot columns
+    \fill[figgreen!12] (0.8,-0.2) rectangle (1.6,2.2);
+    \fill[figgreen!12] (1.6,-0.2) rectangle (2.4,2.2);
+    \fill[figgreen!12] (3.2,-0.2) rectangle (4.0,2.2);
+
+    % Highlight leading 1 boxes
+    \draw[figgreen,thick] (0.85,1.65) rectangle (1.55,2.15);
+    \draw[figgreen,thick] (1.65,1.05) rectangle (2.35,1.55);
+    \draw[figgreen,thick] (3.25,0.45) rectangle (3.95,0.95);
+
+    % Matrix brackets
+    \draw[thick] (0.95,2.25) -- (0.75,2.25) -- (0.75,-0.25) -- (0.95,-0.25);
+    \draw[thick] (4.65,2.25) -- (4.85,2.25) -- (4.85,-0.25) -- (4.65,-0.25);
+
+    % Entries
+    \node[figgreen!80!black,font=\small\bfseries] at (1.2,1.9) {$1$};
+    \node[figgreen!80!black,font=\small] at (2.0,1.9) {$0$};
+    \node[figamber!90!black,font=\small] at (2.8,1.9) {$*$};
+    \node[figgreen!80!black,font=\small] at (3.6,1.9) {$0$};
+    \node[figamber!90!black,font=\small] at (4.4,1.9) {$*$};
+
+    \node[figslate,font=\small] at (1.2,1.3) {$0$};
+    \node[figgreen!80!black,font=\small\bfseries] at (2.0,1.3) {$1$};
+    \node[figamber!90!black,font=\small] at (2.8,1.3) {$*$};
+    \node[figgreen!80!black,font=\small] at (3.6,1.3) {$0$};
+    \node[figamber!90!black,font=\small] at (4.4,1.3) {$*$};
+
+    \node[figslate,font=\small] at (1.2,0.7) {$0$};
+    \node[figslate,font=\small] at (2.0,0.7) {$0$};
+    \node[figslate,font=\small] at (2.8,0.7) {$0$};
+    \node[figgreen!80!black,font=\small\bfseries] at (3.6,0.7) {$1$};
+    \node[figamber!90!black,font=\small] at (4.4,0.7) {$*$};
+
+    \node[figslate,font=\small] at (1.2,0.1) {$0$};
+    \node[figslate,font=\small] at (2.0,0.1) {$0$};
+    \node[figslate,font=\small] at (2.8,0.1) {$0$};
+    \node[figslate,font=\small] at (3.6,0.1) {$0$};
+    \node[figslate,font=\small] at (4.4,0.1) {$0$};
+
+    \node[font=\scriptsize,text=figslate] at (2.8,-0.75) {Pivot cols 1, 2, 4 (green) cleared; cols 3, 5 free};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Anatomy of (a) an echelon form (REF) and (b) the unique reduced echelon form (RREF). In RREF, every pivot entry equals $1$ and is the \emph{only} nonzero entry in its pivot column (shaded green), so each basic variable appears in exactly one equation.}
+\end{fig}
+
+\begin{theorem*}[Lay 1.2 Thm.~1: Uniqueness of the Reduced Echelon Form]\target{thm-lay-1-1}
+  Each matrix is row equivalent to one and only one reduced echelon matrix.
+\end{theorem*}
+\begin{ideabox}
+  While a matrix has many different echelon forms (for example, scaling a nonzero row of an echelon form or adding a lower row to an upper row produces a different echelon form), once we normalize every leading entry to $1$ and clear all entries above every leading $1$, all freedom disappears. Because the reduced echelon form is unique (proved by induction on the number of columns in Lay Appendix~A), the \emph{locations} of the leading entries are intrinsic invariants of the original matrix $A$ and are identical in every echelon form of $A$.
+\end{ideabox}
+
+\begin{definition*}[Pivot positions, pivot columns, basic variables, and free variables (Lay 1.2)]
+  \begin{itemize}
+    \ii A \vocab{pivot position} in a matrix $A$ is a location in $A$ that corresponds to a leading $1$ in the reduced echelon form of $A$. A \vocab{pivot column} is a column of $A$ that contains a pivot position, and a \vocab{pivot} is a nonzero number in a pivot position used as needed to create zeros via row operations.
+    \ii In a linear system, the variables corresponding to pivot columns of the coefficient matrix are called \vocab{basic variables}. The remaining variables (corresponding to non-pivot columns of the coefficient matrix) are called \vocab{free variables}.
+  \end{itemize}
+\end{definition*}
+
+\needspace{8\baselineskip}\method{The five-step row reduction algorithm (Gaussian elimination + Gauss--Jordan backward phase).}
+\begin{steps}
+  \ii \textbf{Step 1 (Locate leftmost nonzero column):} Begin with the leftmost nonzero column. This is a pivot column; the pivot position is at the top.
+  \ii \textbf{Step 2 (Select pivot):} Select a nonzero entry in the pivot column as a pivot. If necessary, interchange rows to move this entry into the pivot position at the top. (\emph{Numerical note:} In computer arithmetic, \vocab{partial pivoting} chooses the entry of largest absolute value in the column as the pivot to minimize roundoff error when dividing by the pivot.)
+  \ii \textbf{Step 3 (Clear below pivot):} Use row replacement operations to create zeros in all positions below the pivot.
+  \ii \textbf{Step 4 (Cover and repeat---Forward phase to REF):} Cover (or ignore) the row containing the pivot position and all rows, if any, above it. Apply Steps~1--3 to the submatrix that remains. Repeat the process until there are no more nonzero rows to modify. The entire matrix is now in \emph{echelon form (REF)}.
+  \ii \textbf{Step 5 (Clear above pivots and scale to $1$---Backward phase to RREF):} Beginning with the \emph{rightmost} pivot and working upward and to the left, create zeros above each pivot. If a pivot is not $1$, make it $1$ by a scaling operation. The matrix is now in \emph{reduced echelon form (RREF)}.
+\end{steps}
+\emph{Why the right-to-left order in Step 5 matters:} Because every entry to the left of the rightmost pivot in its row is already $0$, adding multiples of that row to upper rows during the backward phase never disturbs any columns to the left!
+
+\needspace{7\baselineskip}\textbf{Worked example: parametric description with free variables.} Row reduce the augmented matrix below to RREF:
+\[
+  \aug{rrrr|r}{1 & 3 & 0 & -2 & 1 \\ 2 & 6 & 1 & -1 & 5 \\ -1 & -3 & 1 & 5 & 2}
+  \xrightarrow[R_3\leftarrow R_3+R_1]{R_2\leftarrow R_2-2R_1}
+  \aug{rrrr|r}{1 & 3 & 0 & -2 & 1 \\ 0 & 0 & 1 & 3 & 3 \\ 0 & 0 & 1 & 3 & 3}
+  \xrightarrow{R_3\leftarrow R_3-R_2}
+  \aug{rrrr|r}{1 & 3 & 0 & -2 & 1 \\ 0 & 0 & 1 & 3 & 3 \\ 0 & 0 & 0 & 0 & 0}.
+\]
+\begin{steps}
+  \ii The final matrix is in RREF (leading $1$s in row~1, column~1 and row~2, column~3, with zeros above and below each leading $1$). Thus columns~1 and~3 are pivot columns: $x_1,x_3$ are \textbf{basic variables}, while $x_2,x_4$ are \textbf{free variables}.
+  \ii Because each basic variable appears in only one nonzero row of the RREF, solve each nonzero equation for its basic variable in terms of the free variables:
+  \[
+    \begin{cases}
+      x_1 = 1 - 3x_2 + 2x_4, \\
+      x_2 \text{ is free}, \\
+      x_3 = 3 - 3x_4, \\
+      x_4 \text{ is free}.
+    \end{cases}
+  \]
+  This \vocab{parametric description} generates every solution: assigning any real values to the free parameters $(x_2,x_4)$ uniquely determines the basic variables $(x_1,x_3)$ (for example, $x_2=x_4=0$ yields $(1,0,3,0)$).
+\end{steps}
+
+\textbf{Worked example: detecting an inconsistent system in the forward phase.}
+\[
+  \aug{rrr|r}{1 & 2 & 3 & 1 \\ 2 & 5 & 4 & 2 \\ 3 & 7 & 7 & 4}
+  \xrightarrow[R_3\leftarrow R_3-3R_1]{R_2\leftarrow R_2-2R_1}
+  \aug{rrr|r}{1 & 2 & 3 & 1 \\ 0 & 1 & -2 & 0 \\ 0 & 1 & -2 & 1}
+  \xrightarrow{R_3\leftarrow R_3-R_2}
+  \aug{rrr|r}{1 & 2 & 3 & 1 \\ 0 & 1 & -2 & 0 \\ 0 & 0 & 0 & 1}.
+\]
+The third row of the echelon form represents the equation $0x_1+0x_2+0x_3=1$, which has no solution. You can stop immediately at the echelon form without doing the backward phase: the system is \textbf{inconsistent}.
+
+\begin{fig}
+\tdplotsetmaincoords{68}{118}
+\begin{tikzpicture}[tdplot_main_coords,scale=0.92,>=Stealth]
+  \begin{scope}[tdplot_screen_coords]
+    \fill[figbg,rounded corners=4pt] (-3.9,-2.5) rectangle (4.7,3.1);
+    \draw[figslate!30,rounded corners=4pt] (-3.9,-2.5) rectangle (4.7,3.1);
+  \end{scope}
+
+  % Plane 1 (blue, z = 0)
+  \fill[figblue!14,opacity=0.8] (-1.6,-1.4,0) -- (2.2,-1.4,0) -- (2.2,2.2,0) -- (-1.6,2.2,0) -- cycle;
+  \draw[figblue!60,thin] (-1.6,-1.4,0) -- (2.2,-1.4,0) -- (2.2,2.2,0) -- (-1.6,2.2,0) -- cycle;
+
+  % Plane 2 (red, tilted through the line y = x, z = 0)
+  \fill[figred!14,opacity=0.75] (-1.3,-1.3,0) -- (2.0,2.0,0) -- (1.1,2.0,1.5) -- (-2.2,-1.3,1.5) -- cycle;
+  \draw[figred!60,thin] (-1.3,-1.3,0) -- (2.0,2.0,0) -- (1.1,2.0,1.5) -- (-2.2,-1.3,1.5) -- cycle;
+
+  % Plane 3 (amber, tilted the other way through the same line y = x, z = 0)
+  \fill[figamber!14,opacity=0.75] (-1.3,-1.3,0) -- (2.0,2.0,0) -- (2.6,1.2,-1.25) -- (-0.7,-2.1,-1.25) -- cycle;
+  \draw[figamber!60,thin] (-1.3,-1.3,0) -- (2.0,2.0,0) -- (2.6,1.2,-1.25) -- (-0.7,-2.1,-1.25) -- cycle;
+
+  % Common intersection line (1 free variable)
+  \draw[figgreen,line width=2.0pt] (-1.5,-1.5,0) -- (2.25,2.25,0);
+  \node[figgreen!80!black,halo,font=\footnotesize\bfseries,below left] at (2.15,2.15,0) {Common intersection line ($1$ free variable)};
+
+  \begin{scope}[tdplot_screen_coords]
+    \node[figslate,font=\scriptsize] at (0.4,2.75) {Three planes in $\RR^3$ with $2$ pivots and $1$ free variable meet along a line};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Geometric view in $\RR^3$ of a consistent $3\times 3$ system whose reduced echelon form has $2$ pivots and $1$ free variable (plus a zero row $0=0$): the third plane passes through the line of intersection of the first two planes, producing a $1$-parameter line of solutions.}
+\end{fig}
+
+\begin{theorem*}[Lay 1.2 Thm.~2: Existence and Uniqueness Theorem]\target{thm-lay-1-2}
+  A linear system is consistent if and only if the rightmost column of the augmented matrix is \emph{not} a pivot column---that is, if and only if an echelon form of the augmented matrix has no row of the form
+  \[
+    \begin{bmatrix} 0 & \cdots & 0 & b \end{bmatrix} \qquad\text{with }b\text{ nonzero.}
+  \]
+  If a linear system is consistent, then the solution set contains either
+  \begin{enumerate}[(i)]
+    \ii a \textbf{unique solution}, when there are no free variables, or
+    \ii \textbf{infinitely many solutions}, when there is at least one free variable.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  Because row operations preserve the solution set, we can analyze the reduced echelon form of the augmented matrix directly. When is the rightmost (augmented) column a pivot column? Precisely when some row of the echelon form has its leftmost nonzero entry in the last column, i.e.\ $[\,0\ \cdots\ 0\ b\,]$ with $b\ne 0$ (or $[\,0\ \cdots\ 0\ 1\,]$ in RREF), which translates to the impossible equation $0x_1+\dots+0x_n=b\ne 0$. Conversely, when the rightmost column is \emph{not} a pivot column, every nonzero row of the RREF has a leading $1$ in one of the variable columns (a basic variable) and zeros in all other rows of that column. Moving any free variables to the right side expresses each basic variable uniquely in terms of the free variables. If there are no free variables, every variable is pinned to a single number; if there is at least one free variable, every real value assigned to it yields a distinct solution.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii By row-operation invariance, the original system has the same solution set as the system corresponding to the RREF of its augmented matrix.
+    \ii If the rightmost column of the augmented matrix is a pivot column, then an echelon form has a row $[\,0\ \cdots\ 0\ b\,]$ with $b\ne 0$, which corresponds to the equation $0x_1+\dots+0x_n=b\ne 0$. No tuple $(s_1,\dots,s_n)$ satisfies this equation, so the system is inconsistent.
+    \ii Conversely, if the rightmost column is not a pivot column, then every nonzero row of the RREF has its leading $1$ in a variable column $j_r$ (the $r$-th basic variable), and all other entries in column $j_r$ are zero. Any remaining rows are all zeros ($0=0$).
+    \ii Writing out the nonzero rows of the RREF expresses each basic variable $x_{j_r}$ as a constant minus a linear combination of the free variables. Assigning arbitrary real numbers to the free variables and computing the basic variables from these formulas satisfies every equation, so the system is consistent.
+    \ii When there are no free variables, each basic variable equals a single constant, giving a unique solution. When there is at least one free variable, different choices of the free variables yield distinct solutions, giving infinitely many solutions.
+  \end{steps}
+\end{proof}
+
+\begin{shortcuts}
+  \ii \textbf{Stop at REF for Existence \& Uniqueness questions:} Because pivot positions are the same in any echelon form as in RREF (\ilink{thm-lay-1-1}{Thm.~1.1}), you never need the backward phase (RREF) just to decide whether a system has $0$, $1$, or $\infty$ solutions: reduce to REF, check for a contradictory row $[\,0\ \cdots\ 0\ b\,]$ ($b\ne 0$), and count pivots in the variable columns.
+  \ii \textbf{Pivot-counting formula:} For any consistent system in $n$ variables,
+  \[
+    (\text{number of basic variables}) + (\text{number of free variables}) = n,
+  \]
+  where $(\text{number of basic variables}) = (\text{number of pivots in the coefficient matrix})\le\min(m,n)$. In particular, if $n>m$ (more unknowns than equations), any consistent system \emph{must} have at least $n-m\ge 1$ free variables and hence infinitely many solutions.
+  \ii \textbf{Systems with parameters $h,k$:} Row reduce with $h$ and $k$ in place. If a candidate pivot involves $h$ (such as $8-4h$ in P3), do \emph{not} divide by $8-4h$; instead split into Case~1 ($8-4h\ne 0$, i.e.\ $h\ne 2$, where it is a genuine pivot) and Case~2 ($h=2$, where that entry vanishes and consistency depends on the right-hand side entry $k-8$).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{A row of zeros $[\,0\ \cdots\ 0\ 0\,]$ does NOT automatically mean infinitely many solutions:} An overdetermined system of $4$ equations in $2$ unknowns can reduce to $\aug{rr|r}{1&0&1\\0&1&2\\0&0&0\\0&0&0}$, which has two zero rows yet $2$ pivots for $2$ variables ($0$ free variables), hence a \emph{unique} solution! Always count free variables.
+  \ii \textbf{Basic variables must be expressed in terms of FREE variables only:} In a parametric description, never leave a basic variable on the right-hand side of another basic variable's formula (this happens if you forget the backward phase to RREF).
+  \ii \textbf{Distinguish pivots of the coefficient matrix from a pivot in the augmented column:} When counting basic vs.\ free variables, only pivots in the first $n$ (variable) columns count as basic variables; a pivot in column $n+1$ (the augmented column) means the system is inconsistent.
 \end{trapbox}
 
 \section{Homework this week}
-HW1, Section 1.1: 1, 8, 9, 13, 17, 21, 25, 26, 27, 32, 34. Section 1.2: 1, 3, 11, 13, 15 (or 17), 19, 23, 25, 31, 32. (Sections 1.3--1.4 of HW1 are in the Week 2 handout.)
+HW1, Section 1.1: 1, 8, 9, 13, 17, 21, 25, 26, 27, 32, 34. Section 1.2: 1, 3, 11, 13, 15 (or 17), 19, 23, 25, 31, 32. (Sections 1.3--1.4 of HW1 are in the \xweek{math54}{2026-08-31-vectors-ax-b-solution-sets}{Week~2 handout}.)
 
 \section{Problem set}
 \begin{prob}\textbf{P1.}\ Solve by row reduction and check your answer:
-$x_1+x_2+2x_3=9,\quad 2x_1+4x_2-3x_3=1,\quad 3x_1+6x_2-5x_3=0.$
+\[
+  x_1+x_2+2x_3=9,\qquad 2x_1+4x_2-3x_3=1,\qquad 3x_1+6x_2-5x_3=0.
+\]
 \end{prob}
 \begin{prob}\textbf{P2.}\ For which $h$ is the system with augmented matrix $\aug{rr|r}{1&-3&h\\-2&6&-5}$ consistent?
 \end{prob}
 \begin{prob}\textbf{P3.}\ For the system $x_1+hx_2=2$, $4x_1+8x_2=k$, find all $h,k$ for which it has (a) no solution, (b) exactly one solution, (c) infinitely many solutions.
 \end{prob}
 \begin{prob}\textbf{P4.}\ Find the reduced echelon form and the parametric description of the solution set of the system with augmented matrix
-$\aug{rrrrr|r}{1&-2&-1&3&0&-2\\0&0&1&-4&2&5\\2&-4&0&-2&2&1}.$
+\[
+  \aug{rrrrr|r}{1&-2&-1&3&0&-2\\0&0&1&-4&2&5\\2&-4&0&-2&2&1}.
+\]
 \end{prob}
 \begin{prob}\textbf{P5.}\ True or false, with a reason. (a) A system of 3 equations in 4 unknowns can have exactly one solution. (b) If an echelon form of an augmented matrix has a row of zeros, the system has infinitely many solutions. (c) If the coefficient matrix of a system of 4 equations in 4 unknowns has a pivot in every column, the system has exactly one solution for every right-hand side.
 \end{prob}
