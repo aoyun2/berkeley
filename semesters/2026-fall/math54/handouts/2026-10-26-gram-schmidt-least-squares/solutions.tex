@@ -1,0 +1,76 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\proj}{proj}
+\title{Math 54 --- Week 10}
+\subtitle{Solutions to the problem set}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P1}{P1}.}\par\idea{Subtract from $\vv x_2$ its projection onto $\vv v_1=\vv x_1$, clear fractions, then normalize (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-11}{Thm.~6.11}).}
+$\vv v_1=(1,2,2)$ ($\vv v_1\cdot\vv v_1=9$), $\vv x_2\cdot\vv v_1=8 \implies \vv v_2=(4,1,1)-\frac89(1,2,2)=\frac79(4,-1,-1)$. Clearing the fraction leaves $(4,-1,-1)$; normalizing $\|\vv v_1\|=3$ and $\|(4,-1,-1)\|=3\sqrt{2}$ gives the orthonormal basis
+\[
+  \frac13(1,2,2),\qquad \frac{1}{3\sqrt{2}}(4,-1,-1).
+\]
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P2}{P2}.}\par\idea{Gram--Schmidt clearing fractions after each step.}
+\begin{steps}
+  \ii $\vv v_1=(1,1,1,1)$ ($\vv v_1\cdot\vv v_1=4$).
+  \ii $\vv x_2\cdot\vv v_1=3 \implies \vv x_2-\frac34\vv v_1=\frac14(1,1,1,-3)$; take $\vv v_2=(1,1,1,-3)$ ($\vv v_2\cdot\vv v_2=12$).
+  \ii $\vv x_3\cdot\vv v_1=2$, $\vv x_3\cdot\vv v_2=2 \implies \vv x_3-\frac24\vv v_1-\frac{2}{12}\vv v_2=\frac13(1,1,-2,0)$; take $\vv v_3=(1,1,-2,0)$.
+\end{steps}
+Orthogonal basis: $\{(1,1,1,1),\ (1,1,1,-3),\ (1,1,-2,0)\}$ (dot products pairwise $0$).
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P3}{P3}.}\par\idea{$Q$ comes from P1; then $R=Q^{\mathsf T}A$ (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-12}{Thm.~6.12}).}
+With $\vv q_1=\frac13(1,2,2)^{\mathsf T}$ and $\vv q_2=\frac{1}{3\sqrt{2}}(4,-1,-1)^{\mathsf T}$ from P1: $r_{11}=\vv q_1\cdot\vv x_1=3$, $r_{12}=\vv q_1\cdot\vv x_2=\frac83$, and $r_{22}=\vv q_2\cdot\vv x_2=\frac{7\sqrt{2}}{3}$, giving
+\[
+  Q = \begin{bmatrix}1/3&4/(3\sqrt{2})\\2/3&-1/(3\sqrt{2})\\2/3&-1/(3\sqrt{2})\end{bmatrix},\qquad
+  R = \begin{bmatrix}3&8/3\\0&7\sqrt{2}/3\end{bmatrix}.
+\]
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P4}{P4}.}\par\idea{Independent columns give unique least-squares via the normal equations (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-13}{Thm.~6.13}).}
+With $A=\begin{bmatrix}1&0\\0&1\\1&1\end{bmatrix}$ and $\vv b=\begin{bmatrix}1\\1\\0\end{bmatrix}$:
+\[
+  A^{\mathsf T}A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\quad A^{\mathsf T}\vv b=\begin{bmatrix}1\\1\end{bmatrix}
+  \implies
+  \hat{\vv x}=\frac13\begin{bmatrix}2&-1\\-1&2\end{bmatrix}\begin{bmatrix}1\\1\end{bmatrix}=\begin{bmatrix}1/3\\1/3\end{bmatrix}.
+\]
+Then $\vv b-A\hat{\vv x}=(\frac23,\frac23,-\frac23)^{\mathsf T}$, giving least-squares error $\|\vv b-A\hat{\vv x}\|=\frac{2\sqrt{3}}{3}$.
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P5}{P5}.}\par\idea{Solve $R\hat{\vv x}=Q^{\mathsf T}\vv b$ by back-substitution (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-15}{Thm.~6.15}).}
+For $\vv b=(1,0,0)$, $Q^{\mathsf T}\vv b=(\frac13,\ \frac{4}{3\sqrt{2}})^{\mathsf T}=(\frac13,\ \frac{2\sqrt{2}}{3})^{\mathsf T}$. From $R\hat{\vv x}=Q^{\mathsf T}\vv b$:
+$\frac{7\sqrt{2}}{3}\hat{x}_2=\frac{2\sqrt{2}}{3}\implies \hat{x}_2=\frac27$, then $3\hat{x}_1+\frac83\cdot\frac27=\frac13\implies \hat{x}_1=-\frac17$.
+Check normal equations: $A^{\mathsf T}A=\begin{psmallmatrix}9&8\\8&18\end{psmallmatrix}$, $A^{\mathsf T}\vv b=\begin{psmallmatrix}1\\4\end{psmallmatrix}$, and $A^{\mathsf T}A(-\frac17,\frac27)^{\mathsf T}=(1,4)^{\mathsf T}$.
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P6}{P6}.}\par\idea{Orthonormal columns simplify $A^{\mathsf T}A=I$ immediately.}
+Since the columns of $A$ are orthonormal, $A^{\mathsf T}A=I$ (W4) and columns are independent (W3), so the normal equations become $I\vv x=A^{\mathsf T}\vv b \implies \hat{\vv x}=A^{\mathsf T}\vv b$, and $\proj_{\Col A}\vv b=A\hat{\vv x}=AA^{\mathsf T}\vv b$.
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P7}{P7}.}\par\idea{Convert polynomials to value vectors at $0,1,2$ and take standard dot products.}
+\begin{steps}
+  \ii $p=1+t \mapsto (1,2,3)$ and $q=t^2 \mapsto (0,1,4)$, so $\ip{p}{q}=0+2+12=14$, $\|p\|=\sqrt{14}$, $\|q\|=\sqrt{17}$.
+  \ii Gram--Schmidt: $p_0=1\mapsto(1,1,1)$ ($\ip{1}{1}=3$); $\ip{t}{1}=3 \implies p_1=t-1\mapsto(-1,0,1)$ ($\ip{p_1}{p_1}=2$). Finally $\ip{t^2}{1}=5$ and $\ip{t^2}{t-1}=4$, so
+  \[
+    p_2 = t^2 - \frac53\cdot 1 - \frac42(t-1) = t^2-2t+\frac13.
+  \]
+  Check $p_2\mapsto(\frac13,-\frac23,\frac13)$, dot~$0$ with $(1,1,1)$ and $(-1,0,1)$.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{prob-P8}{P8}.}\par\idea{Apply Cauchy--Schwarz (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-16}{Thm.~6.16}) with the constant $1$ vector/function.}
+\begin{steps}
+  \ii \textbf{(a)} In $\RR^3$, apply Cauchy--Schwarz to $\vv u=(1,1,1)$ and $\vv v=(a,b,c)$: $|a+b+c|\le \sqrt{3}\sqrt{a^2+b^2+c^2}$; squaring gives $(a+b+c)^2\le 3(a^2+b^2+c^2)$.
+  \ii \textbf{(b)} In $C[0,1]$ with $\ip{f}{g}=\int_0^1 f(t)g(t)\,dt$, take $g(t)=1$ ($\|1\|=1$): $\left|\int_0^1 f(t)\,dt\right|\le 1\cdot\left(\int_0^1 f(t)^2\,dt\right)^{1/2}$; squaring gives the inequality.
+\end{steps}
+\end{prob}
+
+\end{document}

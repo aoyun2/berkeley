@@ -1,0 +1,424 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}
+\title{Math 54 --- Week 8}
+\subtitle{Diagonalization; eigenvectors and linear transformations; complex eigenvalues (Lay 5.3--5.5)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--7}
+
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Columns and diagonal scaling (\xweek{math54}{2026-09-14-matrix-algebra-inverses}{Week~4}):} $AP=[\,A\vv p_1\ \cdots\ A\vv p_n\,]$, and for $D=\operatorname{diag}(d_1,\dots,d_n)$, $PD=[\,d_1\vv p_1\ \cdots\ d_n\vv p_n\,]$. The inverse of a $2\times2$ matrix with $ad-bc\ne0$ is $\frac{1}{ad-bc}\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}$.
+
+  \ii \textbf{Invertible matrix theorem \& Rank theorem (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Weeks~4--6}):} For $n\times n$ matrix $P$: $P$ is invertible $\iff$ its columns are linearly independent $\iff$ its columns form a basis of $\RR^n \iff \det P\ne 0$. $\det(AB)=\det A\det B$. Rank theorem: $\rank A+\dim\Nul A=n$.
+
+  \ii \textbf{Eigenvalues and similarity (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{name-characteristic-equation}{Week~7}):} $\lambda$ is an eigenvalue of $A \iff \det(A-\lambda I)=0$; the eigenspace is $\Nul(A-\lambda I)$. Eigenvectors for distinct eigenvalues are linearly independent (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-2}{Lay 5.1 Thm.~2}). Similar matrices ($B=P^{-1}AP$) share the same characteristic polynomial (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-4}{Lay 5.2 Thm.~4}). Eigenvalues of a triangular matrix are its diagonal entries (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-1}{Lay 5.1 Thm.~1}). $\tr A$ is the diagonal sum.
+
+  \ii \textbf{Coordinates (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-4-9}{Week~7}):} For a basis $\mathcal B$ of $\RR^n$ with $P_{\mathcal B}=[\,\vv b_1\ \cdots\ \vv b_n\,]$: $\vv x=P_{\mathcal B}[\vv x]_{\mathcal B}$ and $[\vv x]_{\mathcal B}=P_{\mathcal B}^{-1}\vv x$. Coordinates preserve linear relations.
+
+  \ii \textbf{Determinants \& dimension (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-9}{Weeks~4--6}):} $\det$ can be expanded along any column. In a $d$-dimensional space, $>d$ vectors are dependent, and any independent set extends to a basis.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Diagonalization (Lay 5.3)}
+
+\begin{qbox}
+  The difference equation $\vv x_{k+1}=A\vv x_k$ has closed-form solution $\vv x_k=A^k\vv x_0$. For
+  \[
+    A=\begin{bmatrix}7&2\\-4&1\end{bmatrix},
+  \]
+  multiplying $A^{100}$ directly is hopeless. When can $A$ be factored so that $A^k$ is computed algebraically in one step for every $k$?
+\end{qbox}
+
+Powers of a diagonal matrix $D=\operatorname{diag}(d_1,\dots,d_n)$ are effortless: $D^k=\operatorname{diag}(d_1^k,\dots,d_n^k)$. Whenever $A=PDP^{-1}$ is \emph{similar} to a diagonal matrix, intermediate $P^{-1}P$ factors cancel in any power:
+\[
+  A^k = (PDP^{-1})(PDP^{-1})\cdots(PDP^{-1}) = P D^k P^{-1}.
+\]
+
+\begin{example*}[Worked example 1: Computing $A^k$ for the question]
+  \begin{steps}
+    \ii Eigenvalues: $\tr A=8$ and $\det A=7+8=15$, so $\det(A-\lambda I)=\lambda^2-8\lambda+15=(\lambda-5)(\lambda-3)=0 \implies \lambda=5,3$.
+    \ii Eigenvectors: Row~$1$ of $A-5I$ is $(2,2)\implies\vv p_1=(1,-1)$; Row~$1$ of $A-3I$ is $(4,2)\implies\vv p_2=(1,-2)$.
+    \ii Setting $P=\begin{psmallmatrix}1&1\\-1&-2\end{psmallmatrix}$ ($\det P=-1$), $D=\begin{psmallmatrix}5&0\\0&3\end{psmallmatrix}$, $P^{-1}=\begin{psmallmatrix}2&1\\-1&-1\end{psmallmatrix}$, we have $AP=PD$, so $A=PDP^{-1}$ and for all $k\ge 0$:
+    \[
+      A^k = P\begin{bmatrix}5^k&0\\0&3^k\end{bmatrix}P^{-1}
+      = \begin{bmatrix}2\cdot 5^k-3^k & 5^k-3^k\\ 2\cdot 3^k-2\cdot 5^k & 2\cdot 3^k-5^k\end{bmatrix}.
+    \]
+  \end{steps}
+\end{example*}
+
+\noindent\textbf{Definition.} A square matrix $A$ is \vocab{diagonalizable} if $A=PDP^{-1}$ for some invertible matrix $P$ and diagonal matrix $D$.
+
+\begin{theorem*}[The Diagonalization Theorem (Lay 5.3, Thm.~5)]\target{thm-lay-5-5}
+  An $n\times n$ matrix $A$ is diagonalizable if and only if $A$ has $n$ linearly independent eigenvectors. In fact, $A=PDP^{-1}$ with $D$ diagonal if and only if the columns of $P$ are $n$ linearly independent eigenvectors of $A$, and the diagonal entries of $D$ are the corresponding eigenvalues in the same order.
+\end{theorem*}
+\begin{ideabox}
+  Clear the inverse: $A=PDP^{-1} \iff AP=PD$. Compare columns on both sides using (W1): column~$j$ of $AP$ is $A\vv p_j$, whereas column~$j$ of $PD$ is $d_j\vv p_j$! Thus $AP=PD$ says literally that every column $\vv p_j$ satisfies $A\vv p_j=d_j\vv p_j$, while $P$ being invertible is equivalent to its columns $\vv p_1,\dots,\vv p_n$ being linearly independent (and hence nonzero)!
+\end{ideabox}
+\begin{proof}
+  Let $P=[\,\vv p_1\ \cdots\ \vv p_n\,]$ and $D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$. By (W1), $AP=[\,A\vv p_1\ \cdots\ A\vv p_n\,]$ and $PD=[\,\lambda_1\vv p_1\ \cdots\ \lambda_n\vv p_n\,]$.
+  \begin{steps}
+    \ii ($\Rightarrow$) If $A=PDP^{-1}$, then $AP=PD$, so $A\vv p_j=\lambda_j\vv p_j$ for each $j$. Since $P$ is invertible, its columns are linearly independent by (W2) (so none is $\vv 0$), giving $n$ independent eigenvectors.
+    \ii ($\Leftarrow$) If $\vv p_1,\dots,\vv p_n$ are independent eigenvectors with $A\vv p_j=\lambda_j\vv p_j$, then $AP=PD$ and $P$ is invertible by (W2); multiplying on the right by $P^{-1}$ yields $A=PDP^{-1}$.
+  \end{steps}
+\end{proof}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=2.7cm,yshift=1.2cm,scale=0.68]
+    \draw[figaxis] (-0.6,0) -- (3.0,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.6) -- (0,1.1) node[above,font=\scriptsize] {$x_2$};
+    \draw[dashed,black!40] (0,0) -- (2,-2);
+    \draw[dashed,black!40] (0,0) -- (1.4,-2.8);
+    \draw[figvec,figblue,very thick] (0,0) -- (1,-1) node[right=2pt,halo,font=\scriptsize] {$\vv p_1$};
+    \draw[figvec,figred,very thick] (0,0) -- (1,-2) node[below left=1pt,halo,font=\scriptsize] {$\vv p_2$};
+    \draw[figvec,black,very thick] (0,0) -- (2,-3) node[right=2pt,halo,font=\scriptsize] {$\vv x=\vv p_1+\vv p_2$};
+    \node[font=\footnotesize,anchor=north] at (1.2,-4.0) {Before $A$};
+  \end{scope}
+
+  \draw[->,very thick,black!75] (5.3,1.2) -- node[above,font=\small] {$A$} (6.7,1.2);
+
+  \begin{scope}[xshift=9.1cm,yshift=1.2cm,scale=0.68]
+    \draw[figaxis] (-0.6,0) -- (3.5,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.6) -- (0,1.1) node[above,font=\scriptsize] {$x_2$};
+    \draw[figvec,figblue,very thick] (0,0) -- (1.67,-1.67) node[above right=-1pt,halo,font=\scriptsize] {$5\vv p_1$};
+    \draw[figvec,figred,very thick] (0,0) -- (1,-2) node[left=2pt,halo,font=\scriptsize] {$3\vv p_2$};
+    \draw[dashed,figslate!55] (1.67,-1.67) -- (2.67,-3.67);
+    \draw[dashed,figslate!55] (1,-2) -- (2.67,-3.67);
+    \draw[figvec,black,very thick] (0,0) -- (2.67,-3.67) node[right=1pt,halo,font=\scriptsize] {$A\vv x=5\vv p_1+3\vv p_2$};
+    \node[font=\footnotesize,anchor=north] at (1.4,-4.0) {After $A$ (drawn at $1/3$ scale)};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Geometry of diagonalization for Worked example~1: in the eigenvector basis $\{\vv p_1,\vv p_2\}$, $A$ simply stretches $\vv p_1$ by $5$ and $\vv p_2$ by $3$, so $A^k(\vv p_1+\vv p_2)=5^k\vv p_1+3^k\vv p_2$.}
+\end{fig}
+
+\noindent\textbf{Four-step recipe to diagonalize $A$:} (1) find eigenvalues from $\det(A-\lambda I)=0$; (2) find a basis for each eigenspace $\Nul(A-\lambda I)$; (3) if these bases total $n$ vectors, form $P$ and $D$; (4) check $AP=PD$ column-by-column.
+
+\begin{example*}[Worked example 2: Repeated eigenvalue that IS diagonalizable]
+  Let
+  \[
+    A = \begin{bmatrix}1&3&3\\-3&-5&-3\\3&3&1\end{bmatrix}.
+  \]
+  Subtracting row~$3$ from row~$1$ of $A-\lambda I$ factors out $2+\lambda$, giving $\det(A-\lambda I)=-(\lambda-1)(\lambda+2)^2$: eigenvalues $\lambda=1$ and $\lambda=-2$ (multiplicity~$2$). Row reducing $A-I$ gives rank~$2$ and eigenvector $\vv v_1=(1,-1,1)$. For $\lambda=-2$, every row of $A+2I$ is a multiple of $(1,1,1)$, so $\Nul(A+2I)$ is the $2$-plane $x_1+x_2+x_3=0$ with basis $\vv v_2=(-1,1,0)$, $\vv v_3=(-1,0,1)$. Three vectors total! Thus $A=PDP^{-1}$ with
+  \[
+    P = \begin{bmatrix}1&-1&-1\\-1&1&0\\1&0&1\end{bmatrix}, \qquad
+    D = \begin{bmatrix}1&0&0\\0&-2&0\\0&0&-2\end{bmatrix}, \qquad (\det P=1\ne 0).
+  \]
+\end{example*}
+
+\begin{theorem*}[Distinct eigenvalues guarantee diagonalizability (Lay 5.3, Thm.~6)]\target{thm-lay-5-6}
+  An $n\times n$ matrix with $n$ distinct eigenvalues is diagonalizable.
+\end{theorem*}
+\begin{proof}
+  Choose one eigenvector for each distinct eigenvalue; by Thm.~5.2 (W3) these $n$ vectors are linearly independent, so Thm.~5 applies. (Note: sufficient, not necessary---$I$ and Worked example~2 are diagonalizable with repeated eigenvalues!)
+\end{proof}
+
+When an eigenvalue $\lambda$ has algebraic multiplicity $m>1$, how do we know diagonalizability cannot fail except by having too small an eigenspace?
+
+\begin{theorem*}[Eigenspace dimension vs.\ multiplicity (Lay 5.3, Thm.~7a)]\target{thm-lay-5-7a}
+  If $\lambda_0$ is a real eigenvalue of $A$ with algebraic multiplicity $m$, then $1\le \dim\Nul(A-\lambda_0 I)\le m$.
+\end{theorem*}
+\begin{ideabox}
+  Extend a basis $\vv v_1,\dots,\vv v_p$ of $E(\lambda_0,A)$ to a basis of $\RR^n$ forming columns of $P$. Since $P^{-1}AP$ sends the first $p$ standard basis vectors to $\lambda_0\vv e_j$, $\det(P^{-1}AP-\lambda I)$ pulls out $(\lambda_0-\lambda)^p$ by cofactor expansion down the first $p$ columns, forcing $(\lambda-\lambda_0)^p \mid \det(A-\lambda I)$!
+\end{ideabox}
+\begin{proof}
+  Let $\vv v_1,\dots,\vv v_p$ ($p\ge 1$) be a basis of $\Nul(A-\lambda_0 I)$, extend to a basis $\vv v_1,\dots,\vv v_n$ of $\RR^n$ (W5), set $P=[\,\vv v_1\ \cdots\ \vv v_n\,]$, and let $B=P^{-1}AP$. For $j\le p$, column~$j$ of $B$ is $P^{-1}A\vv v_j=\lambda_0\vv e_j$. Expanding $\det(B-\lambda I)$ repeatedly down its first $p$ columns gives $\det(B-\lambda I)=(\lambda_0-\lambda)^p q(\lambda)$. By similarity (W3), $\det(A-\lambda I)=\det(B-\lambda I)$, so $\lambda_0$ has multiplicity $m\ge p$.
+\end{proof}
+
+\begin{theorem*}[Counting eigenvectors (Lay 5.3, Thm.~7)]\target{thm-lay-5-7}\target{thm-lay-5-7b}
+  Let $A$ be $n\times n$ with distinct real eigenvalues $\lambda_1,\dots,\lambda_r$ of multiplicities $m_1,\dots,m_r$, and let $\mathcal B_k$ be a basis of $\Nul(A-\lambda_k I)$ of dimension $d_k$.
+  \begin{enumerate}
+    \ii[(a)] The combined collection $\mathcal B_1\cup\dots\cup\mathcal B_r$ is linearly independent.
+    \ii[(b)] $A$ is diagonalizable $\iff \sum_{k=1}^r d_k = n \iff \det(A-\lambda I)$ factors completely into real linear factors AND $d_k=m_k$ for every $k$.
+  \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a).} Suppose a linear combination of $\bigcup\mathcal B_k$ equals $\vv 0$. Group the terms from $\mathcal B_k$ into $\vv w_k\in\Nul(A-\lambda_k I)$, so $\vv w_1+\dots+\vv w_r=\vv 0$. Any nonzero $\vv w_k$ would be eigenvectors for distinct eigenvalues summing to $\vv 0$, impossible by (W3); thus each $\vv w_k=\vv 0$, forcing all weights in each basis $\mathcal B_k$ to be $0$.
+    \ii \textbf{(b).} By (a) and (W5), the maximum number of independent eigenvectors in any eigenspace selection is $\sum_{k=1}^r d_k$, so Thm.~5 holds $\iff \sum d_k=n$. Since $\sum d_k \le \sum m_k \le \deg\det(A-\lambda I)=n$ (Thm.~7a), equality holds $\iff \sum m_k=n$ (complete real splitting) and $d_k=m_k$ for every $k$.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Worked examples 3 \& 4: Failure vs.\ $4\times4$ success]
+  \begin{itemize}
+    \ii \emph{Same eigenvalues, NOT diagonalizable:}
+    \[
+      A = \begin{bmatrix}2&4&3\\-4&-6&-3\\3&3&1\end{bmatrix}
+    \]
+    also has $\det(A-\lambda I)=-(\lambda-1)(\lambda+2)^2$, yet $A+2I$ has rank~$2$, so $\dim\Nul(A+2I)=3-2=1<2$. Total independent eigenvectors $=1+1=2<3$, so $A$ is \emph{not} diagonalizable!
+    \ii \emph{Triangular $4\times4$ matrix:}
+    \[
+      A = \begin{bmatrix}2&0&0&0\\0&2&0&0\\1&3&4&0\\0&0&0&4\end{bmatrix}
+    \]
+    has eigenvalues $2,2,4,4$. Here $\rank(A-2I)=2 \implies \dim E(2)=2$ (basis $(-3,1,0,0),(-2,0,1,0)$) and $\rank(A-4I)=2 \implies \dim E(4)=2$ (basis $\vv e_3,\vv e_4$). Since $2+2=4$, $A$ is diagonalizable!
+  \end{itemize}
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Checking $A=PDP^{-1}$:} Check $AP=PD$ ($A\vv p_j=d_j\vv p_j$) instead of computing $P^{-1}$.
+  \ii \textbf{Diagonalizability test via rank:} Simple eigenvalues always contribute $1$; a repeated eigenvalue $\lambda$ of multiplicity $m$ works iff $\rank(A-\lambda I)=n-m$ (Rank Thm.).
+  \ii \textbf{Limits $A^k$ as $k\to\infty$:} If every eigenvalue satisfies $\lambda=1$ or $|\lambda|<1$, then $D^k\to\operatorname{diag}(1,\dots,0)$ gives $\lim_{k\to\infty}A^k$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Column order of $P$ and $D$ must match!} If column~$1$ of $P$ is a $5$-eigenvector, $D_{11}$ must be $5$.
+  \ii \textbf{Diagonalizable $\neq$ invertible:} $\operatorname{diag}(1,0)$ is diagonalizable and singular; $\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ is invertible and \emph{not} diagonalizable.
+  \ii \textbf{Repeated eigenvalues can go either way:} $2I$ is diagonal; $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$ is not.
+\end{trapbox}
+
+\subsection{Eigenvectors and linear transformations (Lay 5.4)}
+
+\begin{qbox}
+  In Worked example~1, $A=PDP^{-1}$ with $D=\operatorname{diag}(5,3)$. What does this factorization reveal about the geometric transformation $\vv x\mapsto A\vv x$ itself when viewed in the basis $\mathcal B=\{(1,-1),(1,-2)\}$? And how do we represent linear maps between abstract vector spaces like $\mathbb P_2$ by matrices?
+\end{qbox}
+
+Let $T\colon V\to W$ be linear, with basis $\mathcal B=\{\vv b_1,\dots,\vv b_n\}$ of $V$ and basis $\mathcal C$ of $W$. Expanding $\vv x=\sum_{j=1}^n r_j\vv b_j$ and using linearity of $T$ and $[\cdot]_{\mathcal C}$ (W4),
+\[
+  [T(\vv x)]_{\mathcal C} = r_1[T(\vv b_1)]_{\mathcal C}+\dots+r_n[T(\vv b_n)]_{\mathcal C} = M[\vv x]_{\mathcal B},
+  \qquad M = \bigl[\,[T(\vv b_1)]_{\mathcal C}\ \ \cdots\ \ [T(\vv b_n)]_{\mathcal C}\,\bigr].
+\]
+When $W=V$ and $\mathcal C=\mathcal B$, $M=[T]_{\mathcal B}$ is the \vocab{$\mathcal B$-matrix of $T$}, satisfying $[T(\vv x)]_{\mathcal B}=[T]_{\mathcal B}[\vv x]_{\mathcal B}$.
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \node[figbox,draw=figslate!60,fill=figbg] (x) at (0,2.1) {$\vv x\in V$};
+  \node[figbox,draw=figslate!60,fill=figbg] (Tx) at (4.8,2.1) {$T(\vv x)\in W$};
+  \node[figbox,draw=figblue,fill=figblue!8] (xB) at (0,0) {$[\vv x]_{\mathcal B}\in\RR^n$};
+  \node[figbox,draw=figgreen,fill=figgreen!8] (TxC) at (4.8,0) {$[T(\vv x)]_{\mathcal C}\in\RR^m$};
+
+  \draw[->,very thick,black] (x) -- node[above,font=\small] {$T$} (Tx);
+  \draw[->,thick,figblue] (x) -- node[left,font=\small] {$\mathcal B$-coords} (xB);
+  \draw[->,thick,figgreen] (Tx) -- node[right,font=\small] {$\mathcal C$-coords} (TxC);
+  \draw[->,very thick,figpurple] (xB) -- node[below,font=\small] {multiply by $M$} (TxC);
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=5.6cm,align=left] at (6.7,1.05) {%
+    \textbf{Commutative matrix square:}\\[2pt]
+    Column $j$ of $M$ is $[T(\vv b_j)]_{\mathcal C}$. Converting $\vv x\to[\vv x]_{\mathcal B}$ and multiplying by $M$ computes the exact same coordinate vector as applying $T$ and taking $\mathcal C$-coordinates!
+  };
+\end{tikzpicture}
+\figcap{The matrix $M$ of a linear transformation $T\colon V\to W$ relative to bases $\mathcal B$ and $\mathcal C$ makes the square commute: $[T(\vv x)]_{\mathcal C} = M[\vv x]_{\mathcal B}$.}
+\end{fig}
+
+\begin{example*}[Differentiation on $\mathbb P_2$]
+  Let $D\colon\mathbb P_2\to\mathbb P_2$ be $D(p)=p'$ in $\mathcal B=\{1,t,t^2\}$. Since $D(1)=0$, $D(t)=1$, $D(t^2)=2t$,
+  \[
+    [D]_{\mathcal B} = \begin{bmatrix}0&1&0\\0&0&2\\0&0&0\end{bmatrix}, \qquad
+    [D(5+3t-t^2)]_{\mathcal B} = [D]_{\mathcal B}\begin{bmatrix}5\\3\\-1\end{bmatrix} = \begin{bmatrix}3\\-2\\0\end{bmatrix}\leftrightarrow 3-2t.
+  \]
+  Because coordinates keep all linear relations (W4), $\vv x\neq\vv 0$ satisfies $T(\vv x)=\lambda\vv x \iff [T]_{\mathcal B}[\vv x]_{\mathcal B}=\lambda[\vv x]_{\mathcal B}$. Here $[D]_{\mathcal B}$ is upper-triangular with diagonal $0,0,0$, so $0$ is the only eigenvalue (constant polynomials).
+\end{example*}
+
+\begin{theorem*}[Diagonal and $\mathcal B$-matrix representation (Lay 5.4, Thm.~8)]\target{thm-lay-5-8}
+  Suppose $A=PCP^{-1}$ with $P$ invertible, and let $\mathcal B$ be the basis of $\RR^n$ formed by the columns of $P$. Then $C$ is the $\mathcal B$-matrix of the transformation $\vv x\mapsto A\vv x$. In particular, if $A=PDP^{-1}$ with $D$ diagonal, then $D$ is the $\mathcal B$-matrix of $\vv x\mapsto A\vv x$.
+\end{theorem*}
+\begin{proof}
+  By (W4), $[A\vv x]_{\mathcal B}=P^{-1}(A\vv x) = P^{-1}AP[\vv x]_{\mathcal B} = C[\vv x]_{\mathcal B}$ for every $\vv x\in\RR^n$. Applying both $C$ and $[\vv x\mapsto A\vv x]_{\mathcal B}$ to $[\vv b_j]_{\mathcal B}=\vv e_j$ confirms their columns match.
+\end{proof}
+
+\noindent\textbf{The question answered.} In the eigenvector basis $\mathcal B=\{(1,-1),(1,-2)\}$, the $\mathcal B$-matrix of $\vv x\mapsto A\vv x$ is $D=\operatorname{diag}(5,3)$: the transformation merely scales coordinate~$1$ by $5$ and coordinate~$2$ by $3$ independently!
+
+\begin{example*}[A non-diagonalizable $2\times2$ matrix in an almost-diagonal basis]
+  $A=\begin{psmallmatrix}4&-9\\4&-8\end{psmallmatrix}$ has $\det(A-\lambda I)=(\lambda+2)^2$ and $E(-2,A)=\spn\{(3,2)\}$ ($\rank(A+2I)=1$). Using $\mathcal B=\{(3,2),(2,1)\}$,
+  \[
+    [x\mapsto A\vv x]_{\mathcal B} = P^{-1}AP = \begin{bmatrix}-1&2\\2&-3\end{bmatrix}\begin{bmatrix}4&-9\\4&-8\end{bmatrix}\begin{bmatrix}3&2\\2&1\end{bmatrix} = \begin{bmatrix}-2&1\\0&-2\end{bmatrix},
+  \]
+  upper-triangular with $1$ on the superdiagonal (a $2\times 2$ Jordan block!).
+\end{example*}
+
+\noindent\textbf{Key facts about similar matrices ($B=P^{-1}AP$):} $\det B=\det A$; $\tr B=\tr A$ (since $\tr(XY)=\tr(YX)$); $B^k=P^{-1}A^k P$; similarity is symmetric/transitive; and if $A\vv v=\lambda\vv v$, then $B(P^{-1}\vv v)=\lambda(P^{-1}\vv v)$ ($P^{-1}$ converts eigenvectors!).
+
+\begin{shortcuts}
+  \ii \textbf{$\mathcal B$-matrix on $\RR^n$:} $[T]_{\mathcal B}=P^{-1}AP$ where columns of $P$ are $\mathcal B$.
+  \ii \textbf{Eigenvalues of an abstract $T\colon V\to V$:} Compute eigenvalues of $[T]_{\mathcal B}$ in any convenient basis $\mathcal B$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Order is $P^{-1}AP$, NOT $PAP^{-1}$!} $PAP^{-1}=\begin{psmallmatrix}3&0\\6&5\end{psmallmatrix}\neq D$ in Worked example~1!
+  \ii \textbf{Similar matrices have DIFFERENT eigenvectors in general:} $D$ has eigenvector $\vv e_1$, while $A$ has $\vv p_1=P\vv e_1$.
+\end{trapbox}
+
+\subsection{Complex eigenvalues (Lay 5.5)}
+
+\begin{qbox}
+  The $90^\circ$ counterclockwise rotation $A=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ moves every nonzero real vector off its own line, so $\det(A-\lambda I)=\lambda^2+1=0$ has no real roots. What geometric action do its \emph{complex} eigenvalues $\pm i$ encode?
+\end{qbox}
+
+Allowing scalars in $\CC$, $\lambda\in\CC$ is a \vocab{complex eigenvalue} of $A$ if $A\vv x=\lambda\vv x$ for some nonzero $\vv x\in\CC^n$. Everything from Week~7 holds identically over $\CC$, and by the Fundamental Theorem of Algebra every $n\times n$ matrix has $n$ complex eigenvalues counted with multiplicity. Taking complex conjugates preserves sums and products ($\overline{B\vv x}=\overline{B}\,\overline{\vv x}$); for a \emph{real} matrix $A=\overline{A}$,
+\[
+  A\vv x=\lambda\vv x \implies A\overline{\vv x}=\overline{\lambda}\,\overline{\vv x},
+\]
+so complex eigenvalues of a real matrix come in \emph{conjugate pairs} $\lambda,\overline{\lambda}$ with conjugate eigenvectors! For $A=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$, $\lambda=i$ has eigenvector $\vv x=(1,-i)$, and automatically $\lambda=-i$ has $\overline{\vv x}=(1,i)$.
+
+\medskip\noindent\textbf{Rotation--scaling matrices.} For real $a,b$ (not both $0$), define
+\[
+  C = \begin{bmatrix}a&-b\\b&a\end{bmatrix}
+  = r\begin{bmatrix}\cos\varphi&-\sin\varphi\\\sin\varphi&\cos\varphi\end{bmatrix},
+  \qquad r = |\lambda|=\sqrt{a^2+b^2}=\sqrt{\det C},\quad \cos\varphi=\frac{a}{r},\ \sin\varphi=\frac{b}{r}.
+\]
+Its eigenvalues are $\lambda=a\pm bi$: the modulus $r$ is the \textbf{scale factor}, and the argument $\varphi$ of $(a,b)$ is the \textbf{rotation angle}! (Careful of quadrant: $\begin{psmallmatrix}1&1\\-1&1\end{psmallmatrix}$ has $a=1,b=-1$, so $(1,-1)$ in Quadrant~IV gives $\varphi=-45^\circ$, whereas $\begin{psmallmatrix}\sqrt{3}&-1\\1&\sqrt{3}\end{psmallmatrix}$ gives $r=2,\varphi=30^\circ$.)
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=2.2cm,yshift=1.4cm,scale=0.85]
+    \draw[figaxis] (-0.4,0) -- (2.9,0) node[right,font=\scriptsize] {$\operatorname{Re}$};
+    \draw[figaxis] (0,-0.4) -- (0,2.1) node[above,font=\scriptsize] {$\operatorname{Im}$};
+    \draw[dashed,black!45] (1.9,0) -- (1.9,1.2) -- (0,1.2);
+    \draw[figvec,black,very thick] (0,0) -- (1.9,1.2);
+    \fill[black] (1.9,1.2) circle (2.2pt);
+    \node[above right=1pt,font=\scriptsize,halo] at (1.9,1.2) {$a+bi$};
+    \node[below,font=\scriptsize] at (1.9,0) {$a$};
+    \node[left,font=\scriptsize] at (0,1.2) {$b$};
+    \draw[figblue,thick] (0.55,0) arc (0:32.3:0.55);
+    \node[font=\scriptsize,figblue] at (0.85,0.22) {$\varphi$};
+    \node[font=\scriptsize,above left=-1pt] at (0.95,0.65) {$r$};
+    \node[font=\footnotesize,anchor=north] at (1.2,-0.55) {Complex plane: $\lambda=re^{i\varphi}$};
+  \end{scope}
+
+  \begin{scope}[xshift=8.5cm,yshift=1.4cm,scale=0.85]
+    \draw[figaxis] (-0.4,0) -- (2.9,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.4) -- (0,2.1) node[above,font=\scriptsize] {$x_2$};
+    \draw[figvec,black,very thick] (0,0) -- (1.1,0) node[below,font=\scriptsize] {$\vv e_1$};
+    \draw[figvec,figblue,very thick] (0,0) -- (1.9,1.2) node[above right=1pt,halo,font=\scriptsize] {$C\vv e_1=(a,b)$};
+    \draw[figblue,thick] (0.55,0) arc (0:32.3:0.55);
+    \node[font=\scriptsize,figblue] at (0.85,0.22) {$\varphi$};
+    \node[font=\scriptsize,above left=-1pt,figblue] at (0.95,0.65) {length $r$};
+    \node[font=\footnotesize,anchor=north] at (1.2,-0.55) {Geometric action of $C$ in $\RR^2$};
+  \end{scope}
+\end{tikzpicture}
+\figcap{\textbf{Left:} Eigenvalue $a+bi$ with modulus $r=\sqrt{a^2+b^2}$ and angle $\varphi$. \textbf{Right:} The matrix $C=\begin{psmallmatrix}a&-b\\b&a\end{psmallmatrix}$ rotates every vector by $\varphi$ and scales length by $r$ ($C\vv e_1=(a,b)$).}
+\end{fig}
+
+\noindent\textbf{The question answered.} The $90^\circ$ rotation matrix has $a=0,b=1$: its eigenvalues $\pm i$ have modulus $r=1$ (no scaling) and argument $\varphi=90^\circ$ (the rotation angle!).
+
+\begin{theorem*}[Real $2\times2$ matrices with complex eigenvalues (Lay 5.5, Thm.~9)]\target{thm-lay-5-9}
+  Let $A$ be a real $2\times2$ matrix with a complex eigenvalue $\lambda=a-bi$ ($b\ne0$) and associated eigenvector $\vv v\in\CC^2$. Then
+  \[
+    A = P C P^{-1}, \qquad\text{where}\qquad P = [\,\operatorname{Re}\vv v\ \ \operatorname{Im}\vv v\,],\qquad C = \begin{bmatrix}a&-b\\b&a\end{bmatrix}.
+  \]
+\end{theorem*}
+\begin{ideabox}
+  Write $\vv v=\vv x+i\vv y$ with $\vv x,\vv y\in\RR^2$. Since $A$ is real, splitting $A(\vv x+i\vv y)=(a-bi)(\vv x+i\vv y)$ into real and imaginary parts gives two real equations: $A\vv x = a\vv x + b\vv y$ and $A\vv y = -b\vv x + a\vv y$. By (W1), those two columns together state $AP = PC$! (Choosing $\lambda=a-bi$ instead of $a+bi$ flips $\operatorname{Im}\vv v \mapsto -\operatorname{Im}\vv v$ and ensures $+b$ sits in entry $(2,1)$ of $C$.)
+\end{ideabox}
+\begin{proof}
+  Let $\vv x=\operatorname{Re}\vv v$ and $\vv y=\operatorname{Im}\vv v$. Since $A$ is real, $A\vv v=A\vv x+iA\vv y$, while $\lambda\vv v=(a-bi)(\vv x+i\vv y)=(a\vv x+b\vv y)+i(-b\vv x+a\vv y)$. Equating real and imaginary parts gives $A\vv x=a\vv x+b\vv y$ and $A\vv y=-b\vv x+a\vv y$, i.e.\ $AP=PC$. If $\vv x,\vv y$ were linearly dependent, $\vv v$ would be a complex multiple of a real eigenvector $\vv u\ne\vv 0$, giving $A\vv u=(a-bi)\vv u$ with the left side real and right side non-real ($b\ne 0$), impossible! Hence $P$ is invertible (W2) and $A=PCP^{-1}$.
+\end{proof}
+
+\begin{example*}[Worked example (Lay 5.5, Ex.~2) \& Elliptical Trajectories]
+  For
+  \[
+    A = \begin{bmatrix}0.5&-0.6\\0.75&1.1\end{bmatrix},
+  \]
+  $\tr A=1.6$, $\det A=1$, so $\lambda^2-1.6\lambda+1=0 \implies \lambda=0.8\pm 0.6i$ ($|\lambda|=\sqrt{0.64+0.36}=1$). Using $\lambda=0.8-0.6i$: row~$1$ of $A-\lambda I$ is $(-0.3+0.6i,\ -0.6)$, giving eigenvector $\vv v=(2,-1+2i)$. Taking $\operatorname{Re}\vv v=(2,-1)$ and $\operatorname{Im}\vv v=(0,2)$ gives
+  \[
+    P=\begin{bmatrix}2&0\\-1&2\end{bmatrix},\qquad
+    C=\begin{bmatrix}0.8&-0.6\\0.6&0.8\end{bmatrix},\qquad
+    A=PCP^{-1}.
+  \]
+  Since $r=1$, $C$ is pure rotation by $\varphi=\arccos(0.8)\approx 36.9^\circ$. Iterating $\vv x_k=A^k\vv x_0 = P C^k\vv e_1$ (from $\vv x_0=\operatorname{Re}\vv v=P\vv e_1$) traces an \textbf{ellipse} $\{\cos\theta(2,-1)+\sin\theta(0,2)\}$ advancing $\approx 36.9^\circ$ per step! (If $r>1$ it spirals outward; if $r<1$ it spirals inward.) For $3\times3$ matrices like $\operatorname{diag}(C,1.07)$, trajectories spiral while expanding/shrinking along the third eigenvector!
+\end{example*}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=3.2cm,yshift=1.9cm,scale=0.68]
+    \draw[figaxis] (-2.6,0) -- (2.9,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.6) -- (0,2.7) node[above,font=\scriptsize] {$x_2$};
+    % Ellipse x(t) = cos(t)*(2,-1) + sin(t)*(0,2) = (2 cos t, -cos t + 2 sin t)
+    \draw[figblue,very thick,domain=0:360,samples=100,variable=\t]
+      plot ({2*cos(\t)},{-cos(\t)+2*sin(\t)});
+
+    % Plot iterates x0, x1, x2, x3: t_k = k * 36.87 deg
+    \foreach \k/\lbl/\pos in {0/0/below right, 1/1/right, 2/2/above right, 3/3/above left} {
+      \pgfmathsetmacro{\px}{2*cos(\k*36.87)}
+      \pgfmathsetmacro{\py}{-cos(\k*36.87)+2*sin(\k*36.87)}
+      \fill[figred] (\px,\py) circle (3pt);
+      \node[\pos=1pt,halo,font=\scriptsize,figred] at (\px,\py) {$\vv x_{\lbl}$};
+    }
+    \draw[->,thick,figred,dashed] (2,-1) -- (1.6,0.4);
+  \end{scope}
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=5.6cm,align=left] at (7.3,1.9) {%
+    \textbf{Dynamical geometry of $A=PCP^{-1}$:}\\[2pt]
+    $\bullet$ In $\CC^n$ ($C$-basis), $C^k\vv e_1=r^k(\cos k\varphi,\sin k\varphi)$ walks on a circle (here $r=1$, $\varphi\approx36.9^\circ$).\\[2pt]
+    $\bullet$ $P$ linearly skews that circle into an invariant \textbf{ellipse} $\{\cos\theta\,\operatorname{Re}\vv v+\sin\theta\,\operatorname{Im}\vv v\}$!\\[2pt]
+    $\bullet$ $|r|<1 \implies$ inward spiral; $|r|>1 \implies$ outward spiral.
+  };
+\end{tikzpicture}
+\figcap{Orbit $\vv x_k=A^k\vv x_0$ for Lay 5.5 Ex.~2 starting at $\vv x_0=\operatorname{Re}\vv v=(2,-1)$: each multiplication by $A$ moves $\vv x_k$ counterclockwise along the invariant ellipse by $\approx36.9^\circ$.}
+\end{fig}
+
+\begin{shortcuts}
+  \ii \textbf{Complex eigenvector of $2\times2$:} Any nonzero row $(p\ \; q)$ of $A-\lambda I$ immediately yields eigenvector $(q,-p)$.
+  \ii \textbf{Rotation--scaling parameters:} From $\lambda=a\pm bi$, $r=\sqrt{a^2+b^2}=\sqrt{\det A}$ and $\varphi$ is the angle of $(a,b)$ (mind the quadrant!).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Columns of $P$ in Thm.~9 are $\operatorname{Re}\vv v$ and $\operatorname{Im}\vv v$ (real vectors!),} NOT $\vv v$ and $\overline{\vv v}$, paired with $\lambda=a-bi$!
+  \ii \textbf{Check $\sin\varphi=b/r$ as well as $\cos\varphi=a/r$:} $\cos\varphi$ alone leaves $\pm\varphi$ ambiguous.
+  \ii \textbf{Only REAL matrices force conjugate eigenvalue pairs:} A complex matrix like $\operatorname{diag}(i,2)$ need not have $-i$ as an eigenvalue.
+\end{trapbox}
+
+\section{Homework this week}
+HW7, Sections 5.3--5.4, and HW8, Section 5.5.
+\begin{itemize}
+  \ii \textbf{Section 5.3:} \#1, \#3 ($A^k=PD^kP^{-1}$); \#7 ($2\times 2$ distinct eigenvalues $\implies$ Thm.~6); \#13, \#19 (check $\rank(A-\lambda I)$ for repeated $\lambda$, Thm.~7b); \#22, \#23, \#24, \#26 (Thm.~5, Worked ex.~3, $\operatorname{diag}(1,0)$, $I$); \#30 ($1+1<3$, Thm.~7b).
+  \ii \textbf{Section 5.4:} \#1, \#3, \#4 (columns are $[T(\vv b_j)]_{\mathcal C}$); \#5 ($[T(\vv x)]_{\mathcal B}=[T]_{\mathcal B}[\vv x]_{\mathcal B}$); \#7, \#8, \#9 ($P^{-1}AP$); \#15, \#20 ($T(p)=\lambda p$); \#22, \#23, \#27 (similarity facts).
+  \ii \textbf{Section 5.5:} \#3, \#5 ($2\times 2$ complex eigenvalues/eigenvectors); \#10 ($r$ and $\varphi$, watch quadrant); \#13, \#15 (Thm.~9 with $\lambda=a-bi$); \#24 (ellipse in Lay 5.5 Ex.~2).
+\end{itemize}
+
+\section{Problem set}
+
+\begin{prob}\target{prob-P1}
+  \textbf{P1.}\ Diagonalize the matrix below, and find a formula for $A^k$.
+  \[
+    A = \begin{bmatrix}2&3\\4&1\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P2}
+  \textbf{P2.}\ Decide whether each matrix is diagonalizable, and diagonalize it if it is:
+  \[
+    A=\begin{bmatrix}2&0&0\\1&2&0\\0&0&3\end{bmatrix},\qquad
+    B=\begin{bmatrix}4&0&-2\\2&5&4\\0&0&5\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P3}
+  \textbf{P3.}\ A $4\times 4$ matrix has eigenvalues $1,1,2,3$, and $\rank(A-I)=3$. Is $A$ diagonalizable? What if $\rank(A-I)=2$?
+\end{prob}
+
+\begin{prob}\target{prob-P4}
+  \textbf{P4.}\ Let $T\colon\mathbb P_1\to\mathbb P_2$ be $T(p)=(t+1)p(t)$. Find the matrix of $T$ relative to $\mathcal B=\{1,t\}$ and $\mathcal C=\{1,t,t^2\}$, and use it to compute $T(3-2t)$.
+\end{prob}
+
+\begin{prob}\target{prob-P5}
+  \textbf{P5.}\ For the matrix $A$ below and $\mathcal B=\{(1,1),(1,2)\}$, find the $\mathcal B$-matrix of $\vv x\mapsto A\vv x$. What does it tell you about $(1,1)$ and $(1,2)$?
+  \[
+    A = \begin{bmatrix}3&-1\\2&0\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P6}
+  \textbf{P6.}\ For the matrix below, find its complex eigenvalues, an eigenvector for $3-i$, and $P,C$ with $A=PCP^{-1}$. What are the scale factor and the rotation angle of $C$?
+  \[
+    A = \begin{bmatrix}2&-1\\2&4\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P7}
+  \textbf{P7.}\ Prove: if $A$ is diagonalizable and invertible, then $A^{-1}$ is diagonalizable. If $A$ is diagonalizable, is $A^{\mathsf T}$?
+\end{prob}
+
+\begin{prob}\target{prob-P8}
+  \textbf{P8.}\ For the matrix below and $\vv x_0=(1,0)$, find $\vv x_k=A^k\vv x_0$ and its limit as $k\to\infty$.
+  \[
+    A = \begin{bmatrix}3/4&1/4\\1/4&3/4\end{bmatrix}.
+  \]
+\end{prob}
+
+\end{document}

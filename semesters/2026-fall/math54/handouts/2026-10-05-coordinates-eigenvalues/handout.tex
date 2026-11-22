@@ -1,0 +1,486 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}
+\title{Math 54 --- Week 7}
+\subtitle{Coordinate systems; change of basis; eigenvectors and eigenvalues; the characteristic equation (Lay 4.4, 4.6, 5.1--5.2)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--6}
+
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Bases (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}):} A basis of $V$ is a linearly independent spanning set. Every basis of $V$ has $n=\dim V$ vectors; in an $n$-dimensional space, any $n$ independent vectors form a basis, and more than $n$ vectors are dependent (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-9}{Lay 4.5}).
+
+  \ii \textbf{Invertible matrix theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Weeks~4--6}):} For square $A$, $A$ is invertible $\iff A\vv x=\vv 0$ has only the trivial solution $\iff \det A\ne 0 \iff$ the columns of $A$ form a basis of $\RR^n$. For $2\times 2$ matrices,
+  \[
+    \begin{bmatrix}a&b\\c&d\end{bmatrix}^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}.
+  \]
+
+  \ii \textbf{Determinants (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Weeks~4--5}):} $\det(AB)=\det A\det B$, $\det(A^{\mathsf T})=\det A$, row operations modify $\det$ predictably, and the determinant of a triangular matrix is the product of its diagonal entries.
+
+  \ii \textbf{Subspaces and row equivalence (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-6}{Weeks~5--6}):} $\Nul A$ is a subspace of $\RR^n$, with a basis given by the parametric vector form of $A\vv x=\vv 0$. Row operations preserve linear relations among the columns of a matrix.
+
+  \ii \textbf{One-to-one linear transformations (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-4-2}{Weeks~3, 5}):} A linear map $T$ is one-to-one if and only if $T(\vv x)=\vv 0$ holds only for $\vv x=\vv 0$ (valid for linear maps between any vector spaces).
+
+  \ii \textbf{Linear dependence lemma (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-7}{Week~2}):} If $\{\vv v_1,\dots,\vv v_p\}$ is dependent and $\vv v_1\ne\vv 0$, then some $\vv v_j$ ($j>1$) is a linear combination of $\vv v_1,\dots,\vv v_{j-1}$ (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-7}{Lay 4.3, Thm.~7}).
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Coordinate systems (Lay 4.4)}
+
+\begin{qbox}
+  Given the slanted basis $\mathcal B=\{\vv b_1,\vv b_2\}=\{(2,1),(-1,1)\}$ of $\RR^2$, how do we describe $\vv x=(4,5)$ by a coordinate list relative to $\mathcal B$, why is this coordinate list \emph{unique}, and how does a coordinate system turn polynomials or matrices into ordinary column vectors in $\RR^n$?
+\end{qbox}
+
+In standard Euclidean coordinates we measure position using grid steps along $(1,0)$ and $(0,1)$. Because \emph{any} basis $\mathcal B$ spans $V$ with zero redundancy, $\mathcal B$ sets up a new skewed coordinate grid on $V$ in which every vector has a unique address!
+
+\begin{theorem*}[The Unique Representation Theorem (Lay 4.4, Thm.~8)]\target{thm-lay-4-8}
+  Let $\mathcal B=\{\vv b_1,\dots,\vv b_n\}$ be a basis for a vector space $V$. Then for each $\vv x\in V$, there exists a \textbf{unique} set of scalars $c_1,\dots,c_n$ such that
+  \[
+    \vv x = c_1\vv b_1 + \dots + c_n\vv b_n.
+  \]
+\end{theorem*}
+\begin{ideabox}
+  Spanning gives \emph{existence} of weights $c_1,\dots,c_n$, while linear independence gives \emph{uniqueness}: subtracting two representations produces a linear combination equal to $\vv 0$, forcing all differences $c_i-d_i$ to vanish!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Since $\mathcal B$ spans $V$, at least one representation $\vv x=c_1\vv b_1+\dots+c_n\vv b_n$ exists.
+    \ii If also $\vv x=d_1\vv b_1+\dots+d_n\vv b_n$, subtracting yields $\vv 0=(c_1-d_1)\vv b_1+\dots+(c_n-d_n)\vv b_n$. By linear independence of $\mathcal B$, $c_i-d_i=0$ for every $i$, so $c_i=d_i$.
+  \end{steps}
+\end{proof}
+
+\noindent\textbf{Definition.} The unique weights $c_1,\dots,c_n$ are the \vocab{coordinates of $\vv x$ relative to $\mathcal B$}, and the column vector $[\vv x]_{\mathcal B}=(c_1,\dots,c_n)\in\RR^n$ is the \vocab{$\mathcal B$-coordinate vector of $\vv x$}. The assignment $\vv x\mapsto[\vv x]_{\mathcal B}$ is the \vocab{coordinate mapping}.
+
+\medskip\noindent\textbf{Coordinates in $\RR^n$ and the matrix $P_{\mathcal B}$.} Putting the basis vectors as columns forms $P_{\mathcal B}=[\,\vv b_1\ \cdots\ \vv b_n\,]$, the \vocab{change-of-coordinates matrix} from $\mathcal B$ to the standard basis $\mathcal E$. By definition of matrix--vector multiplication,
+\[
+  \vv x = c_1\vv b_1+\dots+c_n\vv b_n = P_{\mathcal B}[\vv x]_{\mathcal B},
+  \qquad\text{hence}\qquad
+  [\vv x]_{\mathcal B} = P_{\mathcal B}^{-1}\vv x.
+\]
+Here $P_{\mathcal B}$ is guaranteed invertible because its columns form a basis of $\RR^n$ (W2). In practice, rather than inverting $P_{\mathcal B}$, row reduce the augmented matrix $[\,\vv b_1\ \cdots\ \vv b_n\mid \vv x\,]\sim [\,I\mid [\vv x]_{\mathcal B}\,]$.
+
+\noindent\textbf{The question answered.} Solving $c_1(2,1)+c_2(-1,1)=(4,5)$ (swapping rows first to avoid fractions):
+\[
+  \aug{cc|c}{2&-1&4\\1&1&5}
+  \xrightarrow{R_1\leftrightarrow R_2}
+  \aug{cc|c}{1&1&5\\2&-1&4}
+  \xrightarrow{R_2-2R_1}
+  \aug{cc|c}{1&1&5\\0&-3&-6}
+  \xrightarrow{-\frac13 R_2,\ R_1-R_2}
+  \aug{cc|c}{1&0&3\\0&1&2},
+  \qquad [\vv x]_{\mathcal B} = \begin{bmatrix}3\\2\end{bmatrix}.
+\]
+Check: $3(2,1)+2(-1,1)=(4,5)$, unique by Thm.~8!
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=1.4cm,yshift=1.3cm,scale=0.48]
+    \begin{scope}
+      \clip (-3.4,-1.2) rectangle (7.4,6.4);
+      \foreach \i in {-2,-1,0,1,2,3,4} {
+        \draw[figgrid] ({2*\i-3},{\i-3}) -- ({2*\i+5},{\i+5});
+        \draw[figgrid] ({-\i-4},{\i-2}) -- ({-\i+8},{\i+4});
+      }
+    \end{scope}
+    \draw[figaxis] (-2.6,0) -- (7.2,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.8) -- (0,6.2) node[above,font=\scriptsize] {$x_2$};
+
+    \draw[figvec,figblue,very thick] (0,0) -- (2,1) node[below right=-2pt,halo,font=\scriptsize] {$\vv b_1$};
+    \draw[figvec,figred,very thick] (0,0) -- (-1,1) node[above left=-2pt,halo,font=\scriptsize] {$\vv b_2$};
+    \draw[figvecsub,figblue,dashed] (2,1) -- (6,3) node[below right=-2pt,halo,font=\scriptsize] {$3\vv b_1$};
+    \draw[figvecsub,figred,dashed] (6,3) -- (4,5);
+    \draw[figvec,black,very thick] (0,0) -- (4,5);
+    \fill[black] (4,5) circle (3.5pt);
+    \node[above=3pt,halo,font=\scriptsize] at (4,5) {$\vv x = 3\vv b_1+2\vv b_2=(4,5)$};
+  \end{scope}
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=6.1cm,align=left] at (6.0,2.3) {%
+    \textbf{Two coordinate descriptions:}\\[2pt]
+    $\bullet$ In the slanted $\mathcal B$-grid: walk $3$ units along $\vv b_1$ and $2$ units along $\vv b_2$, giving $[\vv x]_{\mathcal B}=\begin{psmallmatrix}3\\2\end{psmallmatrix}$.\\[3pt]
+    $\bullet$ In the standard grid:
+    \[
+      \vv x = P_{\mathcal B}[\vv x]_{\mathcal B} = \begin{bmatrix}2&-1\\1&1\end{bmatrix}\begin{bmatrix}3\\2\end{bmatrix} = \begin{bmatrix}4\\5\end{bmatrix}.
+    \]
+  };
+\end{tikzpicture}
+\figcap{The skewed grid of $\mathcal B=\{(2,1),(-1,1)\}$ on $\RR^2$: marching $3$ steps along $\vv b_1$ and $2$ steps along $\vv b_2$ arrives at the standard point $(4,5)$.}
+\end{fig}
+
+\begin{theorem*}[The Coordinate Mapping Isomorphism (Lay 4.4, Thm.~9)]\target{thm-lay-4-9}
+  Let $\mathcal B=\{\vv b_1,\dots,\vv b_n\}$ be a basis for a vector space $V$. Then the coordinate mapping $\vv x\mapsto[\vv x]_{\mathcal B}$ is a one-to-one linear transformation from $V$ onto $\RR^n$.
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \emph{Linearity.} Write $\vv u=\sum_{i=1}^n c_i\vv b_i$ and $\vv w=\sum_{i=1}^n d_i\vv b_i$. Then $\vv u+\vv w=\sum_{i=1}^n(c_i+d_i)\vv b_i$ and $r\vv u=\sum_{i=1}^n(rc_i)\vv b_i$. By uniqueness (Thm.~8), $[\vv u+\vv w]_{\mathcal B}=[\vv u]_{\mathcal B}+[\vv w]_{\mathcal B}$ and $[r\vv u]_{\mathcal B}=r[\vv u]_{\mathcal B}$.
+    \ii \emph{One-to-one.} If $[\vv x]_{\mathcal B}=\vv 0$, then $\vv x=0\vv b_1+\dots+0\vv b_n=\vv 0$, so by (W5) the map is one-to-one.
+    \ii \emph{Onto.} Any $(c_1,\dots,c_n)\in\RR^n$ is the coordinate vector of $\vv x=c_1\vv b_1+\dots+c_n\vv b_n\in V$.
+  \end{steps}
+\end{proof}
+
+A one-to-one linear map from $V$ onto $\RR^n$ is an \vocab{isomorphism}: every $n$-dimensional real vector space $V$ behaves identically to $\RR^n$ once a basis is chosen! Because $\vv x\mapsto[\vv x]_{\mathcal B}$ is linear and $[\vv x]_{\mathcal B}=\vv 0\iff \vv x=\vv 0$, coordinates preserve \emph{all} linear relations:
+\[
+  c_1\vv u_1+\dots+c_p\vv u_p = \vv 0 \iff c_1[\vv u_1]_{\mathcal B}+\dots+c_p[\vv u_p]_{\mathcal B}=\vv 0.
+\]
+Thus questions about span and linear independence in $\mathbb P_n$ or $M_{2\times2}$ translate verbatim into columns in $\RR^N$!
+
+\begin{example*}[Worked examples: polynomials and subspaces]
+  \begin{itemize}
+    \ii \emph{Independence in $\mathbb P_2$:} Are $p_1=1+2t^2$, $p_2=4+t+5t^2$, $p_3=3+2t$ independent? Taking coordinate vectors in the standard basis $\{1,t,t^2\}$ gives columns $(1,0,2)^{\mathsf T}$, $(4,1,5)^{\mathsf T}$, $(3,2,0)^{\mathsf T}$:
+    \[
+      \begin{bmatrix}1&4&3\\0&1&2\\2&5&0\end{bmatrix}
+      \xrightarrow{R_3-2R_1}
+      \begin{bmatrix}1&4&3\\0&1&2\\0&-3&-6\end{bmatrix}
+      \xrightarrow{R_3+3R_2,\ R_1-4R_2}
+      \begin{bmatrix}1&0&-5\\0&1&2\\0&0&0\end{bmatrix}.
+    \]
+    Since column~$3 = -5(\text{col }1)+2(\text{col }2)$ and row operations keep column relations (W4), $p_3=-5p_1+2p_2$: \emph{dependent}!
+    \ii \emph{Subspace coordinates:} Let $\vv v_1=(1,2,0)$, $\vv v_2=(0,1,1)$, $H=\spn\{\vv v_1,\vv v_2\}\subseteq\RR^3$ with basis $\mathcal B=\{\vv v_1,\vv v_2\}$. To check if $\vv x=(2,7,3)\in H$ and find $[\vv x]_{\mathcal B}$:
+    \[
+      \aug{cc|c}{1&0&2\\2&1&7\\0&1&3}
+      \xrightarrow{R_2-2R_1,\ R_3-R_2}
+      \aug{cc|c}{1&0&2\\0&1&3\\0&0&0}.
+    \]
+    Consistent! Thus $\vv x\in H$ with $[\vv x]_{\mathcal B}=(2,3)\in\RR^2$ (note $\dim H=2$, so $[\vv x]_{\mathcal B}\in\RR^2$ even though $\vv x\in\RR^3$!).
+  \end{itemize}
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Coordinates in $\RR^n$:} Row reduce $[\,\vv b_1\ \cdots\ \vv b_n\mid \vv x\,]$ to find $[\vv x]_{\mathcal B}$.
+  \ii \textbf{Span/independence in $\mathbb P_n$ or matrix spaces:} Convert to standard coordinate vectors in $\RR^N$ and row reduce (Thm.~9).
+  \ii \textbf{Polynomial in a non-standard basis:} Equate coefficients of $1,t,t^2,\dots$ (e.g.\ in $\mathbb P_1$ with $\mathcal B=\{1+t,1-t\}$, $c_1(1+t)+c_2(1-t)=5+t\implies c_1+c_2=5,\ c_1-c_2=1\implies [5+t]_{\mathcal B}=(3,2)$).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Order matters:} Swapping $\mathcal B'=\{\vv b_2,\vv b_1\}$ swaps the coordinates from $(3,2)$ to $(2,3)$.
+  \ii \textbf{Polynomial basis order:} With $\{1,t,t^2\}$, $1+2t^2$ has coordinates $(1,0,2)$, not $(2,0,1)$.
+  \ii \textbf{$P_{\mathcal B}$ goes $\mathcal B\to\mathcal E$, not $\mathcal E\to\mathcal B$:} For the question, $P_{\mathcal B}(4,5)=(3,9)\neq[\vv x]_{\mathcal B}=(3,2)$; always use $[\vv x]_{\mathcal B}=P_{\mathcal B}^{-1}\vv x$.
+  \ii \textbf{Subspace coordinates live in $\RR^{\dim H}$:} Not in the ambient $\RR^n$!
+\end{trapbox}
+
+\subsection{Change of basis (Lay 4.6)}
+
+\begin{qbox}
+  Let $\mathcal B=\{(1,1),(1,2)\}$ and $\mathcal C=\{(1,0),(2,1)\}$ be two bases of $\RR^2$. Suppose a vector $\vv x$ has $\mathcal B$-coordinates $[\vv x]_{\mathcal B}=(2,-1)$. How do we convert directly from $[\vv x]_{\mathcal B}$ to $[\vv x]_{\mathcal C}$ with a single matrix multiply?
+\end{qbox}
+
+\begin{theorem*}[Change of Coordinates (Lay 4.6, Thm.~15)]\target{thm-lay-4-15}
+  Let $\mathcal B=\{\vv b_1,\dots,\vv b_n\}$ and $\mathcal C=\{\vv c_1,\dots,\vv c_n\}$ be bases of $V$. There exists a \textbf{unique} $n\times n$ matrix $P_{\mathcal C\leftarrow\mathcal B}$ such that
+  \[
+    [\vv x]_{\mathcal C} = P_{\mathcal C\leftarrow\mathcal B}[\vv x]_{\mathcal B} \qquad \text{for every }\vv x\in V.
+  \]
+  Its columns are the $\mathcal C$-coordinate vectors of the old basis $\mathcal B$:
+  \[
+    P_{\mathcal C\leftarrow\mathcal B} = \bigl[\,[\vv b_1]_{\mathcal C}\ \ [\vv b_2]_{\mathcal C}\ \ \cdots\ \ [\vv b_n]_{\mathcal C}\,\bigr].
+  \]
+  Moreover $P_{\mathcal C\leftarrow\mathcal B}$ is invertible, and $(P_{\mathcal C\leftarrow\mathcal B})^{-1} = P_{\mathcal B\leftarrow\mathcal C}$.
+\end{theorem*}
+\begin{ideabox}
+  Since $\vv x\mapsto[\vv x]_{\mathcal C}$ is linear (Thm.~9), knowing $[\vv x]_{\mathcal C}$ for any $\vv x=\sum c_j\vv b_j$ requires only knowing $[\vv b_j]_{\mathcal C}$ for each old basis vector $\vv b_j$: linearity pulls the scalars $c_j=([\vv x]_{\mathcal B})_j$ right out!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Write $\vv x=\sum_{j=1}^n c_j\vv b_j$, so $[\vv x]_{\mathcal B}=(c_1,\dots,c_n)^{\mathsf T}$. By linearity of $[\cdot]_{\mathcal C}$ (Thm.~9),
+    \[
+      [\vv x]_{\mathcal C} = \sum_{j=1}^n c_j[\vv b_j]_{\mathcal C} = P_{\mathcal C\leftarrow\mathcal B}[\vv x]_{\mathcal B}.
+    \]
+    \ii \emph{Uniqueness:} Applying any valid matrix $M$ to $\vv x=\vv b_j$ ($[\vv b_j]_{\mathcal B}=\vv e_j$) forces column $j$ of $M$ to equal $M\vv e_j = [\vv b_j]_{\mathcal C}$.
+    \ii \emph{Invertibility \& inverse:} If $\sum d_j[\vv b_j]_{\mathcal C}=\vv 0$, then $[\sum d_j\vv b_j]_{\mathcal C}=\vv 0$, forcing $\sum d_j\vv b_j=\vv 0$ (Thm.~9) and every $d_j=0$; hence columns are independent and $P_{\mathcal C\leftarrow\mathcal B}$ is invertible (W2). Applying $(P_{\mathcal C\leftarrow\mathcal B})^{-1}[\vv x]_{\mathcal C}=[\vv x]_{\mathcal B}$ to $\vv x=\vv c_j$ shows column $j$ of $(P_{\mathcal C\leftarrow\mathcal B})^{-1}$ is $[\vv c_j]_{\mathcal B}$, i.e.\ $P_{\mathcal B\leftarrow\mathcal C}$.
+  \end{steps}
+\end{proof}
+
+\noindent\textbf{Computing $P_{\mathcal C\leftarrow\mathcal B}$ in $\RR^n$.} Column $j$ solves $[\vv c_1\ \cdots\ \vv c_n]\vv y=\vv b_j$. Solving all $n$ columns simultaneously reduces one augmented matrix:
+\[
+  [\,\vv c_1\ \cdots\ \vv c_n \mid \vv b_1\ \cdots\ \vv b_n\,] \longrightarrow [\,I \mid P_{\mathcal C\leftarrow\mathcal B}\,],
+  \qquad\text{equivalently}\qquad P_{\mathcal C\leftarrow\mathcal B} = P_{\mathcal C}^{-1} P_{\mathcal B}.
+\]
+
+\noindent\textbf{The question answered.} With $\mathcal B=\{(1,1),(1,2)\}$ and $\mathcal C=\{(1,0),(2,1)\}$:
+\[
+  \aug{cc|cc}{1&2&1&1\\0&1&1&2}
+  \xrightarrow{R_1-2R_2}
+  \aug{cc|cc}{1&0&-1&-3\\0&1&1&2},
+  \qquad
+  P_{\mathcal C\leftarrow\mathcal B} = \begin{bmatrix}-1&-3\\1&2\end{bmatrix}, \qquad
+  P_{\mathcal B\leftarrow\mathcal C} = (P_{\mathcal C\leftarrow\mathcal B})^{-1} = \begin{bmatrix}2&3\\-1&-1\end{bmatrix}.
+\]
+Thus
+\[
+  [\vv x]_{\mathcal C} = \begin{bmatrix}-1&-3\\1&2\end{bmatrix}\begin{bmatrix}2\\-1\end{bmatrix} = \begin{bmatrix}1\\0\end{bmatrix},
+\]
+meaning $\vv x=2\vv b_1-\vv b_2=(1,0)=1\vv c_1+0\vv c_2$!
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=2.6cm,yshift=1.2cm,scale=0.82]
+    \draw[figaxis] (-0.8,0) -- (3.1,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-0.4) -- (0,2.5) node[above,font=\scriptsize] {$x_2$};
+    \draw[figvec,figblue,thick] (0,0) -- (1,1) node[pos=0.6,below right=-1pt,halo,font=\scriptsize] {$\vv b_1$};
+    \draw[figvec,figblue,thick] (0,0) -- (1,2) node[above,halo,font=\scriptsize] {$\vv b_2$};
+    \draw[figvecsub,figblue,dashed] (1,1) -- (2,2) node[above right=-1pt,halo,font=\scriptsize] {$2\vv b_1$};
+    \draw[figvecsub,figblue,dashed] (2,2) -- (1,0);
+    \draw[figvec,figred,very thick] (0,0) -- (2,1) node[below right=-2pt,halo,font=\scriptsize] {$\vv c_2$};
+    \draw[figvec,black,very thick] (0,0) -- (1,0);
+    \fill[black] (1,0) circle (2.2pt);
+    \node[below=2pt,font=\scriptsize,halo] at (1.0,-0.05) {$\vv x=2\vv b_1-\vv b_2=\vv c_1$};
+  \end{scope}
+
+  \begin{scope}[xshift=8.0cm,yshift=1.4cm]
+    \node[figbox,draw=figslate!60,fill=figbg] (std) at (2.2,1.6) {Standard $\RR^n$ ($\vv x$)};
+    \node[figbox,draw=figblue,fill=figblue!8] (B) at (0,0) {$[\vv x]_{\mathcal B}$};
+    \node[figbox,draw=figred,fill=figred!8] (C) at (4.4,0) {$[\vv x]_{\mathcal C}$};
+    \draw[->,thick,figblue] (B) -- node[left=1pt,font=\scriptsize] {$P_{\mathcal B}$} (std);
+    \draw[->,thick,figred] (C) -- node[right=1pt,font=\scriptsize] {$P_{\mathcal C}$} (std);
+    \draw[->,very thick,black] (B) -- node[below=2pt,font=\scriptsize] {$P_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}P_{\mathcal B}$} (C);
+  \end{scope}
+\end{tikzpicture}
+\figcap{\textbf{Left:} Both $\mathcal B$-coordinates $(2,-1)$ and $\mathcal C$-coordinates $(1,0)$ locate the exact same vector $\vv x=(1,0)$. \textbf{Right:} Converting $\mathcal B\to\mathcal C$ in $\RR^n$ factors through standard coordinates as $P_{\mathcal C}^{-1}P_{\mathcal B}$.}
+\end{fig}
+
+\begin{example*}[Abstract bases and polynomial bases]
+  \begin{itemize}
+    \ii In $V$ with $\vv b_1=2\vv c_1-\vv c_2$ and $\vv b_2=\vv c_1+3\vv c_2$: $P_{\mathcal C\leftarrow\mathcal B}=\begin{psmallmatrix}2&1\\-1&3\end{psmallmatrix}$, so
+    \[
+      [3\vv b_1+\vv b_2]_{\mathcal C}=\begin{bmatrix}2&1\\-1&3\end{bmatrix}\begin{bmatrix}3\\1\end{bmatrix}=\begin{bmatrix}7\\0\end{bmatrix} \quad (=7\vv c_1).
+    \]
+    \ii In $\mathbb P_2$ with $\mathcal B=\{1,1+t,1+t+t^2\}$ and $\mathcal C=\{1,t,t^2\}$:
+    \[
+      P_{\mathcal C\leftarrow\mathcal B} = \begin{bmatrix}1&1&1\\0&1&1\\0&0&1\end{bmatrix},\qquad
+      P_{\mathcal B\leftarrow\mathcal C} = \begin{bmatrix}1&-1&0\\0&1&-1\\0&0&1\end{bmatrix},
+    \]
+    so $[2+3t+4t^2]_{\mathcal B} = P_{\mathcal B\leftarrow\mathcal C}(2,3,4)^{\mathsf T} = (-1,-1,4)^{\mathsf T}$.
+  \end{itemize}
+\end{example*}
+
+\begin{shortcuts}
+  \ii \textbf{Change of basis in $\RR^n$:} Put the \emph{target} basis $\mathcal C$ on the left: $[\,\mathcal C\mid\mathcal B\,]\to [\,I\mid P_{\mathcal C\leftarrow\mathcal B}\,]$.
+  \ii \textbf{Reverse direction:} Invert $P_{\mathcal C\leftarrow\mathcal B}$ rather than reducing a second system!
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Left--right order:} Reducing $[\,\mathcal B\mid\mathcal C\,]$ produces $P_{\mathcal B\leftarrow\mathcal C}$ (the inverse of $P_{\mathcal C\leftarrow\mathcal B}$).
+  \ii \textbf{Columns vs.\ rows:} The coordinates of $\vv b_1$ in $\mathcal C$ form \emph{column~$1$} of $P_{\mathcal C\leftarrow\mathcal B}$, never row~$1$.
+\end{trapbox}
+
+\subsection{Eigenvectors and eigenvalues (Lay 5.1)}
+
+\begin{qbox}
+  The matrix $A=\begin{psmallmatrix}1&6\\5&2\end{psmallmatrix}$ rotates the vector $(3,-2)$ off its own line to $(-9,11)$, yet sends $(6,-5)$ to $(-24,20)=-4(6,-5)$ along the \emph{same} line! Which vectors does a matrix $A$ merely stretch or flip, and how do they compute $A^k\vv x$ for large $k$ without multiplying matrices $k$ times?
+\end{qbox}
+
+\noindent\textbf{Definition (Lay 5.1).} An \vocab{eigenvector} of an $n\times n$ matrix $A$ is a \emph{nonzero} vector $\vv x\in\RR^n$ such that $A\vv x=\lambda\vv x$ for some scalar $\lambda$. A scalar $\lambda$ is an \vocab{eigenvalue} of $A$ if $A\vv x=\lambda\vv x$ has a nontrivial solution; any such $\vv x\neq\vv 0$ is an eigenvector corresponding to $\lambda$. The set of all solutions of $(A-\lambda I)\vv x=\vv 0$, namely $\Nul(A-\lambda I)$, is the \vocab{eigenspace} of $A$ for $\lambda$.
+
+Notice why eigenvectors turn powers $A^k$ into algebra: if $A\vv v=\lambda\vv v$, then $A^2\vv v=A(\lambda\vv v)=\lambda^2\vv v$, and by induction $A^k\vv v=\lambda^k\vv v$! Expanding any starting vector $\vv x_0 = c_1\vv v_1+c_2\vv v_2$ solves the discrete dynamical system $\vv x_{k+1}=A\vv x_k$ in one stroke:
+\[
+  \vv x_k = A^k\vv x_0 = c_1\lambda_1^k\vv v_1 + c_2\lambda_2^k\vv v_2.
+\]
+
+\begin{example*}[Worked example: a $2$-plane eigenspace]
+  For $A$ below, is $\lambda=2$ an eigenvalue and what is $E(2,A)=\Nul(A-2I)$?
+  \[
+    A=\begin{bmatrix}4&-1&6\\2&1&6\\2&-1&8\end{bmatrix},\qquad
+    A-2I = \begin{bmatrix}2&-1&6\\2&-1&6\\2&-1&6\end{bmatrix}
+    \xrightarrow{R_2-R_1,\ R_3-R_1}
+    \begin{bmatrix}2&-1&6\\0&0&0\\0&0&0\end{bmatrix}.
+  \]
+  Since there are two free variables ($x_2,x_3$), $\lambda=2$ \emph{is} an eigenvalue, and $x_1=\frac12 x_2-3x_3$ gives eigenspace basis $\{(1,2,0),(-3,0,1)\}$. On this entire plane, $A$ acts purely as multiplication by $2$.
+\end{example*}
+
+\begin{theorem*}[Eigenvalues of a triangular matrix (Lay 5.1, Thm.~1)]\target{thm-lay-5-1}
+  The eigenvalues of a triangular matrix $A$ are the entries on its main diagonal.
+\end{theorem*}
+\begin{proof}
+  If $A$ is upper- or lower-triangular, so is $A-\lambda I$, with diagonal entries $a_{11}-\lambda,\dots,a_{nn}-\lambda$. Now $\lambda$ is an eigenvalue $\iff (A-\lambda I)\vv x=\vv 0$ has a nontrivial solution $\iff A-\lambda I$ is not invertible (W2) $\iff \det(A-\lambda I)=\prod_{i=1}^n (a_{ii}-\lambda)=0$ (W3) $\iff \lambda=a_{ii}$ for some $i$.
+\end{proof}
+
+Notice that $\lambda=0$ is an eigenvalue of $A \iff A\vv x=\vv 0$ has a nontrivial solution $\iff A$ is \emph{not} invertible (this updates the \vocab{Invertible Matrix Theorem}: $A$ is invertible $\iff 0$ is not an eigenvalue of $A$).
+
+\begin{theorem*}[Linear independence of eigenvectors (Lay 5.1, Thm.~2)]\target{thm-lay-5-2}
+  If $\vv v_1,\dots,\vv v_r$ are eigenvectors corresponding to \textbf{distinct} eigenvalues $\lambda_1,\dots,\lambda_r$ of an $n\times n$ matrix $A$, then $\{\vv v_1,\dots,\vv v_r\}$ is linearly independent.
+\end{theorem*}
+\begin{ideabox}
+  Think of two vectors first: if $\vv v_2=c\vv v_1$, applying $A$ gives $\lambda_2\vv v_2=c\lambda_1\vv v_1$, whereas multiplying by $\lambda_2$ gives $\lambda_2\vv v_2=c\lambda_2\vv v_1$. Subtracting leaves $c(\lambda_1-\lambda_2)\vv v_1=\vv 0$, forcing $c=0$ since $\lambda_1\ne\lambda_2$! In general, apply this same "$A$ minus $\lambda_{p+1}I$" trick to the \emph{first} vector $\vv v_{p+1}$ that depends on earlier ones: it annihilates $\vv v_{p+1}$ and multiplies each remaining term by $\lambda_i-\lambda_{p+1}\neq0$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose for contradiction that $\{\vv v_1,\dots,\vv v_r\}$ is linearly dependent. Since $\vv v_1\ne\vv 0$, by (W6) there is a first vector $\vv v_{p+1}$ ($1\le p<r$) that is a linear combination of the preceding vectors $\{\vv v_1,\dots,\vv v_p\}$ (which are linearly independent):
+    \[
+      \vv v_{p+1} = c_1\vv v_1 + \dots + c_p\vv v_p.
+    \]
+    \ii Apply $A$ to both sides (using $A\vv v_i=\lambda_i\vv v_i$): $\lambda_{p+1}\vv v_{p+1}=c_1\lambda_1\vv v_1+\dots+c_p\lambda_p\vv v_p$.
+    \ii Multiply step~1 by $\lambda_{p+1}$: $\lambda_{p+1}\vv v_{p+1}=c_1\lambda_{p+1}\vv v_1+\dots+c_p\lambda_{p+1}\vv v_p$.
+    \ii Subtracting eliminates $\vv v_{p+1}$: $\vv 0 = c_1(\lambda_1-\lambda_{p+1})\vv v_1+\dots+c_p(\lambda_p-\lambda_{p+1})\vv v_p$. By independence of $\vv v_1,\dots,\vv v_p$ and $\lambda_i\ne\lambda_{p+1}$, every $c_i=0$, forcing $\vv v_{p+1}=\vv 0$, impossible for an eigenvector!
+  \end{steps}
+\end{proof}
+
+As an immediate consequence, an $n\times n$ matrix has at most $n$ distinct eigenvalues (otherwise it would have $n+1$ independent vectors in $\RR^n$, impossible by W1).
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=3.2cm,yshift=2.2cm,scale=0.145]
+    \draw[figaxis] (-26,0) -- (12,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-10) -- (0,23) node[above,font=\scriptsize] {$x_2$};
+
+    \draw[dashed,black!45] (-25.5,21.25) -- (9,-7.5);
+    \draw[dashed,black!45] (-5,-5) -- (9,9);
+
+    \draw[figvec,figblue,very thick] (0,0) -- (-24,20) node[above right=1pt,halo,font=\scriptsize] {$A\vv v=-4\vv v$};
+    \draw[figvec,black,very thick] (0,0) -- (6,-5) node[below right=1pt,halo,font=\scriptsize] {$\vv v$};
+
+    \draw[figvec,figgreen,very thick] (0,0) -- (7,7) node[above right=1pt,halo,font=\scriptsize] {$A\vv w=7\vv w$};
+    \draw[figvec,black,very thick] (0,0) -- (1,1);
+    \node[above left=0pt,halo,font=\scriptsize] at (0.5,1.2) {$\vv w$};
+    \node[font=\footnotesize,anchor=north] at (-7,-11) {Eigenvectors stay on their invariant lines};
+  \end{scope}
+
+  \begin{scope}[xshift=9.6cm,yshift=1.9cm,scale=0.195]
+    \draw[figaxis] (-11,0) -- (7,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-5) -- (0,13.5) node[above,font=\scriptsize] {$x_2$};
+    \draw[dashed,black!45] (-10.5,7) -- (6,-4);
+    \draw[figvec,figred,very thick] (0,0) -- (-9,11) node[above left=1pt,halo,font=\scriptsize] {$A\vv u=(-9,11)$};
+    \draw[figvec,black,very thick] (0,0) -- (3,-2) node[below right=1pt,halo,font=\scriptsize] {$\vv u=(3,-2)$};
+    \node[font=\footnotesize,anchor=north] at (-2,-5.5) {Non-eigenvector leaves its dashed line};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Action of $A=\begin{psmallmatrix}1&6\\5&2\end{psmallmatrix}$. \textbf{Left:} Eigenvectors $\vv v=(6,-5)$ ($\lambda=-4$) and $\vv w=(1,1)$ ($\lambda=7$) remain on their dashed lines. \textbf{Right:} Generic vector $\vv u=(3,-2)$ is knocked off its line to $(-9,11)$.}
+\end{fig}
+
+\noindent\textbf{The question answered.} The invariant directions of $A$ are its eigenvectors: $A(1,1)=(7,7)=7(1,1)$ and $A(6,-5)=-4(6,-5)$. Writing $(7,-4)^{\mathsf T}=(1,1)^{\mathsf T}+(6,-5)^{\mathsf T}$ instantly solves every power:
+\[
+  A^k\begin{bmatrix}7\\-4\end{bmatrix} = 7^k\begin{bmatrix}1\\1\end{bmatrix} + (-4)^k\begin{bmatrix}6\\-5\end{bmatrix}.
+\]
+
+\begin{shortcuts}
+  \ii \textbf{Checking an eigenvector $\vv u$ vs.\ eigenvalue $\lambda$:} For $\vv u$, compute $A\vv u$ and check if it is $\lambda\vv u$; for $\lambda$, row reduce $A-\lambda I$ and check for a free variable.
+  \ii \textbf{Equal row sums:} If every row of $A$ sums to $s$, then $s$ is an eigenvalue with eigenvector $(1,1,\dots,1)^{\mathsf T}$ (in the question, rows add to $7$).
+  \ii \textbf{Powers \& inverses:} If $A\vv x=\lambda\vv x$ ($\vv x\neq\vv 0$), then $A^k\vv x=\lambda^k\vv x$, and if $A$ is invertible, $\lambda\ne 0$ and $A^{-1}\vv x=\lambda^{-1}\vv x$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Zero vector is NEVER an eigenvector:} $A\vv 0=\lambda\vv 0$ holds trivially for every $\lambda$, whereas $0$ \emph{can} be an eigenvalue!
+  \ii \textbf{Row-reducing $A$ changes eigenvalues!} $A=\begin{psmallmatrix}1&6\\5&2\end{psmallmatrix}$ has eigenvalues $7,-4$, whereas $R_2-5R_1$ gives $\begin{psmallmatrix}1&6\\0&-28\end{psmallmatrix}$ with eigenvalues $1,-28$. Always row reduce $A-\lambda I$, never $A$!
+  \ii \textbf{Thm.~2 goes one way:} Two independent eigenvectors can share the same eigenvalue!
+\end{trapbox}
+
+\subsection{The characteristic equation (Lay 5.2)}
+
+\begin{qbox}
+  Testing candidate values of $\lambda$ one by one is slow. How do we find \emph{all} eigenvalues of $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ simultaneously as roots of a single polynomial equation, and why do similar matrices always share the same eigenvalues?
+\end{qbox}
+
+\begin{theorem*}[Properties of determinants recap (Lay 5.2, Thm.~3) \& Characteristic Equation]\target{thm-lay-5-3}\target{name-characteristic-equation}
+  Recall for $n\times n$ matrices $A,B$ (W2, W3): $A$ is invertible $\iff \det A\ne 0$; $\det(AB)=\det A\det B$; $\det(A^{\mathsf T})=\det A$; triangular determinants equal the product of diagonal entries; and row operations scale/flip/preserve $\det$. Consequently, a scalar $\lambda$ is an eigenvalue of $A$ if and only if $\lambda$ satisfies the \textbf{characteristic equation}
+  \[
+    \det(A - \lambda I) = 0.
+  \]
+\end{theorem*}
+\begin{proof}
+  $A\vv x=\lambda\vv x$ has a nontrivial solution $\iff (A-\lambda I)\vv x=\vv 0$ has a nontrivial solution $\iff A-\lambda I$ is not invertible (W2) $\iff \det(A-\lambda I)=0$ (Thm.~3 / W2).
+\end{proof}
+
+For an $n\times n$ matrix, $\det(A-\lambda I)$ is a degree-$n$ polynomial in $\lambda$ with leading term $(-1)^n\lambda^n$, called the \vocab{characteristic polynomial} of $A$ (stated in Lay without proof). The \vocab{(algebraic) multiplicity} of an eigenvalue $\lambda$ is its multiplicity as a root of $\det(A-\lambda I)$. Setting $\lambda=0$ shows $\det A$ equals the product of the eigenvalues (counted with multiplicity) whenever the polynomial factors completely over $\RR$ (or always over $\CC$). Moreover, since $\det(A^{\mathsf T}-\lambda I)=\det\bigl((A-\lambda I)^{\mathsf T}\bigr)=\det(A-\lambda I)$ by (W3), $A$ and $A^{\mathsf T}$ always have the \emph{exact same eigenvalues} (though generally different eigenvectors!).
+
+\medskip\noindent\textbf{The $2\times 2$ formula and the question answered.} For any $2\times 2$ matrix $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ with $\tr A=a+d$:
+\[
+  \det(A-\lambda I) = (a-\lambda)(d-\lambda)-bc = \lambda^2-(\tr A)\lambda+\det A.
+\]
+If this has roots $\lambda_1,\lambda_2$, comparing with $(\lambda-\lambda_1)(\lambda-\lambda_2)$ gives $\lambda_1+\lambda_2=\tr A$ and $\lambda_1\lambda_2=\det A$. For $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, $\tr A=6$, $\det A=8$, so $\lambda^2-6\lambda+8=(\lambda-2)(\lambda-4)=0$ gives eigenvalues $2,4$ with eigenvectors $(-1,1)$ and $(1,1)$.
+
+\begin{example*}[Worked $3\times 3$ characteristic polynomial]
+  Expand down column~$1$, which has two zeros, and keep linear factors intact instead of multiplying out:
+  \[
+    A=\begin{bmatrix}1&2&1\\0&3&0\\0&1&2\end{bmatrix}, \qquad
+    \det(A-\lambda I) = (1-\lambda)\det\begin{bmatrix}3-\lambda&0\\1&2-\lambda\end{bmatrix} = (1-\lambda)(3-\lambda)(2-\lambda),
+  \]
+  giving eigenvalues $1,2,3$ immediately!
+\end{example*}
+
+\noindent\textbf{Definition.} Two $n\times n$ matrices $A$ and $B$ are \vocab{similar} if $B=P^{-1}AP$ for some invertible matrix $P$.
+
+\begin{theorem*}[Similarity and characteristic polynomials (Lay 5.2, Thm.~4)]\target{thm-lay-5-4}
+  If $n\times n$ matrices $A$ and $B$ are similar ($B=P^{-1}AP$), then they have the same characteristic polynomial, hence the exact same eigenvalues with the exact same multiplicities.
+\end{theorem*}
+\begin{proof}
+  Notice $B-\lambda I = P^{-1}AP - \lambda P^{-1}P = P^{-1}(A-\lambda I)P$. Using (W3),
+  \[
+    \det(B-\lambda I) = \det(P^{-1})\det(A-\lambda I)\det P = \det(P^{-1}P)\det(A-\lambda I) = \det(A-\lambda I).
+  \]
+\end{proof}
+
+\begin{shortcuts}
+  \ii \textbf{$2\times 2$ eigenvalues:} Solve $\lambda^2-(\tr A)\lambda+\det A=0$; verify $\lambda_1+\lambda_2=\tr A$ and $\lambda_1\lambda_2=\det A$.
+  \ii \textbf{$2\times 2$ eigenvector trick:} If row~$1$ of $A-\lambda I$ is $(a-\lambda,b)\ne(0,0)$, an eigenvector is $(b,\lambda-a)$ (e.g.\ $b=0$ gives $(1,0)$ or look at row~$2$).
+  \ii \textbf{$3\times 3$ characteristic polynomial:} Expand along the row or column with the most zeros and factor rather than expanding a cubic!
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{$\det(A-\lambda I)=0$, NOT $\det A-\lambda=0$!} For $\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, $\det A-\lambda=8-\lambda$ wrongly predicts $8$.
+  \ii \textbf{Same characteristic polynomial $\not\Rightarrow$ similar:} $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$ and $2I$ both have $(\lambda-2)^2$, yet $P^{-1}(2I)P=2I$ for every $P$.
+  \ii \textbf{Similarity $\neq$ row equivalence:} Both matrices above row-reduce to $I$, yet are not similar.
+\end{trapbox}
+
+\section{Homework this week}
+HW6, Sections 4.4 and 4.6, and HW7, Sections 5.1--5.2.
+\begin{itemize}
+  \ii \textbf{Section 4.4:} \#1, \#3 (use $\vv x=P_{\mathcal B}[\vv x]_{\mathcal B}$); \#7 (row reduce $[\,\vv b_1\ \vv b_2\ \vv b_3\mid \vv x\,]$); \#13 (equate coefficients of $1,t,t^2$, see P2(a)); \#15, \#17, \#19 (definition of $[\vv x]_{\mathcal B}=P_{\mathcal B}^{-1}\vv x$; $\dim\mathbb P_3=4$); \#25 ($P_{\mathcal B}^{-1}$); \#36 (convert to $\RR^n$ coordinates, apply Basis Thm., then solve weights).
+  \ii \textbf{Section 4.6:} \#1, \#5, \#6 (abstract bases example); \#9 (row reduce $[\,\vv c_1\ \vv c_2\mid \vv b_1\ \vv b_2\,]$, then invert); \#12, \#13 (with $\mathcal C=\mathcal E$, $P_{\mathcal E\leftarrow\mathcal B}=P_{\mathcal B}$); \#15 ($\mathbb P_2$ coordinate columns).
+  \ii \textbf{Section 5.1:} \#3, \#5 (multiply $A\vv u$ and compare with $\vv u$); \#7 (row reduce $A-4I$ for free variables); \#9, \#13 (parametric vector form of $(A-\lambda I)\vv x=\vv 0$); \#23, \#24, \#27, \#28, \#29, \#30 ($0$ eigenvalue $\iff$ singular; $A\vv x=\lambda\vv x$; Thm.~1 needs triangular; $A(2\vv v)=2(A\vv v)$); \#34 (apply $A$ twice to $A\vv x=\lambda\vv x$).
+  \ii \textbf{Section 5.2:} \#5, \#7 ($\lambda^2-(\tr A)\lambda+\det A$); \#11, \#13 (expand along sparse row/column); \#15 (triangular); \#18 (choose $h$ so $A-5I$ has two free variables); \#19 (set $\lambda=0$); \#24, \#25 (Thm.~4 and characteristic equation).
+\end{itemize}
+
+\section{Problem set}
+
+\begin{prob}\target{prob-P1}
+  \textbf{P1.}\ Find $[\vv x]_{\mathcal B}$ for $\vv x=(4,9)$ and $\mathcal B=\{(1,3),(2,5)\}$.
+\end{prob}
+
+\begin{prob}\target{prob-P2}
+  \textbf{P2.}\ \begin{enumerate}[(a)]
+    \ii $\mathcal B=\{1+t,\ t+t^2,\ 1+t^2\}$ is a basis of $\mathbb P_2$. Find $[p]_{\mathcal B}$ for $p=3+2t-t^2$.
+    \ii Use coordinate vectors to decide whether $1-t,\ t-t^2,\ 1-t^2$ are linearly independent.
+  \end{enumerate}
+\end{prob}
+
+\begin{prob}\target{prob-P3}
+  \textbf{P3.}\ $\mathcal B=\{(1,2),(3,4)\}$ and $\mathcal C=\{(1,1),(0,1)\}$. Find $P_{\mathcal C\leftarrow\mathcal B}$ and $P_{\mathcal B\leftarrow\mathcal C}$. If $[\vv x]_{\mathcal B}=(2,-1)$, find $[\vv x]_{\mathcal C}$.
+\end{prob}
+
+\begin{prob}\target{prob-P4}
+  \textbf{P4.}\ For the matrix $A$ below, is $\vv v=(1,-1,0)$ an eigenvector? If so, for which eigenvalue? Is $4$ an eigenvalue?
+  \[
+    A = \begin{bmatrix}3&0&1\\-1&2&-1\\0&0&1\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P5}
+  \textbf{P5.}\ For the same $A$, find the characteristic polynomial, all eigenvalues, and a basis of the eigenspace for $\lambda=1$.
+\end{prob}
+
+\begin{prob}\target{prob-P6}
+  \textbf{P6.}\ Find the characteristic polynomials and eigenvalues of the matrices below:
+  \[
+    \begin{bmatrix}2&7\\7&2\end{bmatrix},\qquad \begin{bmatrix}5&-3\\-4&3\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P7}
+  \textbf{P7.}\ List the eigenvalues, with multiplicities, of the matrix below. Is it invertible?
+  \[
+    \begin{bmatrix}2&3&-1&4\\0&-1&5&2\\0&0&2&7\\0&0&0&0\end{bmatrix}.
+  \]
+\end{prob}
+
+\begin{prob}\target{prob-P8}
+  \textbf{P8.}\ Suppose $A\vv x=\lambda\vv x$ with $\vv x\ne\vv 0$.
+  \begin{enumerate}[(a)]
+    \ii Show that $\vv x$ is an eigenvector of $A^2$ and of $A+3I$; for which eigenvalues?
+    \ii If $A$ is invertible, show $\lambda\ne 0$ and $A^{-1}\vv x=\lambda^{-1}\vv x$.
+  \end{enumerate}
+\end{prob}
+
+\end{document}

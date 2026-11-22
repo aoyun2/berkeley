@@ -1,0 +1,449 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\proj}{proj}\DeclareMathOperator{\dist}{dist}
+\title{Math 54 --- Week 9}
+\subtitle{Inner product, length and orthogonality; orthogonal sets; orthogonal projections (Lay 6.1--6.3)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--8}
+
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Matrix--vector products (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Weeks~2--4}):} $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$ is the combination of the columns of $A$ with weights $\vv x$. Entry~$i$ of $A\vv x$ is $(\text{row }i\text{ of }A)\cdot\vv x$, and entry~$(i,j)$ of $A^{\mathsf T}B$ is $(\text{col }i\text{ of }A)\cdot(\text{col }j\text{ of }B)$. Also $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$.
+
+  \ii \textbf{The subspaces of a matrix (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}):} For an $m\times n$ matrix $A$, $\dim\Row A=\dim\Col A=\rank A$ and $\rank A+\dim\Nul A=n$.
+
+  \ii \textbf{Bases (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}):} In a $p$-dimensional subspace, $p$ linearly independent vectors form a basis. Coordinates relative to a basis are unique (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-4-8}{Week~7}).
+
+  \ii \textbf{Invertible matrix theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Week~4}):} If $A$ is square and $BA=I$ for some $B$, then $A$ is invertible and $A^{-1}=B$.
+
+  \ii \textbf{Determinants (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Week~5}):} $\det(AB)=\det A\det B$ and $\det(A^{\mathsf T})=\det A$.
+
+  \ii \textbf{Eigenvalues (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{name-characteristic-equation}{Week~7}):} $\lambda$ is an eigenvalue of square $A$ if $A\vv x=\lambda\vv x$ for some $\vv x\neq\vv 0$.
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Inner product, length, and orthogonality (Lay 6.1)}
+
+\begin{qbox}
+  In the plane $\RR^2$, the arrow $(3,4)$ has length $5$ by the Pythagorean theorem, and $(1,2)$ is perpendicular to $(-2,1)$. How do we extend length, distance, and perpendicularity consistently to $\RR^n$, e.g.\ for $(1,-2,2,0)\in\RR^4$?
+\end{qbox}
+
+\noindent\textbf{Definition.} The \vocab{inner product (dot product)} of $\vv u,\vv v\in\RR^n$ is the real scalar
+\[
+  \vv u\cdot\vv v = \vv u^{\mathsf T}\vv v = u_1v_1 + u_2v_2 + \dots + u_nv_n.
+\]
+The \vocab{length (norm)} of $\vv v$ is $\|\vv v\|=\sqrt{\vv v\cdot\vv v}=\sqrt{v_1^2+\dots+v_n^2}$ (so $\|\vv v\|^2=\vv v\cdot\vv v$), and the \vocab{distance} between $\vv u$ and $\vv v$ is $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$. A vector with $\|\vv v\|=1$ is a \vocab{unit vector}; for any $\vv v\neq\vv 0$, \vocab{normalizing} gives the unit vector $\vv v/\|\vv v\|$ in the direction of $\vv v$ (for example, $\|(1,-2,2,0)\|=\sqrt{1+4+4}=3$, so $\frac13(1,-2,2,0)$ is a unit vector).
+
+\begin{theorem*}[Properties of the dot product (Lay 6.1, Thm.~1)]\target{thm-lay-6-1}
+  For all vectors $\vv u,\vv v,\vv w\in\RR^n$ and every scalar $c\in\RR$:
+  \begin{enumerate}
+    \ii[(a)] \emph{Symmetry:} $\vv u\cdot\vv v = \vv v\cdot\vv u$.
+    \ii[(b)] \emph{Additivity:} $(\vv u+\vv v)\cdot\vv w = \vv u\cdot\vv w + \vv v\cdot\vv w$.
+    \ii[(c)] \emph{Homogeneity:} $(c\vv u)\cdot\vv v = c(\vv u\cdot\vv v) = \vv u\cdot(c\vv v)$.
+    \ii[(d)] \emph{Positive definiteness:} $\vv u\cdot\vv u \ge 0$ for all $\vv u\in\RR^n$, and $\vv u\cdot\vv u = 0$ if and only if $\vv u=\vv 0$.
+  \end{enumerate}
+  Consequently, $\|c\vv v\| = \sqrt{(c\vv v)\cdot(c\vv v)} = \sqrt{c^2(\vv v\cdot\vv v)} = |c|\,\|\vv v\|$.
+\end{theorem*}
+\begin{proof}
+  Rules (a)--(c) follow directly by writing $\vv u\cdot\vv v=\sum_{i=1}^n u_iv_i$ and applying commutativity/distributivity in $\RR$. For (d), $\vv u\cdot\vv u=\sum_{i=1}^n u_i^2\ge 0$ as a sum of squares of real numbers, and a sum of squares vanishes if and only if every term $u_i=0$, i.e.\ $\vv u=\vv 0$.
+\end{proof}
+
+Why does $\vv u\cdot\vv v=0$ define perpendicularity? In $\RR^2$ or $\RR^3$, take $\vv v\neq\vv 0$. The line through $\vv 0$ and $\vv u$ is perpendicular to $\vv v$ precisely when $\vv u$ lies on the perpendicular bisector of the segment from $-\vv v$ to $\vv v$, meaning $\vv u$ is equidistant from $\vv v$ and $-\vv v$: $\|\vv u-\vv v\|=\|\vv u-(-\vv v)\|$. Expanding squared distances with Thm.~1 gives
+\[
+  \|\vv u-\vv v\|^2 = \|\vv u\|^2 - 2\vv u\cdot\vv v + \|\vv v\|^2, \qquad
+  \|\vv u+\vv v\|^2 = \|\vv u\|^2 + 2\vv u\cdot\vv v + \|\vv v\|^2,
+\]
+which are equal \emph{if and only if} $\vv u\cdot\vv v=0$! That simple algebraic equation works identically in every $\RR^n$.
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=2.8cm,yshift=1.3cm]
+    \draw[black!50,thin] (-2.2,-0.88) -- (2.2,0.88);
+    \draw[figvec,black,very thick] (0,0) -- (1.7,0.68) node[right=1pt,font=\scriptsize] {$\vv v$};
+    \draw[figvec,black,very thick] (0,0) -- (-1.7,-0.68) node[left=1pt,font=\scriptsize] {$-\vv v$};
+    \draw[figvec,figblue,very thick] (0,0) -- (-0.64,1.6) node[above=1pt,halo,font=\scriptsize] {$\vv u$};
+    \draw[dashed,figred,thick] (-0.64,1.6) -- (1.7,0.68) node[midway,above right=-2pt,font=\scriptsize] {$\|\vv u-\vv v\|$};
+    \draw[dashed,figred,thick] (-0.64,1.6) -- (-1.7,-0.68) node[midway,above left=-2pt,font=\scriptsize] {$\|\vv u+\vv v\|$};
+    \draw[black!70] (-0.22,0.55) -- (0.04,0.65) -- (0.26,0.104);
+  \end{scope}
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=5.9cm,align=left] at (6.7,1.4) {%
+    \textbf{Algebraic perpendicular bisector:}\\[2pt]
+    $\vv u$ is equidistant from $\vv v$ and $-\vv v$ iff
+    \[
+      \|\vv u-\vv v\|^2 = \|\vv u+\vv v\|^2 \iff 4\vv u\cdot\vv v = 0.
+    \]
+    Comparing against the Law of Cosines in $\RR^2,\RR^3$ also yields $\vv u\cdot\vv v = \|\vv u\|\,\|\vv v\|\cos\theta$.
+  };
+\end{tikzpicture}
+\figcap{Geometry of orthogonality: $\vv u\perp\vv v$ holds exactly when the dashed distances from $\vv u$ to $\vv v$ and $-\vv v$ are equal, reducing to $\vv u\cdot\vv v=0$.}
+\end{fig}
+
+\noindent\textbf{Definition.} Two vectors $\vv u,\vv v\in\RR^n$ are \vocab{orthogonal} if $\vv u\cdot\vv v=0$ (written $\vv u\perp\vv v$; note $\vv 0$ is orthogonal to every vector). Thus $(1,2)\cdot(-2,1)=0$ confirms orthogonality, and $\|(1,-2,2,0)\|=3$.
+
+\begin{theorem*}[The Pythagorean Theorem in $\RR^n$ (Lay 6.1, Thm.~2)]\target{thm-lay-6-2}
+  Two vectors $\vv u,\vv v\in\RR^n$ are orthogonal if and only if $\|\vv u+\vv v\|^2 = \|\vv u\|^2 + \|\vv v\|^2$.
+\end{theorem*}
+\begin{proof}
+  By Thm.~1, $\|\vv u+\vv v\|^2 = (\vv u+\vv v)\cdot(\vv u+\vv v) = \|\vv u\|^2 + 2(\vv u\cdot\vv v) + \|\vv v\|^2$, which equals $\|\vv u\|^2+\|\vv v\|^2 \iff \vv u\cdot\vv v=0$.
+\end{proof}
+
+\begin{shortcuts}
+  \ii \textbf{Compare lengths by squares:} $\|\vv u\|\le\|\vv v\| \iff \|\vv u\|^2\le\|\vv v\|^2$ (no square roots needed!).
+  \ii \textbf{Angle type in $\RR^2,\RR^3$:} From $\vv u\cdot\vv v=\|\vv u\|\,\|\vv v\|\cos\theta$, $\vv u\cdot\vv v>0 \implies$ acute, $=0\implies$ right, $<0\implies$ obtuse.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Pythagoras uses SQUARES:} $\|\vv u+\vv v\|=\|\vv u\|+\|\vv v\|$ is generally FALSE ($\|(1,0)+(0,1)\|=\sqrt{2}\neq 2$).
+  \ii \textbf{Absolute value on scalars:} $\|c\vv v\|=|c|\,\|\vv v\|$, never $c\|\vv v\|$: $\|-2(1,0)\|=2\neq -2$.
+\end{trapbox}
+
+\subsection{Orthogonal complements (Lay 6.1)}
+
+\begin{qbox}
+  Which vectors $\vv x\in\RR^3$ are perpendicular to \emph{both} $(1,1,1)$ and $(1,-1,0)$---and hence to every vector in the plane they span? What subspace do they form, and how does row reduction compute it immediately?
+\end{qbox}
+
+\noindent\textbf{Definition.} For a subspace $W\subseteq\RR^n$, its \vocab{orthogonal complement} $W^\perp$ is the set of all vectors orthogonal to every vector in $W$:
+\[
+  W^\perp = \{\vv x\in\RR^n : \vv x\cdot\vv w=0 \text{ for all }\vv w\in W\}.
+\]
+Three immediate facts follow from Thm.~1:
+\begin{itemize}
+  \ii \emph{Membership test:} If $W=\spn\{\vv w_1,\dots,\vv w_p\}$, then $\vv x\in W^\perp \iff \vv x\cdot\vv w_j=0$ for each generator $j=1,\dots,p$ (by linearity of the dot product).
+  \ii \emph{$W^\perp$ is a subspace} containing $\vv 0$, closed under addition and scalar multiplication.
+  \ii \emph{$W\cap W^\perp=\{\vv 0\}$:} Any $\vv v\in W\cap W^\perp$ satisfies $\vv v\cdot\vv v=0$, forcing $\vv v=\vv 0$ by definiteness (Thm.~1(d)).
+\end{itemize}
+
+\begin{theorem*}[Orthogonality of Fundamental Subspaces (Lay 6.1, Thm.~3)]\target{thm-lay-6-3}
+  For any $m\times n$ matrix $A$:
+  \[
+    (\Row A)^\perp = \Nul A \qquad\text{and}\qquad (\Col A)^\perp = \Nul A^{\mathsf T}.
+  \]
+\end{theorem*}
+\begin{ideabox}
+  Look at entry~$i$ of $A\vv x$: by (W1), $(A\vv x)_i = (\text{row }i\text{ of }A)\cdot\vv x$. Thus $A\vv x=\vv 0$ literally states that $\vv x$ is orthogonal to \emph{every} row of $A$, which by the membership test means $\vv x\in(\Row A)^\perp$! Replacing $A$ by $A^{\mathsf T}$ (whose rows are the columns of $A$) gives the second identity immediately.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii By (W1), $A\vv x=\vv 0 \iff (\text{row }i\text{ of }A)\cdot\vv x=0$ for all $i=1,\dots,m \iff \vv x\in(\Row A)^\perp$ by the membership test. Hence $\Nul A=(\Row A)^\perp$.
+    \ii Since $\Row(A^{\mathsf T})=\Col A$, applying Step~1 to $A^{\mathsf T}$ yields $\Nul A^{\mathsf T}=(\Row A^{\mathsf T})^\perp=(\Col A)^\perp$.
+  \end{steps}
+\end{proof}
+
+\begin{fig}
+\tdplotsetmaincoords{68}{118}
+\begin{tikzpicture}[tdplot_main_coords,scale=1.05,>=Stealth]
+  \filldraw[figplane] (-1.6,-1.6,0) -- (1.6,-1.6,0) -- (1.6,1.6,0) -- (-1.6,1.6,0) -- cycle;
+  \draw[figgreen,very thick,dashed] (0,0,-1.25) -- (0,0,0);
+  \draw[->,figgreen,very thick] (0,0,0) -- (0,0,1.45) node[above,font=\small] {$W^\perp$};
+  \fill[black] (0,0,0) circle (1.5pt) node[below right=1pt,font=\scriptsize] {$\vv 0$};
+  \draw[black!70] (0,0.22,0) -- (0,0.22,0.22) -- (0,0,0.22);
+  \node[font=\small,figblue] at (1.15,1.15,0) {$W$};
+\end{tikzpicture}
+\hspace{1.0cm}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \node[figbox,draw=figblue,fill=figblue!8] (Row) at (0,1.9) {$\Row A\ (\dim r)$};
+  \node[figbox,draw=figgreen,fill=figgreen!8] (Nul) at (0,0.2) {$\Nul A\ (\dim n-r)$};
+  \node[figbox,draw=figred,fill=figred!8] (Col) at (4.0,1.9) {$\Col A\ (\dim r)$};
+  \node[figbox,draw=figpurple,fill=figpurple!8] (NulT) at (4.0,0.2) {$\Nul A^{\mathsf T}\ (\dim m-r)$};
+  \node[font=\scriptsize,black!75] at (0,1.05) {$\perp$ in $\RR^n$};
+  \node[font=\scriptsize,black!75] at (4.0,1.05) {$\perp$ in $\RR^m$};
+\end{tikzpicture}
+\figcap{\textbf{Left:} In $\RR^3$, the orthogonal complement of a plane $W$ through $\vv 0$ is the perpendicular normal line $W^\perp$. \textbf{Right:} Fundamental subspace orthogonality (\hyperref[thm-lay-6-3]{Thm.~6.3}): $\Row A\perp\Nul A$ in $\RR^n$ and $\Col A\perp\Nul A^{\mathsf T}$ in $\RR^m$, with $\dim W+\dim W^\perp=n$.}
+\end{fig}
+
+\noindent\textbf{The question answered \& dimension identity.} Put the spanning vectors $(1,1,1)$ and $(1,-1,0)$ as \emph{rows} of $A$:
+\[
+  A=\begin{bmatrix}1&1&1\\1&-1&0\end{bmatrix}
+  \sim \begin{bmatrix}1&0&1/2\\0&1&1/2\end{bmatrix},
+  \qquad W^\perp=\Nul A=\spn\{(1,1,-2)\}.
+\]
+Because $W=\Row A$ gives $\dim W=\rank A$ and $W^\perp=\Nul A$, the Rank Theorem (W2) automatically yields
+\[
+  \dim W + \dim W^\perp = n, \qquad\text{and}\qquad (W^\perp)^\perp = W
+\]
+(since $W\subseteq(W^\perp)^\perp$ and both have dimension $n-\dim W^\perp=\dim W$, W3).
+
+\begin{shortcuts}
+  \ii \textbf{Hyperplane given by $\vv a\cdot\vv x=0$ ($\vv a\neq\vv 0$):} $W=(\spn\{\vv a\})^\perp$, so $W^\perp=\spn\{\vv a\}$ immediately!
+  \ii \textbf{Arbitrary $W=\spn\{\vv w_1,\dots,\vv w_p\}$:} Put $\vv w_j$ as \emph{rows} of $A$ and find $\Nul A$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{$(\Col A)^\perp = \Nul A^{\mathsf T}$, NEVER $\Nul A$!} For $A=\begin{psmallmatrix}1&1\\0&0\end{psmallmatrix}$, $(1,-1)\in\Nul A$ is not orthogonal to $(1,0)\in\Col A$.
+  \ii \textbf{Test EVERY generator:} Being orthogonal to one vector of $W$ does not place $\vv x$ in $W^\perp$.
+\end{trapbox}
+
+\subsection{Orthogonal sets and projections (Lay 6.2)}
+
+\begin{qbox}
+  Let $\vv u_1=(3,1,1)$, $\vv u_2=(-1,2,1)$, $\vv u_3=(-\frac12,-2,\frac72)$, and $\vv y=(6,1,-8)$. How can we find the weights $\vv y=c_1\vv u_1+c_2\vv u_2+c_3\vv u_3$ effortlessly without solving a $3\times3$ linear system? And how do we project $\vv y=(7,6)$ orthogonally onto a line $\spn\{(4,2)\}$?
+\end{qbox}
+
+\noindent\textbf{Definition.} $\{\vv u_1,\dots,\vv u_p\}$ is an \vocab{orthogonal set} if $\vv u_i\cdot\vv u_j=0$ whenever $i\ne j$. An \vocab{orthogonal basis} of a subspace $W$ is a basis of $W$ that is an orthogonal set; an \vocab{orthonormal set} is an orthogonal set of unit vectors ($\vv u_i\cdot\vv u_i=1$).
+
+\begin{theorem*}[Orthogonal sets of nonzero vectors are independent (Lay 6.2, Thm.~4)]\target{thm-lay-6-4}
+  If $S=\{\vv u_1,\dots,\vv u_p\}$ is an orthogonal set of nonzero vectors in $\RR^n$, then $S$ is linearly independent and hence is a basis for $\spn S$.
+\end{theorem*}
+\begin{proof}
+  If $c_1\vv u_1+\dots+c_p\vv u_p=\vv 0$, take the dot product of both sides with $\vv u_j$:
+  \[
+    0 = \vv 0\cdot\vv u_j = c_1(\vv u_1\cdot\vv u_j)+\dots+c_p(\vv u_p\cdot\vv u_j) = c_j(\vv u_j\cdot\vv u_j),
+  \]
+  because every cross term $\vv u_i\cdot\vv u_j=0$ ($i\ne j$). Since $\vv u_j\neq\vv 0$, $\vv u_j\cdot\vv u_j>0$ by positive definiteness (Thm.~1(d)), forcing $c_j=0$ for each $j$.
+\end{proof}
+
+\begin{theorem*}[Weights in an orthogonal basis (Lay 6.2, Thm.~5)]\target{thm-lay-6-5}
+  Let $\{\vv u_1,\dots,\vv u_p\}$ be an orthogonal basis for a subspace $W$ of $\RR^n$. For each $\vv y\in W$, the unique weights in $\vv y=c_1\vv u_1+\dots+c_p\vv u_p$ are given by
+  \[
+    c_j = \frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j} \qquad (j=1,\dots,p).
+  \]
+\end{theorem*}
+\begin{proof}
+  Writing $\vv y=\sum_{i=1}^p c_i\vv u_i$ and dotting with $\vv u_j$ cancels all $i\ne j$ terms, leaving $\vv y\cdot\vv u_j = c_j(\vv u_j\cdot\vv u_j)$; divide by $\vv u_j\cdot\vv u_j>0$.
+\end{proof}
+
+\noindent\textbf{The question answered (part 1).} Check $\vv u_1\cdot\vv u_2=-3+2+1=0$, $\vv u_1\cdot\vv u_3=-\frac32-2+\frac72=0$, $\vv u_2\cdot\vv u_3=\frac12-4+\frac72=0$: three nonzero orthogonal vectors in $\RR^3$ form an orthogonal basis (Thm.~4, W3)! By Thm.~5:
+\[
+  c_1 = \frac{18+1-8}{11}=1, \qquad c_2 = \frac{-6+2-8}{6}=-2, \qquad c_3 = \frac{-3-2-28}{33/2}=-2 \implies \vv y=\vv u_1-2\vv u_2-2\vv u_3.
+\]
+
+\medskip\noindent\textbf{Orthogonal projection onto a line $L=\spn\{\vv u\}$ ($\vv u\neq\vv 0$).} To decompose $\vv y=\alpha\vv u+\vv z$ with $\vv z\perp\vv u$, setting $(\vv y-\alpha\vv u)\cdot\vv u=0$ forces $\alpha=\frac{\vv y\cdot\vv u}{\vv u\cdot\vv u}$, defining
+\[
+  \hat{\vv y} = \proj_L\vv y = \frac{\vv y\cdot\vv u}{\vv u\cdot\vv u}\vv u, \qquad \vv z = \vv y - \hat{\vv y}.
+\]
+For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so Thm.~2 gives $\|\vv y-\beta\vv u\|^2 = \|\vv z\|^2 + \|\hat{\vv y}-\beta\vv u\|^2 \ge \|\vv z\|^2$: $\hat{\vv y}$ is the \emph{unique closest point} of $L$ to $\vv y$, at distance $\|\vv z\|$. For $\vv y=(7,6)$ and $\vv u=(4,2)$: $\vv y\cdot\vv u=40$, $\vv u\cdot\vv u=20 \implies \hat{\vv y}=2\vv u=(8,4)$ and $\vv z=(-1,2)$, so $\dist(\vv y,L)=\sqrt{5}$. Notice each term $\frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}\vv u_j$ in Thm.~5 is simply $\proj_{\spn\{\vv u_j\}}\vv y$!
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  % Left: orthogonal basis decomposition y=(4,3) in u1=(2,1), u2=(-1,2)
+  \begin{scope}[xshift=2.4cm,yshift=1.0cm,scale=0.68]
+    \draw[figaxis] (-1.8,0) -- (4.8,0);
+    \draw[figaxis] (0,-0.6) -- (0,3.8);
+    \draw[black!35,thin] (-1,-0.5) -- (4.8,2.4);
+    \draw[black!35,thin] (0.5,-1) -- (-1.2,2.4);
+
+    \draw[figvec,black,very thick] (0,0) -- (2,1) node[below right=-2pt,halo,font=\scriptsize] {$\vv u_1$};
+    \draw[figvec,black,very thick] (0,0) -- (-1,2) node[left=1pt,halo,font=\scriptsize] {$\vv u_2$};
+    \draw[figvec,figred,very thick] (0,0) -- (4.4,2.2) node[below right=-1pt,font=\scriptsize] {$\frac{11}{5}\vv u_1$};
+    \draw[figvec,figred,very thick] (0,0) -- (-0.4,0.8) node[left=1pt,halo,font=\scriptsize] {$\frac{2}{5}\vv u_2$};
+    \draw[figvec,figblue,very thick] (0,0) -- (4,3) node[above=1pt,font=\scriptsize] {$\vv y=(4,3)$};
+    \draw[dashed,black!55] (4,3) -- (4.4,2.2);
+    \draw[dashed,black!55] (4,3) -- (-0.4,0.8);
+    \draw[black!70] (0.2,0.1) -- (0.1,0.3) -- (-0.1,0.2);
+  \end{scope}
+
+  % Right: line projection y=(7,6) onto u=(4,2)
+  \begin{scope}[xshift=8.4cm,yshift=1.0cm,scale=0.45]
+    \draw[figaxis] (-0.8,0) -- (9.0,0);
+    \draw[figaxis] (0,-0.8) -- (0,6.8);
+    \draw[figgreen!70!black,thin] (-1,-0.5) -- (9.2,4.6) node[right,font=\scriptsize] {$L$};
+    \draw[figvec,black,very thick] (0,0) -- (4,2) node[below right=-2pt,halo,font=\scriptsize] {$\vv u=(4,2)$};
+    \draw[figvecsub,figred,very thick] (0,0) -- (8,4) node[below right=-2pt,font=\scriptsize] {$\hat{\vv y}=(8,4)$};
+    \draw[figvec,figblue,very thick] (0,0) -- (7,6) node[above=1pt,font=\scriptsize] {$\vv y=(7,6)$};
+    \draw[figvec,figgreen,very thick] (8,4) -- (7,6) node[midway,above right=-2pt,font=\scriptsize] {$\vv z=(-1,2)$};
+    \draw[black!70] (7.64,3.82) -- (7.46,4.18) -- (7.82,4.36);
+  \end{scope}
+\end{tikzpicture}
+\figcap{\textbf{Left:} Weights in an orthogonal basis add the independent $1$D projections along $\vv u_1=(2,1)$ and $\vv u_2=(-1,2)$ (\hyperref[thm-lay-6-5]{Thm.~6.5}). \textbf{Right:} Closest point $\hat{\vv y}=\proj_L\vv y=(8,4)$ on $L=\spn\{(4,2)\}$ to $\vv y=(7,6)$, with orthogonal error $\vv z=(-1,2)$ ($\dist=\sqrt{5}$).}
+\end{fig}
+
+\begin{trapbox}
+  \ii \textbf{Thm.~4 needs NONZERO vectors:} $\{\vv 0,(1,0)\}$ is orthogonal yet linearly dependent!
+  \ii \textbf{Weight formula fails for non-orthogonal bases:} Always verify pairwise dot products equal $0$ first.
+  \ii \textbf{Distance to $L$ is $\|\vv y-\hat{\vv y}\|$, NOT $\|\hat{\vv y}\|$:} Above, $\dist=\|\vv z\|=\sqrt{5}$, not $\|(8,4)\|=\sqrt{80}$.
+\end{trapbox}
+
+\subsection{Orthonormal sets and orthogonal matrices (Lay 6.2)}
+
+\begin{qbox}
+  Suppose $U$ is a $3\times2$ matrix whose columns $\vv u_1=\frac{1}{\sqrt{2}}(1,1,0)$ and $\vv u_2=\frac{1}{3}(2,-2,1)$ are orthogonal unit vectors. For any $\vv x\in\RR^2$, how does the transformed vector length $\|U\vv x\|$ compare with $\|\vv x\|$?
+\end{qbox}
+
+Normalizing each nonzero orthogonal vector ($\vv v_j/\|\vv v_j\|$) produces an \vocab{orthonormal basis}; then $\vv u_j\cdot\vv u_j=1$, simplifying Thm.~5 weights to $c_j=\vv y\cdot\vv u_j$.
+
+\begin{theorem*}[Orthonormal columns preserve dot products and lengths (Lay 6.2, Thms.~6 \& 7)]\target{thm-lay-6-6}\target{thm-lay-6-7}
+  An $m\times n$ matrix $U$ has orthonormal columns if and only if $U^{\mathsf T}U = I_n$ (\textbf{Thm.~6}). Whenever $U^{\mathsf T}U = I_n$, for all $\vv x,\vv y\in\RR^n$ (\textbf{Thm.~7}):
+  \[
+    (U\vv x)\cdot(U\vv y) = \vv x\cdot\vv y, \qquad
+    \|U\vv x\| = \|\vv x\|, \qquad
+    U\vv x \perp U\vv y \iff \vv x\perp\vv y.
+  \]
+\end{theorem*}
+\begin{proof}
+  By (W1), entry $(i,j)$ of $U^{\mathsf T}U$ is $\vv u_i\cdot\vv u_j$, which equals $\delta_{ij} \iff$ the columns are orthonormal ($U^{\mathsf T}U=I_n$). Then
+  \[
+    (U\vv x)\cdot(U\vv y) = (U\vv x)^{\mathsf T}(U\vv y) = \vv x^{\mathsf T}U^{\mathsf T}U\vv y = \vv x^{\mathsf T}I\vv y = \vv x\cdot\vv y,
+  \]
+  and setting $\vv y=\vv x$ gives $\|U\vv x\|^2=\|\vv x\|^2$. Setting $\vv x\cdot\vv y=0$ preserves orthogonality.
+\end{proof}
+
+\noindent\textbf{Definition.} A \emph{square} $n\times n$ matrix $U$ with orthonormal columns is called an \vocab{orthogonal matrix}; then $U^{\mathsf T}U=I$ forces $U$ to be invertible with $U^{-1}=U^{\mathsf T}$ (W4).
+
+\begin{proposition*}[Square orthogonal matrices: columns, rows, and eigenvalues $\pm1$ (Lay 6.2)]
+  For a square matrix $U$, the following are equivalent: (a) columns are orthonormal; (b) $U^{\mathsf T}U=I$; (c) $UU^{\mathsf T}=I$; (d) rows are orthonormal. Every real eigenvalue of an orthogonal matrix is $1$ or $-1$.
+\end{proposition*}
+\begin{proof}
+  (a)$\Leftrightarrow$(b) is Thm.~6. For square $U$, (W4) makes $U^{\mathsf T}U=I \iff U^{-1}=U^{\mathsf T} \iff UU^{\mathsf T}=I$. Entry $(i,j)$ of $UU^{\mathsf T}=(U^{\mathsf T})^{\mathsf T}U^{\mathsf T}$ is $(\text{row }i\text{ of }U)\cdot(\text{row }j\text{ of }U)$, proving (c)$\Leftrightarrow$(d). Finally, if $U\vv x=\lambda\vv x$ ($\lambda\in\RR$, $\vv x\neq\vv 0$), Thm.~7 gives $\|\vv x\|=\|U\vv x\|=|\lambda|\,\|\vv x\| \implies |\lambda|=1 \implies \lambda=\pm1$.
+\end{proof}
+
+\noindent\textbf{The question answered.} Since $U^{\mathsf T}U=I_2$, for $\vv x=(\sqrt{2},3)$, $U\vv x=(3,-1,1)$ has length $\sqrt{11}=\sqrt{2+9}=\|\vv x\|$, exactly as Thm.~7 predicts!
+
+\begin{shortcuts}
+  \ii \textbf{Instant inverse of an orthogonal matrix:} $U^{-1}=U^{\mathsf T}$, zero row reduction!
+  \ii \textbf{Square $U$ row test:} Checking orthonormal rows is equivalent to checking orthonormal columns.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Orthogonal matrices require ORTHONORMAL columns:} $\begin{psmallmatrix}1&1\\-1&1\end{psmallmatrix}$ has $U^{\mathsf T}U=2I$, so its inverse is $\frac12 U^{\mathsf T}$, not $U^{\mathsf T}$.
+  \ii \textbf{Rectangular $U^{\mathsf T}U=I$ does NOT imply $UU^{\mathsf T}=I$:} Here $U$ is $3\times2$ with $U^{\mathsf T}U=I_2$, yet $UU^{\mathsf T}\neq I_3$.
+\end{trapbox}
+
+\subsection{Orthogonal projections onto subspaces (Lay 6.3)}
+
+\begin{qbox}
+  Given orthogonal vectors $\vv u_1=(2,5,-1)$ and $\vv u_2=(-2,1,1)$ spanning a plane $W\subseteq\RR^3$ and a point $\vv y=(1,2,3)$ outside $W$, which point $\hat{\vv y}\in W$ is \emph{closest} to $\vv y$, and what is the distance from $\vv y$ to $W$?
+\end{qbox}
+
+For a line, we projected $\vv y$ onto its direction vector. For a $p$-dimensional subspace $W$ with orthogonal basis $\{\vv u_1,\dots,\vv u_p\}$, adding the $p$ independent line projections produces the exact orthogonal projection onto $W$!
+
+\begin{theorem*}[The Orthogonal Decomposition Theorem (Lay 6.3, Thm.~8)]\target{thm-lay-6-8}\target{name-orthogonal-decomposition-theorem}
+  Let $W$ be a subspace of $\RR^n$ with an orthogonal basis $\{\vv u_1,\dots,\vv u_p\}$. Every $\vv y\in\RR^n$ decomposes \textbf{uniquely} as $\vv y=\hat{\vv y}+\vv z$ with $\hat{\vv y}\in W$ and $\vv z\in W^\perp$, where
+  \[
+    \hat{\vv y} = \proj_W\vv y = \frac{\vv y\cdot\vv u_1}{\vv u_1\cdot\vv u_1}\vv u_1 + \dots + \frac{\vv y\cdot\vv u_p}{\vv u_p\cdot\vv u_p}\vv u_p.
+  \]
+\end{theorem*}
+\begin{ideabox}
+  Adding the projections onto each orthogonal line $\spn\{\vv u_j\}$ matches $\vv y$'s component along each $\vv u_j$ without interfering with any other $\vv u_i$ ($\vv u_i\cdot\vv u_j=0$!). So $\vv z=\vv y-\hat{\vv y}$ is orthogonal to every $\vv u_j$, hence to all of $W$. Why is $\hat{\vv y}$ independent of which orthogonal basis of $W$ you choose? Because two decompositions $\vv y=\hat{\vv y}_1+\vv z_1=\hat{\vv y}_2+\vv z_2$ force $\hat{\vv y}_1-\hat{\vv y}_2 = \vv z_2-\vv z_1 \in W\cap W^\perp=\{\vv 0\}$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Define $\hat{\vv y}$ by the formula above (clearly $\hat{\vv y}\in W$) and set $\vv z=\vv y-\hat{\vv y}$.
+    \ii For each $j=1,\dots,p$, orthogonality zeroes out all $i\neq j$ terms in $\hat{\vv y}\cdot\vv u_j$, leaving $\vv z\cdot\vv u_j = \vv y\cdot\vv u_j - \frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}(\vv u_j\cdot\vv u_j)=0$. By the membership test (§2.2), $\vv z\in W^\perp$.
+    \ii \emph{Uniqueness:} If $\vv y=\hat{\vv y}_1+\vv z_1=\hat{\vv y}_2+\vv z_2$ with $\hat{\vv y}_k\in W,\vv z_k\in W^\perp$, then $\hat{\vv y}_1-\hat{\vv y}_2=\vv z_2-\vv z_1\in W\cap W^\perp=\{\vv 0\}$, so $\hat{\vv y}_1=\hat{\vv y}_2$ and $\vv z_1=\vv z_2$. (Thus $\proj_W\vv y$ is independent of the choice of orthogonal basis.)
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[The Best Approximation Theorem (Lay 6.3, Thm.~9)]\target{thm-lay-6-9}\target{name-best-approximation-theorem}
+  Let $W$ be a subspace of $\RR^n$ and $\hat{\vv y}=\proj_W\vv y$. Then $\hat{\vv y}$ is the \textbf{unique} point in $W$ closest to $\vv y$:
+  \[
+    \|\vv y-\hat{\vv y}\| < \|\vv y-\vv v\| \qquad \text{for every }\vv v\in W\text{ with }\vv v\ne\hat{\vv y}.
+  \]
+\end{theorem*}
+\begin{proof}
+  For any $\vv v\in W$, write $\vv y-\vv v = (\vv y-\hat{\vv y}) + (\hat{\vv y}-\vv v)$. Here $\vv y-\hat{\vv y}\in W^\perp$ (Thm.~8) and $\hat{\vv y}-\vv v\in W$, so they are orthogonal; by Pythagoras (Thm.~2), $\|\vv y-\vv v\|^2=\|\vv y-\hat{\vv y}\|^2+\|\hat{\vv y}-\vv v\|^2$. Whenever $\vv v\neq\hat{\vv y}$, $\|\hat{\vv y}-\vv v\|^2>0$ by Thm.~1(d), giving $\|\vv y-\vv v\|>\|\vv y-\hat{\vv y}\|$.
+\end{proof}
+
+\begin{fig}
+\tdplotsetmaincoords{68}{118}
+\begin{tikzpicture}[tdplot_main_coords,scale=1.05,>=Stealth]
+  \filldraw[figplane] (-0.8,-0.8,0) -- (2.9,-0.8,0) -- (2.9,2.7,0) -- (-0.8,2.7,0) -- cycle;
+  \draw[->,black!80,thick] (0,0,0) -- (1.9,0,0) node[below,halo,font=\scriptsize] {$\vv u_1$};
+  \draw[->,black!80,thick] (0,0,0) -- (0,1.7,0) node[left,halo,font=\scriptsize] {$\vv u_2$};
+  \draw[dashed,black!45] (1.6,0,0) -- (1.6,1.4,0);
+  \draw[dashed,black!45] (0,1.4,0) -- (1.6,1.4,0);
+  \draw[figvec,figred,very thick] (0,0,0) -- (1.6,1.4,0) node[right=2pt,font=\scriptsize] {$\hat{\vv y}$};
+  \draw[figvec,figblue,very thick] (0,0,0) -- (1.6,1.4,1.9) node[above=2pt,halo,font=\scriptsize] {$\vv y$};
+  \draw[figvec,figgreen,very thick] (1.6,1.4,0) -- (1.6,1.4,1.9) node[midway,right=2pt,font=\scriptsize] {$\vv z\in W^\perp$};
+  \draw[black!70] (1.42,1.4,0) -- (1.42,1.4,0.18) -- (1.6,1.4,0.18);
+  \node[font=\footnotesize,figblue] at (-0.4,2.3,0) {$W$};
+\end{tikzpicture}
+\hspace{0.9cm}
+\tdplotsetmaincoords{68}{118}
+\begin{tikzpicture}[tdplot_main_coords,scale=1.05,>=Stealth]
+  \filldraw[figplane] (-0.8,-0.8,0) -- (2.9,-0.8,0) -- (2.9,2.7,0) -- (-0.8,2.7,0) -- cycle;
+  \fill[figred] (1.7,1.4,0) circle (1.6pt) node[below right=1pt,font=\scriptsize] {$\hat{\vv y}$};
+  \fill[black] (1.5,-0.25,0) circle (1.6pt) node[left=2pt,halo,font=\scriptsize] {$\vv v\in W$};
+  \fill[figblue] (1.7,1.4,1.9) circle (1.6pt) node[above=2pt,halo,font=\scriptsize] {$\vv y$};
+  \draw[figvec,figgreen,very thick] (1.7,1.4,0) -- (1.7,1.4,1.9) node[midway,right=2pt,font=\scriptsize] {$\vv y-\hat{\vv y}$};
+  \draw[figvec,figred,very thick] (1.7,1.4,0) -- (1.5,-0.25,0) node[midway,below=3pt,halo,font=\scriptsize] {$\hat{\vv y}-\vv v$};
+  \draw[dashed,black!75,very thick] (1.5,-0.25,0) -- (1.7,1.4,1.9);
+  \draw[black!70] (1.66,1.15,0) -- (1.66,1.15,0.18) -- (1.7,1.4,0.18);
+  \node[font=\footnotesize,figblue] at (-0.4,2.3,0) {$W$};
+\end{tikzpicture}
+\figcap{\textbf{Left:} Orthogonal Decomposition (\hyperref[thm-lay-6-8]{Thm.~6.8}): $\hat{\vv y}=\proj_W\vv y$ adds the projections onto orthogonal $\vv u_1,\vv u_2$, leaving $\vv z=\vv y-\hat{\vv y}\perp W$. \textbf{Right:} Best Approximation (\hyperref[thm-lay-6-9]{Thm.~6.9}): for any $\vv v\neq\hat{\vv y}$ in $W$, $\|\vv y-\vv v\|$ is the hypotenuse of a right triangle with vertical leg $\|\vv y-\hat{\vv y}\|$.}
+\end{fig}
+
+\noindent\textbf{The question answered.} Check $\vv u_1\cdot\vv u_2=-4+5-1=0$. With $\vv y\cdot\vv u_1=9$, $\vv u_1\cdot\vv u_1=30$, $\vv y\cdot\vv u_2=3$, $\vv u_2\cdot\vv u_2=6$:
+\[
+  \hat{\vv y} = \frac{9}{30}\vv u_1 + \frac{3}{6}\vv u_2 = \left(-\frac25,\,2,\,\frac15\right), \qquad
+  \vv z = \vv y-\hat{\vv y} = \left(\frac75,\,0,\,\frac{14}{5}\right), \qquad
+  \dist(\vv y,W) = \|\vv z\| = \frac{7\sqrt{5}}{5}.
+\]
+
+\begin{theorem*}[Projection matrix $UU^{\mathsf T}$ for an orthonormal basis (Lay 6.3, Thm.~10)]\target{thm-lay-6-10}
+  If $\{\vv u_1,\dots,\vv u_p\}$ is an \textbf{orthonormal} basis of $W\subseteq\RR^n$ and $U=[\,\vv u_1\ \cdots\ \vv u_p\,]$, then
+  \[
+    \proj_W\vv y = (\vv y\cdot\vv u_1)\vv u_1 + \dots + (\vv y\cdot\vv u_p)\vv u_p = UU^{\mathsf T}\vv y.
+  \]
+\end{theorem*}
+\begin{proof}
+  Every denominator $\vv u_j\cdot\vv u_j=1$ in Thm.~8, and by (W1), $U^{\mathsf T}\vv y=(\vv u_1\cdot\vv y,\dots,\vv u_p\cdot\vv y)^{\mathsf T}$, so $U(U^{\mathsf T}\vv y)$ forms the exact combination of the columns $\vv u_j$!
+\end{proof}
+
+Notice when $p=n$ ($W=\RR^n$ and $U$ is orthogonal), $UU^{\mathsf T}=I$; when $p<n$, $UU^{\mathsf T}$ is the symmetric projection matrix onto $\Col U$. For example, with $\vv u_1=\frac{1}{\sqrt{2}}(1,0,1)$ and $\vv u_2=(0,1,0)$,
+\[
+  UU^{\mathsf T} = \begin{bmatrix}1/2&0&1/2\\0&1&0\\1/2&0&1/2\end{bmatrix}
+\]
+satisfies $(UU^{\mathsf T})^2=UU^{\mathsf T}\neq I_3$.
+
+\begin{shortcuts}
+  \ii \textbf{Projecting onto a hyperplane ($W^\perp=\spn\{\vv n\}$):} Compute $\proj_{W^\perp}\vv y$ first and subtract: $\proj_W\vv y = \vv y - \frac{\vv y\cdot\vv n}{\vv n\cdot\vv n}\vv n$!
+  \ii \textbf{Checking a projection:} Verify $(\vv y-\hat{\vv y})\cdot\vv u_j=0$ for every basis vector $\vv u_j$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Do NOT sum line projections onto a NON-orthogonal basis!} Verify $\vv u_i\cdot\vv u_j=0$ first!
+  \ii \textbf{Closest point is $\hat{\vv y}$; distance is $\|\vv y-\hat{\vv y}\|$, not $\|\hat{\vv y}\|$.}
+\end{trapbox}
+
+\section{Homework this week}
+HW8, Sections 6.1--6.3.
+\begin{itemize}
+  \ii \textbf{Section 6.1:} \#1 (dot products \& quotient $\frac{\vv v\cdot\vv u}{\vv u\cdot\vv u}$); \#7 ($\|\vv w\|$); \#9 (normalize); \#13 ($\|\vv x-\vv y\|$); \#17 (orthogonal iff dot $0$); \#22 (Pythagoras iff); \#23 (membership test); \#27 (Thm.~3: $\Col A\perp\Nul A^{\mathsf T}$); \#30 (positive definiteness Thm.~1(d)); \#34 (hyperplane dimension $n-1$).
+  \ii \textbf{Section 6.2:} \#5 (pairwise dots); \#7, \#9 (Thm.~4 \& Thm.~5 weights); \#15 (distance $\|\vv y-\hat{\vv y}\|$); \#17 (normalize orthogonal set); \#23, \#24 (nonzero requirement in Thm.~4); \#26, \#27 (orthonormal scaling); \#29, \#32 (orthogonal matrices must be square).
+  \ii \textbf{Section 6.3:} \#3, \#7 (confirm $\vv u_1\cdot\vv u_2=0$, Thm.~8); \#11 ($\proj_W\vv y$); \#15 ($\|\vv y-\proj_W\vv y\|$); \#17 ($U^{\mathsf T}U=I_2$, $UU^{\mathsf T}\vv y=\proj_W\vv y$); \#22, \#28 (Thm.~8 uniqueness); \#30 ($UU^{\mathsf T}\vv x=\vv x$ iff $\vv x\in\Col U$).
+\end{itemize}
+
+\section{Problem set}
+
+\begin{prob}\target{prob-P1}
+  \textbf{P1.}\ For $\vv u=(1,2,-1,3)$ and $\vv v=(2,-1,3,1)$, compute $\vv u\cdot\vv v$, $\|\vv u\|$, $\|\vv v\|$, and $\|\vv u+\vv v\|$. Are $\vv u$ and $\vv v$ orthogonal? Check the Pythagorean theorem for them.
+\end{prob}
+
+\begin{prob}\target{prob-P2}
+  \textbf{P2.}\ Find a basis of $W^\perp$ for $W=\spn\{(1,0,1,1),\ (0,1,-1,2)\}\subseteq\RR^4$.
+\end{prob}
+
+\begin{prob}\target{prob-P3}
+  \textbf{P3.}\ Show that $\vv b_1=(1,1,0)$, $\vv b_2=(1,-1,1)$, $\vv b_3=(-1,1,2)$ form an orthogonal basis of $\RR^3$, and write $\vv x=(3,1,4)$ in this basis without row reduction.
+\end{prob}
+
+\begin{prob}\target{prob-P4}
+  \textbf{P4.}\ Write $\vv y=(3,1)$ as the sum of a vector on the line through $\vv u=(1,2)$ and a vector orthogonal to $\vv u$. What is the distance from $\vv y$ to the line?
+\end{prob}
+
+\begin{prob}\target{prob-P5}
+  \textbf{P5.}\ Let $W=\spn\{(1,1,0),\ (1,-1,1)\}$ and $\vv y=(2,3,4)$. Find $\proj_W\vv y$, the distance from $\vv y$ to $W$, and the closest point of $W$ to $\vv y$.
+\end{prob}
+
+\begin{prob}\target{prob-P6}
+  \textbf{P6.}\ Let $A$ be $m\times n$. Show that if $A^{\mathsf T}A\vv x=\vv 0$, then $A\vv x=\vv 0$ (compute $\|A\vv x\|^2$). Conclude that $\Nul(A^{\mathsf T}A)=\Nul A$.
+\end{prob}
+
+\begin{prob}\target{prob-P7}
+  \textbf{P7.}\ Let $U$ and $V$ be $n\times n$ orthogonal matrices. Show that $\det U=\pm1$ and that $UV$ is an orthogonal matrix.
+\end{prob}
+
+\begin{prob}\target{prob-P8}
+  \textbf{P8.}\ Let $\vv u_1=\frac{1}{\sqrt{2}}(1,0,1)$, $\vv u_2=(0,1,0)$, $U=[\,\vv u_1\ \ \vv u_2\,]$, $W=\Col U$, and $P=UU^{\mathsf T}$. Show that $P^2=P$ and $P^{\mathsf T}=P$, and find $\Nul P$.
+\end{prob}
+
+\end{document}

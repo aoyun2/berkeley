@@ -1,0 +1,73 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\proj}{proj}
+\title{Math 54 --- Week 9}
+\subtitle{Solutions to the problem set}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P1}{P1}.}\par\idea{Compute dot products and check Pythagoras on $\|\vv u+\vv v\|^2$.}
+\begin{steps}
+  \ii $\vv u\cdot\vv v = 2-2-3+3=0$, so $\vv u$ and $\vv v$ are \textbf{orthogonal}.
+  \ii $\|\vv u\|=\sqrt{1+4+1+9}=\sqrt{15}$, $\|\vv v\|=\sqrt{4+1+9+1}=\sqrt{15}$.
+  \ii $\vv u+\vv v=(3,1,2,4)$, so $\|\vv u+\vv v\|=\sqrt{9+1+4+16}=\sqrt{30}$.
+  \ii Pythagorean check: $\|\vv u+\vv v\|^2 = 30 = 15 + 15 = \|\vv u\|^2+\|\vv v\|^2$.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P2}{P2}.}\par\idea{$W^\perp$ is the null space of the matrix whose rows span $W$ (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-3}{Thm.~6.3}).}
+Setting up $A=\begin{psmallmatrix}1&0&1&1\\0&1&-1&2\end{psmallmatrix}$ (already in RREF!), $x_1=-x_3-x_4$ and $x_2=x_3-2x_4$ with $x_3,x_4$ free, so
+\[
+  \vv x = x_3(-1,1,1,0) + x_4(-1,-2,0,1).
+\]
+These two vectors are not multiples of each other (entries 3 and 4), so $\{(-1,1,1,0),(-1,-2,0,1)\}$ is a basis of $W^\perp$ (and $\dim W+\dim W^\perp=2+2=4$).
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P3}{P3}.}\par\idea{Verify pairwise dot products equal $0$, then use $c_j=(\vv x\cdot\vv b_j)/(\vv b_j\cdot\vv b_j)$ (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-5}{Thm.~6.5}).}
+\begin{steps}
+  \ii $\vv b_1\cdot\vv b_2=1-1+0=0$, $\vv b_1\cdot\vv b_3=-1+1+0=0$, $\vv b_2\cdot\vv b_3=-1-1+2=0$: nonzero orthogonal vectors are independent (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-4}{Thm.~6.4}), hence form a basis of $\RR^3$.
+  \ii Computing dot products ($\vv b_1\cdot\vv b_1=2,\ \vv b_2\cdot\vv b_2=3,\ \vv b_3\cdot\vv b_3=6$ and $\vv x\cdot\vv b_1=4,\ \vv x\cdot\vv b_2=6,\ \vv x\cdot\vv b_3=6$):
+  \[
+    c_1=\frac{4}{2}=2,\qquad c_2=\frac{6}{3}=2,\qquad c_3=\frac{6}{6}=1
+    \implies \vv x = 2\vv b_1+2\vv b_2+\vv b_3.
+  \]
+  (Check: $(2,2,0)+(2,-2,2)+(-1,1,2)=(3,1,4)$.)
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P4}{P4}.}\par\idea{Project $\vv y$ onto $\vv u$ and subtract.}
+$\vv y\cdot\vv u=3+2=5$ and $\vv u\cdot\vv u=5$, so $\hat{\vv y}=\frac55\vv u=(1,2)$ and $\vv z=\vv y-\hat{\vv y}=(2,-1)$ ($\vv z\cdot\vv u=0$). Thus $\vv y=(1,2)+(2,-1)$, and the distance from $\vv y$ to the line is $\|\vv z\|=\sqrt{5}$.
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P5}{P5}.}\par\idea{Confirm the basis is orthogonal and apply \xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-8}{Thm.~6.8} and \xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-9}{Thm.~6.9}.}
+\begin{steps}
+  \ii $(1,1,0)\cdot(1,-1,1)=0$, so the basis is orthogonal.
+  \ii $\proj_W\vv y = \frac{5}{2}(1,1,0) + \frac{3}{3}(1,-1,1) = \left(\frac72,\,\frac32,\,1\right)$.
+  \ii Residual $\vv z=\vv y-\proj_W\vv y=\left(-\frac32,\frac32,3\right)$ (orthogonal to both basis vectors), so the distance to $W$ is $\|\vv z\|=\sqrt{\frac94+\frac94+9}=\frac{3\sqrt{6}}{2}$.
+  \ii By the Best Approximation Theorem, the closest point in $W$ is $\proj_W\vv y=\left(\frac72,\frac32,1\right)$.
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P6}{P6}.}\par\idea{$\vv x^{\mathsf T}A^{\mathsf T}A\vv x = \|A\vv x\|^2$.}
+If $A^{\mathsf T}A\vv x=\vv 0$, left-multiplying by $\vv x^{\mathsf T}$ gives $0=\vv x^{\mathsf T}A^{\mathsf T}A\vv x = (A\vv x)^{\mathsf T}(A\vv x)=\|A\vv x\|^2$. By positive definiteness (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-1}{Thm.~6.1(d)}), $A\vv x=\vv 0$. Conversely, $A\vv x=\vv 0 \implies A^{\mathsf T}A\vv x=\vv 0$. Hence $\Nul(A^{\mathsf T}A)=\Nul A$.
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P7}{P7}.}\par\idea{Use $U^{\mathsf T}U=I$ and multiplicative determinants.}
+\begin{steps}
+  \ii From $U^{\mathsf T}U=I$, taking determinants gives $(\det U)^2=\det(U^{\mathsf T})\det U=\det I=1$, so $\det U=\pm1$.
+  \ii $UV$ is $n\times n$ and $(UV)^{\mathsf T}(UV)=V^{\mathsf T}(U^{\mathsf T}U)V=V^{\mathsf T}IV=V^{\mathsf T}V=I$, so $UV$ is orthogonal (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-6}{Thm.~6.6}).
+\end{steps}
+\end{prob}
+
+\begin{prob}\textbf{\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P8}{P8}.}\par\idea{Substitute $U^{\mathsf T}U=I_2$.}
+\begin{steps}
+  \ii Since $\vv u_1,\vv u_2$ are orthonormal, $U^{\mathsf T}U=I_2$, so $P^2=U(U^{\mathsf T}U)U^{\mathsf T}=UI_2U^{\mathsf T}=P$ and $P^{\mathsf T}=(U^{\mathsf T})^{\mathsf T}U^{\mathsf T}=UU^{\mathsf T}=P$.
+  \ii If $P\vv x=\vv 0$, then $U(U^{\mathsf T}\vv x)=\vv 0 \implies U^{\mathsf T}(UU^{\mathsf T}\vv x)=U^{\mathsf T}\vv x=\vv 0$; conversely $U^{\mathsf T}\vv x=\vv 0 \implies P\vv x=\vv 0$. Thus $\Nul P=\Nul U^{\mathsf T}=W^\perp=\spn\{(1,0,-1)\}$ (since $x_1+x_3=0$ and $x_2=0$).
+\end{steps}
+\end{prob}
+
+\end{document}
