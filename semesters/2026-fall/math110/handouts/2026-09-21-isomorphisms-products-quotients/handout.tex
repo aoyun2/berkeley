@@ -4,291 +4,258 @@
 \DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
 \newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 4}
-\subtitle{Isomorphisms, inverses, products, quotient spaces (Notes Ch.~7--8, LADR 3D--3E, HW4)}
+\subtitle{Isomorphisms, change of basis, products, quotient spaces (Notes Ch.~7--8, LADR 3D--3E, HW4)}
 \author{}\date{}\ihead{}
 \begin{document}
 \maketitle
 
-\section{Facts used from Weeks 1--3}
+\section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii A sum $U_1+\dots+U_m$ is direct exactly when $u_1+\dots+u_m=0$ with $u_i\in U_i$ forces every $u_i=0$; then $\dim(U_1\oplus\dots\oplus U_m)=\sum\dim U_i$ (Weeks 1--2).
-  \ii An independent list extends to a basis. In a space of dimension $n$, $n$ independent vectors form a basis, and so do $n$ spanning vectors (Week 2).
-  \ii Given a basis $v_1,\dots,v_n$ of $V$ and any $w_1,\dots,w_n\in W$, there is exactly one linear $T$ with $Tv_j=w_j$. Two linear maps that agree on a basis are equal (Week 3, \hyperref[prop-21]{Prop.~21}).
-  \ii $T$ is injective $\iff\nul T=\{0\}$ (Week 3, \hyperref[prop-2]{Prop.~2}3).
-  \ii Rank--nullity: $\dim V=\dim\nul T+\dim\range T$ (Week 3, \hyperref[prop-24]{Prop.~24}).
-  \ii If $\dim V=\dim W<\infty$: $T$ injective $\iff T$ surjective (Week 3, \hyperref[prop-25]{Prop.~25}).
+  \ii \textbf{Direct sums (\xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Prop.~7}, \xlink{math110}{2026-09-07-bases-dimension}{prop-17}{Prop.~17}):} A sum $U_1+\dots+U_m$ is direct ($U_1\oplus\dots\oplus U_m$) iff $u_1+\dots+u_m=0$ ($u_k\in U_k$) forces $u_1=\dots=u_m=0$; in finite dimensions, this holds iff $\dim(U_1+\dots+U_m)=\sum_{k=1}^m\dim U_k$.
+  \ii \textbf{Bases and dimension (\xlink{math110}{2026-09-07-bases-dimension}{prop-11}{Prop.~11, 13}):} Every linearly independent list in a finite-dimensional space $V$ extends to a basis of $V$, and any independent list (or spanning list) of length $\dim V$ is a basis of $V$.
+  \ii \textbf{Linear map lemma (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-21}{Prop.~21}):} Given a basis $v_1,\dots,v_n$ of $V$ and any vectors $w_1,\dots,w_n\in W$, there exists a unique $T\in\LL(V,W)$ with $Tv_j=w_j$. Two linear maps agreeing on a basis are equal.
+  \ii \textbf{Rank--Nullity and equal dimensions (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-23}{Prop.~23--25}):} $T\in\LL(V,W)$ is injective $\iff\nul T=\{0\}$; when $\dim V<\infty$, $\dim V=\dim\nul T+\dim\range T$; and when $\dim V=\dim W<\infty$, $T$ is injective $\iff T$ is surjective $\iff T$ is bijective.
+  \ii \textbf{Matrices of linear maps (\xlink{math110}{2026-09-14-linear-maps-matrices}{def-18}{Def.~18--20}):} With bases fixed, $\MM(Tv)=\MM(T)\MM(v)$ and $\MM(ST)=\MM(S)\MM(T)$.
 \end{enumerate}
 
 \section{This week}
 
-\subsection{Isomorphisms and inverses (Ch.~7.1)}
+\subsection{Invertible linear maps and isomorphisms (Notes Ch.~7.1, LADR 3D)}
 
 \begin{qbox}
-  When are two vector spaces ``the same'' as far as linear algebra is concerned, even though their elements look different? $\PP_2(\RR)$ and $\RR^3$: the polynomial $a+bx+cx^2$ and the triple $(a,b,c)$ carry the same information, and adding or scaling on one side matches adding or scaling on the other.
+  The polynomial space $\PP_2(\RR)$ (consisting of $a_0+a_1x+a_2x^2$) and the coordinate space $\RR^3$ (consisting of triples $(a_0,a_1,a_2)$) have different-looking elements, yet every linear-algebraic calculation in one translates word for word into the other. How do we formalize when two vector spaces $V$ and $W$ have identical linear structure, and which single number classifies all finite-dimensional vector spaces over $\FF$ up to isomorphism?
 \end{qbox}
 
-\begin{definition*}[Def.~21 / LADR 3.59, 3.69]\hypertarget{def-21}{}\label{def-21}
-  A linear map $T\colon V\to W$ is an \vocab{isomorphism} (is \vocab{invertible}) if there is a linear map $S\colon W\to V$ with $TS=\id_W$ and $ST=\id_V$. Then $V$ and $W$ are \vocab{isomorphic}, written $V\cong W$.
+\begin{definition*}[Def.~21 / LADR 3.59, 3.69: Invertible linear map and isomorphism]\target{def-21}
+  \begin{itemize}
+    \ii A linear map $T\in\LL(V,W)$ is called \vocab{invertible} (or an \vocab{isomorphism}) if there exists a linear map $S\in\LL(W,V)$ such that $ST=I_V$ and $TS=I_W$. Such a linear map $S$ is called an \vocab{inverse} of $T$.
+    \ii Two vector spaces $V$ and $W$ over $\FF$ are called \vocab{isomorphic}, written $V\cong W$, if there exists an isomorphism from $V$ onto $W$.
+  \end{itemize}
 \end{definition*}
 
-\begin{proposition*}[Prop.~28 / LADR 3.60: the inverse is unique]\hypertarget{prop-28}{}\label{prop-28}
-  If $T$ is an isomorphism, the map $S$ is unique. It is written $T^{-1}$.
-\end{proposition*}
-\begin{proof}
-  If $S_1,S_2$ both work, then $S_1=S_1(TS_2)=(S_1T)S_2=S_2$.
-\end{proof}
-\begin{itemize}
-  \ii The computation uses only $S_1T=\id$ and $TS_2=\id$. So: \emph{if $T$ has a left inverse and a right inverse, they are equal.}
-  \ii With only one side, uniqueness fails. $A=\begin{pmatrix}1&2\end{pmatrix}\colon\FF^2\to\FF$ has no left inverse (it is not injective) and infinitely many right inverses: $\begin{pmatrix}1&2\end{pmatrix}\begin{psmallmatrix}1-2x\\x\end{psmallmatrix}=1$ for every $x$.
-\end{itemize}
-
-\begin{proposition*}[Prop.~29 / LADR 3.63: isomorphism $=$ linear bijection]\hypertarget{prop-29}{}\label{prop-29}
-  A linear map $T\colon V\to W$ is an isomorphism if and only if it is injective and surjective.
-\end{proposition*}
-\begin{ideabox}
-A bijection always has an inverse \emph{function}. The definition asks for a \emph{linear} inverse, so the content is that the inverse function of a linear bijection is automatically linear.
-
-How do you prove $T^{-1}(\lambda w_1+w_2)$ equals $\lambda T^{-1}(w_1)+T^{-1}(w_2)$ when you have no formula for $T^{-1}$? Both sides are vectors in $V$, and $T$ is injective, so it is enough to show $T$ sends them to the same vector. Applying $T$ removes every $T^{-1}$. This move (to compare two vectors, apply an injective map to both) is used again and again.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii ($\Rightarrow$) If $Tv=0$ then $v=T^{-1}(Tv)=T^{-1}(0)=0$: injective. Any $w$ equals $T(T^{-1}w)$: surjective.
-    \ii ($\Leftarrow$) For $w\in W$ let $T^{-1}(w)$ be the unique $v$ with $Tv=w$. Then $T(T^{-1}w)=w$ and $T^{-1}(Tv)=v$.
-    \ii $T^{-1}$ is linear: $T\bigl(T^{-1}(\lambda w_1+w_2)\bigr)=\lambda w_1+w_2=\lambda T(T^{-1}w_1)+T(T^{-1}w_2)=T\bigl(\lambda T^{-1}w_1+T^{-1}w_2\bigr)$, and $T$ is injective.
-  \end{steps}
-\end{proof}
-
-\begin{proposition*}[Prop.~30 / LADR 3.70: dimension classifies finite-dimensional spaces]\hypertarget{prop-30}{}\label{prop-30}
-  Finite-dimensional $V$ and $W$ are isomorphic if and only if $\dim V=\dim W$.
-\end{proposition*}
-\begin{ideabox}
-A basis $v_1,\dots,v_n$ of $V$ gives every vector a unique coordinate column, and that is an isomorphism $V\to\FF^n$. So every $n$-dimensional space is a copy of $\FF^n$, and two $n$-dimensional spaces are copies of each other. To build the isomorphism directly, send a basis of $V$ to a basis of $W$; the inverse sends the basis of $W$ back.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii ($\Rightarrow$) If $T$ is an isomorphism, $\nul T=\{0\}$ and $\range T=W$, so by (W5) $\dim V=0+\dim W$.
-    \ii ($\Leftarrow$) Choose bases $v_1,\dots,v_n$ of $V$ and $w_1,\dots,w_n$ of $W$. By (W3) there are linear maps $T$ with $Tv_j=w_j$ and $S$ with $Sw_j=v_j$.
-    \ii $STv_j=v_j$ and $TSw_j=w_j$. So $ST$ and $\id_V$ agree on a basis, and $TS$ and $\id_W$ agree on a basis. Hence $ST=\id_V$, $TS=\id_W$ (W3).
-  \end{steps}
-\end{proof}
-
-\begin{proposition*}[Prop.~31 / LADR 3.65: with equal dimensions, one condition is enough]\hypertarget{prop-31}{}\label{prop-31}
-  If $\dim V=\dim W<\infty$ and $T\in\LL(V,W)$, the following are equivalent: $T$ is an isomorphism; $T$ is injective; $T$ is surjective.
-\end{proposition*}
-\begin{proof}
-  Injective and surjective are equivalent here (W6), and both together mean isomorphism (\hyperref[prop-29]{Prop.~29}).
-\end{proof}
-
-\begin{example*}[Ex.~34: interpolation]\hypertarget{ex-34}{}\label{ex-34}
-  Given points $(x_0,y_0),\dots,(x_n,y_n)$ with distinct $x_j$, there is exactly one $p\in\PP_n(\RR)$ with $p(x_j)=y_j$ for all $j$.
-  \begin{steps}
-    \ii Let $T\colon\PP_n(\RR)\to\RR^{n+1}$, $T(p)=(p(x_0),\dots,p(x_n))$. Both spaces have dimension $n+1$.
-    \ii If $Tp=0$, then $p$ has the $n+1$ distinct zeros $x_0,\dots,x_n$, so $(x-x_0)\cdots(x-x_n)$ divides $p$. A nonzero $p$ would then have degree $\ge n+1$. So $p=0$ and $T$ is injective.
-    \ii By \hyperref[prop-31]{Prop.~31}, $T$ is bijective: every $(y_0,\dots,y_n)$ is $T(p)$ for exactly one $p$.
-  \end{steps}
-\end{example*}
-\begin{example*}[Ex.~35 / LADR 3.67: existence from injectivity]\hypertarget{ex-35}{}\label{ex-35}
-  For every polynomial $q$ there is a polynomial $p$ with $\bigl((x^2+5x+7)p\bigr)''=q$.
-  \begin{steps}
-    \ii Choose $m$ with $q\in\PP_m(\RR)$ and let $T\colon\PP_m(\RR)\to\PP_m(\RR)$, $T(p)=\bigl((x^2+5x+7)p\bigr)''$. Multiplying raises the degree by $2$ and differentiating twice lowers it by $2$, so $T$ maps $\PP_m(\RR)$ to itself.
-    \ii If $Tp=0$, then $(x^2+5x+7)p$ has degree $\le1$. For $p\ne0$ its degree is $\ge2$. So $p=0$: $T$ is injective.
-    \ii $T$ is an operator on a finite-dimensional space, so it is surjective. No coefficients were solved for.
-  \end{steps}
-\end{example*}
-Ex.~36: in infinite dimensions this fails. Differentiation $\PP(\RR)\to\PP(\RR)$ is surjective and not injective.
-
-\textbf{The $2\times2$ determinant (computational aside).} For $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ define $\det A=ad-bc$. (This is only a formula for now; determinants in general come at the end of the course.)
-\begin{itemize}
-  \ii Direct multiplication: $\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}=\begin{psmallmatrix}ad-bc&-ab+ba\\cd-dc&-cb+da\end{psmallmatrix}=(ad-bc)I$, and the same in the other order.
-  \ii If $\det A\ne0$: $A^{-1}=\dfrac{1}{ad-bc}\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}$. Swap the diagonal entries, negate the other two, divide by $\det A$.
-  \ii If $\det A=0$, then $A$ is not invertible. If $(a,b)\ne(0,0)$: $A\begin{psmallmatrix}b\\-a\end{psmallmatrix}=\begin{psmallmatrix}ab-ba\\cb-da\end{psmallmatrix}=0$, so $A$ is not injective. If $a=b=0$: every output has first coordinate $0$, so $A$ is not surjective.
-  \ii Hence $A$ is invertible $\iff\det A\ne0$.
-\end{itemize}
-
-\subsection{One-sided inverses (Ch.~7.3)}
-
-\begin{qbox}
-  If $ST$ is invertible, must $S$ and $T$ be? If $ST=I$, is $TS=I$?
-\end{qbox}
-
-\begin{proposition*}[Prop.~32 / LADR 3D: inverses and products]\hypertarget{prop-32}{}\label{prop-32}
-  Let $S,T\in\LL(V)$.
-  \begin{enumerate}[(i)]
-    \ii If $S$ and $T$ are invertible, so is $ST$, and $(ST)^{-1}=T^{-1}S^{-1}$.
-    \ii If $ST$ is invertible, then $S$ is surjective and $T$ is injective. If $V$ is finite-dimensional, then $S$, $T$ and $TS$ are all invertible.
+\begin{proposition*}[Prop.~28, 29 / LADR 3.60, 3.63: Uniqueness of $T^{-1}$ and injectivity $+$ surjectivity]\target{prop-28}\target{prop-29}
+  \begin{enumerate}[(a)]
+    \ii \textbf{Uniqueness of inverse (Prop.~28 / LADR 3.60):} An invertible linear map $T\in\LL(V,W)$ has a unique inverse, denoted by $T^{-1}\in\LL(W,V)$.
+    \ii \textbf{Invertible $\iff$ injective and surjective (Prop.~29 / LADR 3.63):} A linear map $T\in\LL(V,W)$ is invertible (an isomorphism) if and only if $T$ is both injective and surjective.
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-In $ST$, $T$ acts first and $S$ acts last. If $T$ sent two vectors to the same place, so would $ST$; so $ST$ injective forces $T$ injective. Every output of $ST$ is an output of $S$; so $ST$ surjective forces $S$ surjective. Neither argument says anything about the other map, and in infinite dimensions the other half can fail (Ex.~37, 38). In finite dimensions, \hyperref[prop-31]{Prop.~31} upgrades each half to invertibility.
+  If $S_1$ is a left inverse ($S_1T=I_V$) and $S_2$ is a right inverse ($TS_2=I_W$), then $S_1=S_1I_W=S_1(TS_2)=(S_1T)S_2=I_VS_2=S_2$, so any two-sided inverse is unique. For (b), any set-theoretic bijection $T\colon V\to W$ has a unique set-theoretic inverse function $S\colon W\to V$ satisfying $T(Sw)=w$ and $S(Tv)=v$; why is $S$ automatically a \emph{linear} map? To check $S(\lambda w_1+w_2)=\lambda Sw_1+Sw_2$, apply the injective map $T$ to both sides: $T(S(\lambda w_1+w_2))=\lambda w_1+w_2=\lambda T(Sw_1)+T(Sw_2)=T(\lambda Sw_1+Sw_2)$, and injectivity of $T$ cancels $T$!
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii (i) $(T^{-1}S^{-1})(ST)=T^{-1}(S^{-1}S)T=T^{-1}T=I$ and $(ST)(T^{-1}S^{-1})=S(TT^{-1})S^{-1}=I$.
-    \ii (ii) Any $v$ is $v=(ST)(ST)^{-1}v=S\bigl(T(ST)^{-1}v\bigr)\in\range S$.
-    \ii If $Tv=0$, then $v=(ST)^{-1}(ST)v=(ST)^{-1}S(0)=0$.
-    \ii If $\dim V<\infty$, \hyperref[prop-31]{Prop.~31} makes $S$ and $T$ invertible, and (i) makes $TS$ invertible.
+    \ii For (a), if $S_1,S_2\in\LL(W,V)$ both satisfy $S_iT=I_V$ and $TS_i=I_W$, then $S_1=S_1I_W=S_1(TS_2)=(S_1T)S_2=I_VS_2=S_2$.
+    \ii For (b) ($\Rightarrow$), suppose $T$ is invertible with inverse $T^{-1}$. If $Tv=0$, then $v=T^{-1}(Tv)=T^{-1}(0)=0$, so $T$ is injective; and for any $w\in W$, $w=T(T^{-1}w)\in\range T$, so $T$ is surjective.
+    \ii For (b) ($\Leftarrow$), suppose $T\in\LL(V,W)$ is injective and surjective. For each $w\in W$, there exists a unique $v\in V$ with $Tv=w$; define $Sw=v$, so $T(Sw)=w$ and $S(Tv)=v$.
+    \ii For any $w_1,w_2\in W$ and $\lambda\in\FF$, linearity of $T$ gives
+    \[
+      T\big(\lambda Sw_1 + Sw_2\big) = \lambda T(Sw_1) + T(Sw_2) = \lambda w_1 + w_2 = T\big(S(\lambda w_1+w_2)\big).
+    \]
+    Because $T$ is injective, $\lambda Sw_1+Sw_2=S(\lambda w_1+w_2)$, so $S\in\LL(W,V)$ is the linear inverse $T^{-1}$.
   \end{steps}
 \end{proof}
-\begin{proposition*}[Prop.~33 / LADR 3D.11: one side is enough in finite dimensions]\hypertarget{prop-33}{}\label{prop-33}
-  If $V$ is finite-dimensional and $S,T\in\LL(V)$, then $ST=I\iff TS=I$.
-\end{proposition*}
-\begin{proof}
-  If $ST=I$, then $ST$ is invertible, so $T$ is invertible (\hyperref[prop-32]{Prop.~32}). Then $S=S(TT^{-1})=(ST)T^{-1}=T^{-1}$, so $TS=TT^{-1}=I$. The converse is the same with the roles exchanged.
-\end{proof}
-\begin{itemize}
-  \ii Ex.~38: on $\PP(\RR)$ let $S(p)=p'$ and $T(p)(x)=\int_0^xp(t)\,dt$. Then $ST=I$, but $TS(p)=p-p(0)\ne p$ in general.
-  \ii Ex.~37: on $\PP(\RR)$ let $S(p)=p'$ and $T(p)(x)=\int_0^{x+1}p(t)\,dt$. Then $ST(p)(x)=p(x+1)$, which is invertible (inverse $p(x)\mapsto p(x-1)$), yet $S$ is not injective, $T$ is not surjective ($\range T=\{p:p(-1)=0\}$), and $TS$ sends constants to $0$.
-  \ii Even then, $T$ is an isomorphism from $V$ onto $\range T$, and $(ST)^{-1}=T^{-1}(S|_{\range T})^{-1}$.
-\end{itemize}
 
-\subsection{Products (Ch.~8.1)}
-
-\begin{qbox}
-  Given unrelated vector spaces $V_1,\dots,V_m$, how do we build one space that contains a copy of each, side by side? ($\RR^n$ is built from $n$ copies of $\RR$ this way.)
-\end{qbox}
-\begin{definition*}[Prop.~34 / LADR 3.87, 3.89]
-  The \vocab{product} $V_1\times\dots\times V_m=\{(v_1,\dots,v_m):v_i\in V_i\}$ is a vector space with componentwise operations: $(v_1,\dots,v_m)+(w_1,\dots,w_m)=(v_1+w_1,\dots,v_m+w_m)$, $\lambda(v_1,\dots,v_m)=(\lambda v_1,\dots,\lambda v_m)$. Zero is $(0,\dots,0)$.
-\end{definition*}
-\begin{itemize}
-  \ii Ex.~39, 40: $\RR^n=\RR\times\dots\times\RR$, and $\RR^m\times\RR^n\cong\RR^{m+n}$ by $((x_1,\dots,x_m),(y_1,\dots,y_n))\mapsto(x_1,\dots,x_m,y_1,\dots,y_n)$.
-  \ii Let $V_{(i)}=\{(0,\dots,0,v,0,\dots,0):v\in V_i\}$ ($v$ in slot $i$). It is a subspace of the product, isomorphic to $V_i$.
-\end{itemize}
-\begin{proposition*}[Prop.~35, 36 / LADR 3.92: the product is the direct sum of the $V_{(i)}$]\hypertarget{prop-35}{}\label{prop-35}
-  $V_1\times\dots\times V_m=V_{(1)}\oplus\dots\oplus V_{(m)}$. If the $V_i$ are finite-dimensional, $\dim(V_1\times\dots\times V_m)=\dim V_1+\dots+\dim V_m$.
-\end{proposition*}
+\begin{theorem*}[Prop.~30, 31 / LADR 3.65, 3.68, 3.70: Dimension classifies spaces and one-condition isomorphism test]\target{prop-30}\target{prop-31}
+  \begin{enumerate}[(a)]
+    \ii \textbf{Isomorphic $\iff$ equal dimension (Prop.~30 / LADR 3.70):} Two finite-dimensional vector spaces $V$ and $W$ over $\FF$ are isomorphic ($V\cong W$) if and only if $\dim V=\dim W$.
+    \ii \textbf{Equal-dimension equivalence (Prop.~31 / LADR 3.65, 3.68):} Suppose $V$ and $W$ are finite-dimensional vector spaces with $\dim V=\dim W$ and $T\in\LL(V,W)$. Then
+    \[
+      T\text{ is invertible (an isomorphism)} \iff T\text{ is injective} \iff T\text{ is surjective}.
+    \]
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  Any isomorphism $T\colon V\to W$ has $\nul T=\{0\}$ and $\range T=W$, so Rank--Nullity gives $\dim V=0+\dim W=\dim W$. Conversely, if $\dim V=\dim W=n$, pick any basis $v_1,\dots,v_n$ of $V$ and any basis $w_1,\dots,w_n$ of $W$; the unique linear map $T$ sending $Tv_j=w_j$ has inverse $S$ sending $Sw_j=v_j$, so $V\cong W$. And when $\dim V=\dim W<\infty$, (W4) already shows injective $\iff$ surjective, so either one alone guarantees that $T$ is an isomorphism!
+\end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii $(v_1,\dots,v_m)=(v_1,0,\dots,0)+\dots+(0,\dots,0,v_m)$, and this is the only way to write it as a sum with one term from each $V_{(i)}$, because the term from $V_{(i)}$ must have $v_i$ in slot $i$.
-    \ii By (W1), the dimension is $\sum\dim V_{(i)}=\sum\dim V_i$.
+    \ii In (a), if $T\in\LL(V,W)$ is an isomorphism, then $\nul T=\{0\}$ and $\range T=W$, so Rank--Nullity (W4) gives $\dim V=\dim\nul T+\dim\range T=0+\dim W=\dim W$.
+    \ii Conversely, if $\dim V=\dim W=n$, choose bases $v_1,\dots,v_n$ of $V$ and $w_1,\dots,w_n$ of $W$. By (W3), there exist linear maps $T\in\LL(V,W)$ and $S\in\LL(W,V)$ with $Tv_j=w_j$ and $Sw_j=v_j$. Since $(ST)v_j=v_j$ and $(TS)w_j=w_j$ for all $j$, $ST=I_V$ and $TS=I_W$, so $V\cong W$.
+    \ii Part (b) combines \ilink{prop-29}{Prop.~29(b)} with (W4) (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-25}{Prop.~25}).
   \end{steps}
 \end{proof}
-\begin{itemize}
-  \ii Concretely: if $v_1,\dots,v_n$ is a basis of $V$ and $w_1,\dots,w_m$ a basis of $W$, then $(v_1,0),\dots,(v_n,0),(0,w_1),\dots,(0,w_m)$ is a basis of $V\times W$ (\hyperref[prob-HW4-P5]{HW4 P5}).
-  \ii The dimension of a product is the \emph{sum} of the dimensions. (The space with dimension $\dim V\cdot\dim W$ is $\LL(V,W)$.)
-  \ii The product is also called the \emph{external direct sum}.
-\end{itemize}
-\begin{proposition*}[Prop.~37 / LADR 3.93: products and sums]\hypertarget{prop-37}{}\label{prop-37}
-  For subspaces $U_1,\dots,U_m$ of $V$, the map $\Gamma\colon U_1\times\dots\times U_m\to U_1+\dots+U_m$, $\Gamma(u_1,\dots,u_m)=u_1+\dots+u_m$, is linear and surjective. It is injective exactly when the sum is direct.
-\end{proposition*}
-\begin{proof}
-  Surjective by the definition of the sum. $\nul\Gamma=\{0\}$ says: $u_1+\dots+u_m=0$ forces all $u_i=0$. That is (W1).
-\end{proof}
-\begin{itemize}
-  \ii Rank--nullity for $\Gamma$: $\dim(U_1+\dots+U_m)=\sum\dim U_i-\dim\nul\Gamma\le\sum\dim U_i$, with equality exactly when the sum is direct. \textbf{A sum is direct $\iff$ its dimension is the sum of the dimensions.}
-\end{itemize}
 
-\subsection{Affine subsets and quotient spaces (Ch.~8.2)}
+\begin{example*}[Ex.~34, 35 / LADR 3.67: Proving existence of solutions via injectivity alone]\target{ex-34}\target{ex-35}
+  \begin{itemize}
+    \ii \textbf{Lagrange polynomial interpolation (Ex.~34):} Given $n+1$ distinct points $x_0,\dots,x_n\in\RR$ and any values $y_0,\dots,y_n\in\RR$, there exists a \emph{unique} polynomial $p\in\PP_n(\RR)$ such that $p(x_j)=y_j$ for $j=0,\dots,n$.
+    \emph{Proof:} Define $T\colon\PP_n(\RR)\to\RR^{n+1}$ by $T(p)=(p(x_0),\dots,p(x_n))$. Both spaces have dimension $n+1$. If $T(p)=0$, then $p\in\PP_n(\RR)$ has $n+1$ distinct roots $x_0,\dots,x_n$, which forces $p=0$. Thus $T$ is injective, so by \ilink{prop-31}{Prop.~31(b)} $T$ is an isomorphism (hence surjective and bijective)!
+    \ii \textbf{Differential equation existence without solving for coefficients (Ex.~35 / LADR 3.67):} For every polynomial $q\in\PP(\RR)$, there exists a polynomial $p\in\PP(\RR)$ such that $\big((x^2+5x+7)p\big)''=q$.
+    \emph{Proof:} Fix $m\ge\deg q$ and define $T\in\LL(\PP_m(\RR))$ by $T(p)=\big((x^2+5x+7)p\big)''$ (multiplying by $x^2+5x+7$ raises degree by $2$ and differentiating twice lowers it by $2$, so $T$ maps $\PP_m(\RR)$ into itself). If $T(p)=0$, then $(x^2+5x+7)p(x)=ax+b$ has degree $\le 1$, which is impossible for $p\ne 0$. Thus $\nul T=\{0\}$ ($T$ is injective), so by \ilink{prop-31}{Prop.~31(b)} $T$ is surjective on $\PP_m(\RR)$!
+  \end{itemize}
+\end{example*}
+
+\subsection{One-sided inverses, invertible matrices, and change of basis (Notes Ch.~7.3, LADR 3D)}
 
 \begin{qbox}
-  Given a subspace $U$ of $V$, how do we build a vector space in which vectors that differ by an element of $U$ count as the same? Example: in $\RR^2$ with $U=\spn((0,1))$, ignore the $y$-coordinate, so $(1,2)$ and $(1,4)$ become equal.
+  When we change the basis of $V$ from $B=(v_1,\dots,v_n)$ to $B'=(u_1,\dots,u_n)$, how does the matrix $\MM(T,B)$ of an operator $T\in\LL(V)$ transform into $\MM(T,B')$?
 \end{qbox}
-\begin{definition*}[Def.~22, 23 / LADR 3.95, 3.97]\hypertarget{def-22}{}\label{def-22}
-  For $v\in V$ and a subspace $U$, $v+U=\{v+u:u\in U\}$. A subset of this form is an \vocab{affine subset}, \vocab{parallel} to $U$. Two affine subsets are parallel if they are parallel to the same subspace.
-\end{definition*}
-\begin{itemize}
-  \ii Ex.~41: the line $x+y=1$ in $\RR^2$ is $(1,0)+\spn((-1,1))$.
-  \ii Ex.~42: $\int x^2\,dx=\frac13x^3+C$ is the affine subset $\frac13x^3+\RR$ of $\PP(\RR)$, parallel to the constants.
-  \ii \hyperref[prop-3]{Prop.~3}8: an affine subset is parallel to only one subspace. If $v+U=x+W$: write $v=x+w_0$ with $w_0\in W$. For $u\in U$, $v+u=x+w$ for some $w\in W$, so $u=w-w_0\in W$. So $U\subseteq W$, and symmetrically $W\subseteq U$.
-\end{itemize}
-\begin{proposition*}[Prop.~39 / LADR 3.101: when two parallel affine subsets are equal]\hypertarget{prop-39}{}\label{prop-39}
-  For a subspace $U$ and $v,w\in V$ the following are equivalent:
-  \[ \text{(i) } v-w\in U\qquad\text{(ii) } v+U=w+U\qquad\text{(iii) } (v+U)\cap(w+U)\ne\varnothing. \]
+
+\begin{proposition*}[Prop.~32, 33 / LADR 3.65, 3.80--3.86: Products of inverses and the Change-of-Basis Formula]\target{prop-32}\target{prop-33}
+  \begin{enumerate}[(a)]
+    \ii \textbf{Inverses and products (Prop.~32):} Let $S,T\in\LL(V)$. If $S$ and $T$ are invertible, so is $ST$, and $(ST)^{-1}=T^{-1}S^{-1}$. If $ST$ is invertible, then $S$ is surjective and $T$ is injective; if in addition $\dim V<\infty$, then $S$, $T$, and $TS$ are all invertible.
+    \ii \textbf{One-sided inverse in finite dimensions (Prop.~33):} If $\dim V<\infty$ and $S,T\in\LL(V)$, then $ST=I_V\iff TS=I_V$ (and $S=T^{-1}$).
+    \ii \textbf{Invertible matrices and change of basis (LADR 3.80--3.86):} A square $n\times n$ matrix $A\in\FF^{n,n}$ is called \vocab{invertible} if there exists $A^{-1}\in\FF^{n,n}$ with $AA^{-1}=I_n=A^{-1}A$. For any basis $B=(v_1,\dots,v_n)$ of $V$, $T\in\LL(V)$ is invertible iff $\MM(T,B)$ is invertible, and $\MM(T^{-1},B)=\MM(T,B)^{-1}$ (LADR 3.82). Furthermore, if $B=(v_1,\dots,v_n)$ and $B'=(u_1,\dots,u_n)$ are two bases of $V$ and
+    \[
+      A = \MM(I, B', B) = \MM\big(I, (u_1,\dots,u_n), (v_1,\dots,v_n)\big)
+    \]
+    is the invertible change-of-basis matrix whose $k$-th column holds the $B$-coordinates of $u_k$, then for every $T\in\LL(V)$,
+    \[
+      \MM(T, B') = A^{-1}\MM(T, B)A.
+    \]
+  \end{enumerate}
 \end{proposition*}
+\begin{ideabox}
+  Look at the identity map $I\in\LL(V)$ written with $B'$ on the domain and $B$ on the codomain: its matrix $A=\MM(I,B',B)$ satisfies $\MM(v,B)=\MM(Iv,B)=\MM(I,B',B)\MM(v,B')=A\MM(v,B')$, so $A$ converts $B'$-coordinates into $B$-coordinates! Because $I=I^{-1}$, $\MM(I,B,B')=A^{-1}$ converts $B$-coordinates back into $B'$-coordinates. Factorization of $T\colon(V,B')\to(V,B')$ as $(V,B')\xrightarrow{I}(V,B)\xrightarrow{T}(V,B)\xrightarrow{I}(V,B')$ and the multiplicative rule $\MM(ST)=\MM(S)\MM(T)$ immediately give
+  \[
+    \MM(T,B',B') = \MM(I,B,B')\,\MM(T,B,B)\,\MM(I,B',B) = A^{-1}\MM(T,B)A!
+  \]
+\end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii (i)$\Rightarrow$(ii): for $u\in U$, $v+u=w+\bigl((v-w)+u\bigr)\in w+U$. So $v+U\subseteq w+U$. Since $w-v\in U$ too, the same argument gives $w+U\subseteq v+U$.
-    \ii (ii)$\Rightarrow$(iii): $v=v+0$ lies in both.
-    \ii (iii)$\Rightarrow$(i): if $v+u_1=w+u_2$, then $v-w=u_2-u_1\in U$.
+    \ii In (a), $(T^{-1}S^{-1})(ST)=I_V=(ST)(T^{-1}S^{-1})$. If $ST$ is invertible, then $Tv=0\implies(ST)v=0\implies v=0$ ($T$ is injective) and $v=S(T(ST)^{-1}v)\in\range S$ ($S$ is surjective). When $\dim V<\infty$, \ilink{prop-31}{Prop.~31(b)} implies both $S$ and $T$ are invertible, which also proves (b).
+    \ii In (c), applying $\MM(ST)=\MM(S)\MM(T)$ to $I_V=(I_V)T(I_V)$ with bases $B'\xrightarrow{I_V}B\xrightarrow{T}B\xrightarrow{I_V}B'$ gives $\MM(T,B')=\MM(I,B,B')\MM(T,B)\MM(I,B',B)$. Taking $T=I_V$ shows $\MM(I,B,B')=A^{-1}$, yielding $\MM(T,B')=A^{-1}\MM(T,B)A$.
   \end{steps}
 \end{proof}
-So the affine subsets parallel to $U$ either coincide or do not meet: they cut $V$ into non-overlapping pieces.
 
-\begin{definition*}[Def.~24 / LADR 3.99, 3.102: quotient space]\hypertarget{def-24}{}\label{def-24}
-  $V/U$ is the set of all affine subsets of $V$ parallel to $U$, with
-  \[ (v+U)+(w+U)=(v+w)+U,\qquad\lambda(v+U)=(\lambda v)+U. \]
-  The zero element is $0+U=U$.
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,scale=0.95]
+  \fill[figbg,rounded corners=4pt] (-5.8,-1.85) rectangle (5.8,1.95);
+  \draw[figslate!30,rounded corners=4pt] (-5.8,-1.85) rectangle (5.8,1.95);
+
+  % Top row: B'-coordinates
+  \node[figbox,draw=figblue,fill=figblue!10,minimum width=2.7cm,minimum height=0.9cm,font=\footnotesize\bfseries] (TL) at (-3.4,1.0) {$\MM(v,B')\in\FF^{n,1}$};
+  \node[figbox,draw=figblue,fill=figblue!10,minimum width=2.7cm,minimum height=0.9cm,font=\footnotesize\bfseries] (TR) at (3.4,1.0) {$\MM(Tv,B')\in\FF^{n,1}$};
+
+  % Bottom row: B-coordinates
+  \node[figbox,draw=figgreen,fill=figgreen!10,minimum width=2.7cm,minimum height=0.9cm,font=\footnotesize\bfseries] (BL) at (-3.4,-0.9) {$\MM(v,B)\in\FF^{n,1}$};
+  \node[figbox,draw=figgreen,fill=figgreen!10,minimum width=2.7cm,minimum height=0.9cm,font=\footnotesize\bfseries] (BR) at (3.4,-0.9) {$\MM(Tv,B)\in\FF^{n,1}$};
+
+  % Arrows
+  \draw[figvec,figblue,very thick] (TL.east) -- node[above,font=\footnotesize\bfseries] {$\MM(T,B') = A^{-1}\MM(T,B)A$} (TR.west);
+  \draw[figvec,figgreen!80!black,very thick] (BL.east) -- node[below,font=\footnotesize\bfseries] {$\MM(T,B)$} (BR.west);
+  \draw[figvec,figamber!90!black,very thick] (TL.south) -- node[left,font=\scriptsize\bfseries] {$A=\MM(I,B',B)$} (BL.north);
+  \draw[figvec,figamber!90!black,very thick] (BR.north) -- node[right,font=\scriptsize\bfseries] {$A^{-1}=\MM(I,B,B')$} (TR.south);
+\end{tikzpicture}
+\figcap{Commutative diagram for the Change-of-Basis Formula $\MM(T,B')=A^{-1}\MM(T,B)A$ (LADR 3.84): to apply $T$ in $B'$-coordinates, multiply by $A=\MM(I,B',B)$ to convert to $B$-coordinates, multiply by $\MM(T,B)$, and multiply by $A^{-1}$ to convert back to $B'$-coordinates.}
+\end{fig}
+
+\subsection{Products of vector spaces, affine subsets, and quotient spaces (Notes Ch.~8, LADR 3E)}
+
+\begin{qbox}
+  Given spaces $V_1,\dots,V_m$, how do we combine them externally into a product space $V_1\times\dots\times V_m$? And given a single space $V$ and a subspace $U\subseteq V$, how do we build a \emph{quotient space} $V/U$ in which two vectors $v,w\in V$ are identified whenever their difference $v-w$ lies in $U$?
+\end{qbox}
+
+\begin{proposition*}[Prop.~34--37 / LADR 3.87--3.94: Product of vector spaces and external vs.\ internal direct sums]\target{prop-34}\target{prop-35}\target{prop-36}\target{prop-37}
+  \begin{enumerate}[(a)]
+    \ii \textbf{Product space (Prop.~34 / LADR 3.87, 3.89):} For vector spaces $V_1,\dots,V_m$ over $\FF$, the Cartesian product $V_1\times\dots\times V_m=\{(v_1,\dots,v_m):v_k\in V_k\}$ is a vector space under componentwise addition and scalar multiplication, with zero vector $(0,\dots,0)$.
+    \ii \textbf{Dimension of a product (Prop.~35, 36 / LADR 3.92):} $V_1\times\dots\times V_m=V_{(1)}\oplus\dots\oplus V_{(m)}$ where $V_{(i)}=\{(0,\dots,v_i,\dots,0):v_i\in V_i\}\cong V_i$. When all $V_i$ are finite-dimensional,
+    \[
+      \dim(V_1\times\dots\times V_m) = \dim V_1 + \dots + \dim V_m.
+    \]
+    \ii \textbf{Products and direct sums (Prop.~37 / LADR 3.93, 3.94):} For subspaces $U_1,\dots,U_m\subseteq V$, the linear map $\Gamma\colon U_1\times\dots\times U_m\to U_1+\dots+U_m$ given by $\Gamma(u_1,\dots,u_m)=u_1+\dots+u_m$ is surjective, and $\Gamma$ is injective (hence an isomorphism) if and only if $U_1+\dots+U_m$ is a direct sum $U_1\oplus\dots\oplus U_m$.
+  \end{enumerate}
+\end{proposition*}
+
+\begin{definition*}[Def.~22--24, Prop.~38, 39 / LADR 3.95--3.103: Affine subsets and the quotient space $V/U$]\target{def-22}\target{def-23}\target{def-24}\target{prop-38}\target{prop-39}
+  Let $U$ be a subspace of $V$.
+  \begin{itemize}
+    \ii \textbf{Translate and affine subset (Def.~22, 23 / LADR 3.95, 3.97):} For $v\in V$, the \vocab{translate} (or \vocab{coset}) of $U$ by $v$ is the set
+    \[
+      v + U = \{v + u : u\in U\}.
+    \]
+    A subset of $V$ of the form $v+U$ for some $v\in V$ and some subspace $U\subseteq V$ is called an \vocab{affine subset} of $V$, and is said to be \vocab{parallel} to $U$ (by Prop.~38, $v+U=x+W\implies U=W$, so $U$ is uniquely determined by the affine subset).
+    \ii \textbf{Equality of translates (Prop.~39 / LADR 3.101):} For any $v,w\in V$, the following three conditions are equivalent:
+    \[
+      \text{(i) } v - w \in U \qquad\iff\qquad \text{(ii) } v + U = w + U \qquad\iff\qquad \text{(iii) } (v+U)\cap(w+U) \ne \varnothing.
+    \]
+    \ii \textbf{Quotient space $V/U$ (Def.~24 / LADR 3.99, 3.102, 3.103):} The \vocab{quotient space} $V/U$ is the set of all translates of $U$: $V/U=\{v+U:v\in V\}$, equipped with addition and scalar multiplication defined by
+    \[
+      (v+U) + (w+U) = (v+w) + U \qquad\text{and}\qquad \lambda(v+U) = (\lambda v) + U
+    \]
+    for all $v,w\in V$ and $\lambda\in\FF$. By LADR 3.103, these operations are \textbf{well-defined} (independent of the choice of representatives $v,w$) and make $V/U$ a vector space with additive identity $0+U=U$ and additive inverse $-(v+U)=(-v)+U$.
+  \end{itemize}
 \end{definition*}
 \begin{ideabox}
-An element of $V/U$ is a whole set $v+U$, and the same set has many names: $v+U=v'+U$ whenever $v-v'\in U$. The operations are defined using a name. So there is something to check: if we rename both inputs, does the output set stay the same? If not, the ``definition'' would give two different answers for one question. This check is called \emph{well-definedness}, and it is needed every time a map out of a quotient is defined by a formula in $v$.
-
-The check is always the same computation: assume the differences of the names are in $U$, and show the difference of the outputs is in $U$. It works because $U$ is closed under addition and scalar multiplication. That is exactly why $U$ must be a subspace.
+  Why must we verify that $(v+U)+(w+U)=(v+w)+U$ and $\lambda(v+U)=(\lambda v)+U$ are \emph{well-defined}? Because a single element of $V/U$ is an entire parallel coset $v+U$ that has infinitely many different names ($v_1+U=v_2+U$ whenever $v_1-v_2\in U$ by \ilink{prop-39}{Prop.~39}). If we replace $v_1$ by $v_2$ (with $v_1-v_2\in U$) and $w_1$ by $w_2$ (with $w_1-w_2\in U$), closure of the subspace $U$ under addition and scalar multiplication guarantees that $(v_1+w_1)-(v_2+w_2)=(v_1-v_2)+(w_1-w_2)\in U$ and $(\lambda v_1)-(\lambda v_2)=\lambda(v_1-v_2)\in U$, so the output cosets $(v_1+w_1)+U=(v_2+w_2)+U$ and $(\lambda v_1)+U=(\lambda v_2)+U$ do not depend on which representative we picked!
 \end{ideabox}
-\begin{proof}[Proof that the operations are well-defined]
-  \begin{steps}
-    \ii Suppose $v_1+U=v_2+U$ and $w_1+U=w_2+U$. By \hyperref[prop-39]{Prop.~39}, $v_1-v_2\in U$ and $w_1-w_2\in U$.
-    \ii $(v_1+w_1)-(v_2+w_2)=(v_1-v_2)+(w_1-w_2)\in U$, so $(v_1+w_1)+U=(v_2+w_2)+U$.
-    \ii $\lambda v_1-\lambda v_2=\lambda(v_1-v_2)\in U$, so $\lambda v_1+U=\lambda v_2+U$.
-    \ii The vector space axioms for $V/U$ follow from those of $V$, applied to the names.
-  \end{steps}
-\end{proof}
+
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.82,x=1.35cm,y=0.58cm]
-  \draw[->,gray] (-1.3,0) -- (3.8,0) node[right,font=\tiny]{$x$};
-  \draw[thick,black!35] (-1,-0.4) -- (-1,4.4);
-  \draw[very thick] (0,-0.4) -- (0,4.4) node[above,font=\small]{$U$};
-  \draw[thick,blue] (1,-0.4) -- (1,4.4);
-  \draw[thick,red] (2,-0.4) -- (2,4.4);
-  \draw[thick,violet] (3,-0.4) -- (3,4.4);
-  \fill[blue] (1,2) circle (2.2pt) node[right,font=\footnotesize]{$(1,2)$};
-  \fill[blue] (1,4) circle (2.2pt) node[right,font=\footnotesize]{$(1,4)$};
-  \fill[red] (2,1) circle (2.2pt) node[right,font=\footnotesize]{$(2,1)$};
-  \fill[violet] (3,3) circle (2.2pt) node[right,font=\footnotesize]{$(3,3)$};
-  \node[blue!90!black,below,font=\footnotesize] at (1,-0.4) {$(1,2)+U$};
-  \node[red!90!black,below,font=\footnotesize] at (2,-0.4) {$(2,1)+U$};
-  \node[violet!90!black,below,font=\footnotesize] at (3,-0.4) {$(3,3)+U$};
-  \node[anchor=west,text width=6.6cm,font=\footnotesize] at (4.2,2.1) {$U=\spn((0,1))$. Each vertical line is one element of $\RR^2/U$.\\[3pt] $(1,2)+U=(1,4)+U$: the same line, since $(1,4)-(1,2)\in U$.\\[3pt] Sum of the blue and red lines: add any point of one to any point of the other. $(1,2)+(2,1)=(3,3)$ and $(1,4)+(2,1)=(3,5)$ both lie on the line $x=3$.};
+\begin{tikzpicture}[>=Stealth]
+  \fill[figbg,rounded corners=4pt] (-1.1,-1.35) rectangle (12.3,3.25);
+  \draw[figslate!30,rounded corners=4pt] (-1.1,-1.35) rectangle (12.3,3.25);
+
+  % x-axis
+  \draw[figaxis] (-0.9,0) -- (4.8,0) node[right,font=\scriptsize] {$x$};
+
+  % Vertical coset lines x = -0.6, 0, 1.35, 2.70, 4.05
+  \draw[figslate!45,thick] (-0.6,-0.4) -- (-0.6,2.6);
+  \draw[black,very thick] (0,-0.4) -- (0,2.6) node[above,font=\footnotesize\bfseries] {$U = 0+U$};
+  \draw[figblue,very thick] (1.35,-0.4) -- (1.35,2.6);
+  \draw[figred,very thick] (2.70,-0.4) -- (2.70,2.6);
+  \draw[figpurple,very thick] (4.05,-0.4) -- (4.05,2.6);
+
+  % Points on the lines (labels stay well left of x=5.5)
+  \fill[figblue] (1.35,0.95) circle (2.0pt) node[right,xshift=1pt,font=\scriptsize] {$(1,1)$};
+  \fill[figblue] (1.35,2.15) circle (2.0pt) node[right,xshift=1pt,font=\scriptsize] {$(1,3)$};
+  \fill[figred] (2.70,0.65) circle (2.0pt) node[right,xshift=1pt,font=\scriptsize] {$(2,0.5)$};
+  \fill[figpurple] (4.05,1.5) circle (2.0pt) node[right,xshift=1pt,font=\scriptsize] {$(3,1.5)$};
+  \fill[figpurple] (4.05,2.45) circle (2.0pt) node[right,xshift=1pt,font=\scriptsize] {$(3,3.5)$};
+
+  % Staggered coset labels at bottom
+  \node[figblue,font=\scriptsize\bfseries] at (1.35,-0.62) {$(1,1)+U$};
+  \node[figred,font=\scriptsize\bfseries] at (2.70,-1.02) {$(2,0.5)+U$};
+  \node[figpurple,font=\scriptsize\bfseries] at (4.05,-0.62) {$(3,1.5)+U$};
+
+  % Explanation panel on the right (anchor=west at x=5.65, width ~6.2cm)
+  \node[figbox,draw=figslate!40,fill=white,anchor=west,text width=5.95cm,inner sep=6pt,align=left,font=\footnotesize] at (5.65,1.0) {\textbf{Quotient space $\RR^2/U$ ($U = y$-axis):}\\[4pt]
+  $\bullet$ Each entire vertical line is \textbf{one vector} in $\RR^2/U$.\\[3pt]
+  $\bullet$ $(1,1)+U = (1,3)+U$ because $(1,3)-(1,1)=(0,2)\in U$.\\[3pt]
+  $\bullet$ Adding the blue coset and red coset gives the purple\\
+  \hspace*{6pt}coset $x=3$ regardless of representatives:\\
+  \hspace*{6pt}$(1,1)+(2,0.5)=(3,1.5)$ and $(1,3)+(2,0.5)=(3,3.5)$\\
+  \hspace*{6pt}both lie on the exact same vertical line $(3,1.5)+U$!};
 \end{tikzpicture}
-\figcap{The quotient $\RR^2/U$ for $U$ the $y$-axis. The answer to ``blue line $+$ red line'' does not depend on which points are used to compute it.}
+\figcap{Geometry of the quotient space $\RR^2/U$ where $U=\spn((0,1))$ is the vertical axis: elements of $\RR^2/U$ are the vertical lines parallel to $U$, and coset addition adds any point on the first line to any point on the second line to land on a uniquely determined third line.}
 \end{fig}
 
 \begin{shortcuts}
-  \ii \textbf{Isomorphism between spaces of equal finite dimension}: prove injectivity only (solve $Tv=0$). This also proves existence statements (\hyperref[ex-34]{Ex.~34}, 35).
-  \ii \textbf{$T$ is invertible $\iff$ it sends some (every) basis to a basis} (\hyperref[prob-HW4-P3]{HW4 P3}). So: to build an invertible map, send a basis to a basis.
-  \ii \textbf{$2\times2$ inverse}: swap the diagonal, negate the off-diagonal, divide by $ad-bc$. Not invertible exactly when $ad-bc=0$. Over $\FF_p$ compute $ad-bc$ mod $p$.
-  \ii \textbf{Square matrices / operators in finite dimension}: $ST=I$ already gives $TS=I$ and $S=T^{-1}$. Check one side.
-  \ii \textbf{$(ST)^{-1}=T^{-1}S^{-1}$}: the order reverses.
-  \ii \textbf{Constructing a map with prescribed behaviour}: extend to a basis and define the map on the basis (left inverse of an injective map, extension of an injective map: R1, \hyperref[prob-HW4-P7]{HW4 P7}).
-  \ii \textbf{$\rank(BC)\le\min(\rank B,\rank C)$} (\hyperref[prob-HW4-P4]{HW4 P4}).
-  \ii \textbf{Is a sum direct?} Compare $\dim(U_1+\dots+U_m)$ with $\sum\dim U_i$.
-  \ii \textbf{Equality in a quotient}: $v+U=w+U\iff v-w\in U$. Every well-definedness check starts with this line.
+  \ii \textbf{Proving $T\in\LL(V,W)$ is an isomorphism when $\dim V=\dim W<\infty$ (\ilink{prop-31}{Prop.~31}):} Check \emph{only} $\nul T=\{0\}$ ($Tv=0\implies v=0$)! Surjectivity and invertibility follow automatically.
+  \ii \textbf{$2\times 2$ matrix inverse and determinant:} $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$ is invertible iff $\det A=ad-bc\ne 0$ in $\FF$, with $A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$ (\ilink{prob-HW4-P1}{HW4~P1--P2}).
 \end{shortcuts}
+
 \begin{trapbox}
-  \ii In infinite dimensions, injective does not give surjective, and $ST=I$ does not give $TS=I$ (derivative and integral).
-  \ii A non-square matrix can have a one-sided inverse; it is never invertible (the dimensions differ).
-  \ii $\dim(V\times W)=\dim V+\dim W$, not the product.
-  \ii $v+U$ is a subspace only when $v\in U$ (then it equals $U$); otherwise it does not contain $0$ (\hyperref[prob-HW4-P6]{HW4 P6}).
-  \ii An element of $V/U$ is a set, not a vector of $V$. The name $v$ in $v+U$ is not determined by the set.
-  \ii ``Isomorphic'' says an isomorphism exists. It does not say which one; different bases give different isomorphisms $V\to\FF^n$.
+  \ii \textbf{$\dim(V\times W)=\dim V+\dim W$, whereas $\dim\LL(V,W)=(\dim V)(\dim W)$:} Do not confuse the product space $V\times W$ (dimension $n+m$) with the space of linear maps $\LL(V,W)$ (dimension $nm$).
+  \ii \textbf{A translate $v+U$ is a subspace of $V$ if and only if $v\in U$ (i.e.\ $v+U=U$):} As a subset of $V$, $v+U$ contains $0\in V$ iff $v\in U$. Inside the quotient space $V/U$, however, every translate $v+U$ is a single \emph{point} (vector) of $V/U$, and $0+U=U$ is the zero vector of $V/U$ (\ilink{prob-HW4-P6}{HW4~P6}).
 \end{trapbox}
 
 \section{Problem set}
 
-\begin{prob}\textbf{HW4 P1.}\ Let $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. (a) Verify by direct multiplication that $A\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}=(ad-bc)I$. (b) Define $\det A=ad-bc$. Prove that if $\det A\ne0$ then $A$ is invertible, and derive the formula for $A^{-1}$. (c) Prove, without any general determinant theory, that if $\det A=0$ then $A$ is not invertible.\hypertarget{prob-HW4-P1}{}\label{prob-HW4-P1}
+\begin{prob}\textbf{HW4 P1.}\ Let $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. (a) Verify by direct multiplication that $A\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}=(ad-bc)I$. (b) Define $\det A=ad-bc$. Prove that if $\det A\ne0$ then $A$ is invertible, and derive the formula for $A^{-1}$. (c) Prove, without any general determinant theory, that if $\det A=0$ then $A$ is not invertible.\target{prob-HW4-P1}
 
 \emph{Hint for (c):} if $A$ were invertible, multiply the identity in (a) by $A^{-1}$.
 \end{prob}
-\begin{prob}\textbf{HW4 P2.}\ Decide which are invertible, and find the inverse when it exists:\hypertarget{prob-HW4-P2}{}\label{prob-HW4-P2}
+\begin{prob}\textbf{HW4 P2.}\ Decide which are invertible, and find the inverse when it exists:\target{prob-HW4-P2}
 $\begin{psmallmatrix}2&1\\5&3\end{psmallmatrix}$,\quad $\begin{psmallmatrix}1&i\\i&-1\end{psmallmatrix}$ over $\CC$,\quad $\begin{psmallmatrix}1&2\\3&1\end{psmallmatrix}$ over $\FF_5$.
 
 \emph{Hint:} compute $ad-bc$ in the given field.
 \end{prob}
-\begin{prob}\textbf{HW4 P3 (LADR 3D, Exercise 3).}\ Let $V$ be finite-dimensional and $T\colon V\to V$ linear. Prove that the following are equivalent: (a) $T$ is an isomorphism; (b) for every basis $v_1,\dots,v_n$ of $V$, the list $Tv_1,\dots,Tv_n$ is a basis of $V$.\hypertarget{prob-HW4-P3}{}\label{prob-HW4-P3}
+\begin{prob}\textbf{HW4 P3 (LADR 3D, Exercise 3).}\ Let $V$ be finite-dimensional and $T\colon V\to V$ linear. Prove that the following are equivalent: (a) $T$ is an isomorphism; (b) for every basis $v_1,\dots,v_n$ of $V$, the list $Tv_1,\dots,Tv_n$ is a basis of $V$.\target{prob-HW4-P3}
 
 \emph{Hint:} an injective map sends independent lists to independent lists; then count.
 \end{prob}
-\begin{prob}\textbf{HW4 P4.}\ Suppose $BC$ is defined. (a) Prove $\rank(BC)\le\min\{\rank B,\rank C\}$. (b) Give an example where the inequality is strict although $B$ and $C$ both have positive rank.\hypertarget{prob-HW4-P4}{}\label{prob-HW4-P4}
+\begin{prob}\textbf{HW4 P4.}\ Suppose $BC$ is defined. (a) Prove $\operatorname{rank}(BC)\le\min\{\operatorname{rank}B,\operatorname{rank}C\}$. (b) Give an example where the inequality is strict although $B$ and $C$ both have positive rank.\target{prob-HW4-P4}
 
 \emph{Hint:} $\range(BC)$ is contained in $\range B$, and it is the image of $\range C$ under $B$.
 \end{prob}
-\begin{prob}\textbf{HW4 P5.}\ Let $V,W$ be finite-dimensional. Prove $\dim(V\times W)=\dim V+\dim W$ by constructing a basis of $V\times W$ from bases of $V$ and $W$.\hypertarget{prob-HW4-P5}{}\label{prob-HW4-P5}
+\begin{prob}\textbf{HW4 P5.}\ Let $V,W$ be finite-dimensional. Prove $\dim(V\times W)=\dim V+\dim W$ by constructing a basis of $V\times W$ from bases of $V$ and $W$.\target{prob-HW4-P5}
 
 \emph{Hint:} $(v_i,0)$ and $(0,w_j)$.
 \end{prob}
-\begin{prob}\textbf{HW4 P6.}\ Let $U$ be a subspace of $V$ and $v,v'\in V$. (a) Prove that $v+U$ is a subspace of $V$ if and only if $v\in U$; in that case $v+U=U$. (b) Prove that $v+U=v'+U$ if and only if $v-v'\in U$.\hypertarget{prob-HW4-P6}{}\label{prob-HW4-P6}
+\begin{prob}\textbf{HW4 P6.}\ Let $U$ be a subspace of $V$ and $v,v'\in V$. (a) Prove that $v+U$ is a subspace of $V$ if and only if $v\in U$; in that case $v+U=U$. (b) Prove that $v+U=v'+U$ if and only if $v-v'\in U$.\target{prob-HW4-P6}
 
 \emph{Hint:} a subspace contains $0$.
 \end{prob}
-\begin{prob}\textbf{HW4 P7 (optional).}\ Suppose $U$ is a subspace of a finite-dimensional $V$ and $S\colon U\to V$ is injective. Prove that $S$ extends to an invertible operator $T\colon V\to V$.\hypertarget{prob-HW4-P7}{}\label{prob-HW4-P7}
+\begin{prob}\textbf{HW4 P7 (optional).}\ Suppose $U$ is a subspace of a finite-dimensional $V$ and $S\colon U\to V$ is injective. Prove that $S$ extends to an invertible operator $T\colon V\to V$.\target{prob-HW4-P7}
 
 \emph{Hint:} extend a basis of $U$ and, separately, the images of that basis; send the new vectors to the new vectors.
 \end{prob}
@@ -300,7 +267,10 @@ $\begin{psmallmatrix}2&1\\5&3\end{psmallmatrix}$,\quad $\begin{psmallmatrix}1&i\
 \end{prob}
 \begin{prob}\textbf{R4 (Midterm 1 review, Exercise 13).}\ Let $P\colon V\to V$ be linear with $P^2=P$. Show $V=\nul P\oplus\range P$.
 \end{prob}
-\begin{prob}\textbf{R5 (Midterm 1 review, Exercise 12).}\ Let $D\colon\PP_3(\RR)\to\PP_2(\RR)$ be differentiation. Find bases $\beta$ of $\PP_3(\RR)$ and $\gamma$ of $\PP_2(\RR)$ such that $\MM(D)=\begin{psmallmatrix}1&0&0&0\\0&1&0&0\\0&0&1&0\end{psmallmatrix}$.
+\begin{prob}\textbf{R5 (Midterm 1 review, Exercise 12).}\ Let $D\colon\PP_3(\RR)\to\PP_2(\RR)$ be differentiation. Find bases $\beta$ of $\PP_3(\RR)$ and $\gamma$ of $\PP_2(\RR)$ such that
+\[
+  \MM(D) = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{pmatrix}.
+\]
 \end{prob}
 
 \end{document}
