@@ -1,0 +1,179 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+\title{Math 110 --- Week 11}
+\subtitle{Solutions}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P1}{HW11 P1}. }\par
+  \idea{The standard basis is orthonormal, so $\MM(T^*)$ is the conjugate transpose of $\MM(T)$ (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-93}{Prop.~93}). $T$ shifts coordinates down one position; its adjoint shifts them up one position.}
+  \begin{steps}
+    \ii $Te_j=e_{j+1}$ for $j<n$ and $Te_n=0$, so $\MM(T)$ has $1$ in entry $(j+1,j)$ and $0$ elsewhere. Because all entries are real, $\MM(T^*)=\MM(T)^{\mathsf T}$ has $1$ in entry $(j,j+1)$: $T^*e_{j+1}=e_j$ and $T^*e_1=0$.
+    \ii Therefore
+    \[
+      T^*(z_1,\dots,z_n) = (z_2,z_3,\dots,z_n,0).
+    \]
+    \ii Verification against the definition: both expressions below equal $z_1\overline{w_2}+\dots+z_{n-1}\overline{w_n}$:
+    \[
+      \langle Tz,w\rangle = \sum_{j=2}^n z_{j-1}\overline{w_j}, \qquad
+      \langle z,(w_2,\dots,w_n,0)\rangle = \sum_{k=1}^{n-1} z_k\overline{w_{k+1}}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P2}{HW11 P2}. }\par
+  \idea{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-94}{Prop.~94} converts statements about $\nul T$ into statements about $\range T^*$; taking orthogonal complements converts ``$=\{0\}$'' into ``$=V$''.}
+  \begin{steps}
+    \ii $T$ is injective $\iff \nul T=\{0\}$.
+    \ii By \xlink{math110}{2026-11-02-orthogonality-projections}{prop-89}{Week~10 (T5)}, $\nul T=\{0\} \iff (\nul T)^\perp=V$: if $\nul T=\{0\}$, its complement has dimension $\dim V$; conversely, if $(\nul T)^\perp=V$, then $\nul T=((\nul T)^\perp)^\perp=V^\perp=\{0\}$.
+    \ii By \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-94}{Prop.~94(ii)}, $(\nul T)^\perp=\range T^*$. Hence $T$ is injective $\iff \range T^*=V \iff T^*$ is surjective.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P3}{HW11 P3}. }\par
+  \idea{In the standard orthonormal basis, $\MM(T)$ is real, so $\MM(T^*)=\MM(T)^{\mathsf T}$ (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-93}{Prop.~93}); then check commutativity and eigenvalues directly.}
+  \begin{steps}
+    \ii \textbf{(a)} $T(1,0)=(0,1)$ and $T(0,1)=(-1,0)$, so
+    \[
+      \MM(T)=\begin{bmatrix}0&-1\\1&0\end{bmatrix},\qquad
+      \MM(T^*)=\begin{bmatrix}0&1\\-1&0\end{bmatrix},\qquad
+      T^*(x,y)=(y,-x).
+    \]
+    \ii \textbf{(b)} $TT^*(x,y)=T(y,-x)=(x,y)$ and $T^*T(x,y)=T^*(-y,x)=(x,y)$, so $TT^*=I=T^*T$ and $T$ is normal. Since $T^*=-T\neq T$ (e.g.\ $T(1,0)=(0,1)\neq(0,-1)=T^*(1,0)$), $T$ is not self-adjoint.
+    \ii \textbf{(c)} Characteristic polynomial: $\lambda^2-(\tr T)\lambda+\det T=\lambda^2+1$. Over $\RR$, this has no roots, so $T$ has no real eigenvalues. Over $\CC$, the eigenvalues are $i$ and $-i$ with eigenvectors $(1,-i)$ and $(1,i)$: $T(1,-i)=(i,1)=i(1,-i)$ and $T(1,i)=(-i,1)=-i(1,i)$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P4}{HW11 P4}. }\par
+  \idea{Any projector decomposes $V=\range P\oplus\nul P$ (\xlink{math110}{2026-11-02-orthogonality-projections}{prop-91}{Week~10, Prop.~91}). It is the orthogonal projection precisely when those two subspaces are perpendicular, and normality provides $\nul P=(\range P)^\perp$ via \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-99}{Prop.~99}.}
+  \begin{steps}
+    \ii \textbf{(a)$\Rightarrow$(b).} Every self-adjoint operator is normal: $PP^*=P^2=P^*P$.
+    \ii \textbf{(b)$\Rightarrow$(c).} By \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-99}{Prop.~99}, $(\nul P)^\perp=\range P$; taking orthogonal complements gives $\nul P=(\range P)^\perp$. Since $P^2=P$, $V=\range P\oplus\nul P$, $P$ fixes $\range P$ (if $u=Pv$ then $Pu=P^2v=u$), and vanishes on $\nul P=(\range P)^\perp$: hence $P$ is the orthogonal projection onto $\range P$.
+    \ii \textbf{(c)$\Rightarrow$(a).} Let $U=\range P$ and decompose arbitrary vectors $v=u+u'$, $w=x+x'$ along $U\oplus U^\perp$. Then $Pv=u$ and $Pw=x$, so
+    \[
+      \langle Pv,w\rangle = \langle u,x+x'\rangle = \langle u,x\rangle, \qquad
+      \langle v,Pw\rangle = \langle u+u',x\rangle = \langle u,x\rangle,
+    \]
+    since $\langle u,x'\rangle=\langle u',x\rangle=0$. Thus $P^*=P$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P5}{HW11 P5}. }\par
+  \idea{Move $T$ across the inner product so it acts on a vector in $U$, which stays in $U$.}
+  \begin{steps}
+    \ii Let $v\in U^\perp$ and $u\in U$. Because $U$ is $T$-invariant, $Tu\in U$, so $\langle v,Tu\rangle=0$.
+    \ii Since $T=T^*$, $\langle Tv,u\rangle = \langle v,Tu\rangle = 0$ for every $u\in U$, so $Tv\in U^\perp$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P6}{HW11 P6}. }\par
+  \idea{Since $A$ is real symmetric with distinct eigenvalues, its eigenvectors are orthogonal; normalize them into $Q$ and compute $A^m=QD^mQ^{\mathsf T}$.}
+  \begin{steps}
+    \ii \textbf{(a)} $\tr A=4$ and $\det A=3$, so $\lambda^2-4\lambda+3=(\lambda-3)(\lambda-1)=0$. Direct check: $A(1,1)=3(1,1)$ and $A(1,-1)=(1,-1)$. Normalizing gives the orthonormal eigenbasis $u_1=\frac{1}{\sqrt{2}}(1,1)$, $u_2=\frac{1}{\sqrt{2}}(1,-1)$.
+    \ii \textbf{(b)} Placing $u_1,u_2$ as columns gives
+    \[
+      Q = \frac{1}{\sqrt{2}}\begin{bmatrix}1&1\\1&-1\end{bmatrix},\qquad
+      D = \begin{bmatrix}3&0\\0&1\end{bmatrix},\qquad
+      A = QDQ^{\mathsf T},
+    \]
+    because $AQ=QD$ and $Q^{\mathsf T}Q=I$ gives $Q^{-1}=Q^{\mathsf T}$.
+    \ii \textbf{(c)} For every $m\ge1$,
+    \[
+      A^m = QD^mQ^{\mathsf T}
+      = \frac{1}{2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}\begin{bmatrix}3^m&0\\0&1\end{bmatrix}\begin{bmatrix}1&1\\1&-1\end{bmatrix}
+      = \frac{1}{2}\begin{bmatrix}3^m+1&3^m-1\\3^m-1&3^m+1\end{bmatrix}.
+    \]
+    At $m=1$, this returns $A$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P7}{HW11 P7}. }\par
+  \idea{Apply both directions of the complex spectral theorem (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-104}{Prop.~104}).}
+  \begin{steps}
+    \ii Since $T$ is normal over $\CC$, Prop.~104 supplies an orthonormal basis $e_1,\dots,e_n$ with $Te_j=\lambda_j e_j$.
+    \ii Then $T^ke_j=\lambda_j^k e_j$ for all $k\ge0$, so $p(T)e_j=p(\lambda_j)e_j$: the same orthonormal basis is an eigenbasis of $p(T)$.
+    \ii By the converse direction of Prop.~104, $p(T)$ is normal.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O1}{O1}. }\par
+  \idea{Because $\|e_1\|^2=2\neq1$, the standard basis is \emph{not} orthonormal, so enforce $\langle Tv,w\rangle=\langle v,T^*w\rangle$ directly.}
+  \begin{steps}
+    \ii For $x,y\in\RR^2$, $\langle Tx,y\rangle=\langle(x_2,0),(y_1,y_2)\rangle=2x_2y_1$. Writing $T^*y=(p,q)$ gives $\langle x,T^*y\rangle=2x_1p+x_2q$.
+    \ii Matching coefficients of $x_1,x_2$ gives $2p=0$ and $q=2y_1$, hence $T^*(y_1,y_2)=(0,2y_1)$.
+    \ii In the standard basis, $\MM(T^*)$ is \emph{not} $\MM(T)^{\mathsf T}$:
+    \[
+      \MM(T)=\begin{bmatrix}0&1\\0&0\end{bmatrix},\qquad
+      \MM(T^*)=\begin{bmatrix}0&0\\2&0\end{bmatrix},\qquad
+      \MM(T)^{\mathsf T}=\begin{bmatrix}0&0\\1&0\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O2}{O2}. }\par
+  \idea{Relate $E(\overline{\lambda},T^*)$ to $\nul((T-\lambda I)^*)$ and apply \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{name-ladr-7-7}{LADR~7.7}.}
+  \begin{steps}
+    \ii By LADR~7.5, $(T-\lambda I)^*=T^*-\overline{\lambda}I$, so $E(\overline{\lambda},T^*)=\nul((T-\lambda I)^*)$.
+    \ii Applying LADR~7.7 to $S=T-\lambda I\in\LL(V,V)$ ($\dim W=\dim V$) gives $\dim\nul S^* = \dim\nul S$.
+    \ii Thus $\dim E(\overline{\lambda},T^*)=\dim E(\lambda,T)$ (both $0$ if $\lambda$ is not an eigenvalue).
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O3}{O3}. }\par
+  \idea{Compute $M^*$ and compare $MM^*$ with $M^*M$.}
+  \begin{steps}
+    \ii $M^*=\begin{psmallmatrix}1&-i\\-i&1\end{psmallmatrix}\neq M$, so $M$ is \textbf{not} self-adjoint. However,
+    \[
+      MM^* = \begin{bmatrix}1&i\\i&1\end{bmatrix}\begin{bmatrix}1&-i\\-i&1\end{bmatrix} = \begin{bmatrix}2&0\\0&2\end{bmatrix} = M^*M,
+    \]
+    so $M$ is \textbf{normal}.
+    \ii Characteristic polynomial: $\lambda^2-2\lambda+(1-i^2)=\lambda^2-2\lambda+2=0$, giving eigenvalues $1\pm i$. Direct check: $M(1,1)=(1+i)(1,1)$ and $M(1,-1)=(1-i)(1,-1)$.
+    \ii An orthonormal eigenbasis of $\CC^2$ is $\frac{1}{\sqrt{2}}(1,1)$, $\frac{1}{\sqrt{2}}(1,-1)$ (automatically orthogonal by \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{name-ladr-7-22}{LADR~7.22}; eigenvalues are non-real because $M$ is not Hermitian).
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O4}{O4}. }\par
+  \idea{($\Rightarrow$) uses Prop.~95; ($\Leftarrow$) diagonalizes unitarily and takes conjugate transpose.}
+  \begin{steps}
+    \ii ($\Rightarrow$) Every eigenvalue of a self-adjoint operator is real by \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-95}{Prop.~95}.
+    \ii ($\Leftarrow$) Suppose every eigenvalue of the normal operator $T$ is real. By \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-104}{Prop.~104}, there is an orthonormal basis in which $\MM(T)=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$ with $\lambda_j\in\RR$. By \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-93}{Prop.~93}, $\MM(T^*)=\MM(T)^*=\MM(T)$, so $T^*=T$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O5}{O5}. }\par
+  \idea{In an orthonormal eigenbasis, $T^9=T^8$ becomes $\lambda_j^9=\lambda_j^8$ for every eigenvalue.}
+  \begin{steps}
+    \ii By \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-104}{Prop.~104}, let $e_1,\dots,e_n$ be an orthonormal basis with $Te_j=\lambda_j e_j$.
+    \ii Applying $T^9=T^8$ to $e_j$ gives $\lambda_j^9=\lambda_j^8$, i.e.\ $\lambda_j^8(\lambda_j-1)=0$, so $\lambda_j\in\{0,1\}$.
+    \ii Because all eigenvalues are real, $T$ is self-adjoint by \xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O4}{O4}. Moreover $\lambda_j^2=\lambda_j$ gives $T^2e_j=Te_j$ for all $j$, so $T^2=T$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-O6}{O6}. }\par
+  \idea{Move one copy of $T$ across $\langle Tv,Tv\rangle$.}
+  For every $v\in V$, using $T=T^*$ and $T^2=0$,
+  \[
+    \|Tv\|^2 = \langle Tv,Tv\rangle = \langle T^*Tv,v\rangle = \langle T^2v,v\rangle = 0.
+  \]
+  Hence $Tv=0$ for every $v\in V$, i.e.\ $T=0$.
+\end{prob}
+
+\end{document}

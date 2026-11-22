@@ -1,0 +1,682 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
+\newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+\title{Math 110 --- Week 12}
+\subtitle{Positive operators, isometries, polar decomposition, singular values (Notes Ch.~21--22, LADR 7C--7F, HW12)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from earlier weeks}
+
+Throughout, $V$ and $W$ are finite-dimensional inner product spaces over $\FF=\RR$ or $\CC$, with $n=\dim V$ and $m=\dim W$.
+
+\begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
+  \ii \tool{Rules of the inner product (\xweek{math110}{2026-10-26-trace-inner-products}{Week~9}).} For all $u,v,w\in V$ and $\lambda\in\FF$: $\langle\lambda u+v,w\rangle=\lambda\langle u,w\rangle+\langle v,w\rangle$, $\langle u,\lambda v+w\rangle=\overline{\lambda}\langle u,v\rangle+\langle u,w\rangle$, $\langle u,v\rangle=\overline{\langle v,u\rangle}$, \textbf{positivity} $\langle v,v\rangle\ge0$ for all $v\in V$, and \textbf{definiteness} $\langle v,v\rangle=0 \iff v=0$; here $\|v\|^2=\langle v,v\rangle$. \textit{Pythagoras:} if $\langle u,w\rangle=0$, then $\|u+w\|^2=\|u\|^2+\|w\|^2$.
+
+  \ii \tool{Orthonormal lists and bases (\xlink{math110}{2026-11-02-orthogonality-projections}{prop-84}{Week~10, Props.~84--87}).} For any orthonormal list $e_1,\dots,e_k$, $\|a_1e_1+\dots+a_ke_k\|^2=|a_1|^2+\dots+|a_k|^2$, and the list is linearly independent; an orthonormal list of length $\dim V$ is a basis. In an orthonormal basis $e_1,\dots,e_n$, $v=\sum_{j=1}^n\langle v,e_j\rangle e_j$. Gram--Schmidt turns any basis $v_1,\dots,v_k$ into an orthonormal basis $e_1,\dots,e_k$ with $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for all $j$, and any orthonormal list extends to an orthonormal basis.
+
+  \ii \tool{Orthogonal complements and projections (\xlink{math110}{2026-11-02-orthogonality-projections}{prop-89}{Week~10, Props.~89--90, Def.~48}).} For a subspace $U\subseteq V$: $V=U\oplus U^\perp$ and $\dim U^\perp = n-\dim U$. The orthogonal projection $P_U$ is linear, $P_Uv\in U$, $v-P_Uv\in U^\perp$, and $P_U$ is self-adjoint (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prob-HW11-P4}{Week~11, HW11 P4}).
+
+  \ii \tool{Linear maps (\xweek{math110}{2026-09-14-linear-maps-matrices}{Week~3}).} A linear map is uniquely determined by arbitrary prescribed values on a basis. Rank--nullity: $\dim\nul T+\dim\range T=\dim V$ for $T\in\LL(V,W)$; an injective operator is invertible.
+
+  \ii \tool{Adjoints (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{def-49}{Week~11, Def.~49, Prop.~93, LADR 7.5, 7.7}).} $\langle Tv,w\rangle=\langle v,T^*w\rangle$. In orthonormal bases $\MM(T^*)=\MM(T)^*$ (conjugate transpose). $(S+T)^*=S^*+T^*$, $(\lambda T)^*=\overline{\lambda}T^*$, $(T^*)^*=T$, $(TR)^*=R^*T^*$, $I^*=I$. If $T$ is invertible, $(T^*)^{-1}=(T^{-1})^*$. Also $\dim\range T^*=\dim\range T$, and two vectors having the same inner product against every basis vector are equal.
+
+  \ii \tool{Self-adjoint operators (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-95}{Week~11, Props.~95, 97, 101}).} Eigenvalues of a self-adjoint operator are real. If $T=T^*$ and $\langle Tv,v\rangle=0$ for all $v$, then $T=0$. If $T=T^*$ and $U$ is $T$-invariant, $T|_U$ is self-adjoint.
+
+  \ii \tool{Spectral theorems (\xlink{math110}{2026-11-09-adjoints-spectral-theorem}{prop-102}{Week~11, Props.~99, 102, 104}).} Every self-adjoint operator (over $\RR$ or $\CC$) is orthogonally diagonalizable; conversely, any operator with an orthonormal eigenbasis and real eigenvalues is self-adjoint (Prop.~102(b)). Over $\CC$, $T$ is normal ($TT^*=T^*T$) $\iff T$ is orthogonally diagonalizable; if $Tv=\lambda v$ for normal $T$, then $T^*v=\overline{\lambda}v$. A square matrix $Q$ with orthonormal columns satisfies $Q^*Q=I$ and $Q^{-1}=Q^*$ (called \textbf{orthogonal} over $\RR$, \textbf{unitary} over $\CC$). Self-adjoint matrices factor as $QDQ^*$ with $D$ real diagonal.
+
+  \ii \tool{Diagonal matrices (\xweek{math110}{2026-10-05-eigenvalues-pagerank}{Week~6}).} If $Te_k=d_k e_k$ on a basis $e_1,\dots,e_n$, the eigenvalues of $T$ are $\{d_1,\dots,d_n\}$ (counting multiplicity); if every $d_k=\mu$, then $T=\mu I$.
+
+  \ii \tool{$2\times2$ matrices (\xweek{math110}{2026-10-05-eigenvalues-pagerank}{Week~6}).} $\det\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}=ad-bc\neq0\iff$ invertible; characteristic polynomial $x^2-(\tr A)x+\det A$.
+
+  \ii \tool{Norms (\xlink{math110}{2026-10-26-trace-inner-products}{def-44}{Week~9, Def.~44, Prop.~83}).} A norm satisfies positivity $\|v\|\ge0$, definiteness $\|v\|=0\iff v=0$, homogeneity $\|\lambda v\|=|\lambda|\,\|v\|$, and the triangle inequality $\|u+v\|\le\|u\|+\|v\|$. Inner-product norms ($\|v\|^2=\langle v,v\rangle$) satisfy the parallelogram law $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$.
+
+  \ii \tool{Trace (\xlink{math110}{2026-10-26-trace-inner-products}{prop-78}{Week~9, Prop.~78}).} $\tr(AB)=\tr(BA)$, so $\tr(Q^{-1}AQ)=\tr A$ is basis-independent.
+\end{enumerate}
+
+\section{This week}
+
+Just as complex numbers factor into $z = e^{i\theta}\cdot r$ (a unit-modulus rotation times a nonnegative real stretch $r=|z|=\sqrt{\overline{z}z}$), we decompose general linear maps into an \textbf{isometry} (length-preserving) times a \textbf{positive operator} (pure orthogonal stretching).
+
+\subsection{Positive operators (Ch.~21)}
+
+\begin{qbox}
+  For the two symmetric matrices below, does $\langle Av,v\rangle\ge0$ hold for every $v\in\RR^2$? Does either matrix admit a symmetric square root $R$ with $R^2=A$?
+  \[
+    A_1 = \begin{bmatrix}2&-1\\-1&2\end{bmatrix}, \qquad
+    A_2 = \begin{bmatrix}1&3\\3&1\end{bmatrix}.
+  \]
+\end{qbox}
+
+Among self-adjoint operators (the ``real numbers'' of $\LL(V)$), positive operators play the role of nonnegative real numbers $r\ge0$.
+
+\begin{definition*}[Def.~52 / LADR 7C: Positive and positive definite operators]\target{def-52}
+  A self-adjoint operator $T\in\LL(V)$ is \textbf{positive} (also \textbf{positive semidefinite}) if
+  \[
+    \langle Tv,v\rangle \ge 0 \qquad \text{for all } v\in V.
+  \]
+  It is \textbf{positive definite} if $\langle Tv,v\rangle > 0$ for all $v\neq0$. (Notice Axler LADR requires self-adjointness explicitly: over $\RR$, skew operators can satisfy $\langle Tv,v\rangle=0$!) A square matrix is positive (definite) if the operator $x\mapsto Ax$ on $\FF^n$ with the standard inner product is.
+\end{definition*}
+
+\begin{example*}[Ex.~75: Orthogonal projections are positive]\target{ex-75}
+  Let $P_U$ be the orthogonal projection onto a subspace $U\subseteq V$, and write $v=P_Uv+(v-P_Uv)$ with $P_Uv\in U$ and $v-P_Uv\in U^\perp$ (T3). Because these pieces are orthogonal,
+  \[
+    \langle P_U v,v\rangle = \langle P_Uv,P_Uv\rangle + \langle P_Uv,v-P_Uv\rangle = \|P_Uv\|^2 \ge 0.
+  \]
+  Since $P_U$ is self-adjoint (T3), it is positive! It is positive definite only when $U=V$ (a nonzero $v\in U^\perp$ has $\langle P_Uv,v\rangle=0$).
+\end{example*}
+
+\begin{theorem*}[Prop.~105 / LADR 7.38: Six descriptions of a positive operator]\target{prop-105}
+  For $T\in\LL(V)$, the following are equivalent:
+  \begin{enumerate}
+    \ii[(i)] $T$ is positive;
+    \ii[(ii)] $T$ is self-adjoint and every eigenvalue of $T$ is nonnegative;
+    \ii[(iii)] $T=R^2$ for some self-adjoint $R\in\LL(V)$;
+    \ii[(iv)] $T=R^*R$ for some $R\in\LL(V)$;
+    \ii[(v)] in some orthonormal basis, $\MM(T)$ is diagonal with all diagonal entries $\ge0$;
+    \ii[(vi)] $T$ has a positive square root: $T=R^2$ for some positive $R\in\LL(V)$.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  On an eigenvector $v$, $\langle Tv,v\rangle = \lambda\|v\|^2$, so positivity forces $\lambda\ge0$. Conversely, by the spectral theorem (T7), a self-adjoint $T$ with eigenvalues $\lambda_k\ge0$ just multiplies an orthonormal basis by $\lambda_k\ge0$; replacing each $\lambda_k$ by $\sqrt{\lambda_k}\ge0$ builds a positive square root $R$! And any $R^*R$ automatically gives $\langle R^*Rv,v\rangle = \|Rv\|^2 \ge 0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(i)$\Rightarrow$(ii).} $T$ is self-adjoint by Def.~52. If $Tv=\lambda v$ ($v\neq0$), then $\lambda\in\RR$ (T6) and $\lambda\|v\|^2=\langle Tv,v\rangle\ge0$, forcing $\lambda\ge0$.
+    \ii \textbf{(ii)$\Rightarrow$(iii) \& (vi).} By (T7), choose an orthonormal basis $e_1,\dots,e_n$ with $Te_k=\lambda_k e_k$ ($\lambda_k\ge0$). Define $R\in\LL(V)$ by $Re_k=\sqrt{\lambda_k}e_k$ (T4). Since $R$ has real eigenvalues $\sqrt{\lambda_k}\ge0$ in an orthonormal basis, $R$ is self-adjoint (T7) with eigenvalues $\sqrt{\lambda_k}\ge0$ (T8), and $R^2e_k=\lambda_k e_k=Te_k$ forces $R^2=T$. Moreover $\langle Rv,v\rangle = \sum \sqrt{\lambda_k}|\langle v,e_k\rangle|^2 \ge 0$, so $R$ is positive.
+    \ii \textbf{(vi)$\Rightarrow$(iii).} A positive operator $R$ is self-adjoint by Def.~52.
+    \ii \textbf{(iii)$\Rightarrow$(iv).} If $R^*=R$, then $T=R^2=R^*R$.
+    \ii \textbf{(iv)$\Rightarrow$(i).} By (T5), $(R^*R)^*=R^*(R^*)^*=R^*R$, so $T$ is self-adjoint; and $\langle Tv,v\rangle=\langle R^*Rv,v\rangle=\|Rv\|^2\ge0$.
+    \ii \textbf{(ii)$\Leftrightarrow$(v).} In step~(ii)$\Rightarrow$(iii), $\MM(T)=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$ with $\lambda_k\ge0$. Conversely, an orthonormal basis where $Te_k=d_ke_k$ ($d_k\ge0$) makes $T$ self-adjoint (T7) with eigenvalues $d_1,\dots,d_n\ge0$ (T8).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~106: Positive definite operators]\target{prop-106}
+  For $T\in\LL(V)$, the following are equivalent:
+  \begin{enumerate}
+    \ii[(i)] $T$ is positive definite;
+    \ii[(ii)] $T$ is self-adjoint and every eigenvalue of $T$ is strictly positive ($\lambda>0$);
+    \ii[(iii)] $T=R^*R$ for some invertible $R\in\LL(V)$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(i)$\Rightarrow$(ii).} If $Tv=\lambda v$ ($v\neq0$), then $\lambda\|v\|^2=\langle Tv,v\rangle>0$, so $\lambda>0$.
+    \ii \textbf{(ii)$\Rightarrow$(iii).} Build $Re_k=\sqrt{\lambda_k}e_k$ as in Prop.~105. Since $\sqrt{\lambda_k}>0$ for all $k$, $\nul R=\{0\}$, so $R$ is invertible (T4) and $T=R^2=R^*R$.
+    \ii \textbf{(iii)$\Rightarrow$(i).} $R^*R$ is self-adjoint and for $v\neq0$, injectivity of $R$ forces $Rv\neq0$, hence $\langle Tv,v\rangle=\|Rv\|^2>0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Algebra of positive operators]
+  If $S,T\in\LL(V)$ are positive: \textbf{(a)} $S+T$ is positive; \textbf{(b)} $cT$ is positive for real $c\ge0$; \textbf{(c)} $X^*TX$ is positive for every $X\in\LL(V)$; \textbf{(d)} if $T$ is invertible, then $T$ is positive definite.
+\end{proposition*}
+\begin{proof}
+  (a), (b) Self-adjointness follows from (T5), and $\langle(S+T)v,v\rangle=\langle Sv,v\rangle+\langle Tv,v\rangle\ge0$, $\langle cTv,v\rangle=c\langle Tv,v\rangle\ge0$.
+  (c) $(X^*TX)^*=X^*T^*X=X^*TX$, and $\langle X^*TXv,v\rangle=\langle T(Xv),Xv\rangle\ge0$.
+  (d) Eigenvalues are $\ge0$ (Prop.~105), and $0$ cannot be an eigenvalue since $T$ is invertible; hence all eigenvalues are $>0$ (Prop.~106).
+\end{proof}
+
+\begin{proposition*}[Quadratics in a self-adjoint operator, LADR 7C]
+  If $T\in\LL(V)$ is self-adjoint and $b,c\in\RR$ satisfy $b^2<4c$, then $T^2+bT+cI$ is positive definite (and hence invertible).
+\end{proposition*}
+\begin{proof}
+  $Q=T^2+bT+cI$ is self-adjoint by (T5). In an orthonormal eigenbasis $e_1,\dots,e_n$ of $T$ with real eigenvalues $\lambda_k$, $Qe_k = \mu_k e_k$ where $\mu_k = (\lambda_k+b/2)^2 + (c-b^2/4) > 0$, so $Q$ is positive definite by Prop.~106.
+\end{proof}
+
+\begin{theorem*}[Prop.~107 / LADR 7.39, 7.40: Uniqueness of the positive square root]\target{prop-107}
+  Every positive operator $T\in\LL(V)$ has a \textbf{unique} positive square root, denoted $\sqrt{T}$. On each eigenspace $E(\lambda,T)$, $\sqrt{T}$ acts as $\sqrt{\lambda}\,I$.
+\end{theorem*}
+\begin{ideabox}
+  Any positive square root $R$ ($R^2=T$) commutes with $T=R^2$: $RT=R^3=TR$. Therefore $R$ leaves every eigenspace $E(\lambda,T)$ invariant! Inside $E(\lambda,T)$, $R^2=\lambda I$, so every eigenvalue $\mu$ of the positive operator $R|_{E(\lambda,T)}$ satisfies $\mu^2=\lambda$ and $\mu\ge0$, forcing $\mu=\sqrt{\lambda}$. Diagonalizing this self-adjoint restriction yields $R=\sqrt{\lambda}\,I$ on every $E(\lambda,T)$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Existence was proved in Prop.~105(vi). Suppose $R\in\LL(V)$ is any positive operator with $R^2=T$.
+    \ii If $Tv=\lambda v$, then $T(Rv)=R^3v=R(Tv)=\lambda Rv$, so $E(\lambda,T)$ is $R$-invariant. Put $R_\lambda=R|_{E(\lambda,T)}$, which is self-adjoint (T6) and positive ($\langle R_\lambda v,v\rangle=\langle Rv,v\rangle\ge0$).
+    \ii Since $R_\lambda^2=\lambda I$, any eigenvalue $\mu$ of $R_\lambda$ satisfies $\mu^2=\lambda$ and $\mu\ge0$ (Prop.~105), forcing $\mu=\sqrt{\lambda}$. Because $R_\lambda$ is self-adjoint, $E(\lambda,T)$ has a basis of eigenvectors of $R_\lambda$ (T7), all with eigenvalue $\sqrt{\lambda}$, so $R_\lambda=\sqrt{\lambda}\,I$ (T8).
+    \ii Since $V=\bigoplus_\lambda E(\lambda,T)$ (T7), the values of $R$ on an eigenbasis are uniquely forced, so $R$ is unique (T4).
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Ex.~76: Without positivity, square roots are not unique]\target{ex-76}
+  For any $a,b\in\CC$ with $b\neq0$, the matrix $R=\begin{bmatrix}a&b\\(1-a^2)/b&-a\end{bmatrix}$ satisfies $R^2=I$. Thus $I$ on $\CC^2$ has infinitely many square roots (this entire family, $\pm I$, $\operatorname{diag}(1,-1)$, etc.), yet by Prop.~107, $I$ itself is the \emph{only} positive square root!
+\end{example*}
+
+\noindent\textbf{Computing $\sqrt{T}$ and $2\times2$ shortcut.} If $A=QDQ^*$ is an orthogonal/unitary diagonalization (T7) of a positive matrix $A$, then $\sqrt{A}=Q\sqrt{D}Q^*$ where $\sqrt{D}$ takes entrywise square roots. For $2\times2$ matrices, no eigenvectors are even needed!
+
+\begin{proposition*}[Square-root formula for $2\times2$ positive matrices]\target{name-square-root-2x2}
+  Let $A$ be a nonzero positive $2\times2$ matrix. Then
+  \[
+    \sqrt{A} = \frac{A + \sqrt{\det A}\,I}{\sqrt{\tr A + 2\sqrt{\det A}}}.
+  \]
+\end{proposition*}
+\begin{proof}
+  Let $\lambda_1,\lambda_2\ge0$ be the eigenvalues of $A$ with orthonormal eigenvectors $u_1,u_2$, and set $s_k=\sqrt{\lambda_k}\ge0$ ($s_1+s_2>0$ since $A\neq0$). For $k=1,2$,
+  \[
+    (A+s_1s_2 I)u_k = (s_k^2+s_1s_2)u_k = s_k(s_1+s_2)u_k = (s_1+s_2)\sqrt{A}\,u_k,
+  \]
+  so $A+s_1s_2 I = (s_1+s_2)\sqrt{A}$ (T4). By (T9), $s_1s_2=\sqrt{\lambda_1\lambda_2}=\sqrt{\det A}$ and $(s_1+s_2)^2=\lambda_1+\lambda_2+2s_1s_2=\tr A+2\sqrt{\det A}$.
+\end{proof}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{scope}[xshift=2.8cm,yshift=1.9cm,scale=1.25]
+    \draw[thin,black!30] (-1.4,0) -- (1.5,0) node[right,font=\scriptsize] {$x$};
+    \draw[thin,black!30] (0,-1.25) -- (0,1.35) node[above,font=\scriptsize] {$y$};
+    \draw[dashed,black!45] (-1.0,-1.0) -- (1.0,1.0);
+    \draw[dashed,black!45] (-0.85,0.85) -- (0.85,-0.85);
+    \draw[figblue,very thick,rotate=45] (0,0) ellipse (1 and 0.57735);
+    \node[font=\footnotesize,anchor=north] at (0,-1.3) {$\langle A_1 v,v\rangle=1$: ellipse ($u^2+3w^2=1$)};
+  \end{scope}
+
+  \begin{scope}[xshift=9.2cm,yshift=1.9cm,scale=1.25]
+    \draw[thin,black!30] (-1.4,0) -- (1.5,0) node[right,font=\scriptsize] {$x$};
+    \draw[thin,black!30] (0,-1.25) -- (0,1.35) node[above,font=\scriptsize] {$y$};
+    \draw[dashed,black!45] (-1.0,-1.0) -- (1.0,1.0);
+    \draw[dashed,black!45] (-0.9,0.9) -- (0.9,-0.9) node[below right=-2pt,font=\tiny] {$\lambda_2=-2$};
+    \draw[figred,very thick,domain=-1.1:1.1,samples=60,variable=\t,rotate=45]
+      plot ({0.5*cosh(\t)},{0.7071*sinh(\t)});
+    \draw[figred,very thick,domain=-1.1:1.1,samples=60,variable=\t,rotate=45]
+      plot ({-0.5*cosh(\t)},{0.7071*sinh(\t)});
+    \node[font=\footnotesize,anchor=north] at (0,-1.3) {$\langle A_2 v,v\rangle=1$: hyperbola ($4u^2-2w^2=1$)};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Level sets $\langle Av,v\rangle=1$ along the orthonormal eigenvector axes (dashed). Positive definite $A_1$ (eigenvalues $1,3$) gives a closed ellipse; indefinite $A_2$ (eigenvalues $4,-2$) gives a hyperbola and takes negative values ($\langle A_2(1,-1),(1,-1)\rangle=-4$).}
+\end{fig}
+
+\noindent\textbf{The question answered.} $A_1$ has $\tr A_1=4$, $\det A_1=3$, eigenvalues $3,1>0$, so $A_1$ is positive definite (Prop.~106), and $\sqrt{A_1}=\frac{A_1+\sqrt{3}I}{\sqrt{4+2\sqrt{3}}}=\frac{1}{2}\begin{bmatrix}\sqrt{3}+1&1-\sqrt{3}\\1-\sqrt{3}&\sqrt{3}+1\end{bmatrix}$. Meanwhile $\det A_2=-8<0$ (eigenvalues $4,-2$), so $A_2$ is \emph{not} positive ($\langle A_2(1,-1),(1,-1)\rangle=-4$) and has no symmetric square root.
+
+\begin{theorem*}[Prop.~108: Positive definite matrices classify all inner products on $\FF^n$]\target{prop-108}
+  For every inner product on $\FF^n$, there exists a unique Hermitian positive definite matrix $G$ such that
+  \[
+    \langle v,w\rangle = v^{\mathsf T}G\overline{w} \qquad \text{for all } v,w\in\FF^n,
+  \]
+  namely $G_{ij}=\langle e_i,e_j\rangle$. Conversely, every Hermitian positive definite $G$ defines an inner product by this formula. (Over $\RR$: $\langle v,w\rangle=v^{\mathsf T}Gw$ with $G$ real symmetric positive definite.)
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii Expanding $v=\sum_i v_i e_i$ and $w=\sum_j w_j e_j$ via (T1) gives $\langle v,w\rangle = \sum_{i,j} v_i \overline{w_j}\langle e_i,e_j\rangle = v^{\mathsf T}G\overline{w}$ with $G_{ij}=\langle e_i,e_j\rangle$ forced by taking $v=e_i,w=e_j$.
+    \ii $G_{ji}=\langle e_j,e_i\rangle=\overline{\langle e_i,e_j\rangle}=\overline{G_{ij}}$, so $G^*=G$. Under the standard inner product $\langle\cdot,\cdot\rangle_0$, for $y\neq0$ setting $v=\overline{y}\neq0$ yields $\langle Gy,y\rangle_0 = \sum_{i,j} \overline{v_j} G_{ij} v_i = v^{\mathsf T}G\overline{v} = \langle v,v\rangle > 0$.
+    \ii Conversely, any Hermitian positive definite $G$ makes $\langle v,w\rangle=v^{\mathsf T}G\overline{w}$ linear in $v$. Because $G^*=\overline{G}^{\mathsf T}=G$ and a scalar equals its transpose, $\overline{w^{\mathsf T}G\overline{v}}=\overline{w}^{\mathsf T}\overline{G}v = (\overline{w}^{\mathsf T}\overline{G}v)^{\mathsf T} = v^{\mathsf T}G^*\overline{w}=v^{\mathsf T}G\overline{w}$, giving conjugate symmetry. Finally, by Step~2, $\langle v,v\rangle=\langle G\overline{v},\overline{v}\rangle_0 > 0$ for all $v\neq0$.
+  \end{steps}
+\end{proof}
+
+\noindent\textbf{Where this is used: covariance matrices \& PCA (Notes Ch.~21).} For a random vector $X\in\RR^n$ with mean $\mu=\mathbb{E}X$, its covariance matrix $C=\mathbb{E}[(X-\mu)(X-\mu)^{\mathsf T}]$ is symmetric and positive because $v^{\mathsf T}Cv = \mathbb{E}[(v^{\mathsf T}(X-\mu))^2]\ge0$. Maximizing variance $v^{\mathsf T}Cv$ over unit vectors $v$ yields the top eigenvector of $C$; orthogonal eigenvectors give the \textbf{principal directions} of Principal Component Analysis (PCA).
+
+\begin{shortcuts}
+  \ii \textbf{$2\times2$ positivity:} A Hermitian $2\times2$ matrix is positive $\iff \det A\ge0$ and $\tr A\ge0$ (strict $>$ for positive definite).
+  \ii \textbf{Diagonal entries:} Any positive matrix has $a_{ii}=\langle Ae_i,e_i\rangle\ge0$.
+  \ii \textbf{$R^*R$ is always positive:} So are $RR^*$, $A^{\mathsf T}A$, and covariance matrices (Prop.~105).
+  \ii \textbf{Zero value of a positive operator (LADR 7C):} If $T$ is positive and $\langle Tv,v\rangle=0$, then $\|\sqrt{T}v\|^2=0 \implies \sqrt{T}v=0 \implies Tv=0$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Positive entries $\neq$ positive matrix:} $A_2=\begin{psmallmatrix}1&3\\3&1\end{psmallmatrix}$ has all entries positive yet $\det A_2=-8<0$; $A_1$ has negative off-diagonal entries yet is positive definite.
+  \ii \textbf{Entry $a_{11}\ge0$ and $\det A\ge0$ is not enough:} $\operatorname{diag}(0,-1)$ has $a_{11}=0$ and $\det=0$ yet $\tr=-1<0$. Always check $\tr A\ge0$!
+  \ii \textbf{$\sqrt{A}$ is not entrywise:} taking entrywise roots gives the wrong matrix:
+  \[
+    \sqrt{\begin{bmatrix}5&4\\4&5\end{bmatrix}} = \begin{bmatrix}2&1\\1&2\end{bmatrix} \neq \begin{bmatrix}\sqrt{5}&2\\2&\sqrt{5}\end{bmatrix}.
+  \]
+  \ii \textbf{Must check self-adjointness:} $90^\circ$ rotation on $\RR^2$ has $\langle Tv,v\rangle=0\ge0$ everywhere, yet is not positive.
+\end{trapbox}
+
+\subsection{Isometries (Ch.~21)}
+
+\begin{qbox}
+  The map $S\colon\RR^2\to\RR^3$ given by $S(x,y)=(x,y,0)$ preserves all lengths: $\|S(x,y)\|=\|(x,y)\|$. Does $S^*$ preserve lengths? If $S\colon\RR^n\to\RR^n$ is an operator on the \emph{same} space that preserves lengths, must $S^*S=SS^*=I$?
+\end{qbox}
+
+\begin{definition*}[Def.~53 / LADR 7.44: Isometry]\target{def-53}
+  A linear map $S\in\LL(V,W)$ is an \textbf{isometry} if $\|Sv\|=\|v\|$ for every $v\in V$. An isometric operator $S\in\LL(V)$ is called \textbf{orthogonal} over $\RR$ and \textbf{unitary} over $\CC$ (LADR 4th ed.\ 7.44 defines isometry for $S\in\LL(V,W)$ and calls isometric operators unitary in LADR 7.51).
+\end{definition*}
+
+\begin{theorem*}[Prop.~109 / LADR 7.49: Isometry $\iff S^*S=I$]\target{prop-109}
+  $S\in\LL(V,W)$ is an isometry if and only if $S^*S=I_V$.
+\end{theorem*}
+\begin{proof}
+  For all $v\in V$, $\langle(S^*S-I)v,v\rangle = \langle Sv,Sv\rangle - \langle v,v\rangle = \|Sv\|^2 - \|v\|^2$. Since $S^*S-I$ is self-adjoint (T5), $\|Sv\|^2-\|v\|^2=0$ for all $v \iff S^*S-I=0$ (T6) $\iff S^*S=I$.
+\end{proof}
+
+\begin{theorem*}[Prop.~110 / LADR 7.49: Isometries and orthonormal lists]\target{prop-110}
+  For $S\in\LL(V,W)$, the following are equivalent:
+  \begin{enumerate}
+    \ii[(i)] $S$ is an isometry;
+    \ii[(ii)] $\langle Su,Sv\rangle = \langle u,v\rangle$ for all $u,v\in V$ ($S$ preserves angles as well as lengths);
+    \ii[(iii)] $S$ maps every orthonormal basis $e_1,\dots,e_n$ of $V$ to an orthonormal list $Se_1,\dots,Se_n$ in $W$;
+    \ii[(iv)] $S$ maps some orthonormal basis $e_1,\dots,e_n$ of $V$ to an orthonormal list in $W$.
+  \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(i)$\Rightarrow$(ii).} $\langle Su,Sv\rangle=\langle S^*Su,v\rangle=\langle u,v\rangle$ by Prop.~109.
+    \ii \textbf{(ii)$\Rightarrow$(iii).} $\langle Se_i,Se_j\rangle=\langle e_i,e_j\rangle=\delta_{ij}$.
+    \ii \textbf{(iii)$\Rightarrow$(iv).} $V$ has an orthonormal basis (T2).
+    \ii \textbf{(iv)$\Rightarrow$(i).} Writing $v=\sum_{k=1}^n \lambda_k e_k$, (T2) applied to the orthonormal list $Se_1,\dots,Se_n$ in $W$ gives $\|Sv\|^2 = \|\sum \lambda_k Se_k\|^2 = \sum |\lambda_k|^2 = \|v\|^2$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Isometry inverse rule]
+  Let $S\in\LL(V)$ be an isometric \textbf{operator} ($W=V$). Then $S$ is invertible with $S^{-1}=S^*$, $SS^*=I$, $S$ is normal, and $S^*$ is also an isometry. In particular, if a square matrix has orthonormal columns, then its rows are also orthonormal.
+\end{proposition*}
+\begin{proof}
+  If $Sv=0$ then $\|v\|=\|Sv\|=0$, so $S$ is injective, hence invertible (T4). From $S^*S=I$ (Prop.~109), right-multiplying by $S^{-1}$ gives $S^*=S^{-1}$, hence $SS^*=I=S^*S$ (normal) and $(S^*)^*S^*=SS^*=I$ ($S^*$ is an isometry). For a square matrix $S$, its columns are $S\delta_j$ (orthonormal), so $S^*$ is an isometry whose columns $S^*\delta_k$ (the conjugates of the rows of $S$) are orthonormal, hence the rows of $S$ are orthonormal.
+\end{proof}
+
+\begin{theorem*}[Prop.~111 / LADR 7.55: Complex isometries]\target{prop-111}
+  Let $V$ be complex and $S\in\LL(V)$. Then $S$ is an isometry if and only if $S$ is normal and every eigenvalue of $S$ has absolute value $1$.
+\end{theorem*}
+\begin{proof}
+  ($\Rightarrow$) An isometric operator is normal by the inverse rule, and if $Sv=\lambda v$ ($v\neq0$), then $\|v\|=\|Sv\|=|\lambda|\,\|v\|\implies|\lambda|=1$.
+  ($\Leftarrow$) By (T7), let $e_1,\dots,e_n$ be an orthonormal eigenbasis with $Se_k=\lambda_k e_k$, $|\lambda_k|=1$. Since $S$ is normal, $S^*e_k=\overline{\lambda_k}e_k$, so $S^*Se_k=|\lambda_k|^2 e_k = e_k$ for all $k$, giving $S^*S=I$ (T4).
+\end{proof}
+
+\begin{example*}[Householder reflection $H=I-2uu^{\mathsf T}$]
+  Let $u\in\RR^n$ be a unit vector ($\|u\|=1$, $u^{\mathsf T}u=1$) and set $H=I-2uu^{\mathsf T}$. Because $(uu^{\mathsf T})^{\mathsf T}=uu^{\mathsf T}$, we have $H^{\mathsf T}=H$ and
+  \[
+    H^{\mathsf T}H = H^2 = I - 4uu^{\mathsf T} + 4u(u^{\mathsf T}u)u^{\mathsf T} = I,
+  \]
+  so $H$ is both self-adjoint and orthogonal (Prop.~109). Geometrically, decomposing any $v\in\RR^n$ into its component $(u^{\mathsf T}v)u$ along $u$ and $w=v-(u^{\mathsf T}v)u\in u^\perp$, we have $Hu=-u$ and $Hw=w$: $H$ reflects every vector across the hyperplane $u^\perp$, with eigenvalues $+1$ (multiplicity $n-1$ on $u^\perp$) and $-1$ (multiplicity $1$ on $\spn(u)$).
+\end{example*}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=2.8cm,yshift=1.8cm]
+    \draw[very thick,figgreen] (-2.3,-0.65) -- (2.3,0.65) node[right,font=\small] {$u^\perp$ ($+1$)};
+    \draw[dashed,black!45] (0.52,-1.85) -- (-0.52,1.85);
+    \draw[->,thick,figred] (0,0) -- (-0.31,1.1) node[left,font=\small] {$u$};
+
+    \coordinate (V) at (1.55,1.45);
+    \coordinate (W) at (1.81,0.512);
+    \coordinate (HV) at (2.07,-0.426);
+
+    \draw[->,very thick,figblue] (0,0) -- (V) node[above right=-2pt,font=\small] {$v$};
+    \draw[->,very thick,figpurple] (0,0) -- (HV) node[below=2pt,font=\small] {$Hv$};
+    \draw[->,thick,figgreen] (0,0) -- (W) node[above left=1pt,halo,font=\scriptsize] {$w=P_{u^\perp}v$};
+    \draw[dashed,figred,thick] (V) -- (HV);
+    \draw[black!60] (1.65,0.467) -- (1.60,0.64) -- (1.76,0.685);
+  \end{scope}
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=5.6cm,align=left] at (7.0,1.8) {%
+    \textbf{Householder reflection $H=I-2uu^{\mathsf T}$:}\\[2pt]
+    $\bullet$ $H$ fixes every $w\in u^\perp$ ($+1$, mult.~$n-1$) and reverses $u$ ($Hu=-u$, $-1$).\\[2pt]
+    $\bullet$ $H=H^{\mathsf T}=H^{-1}$, so $H^2=I$.\\[2pt]
+    $\bullet$ Reflections generate all orthogonal matrices and power practical $QR$ algorithms!
+  };
+\end{tikzpicture}
+\figcap{Householder reflection across $u^\perp$: subtracting twice the normal projection $(u^{\mathsf T}v)u$ flips $v$ to its mirror image $Hv$ across the hyperplane $u^\perp$.}
+\end{fig}
+
+\begin{proposition*}[QR and Cholesky factorizations, LADR 7D]\target{name-qr}\target{name-cholesky}
+  \begin{enumerate}
+    \ii[(a)] \textbf{(QR)} If $A$ is $m\times n$ with linearly independent columns $v_1,\dots,v_n$, then $A=QR$ where $Q$ ($m\times n$) has orthonormal columns and $R$ ($n\times n$) is upper-triangular with positive diagonal entries.
+    \ii[(b)] \textbf{(Cholesky)} Every positive definite $n\times n$ matrix $B$ factors uniquely as $B=R^*R$ where $R$ is upper-triangular with positive diagonal entries.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a)} Apply Gram--Schmidt (T2) to $v_1,\dots,v_n$ to obtain orthonormal $e_1,\dots,e_n$ with $\spn(e_1,\dots,e_k)=\spn(v_1,\dots,v_k)$. Let $Q=[e_1\;\cdots\;e_n]$, set $R_{jk}=\langle v_k,e_j\rangle$ ($j\le k$) and $0$ ($j>k$). Then column $k$ of $QR$ is $\sum_{j\le k}\langle v_k,e_j\rangle e_j=v_k$ (T2), and with Gram--Schmidt orthogonal remainder $w_k$, $R_{kk}=\langle v_k,e_k\rangle=\|w_k\|>0$.
+    \ii \textbf{(b)} By Prop.~106, $B=M^*M$ for an invertible $M$. Applying QR gives $M=QR$ with $Q$ unitary ($Q^*Q=I$) and $R$ upper-triangular with positive diagonal, whence $B=(QR)^*QR=R^*Q^*QR=R^*R$.
+  \end{steps}
+\end{proof}
+
+\noindent\textbf{The question answered.} $S(x,y)=(x,y,0)$ has orthonormal columns, so it is an isometry (Prop.~110). Its adjoint $S^*(a,b,c)=(a,b)$ annihilates $(0,0,1)$, so $S^*$ is \emph{not} an isometry ($S^*S=I_2$ while $SS^*=\operatorname{diag}(1,1,0)\neq I_3$). On the same space $\RR^n$, yes: $S^*S=I$ forces $SS^*=I$ by the inverse rule!
+
+\begin{shortcuts}
+  \ii \textbf{Checking isometry:} Verify columns are orthonormal (Prop.~110).
+  \ii \textbf{Inverse of isometric operator:} $S^{-1}=S^*$ with zero row reduction.
+  \ii \textbf{Cholesky ($2\times2$):} For positive definite $B=\begin{psmallmatrix}b_{11}&b_{12}\\\overline{b_{12}}&b_{22}\end{psmallmatrix}$, $R=\begin{psmallmatrix}r_{11}&r_{12}\\0&r_{22}\end{psmallmatrix}$ has $r_{11}=\sqrt{b_{11}}$, $r_{12}=b_{12}/r_{11}$, $r_{22}=\sqrt{b_{22}-|r_{12}|^2}$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Orthogonal columns $\neq$ orthonormal:} $\operatorname{diag}(2,1)$ has orthogonal columns yet is not an isometry.
+  \ii \textbf{$S^*S=I$ does not force $SS^*=I$ when $V\neq W$:} $S\colon\RR^2\to\RR^3$ above has $S^*S=I_2$ yet $SS^*\neq I_3$.
+  \ii \textbf{Prop.~111 needs $\CC$:} Over $\RR$, $2\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ has no real eigenvalues at all yet doubles every length!
+\end{trapbox}
+
+\subsection{Polar decomposition (Ch.~22)}
+
+\begin{qbox}
+  A nonzero complex scalar factors as $z=e^{i\theta}|z|$: a rotation $e^{i\theta}$ times a positive stretch $|z|=\sqrt{\overline{z}z}$. Does every linear operator $T\in\LL(V)$ factor similarly as an isometry times a positive operator, $T=S\sqrt{T^*T}$? Find this factorization for
+  \[
+    A=\begin{bmatrix}-1&-2\\2&1\end{bmatrix}.
+  \]
+\end{qbox}
+
+Notice why $\sqrt{T^*T}$ is the natural ``modulus $|T|$'' of $T$: $T^*T$ is always positive ($\langle T^*Tv,v\rangle=\|Tv\|^2\ge0$), so $P=\sqrt{T^*T}$ exists uniquely (Prop.~107), and for every $v\in V$:
+\begin{equation*}\tag{$\ast$}
+  \|\sqrt{T^*T}\,v\|^2 = \langle\sqrt{T^*T}\,v,\sqrt{T^*T}\,v\rangle = \langle T^*Tv,v\rangle = \|Tv\|^2
+  \implies \|\sqrt{T^*T}\,v\| = \|Tv\|.
+\end{equation*}
+Equation~$(\ast)$ says $Pv$ and $Tv$ always have the exact same length!
+
+\begin{theorem*}[Prop.~112 / LADR 7.93: Polar decomposition]\target{prop-112}\target{name-polar}
+  For every operator $T\in\LL(V)$, there exists an isometry $S\in\LL(V)$ such that
+  \[
+    T = S\sqrt{T^*T}.
+  \]
+  Moreover, $P=\sqrt{T^*T}$ is uniquely determined by $T=SP$ ($S$ isometry, $P$ positive); and if $T$ is invertible, $S=TP^{-1}$ is unique as well.
+\end{theorem*}
+\begin{ideabox}
+  Because $\|Pv\|=\|Tv\|$ by $(\ast)$, the map sending $Pv\mapsto Tv$ is well-defined and preserves all lengths from $\range P$ onto $\range T$! By Rank--Nullity and (T3), $(\range P)^\perp$ and $(\range T)^\perp$ have equal dimension, so we match them with any isometry between orthonormal bases.
+\end{ideabox}
+\begin{proof}
+  Write $P=\sqrt{T^*T}$.
+  \begin{steps}
+    \ii Define $S_1\colon\range P\to\range T$ by $S_1(Pv)=Tv$. If $Pv_1=Pv_2$, then $\|T(v_1-v_2)\|=\|P(v_1-v_2)\|=0$ by $(\ast)$, so $Tv_1=Tv_2$; hence $S_1$ is well-defined and clearly linear, onto $\range T$, and length-preserving ($\|S_1(Pv)\|=\|Tv\|=\|Pv\|$). Thus $\dim\range P=\dim\range T$ (T4).
+    \ii Consequently $\dim(\range P)^\perp = \dim(\range T)^\perp = k$ (T3). Choose orthonormal bases $g_1,\dots,g_k$ of $(\range P)^\perp$ and $h_1,\dots,h_k$ of $(\range T)^\perp$, and let $S_2\colon(\range P)^\perp\to(\range T)^\perp$ be the linear map $S_2g_j=h_j$ (isometric by T2).
+    \ii Decomposing $v=u+w$ along $\range P\oplus(\range P)^\perp$ ($u=P_{\range P}v$, $w=v-u$), define $Sv=S_1u+S_2w$. Linearity holds because $P_{\range P}$ is linear (T3); since $S_1u\in\range T\perp(\range T)^\perp\ni S_2w$, Pythagoras (T1) gives $\|Sv\|^2=\|S_1u\|^2+\|S_2w\|^2=\|u\|^2+\|w\|^2=\|v\|^2$, so $S$ is an isometry and $S(Pv)=S_1(Pv)=Tv$ for all $v$.
+    \ii \emph{Uniqueness:} If $T=SP$ ($S$ isometry, $P$ positive), then $T^*T=P^*S^*SP=P^2$ (Prop.~109), forcing $P=\sqrt{T^*T}$ (Prop.~107). If $T$ is invertible, $P$ is invertible (by $(\ast)$, $Pv=0\implies Tv=0\implies v=0$) and $S=TP^{-1}$ is unique. (When $T$ is invertible, setting $S=TP^{-1}$ directly avoids Steps~1--3 since $S^*S=P^{-1}T^*TP^{-1}=P^{-1}P^2P^{-1}=I$.)
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Ex.~77: Polar form on $\CC$]\target{ex-77}
+  Multiplication $z\mapsto\lambda z$ ($\lambda\neq0$) has adjoint $w\mapsto\overline{\lambda}w$, so $\sqrt{\lambda^*\lambda}=\sqrt{|\lambda|^2}=|\lambda|$ and $\lambda = (\lambda/|\lambda|)|\lambda| = e^{i\theta}|\lambda|$.
+\end{example*}
+
+\begin{example*}[Worked examples: invertible vs.\ non-invertible]
+  \begin{itemize}
+    \ii \emph{The question ($A=\begin{psmallmatrix}-1&-2\\2&1\end{psmallmatrix}$):} $A^{\mathsf T}A=\begin{psmallmatrix}5&4\\4&5\end{psmallmatrix}$ has $\tr=10$, $\det=9$. By the $2\times2$ square-root formula,
+    \[
+      P=\sqrt{A^{\mathsf T}A}=\frac{A^{\mathsf T}A+3I}{\sqrt{10+6}}=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+      S = AP^{-1} = \frac{1}{3}\begin{bmatrix}-1&-2\\2&1\end{bmatrix}\begin{bmatrix}2&-1\\-1&2\end{bmatrix} = \begin{bmatrix}0&-1\\1&0\end{bmatrix},
+    \]
+    a counterclockwise $90^\circ$ rotation! So $A$ stretches by $3$ along $(1,1)$ and $1$ along $(1,-1)$, then rotates by $90^\circ$.
+    \ii \emph{Non-invertible $T=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$:} Here $T^{\mathsf T}T=\operatorname{diag}(0,1)$ gives $P=\operatorname{diag}(0,1)$, $\range P=\spn(e_2)$, $\range T=\spn(e_1)$, $S_1e_2=e_1$, while $S_2\colon\spn(e_1)\to\spn(e_2)$ can send $e_1\mapsto e_2$ \emph{or} $e_1\mapsto -e_2$:
+    \[
+      S=\begin{bmatrix}0&1\\\pm1&0\end{bmatrix}, \qquad SP=T.
+    \]
+    So $S$ is \emph{not} unique when $T$ is non-invertible!
+  \end{itemize}
+\end{example*}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  \begin{scope}[xshift=1.8cm,yshift=1.6cm,scale=0.68]
+    \draw[thin,black!25] (-1.6,0) -- (1.6,0);
+    \draw[thin,black!25] (0,-1.5) -- (0,1.5);
+    \draw[black!60,thick] (0,0) circle (1);
+    \draw[->,very thick,figred] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)}) node[above right=-2pt,font=\scriptsize] {$e_1$};
+    \draw[->,very thick,figblue] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)}) node[below right=-2pt,font=\scriptsize] {$e_2$};
+    \node[font=\footnotesize,anchor=north] at (0,-1.65) {unit circle};
+  \end{scope}
+
+  \draw[->,thick,black!75] (3.4,1.6) -- node[above,font=\small] {$P=\sqrt{A^{\mathsf T}A}$} (4.6,1.6);
+
+  \begin{scope}[xshift=6.5cm,yshift=1.6cm,scale=0.48]
+    \draw[thin,black!25] (-3.2,0) -- (3.2,0);
+    \draw[thin,black!25] (0,-2.6) -- (0,2.6);
+    \draw[figgreen,very thick,rotate=45] (0,0) ellipse (3 and 1);
+    \draw[->,very thick,figred] (0,0) -- ({3/sqrt(2)},{3/sqrt(2)}) node[above right=-2pt,font=\scriptsize] {$3e_1$};
+    \draw[->,very thick,figblue] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)}) node[below right=-2pt,font=\scriptsize] {$e_2$};
+    \node[font=\footnotesize,anchor=north] at (0,-2.35) {$P(\text{circle})$};
+  \end{scope}
+
+  \draw[->,thick,black!75] (8.3,1.6) -- node[above,font=\small] {$S$ ($90^\circ$ rot.)} (9.5,1.6);
+
+  \begin{scope}[xshift=11.4cm,yshift=1.6cm,scale=0.48]
+    \draw[thin,black!25] (-3.2,0) -- (3.2,0);
+    \draw[thin,black!25] (0,-2.6) -- (0,2.6);
+    \draw[figblue,very thick,rotate=135] (0,0) ellipse (3 and 1);
+    \draw[->,very thick,figred] (0,0) -- ({-3/sqrt(2)},{3/sqrt(2)}) node[above left=-2pt,font=\scriptsize] {$3f_1$};
+    \draw[->,very thick,figblue] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)}) node[above right=-2pt,font=\scriptsize] {$f_2$};
+    \node[font=\footnotesize,anchor=north] at (0,-2.35) {$A(\text{circle})=SP(\text{circle})$};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Polar decomposition and SVD of $A=\begin{psmallmatrix}-1&-2\\2&1\end{psmallmatrix}$: $P$ stretches the unit circle by $s_1=3$ along $e_1=\frac{1}{\sqrt{2}}(1,1)$ and $s_2=1$ along $e_2=\frac{1}{\sqrt{2}}(1,-1)$; the isometry $S$ then rotates by $90^\circ$ ($e_j\mapsto f_j$).}
+\end{fig}
+
+\begin{proposition*}[Real $2\times2$ polar formula \& determinant product rule]\target{name-polar-2x2}
+  For $2\times2$ matrices $X,Y$, $\det(XY)=\det X\det Y$. Consequently, if $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ is real with $\det A\neq0$ and polar decomposition $A=SP$, then $P=S^{\mathsf T}A$ and:
+  \begin{enumerate}
+    \ii[(a)] if $\det A>0$, $S=\frac{1}{N_1}\begin{bmatrix}a+d&b-c\\c-b&a+d\end{bmatrix}$ with $N_1=\sqrt{(a+d)^2+(c-b)^2}$ (a rotation);
+    \ii[(b)] if $\det A<0$, $S=\frac{1}{N_2}\begin{bmatrix}a-d&b+c\\b+c&d-a\end{bmatrix}$ with $N_2=\sqrt{(a-d)^2+(b+c)^2}$ (a reflection).
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  Expanding $(x_1y_1+x_2y_3)(x_3y_2+x_4y_4)-(x_1y_2+x_2y_4)(x_3y_1+x_4y_3)=(x_1x_4-x_2x_3)(y_1y_4-y_2y_3)$ proves $\det(XY)=\det X\det Y$. In (a), $\det A>0$ prevents $a+d=c-b=0$ (else $\det A=-a^2-b^2\le0$), $S$ has orthonormal columns with $\det S=1$, and $S^{\mathsf T}A$ has off-diagonal difference $\bigl((a+d)(b-c)+(c-b)(a+d)\bigr)/N_1=0$ (symmetric), trace $N_1>0$, and $\det P=\det S^{\mathsf T}\det A=\det A>0$, so $P$ is positive definite (Prop.~106) and $SP=SS^{\mathsf T}A=A$. Case (b) follows identically with $\det S=-1$ and trace $N_2>0$.
+\end{proof}
+
+\begin{trapbox}
+  \ii \textbf{Right positive factor uses $T^*T$, not $TT^*$:} If you factor $T=P'S$ instead, $P'=\sqrt{TT^*}$.
+  \ii \textbf{$\sqrt{T^*T}$ is not entrywise $|T|$:} For $A=\begin{psmallmatrix}-1&-2\\2&1\end{psmallmatrix}$, $P=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$, not $\begin{psmallmatrix}1&2\\2&1\end{psmallmatrix}$.
+\end{trapbox}
+
+\subsection{Singular values, SVD, and the pseudoinverse (Ch.~22, LADR 7E--7F)}
+
+\begin{qbox}
+  Returning to $A=\begin{psmallmatrix}-1&-2\\2&1\end{psmallmatrix}$, which unit vector $v\in\RR^2$ maximizes $\|Av\|$, and how large is the maximum? Furthermore, what is the closest rank-$1$ matrix to $A$?
+\end{qbox}
+
+For rectangular maps $T\in\LL(V,W)$, eigenvalues do not even make sense because $T$ maps between \emph{different} spaces. Just as least-squares replaces $Ax=b$ with $A^{\mathsf T}Ax=A^{\mathsf T}b$, we study the positive self-adjoint operator $T^*T\in\LL(V)$.
+
+\begin{proposition*}[LADR 7.43 / 7E: Properties of $T^*T$]\target{name-ladr-7-43}
+  For any $T\in\LL(V,W)$: $T^*T\in\LL(V)$ is positive, $\nul(T^*T)=\nul T$, $\range(T^*T)=\range T^*$, and $\dim\range(T^*T)=\dim\range T$.
+\end{proposition*}
+\begin{proof}
+  Positivity is $\langle T^*Tv,v\rangle=\|Tv\|^2\ge0$. Clearly $Tv=0\implies T^*Tv=0$; conversely $T^*Tv=0\implies \|Tv\|^2=\langle T^*Tv,v\rangle=0\implies Tv=0$, so $\nul(T^*T)=\nul T$. Clearly $\range(T^*T)\subseteq\range T^*$, while Rank--Nullity (T4) and (T5) give $\dim\range(T^*T)=n-\dim\nul(T^*T)=n-\dim\nul T=\dim\range T=\dim\range T^*$, forcing equality.
+\end{proof}
+
+\begin{definition*}[Def.~54 / LADR 7.65: Singular values]\target{def-54}
+  The \textbf{singular values} of $T\in\LL(V,W)$ are the eigenvalues of $\sqrt{T^*T}$ listed with multiplicity---equivalently, the nonnegative square roots of the eigenvalues of $T^*T$. There are $n=\dim V$ of them, ordered $s_1\ge s_2\ge\dots\ge s_n\ge0$.
+\end{definition*}
+
+\begin{proposition*}[Positive singular values, LADR 7E]
+  For $T\in\LL(V,W)$, the number of strictly positive singular values equals $\dim\range T=\rank T$. Thus $T$ is injective $\iff 0$ is not a singular value of $T$.
+\end{proposition*}
+\begin{proof}
+  In an orthonormal eigenbasis $e_1,\dots,e_n$ of $\sqrt{T^*T}$ with $\sqrt{T^*T}e_j=s_je_j$, $\range\sqrt{T^*T}=\spn\{e_j:s_j>0\}$ has dimension equal to $\#\{j:s_j>0\}$, and by $(\ast)$, $\nul\sqrt{T^*T}=\nul T$, so Rank--Nullity gives $\dim\range T=\dim\range\sqrt{T^*T}$.
+\end{proof}
+
+\begin{theorem*}[Prop.~113 / LADR 7.70 \& 7.69: Singular value decomposition]\target{prop-113}\target{name-svd}\target{name-ladr-7-69}
+  Let $T\in\LL(V)$ have singular values $s_1\ge\dots\ge s_n$. There exist orthonormal bases $e_1,\dots,e_n$ and $f_1,\dots,f_n$ of $V$ such that $Te_j=s_jf_j$, hence
+  \[
+    Tv = \sum_{j=1}^n s_j\langle v,e_j\rangle f_j \qquad\text{and}\qquad T^*w = \sum_{j=1}^n s_j\langle w,f_j\rangle e_j \qquad \text{(LADR 7.69)}
+  \]
+  for all $v,w\in V$. In matrix form, $A = F\Sigma E^* = \sum_{j=1}^n s_j f_j e_j^*$ with $E,F$ unitary and $\Sigma=\operatorname{diag}(s_1,\dots,s_n)$.
+\end{theorem*}
+\begin{proof}
+  Choose an orthonormal eigenbasis $e_1,\dots,e_n$ of $\sqrt{T^*T}$ with $\sqrt{T^*T}e_j=s_j e_j$ (T7), and take $T=S\sqrt{T^*T}$ (Prop.~112). Set $f_j=Se_j$; by Prop.~110, $f_1,\dots,f_n$ is an orthonormal basis of $V$, and $Te_j=S(s_j e_j)=s_j f_j$. Expanding $v=\sum_j\langle v,e_j\rangle e_j$ (T2) gives $Tv=\sum_j s_j\langle v,e_j\rangle f_j$. For $T^*w$, testing against $e_k$ gives $\langle T^*w,e_k\rangle = \langle w,Te_k\rangle = \langle w,s_k f_k\rangle = s_k\langle w,f_k\rangle$, so Fourier expansion in $\{e_k\}$ yields LADR~7.69: $T^*w = \sum_k s_k\langle w,f_k\rangle e_k$ (and $T^*f_k=s_ke_k$).
+\end{proof}
+
+\begin{proposition*}[Prop.~116: Converse---diagonal in two ONBs means singular values]\target{prop-116}
+  If $e_1,\dots,e_n$ and $f_1,\dots,f_n$ are orthonormal bases of $V$ with $Te_k=s_k f_k$ and $s_k\ge0$ for all $k$, then $s_1,\dots,s_n$ are the singular values of $T$.
+\end{proposition*}
+\begin{proof}
+  For all $j,k$, $\langle e_j,T^*f_k\rangle=\langle Te_j,f_k\rangle=s_j\delta_{jk}=\langle e_j,s_k e_k\rangle$, so $T^*f_k=s_k e_k$ (T5), hence $T^*Te_k=s_k^2 e_k$. Defining $Re_k=s_k e_k$ gives a positive operator (Prop.~105) with $R^2=T^*T$, so $R=\sqrt{T^*T}$ (Prop.~107) has eigenvalues $s_1,\dots,s_n$ with multiplicity (T8).
+\end{proof}
+
+\begin{proposition*}[Rectangular SVD between two spaces, $T\in\LL(V,W)$]
+  Let $T\in\LL(V,W)$ have singular values $s_1\ge\dots\ge s_r>0=s_{r+1}=\dots=s_n$ ($r=\rank T$). There exist orthonormal bases $e_1,\dots,e_n$ of $V$ and $f_1,\dots,f_m$ of $W$ such that $Te_j=s_j f_j$ ($j\le r$) and $Te_j=0$ ($j>r$), hence
+  \[
+    Tv = \sum_{j=1}^r s_j\langle v,e_j\rangle f_j, \qquad
+    T^*w = \sum_{j=1}^r s_j\langle w,f_j\rangle e_j, \qquad
+    A = F\Sigma E^*,
+  \]
+  where $\Sigma$ is $m\times n$ with $s_1,\dots,s_r$ on its leading diagonal and $0$ elsewhere.
+\end{proposition*}
+\begin{proof}
+  Diagonalize positive $T^*T$ on $V$ by an orthonormal eigenbasis $e_1,\dots,e_n$ with $T^*Te_j=s_j^2 e_j$. Then $\langle Te_i,Te_j\rangle=s_i^2\delta_{ij}$, so $f_j=Te_j/s_j$ ($j\le r$) are orthonormal in $W$, while $\|Te_j\|^2=0\implies Te_j=0$ ($j>r$). Extend $f_1,\dots,f_r$ to an orthonormal basis $f_1,\dots,f_m$ of $W$ (T2). Checking $\langle T^*w,e_j\rangle=\langle w,Te_j\rangle$ yields $T^*w=\sum_{j=1}^r s_j\langle w,f_j\rangle e_j$.
+\end{proof}
+
+\begin{example*}[Three concrete SVDs + Ex.~78]\target{ex-78}
+  \begin{enumerate}
+    \ii \emph{Zero singular value:} $A=\begin{psmallmatrix}2&2\\1&1\end{psmallmatrix}$ gives $A^{\mathsf T}A=\begin{psmallmatrix}5&5\\5&5\end{psmallmatrix}$, eigenvalues $10,0$, $s_1=\sqrt{10},s_2=0$; $e_1=\frac{1}{\sqrt{2}}(1,1)$, $e_2=\frac{1}{\sqrt{2}}(1,-1)$, $f_1=\frac{Ae_1}{\sqrt{10}}=\frac{1}{\sqrt{5}}(2,1)$, $f_2=\frac{1}{\sqrt{5}}(-1,2)$, so $A=\sqrt{10}\,f_1 e_1^{\mathsf T}$.
+    \ii \emph{$3\times2$ matrix:} for
+    \[
+      A = \begin{bmatrix}1&1\\0&1\\1&0\end{bmatrix},
+    \]
+    we get $A^{\mathsf T}A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ ($s_1=\sqrt{3},s_2=1$, $e_1=\frac{1}{\sqrt{2}}(1,1)$, $e_2=\frac{1}{\sqrt{2}}(1,-1)$). Then $f_1=\frac{1}{\sqrt{6}}(2,1,1)$, $f_2=\frac{1}{\sqrt{2}}(0,-1,1)$, completed by $f_3=\frac{1}{\sqrt{3}}(1,-1,-1)$.
+    \ii \emph{Ex.~78 (Notes Ch.~22):} $A=\begin{psmallmatrix}1&0\\1&1\end{psmallmatrix}$ has $A^{\mathsf T}A=\begin{psmallmatrix}2&1\\1&1\end{psmallmatrix}$ with $\tr=3$, $\det=1$, eigenvalues $\frac{3\pm\sqrt{5}}{2}=\varphi^{\pm2}$ where $\varphi=\frac{1+\sqrt{5}}{2}$. Thus $s_1=\varphi\approx1.618$, $s_2=\varphi^{-1}=\varphi-1\approx0.618$ (even though the only eigenvalue of $A$ is $1$!), $c=\sqrt{\varphi^2+1}$, $e_1=\frac{1}{c}(\varphi,1)$, $e_2=\frac{1}{c}(-1,\varphi)$, $f_1=\frac{1}{c}(1,\varphi)$, $f_2=\frac{1}{c}(-\varphi,1)$, and polar rotation $S=\frac{1}{\sqrt{5}}\begin{psmallmatrix}2&-1\\1&2\end{psmallmatrix}$.
+  \end{enumerate}
+\end{example*}
+
+\noindent\textbf{The spectral norm, smallest stretch, and ellipsoid image (LADR 7F).} The largest singular value $s_1$ is the \textbf{spectral norm} $\|T\|_2$.
+
+\begin{theorem*}[Prop.~114 \& LADR 7F: Largest/smallest stretch, products, and ellipsoid image]\target{prop-114}\target{name-ladr-7-75}
+  Let $S,T\in\LL(V)$ with singular values of $T$ ordered $s_1\ge\dots\ge s_n$.
+  \begin{enumerate}
+    \ii[(a)] $\|Tv\|\le s_1\|v\|$ for all $v\in V$, with equality at $v=e_1$, so $\|T\|_2 = \max_{\|v\|=1}\|Tv\| = s_1$.
+    \ii[(b)] On $\LL(V)$, $\|\cdot\|_2$ is a norm (positivity, definiteness, scaling, triangle inequality), yet if $\dim V\ge2$, it does \textbf{not} come from any inner product.
+    \ii[(c)] $\|Tv\|\ge s_n\|v\|$ for all $v\in V$, with equality at $v=e_n$; $\|ST\|_2\le\|S\|_2\|T\|_2$.
+    \ii[(d)] If $T$ is invertible, the singular values of $T^{-1}$ are $1/s_n\ge\dots\ge 1/s_1$ ($\|T^{-1}\|_2=1/s_n$), and $T$ maps the unit sphere $\{\|v\|=1\}$ onto the ellipsoid $\bigl\{\sum_{j=1}^n d_j f_j : \sum_{j=1}^n |d_j|^2/s_j^2 = 1\bigr\}$ with orthogonal semi-axes $s_1f_1,\dots,s_nf_n$ (\textbf{LADR 7.75}).
+  \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a),(c).} Writing $v=\sum_j c_j e_j$ in Prop.~113, $Tv=\sum_j s_j c_j f_j$ so $s_n^2\sum|c_j|^2 \le \|Tv\|^2 = \sum s_j^2|c_j|^2 \le s_1^2\sum|c_j|^2 = s_1^2\|v\|^2$, with equality at $v=e_1$ and $v=e_n$. Also $\|ST\|_2 = \max_{\|v\|=1}\|S(Tv)\| \le \|S\|_2\max_{\|v\|=1}\|Tv\| = \|S\|_2\|T\|_2$.
+    \ii \textbf{(b).} Definiteness: $\|T\|_2=0\implies\|Tv\|\le0\ \forall v\implies T=0$; homogeneity and triangle inequality follow from max over $\|v\|=1$. For $\dim V\ge2$, $E_{11}=\operatorname{diag}(1,0,\dots)$ and $E_{22}=\operatorname{diag}(0,1,0,\dots)$ satisfy $\|E_{11}\|_2=\|E_{22}\|_2=\|E_{11}+E_{22}\|_2=\|E_{11}-E_{22}\|_2=1$ (Prop.~116), violating the parallelogram law $1^2+1^2\neq 2(1^2+1^2)$ (T10).
+    \ii \textbf{(d).} From $Te_k=s_kf_k$ ($s_k>0$), $T^{-1}f_k=s_k^{-1}e_k$, so Prop.~116 gives singular values $s_k^{-1}$. And $v=\sum c_je_j$ has $\|v\|^2=\sum|c_j|^2=1 \iff Tv=\sum d_jf_j$ with $d_j=s_jc_j$ satisfies $\sum|d_j|^2/s_j^2=1$.
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Prop.~115: Eckart--Young best rank-$k$ approximation]\target{prop-115}\target{name-eckart-young}
+  Let $T\in\LL(V)$ have singular values $s_1\ge\dots\ge s_n$ and SVD $Tv=\sum_{j=1}^n s_j\langle v,e_j\rangle f_j$. For $1\le k<n$, define the rank-$\le k$ truncation
+  \[
+    T_k v = \sum_{j=1}^k s_j\langle v,e_j\rangle f_j.
+  \]
+  Then $\rank T_k\le k$, $\|T-T_k\|_2 = s_{k+1}$, and for every $R\in\LL(V)$ with $\rank R\le k$, $\|T-R\|_2 \ge s_{k+1}$. Thus $T_k$ is a best rank-$\le k$ approximation to $T$ in spectral norm!
+\end{theorem*}
+\begin{ideabox}
+  The error $T-T_k$ drops the first $k$ modes and keeps $s_{k+1},\dots,s_n$, so its largest stretch is $s_{k+1}$. Why can no other rank-$k$ map $R$ beat $s_{k+1}$? Consider the $(k+1)$-dimensional subspace $U=\spn(e_1,\dots,e_{k+1})$: by Rank--Nullity (dimension pigeonhole!), $R|_U$ cannot be injective, so some unit vector $x\in U$ lies in $\nul R$. On that $x$, $(T-R)x = Tx$, and every unit vector in $U$ is stretched by at least $s_{k+1}$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii $\range T_k\subseteq\spn(f_1,\dots,f_k)$, so $\rank T_k\le k$.
+    \ii $(T-T_k)v = \sum_{j>k}s_j c_j f_j$ has $\|(T-T_k)v\|^2=\sum_{j>k}s_j^2|c_j|^2\le s_{k+1}^2\|v\|^2$, with equality at $e_{k+1}$, so $\|T-T_k\|_2=s_{k+1}$.
+    \ii For any $R$ with $\rank R\le k$, set $U=\spn(e_1,\dots,e_{k+1})$. Since $\dim U=k+1 > k \ge \dim\range R$, Rank--Nullity (T4) yields a unit vector $x=\sum_{j=1}^{k+1}c_je_j\in U\cap\nul R$ ($\sum_{j=1}^{k+1}|c_j|^2=1$). Then $Rx=0$ gives
+    \[
+      \|T-R\|_2 \ge \|(T-R)x\| = \|Tx\| = \left(\sum_{j=1}^{k+1} s_j^2 |c_j|^2\right)^{1/2} \ge s_{k+1}.
+    \]
+  \end{steps}
+\end{proof}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    at={(0,0)},anchor=south west,
+    ybar,bar width=16pt,
+    width=7.4cm,height=4.8cm,
+    ymin=0,ymax=4.6,
+    xmin=0.4,xmax=5.6,
+    xtick={1,2,3,4,5},
+    xticklabels={$s_1$,$s_2$,$s_3$,$s_4$,$s_5$},
+    ylabel={Singular value $s_j$},
+    axis lines*=left,
+    clip=false
+  ]
+    \addplot[fill=figblue!65!white,draw=figblue,thick] coordinates {(1,4.0) (2,2.4)};
+    \addplot[fill=black!18,draw=black!55,thick] coordinates {(3,0.95) (4,0.45) (5,0.2)};
+
+    \draw[dashed,figred,thick] (axis cs:0.5,0.95) -- (axis cs:5.5,0.95);
+    \node[anchor=west,font=\scriptsize,figred] at (axis cs:3.45,1.35) {$\|T-T_k\|_2 = s_{k+1}$};
+    \node[font=\scriptsize,figblue] at (axis cs:1.5,4.25) {Kept ($j\le k=2$)};
+    \node[font=\scriptsize,black!70] at (axis cs:4.1,2.3) {Tail ($j>k$)};
+  \end{axis}
+
+  \node[figbox,draw=figslate!40,fill=figbg,anchor=west,text width=5.6cm,align=left] at (7.3,2.05) {%
+    \textbf{Rank-$k$ compression \& LADR 7F:}\\[2pt]
+    $\bullet$ Keeping the largest $k$ singular modes gives $A^{(k)}=F_k\Sigma_k E_k^*$ ($k(m+n+1)$ numbers instead of $mn$).\\[2pt]
+    $\bullet$ Spectral error $\|A-A^{(k)}\|_2$ equals the tallest dropped bar $s_{k+1}$ (\hyperref[prop-115]{Prop.~115}).
+  };
+\end{tikzpicture}
+\figcap{Eckart--Young best rank-$k$ approximation: keeping the leading $k=2$ singular modes captures the dominant structure while bounding the worst-case error cleanly by $s_{k+1}$.}
+\end{fig}
+
+\begin{theorem*}[Pseudoinverse $T^\dagger$ via SVD \& Least-Squares, LADR 7.99, 7.101, 7.111]\target{name-pseudoinverse}
+  Let $T\in\LL(V,W)$ have nonzero singular values $s_1,\dots,s_r>0$ and SVD $Tv=\sum_{j=1}^r s_j\langle v,e_j\rangle f_j$. Define the \textbf{pseudoinverse} $T^\dagger\in\LL(W,V)$ by
+  \[
+    T^\dagger w = \sum_{j=1}^r \frac{1}{s_j}\langle w,f_j\rangle e_j \qquad (\text{matrix form: } A^\dagger = E\Sigma^\dagger F^*,\; \Sigma^\dagger_{jj}=s_j^{-1}\ (j\le r),\; 0\text{ else}).
+  \]
+  Then:
+  \begin{enumerate}
+    \ii[(a)] $T^\dagger T = P_{(\nul T)^\perp}$ (orthogonal projection onto $(\nul T)^\perp=\range T^*$) and $TT^\dagger = P_{\range T}$;
+    \ii[(b)] For any $b\in W$, $x^+ = T^\dagger b$ is a least-squares solution minimizing $\|Tx-b\|$, and among all least-squares minimizers $x^+$ is the \textbf{unique} one of smallest norm $\|x\|$.
+  \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  Note $(\nul T)^\perp = \spn(e_1,\dots,e_r)$ and $\range T = \spn(f_1,\dots,f_r)$. Directly from the formulas: $T^\dagger T e_j = e_j$ ($j\le r$) and $0$ ($j>r$), proving $T^\dagger T=P_{(\nul T)^\perp}$; similarly $TT^\dagger f_j = f_j$ ($j\le r$) and $0$ ($j>r$), proving $TT^\dagger=P_{\range T}$. For $b\in W$, $Tx^+=TT^\dagger b=P_{\range T}b$ is the closest point to $b$ in $\range T$ (\xlink{math110}{2026-11-02-orthogonality-projections}{name-best-approximation}{Week~10}). Any other minimizer has the form $x=x^+ + z$ with $z\in\nul T$. Since $x^+\in(\nul T)^\perp$, Pythagoras gives $\|x\|^2=\|x^+\|^2+\|z\|^2\ge\|x^+\|^2$ with strict inequality unless $z=0$.
+\end{proof}
+
+\noindent\textbf{The question answered.} The maximum stretch over unit vectors is $s_1=3$ at $v=e_1=\frac{1}{\sqrt{2}}(1,1)$ (Prop.~114). The closest rank-$1$ matrix in spectral norm is $A^{(1)}=3f_1e_1^{\mathsf T}=\frac{3}{2}\begin{psmallmatrix}-1&-1\\1&1\end{psmallmatrix}$, with error $\|A-A^{(1)}\|_2=s_2=1$ (Prop.~115).
+
+\begin{shortcuts}
+  \ii \textbf{Sum of squares:} $\sum_{j=1}^n s_j^2 = \tr(A^*A) = \sum_{i,j}|a_{ij}|^2$ (T11).
+  \ii \textbf{$2\times2$ singular values:} $s_1^2+s_2^2=\sum|a_{ij}|^2$ and $s_1s_2=|\det A|$, giving $s_1,s_2$ instantly from two numbers!
+  \ii \textbf{Rank-$1$ map ($A=uv^*$):} Singular values are $\|u\|\,\|v\|,0,\dots,0$ with $e_1=v/\|v\|$ and $f_1=u/\|u\|$.
+  \ii \textbf{Use the smaller of $A^*A$ and $AA^*$:} Both have the exact same nonzero eigenvalues $s_j^2$! If $m<n$, find $f_j$ from $AA^*$ and set $e_j=A^*f_j/s_j$.
+  \ii \textbf{Singular values of $T^*$, $ST$, $TS$:} Identical to those of $T$ whenever $S$ is an isometric operator.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Singular values $\neq |\lambda_j|$ unless normal:} Ex.~78 has eigenvalues $1,1$ yet singular values $\varphi\neq\varphi^{-1}$!
+  \ii \textbf{Compute $f_j=Ae_j/s_j$ directly:} Independently normalizing eigenvectors of $AA^*$ risks sign flips ($-f_1$ gives $Ae_1=-s_1f_1$).
+  \ii \textbf{Singular values are $\sqrt{\lambda_j(T^*T)}$, not $\lambda_j(T^*T)$:} And for $m\times n$ matrices, $\Sigma$ is $m\times n$ (not square).
+\end{trapbox}
+
+\section{Problem set}
+
+\begin{prob}\target{prob-HW12-P1}
+  \textbf{HW12 P1.}\ Classify each real symmetric matrix as positive definite, positive semidefinite but not positive definite, or not positive semidefinite:
+  \[
+    A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+    B=\begin{bmatrix}1&2\\2&1\end{bmatrix},\qquad
+    C=\begin{bmatrix}1&1\\1&1\end{bmatrix}.
+  \]
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-105}{Props.~105--106}; $\det$ and $\tr$ are the product and sum of the eigenvalues (T9).
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P2}
+  \textbf{HW12 P2.}\ Find the positive square root of $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ as an explicit $2\times2$ matrix.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} The \ilink{name-square-root-2x2}{square-root formula}; note $4+2\sqrt{3}=(1+\sqrt{3})^2$.
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P3}
+  \textbf{HW12 P3.}\ Let $S\colon V\to W$ be linear between finite-dimensional inner product spaces, and $e_1,\dots,e_n$ an orthonormal basis of $V$. Prove that $S$ is an isometry if and only if $Se_1,\dots,Se_n$ is an orthonormal list in $W$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-110}{Prop.~110}: (i)$\Rightarrow$(ii)$\Rightarrow$(iii) and (iv)$\Rightarrow$(i).
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P4}
+  \textbf{HW12 P4.}\ Find the polar decomposition $A=S\sqrt{A^*A}$ of $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ acting on $\RR^2$ with the standard inner product.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $A^{\mathsf T}A$ is diagonal; then $S=AP^{-1}$.
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P5}
+  \textbf{HW12 P5.}\ Find a singular value decomposition of $A=\begin{bmatrix}1&1\\1&1\end{bmatrix}$: give the singular values and orthonormal bases $e_1,e_2$ and $f_1,f_2$ with $Ae_j=s_jf_j$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Follow the SVD method; one singular value is $0$, so extend $\{f_1\}$ to an orthonormal basis.
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P6}
+  \textbf{HW12 P6 (optional).}\ Let $T$ be an invertible operator. Prove that the singular values of $T^{-1}$ are the reciprocals of the singular values of $T$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} From $Te_k=s_kf_k$, solve for $T^{-1}f_k$; then \ilink{prop-116}{Prop.~116}.
+\end{prob}
+
+\begin{prob}\target{prob-HW12-P7}
+  \textbf{HW12 P7 (optional).}\ Let $T$ have singular values $s_1\ge\dots\ge s_n\ge0$. Prove that $\|Tv\|\le s_1\|v\|$ for every $v$, and that equality holds for some $v\neq0$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-113}{Prop.~113} and the calculation in \ilink{prop-114}{Prop.~114}.
+\end{prob}
+
+\begin{prob}\target{prob-O1}
+  \textbf{O1 (commuting positive operators).}\ Let $S,T\in\LL(V)$ be positive with $ST=TS$. Prove that $ST$ is positive. Show by an example that $ST$ need not be positive if $ST\neq TS$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $T$ preserves each eigenspace of $S$, on which $\sqrt{S}$ is a scalar multiple of $I$ (\ilink{prop-107}{Prop.~107}); hence $\sqrt{S}$ commutes with $T$, and $\langle STv,v\rangle=\langle T\sqrt{S}v,\sqrt{S}v\rangle$.
+\end{prob}
+
+\begin{prob}\target{prob-O2}
+  \textbf{O2 (a $2\times3$ matrix).}\ Find a singular value decomposition $A=F\Sigma E^{\mathsf T}$ of $A=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $AA^{\mathsf T}$ is only $2\times2$; find its unit eigenvectors $f_j$ first, then set $e_j=A^{\mathsf T}f_j/s_j$.
+\end{prob}
+
+\begin{prob}\target{prob-O3}
+  \textbf{O3 (polar decomposition and SVD).}\ Find the polar decomposition and a singular value decomposition of $A=\begin{bmatrix}3&0\\4&5\end{bmatrix}$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $A^{\mathsf T}A$ has $\tr=50$ and $\det=225$; apply the \ilink{name-square-root-2x2}{square-root formula} or \ilink{name-polar-2x2}{polar formula}.
+\end{prob}
+
+\begin{prob}\target{prob-O4}
+  \textbf{O4 (norm of $T^*T$).}\ Prove that $\|T^*T\|_2=\|T\|_2^2$.
+  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $T^*T$ is positive, so its singular values coincide with its eigenvalues $s_j^2$.
+\end{prob}
+
+\end{document}
