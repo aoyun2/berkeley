@@ -1,0 +1,457 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}
+\DeclareMathOperator{\Col}{Col}
+\DeclareMathOperator{\Nul}{Nul}
+\DeclareMathOperator{\tr}{tr}
+\title{Math 54 --- Week 13}
+\subtitle{Linear systems of differential equations: normal form, fundamental matrices, the eigenvalue method (Nagle 9.1, 9.4, 9.5)}
+\author{}\date{}\ihead{}
+
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--12}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Invertible matrices (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{name-invertible-matrix-theorem}{Weeks~3--6}):} For square $M$: $\det M\neq 0\iff M$ invertible $\iff$ columns independent $\iff M\vv c=\vv 0$ only for $\vv c=\vv 0\iff M\vv c=\vv b$ has a unique solution for every $\vv b$. Scaling one column by $k$ multiplies $\det M$ by $k$, and $\det M^{\mathsf T}=\det M$ (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-5}{Week~5}). Triangular $\det$ equals the diagonal product (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-3-2}{Week~4}). Rank Theorem: $\rank M+\dim\Nul M=n$ (\xlink{math54}{2026-09-28-bases-dimension-rank}{name-rank-theorem}{Week~6}).
+  \ii \textbf{Eigenvalues \& diagonalization (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-2}{Weeks~7--8}):} $\lambda$ is an eigenvalue of $A\iff \det(A-\lambda I)=0$, with eigenvectors the nonzero vectors of $\Nul(A-\lambda I)$. Eigenvectors for distinct eigenvalues are linearly independent. $A=PDP^{-1}$ iff $A$ has $n$ linearly independent eigenvectors (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-5}{Week~8}).
+  \ii \textbf{Symmetric matrices (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-lay-7-3}{Week~11}):} Any real symmetric matrix ($A^{\mathsf T}=A$) has real eigenvalues and $n$ orthonormal (hence independent) eigenvectors.
+  \ii \textbf{Scalar linear ODEs (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-2}{Weeks~11--12}):} Roots of $ar^2+br+c=0$ give $e^{rt}$; Wronskian of two solutions is never $0$ or always $0$; nonhomogeneous general solution is $y_p+y_h$ (\xlink{math54}{2026-11-09-undetermined-coefficients-superposition}{thm-nagle-4-4}{Week~12}).
+  \ii \textbf{Calculus:} $\frac{d}{dt}e^{rt}=re^{rt}$; product/quotient/chain rules; $\frac{d}{dt}\int_{t_0}^t g(s)\,ds=g(t)$ for continuous $g$; $f'\equiv 0$ on an interval $\implies f$ is constant; vector/matrix derivatives act entry-by-entry.
+\end{enumerate}
+
+\section{This week}
+\subsection{Systems in normal form (Nagle 9.1, 9.4)}
+\begin{qbox}
+  Two connected brine tanks hold salt amounts $x(t)$ and $y(t)$ satisfying
+  \[
+    x'=-4x+2y, \qquad y'=4x-4y.
+  \]
+  How does this collapse into a single matrix equation? And how does the second-order spring equation $my''+ky=0$ convert into a first-order system of this exact kind?
+\end{qbox}
+
+Because each entry of $A\vv x$ is the dot product of a row of $A$ with $\vv x$, the coupled tank equations read immediately:
+\[
+  \begin{bmatrix}x'\\y'\end{bmatrix} = \begin{bmatrix}-4&2\\4&-4\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}.
+\]
+
+\noindent\textbf{Definition (Normal form, Nagle 9.4).} A system of $n$ linear differential equations is in \textbf{normal form} if
+\[
+  \vv x'(t) = A(t)\vv x(t) + \vv f(t),
+\]
+where $\vv x(t)=(x_1(t),\dots,x_n(t))^{\mathsf T}$, $A(t)$ is an $n\times n$ matrix function, and $\vv f(t)$ is a column vector function. It is \textbf{homogeneous} if $\vv f\equiv\vv 0$ and has \textbf{constant coefficients} if every entry of $A$ is constant. An \textbf{initial value problem (IVP)} specifies $\vv x(t_0)=\vv x_0$.
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  % Left: Two connected brine tanks
+  \draw[figbox,draw=figblue,fill=figblue!8] (0,0.4) rectangle (1.85,1.9);
+  \node[font=\footnotesize\bfseries,figblue] at (0.925,1.4) {Tank 1};
+  \node[font=\scriptsize] at (0.925,0.85) {salt $x(t)$};
+
+  \draw[figbox,draw=figred,fill=figred!8] (3.4,0.4) rectangle (5.25,1.9);
+  \node[font=\footnotesize\bfseries,figred] at (4.325,1.4) {Tank 2};
+  \node[font=\scriptsize] at (4.325,0.85) {salt $y(t)$};
+
+  \draw[->,thick,figblue] (1.9,1.48) -- node[above,font=\scriptsize] {$4x$} (3.35,1.48);
+  \draw[->,thick,figred] (3.35,0.82) -- node[below,font=\scriptsize] {$2y$} (1.9,0.82);
+  \draw[->,thick,figslate] (5.3,1.15) -- (6.05,1.15) node[right,font=\scriptsize] {drain $2y$};
+
+  % Right: Coupled spring diagram (state vector)
+  \node[figbox,draw=figslate!60,fill=figbg,anchor=west,text width=6.1cm,align=left,inner sep=7pt] at (8.0,1.15) {%
+    \textbf{\color{figslate}Order-$n$ ODE $\leftrightarrow$ First-Order Normal Form}\\[3pt]
+    {\scriptsize Scalar $y^{(n)}+p_{n-1}y^{(n-1)}+\dots+p_0y=g$\\[2pt]
+    State vector $\vv x=(y,y',\dots,y^{(n-1)})^{\mathsf T}$:\\[2pt]
+    $x_k'=x_{k+1}\ (k<n)$, \quad $x_n'=-\sum p_k x_{k+1}+g$.}%
+  };
+\end{tikzpicture}
+\figcap{\textbf{Left:} Coupled brine tanks produce $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$ cleanly by conservation of flow. \textbf{Right:} Tracking position together with every lower derivative turns any order-$n$ scalar ODE into an equivalent $n\times n$ first-order normal system.}
+\end{fig}
+
+\begin{example*}[Worked examples 1--3 (Nagle 9.1): variable coefficients, single spring, coupled springs]
+  \begin{steps}
+    \ii \textbf{Ex.~1 ($t$-dependent $A(t)$):} Row $i$ of $A(t)$ lists coefficients of $x_1,\dots,x_4$ in $x_i'$ (using $0$ if absent):
+    \[
+      \left\{
+      \begin{aligned}
+        x_1'&=2x_1+t^2x_2+(4t+e^t)x_4,\\
+        x_2'&=(\sin t)x_2+(\cos t)x_3,\\
+        x_3'&=x_1+x_2+x_3+x_4,\quad x_4'=0
+      \end{aligned}
+      \right.
+      \quad\Longleftrightarrow\quad
+      \vv x'=
+      \begin{bmatrix}
+        2&t^2&0&4t+e^t\\0&\sin t&\cos t&0\\1&1&1&1\\0&0&0&0
+      \end{bmatrix}\vv x.
+    \]
+    \ii \textbf{From an $n$th-order ODE to a companion system:} Setting $x_1=y, x_2=y',\dots, x_n=y^{(n-1)}$ automatically gives $x_k'=x_{k+1}$ ($k<n$), while $y^{(n)}+p_{n-1}y^{(n-1)}+\dots+p_0y=g$ supplies the bottom row:
+    \[
+      A = \begin{bmatrix}0&1&0&\cdots&0\\0&0&1&\cdots&0\\\vdots&\vdots&\vdots&\ddots&\vdots\\0&0&0&\cdots&1\\-p_0&-p_1&-p_2&\cdots&-p_{n-1}\end{bmatrix},\qquad
+      \vv f = \begin{bmatrix}0\\\vdots\\0\\g\end{bmatrix}.
+    \]
+    Scalar solutions $y$ correspond $1$-to-$1$ with system solutions $\vv x=(y,y',\dots,y^{(n-1)})^{\mathsf T}$!
+    \ii \textbf{Ex.~2 (the spring $my''+ky=0$):} Putting $x_1=y$ (position) and $x_2=y'$ (velocity) gives $x_1'=x_2$ and $x_2'=-\frac{k}{m}x_1$:
+    \[
+      \begin{bmatrix}x_1\\x_2\end{bmatrix}' = \begin{bmatrix}0&1\\-k/m&0\end{bmatrix}\begin{bmatrix}x_1\\x_2\end{bmatrix}.
+    \]
+    \ii \textbf{Ex.~3 (two coupled springs):} For $2x''+6x-2y=0$, $y''+2y-2x=0$, let $x_1=x, x_2=x', x_3=y, x_4=y'$. Dividing the first by~$2$ gives $x_2'=-3x_1+x_3$ and $x_4'=2x_1-2x_3$:
+    \[
+      \begin{bmatrix}x_1\\x_2\\x_3\\x_4\end{bmatrix}' =
+      \begin{bmatrix}0&1&0&0\\-3&0&1&0\\0&0&0&1\\2&0&-2&0\end{bmatrix}
+      \begin{bmatrix}x_1\\x_2\\x_3\\x_4\end{bmatrix}.
+    \]
+  \end{steps}
+\end{example*}
+
+\begin{theorem*}[Existence and uniqueness (Nagle 9.4, Thm.~2)]\target{thm-nagle-9-2}
+  If $A(t)$ and $\vv f(t)$ are continuous on an open interval $I$ containing $t_0$, then for every $\vv x_0\in\RR^n$ the IVP $\vv x'=A(t)\vv x+\vv f(t)$, $\vv x(t_0)=\vv x_0$, has a unique solution on all of $I$.
+\end{theorem*}
+\noindent (Cited here from Nagle Ch.~13; applied to companion systems, this establishes Nagle 4.5 Thm.~4 from Week~12!)
+
+\medskip\noindent\textbf{Linearity of $L[\vv x]=\vv x'-A\vv x$.} For constants $a,b$, $L[a\vv x+b\vv y]=a\vv x'+b\vv y'-aA\vv x-bA\vv y=aL[\vv x]+bL[\vv y]$. Thus homogeneous combinations solve $L[\vv x]=\vv 0$, and \textbf{superposition} gives $L[c_1\vv x_1+c_2\vv x_2]=c_1\vv g_1+c_2\vv g_2$ when $L[\vv x_i]=\vv g_i$.
+
+\medskip\noindent\textbf{The question answered.} The brine-tank system is $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$, and $my''+ky=0$ becomes Example~2!
+
+\begin{shortcuts}
+  \ii \textbf{Reading off $A$:} Row $i$ lists the coefficients of $x_1,\dots,x_n$ in the equation for $x_i'$.
+  \ii \textbf{Companion matrix trick:} $y''+by'+cy=0$ has $A=\begin{psmallmatrix}0&1\\-c&-b\end{psmallmatrix}$, whose characteristic polynomial $\det\begin{psmallmatrix}-r&1\\-c&-b-r\end{psmallmatrix}=r^2+br+c$ is literally the auxiliary polynomial!
+  \ii \textbf{System dimension:} Sum the highest derivative orders of all scalar unknowns ($2+2=4$ in Ex.~3).
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Divide out the leading coefficient first:} $2x''=-6x+2y$ gives $x_2'=-3x_1+x_3$, NOT $-6x_1+2x_3$!
+  \ii \textbf{Nonhomogeneous terms belong in $\vv f$, not $A$:} $x'=3x+t^2$ means $\vv x'=[3]\vv x+[t^2]$.
+  \ii \textbf{Match column order to variable order:} With $(x,x',y,y')$, $y$ sits in column~$3$ (not~$2$!).
+\end{trapbox}
+
+\subsection{Independence, Wronskians, and fundamental matrices (Nagle 9.4)}
+\begin{qbox}
+  The three vector functions below solve $\vv x'=A\vv x$ for $A$ on the right. How can we prove they form a complete basis so that \emph{every} solution equals $c_1\vv x_1+c_2\vv x_2+c_3\vv x_3$?
+  \[
+    \vv x_1=e^{2t}\begin{bmatrix}1\\1\\1\end{bmatrix},\quad
+    \vv x_2=e^{-t}\begin{bmatrix}-1\\0\\1\end{bmatrix},\quad
+    \vv x_3=e^{-t}\begin{bmatrix}0\\1\\-1\end{bmatrix};\qquad
+    A=\begin{bmatrix}0&1&1\\1&0&1\\1&1&0\end{bmatrix}.
+  \]
+\end{qbox}
+
+\noindent\textbf{Definition (Linear dependence, Nagle 9.4 Def.~1).} Vector functions $\vv x_1,\dots,\vv x_m$ are \textbf{linearly dependent} on an interval $I$ if there exist \emph{constants} $c_1,\dots,c_m$, not all~$0$, such that $c_1\vv x_1(t)+\dots+c_m\vv x_m(t)=\vv 0$ for every $t\in I$; otherwise they are \textbf{linearly independent} on $I$.
+
+\begin{example*}[Worked examples 1--3 (Nagle 9.4)]
+  \begin{steps}
+    \ii $\vv x_1=(e^t,0,e^t)$, $\vv x_2=(3e^t,0,3e^t)$, $\vv x_3=(t,1,0)$ are dependent on $\RR$: $3\vv x_1-\vv x_2+0\vv x_3\equiv\vv 0$.
+    \ii $\vv x_1=(t,t)$ and $\vv x_2=(|t|,|t|)$ are \textbf{independent} on $(-\infty,\infty)$ even though at every individual $t$ one is a scalar multiple of the other! Indeed $c_1\vv x_1+c_2\vv x_2\equiv\vv 0$ evaluates to $c_1+c_2=0$ at $t=1$ and $-c_1+c_2=0$ at $t=-1\implies c_1=c_2=0$ (coefficients must be \emph{constant} in $t$).
+    \ii $\vv x_1=e^{2t}(1,0,1)$, $\vv x_2=e^{2t}(1,1,-1)$, $\vv x_3=e^t(1,2,1)$ are independent on $\RR$: evaluating $\sum c_i\vv x_i(0)=\vv 0$ gives coefficient matrix
+    \[
+      \begin{bmatrix}1&1&1\\0&1&2\\1&-1&1\end{bmatrix},
+    \]
+    with determinant $4\neq 0\implies c_1=c_2=c_3=0$ by (W1).
+  \end{steps}
+\end{example*}
+
+\noindent\textbf{Definition (Wronskian, Nagle 9.4 Def.~2).} The \textbf{Wronskian} of $n$ vector functions in $\RR^n$ is
+\[
+  W[\vv x_1,\dots,\vv x_n](t) = \det\bigl[\,\vv x_1(t)\ \cdots\ \vv x_n(t)\,\bigr].
+\]
+
+\begin{proposition*}[Wronskian test (Nagle 9.4)]\target{name-wronskian-test}
+  If $W[\vv x_1,\dots,\vv x_n](t_0)\neq 0$ at even one point $t_0\in I$, then $\vv x_1,\dots,\vv x_n$ are linearly independent on $I$.
+\end{proposition*}
+\begin{proof}
+  If $c_1\vv x_1(t)+\dots+c_n\vv x_n(t)\equiv\vv 0$ on $I$, setting $t=t_0$ gives $X(t_0)\vv c=\vv 0$ where $\det X(t_0)=W(t_0)\neq 0$; hence $\vv c=\vv 0$ by (W1). \qedhere
+\end{proof}
+
+Ex.~2 above has $W(t)=t|t|-|t|t\equiv 0$ yet the vectors are independent---the converse fails for arbitrary functions! But for solutions of ONE linear system, Uniqueness (Thm.~2) makes $W$ all-or-nothing:
+
+\begin{theorem*}[Wronskian of solutions (Nagle 9.4)]\target{name-wronskian-solutions}
+  Let $\vv x_1,\dots,\vv x_n$ solve $\vv x'=A(t)\vv x$ on $I$ with $A$ continuous. Either $W(t)\neq 0$ for every $t\in I$ (solutions independent on $I$), or $W(t)=0$ for every $t\in I$ (solutions dependent on $I$).
+\end{theorem*}
+\begin{ideabox}
+  If $W(t_0)=0$ at one time $t_0$, the vectors $\vv x_i(t_0)$ are linearly dependent, so a nontrivial linear combination $\vv z=\sum c_i\vv x_i$ vanishes at $t_0$. Since $\vv z$ solves $\vv x'=A\vv x$ with $\vv z(t_0)=\vv 0$, Uniqueness (Thm.~2) forces $\vv z\equiv\vv 0$ at \emph{every} time $t$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose $W(t_0)=0$ at some $t_0\in I$. By (W1), $X(t_0)\vv c=\vv 0$ for some $\vv c\neq\vv 0$.
+    \ii Set $\vv z(t)=\sum c_i\vv x_i(t)$. By linearity of $L$, $\vv z'=A\vv z$ and $\vv z(t_0)=\vv 0$.
+    \ii Since $\vv 0$ also solves this IVP, Thm.~2 gives $\vv z(t)\equiv\vv 0$ on $I$: $\vv x_1,\dots,\vv x_n$ are dependent on $I$, and $X(t)\vv c=\vv 0\implies W(t)=\det X(t)=0$ for every $t\in I$!
+    \ii Conversely, if $W$ never vanishes on $I$, the Wronskian Test guarantees independence. \qedhere
+  \end{steps}
+\end{proof}
+
+\begin{theorem*}[Representation, homogeneous case (Nagle 9.4, Thm.~3)]\target{thm-nagle-9-3}
+  If $A(t)$ is continuous on $I$ and $\vv x_1,\dots,\vv x_n$ are linearly independent solutions of $\vv x'=A(t)\vv x$ on $I$, then every solution on $I$ is $\vv x=c_1\vv x_1+\dots+c_n\vv x_n=X(t)\vv c$ for unique constants $c_1,\dots,c_n$.
+\end{theorem*}
+\begin{proof}
+  For any solution $\vv x$ and fixed $t_0\in I$, $\det X(t_0)=W(t_0)\neq 0$ (Wronskian of solutions), so $X(t_0)\vv c=\vv x(t_0)$ has a unique solution $\vv c$ by (W1). Since $\vv y(t)=X(t)\vv c$ solves $\vv y'=A\vv y$ with $\vv y(t_0)=\vv x(t_0)$, Thm.~2 forces $\vv x\equiv\vv y=X(t)\vv c$. \qedhere
+\end{proof}
+
+Such $\vv x_1,\dots,\vv x_n$ form a \textbf{fundamental solution set}, $X(t)=[\,\vv x_1(t)\ \cdots\ \vv x_n(t)\,]$ is a \textbf{fundamental matrix} (invertible for all $t\in I$ and obeying $X'=AX$), and $\vv x=X(t)\vv c$ is the \textbf{general solution}. Fundamental sets always exist: for fixed $t_0\in I$, let $\vv x_i$ solve the IVP $\vv x_i(t_0)=\vv e_i$ by Thm.~2; then $W(t_0)=\det I_n=1\neq 0$!
+
+\begin{theorem*}[Representation, nonhomogeneous case (Nagle 9.4, Thm.~4)]\target{thm-nagle-9-4}
+  If $A(t)$ and $\vv f(t)$ are continuous on $I$, $\vv x_p$ solves $\vv x'=A\vv x+\vv f$ on $I$, and $X(t)$ is a fundamental matrix for $\vv x'=A\vv x$, then every solution on $I$ has the form $\vv x=\vv x_p+X(t)\vv c$.
+\end{theorem*}
+\begin{proof}
+  For any solution $\vv x$, $L[\vv x-\vv x_p]=L[\vv x]-L[\vv x_p]=\vv f-\vv f=\vv 0$, so $\vv x-\vv x_p=X\vv c$ by Thm.~3. Conversely, $L[\vv x_p+X\vv c]=\vv f+\vv 0=\vv f$. \qedhere
+\end{proof}
+
+\begin{proposition*}[Abel's formula (Nagle 9.4, Prob.~32; proved for $2\times 2$)]\target{prop-abel-formula}
+  If $\vv x_1,\vv x_2$ solve $\vv x'=A(t)\vv x$ with continuous $2\times 2$ $A(t)$, then $W'=(\tr A)W$, so
+  \[
+    W(t) = W(t_0)\exp\left(\int_{t_0}^t \tr A(s)\,ds\right).
+  \]
+  (The exact formula holds for all $n\times n$ systems; cited without proof for $n\ge 3$.)
+\end{proposition*}
+\begin{proof}
+  Write $\vv x_1=(p,q)^{\mathsf T}$, $\vv x_2=(u,v)^{\mathsf T}$, $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. Since $W=pv-qu$, substituting $p'=ap+bq$, $q'=cp+dq$, $u'=au+bv$, $v'=cu+dv$ gives
+  \[
+    W' = p'v+pv'-q'u-qu' = (a+d)(pv-qu) = (\tr A)W.
+  \]
+  Putting $E(t)=\exp\int_{t_0}^t\tr A(s)\,ds$ gives $E'=(\tr A)E$, $E(t_0)=1$, and $(W/E)'=(W'E-WE')/E^2=0$, so $W(t)=W(t_0)E(t)$ (confirming again $W$ is never $0$ or always $0$!). \qedhere
+\end{proof}
+
+\noindent\textbf{Link with scalar Wronskian:} For $y''+by'+cy=0$, the companion matrix has $\tr A=-b$, so Abel's formula immediately reads $W(t)=W(t_0)e^{-b(t-t_0)}$.
+
+\medskip\noindent\textbf{The question answered (Nagle 9.4, Ex.~4).} Check $A\vv x_1=e^{2t}(2,2,2)^{\mathsf T}=\vv x_1'$, etc. At $t=0$,
+\[
+  W(0) = \det\begin{bmatrix}1&-1&0\\1&0&1\\1&1&-1\end{bmatrix} = -3\neq 0,
+\]
+so $\vv x_1,\vv x_2,\vv x_3$ are independent by the Wronskian Test, hence a fundamental set with general solution $\vv x=c_1\vv x_1+c_2\vv x_2+c_3\vv x_3$ (directly $W(t)=e^{2t}e^{-t}e^{-t}W(0)=-3$).
+
+\begin{shortcuts}
+  \ii \textbf{Test independence at $t=0$:} One determinant $W(0)\neq 0$ settles everything (Prop.\ \& Thm.\ above).
+  \ii \textbf{Exponential columns determinant:} $\det[\,e^{r_1 t}\vv u_1\ \cdots\ e^{r_n t}\vv u_n\,]=e^{(r_1+\dots+r_n)t}\det[\,\vv u_1\ \cdots\ \vv u_n\,]$ by (W1).
+  \ii \textbf{Abel's formula for constant $A$:} $W(t)=W(0)e^{(\tr A)t}$ immediately!
+  \ii \textbf{IVP formula via fundamental matrix:} $\vv x(t)=X(t)X(t_0)^{-1}\vv x_0$ solves $\vv x'=A\vv x,\ \vv x(t_0)=\vv x_0$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Pointwise dependence $\neq$ functional dependence:} $(t,t)$ and $(|t|,|t|)$ are independent on $\RR$ despite $W\equiv 0$!
+  \ii \textbf{$W\equiv 0$ proves dependence ONLY for solutions of ONE continuous system:} Never apply Thm.~Wronskian of Solutions to functions like $(1,0),(0,t)$ ($W(0)=0$) or $(t,1),(t^2,t)$ ($W\equiv 0$): neither pair solves a continuous system across $t=0$.
+  \ii \textbf{Nonhomogeneous IVPs/general solutions use $\vv x_p+X\vv c$:} Adding two nonhomogeneous solutions yields $A\vv x+2\vv f$, not $\vv f$.
+\end{trapbox}
+
+\subsection{Constant coefficients: the eigenvalue method (Nagle 9.5)}
+\begin{qbox}
+  Find all solutions of $\vv x'=A\vv x$ for
+  \[
+    A=\begin{bmatrix}2&-3\\1&-2\end{bmatrix}.
+  \]
+  Which solutions move along straight lines through the origin, and how does every trajectory behave as $t\to\infty$?
+\end{qbox}
+
+For scalar equations $e^{rt}$ worked; try the vector ansatz $\vv x(t)=e^{rt}\vv u$ with constant $\vv u\neq\vv 0$. Since $\vv x'=re^{rt}\vv u$ and $e^{rt}\neq 0$:
+\[
+  \vv x'=A\vv x \iff A\vv u=r\vv u \iff (A-rI)\vv u=\vv 0.
+\]
+So $e^{rt}\vv u$ is a solution iff $r$ is an eigenvalue of $A$ (root of the \textbf{characteristic equation} $\det(A-rI)=0$) and $\vv u$ is an eigenvector for $r$ (W2; Nagle 9.5 Def.~3).
+
+\begin{example*}[Worked examples 1--2 (Nagle 9.5): computing eigenpairs]
+  \begin{steps}
+    \ii \textbf{Ex.~1 ($A$ of the question):} $\det(A-rI)=(2-r)(-2-r)+3=r^2-1=0\implies r=1,-1$. For $r=1$: $A-I$ has rows $(1,-3),(1,-3)\implies\vv u_1=(3,1)$. For $r=-1$: $A+I$ has rows $(3,-3),(1,-1)\implies\vv u_2=(1,1)$.
+    \ii \textbf{Ex.~2 ($3\times 3$):}
+    \[
+      A = \begin{bmatrix}1&2&-1\\1&0&1\\4&-4&5\end{bmatrix}
+      \implies \det(A-rI)=-(r-1)(r-2)(r-3).
+    \]
+    Row-reducing $A-rI$ gives eigenvectors $(-1,1,2)$ for $r=1$, $(-2,1,4)$ for $r=2$, and $(-1,1,4)$ for $r=3$ (check: $A(-2,1,4)=2(-2,1,4)$, $A(-1,1,4)=3(-1,1,4)$!).
+  \end{steps}
+\end{example*}
+
+\begin{theorem*}[$n$ independent eigenvectors (Nagle 9.5, Thm.~5)]\target{thm-nagle-9-5}
+  If $n\times n$ matrix $A$ has $n$ linearly independent eigenvectors $\vv u_1,\dots,\vv u_n$ with eigenvalues $r_1,\dots,r_n$ (not necessarily distinct), then $\{e^{r_1 t}\vv u_1,\dots,e^{r_n t}\vv u_n\}$ is a fundamental solution set on $(-\infty,\infty)$, $X(t)=[\,e^{r_1 t}\vv u_1\ \cdots\ e^{r_n t}\vv u_n\,]$ is a fundamental matrix, and the general solution is
+  \[
+    \vv x(t) = c_1 e^{r_1 t}\vv u_1 + \dots + c_n e^{r_n t}\vv u_n.
+  \]
+\end{theorem*}
+\begin{proof}
+  Each $e^{r_i t}\vv u_i$ solves $\vv x'=A\vv x$. Factoring $e^{r_i t}$ out of column~$i$ (W1) gives $W(t)=e^{(r_1+\dots+r_n)t}\det[\,\vv u_1\ \cdots\ \vv u_n\,]\neq 0$ because $\vv u_1,\dots,\vv u_n$ are independent; hence fundamental by the Wronskian Test and Thm.~3! \qedhere
+\end{proof}
+\noindent (Note: eigenvalues may be complex, giving complex exponential solutions; Week~11 Lemma~2 yields real solutions from real/imaginary parts.)
+
+\begin{theorem*}[Distinct eigenvalues guarantee independence (Nagle 9.5, Thm.~6, Cor.~1)]\target{thm-nagle-9-6}
+  Eigenvectors $\vv u_1,\dots,\vv u_m$ corresponding to distinct eigenvalues $r_1,\dots,r_m$ are linearly independent. Hence any $n\times n$ matrix with $n$ distinct eigenvalues has fundamental set $\{e^{r_1 t}\vv u_1,\dots,e^{r_n t}\vv u_n\}$.
+\end{theorem*}
+\begin{proof}
+  For $m=2$ (Nagle): if $\vv u_1=c\vv u_2$, multiplying by $A$ gives $r_1\vv u_1=cr_2\vv u_2=r_2\vv u_1\implies (r_1-r_2)\vv u_1=\vv 0$, contradicting $\vv u_1\neq\vv 0$ and $r_1\neq r_2$. For general $m$, this is Lay 5.1 Thm.~2 (W2, proved in Week~7): if $\vv u_{p+1}=\sum_{i=1}^p c_i\vv u_i$ were a minimal dependence, applying $(A-r_{p+1}I)$ eliminates $\vv u_{p+1}$ and leaves $\sum_{i=1}^p c_i(r_i-r_{p+1})\vv u_i=\vv 0$, forcing $c_i=0$ since $r_i\neq r_{p+1}$---impossible! Thm.~5 then applies. \qedhere
+\end{proof}
+
+\noindent\textbf{Example 3 (Nagle 9.5) \& the question answered.} By Ex.~1 and Thm.~6, the general solution of $\vv x'=\begin{psmallmatrix}2&-3\\1&-2\end{psmallmatrix}\vv x$ is
+\[
+  \vv x(t) = c_1 e^t\begin{bmatrix}3\\1\end{bmatrix} + c_2 e^{-t}\begin{bmatrix}1\\1\end{bmatrix}.
+\]
+Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving outward from $\vv 0$) and $c_2e^{-t}(1,1)$ (decaying to $\vv 0$). For every generic initial state with $c_1\neq 0$, $e^t$ dominates as $t\to\infty$, so trajectories grow unboundedly while flattening along $\pm(3,1)$!
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+  % Left: Saddle of Example 3
+  \begin{scope}[xshift=2.8cm,yshift=1.9cm,scale=0.62]
+    \draw[figaxis] (-4.1,0) -- (4.1,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.4) -- (0,2.4) node[above,font=\scriptsize] {$x_2$};
+    % Eigenvector lines
+    \draw[figred,very thick,->] (0,0) -- (3.9,1.3);
+    \draw[figred,very thick,->] (0,0) -- (-3.9,-1.3);
+    \node[text=figred,font=\scriptsize,above=2pt,halo] at (2.8,1.5) {$\vv u_1=(3,1),\ r=1$};
+    \draw[figblue,very thick,->] (2.2,2.2) -- (0.2,0.2);
+    \draw[figblue,very thick,->] (-2.2,-2.2) -- (-0.2,-0.2);
+    \node[text=figblue,font=\scriptsize,left=2pt,halo] at (-0.6,-2.1) {$\vv u_2=(1,1),\ r=-1$};
+    % Hyperbolic trajectories x(t) = c1 e^t (3,1) + c2 e^-t (1,1)
+    \foreach \ca/\cb in {0.45/0.8, 0.45/-0.8, -0.45/-0.8, -0.45/0.8} {
+      \draw[black!65,thick] plot[domain=-0.95:0.75,samples=30] ({\ca*exp(\x)*3 + \cb*exp(-\x)*1}, {\ca*exp(\x)*1 + \cb*exp(-\x)*1});
+    }
+    \draw[->,black!75,thick] (1.6,1.12) -- (1.85,1.19);
+    \draw[->,black!75,thick] (-1.6,-1.12) -- (-1.85,-1.19);
+    \draw[->,black!75,thick] (0.52,-0.32) -- (0.8,-0.15);
+    \draw[->,black!75,thick] (-0.52,0.32) -- (-0.8,0.15);
+    \node[font=\footnotesize,anchor=north] at (0,-2.65) {Saddle ($r_1>0>r_2$, Ex.~3)};
+  \end{scope}
+
+  % Middle: Sink
+  \begin{scope}[xshift=8.0cm,yshift=1.9cm,scale=0.62]
+    \draw[figaxis] (-2.2,0) -- (2.2,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.2) -- (0,2.2) node[above,font=\scriptsize] {$x_2$};
+    \draw[figblue,thick,->] (2.0,0) -- (0.2,0);
+    \draw[figblue,thick,->] (-2.0,0) -- (-0.2,0);
+    \draw[figblue!60,thick,->] (0,2.0) -- (0,0.2);
+    \draw[figblue!60,thick,->] (0,-2.0) -- (0,-0.2);
+    \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
+      \draw[black!65,thick] plot[domain=-0.4:1.6,samples=25] ({\sx*1.3*exp(-0.7*\x)}, {\sy*1.1*exp(-2.2*\x)});
+      \draw[->,black!75,thick] ({\sx*1.3*exp(-0.1)}, {\sy*1.1*exp(-0.1)}) -- ({\sx*1.3*exp(0.1)}, {\sy*1.1*exp(-0.5)});
+    }
+    \node[font=\scriptsize,text=figblue,below=2pt,halo] at (1.1,-0.05) {slower $r_1$};
+    \node[font=\footnotesize,anchor=north] at (0,-2.65) {Sink ($r_2<r_1<0$: all $\to\vv 0$)};
+  \end{scope}
+
+  % Right: Source
+  \begin{scope}[xshift=12.2cm,yshift=1.9cm,scale=0.62]
+    \draw[figaxis] (-2.2,0) -- (2.2,0) node[right,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.2) -- (0,2.2) node[above,font=\scriptsize] {$x_2$};
+    \draw[figred,thick,->] (0,0) -- (2.0,0);
+    \draw[figred,thick,->] (0,0) -- (-2.0,0);
+    \draw[figred!60,thick,->] (0,0) -- (0,2.0);
+    \draw[figred!60,thick,->] (0,0) -- (0,-2.0);
+    \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
+      \draw[black!65,thick] plot[domain=-0.4:1.6,samples=25] ({\sx*1.3*exp(-0.7*\x)}, {\sy*1.1*exp(-2.2*\x)});
+      \draw[->,black!75,thick] ({\sx*1.3*exp(0.1)}, {\sy*1.1*exp(-0.2)}) -- ({\sx*1.3*exp(-0.2)}, {\sy*1.1*exp(0.3)});
+    }
+    \node[font=\scriptsize,text=figred,right=2pt,halo] at (0.05,1.8) {faster $r_2$};
+    \node[font=\footnotesize,anchor=north] at (0,-2.65) {Source ($0<r_1<r_2$: all $\to\infty$)};
+  \end{scope}
+\end{tikzpicture}
+\figcap{Phase portraits organized by eigenvalue signs! \textbf{Left (Ex.~3 saddle):} Trajectories come in along $\vv u_2$ ($r=-1<0$) and sweep out along $\vv u_1$ ($r=1>0$). \textbf{Middle (sink):} Negative eigenvalues pull all solutions into $\vv 0$, tangent to the slower decaying eigenvector. \textbf{Right (source):} Positive eigenvalues push all nonzero solutions outward along the faster growing direction.}
+\end{fig}
+
+\begin{example*}[Worked examples 4--5 (Nagle 9.5): 3D IVP \& symmetric repeated eigenvalue]
+  \begin{steps}
+    \ii \textbf{Ex.~4 (IVP using Ex.~2):} Solve $\vv x'=A\vv x$, $\vv x(0)=(-1,0,0)$. Solving $c_1(-1,1,2)+c_2(-2,1,4)+c_3(-1,1,4)=(-1,0,0)$ gives $c_1=0,c_2=1,c_3=-1$, so $\vv x(t)=e^{2t}(-2,1,4)-e^{3t}(-1,1,4)$.
+    \ii \textbf{Symmetric matrices (Nagle 9.5 Def.~4):} Every symmetric $A$ ($A^{\mathsf T}=A$) has $n$ independent eigenvectors even with repeated eigenvalues (W3), so Thm.~5 ALWAYS applies!
+    \ii \textbf{Ex.~5 (symmetric repeated eigenvalue):}
+    \[
+      A = \begin{bmatrix}1&-2&2\\-2&1&2\\2&2&1\end{bmatrix}, \qquad \det(A-rI)=-(r-3)^2(r+3).
+    \]
+    For $r=3$, $A-3I$ has rank~$1$ ($-u_1-u_2+u_3=0$), giving two independent eigenvectors $(1,0,1)$ and $(-1,1,0)$; for $r=-3$, $\vv u_3=(-1,-1,1)$. Hence $\vv x=c_1e^{3t}(1,0,1)+c_2e^{3t}(-1,1,0)+c_3e^{-3t}(-1,-1,1)$.
+  \end{steps}
+\end{example*}
+
+\noindent\textbf{When there are not enough eigenvectors (Nagle 9.5, Probs.~35--40).} Non-symmetric $A=\begin{psmallmatrix}2&1\\-1&4\end{psmallmatrix}$ has $\det(A-rI)=(r-3)^2$, double eigenvalue $3$, yet $A-3I=\begin{psmallmatrix}-1&1\\-1&1\end{psmallmatrix}$ has only a 1D eigenspace $\spn\{(1,1)\}$! Inspired by scalar double roots, try $\vv x=te^{rt}\vv u_1+e^{rt}\vv u_2$.
+
+\begin{proposition*}[Second solution for a double eigenvalue (Nagle 9.5, Prob.~35)]\target{prop-double-eig-2nd}
+  Let $(A-rI)\vv u_1=\vv 0$ with $\vv u_1\neq\vv 0$. Then $\vv x(t)=te^{rt}\vv u_1+e^{rt}\vv u_2$ solves $\vv x'=A\vv x$ iff $(A-rI)\vv u_2=\vv u_1$. Moreover, $e^{rt}\vv u_1$ and $\vv x(t)$ are linearly independent.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Since $A\vv u_1=r\vv u_1$, product rule gives $\vv x'=e^{rt}\vv u_1+rte^{rt}\vv u_1+re^{rt}\vv u_2$, while $A\vv x=rte^{rt}\vv u_1+e^{rt}A\vv u_2$. Comparing $e^{rt}$ coefficients ($e^{rt}\neq 0$) makes $\vv x'=A\vv x \iff \vv u_1+r\vv u_2=A\vv u_2 \iff (A-rI)\vv u_2=\vv u_1$.
+    \ii Since $(A-rI)(c\vv u_1)=\vv 0\neq\vv u_1$, $\vv u_2$ cannot be a multiple of $\vv u_1$; thus $W(0)=\det[\,\vv u_1\ \vv u_2\,]\neq 0$, giving independence! \qedhere
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Solvability of $(A-rI)\vv u_2=\vv u_1$ in $2\times 2$]\target{prop-u2-solvable-2x2}
+  If $2\times 2$ $A$ has a double eigenvalue $r$ with 1D eigenspace, then $(A-rI)\vv u_2=\vv u_1$ ALWAYS has a solution for every eigenvector $\vv u_1$.
+\end{proposition*}
+\begin{proof}
+  Put $N=A-rI=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. Since $r$ is a double root of $\lambda^2-(\tr A)\lambda+\det A=0$, $\tr A=2r\implies \tr N=0$ and $\det N=0$. Directly multiplying $N^2$:
+  \[
+    N^2 = \begin{bmatrix}a^2+bc&b(a+d)\\c(a+d)&d^2+bc\end{bmatrix} = (a+d)N-(ad-bc)I = (\tr N)N-(\det N)I = 0!
+  \]
+  Since $\dim\Nul N=1$ ($N\neq 0$), Rank Theorem (W1) forces $\rank N=1$. Since $N(N\vv v)=N^2\vv v=\vv 0$, $\Col N\subseteq\Nul N$; both are lines, so $\Col N=\Nul N$, and $\vv u_1\in\Nul N=\Col N$ equals $N\vv u_2$ for some $\vv u_2$! \qedhere
+\end{proof}
+
+Here $(A-3I)\vv u_2=(1,1)$ says $-u_{21}+u_{22}=1$; taking $\vv u_2=(0,1)$ yields
+\[
+  \vv x(t) = c_1 e^{3t}\begin{bmatrix}1\\1\end{bmatrix} + c_2\left(te^{3t}\begin{bmatrix}1\\1\end{bmatrix} + e^{3t}\begin{bmatrix}0\\1\end{bmatrix}\right),
+\]
+with $W(0)=\det\begin{psmallmatrix}1&0\\1&1\end{psmallmatrix}=1\neq 0$. ($\vv u_2$ is a \textbf{generalized eigenvector}; a triple defective eigenvalue needs $\frac{t^2}{2}e^{rt}\vv u_1+te^{rt}\vv u_2+e^{rt}\vv u_3$ with $(A-rI)\vv u_3=\vv u_2$, and the full theory uses the matrix exponential $e^{tA}$, Nagle 9.8, cited.)
+
+\medskip\noindent\textbf{Diagonalization connection (Nagle 9.5).} With $U=[\,\vv u_1\ \cdots\ \vv u_n\,]$ ($AU=UD$, $A=UDU^{-1}$), substituting $\vv x=U\vv y$ decouples $\vv x'=A\vv x$ into $\vv y'=D\vv y$, i.e.\ $n$ independent scalar equations $y_i'=r_i y_i\implies y_i=c_ie^{r_it}$, giving $X(t)=U\operatorname{diag}(e^{r_1t},\dots,e^{r_nt})$!
+
+\begin{shortcuts}
+  \ii \textbf{IVP constants:} Solve $U\vv c=\vv x(0)$ directly ($e^{r_i\cdot 0}=1$).
+  \ii \textbf{Long-run asymptotics:} Highest real eigenvalue $r_{\max}$ (with $c_i\neq 0$) dominates as $t\to\infty$; all $r_i<0\implies \vv x(t)\to\vv 0$.
+  \ii \textbf{$2\times 2$ shortcut:} Characteristic equation $r^2-(\tr A)r+\det A=0$; nonzero row $(a,b)$ of $A-rI$ gives eigenvector $(b,-a)$.
+  \ii \textbf{Triangular $A$:} Eigenvalues sit on the diagonal (W1).
+  \ii \textbf{Sum/product check:} Eigenvalues always sum to $\tr A$ and multiply to $\det A$!
+  \ii \textbf{Defective $2\times 2$:} Count $\dim\Nul(A-rI)$ first; if $1$, use $te^{rt}\vv u_1+e^{rt}\vv u_2$ with $(A-rI)\vv u_2=\vv u_1$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Repeated eigenvalue $\not\Rightarrow$ defective, and $\not\Rightarrow$ diagonalizable:} Always check $\dim\Nul(A-rI)$!
+  \ii \textbf{Never drop $e^{rt}\vv u_2$ on a defective eigenvalue:} $te^{rt}\vv u_1$ alone satisfies $\vv x'-A\vv x=e^{rt}\vv u_1\neq\vv 0$!
+  \ii \textbf{Triple eigenvalue with geometric multiplicity~$2$:} $(A-rI)\vv w=\vv u$ works ONLY for certain eigenvectors $\vv u$ in $\Col(A-rI)\cap\Nul(A-rI)$! For the matrix
+  \[
+    A=\begin{bmatrix}1&1&0\\0&1&0\\0&0&1\end{bmatrix}
+  \]
+  with triple eigenvalue $1$ and eigenvectors $\vv e_1,\vv e_3$, $(A-I)\vv w=(w_2,0,0)^{\mathsf T}$, so $(A-I)\vv w=\vv e_3$ has NO solution while $\vv u=\vv e_1,\ \vv w=\vv e_2$ works!
+  \ii \textbf{Match $\vv x(0)$ using the FULL combination $\sum c_i\vv u_i$:} Never assume $\vv x(0)$ is an eigenvector.
+  \ii \textbf{Characteristic equation is $\det(A-rI)=0$, NOT $\det(A)-r=0$!}
+\end{trapbox}
+
+\section{Homework this week}
+\begin{itemize}
+  \ii \textbf{HW12, Nagle Section 9.1:} 2, 4, 7, 12 (normal form, Section~2.1).
+  \ii \textbf{Nagle Section 9.4:} 1, 3, 7, 10, 14, 16, 21, 25, 31 (Wronskians \& fundamental matrices, Sections~2.1--2.2).
+  \ii \textbf{Nagle Section 9.5:} 12, 13, 17(a,b,c), 20, 25, 31, 35 (eigenvalue method, Section~2.3).
+  \ii \textbf{HW12 also includes Nagle Section 4.5:} 2(b), 8, 10, 11, 18, 29, 35 (\xlink{math54}{2026-11-09-undetermined-coefficients-superposition}{thm-nagle-4-4}{Week~12}, Section~2.2).
+\end{itemize}
+
+\section{Problem set}
+\begin{prob}\target{prob-P1}
+  \textbf{P1.}\ Write $y'''-2y''+y'-3y=e^t$ as a first-order system in normal form $\vv x'=A\vv x+\vv f$.
+\end{prob}
+\begin{prob}\target{prob-P2}
+  \textbf{P2.}\ Write the system $x''+2x-y=0,\ y''+3y'-x=0$ in normal form.
+\end{prob}
+\begin{prob}\target{prob-P3}
+  \textbf{P3.}\ Show that $e^{-2t}(1,-2)$ and $e^{-3t}(1,-3)$ solve the system with matrix $A$ below, form a fundamental matrix, and give the general solution. Which scalar equation does this system come from?
+  \[
+    A=\begin{bmatrix}0&1\\-6&-5\end{bmatrix}.
+  \]
+\end{prob}
+\begin{prob}\target{prob-P4}
+  \textbf{P4.}\ Are $(1,1+t)$ and $(t,t+t^2)$ linearly independent on $(-\infty,\infty)$? Compute their Wronskian. Can they both be solutions of one system $\vv x'=A(t)\vv x$ with $A$ continuous on $(-\infty,\infty)$?
+\end{prob}
+\begin{prob}\target{prob-P5}
+  \textbf{P5.}\ Find the eigenvalues and eigenvectors of the matrix below, the general solution of $\vv x'=A\vv x$, and the solution with $\vv x(0)=(1,0)$.
+  \[
+    A=\begin{bmatrix}4&-2\\1&1\end{bmatrix}.
+  \]
+\end{prob}
+\begin{prob}\target{prob-P6}
+  \textbf{P6.}\ Find the general solution of $\vv x'=A\vv x$ for the symmetric matrix
+  \[
+    A=\begin{bmatrix}1&0&2\\0&3&0\\2&0&1\end{bmatrix}.
+  \]
+\end{prob}
+\begin{prob}\target{prob-P7}
+  \textbf{P7.}\ The matrix below has a double eigenvalue with only one independent eigenvector. Find two independent solutions of $\vv x'=A\vv x$.
+  \[
+    A=\begin{bmatrix}3&1\\-1&1\end{bmatrix}.
+  \]
+\end{prob}
+\begin{prob}\target{prob-P8}
+  \textbf{P8.}\ For $\vv x'=A\vv x$ with the matrix below, describe the long-run behavior of all solutions, and find the solutions that tend to $\vv 0$.
+  \[
+    A=\begin{bmatrix}1&2\\2&1\end{bmatrix}.
+  \]
+\end{prob}
+\end{document}

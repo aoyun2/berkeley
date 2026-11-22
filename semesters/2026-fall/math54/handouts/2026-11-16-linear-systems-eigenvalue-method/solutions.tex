@@ -1,0 +1,99 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\title{Math 54 --- Week 13}
+\subtitle{Solutions to the problem set}
+\author{}\date{}\ihead{}
+
+\begin{document}
+\maketitle
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P1}{P1}.}\par\idea{Introduce $y, y', y''$, isolate $y'''$ for the bottom row, and put $e^t$ into $\vv f$.}
+  \begin{steps}
+    \ii Set $x_1=y,\ x_2=y',\ x_3=y''$, so $x_1'=x_2$ and $x_2'=x_3$.
+    \ii Solving gives $y'''=3y-y'+2y''+e^t$, so $x_3'=3x_1-x_2+2x_3+e^t$, hence $\vv x'=A\vv x+\vv f$ with
+    \[
+      A=\begin{bmatrix}0&1&0\\0&0&1\\3&-1&2\end{bmatrix},\qquad \vv f=\begin{bmatrix}0\\0\\e^t\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P2}{P2}.}\par\idea{One unknown for each scalar function and every derivative below its highest: $x, x', y, y'$.}
+  \begin{steps}
+    \ii Set $x_1=x, x_2=x', x_3=y, x_4=y'$, so $x_1'=x_2$ and $x_3'=x_4$.
+    \ii $x_2'=x''=-2x_1+x_3$ and $x_4'=y''=x_1-3x_4$, yielding
+    \[
+      \vv x'=\begin{bmatrix}0&1&0&0\\-2&0&1&0\\0&0&0&1\\1&0&0&-3\end{bmatrix}\vv x.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P3}{P3}.}\par\idea{Verify $A\vv u=r\vv u$, test $W(0)$, and match the companion matrix pattern.}
+  \begin{steps}
+    \ii $A\begin{psmallmatrix}1\\-2\end{psmallmatrix}=\begin{psmallmatrix}-2\\4\end{psmallmatrix}=-2\begin{psmallmatrix}1\\-2\end{psmallmatrix}$ and $A\begin{psmallmatrix}1\\-3\end{psmallmatrix}=\begin{psmallmatrix}-3\\9\end{psmallmatrix}=-3\begin{psmallmatrix}1\\-3\end{psmallmatrix}$, so both are solutions.
+    \ii $W(0)=\det\begin{psmallmatrix}1&1\\-2&-3\end{psmallmatrix}=-1\neq 0\implies$ independent by the \xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{name-wronskian-test}{Wronskian Test}, giving fundamental matrix and general solution
+    \[
+      X(t)=\begin{bmatrix}e^{-2t}&e^{-3t}\\-2e^{-2t}&-3e^{-3t}\end{bmatrix},\qquad
+      \vv x(t)=c_1e^{-2t}\begin{bmatrix}1\\-2\end{bmatrix}+c_2e^{-3t}\begin{bmatrix}1\\-3\end{bmatrix}.
+    \]
+    \ii Companion matrix of $y''+5y'+6y=0$ ($x_1=y,\ x_2=y'$): roots $-2,-3$ give scalar solutions $e^{-2t}, e^{-3t}$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P4}{P4}.}\par\idea{One vector is $t$ times the other pointwise so $W\equiv 0$, yet no constant scalar works for all $t$!}
+  \begin{steps}
+    \ii $W(t)=\det\begin{psmallmatrix}1&t\\1+t&t+t^2\end{psmallmatrix}=(t+t^2)-t(1+t)=0$ for all $t$.
+    \ii \textbf{Independent:} $c_1(1,1+t)+c_2(t,t+t^2)\equiv\vv 0\implies c_1+c_2t\equiv 0\implies c_1=0$ (at $t=0$) and $c_2=0$ (at $t=1$).
+    \ii \textbf{Not solutions of one system:} Any independent solutions of a continuous $\vv x'=A(t)\vv x$ on $(-\infty,\infty)$ must have $W(t)\neq 0$ everywhere (\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{name-wronskian-solutions}{Wronskian of solutions}), contradicting $W\equiv 0$!
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P5}{P5}.}\par\idea{Distinct eigenvalues yield a fundamental set by \xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{thm-nagle-9-6}{Nagle Thm.~6}; solve $U\vv c=\vv x(0)$.}
+  \begin{steps}
+    \ii $\det(A-rI)=r^2-5r+6=(r-2)(r-3)=0\implies r=2,3$.
+    \ii $r=2$: $A-2I$ has rows $(2,-2),(1,-1)\implies\vv u_1=(1,1)$. $r=3$: $A-3I$ has rows $(1,-2),(1,-2)\implies\vv u_2=(2,1)$.
+    \ii General solution: $\vv x(t)=c_1e^{2t}(1,1)+c_2e^{3t}(2,1)$.
+    \ii At $t=0$: $c_1+2c_2=1,\ c_1+c_2=0\implies c_2=1,\ c_1=-1$, giving $\vv x(t)=-e^{2t}(1,1)+e^{3t}(2,1)$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P6}{P6}.}\par\idea{Symmetric $A$ has a complete eigenvector basis despite repeated eigenvalue $3$ (\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{thm-nagle-9-5}{Nagle Thm.~5}).}
+  \begin{steps}
+    \ii $\det(A-rI)=(3-r)\bigl((1-r)^2-4\bigr)=-(r-3)^2(r+1)=0\implies r=3,3,-1$.
+    \ii $r=3$: $A-3I$ has rows $(-2,0,2),(0,0,0),(2,0,-2)\implies u_1=u_3$ and $u_2$ free: $\vv u=s(1,0,1)+v(0,1,0)$.
+    \ii $r=-1$: $A+I$ has rows $(2,0,2),(0,4,0),(2,0,2)\implies u_2=0,\ u_3=-u_1$: $\vv u_3=(1,0,-1)$. Since $\det[\,\vv u_1\ \vv u_2\ \vv u_3\,]=-2\neq 0$,
+    \[
+      \vv x(t)=c_1e^{3t}\begin{bmatrix}1\\0\\1\end{bmatrix}+c_2e^{3t}\begin{bmatrix}0\\1\\0\end{bmatrix}+c_3e^{-t}\begin{bmatrix}1\\0\\-1\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P7}{P7}.}\par\idea{Defective eigenvalue: pair $e^{rt}\vv u_1$ with $te^{rt}\vv u_1+e^{rt}\vv u_2$ where $(A-rI)\vv u_2=\vv u_1$ (\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prop-double-eig-2nd}{Prop.}).}
+  \begin{steps}
+    \ii $\det(A-rI)=r^2-4r+4=(r-2)^2=0\implies r=2$. $A-2I$ has rows $(1,1),(-1,-1)\implies\vv u_1=(1,-1)$.
+    \ii $(A-2I)\vv u_2=\vv u_1$ requires $a+b=1$; choose $\vv u_2=(1,0)$.
+    \ii Independent solutions (check $W(0)=\det\begin{psmallmatrix}1&1\\-1&0\end{psmallmatrix}=1\neq 0$):
+    \[
+      \vv x_1 = e^{2t}\begin{bmatrix}1\\-1\end{bmatrix},\qquad
+      \vv x_2 = te^{2t}\begin{bmatrix}1\\-1\end{bmatrix} + e^{2t}\begin{bmatrix}1\\0\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-16-linear-systems-eigenvalue-method}{prob-P8}{P8}.}\par\idea{Opposite-sign eigenvalues create a saddle: the positive eigenvalue dominates unless its coefficient is~$0$.}
+  \begin{steps}
+    \ii $\det(A-rI)=(1-r)^2-4=(r-3)(r+1)=0$: $r=3$ has $\vv u_1=(1,1)$, $r=-1$ has $\vv u_2=(1,-1)$.
+    \ii General solution: $\vv x(t)=c_1e^{3t}(1,1)+c_2e^{-t}(1,-1)$.
+    \ii If $c_1\neq 0$, $e^{-3t}\vv x(t)\to c_1(1,1)$, so $\|\vv x(t)\|$ grows like $e^{3t}$ and approaches direction $\pm(1,1)$. Only solutions with $c_1=0$---the stable line $\vv x(t)=c_2e^{-t}(1,-1)$ through $(1,-1)$---tend to $\vv 0$ as $t\to\infty$!
+  \end{steps}
+\end{prob}
+\end{document}

@@ -1,0 +1,140 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\DeclareMathOperator{\spn}{Span}
+\DeclareMathOperator{\Nul}{Nul}
+\DeclareMathOperator{\Col}{Col}
+\DeclareMathOperator{\Row}{Row}
+\DeclareMathOperator{\tr}{tr}
+\title{Math 54 --- Week 11}
+\subtitle{Solutions to the problem set}
+\author{}\date{}\ihead{}
+
+\begin{document}
+\maketitle
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P1}{P1}.}\par\idea{Two distinct eigenvalues of symmetric $A$ have orthogonal eigenvectors (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-lay-7-1}{Thm.~1}); normalize them.}
+  \begin{steps}
+    \ii $\tr A=7$, $\det A=10-4=6$, so $\lambda^2-7\lambda+6=(\lambda-6)(\lambda-1)=0\implies\lambda_1=6,\ \lambda_2=1$.
+    \ii $\lambda=6$: row~$1$ of $A-6I$ is $(-1,-2)$, giving $(-2,1)$. For $\lambda=1$, perpendicular vector $(1,2)$ checks: $A(1,2)=(1,2)$.
+    \ii Normalizing both ($\|(-2,1)\|=\sqrt{5}$):
+    \[
+      P=\frac{1}{\sqrt{5}}\begin{bmatrix}-2&1\\1&2\end{bmatrix},\qquad
+      D=\begin{bmatrix}6&0\\0&1\end{bmatrix},\qquad A=PDP^{\mathsf T}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P2}{P2}.}\par\idea{One simple eigenvalue, one double; run Gram--Schmidt inside the $2$-dimensional eigenspace (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{ex-repeated-sym}{Worked example}).}
+  \begin{steps}
+    \ii Each row sums to $0$, so $A(1,1,1)=\vv 0$: eigenvalue $0$ with eigenvector $(1,1,1)$.
+    \ii Every entry of $A-3I$ is $-1$ ($\rank 1$), so $\lambda=3$ has $2$-dimensional eigenspace $x_1+x_2+x_3=0$ (multiplicities $1+2=3$ by \xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-lay-7-3}{Spectral Theorem}).
+    \ii Gram--Schmidt on basis $(-1,1,0), (-1,0,1)$: $(-1,0,1)-\frac12(-1,1,0)=(-\frac12,-\frac12,1)$, scaled to $(-1,-1,2)$.
+    \ii Normalizing:
+    \[
+      P=\begin{bmatrix}1/\sqrt{3}&-1/\sqrt{2}&-1/\sqrt{6}\\1/\sqrt{3}&1/\sqrt{2}&-1/\sqrt{6}\\1/\sqrt{3}&0&2/\sqrt{6}\end{bmatrix},\qquad
+      D=\begin{bmatrix}0&0&0\\0&3&0\\0&0&3\end{bmatrix},\qquad A=PDP^{\mathsf T}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P3}{P3}.}\par\idea{$A=\lambda_1\vv u_1\vv u_1^{\mathsf T}+\lambda_2\vv u_2\vv u_2^{\mathsf T}$ using the unit eigenvectors from \xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P1}{P1}.}
+  \begin{steps}
+    \ii With $\vv u_1=\frac{1}{\sqrt{5}}(-2,1)$ and $\vv u_2=\frac{1}{\sqrt{5}}(1,2)$:
+    \[
+      \vv u_1\vv u_1^{\mathsf T}=\frac15\begin{bmatrix}4&-2\\-2&1\end{bmatrix},\qquad
+      \vv u_2\vv u_2^{\mathsf T}=\frac15\begin{bmatrix}1&2\\2&4\end{bmatrix}.
+    \]
+    \ii Check: $6\cdot\frac15\begin{psmallmatrix}4&-2\\-2&1\end{psmallmatrix}+1\cdot\frac15\begin{psmallmatrix}1&2\\2&4\end{psmallmatrix}=\frac15\begin{psmallmatrix}25&-10\\-10&10\end{psmallmatrix}=\begin{psmallmatrix}5&-2\\-2&2\end{psmallmatrix}=A$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P4}{P4}.}\par\idea{Symmetric $A=A^{\mathsf T}$ gives $A^2=A^{\mathsf T}A$.}
+  \begin{steps}
+    \ii For every $\vv x\in\RR^n$, $\|A\vv x\|^2=\vv x^{\mathsf T}A^{\mathsf T}A\vv x=\vv x^{\mathsf T}A^2\vv x=0$.
+    \ii Hence $A\vv x=\vv 0$ for every $\vv x$; taking $\vv x=\vv e_j$ shows every column of $A$ is $\vv 0$, so $A=0$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P5}{P5}.}\par\idea{Orthonormal eigenvectors of $A^{\mathsf T}A$ give $V$; then $\vv u_i=A\vv v_i/\sigma_i$ (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-lay-7-10}{SVD}).}
+  \begin{steps}
+    \ii $A^{\mathsf T}A=\begin{psmallmatrix}5&-3\\-3&5\end{psmallmatrix}$ has characteristic polynomial $(\lambda-8)(\lambda-2)$: $\sigma_1=2\sqrt{2}$ with $\vv v_1=\frac{1}{\sqrt{2}}(1,-1)$ and $\sigma_2=\sqrt{2}$ with $\vv v_2=\frac{1}{\sqrt{2}}(1,1)$.
+    \ii $A\vv v_1=\frac{1}{\sqrt{2}}(0,-4)\implies\vv u_1=(0,-1)$; $A\vv v_2=\frac{1}{\sqrt{2}}(2,0)\implies\vv u_2=(1,0)$.
+    \ii Hence
+    \[
+      A = \begin{bmatrix}0&1\\-1&0\end{bmatrix}\begin{bmatrix}2\sqrt{2}&0\\0&\sqrt{2}\end{bmatrix}\frac{1}{\sqrt{2}}\begin{bmatrix}1&-1\\1&1\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P6}{P6}.}\par\idea{Rank~$1$ ($r=1$); zero eigenvalue of $A^{\mathsf T}A$ gives $\Nul A$, and $\Nul A^{\mathsf T}$ supplies $\vv u_2,\vv u_3$.}
+  \begin{steps}
+    \ii $A^{\mathsf T}A=\begin{psmallmatrix}9&9\\9&9\end{psmallmatrix}$ has eigenvalues $18,0$ ($\sigma_1=3\sqrt{2},\ \sigma_2=0$), $\vv v_1=\frac{1}{\sqrt{2}}(1,1)$, $\vv v_2=\frac{1}{\sqrt{2}}(1,-1)$.
+    \ii $A\vv v_1=\frac{1}{\sqrt{2}}(4,4,2)\implies \vv u_1=\frac13(2,2,1)$.
+    \ii $\Nul A^{\mathsf T}=\{2x_1+2x_2+x_3=0\}$ contains $\vv u_2=\frac{1}{\sqrt{2}}(1,-1,0)$ and perpendicular $\vv u_3=\frac{1}{3\sqrt{2}}(1,1,-4)$. Thus $A=U\Sigma V^{\mathsf T}$ with
+    \[
+      U=\begin{bmatrix}2/3&1/\sqrt{2}&1/(3\sqrt{2})\\2/3&-1/\sqrt{2}&1/(3\sqrt{2})\\1/3&0&-4/(3\sqrt{2})\end{bmatrix},\qquad
+      \Sigma=\begin{bmatrix}3\sqrt{2}&0\\0&0\\0&0\end{bmatrix},\qquad
+      V=\frac{1}{\sqrt{2}}\begin{bmatrix}1&1\\1&-1\end{bmatrix}.
+    \]
+    \ii Orthonormal bases: $\Col A$: $\{\vv u_1\}$; $\Nul A^{\mathsf T}$: $\{\vv u_2,\vv u_3\}$; $\Row A$: $\{\vv v_1\}$; $\Nul A$: $\{\vv v_2\}$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P7}{P7}.}\par\idea{Distinct real roots give $c_1e^{r_1t}+c_2e^{r_2t}$ (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-2}{Nagle Thm.~2}).}
+  \begin{steps}
+    \ii $r^2-3r-10=(r-5)(r+2)=0\implies y=c_1e^{5t}+c_2e^{-2t}$.
+    \ii $y(0)=c_1+c_2=0$ and $y'(0)=5c_1-2c_2=7\implies 7c_1=7\implies c_1=1,\ c_2=-1$, so $y=e^{5t}-e^{-2t}$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P8}{P8}.}\par\idea{Double root $r$ requires $(c_1+c_2t)e^{rt}$.}
+  \begin{steps}
+    \ii $4r^2+12r+9=(2r+3)^2=0$ has double root $r=-3/2$, so $y=(c_1+c_2t)e^{-3t/2}$.
+    \ii $c_1=y(0)=2$, $c_2=y'(0)-ry(0)=0-(-3/2)(2)=3$, giving $y=(2+3t)e^{-3t/2}$.
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P9}{P9}.}\par\idea{Complex conjugate roots $\alpha\pm i\beta$ produce $e^{\alpha t}(c_1\cos\beta t+c_2\sin\beta t)$ (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{lemma-nagle-4-2}{Nagle Lemma~2}).}
+  \begin{steps}
+    \ii $r^2+2r+10=0\implies r=-1\pm 3i$ ($\alpha=-1,\ \beta=3$), so $y=e^{-t}(c_1\cos 3t+c_2\sin 3t)$.
+    \ii $c_1=y(0)=0$ and $c_2=(y'(0)-\alpha y(0))/\beta=6/3=2$, so $y=2e^{-t}\sin 3t$ ($y'(0)=6$ checks!).
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P10}{P10}.}\par\idea{Differentiate with the product rule; $\cos^2+\sin^2=1$ simplifies $W$.}
+  \begin{steps}
+    \ii Let $y_1=e^{\alpha t}\cos\beta t$, $y_2=e^{\alpha t}\sin\beta t$, so $y_1'=e^{\alpha t}(\alpha\cos\beta t-\beta\sin\beta t)$ and $y_2'=e^{\alpha t}(\alpha\sin\beta t+\beta\cos\beta t)$.
+    \ii The $\alpha\sin\beta t\cos\beta t$ terms cancel:
+    \[
+      W[y_1,y_2](t)=y_1y_2'-y_1'y_2=e^{2\alpha t}(\beta\cos^2\beta t+\beta\sin^2\beta t)=\beta e^{2\alpha t}.
+    \]
+    \ii Since dependent solutions would satisfy $W\equiv 0$ (as $y_2=ky_1\implies y_1ky_1'-y_1'ky_1\equiv 0$), $\beta\neq 0\implies W\neq 0\implies$ independent!
+  \end{steps}
+\end{prob}
+
+\begin{prob}
+  \textbf{\xlink{math54}{2026-11-02-symmetric-svd-second-order}{prob-P11}{P11}.}\par\idea{For $A$: $\vv v_2\in\Nul A$, $\vv u_2\in\Nul A^{\mathsf T}$. For wide $B$: diagonalize $2\times 2$ $BB^{\mathsf T}$, then $\vv v_i=B^{\mathsf T}\vv u_i/\sigma_i$ and $\vv v_3\in\Nul B$.}
+  \begin{steps}
+    \ii \textbf{For $A$:} $A^{\mathsf T}A=\begin{psmallmatrix}20&-10\\-10&5\end{psmallmatrix}$ has eigenvalues $25,0$ ($\sigma_1=5,\ \sigma_2=0$), $\vv v_1=\frac{1}{\sqrt{5}}(2,-1)$, $\vv v_2=\frac{1}{\sqrt{5}}(1,2)$; $A\vv v_1=\frac{1}{\sqrt{5}}(5,-10)\implies\vv u_1=\frac{1}{\sqrt{5}}(1,-2)$, and $\Nul A^{\mathsf T}$ gives $\vv u_2=\frac{1}{\sqrt{5}}(2,1)$. Thus
+    \[
+      A = \frac{1}{\sqrt{5}}\begin{bmatrix}1&2\\-2&1\end{bmatrix}\begin{bmatrix}5&0\\0&0\end{bmatrix}\frac{1}{\sqrt{5}}\begin{bmatrix}2&-1\\1&2\end{bmatrix}.
+    \]
+    \ii \textbf{For $B$:} $BB^{\mathsf T}=\operatorname{diag}(2,4)$ has $\sigma_1=2$ ($\vv u_1=\vv e_2$) and $\sigma_2=\sqrt{2}$ ($\vv u_2=\vv e_1$). Then $\vv v_1=B^{\mathsf T}\vv e_2/2=(0,0,1)$, $\vv v_2=B^{\mathsf T}\vv e_1/\sqrt{2}=\frac{1}{\sqrt{2}}(1,1,0)$, and $\Nul B$ gives $\vv v_3=\frac{1}{\sqrt{2}}(1,-1,0)$ ($\Sigma$ is $2\times 3$, so $\sigma_3=0$ does not appear on its diagonal):
+    \[
+      B = \begin{bmatrix}0&1\\1&0\end{bmatrix}\begin{bmatrix}2&0&0\\0&\sqrt{2}&0\end{bmatrix}\begin{bmatrix}0&0&1\\1/\sqrt{2}&1/\sqrt{2}&0\\1/\sqrt{2}&-1/\sqrt{2}&0\end{bmatrix}.
+    \]
+  \end{steps}
+\end{prob}
+\end{document}
