@@ -4,17 +4,58 @@
 %   \usepackage{handout}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{handout}
-\hypersetup{colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,citecolor=RoyalBlue}
+\hypersetup{colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,citecolor=RoyalBlue,pdfborder={0 0 0}}
 \RequirePackage[letterpaper,margin=0.75in,headsep=0.25in]{geometry}
 \RequirePackage{needspace}
 \RequirePackage{booktabs}
 \RequirePackage{pgfplots}
-\pgfplotsset{compat=1.16}
-\usetikzlibrary{arrows.meta,positioning}
+\pgfplotsset{compat=1.18}
+\RequirePackage{tikz-3dplot}
+\usetikzlibrary{arrows.meta,positioning,calc,backgrounds,decorations.pathreplacing,decorations.markings,angles,quotes,fit,matrix,shapes.geometric,patterns}
 \setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{4pt}
 \setlength{\emergencystretch}{3em}
+% ---- Visual design system for figures ----
+\definecolor{figblue}{HTML}{1D4ED8}
+\definecolor{figred}{HTML}{B91C1C}
+\definecolor{figgreen}{HTML}{15803D}
+\definecolor{figamber}{HTML}{B45309}
+\definecolor{figpurple}{HTML}{6D28D9}
+\definecolor{figslate}{HTML}{475569}
+\definecolor{figbg}{HTML}{F8FAFC}
+\tikzset{
+  >=Stealth,
+  figaxis/.style={-{Stealth[length=4.5pt,width=3.2pt]}, draw=figslate!80, line width=0.55pt},
+  figgrid/.style={draw=figslate!16, line width=0.35pt},
+  figvec/.style={-{Stealth[length=6pt,width=4pt]}, line width=1.25pt, line cap=round},
+  figvecsub/.style={-{Stealth[length=5pt,width=3.5pt]}, line width=0.95pt, line cap=round},
+  figguide/.style={dashed, draw=figslate!70, line width=0.65pt},
+  figplane/.style={fill=figblue!10, draw=figblue!55, line width=0.6pt, fill opacity=0.78},
+  figplaneR/.style={fill=figred!10, draw=figred!55, line width=0.6pt, fill opacity=0.72},
+  figplaneG/.style={fill=figgreen!10, draw=figgreen!55, line width=0.6pt, fill opacity=0.72},
+  halo/.style={fill=white, fill opacity=0.90, text opacity=1, inner sep=1.4pt, rounded corners=1.2pt},
+  figdot/.style={circle, fill, inner sep=1.5pt},
+  figbox/.style={rounded corners=4pt, line width=0.75pt, inner sep=6pt, align=center},
+  figpanel/.style={rounded corners=5pt, draw=figslate!25, fill=figbg, line width=0.5pt},
+}
+\pgfplotsset{
+  handoutplot/.style={
+    axis lines=middle,
+    axis line style={-{Stealth[length=4.5pt,width=3.2pt]}, figslate!80},
+    tick label style={font=\scriptsize, text=figslate!90},
+    label style={font=\footnotesize},
+    grid=major,
+    grid style={figslate!15, line width=0.35pt},
+    samples=120,
+    smooth
+  }
+}
+% ---- Native named-destination and cross-week link macros ----
+\newcommand{\target}[1]{\raisebox{2.0\baselineskip}[0pt][0pt]{\hypertarget{#1}{}}\label{#1}}
+\newcommand{\ilink}[2]{\hyperlink{#1}{#2}}
+\newcommand{\xlink}[4]{\href{https://aoyun2.github.io/berkeley/pdfjs/web/viewer.html?file=/berkeley/semesters/2026-fall/#1/handouts/#2/handout.pdf\#nameddest=#3}{#4}}
+\newcommand{\xweek}[3]{\href{https://aoyun2.github.io/berkeley/pdfjs/web/viewer.html?file=/berkeley/semesters/2026-fall/#1/handouts/#2/handout.pdf}{#3}}
 % Theorem-type boxes never split across pages.
 \mdfdefinestyle{mdbluebox}{roundcorner=6pt,linewidth=0.8pt,skipabove=7pt,skipbelow=2pt,innertopmargin=5pt,innerbottommargin=5pt,linecolor=blue,nobreak=true,backgroundcolor=TealBlue!5}
 \mdfdefinestyle{mdredbox}{linewidth=0.5pt,skipabove=7pt,skipbelow=2pt,innertopmargin=3pt,innerbottommargin=5pt,nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna}
@@ -41,7 +82,7 @@
 \newcommand{\method}[1]{\par\Needspace{5\baselineskip}\medskip\noindent{\color{NavyBlue}\textbf{#1}}\ }
 % Figures: \begin{fig} tikz \figcap{caption} \end{fig}
 \newenvironment{fig}{\par\medskip\noindent\begin{minipage}{\linewidth}\centering}{\end{minipage}\par\medskip}
-\newcommand{\figcap}[1]{\par\vspace{3pt}\begin{minipage}{0.86\linewidth}\small\centering #1\end{minipage}}
+\newcommand{\figcap}[1]{\par\vspace{4pt}\begin{minipage}{0.90\linewidth}\small\centering #1\end{minipage}}
 % A problem (or solution) that cannot split across pages:
 %   \begin{prob}\textbf{HW11 P2.}\ statement...\end{prob}
 \newenvironment{prob}{\par\bigskip\noindent\begin{minipage}{\linewidth}\setlength{\parskip}{4pt}}{\end{minipage}\par}

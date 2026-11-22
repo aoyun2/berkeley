@@ -5,311 +5,532 @@
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 10}
-\subtitle{Orthogonality (Notes Ch.~18, LADR 6B--6C, HW10)}
+\subtitle{Orthogonality, projections, and best approximation (Notes Ch.~18, LADR 6B--6C, HW10)}
 \author{}\date{}\ihead{}
 \begin{document}
 \maketitle
+
 \section{Facts used from earlier weeks}
-$V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Shorthand: ``$S$ kills $v$'' means $Sv=0$, and ``$q$ kills $T$'' means $q(T)=0$. From Week 9: inner products and norms, the orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (LADR 6.13), Pythagoras, and Cauchy--Schwarz.
+Throughout this handout, $V$ is an inner product space over $\FF$ ($\RR$ or $\CC$); whenever finite dimensionality is needed, we write $n=\dim V<\infty$. From \xweek{math110}{2026-10-26-trace-inner-products}{Week~9}: an inner product $\ip--\colon V\times V\to\FF$ is linear in the first slot, conjugate-linear in the second slot ($\ip u{\lambda v+\mu w}=\bar\lambda\ip uv+\bar\mu\ip uw$), conjugate-symmetric ($\ip uv=\overline{\ip vu}$), and positive definite ($\ip vv\ge 0$ with $\ip vv=0\iff v=0$, \xlink{math110}{2026-10-26-trace-inner-products}{def-43}{Def.~43}); the induced norm $\|v\|=\sqrt{\ip vv}$ (\xlink{math110}{2026-10-26-trace-inner-products}{def-44}{Def.~44}) satisfies the Pythagorean theorem ($\|u+v\|^2=\|u\|^2+\|v\|^2$ whenever $u\perp v$), the single-vector orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (\xlink{math110}{2026-10-26-trace-inner-products}{name-ladr-6-13-orthogonal-decomposition}{LADR 6.13}), and the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$ (\xlink{math110}{2026-10-26-trace-inner-products}{prop-82}{Prop.~82}).
 
 \begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
-  \ii \tool{Rank--nullity.} For linear $T\colon V\to W$: $\dim V=\dim\nul T+\dim\range T$.
-  \why{\begin{steps}
-    \ii Extend a basis $u_1,\dots,u_k$ of $\nul T$ to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. It suffices to show $Tv_1,\dots,Tv_r$ is a basis of $\range T$.
-    \ii Spanning: $T$ of any vector is a combination of the $Tu_i$ (which are $0$) and the $Tv_j$.
-    \ii Independent: if $\sum c_jTv_j=0$, then $\sum c_jv_j\in\nul T$ is a combination of the $u_i$, and independence of the basis of $V$ gives all $c_j=0$.
-  \end{steps}}
-  \ii \tool{Dimension shortcuts.}
+  \ii \tool{Rank--nullity (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-20}{Prop.~20}).} For any linear map $T\colon V\to W$ with $\dim V<\infty$: $\dim V=\dim\nul T+\dim\range T$.
+  \why{Extend a basis $u_1,\dots,u_k$ of $\nul T$ to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. Then $Tv_1,\dots,Tv_r$ spans $\range T$ (since $Tu_i=0$) and is linearly independent (since $\sum c_jTv_j=0\implies\sum c_jv_j\in\nul T=\spn(u_1,\dots,u_k)\implies$ all $c_j=0$).}
+
+  \ii \tool{Dimension shortcuts (\xlink{math110}{2026-09-07-bases-dimension}{prop-13}{Prop.~13--17}).} In a finite-dimensional vector space $V$ with $n=\dim V$:
   \begin{enumerate}[(a)]
-    \ii An independent list of $n$ vectors is a basis.
-    \ii A subspace of dimension $n$ is all of $V$.
-    \ii If $U\cap W=\{0\}$ and $\dim U+\dim W=n$, then $V=U\oplus W$.
+    \ii Any linearly independent list of length $n$ is a basis of $V$, and any subspace $U\subseteq V$ with $\dim U=n$ equals $V$.
+    \ii If $U,W\subseteq V$ are subspaces with $U\cap W=\{0\}$ and $\dim U+\dim W=n$, then $V=U\oplus W$.
     \ii $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$.
   \end{enumerate}
-  \why{\begin{steps}
-    \ii (a), (b): an independent list extends to a basis, and every basis has length $n$.
-    \ii (c): a basis of $U$ followed by a basis of $W$ is independent (a relation gives $u=-w\in U\cap W=\{0\}$) and has length $n$, so it is a basis by (a).
-    \ii (d): extend a basis $x_1,\dots,x_k$ of $U\cap W$ to a basis $x_i,u_j$ of $U$ and, separately, to a basis $x_i,w_l$ of $W$. Together the $x_i,u_j,w_l$ span $U+W$; it remains to show they are independent.
-    \ii If $x+u+w=0$ ($x,u,w$ combinations of the $x_i$, $u_j$, $w_l$), then $w=-x-u\in U\cap W$, so $w$ is a combination of the $x_i$. The basis $x_i,w_l$ of $W$ is independent, so $w=0$. Then $x+u=0$, and independence of $x_i,u_j$ gives $x=u=0$.
-  \end{steps}}
-  \ii \tool{Products of operators.} If $S,T$ are injective, so is $ST$. So if a product sends some $v\ne0$ to $0$, some factor is not injective.
-  \why{$STv=0\Rightarrow Tv=0\Rightarrow v=0$.}
-  \ii \tool{Polynomials in $T$ commute.} $p(T)q(T)=q(T)p(T)$. Hence $\nul p(T)$ and $\range p(T)$ are $T$-invariant.
-  \why{Both products equal $(pq)(T)$. If $p(T)v=0$, then $p(T)(Tv)=T\,p(T)v=0$. And $T\bigl(p(T)u\bigr)=p(T)(Tu)\in\range p(T)$.}
-  \ii \tool{Fundamental theorem of algebra.} A nonconstant $p\in\PP(\CC)$ factors as $c(z-\lambda_1)\cdots(z-\lambda_m)$ (cited). Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$.
-  \why{Divide $p$ by $z-\lambda$: the remainder is a constant, and evaluating at $\lambda$ shows it equals $p(\lambda)$.}
-  \ii \tool{Eigenvalues.}
-  \begin{enumerate}[(a)]
-    \ii $\lambda$ is an eigenvalue $\iff T-\lambda I$ is not injective.
-    \ii If $Tv=\lambda v$, then $p(T)v=p(\lambda)v$.
-    \ii Eigenvectors for distinct eigenvalues are independent (\hyperref[prop-54]{Prop.~54}).
-    \ii Over $\CC$ with $V\ne0$, every operator has an eigenvalue.
-  \end{enumerate}
-  \why{\begin{steps}
-    \ii (a) is the definition: $Tv=\lambda v$ with $v\ne0$ means $(T-\lambda I)v=0$ with $v\ne0$.
-    \ii (b): $T^kv=\lambda^kv$ by induction; add up the terms of $p$.
-    \ii (d): take $v\ne0$. The $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $p(T)v=0$ for some $p\ne0$; $p$ is not constant since $v\ne0$.
-    \ii Factor $p=c(z-\lambda_1)\cdots(z-\lambda_m)$ (T5). The product $c(T-\lambda_1I)\cdots(T-\lambda_mI)$ sends $v\ne0$ to $0$, so some $T-\lambda_jI$ is not injective (T3).
-  \end{steps}}
-  \ii \tool{Upper-triangular matrices.} $\MM(T)$ is upper-triangular in $v_1,\dots,v_n$ $\iff$ every $\spn(v_1,\dots,v_j)$ is invariant. Then the eigenvalues of $T$ are the diagonal entries. Over $\CC$ every operator has an upper-triangular matrix.
-  \why{\begin{steps}
-    \ii Column $j$ holds the coordinates of $Tv_j$, so ``upper-triangular'' means $Tv_j\in\spn(v_1,\dots,v_j)$ for every $j$.
-    \ii If $a_{jj}=\lambda$: $T-\lambda I$ maps $\spn(v_1,\dots,v_j)$ into $\spn(v_1,\dots,v_{j-1})$, a smaller space, so it is not injective (T1). So $\lambda$ is an eigenvalue.
-    \ii If no $a_{jj}$ equals $\lambda$: $\MM(T-\lambda I)$ is triangular with nonzero diagonal. Its columns are independent: in a relation, the right-most column used is the only one with a nonzero entry in its own diagonal row. So $T-\lambda I$ is injective.
-    \ii Existence over $\CC$, by induction on $n$: take an eigenvalue $\lambda$ (T6(d)). $U=\range(T-\lambda I)$ is invariant (T4) and $\dim U<n$, since $T-\lambda I$ is not injective (T1).
-    \ii By induction $U$ has a basis $u_1,\dots,u_m$ with every $\spn(u_1,\dots,u_j)$ invariant. Extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_k$ of $V$.
-    \ii $Tv_j=(T-\lambda I)v_j+\lambda v_j\in U+\spn(v_j)\subseteq\spn(u_1,\dots,u_m,v_1,\dots,v_j)$. So every span of an initial part of the list is invariant.
-  \end{steps}}
+  \why{Every linearly independent list in $V$ extends to a basis of $V$, and every basis of $V$ has length $n$. When $U\cap W=\{0\}$, concatenating a basis of $U$ and a basis of $W$ gives an independent list of length $\dim U+\dim W=n$, hence a basis of $V$.}
+
+  \ii \tool{Upper-triangular matrices (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-60}{Prop.~60--61}).} For $T\in\LL(V)$ and a basis $v_1,\dots,v_n$ of $V$, $\MM(T,(v_1,\dots,v_n))$ is upper-triangular if and only if $\spn(v_1,\dots,v_j)$ is $T$-invariant for every $j=1,\dots,n$. Over $\CC$, every operator on a finite-dimensional nonzero space has an upper-triangular matrix in some basis.
+  \why{Column $j$ of $\MM(T)$ gives the coordinates of $Tv_j$, so all entries below the diagonal vanish iff $Tv_j\in\spn(v_1,\dots,v_j)$ for each $j$, which holds iff $\spn(v_1,\dots,v_j)$ is $T$-invariant for each $j$.}
 \end{enumerate}
 
 \section{This week}
-\subsection{Orthogonality (Ch.~18)}
+\subsection{Orthonormal bases, Gram--Schmidt, and Riesz representation (Ch.~18, LADR 6B)}
 
 \begin{qbox}
-  In a general basis, finding coordinates means solving a linear system. If the basis vectors are perpendicular unit vectors, each coordinate is one inner product. We want such bases, a way to build them, and to use them to split spaces into perpendicular pieces.
+  In an arbitrary basis $v_1,\dots,v_n$ of $V$, finding the coordinates $a_1,\dots,a_n$ of a vector $v=\sum_{j=1}^n a_jv_j$ requires solving an $n\times n$ system of linear equations, and computing $\|v\|$ produces $n(n-1)$ cross terms $\ip{v_i}{v_j}$. How can we choose a basis in which every coordinate $a_j$ is computed immediately by a single inner product and every cross term vanishes, and how do we systematically construct such a basis from any linearly independent list?
 \end{qbox}
 
-\begin{definition*}[Def.~46]\hypertarget{def-46}{}\label{def-46}
-  $u\perp v$ if $\ip uv=0$. $e_1,\dots,e_m$ is \vocab{orthonormal} if $\ip{e_i}{e_j}=\delta_{ij}$.
+Suppose $e_1,\dots,e_n$ are mutually orthogonal unit vectors ($\ip{e_i}{e_j}=0$ for $i\ne j$ and $\ip{e_i}{e_i}=1$). If $v=\sum_{j=1}^n a_je_j$, then taking the inner product of both sides with $e_k$ eliminates every term except $j=k$:
+\[
+  \ip v{e_k} = \sum_{j=1}^n a_j\ip{e_j}{e_k} = a_k\ip{e_k}{e_k} = a_k.
+\]
+Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a linear system, and the Pythagorean theorem eliminates all cross terms from $\|v\|^2$.
+
+\begin{definition*}[Def.~46 / LADR 6.23, 6.29: Orthonormal list and orthonormal basis]\target{def-46}
+  A list of vectors $e_1,\dots,e_m\in V$ is called \vocab{orthonormal} if every vector in the list has norm $1$ and any two distinct vectors in the list are orthogonal:
+  \[
+    \ip{e_i}{e_j} = \delta_{ij} = \begin{cases} 1 & \text{if }i=j, \\ 0 & \text{if }i\ne j, \end{cases} \qquad\text{for all }i,j\in\{1,\dots,m\}.
+  \]
+  An \vocab{orthonormal basis} of $V$ is an orthonormal list in $V$ that is also a basis of $V$.
 \end{definition*}
 
-\begin{proposition*}[Prop.~84--86 / LADR 6.24, 6.25, 6.30]\hypertarget{prop-84}{}\label{prop-84}
-  For an orthonormal list: $\|\sum a_ie_i\|^2=\sum|a_i|^2$, and the list is independent. For an orthonormal basis:
-  \[ v=\sum_i\ip v{e_i}e_i,\qquad\|v\|^2=\sum_i|\ip v{e_i}|^2. \]
+\begin{proposition*}[Prop.~84--86 / LADR 6.24, 6.25, 6.26, 6.30, 6.31: Coordinates, Parseval, and Bessel]\target{prop-84}\target{prop-85}\target{prop-86}
+  Let $e_1,\dots,e_m$ be an orthonormal list in $V$.
+  \begin{enumerate}[(a)]
+    \ii \textbf{Norm of an orthonormal linear combination (Prop.~84 / LADR 6.24):} For all $a_1,\dots,a_m\in\FF$,
+    \[
+      \|a_1e_1+\dots+a_me_m\|^2 = |a_1|^2 + \dots + |a_m|^2.
+    \]
+    \ii \textbf{Linear independence (Prop.~85 / LADR 6.25, 6.31):} Every orthonormal list $e_1,\dots,e_m$ is linearly independent. In particular, if $\dim V=n<\infty$, any orthonormal list in $V$ of length $n$ is an orthonormal basis of $V$.
+    \ii \textbf{Bessel's inequality (LADR 6.26):} For every $v\in V$,
+    \[
+      |\ip v{e_1}|^2 + \dots + |\ip v{e_m}|^2 \le \|v\|^2.
+    \]
+    \ii \textbf{Expansion and Parseval's identity in an orthonormal basis (Prop.~86 / LADR 6.28, 6.30):} If $e_1,\dots,e_n$ is an orthonormal basis of $V$, then for all $u,v\in V$,
+    \[
+      v = \sum_{k=1}^n \ip v{e_k}e_k, \qquad \ip uv = \sum_{k=1}^n \ip u{e_k}\overline{\ip v{e_k}}, \qquad\text{and}\qquad \|v\|^2 = \sum_{k=1}^n |\ip v{e_k}|^2.
+    \]
+  \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-Norm: Pythagoras handles two perpendicular vectors, and $a_me_m$ is perpendicular to $a_1e_1+\dots+a_{m-1}e_{m-1}$. So add one term at a time.
-
-Independence: If $\sum a_ie_i=0$, its norm $\sqrt{\sum|a_i|^2}$ is $0$, so every $a_i=0$.
-
-Coordinates: To find $a_k$ in $v=\sum a_ie_i$, take the inner product with $e_k$: the terms with $i\ne k$ give $0$, and the $k$-th gives $a_k$. This is the reason to want orthonormal bases: coordinates without solving a linear system.
+  Because the vectors $a_1e_1,\dots,a_me_m$ are pairwise orthogonal ($\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\ip{e_i}{e_j}=0$ for $i\ne j$), applying the Pythagorean theorem repeatedly adds their squared norms $\|a_ke_k\|^2=|a_k|^2\|e_k\|^2=|a_k|^2$. Linear independence follows immediately: if $\sum a_ke_k=0$, then $\sum |a_k|^2=\|0\|^2=0$, forcing every $a_k=0$. For an arbitrary vector $v\in V$, subtracting all $m$ components $u=\sum_{k=1}^m\ip v{e_k}e_k$ leaves a remainder $w=v-u$ that is orthogonal to each $e_k$ and hence orthogonal to $u$; applying Pythagoras to $v=u+w$ gives $\|v\|^2=\|u\|^2+\|w\|^2=\sum_{k=1}^m|\ip v{e_k}|^2+\|w\|^2$, which yields Bessel's inequality by dropping $\|w\|^2\ge 0$, and becomes Parseval's equality when $e_1,\dots,e_n$ spans $V$ (so $w=0$).
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii $e_m\perp a_1e_1+\dots+a_{m-1}e_{m-1}$, so Pythagoras adds $|a_m|^2$; induct.
-    \ii $\sum a_ie_i=0\Rightarrow\sum|a_i|^2=0\Rightarrow$ all $a_i=0$.
-    \ii If $v=\sum a_ie_i$, then $\ip v{e_k}=\sum a_i\ip{e_i}{e_k}=a_k$.
+    \ii Since $\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\delta_{ij}=0$ for $i\ne j$, induction on $m$ using the Pythagorean theorem gives $\|a_1e_1+\dots+a_me_m\|^2=\|a_1e_1\|^2+\dots+\|a_me_m\|^2=|a_1|^2+\dots+|a_m|^2$, proving (a). (Conversely, by LADR 6.28, if $\|\sum a_ke_k\|^2=\sum|a_k|^2$ holds for all $a_k\in\FF$, testing $a_k=\delta_{ki}$ gives $\|e_i\|=1$ and testing $e_i+e_j$ and $e_i+ie_j$ gives $\ip{e_i}{e_j}=0$.)
+    \ii If $a_1e_1+\dots+a_me_m=0$, then Step~1 gives $|a_1|^2+\dots+|a_m|^2=\|0\|^2=0$, so $a_1=\dots=a_m=0$. When $\dim V=n$, any linearly independent list of length $n$ is a basis by (T2a), proving (b).
+    \ii For any $v\in V$, define $u=\sum_{k=1}^m\ip v{e_k}e_k$ and $w=v-u$. For each $j\in\{1,\dots,m\}$,
+    \[
+      \ip w{e_j} = \ip v{e_j} - \sum_{k=1}^m\ip v{e_k}\ip{e_k}{e_j} = \ip v{e_j} - \ip v{e_j} = 0.
+    \]
+    Hence $w$ is orthogonal to every linear combination of $e_1,\dots,e_m$, so $w\perp u$. By Pythagoras and Step~1,
+    \[
+      \|v\|^2 = \|u+w\|^2 = \|u\|^2 + \|w\|^2 = \sum_{k=1}^m |\ip v{e_k}|^2 + \|w\|^2 \ge \sum_{k=1}^m |\ip v{e_k}|^2,
+    \]
+    which proves Bessel's inequality (c).
+    \ii If $e_1,\dots,e_n$ is an orthonormal basis of $V$, then $v=\sum_{k=1}^n a_ke_k$ for some scalars $a_k\in\FF$. Taking the inner product with $e_j$ gives $\ip v{e_j}=\sum_{k=1}^n a_k\ip{e_k}{e_j}=a_j$, so $v=\sum_{k=1}^n\ip v{e_k}e_k$. Expanding $\ip uv=\ip{\sum_j\ip u{e_j}e_j}{\sum_k\ip v{e_k}e_k}$ gives $\sum_{k=1}^n\ip u{e_k}\overline{\ip v{e_k}}$, and setting $u=v$ gives Parseval's identity $\|v\|^2=\sum_{k=1}^n|\ip v{e_k}|^2$.
   \end{steps}
 \end{proof}
-\needspace{7\baselineskip}\textbf{Parseval} (infinite-dimensional version): for $f(x)=\sum c_ne^{2\pi inx}$ on $[0,1]$, $\sum|c_n|^2=\int_0^1|f|^2$. With $f(x)=x=\frac12-\frac1{2\pi i}\sum_{n\ne0}\frac1ne^{2\pi inx}$ this gives $\frac14+\frac1{4\pi^2}\sum_{n\ne0}\frac1{n^2}=\frac13$, so $\sum_{n\ge1}\frac1{n^2}=\frac{\pi^2}6$.
 
-\begin{theorem*}[Prop.~87 / LADR 6.32: Gram--Schmidt]\hypertarget{prop-87}{}\label{prop-87}
-  For independent $v_1,\dots,v_n$: $e_1=v_1/\|v_1\|$, and for $j\ge2$
-  \[ w_j=v_j-\sum_{k<j}\ip{v_j}{e_k}e_k,\qquad e_j=w_j/\|w_j\|. \]
-  Then $e_1,\dots,e_n$ is orthonormal and $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
+\begin{itemize}
+  \ii \textbf{Infinite-dimensional Parseval identity and Euler's Basel sum:} On $C([0,1])$ with $\ip fg=\int_0^1 f(x)\overline{g(x)}\,dx$, the complex exponentials $e_n(x)=e^{2\pi i nx}$ ($n\in\ZZ$) form an orthonormal system. By Fourier analysis, expanding $f(x)=x=\frac{1}{2}-\frac{1}{2\pi i}\sum_{n\ne 0}\frac{1}{n}e^{2\pi i nx}$ satisfies Parseval's identity $\sum_{n\in\ZZ}|\ip f{e_n}|^2=\|f\|^2=\int_0^1 x^2\,dx=\frac{1}{3}$. Since $|\ip f{e_0}|^2=\frac{1}{4}$ and $|\ip f{e_n}|^2=\frac{1}{4\pi^2 n^2}$ for $n\ne 0$, this gives $\frac{1}{4}+\frac{2}{4\pi^2}\sum_{n=1}^\infty\frac{1}{n^2}=\frac{1}{3}$, yielding $\sum_{n=1}^\infty\frac{1}{n^2}=\frac{\pi^2}{6}$.
+\end{itemize}
+
+\begin{theorem*}[Prop.~87 / LADR 6.32: Gram--Schmidt procedure]\target{prop-87}\target{name-gram-schmidt}
+  Suppose $v_1,\dots,v_m$ is a linearly independent list of vectors in $V$. Define $w_1=v_1$, $e_1=\dfrac{w_1}{\|w_1\|}$, and inductively for $j=2,\dots,m$:
+  \[
+    w_j = v_j - \ip{v_j}{e_1}e_1 - \dots - \ip{v_j}{e_{j-1}}e_{j-1} = v_j - \sum_{k=1}^{j-1}\ip{v_j}{e_k}e_k, \qquad e_j = \frac{w_j}{\|w_j\|}.
+  \]
+  Then $e_1,\dots,e_m$ is an orthonormal list in $V$ such that
+  \[
+    \spn(v_1,\dots,v_j) = \spn(e_1,\dots,e_j) \qquad\text{for each }j=1,\dots,m.
+  \]
 \end{theorem*}
 \begin{ideabox}
-To show: Orthonormal $e_1,\dots,e_n$ with $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ for every $j$.
-
-For a unit vector $e$, $v-\ip ve\,e\perp e$ (LADR 6.13 with $\|e\|=1$). Subtracting a combination of $e_1,\dots,e_{j-1}$ from $v_j$ does not change the span of $e_1,\dots,e_{j-1},v_j$.
-
-Build one vector at a time: from $v_j$ subtract its component $\ip{v_j}{e_k}e_k$ along each earlier $e_k$. Since the earlier $e_k$ are perpendicular to each other, the subtraction for $e_k$ does not change the inner products with the other $e_i$. Then divide by the length.
-
-Only risk: $w_j=0$, which would put $v_j$ in $\spn(v_1,\dots,v_{j-1})$; independence rules it out.
+  We construct $e_1,\dots,e_m$ one vector at a time so that at stage $j$, the new vector $e_j$ is orthogonal to $e_1,\dots,e_{j-1}$ while keeping the cumulative span $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ unchanged. Because $e_1,\dots,e_{j-1}$ are already mutually orthogonal unit vectors, subtracting $\ip{v_j}{e_k}e_k$ for each $k<j$ removes the component of $v_j$ along $e_k$ without disturbing the inner product with any other $e_i$ ($i<j$). Can the residual $w_j$ ever be $0$? If $w_j=0$, then $v_j$ would be a linear combination of $e_1,\dots,e_{j-1}$ and hence in $\spn(v_1,\dots,v_{j-1})$, which is impossible because $v_1,\dots,v_m$ is linearly independent. Dividing the nonzero vector $w_j$ by $\|w_j\|$ produces the unit vector $e_j$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii If $w_j=0$, then $v_j\in\spn(e_1,\dots,e_{j-1})=\spn(v_1,\dots,v_{j-1})$, contradicting independence.
-    \ii For $k<j$: $\ip{w_j}{e_k}=\ip{v_j}{e_k}-\ip{v_j}{e_k}=0$. And $\|e_j\|=1$.
-    \ii $e_j\in\spn(v_1,\dots,v_j)$, so the spans are nested; both have dimension $j$, so they are equal.
+    \ii We proceed by induction on $j$. For $j=1$, linear independence of $v_1,\dots,v_m$ implies $v_1\ne 0$, so $\|v_1\|\ne 0$, $\|e_1\|=\|v_1\|/\|v_1\|=1$, and $\spn(e_1)=\spn(v_1)$.
+    \ii Suppose $1<j\le m$ and $e_1,\dots,e_{j-1}$ has been constructed so that it is orthonormal and $\spn(e_1,\dots,e_{j-1})=\spn(v_1,\dots,v_{j-1})$. Because $v_1,\dots,v_m$ is linearly independent, $v_j\notin\spn(v_1,\dots,v_{j-1})=\spn(e_1,\dots,e_{j-1})$, so $w_j=v_j-\sum_{k=1}^{j-1}\ip{v_j}{e_k}e_k\ne 0$.
+    \ii Dividing by $\|w_j\|\ne 0$ gives $\|e_j\|=1$. For each $i\in\{1,\dots,j-1\}$, since $\ip{e_k}{e_i}=\delta_{ki}$, we have
+    \[
+      \ip{w_j}{e_i} = \ip{v_j}{e_i} - \sum_{k=1}^{j-1}\ip{v_j}{e_k}\ip{e_k}{e_i} = \ip{v_j}{e_i} - \ip{v_j}{e_i} = 0,
+    \]
+    so $\ip{e_j}{e_i}=\|w_j\|^{-1}\ip{w_j}{e_i}=0$. Thus $e_1,\dots,e_j$ is an orthonormal list.
+    \ii By definition, $w_j$ and $e_j$ lie in $\spn(e_1,\dots,e_{j-1},v_j)=\spn(v_1,\dots,v_j)$, so $\spn(e_1,\dots,e_j)\subseteq\spn(v_1,\dots,v_j)$. Since both $v_1,\dots,v_j$ and $e_1,\dots,e_j$ are linearly independent lists of length $j$ (\ilink{prop-85}{Prop.~85}), both spans have dimension $j$ and therefore $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$ by (T2a).
   \end{steps}
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=1.05]
-  % Plane spanned by e1, e2
-  \draw[->,gray!60] (-1.5,0) -- (3.8,0);
-  \draw[->,gray!60] (-1.0,-0.8) -- (1.5,1.2);
-  \fill[blue!10,opacity=0.7] (-1.8,-0.7) -- (2.5,-0.7) -- (4.2,1.3) -- (-0.1,1.3) -- cycle;
-  \draw[blue!60!black,dashed] (-1.8,-0.7) -- (2.5,-0.7) -- (4.2,1.3) -- (-0.1,1.3) -- cycle;
-  \node[blue!80!black,font=\footnotesize] at (3.5,-0.35) {$\spn(e_1,e_2)$};
+\tdplotsetmaincoords{70}{118}
+\begin{tikzpicture}[tdplot_main_coords,scale=1.15,>=Stealth]
+  % Background panel in screen coords
+  \begin{scope}[tdplot_screen_coords]
+    \fill[figbg,rounded corners=4pt] (-4.6,-2.1) rectangle (5.6,3.55);
+    \draw[figslate!30,rounded corners=4pt] (-4.6,-2.1) rectangle (5.6,3.55);
+  \end{scope}
 
-  % e1 and e2 vectors
-  \draw[->,very thick,blue!80!black] (0,0) -- (0.9,0.72) node[above left=1pt,font=\small] {$e_2$};
-  \draw[->,very thick,blue!80!black] (0,0) -- (2.2,0) node[below=2pt,font=\small] {$e_1$};
+  % Span(e1, e2) plane in xy-plane
+  \fill[figplane] (-1.2,-1.1,0) -- (3.3,-1.1,0) -- (3.3,3.2,0) -- (-1.2,3.2,0) -- cycle;
+  \draw[figblue!45,thin] (-1.2,-1.1,0) -- (3.3,-1.1,0) -- (3.3,3.2,0) -- (-1.2,3.2,0) -- cycle;
 
-  % Vector v3 in 3D
-  \coordinate (O) at (0,0);
-  \coordinate (P) at (2.4,0.8);
-  \coordinate (V3) at (2.4,2.8);
+  % Plane label cleanly in screen coordinates at bottom-left corner of the plane
+  \begin{scope}[tdplot_screen_coords]
+    \node[figblue!85!black,font=\footnotesize,anchor=west] at (-4.3,-1.72) {Plane $\spn(v_1,v_2)=\spn(e_1,e_2)$};
+  \end{scope}
 
-  % Projection in the plane
-  \draw[thick,OliveGreen!70!black,->] (O) -- (P);
-  \node[OliveGreen!80!black,font=\footnotesize,anchor=north west] at (2.45,0.85) {$\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$};
-  \draw[gray!70,dashed] (P) -- (2.4,0);
-  \draw[gray!70,dashed] (P) -- (1.0,0.8);
+  % Coordinate axes in xy-plane and z-axis
+  \draw[figaxis] (-1.0,0,0) -- (3.4,0,0);
+  \draw[figaxis] (0,-0.9,0) -- (0,3.3,0);
+  \draw[figaxis] (0,0,0) -- (0,0,3.15);
+
+  % Orthonormal basis vectors e1, e2 in the plane
+  \draw[figvec,figblue,very thick] (0,0,0) -- (1.85,0,0);
+  \node[figblue,font=\small,above left,xshift=-2pt,yshift=-1pt] at (1.35,0,0) {$e_1$};
+  \draw[figvec,figblue,very thick] (0,0,0) -- (0,1.75,0);
+  \node[figblue,font=\small,above right,xshift=2pt,yshift=-1pt] at (0,1.35,0) {$e_2$};
+
+  % Projection P = (2.3, 2.35, 0) and v3 = (2.3, 2.35, 2.55)
+  \coordinate (O) at (0,0,0);
+  \coordinate (Px) at (2.3,0,0);
+  \coordinate (Py) at (0,2.35,0);
+  \coordinate (P) at (2.3,2.35,0);
+  \coordinate (V3) at (2.3,2.35,2.55);
+  \coordinate (W3) at (0,0,2.55);
+  \coordinate (E3) at (0,0,1.35);
+
+  % Guide lines in the plane
+  \draw[figguide] (Px) -- (P);
+  \draw[figguide] (Py) -- (P);
+
+  % Sum of components along e1 and e2
+  \draw[figvec,figamber,very thick] (O) -- (P);
+  \node[figamber!90!black,font=\footnotesize,below right,xshift=3pt,yshift=-1pt] at (P) {$\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$};
+
+  % Vertical residual from P to V3 and parallelogram guide from W3 to V3
+  \draw[figgreen,thick,dashed] (P) -- (V3);
+  \draw[figguide] (W3) -- (V3);
+
+  % Right-angle mark at P
+  \draw[figslate,thin] (2.3,2.08,0) -- (2.3,2.08,0.27) -- (2.3,2.35,0.27);
 
   % Vector v3
-  \draw[->,very thick,red!80!black] (O) -- (V3) node[above right,font=\small] {$v_3$};
+  \draw[figvec,figred,very thick] (O) -- (V3) node[above right,xshift=2pt] {$v_3$};
 
-  % Drop perpendicular from v3 to P
-  \draw[thick,purple!80!black,dashed] (P) -- (V3);
-  \draw[gray!70] (2.4,1.0) -- (2.2,1.0) -- (2.2,0.8);
+  % Residual w3 and unit vector e3 along vertical axis
+  \draw[figvec,figgreen,very thick] (O) -- (W3);
+  \node[figgreen,font=\footnotesize,above left,xshift=-3pt] at (W3) {$w_3 = v_3 - \sum_{k=1}^2\ip{v_3}{e_k}e_k$};
 
-  % Orthogonal vector w3 along normal axis
-  \draw[->,very thick,OliveGreen!90!black] (O) -- (0,2.1) node[above,font=\small] {$w_3$};
-  \node[OliveGreen!90!black,font=\footnotesize,anchor=east] at (-0.1,1.9) {$w_3=v_3-\sum_{k=1}^2\ip{v_3}{e_k}e_k$};
-  \draw[->,thick,black] (0,0) -- (0,1.1) node[left=2pt,font=\footnotesize] {$e_3=\frac{w_3}{\|w_3\|}$};
-  \draw[gray!70,dashed] (0,2.1) -- (V3);
+  \draw[figvec,black,very thick] (O) -- (E3);
+  \node[black,font=\footnotesize,left,xshift=-4pt] at (0,0,0.85) {$e_3 = \dfrac{w_3}{\|w_3\|}$};
 
-  \fill (O) circle (1.5pt) node[below left,font=\tiny]{$0$};
+  \fill[black] (O) circle (1.4pt);
+  \fill[figamber] (P) circle (1.5pt);
 \end{tikzpicture}
-\figcap{Gram--Schmidt 3D geometric breakdown: $v_3$ is stripped of its projections onto the orthonormal vectors $e_1$ and $e_2$ already constructed. The residual vector $w_3$ is perpendicular to the plane $\spn(e_1,e_2)$, and normalizing $w_3$ yields the third orthonormal basis vector $e_3$.}
+\figcap{Three-dimensional geometry of Step $j=3$ of the Gram--Schmidt procedure (\ilink{prop-87}{Prop.~87}). Having built the orthonormal basis $(e_1,e_2)$ for $\spn(v_1,v_2)$, we subtract from $v_3$ its component $\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$ in the plane $\spn(e_1,e_2)$. The residual $w_3$ is orthogonal to the entire plane $\spn(e_1,e_2)$, and normalizing $w_3$ gives the third orthonormal vector $e_3=w_3/\|w_3\|$.}
 \end{fig}
+
 \begin{itemize}
-  \ii Every finite-dimensional inner product space has an orthonormal basis; every orthonormal list extends to one (extend to a basis, then Gram--Schmidt; the first vectors do not change) (LADR 6.35, 6.36).
-  \ii An orthonormal list of length $\dim V$ is an orthonormal basis (\hyperref[prop-8]{Prop.~8}5, T2).
-  \ii If the $v_j$ are dependent, $w_j=0$ exactly when $v_j\in\spn(v_1,\dots,v_{j-1})$: skip it and continue.
-  \ii \textbf{Schur (LADR 6.38):} over $\CC$, $T$ is upper-triangular in some \emph{orthonormal} basis. Take a triangular basis (T7) and apply Gram--Schmidt: it keeps the spans $\spn(v_1,\dots,v_j)$, which are invariant, so the matrix stays triangular.
+  \ii \textbf{Existence and extension of orthonormal bases (LADR 6.35, 6.36):} Every finite-dimensional inner product space $V$ has an orthonormal basis (apply Gram--Schmidt to any basis of $V$). Furthermore, every orthonormal list $e_1,\dots,e_m$ in $V$ extends to an orthonormal basis $e_1,\dots,e_m,e_{m+1},\dots,e_n$ of $V$: extend $e_1,\dots,e_m$ to a basis $e_1,\dots,e_m,v_{m+1},\dots,v_n$ of $V$ and apply Gram--Schmidt; because $e_1,\dots,e_m$ are already orthonormal, the first $m$ vectors of the Gram--Schmidt output are unchanged!
+  \ii \textbf{Upper-triangular matrices and Schur's theorem (LADR 6.37, 6.38):} By (T3), $\MM(T,(v_1,\dots,v_n))$ is upper-triangular iff $\spn(v_1,\dots,v_j)$ is $T$-invariant for every $j=1,\dots,n$. Because Gram--Schmidt preserves each span $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$, applying Gram--Schmidt to an upper-triangular basis produces an \emph{orthonormal} basis in which $\MM(T)$ is still upper-triangular. In particular, over $\CC$, every operator on a finite-dimensional nonzero inner product space has an upper-triangular matrix with respect to some \emph{orthonormal} basis (\vocab{Schur's theorem}, which we revisit in \xweek{math110}{2026-11-09-adjoints-spectral-theorem}{Week~11}).
 \end{itemize}
 
-\begin{example*}[Ex.~70: Gram--Schmidt on $\PP_2$, $\ip pq=\int_0^1p\bar q$]\hypertarget{ex-70}{}\label{ex-70}
+\begin{example*}[Ex.~70 / LADR 6.33: Gram--Schmidt on $\PP_2(\RR)$ with $\ip pq=\int_0^1 p(x)q(x)\,dx$]\target{ex-70}
+  Apply Gram--Schmidt to the ordered basis $v_1=1$, $v_2=x$, $v_3=x^2$ of $\PP_2(\RR)$ under $\ip pq=\int_0^1 p(x)q(x)\,dx$:
   \begin{steps}
-    \ii $\|1\|=1$: $e_1=1$.
-    \ii $w_2=x-\ip x1=x-\frac12$, $\|w_2\|^2=\frac1{12}$: $e_2=\sqrt3(2x-1)$.
-    \ii $w_3=x^2-\frac13-\frac12(2x-1)=x^2-x+\frac16$, $\|w_3\|=\frac1{6\sqrt5}$: $e_3=\sqrt5(6x^2-6x+1)$.
+    \ii \textbf{First vector:} $w_1=1$ has $\|w_1\|^2=\int_0^1 1^2\,dx=1$, so $e_1=1$.
+    \ii \textbf{Second vector:} $\ip x{e_1}=\int_0^1 x\,dx=\frac{1}{2}$, so $w_2 = x - \ip x{e_1}e_1 = x - \frac{1}{2}$. Its squared norm is
+    \[
+      \|w_2\|^2 = \int_0^1 \left(x-\frac{1}{2}\right)^2 dx = \left[\frac{(x-1/2)^3}{3}\right]_0^1 = \frac{1}{24} + \frac{1}{24} = \frac{1}{12},
+    \]
+    so $\|w_2\|=\frac{1}{2\sqrt 3}$ and $e_2 = \frac{w_2}{\|w_2\|} = 2\sqrt{3}\left(x-\frac{1}{2}\right) = \sqrt{3}(2x-1)$.
+    \ii \textbf{Third vector:} Compute the inner products of $v_3=x^2$ with $e_1$ and $e_2$:
+    \[
+      \ip{x^2}{e_1} = \int_0^1 x^2\,dx = \frac{1}{3}, \qquad \ip{x^2}{e_2} = \sqrt{3}\int_0^1 x^2(2x-1)\,dx = \sqrt{3}\left(\frac{2}{4}-\frac{1}{3}\right) = \frac{\sqrt 3}{6}.
+    \]
+    Subtracting both projections gives
+    \[
+      w_3 = x^2 - \frac{1}{3}\cdot 1 - \frac{\sqrt 3}{6}\cdot\sqrt{3}(2x-1) = x^2 - \frac{1}{3} - \frac{1}{2}(2x-1) = x^2 - x + \frac{1}{6}.
+    \]
+    Since $\|w_3\|^2=\int_0^1(x^2-x+\frac{1}{6})^2\,dx=\frac{1}{180}$, we have $\|w_3\|=\frac{1}{6\sqrt 5}$ and $e_3=\sqrt{5}(6x^2-6x+1)$.
   \end{steps}
-  Order of work: $w_j$, then $\|w_j\|^2$, then divide. Check $w_j\perp$ the earlier $e$'s. (These are the shifted Legendre polynomials; on $[-1,1]$, HW10 P1, the Legendre polynomials.)
+  (These are the normalized shifted Legendre polynomials on $[0,1]$; on $[-1,1]$, see HW10~P1.)
 \end{example*}
 
-\begin{proposition*}[Prop.~88 / LADR 6.42, 6.58: Riesz representation]\hypertarget{prop-88}{}\label{prop-88}
-  For finite-dimensional $V$, every $\psi\in V'$ is $\psi(u)=\ip uv$ for a unique $v$. In an orthonormal basis, $v=\sum_j\overline{\psi(e_j)}e_j$.
-\end{proposition*}
-\begin{ideabox}
-To show: A vector $v$ with $\psi(u)=\ip uv$ for all $u$.
-
-\textbf{Coordinate proof with an orthonormal basis:} Write the unknown $v=\sum a_je_j$ in an orthonormal basis and test on $e_i$: $\ip{e_i}v=\bar a_i$ must equal $\psi(e_i)$. So $a_i=\overline{\psi(e_i)}$, and this $v$ works because both sides agree on a basis.
-
-\textbf{Geometric coordinate-free proof via orthogonal complements:} If $\psi=0$, take $v=0$. If $\psi\ne0$, $\ker\psi$ is a subspace of codimension $1$ (rank-nullity: $\dim\ker\psi=\dim V-\dim\FF=\dim V-1$). By \hyperref[prop-89]{Prop.~89}, $\dim(\ker\psi)^\perp=\dim V-\dim\ker\psi=1$: the orthogonal complement of the hyperplane $\ker\psi$ is a 1-dimensional line. Pick a unit vector $w_0\in(\ker\psi)^\perp$. Every $u\in V$ decomposes as $u=u_0+cw_0$ with $u_0\in\ker\psi$ and $c=\ip u{w_0}$. Then $\psi(u)=\psi(u_0)+c\psi(w_0)=c\psi(w_0)=\ip u{w_0}\psi(w_0)=\ip u{\overline{\psi(w_0)}w_0}$. Thus $v=\overline{\psi(w_0)}w_0$ is the unique representing vector.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii With $v=\sum\overline{\psi(e_j)}e_j$: $\ip{e_i}v=\psi(e_i)$. Two linear functionals equal on a basis are equal.
-    \ii Unique: if $\ip uv=\ip u{v'}$ for all $u$, take $u=v-v'$ to get $\|v-v'\|^2=0$.
-  \end{steps}
-  (The notes use $\Gamma(v)=\ip-v$: real-linear, not complex-linear since $\Gamma(iv)=-i\Gamma(v)$, injective, and $\dim_\RR V=\dim_\RR V'$.)
-\end{proof}
-
-\begin{definition*}[Def.~47 / LADR 6.46, 6.47]\hypertarget{def-47}{}\label{def-47}
-  $U^\perp=\{v:\ip vu=0\text{ for all }u\in U\}$, a subspace (linearity in the first slot).
-\end{definition*}
-\begin{itemize}
-  \ii $\{0\}^\perp=V$; $V^\perp=\{0\}$; $U\cap U^\perp=\{0\}$ (a vector perpendicular to itself is $0$).
-  \ii $U\subseteq W\Rightarrow W^\perp\subseteq U^\perp$.
-  \ii $(U+W)^\perp=U^\perp\cap W^\perp$ (perpendicular to all $u+w$ iff to all $u$ and all $w$).
-  \ii $(U\cap W)^\perp=U^\perp+W^\perp$ (finite dim., HW10 P4): take $\perp$ of $(U^\perp+W^\perp)^\perp=U\cap W$ (\hyperref[prop-90]{Prop.~90}).
-  \ii Finite dim.: $U^\perp=\{0\}\iff U=V$; $U^\perp=V\iff U=\{0\}$ (\hyperref[prop-89]{Prop.~89}).
-  \ii \textbf{Computing $U^\perp$:} require $\ip v{u_i}=0$ for a spanning list of $U$ and solve the linear system. Under Riesz, $U^\perp$ matches the annihilator $U^0$.
-\end{itemize}
-
-\begin{theorem*}[Prop.~89 / LADR 6.49, 6.50]\hypertarget{prop-89}{}\label{prop-89}
-  If $U$ is finite-dimensional, $V=U\oplus U^\perp$. If $V$ is finite-dimensional, $\dim U^\perp=\dim V-\dim U$.
+\begin{theorem*}[Prop.~88 / LADR 6.42: Riesz representation theorem]\target{prop-88}\target{name-riesz}
+  Suppose $V$ is a finite-dimensional inner product space and $\psi\in V'$ is a linear functional on $V$ (i.e.\ $\psi\in\LL(V,\FF)$). Then there exists a unique vector $v\in V$ such that
+  \[
+    \psi(u) = \ip uv \qquad\text{for all }u\in V.
+  \]
+  In any orthonormal basis $e_1,\dots,e_n$ of $V$, this unique representing vector is given explicitly by
+  \[
+    v = \overline{\psi(e_1)}e_1 + \dots + \overline{\psi(e_n)}e_n = \sum_{k=1}^n \overline{\psi(e_k)}e_k.
+  \]
 \end{theorem*}
 \begin{ideabox}
-To show: Every $v$ is $u+w$ with $u\in U$ and $w\perp U$, in exactly one way.
-
-For a line $U=\spn(e)$, $\|e\|=1$, this is LADR 6.13: $u=\ip ve\,e$.
-
-For a subspace, take an orthonormal basis $e_1,\dots,e_m$ of $U$ and use all the components: $u=\sum\ip v{e_k}e_k$. Then $\ip{v-u}{e_k}=0$ for every $k$, so $v-u\perp U$. Uniqueness: $U\cap U^\perp=0$, since a vector perpendicular to itself is $0$.
-
-Dimension: $\dim U^\perp=\dim V-\dim U$ then follows from the direct sum.
+  For any fixed vector $v\in V$, linearity of the inner product in the first slot makes the map $u\mapsto\ip uv$ a linear functional on $V$. Conversely, given a linear functional $\psi\in V'$, how can we discover which vector $v$ represents it? Choose an orthonormal basis $e_1,\dots,e_n$ of $V$. If $\psi(u)=\ip uv$ holds for all $u\in V$, then plugging in $u=e_k$ forces $\psi(e_k)=\ip{e_k}{v}=\overline{\ip v{e_k}}$. Taking complex conjugates reveals the exact $k$-th orthonormal coordinate of $v$: $\ip v{e_k}=\overline{\psi(e_k)}$. By \ilink{prop-86}{Prop.~86}, $v$ must equal $\sum_{k=1}^n\overline{\psi(e_k)}e_k$, and checking this candidate on an arbitrary vector $u=\sum_{k=1}^n\ip u{e_k}e_k$ confirms that $\ip uv=\psi(u)$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Direct: if $u\in U\cap U^\perp$, then $\ip uu=0$, so $u=0$.
-    \ii Take an orthonormal basis $e_1,\dots,e_m$ of $U$ (Gram--Schmidt). Set $u=\sum\ip v{e_k}e_k\in U$, $w=v-u$.
-    \ii $\ip w{e_k}=\ip v{e_k}-\ip v{e_k}=0$ for each $k$, so $w\perp U$, and $v=u+w$.
+    \ii Choose an orthonormal basis $e_1,\dots,e_n$ of $V$ (LADR 6.35) and define $v=\sum_{k=1}^n\overline{\psi(e_k)}e_k\in V$.
+    \ii For any $u\in V$, expanding $u=\sum_{k=1}^n\ip u{e_k}e_k$ by \ilink{prop-86}{Prop.~86} and using conjugate-linearity in the second slot gives
+    \[
+      \ip uv = \ip{u}{\sum_{k=1}^n\overline{\psi(e_k)}e_k} = \sum_{k=1}^n \psi(e_k)\ip u{e_k} = \psi\left(\sum_{k=1}^n\ip u{e_k}e_k\right) = \psi(u).
+    \]
+    \ii To prove uniqueness, suppose $v,v'\in V$ both satisfy $\psi(u)=\ip uv=\ip u{v'}$ for all $u\in V$. Then $\ip u{v-v'}=0$ for all $u\in V$. Setting $u=v-v'$ gives $\|v-v'\|^2=\ip{v-v'}{v-v'}=0$, so definiteness forces $v-v'=0$, i.e.\ $v=v'$.
   \end{steps}
 \end{proof}
 
-\begin{proposition*}[Prop.~90 / LADR 6.52]\hypertarget{prop-90}{}\label{prop-90}
-  If $U$ is finite-dimensional, $(U^\perp)^\perp=U$.
-\end{proposition*}
-\begin{ideabox}
-To show: $(U^\perp)^\perp=U$. The inclusion $U\subseteq(U^\perp)^\perp$ is immediate from the definitions; the work is showing that $(U^\perp)^\perp$ is not bigger.
-
-Finite dimension: Count: $\dim(U^\perp)^\perp=n-(n-\dim U)=\dim U$ (\hyperref[prop-89]{Prop.~89} twice), and a subspace of the same dimension is equal (T2).
-
-Take $v\in(U^\perp)^\perp$ and split $v=u+w$ (\hyperref[prop-89]{Prop.~89}). Then $w\in U^\perp$, and also $w=v-u\in(U^\perp)^\perp$. So $w$ is perpendicular to itself, and $w=0$.
-\end{ideabox}
-\begin{proof}
-  $U\subseteq(U^\perp)^\perp$: every $u\in U$ is perpendicular to every element of $U^\perp$. Conversely let $v\in(U^\perp)^\perp$, $v=u+w$ ($u\in U$, $w\in U^\perp$). Then $w=v-u\in(U^\perp)^\perp$ and $w\in U^\perp$, so $\ip ww=0$ and $w=0$.
-\end{proof}
-
-\begin{definition*}[Def.~48 / LADR 6.55]\hypertarget{def-48}{}\label{def-48}
-  For finite-dimensional $U$, the \vocab{orthogonal projection} is $P_U(u+w)=u$ ($u\in U$, $w\in U^\perp$). It is the unique projector with $\range P=U$, $\nul P=U^\perp$.
-\end{definition*}
-\begin{itemize}
-  \ii \textbf{Uniqueness:} if $P^2=P$, $\range P=U$, $\nul P=U^\perp$, then $u=Px$ gives $Pu=P^2x=u$, so $P(u+w)=u$.
-  \ii \textbf{Properties} (LADR 6.57), all from $v=P_Uv+(v-P_Uv)$:
-  \begin{itemize}
-    \ii $P_U$ is linear; $P_U^2=P_U$; $\range P_U=U$; $\nul P_U=U^\perp$; $v-P_Uv\in U^\perp$.
-    \ii $\|P_Uv\|\le\|v\|$ (Pythagoras).
-    \ii $I-P_U=P_{U^\perp}$ if $V$ is finite-dimensional ($V=U^\perp\oplus U$).
-  \end{itemize}
-  \ii \textbf{Any projector} ($P^2=P$) has $V=\nul P\oplus\range P$ (\hyperref[prop-9]{Prop.~9}1). Idea: $Pv$ is the obvious range part, and $P(v-Pv)=Pv-P^2v=0$. If $w=Pv\in\nul P$, then $w=P^2v=Pw=0$.
-  \ii It is orthogonal only when $\nul P\perp\range P$: $P(x,y)=(0,y)$ is $P_{\spn(e_2)}$; $P(x,y)=(x+y,0)$ is not orthogonal.
-\end{itemize}
-
-\begin{proposition*}[Prop.~92 / LADR 6.57(i)]\hypertarget{prop-92}{}\label{prop-92}
-  If $e_1,\dots,e_m$ is an orthonormal basis of $U$: $P_Uv=\sum_k\ip v{e_k}e_k$.
-\end{proposition*}
-\begin{ideabox}
-To show: The coordinates of $P_Uv$ in an orthonormal basis $e_1,\dots,e_m$ of $U$.
-
-Coordinates in an orthonormal basis are inner products: $P_Uv=\sum\ip{P_Uv}{e_k}e_k$ (\hyperref[prop-8]{Prop.~8}6 in $U$).
-
-$v-P_Uv\perp e_k$, so $\ip v{e_k}=\ip{P_Uv}{e_k}$. The coordinates can be computed from $v$, without knowing $P_Uv$ first.
-\end{ideabox}
-\begin{proof}
-  $v=u+w$: $\ip v{e_k}=\ip u{e_k}$, so $P_Uv=u=\sum\ip u{e_k}e_k=\sum\ip v{e_k}e_k$ (\hyperref[prop-8]{Prop.~8}6 in $U$).
-\end{proof}
-
-\begin{proposition*}[HW10 P5, LADR 6.61: best approximation]\hypertarget{name-hw10-p5-ladr-6-61-best-approximation}{}\label{name-hw10-p5-ladr-6-61-best-approximation}
-  For $u\in U$: $\|v-P_Uv\|\le\|v-u\|$, equality only at $u=P_Uv$. So the distance from $v$ to $U$ is $\|v-P_Uv\|$.
-\end{proposition*}
-\begin{ideabox}
-To show: Among $u\in U$, $\|v-u\|$ is smallest at $u=P_Uv$.
-
-Split the error: $v-u=(v-P_Uv)+(P_Uv-u)$. The first part is in $U^\perp$ and does not depend on $u$; the second is in $U$. They are perpendicular, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$, which is smallest exactly when the second term is $0$.
-\end{ideabox}
-\begin{proof}
-  $v-u=(v-P_Uv)+(P_Uv-u)$ with pieces in $U^\perp$ and $U$, so $\|v-u\|^2=\|v-P_Uv\|^2+\|P_Uv-u\|^2$.
-\end{proof}
-\begin{fig}
-\begin{tikzpicture}[scale=1.15,>=Stealth]
-  \draw[thick] (-0.6,0) -- (4.6,0) node[right] {$U$};
-  \fill (2,1.8) circle (1.8pt) node[above] {$v$};
-  \fill (2,0) circle (1.8pt) node[below] {$P_Uv$};
-  \fill (3.8,0) circle (1.8pt) node[below] {$u$};
-  \draw[OliveGreen,thick] (2,0) -- (2,1.8);
-  \node[OliveGreen!70!black,left] at (2,0.9) {$v-P_Uv\perp U$};
-  \draw[red,thick,dashed] (3.8,0) -- (2,1.8);
-  \node[red,right] at (2.95,1.0) {$v-u$};
-  \draw (2,0.18) -- (2.18,0.18) -- (2.18,0);
-\end{tikzpicture}
-\figcap{$v-u$ is the hypotenuse of a right triangle. One leg, $v-P_Uv$, does not depend on $u$; the other, $P_Uv-u$, lies in $U$ and is $0$ only when $u=P_Uv$.}
-\end{fig}
-
-\begin{itemize}
-  \ii \textbf{Bessel:} for any orthonormal $e_1,\dots,e_m$, $\sum|\ip v{e_k}|^2\le\|v\|^2$. The left side is $\|P_Uv\|^2$ with $U=\spn(e_k)$.
-  \ii \textbf{HW10 P7:} a projector is orthogonal iff $\|Pv\|\le\|v\|$ for all $v$. Idea for $\Leftarrow$: suppose $u\in\range P$ and $w\in\nul P$ are not perpendicular. The point of the line $u+tw$ closest to $0$ has $t=-\ip uw/\|w\|^2\ne0$ and is shorter than $u$. But $P(u+tw)=u$, so $\|P(u+tw)\|>\|u+tw\|$. (Details in the solutions.)
-  \ii \textbf{Computing $P_Uv$:} (1) Gram--Schmidt on $U$, then \hyperref[prop-92]{Prop.~92}. (2) Or write $P_Uv=\sum c_iu_i$ for a basis $u_i$ and solve $\ip{v-\sum c_iu_i}{u_j}=0$ for all $j$. Check that $v-P_Uv\perp$ each $u_j$.
-\end{itemize}
-
-\begin{example*}[Ex.~71]\hypertarget{ex-71}{}\label{ex-71}
-  $P_U(x^3)$, $U=\spn(1,x)$, $\ip pq=\int_0^1pq$. With $e_1=1$, $e_2=\sqrt3(2x-1)$: $\ip{x^3}{e_1}=\frac14$, $\ip{x^3}{e_2}=\frac{3\sqrt3}{20}$, so $P_U(x^3)=\frac14+\frac9{20}(2x-1)=\frac9{10}x-\frac15$. Check: $x^3-\frac9{10}x+\frac15$ is perpendicular to $1$ and $x$.
-\end{example*}
+\begin{shortcuts}
+  \ii \textbf{Clear fractions before normalizing in Gram--Schmidt:} Because any positive scalar multiple of $w_j$ has the same direction, if $w_j$ has ugly fractions (such as $w_3=x^2-x+\frac{1}{6}=\frac{1}{6}(6x^2-6x+1)$ in \ilink{ex-70}{Ex.~70}), factor out $\frac{1}{6}$ and normalize $\widetilde w_3=6x^2-6x+1$ instead: $e_3=\widetilde w_3/\|\widetilde w_3\|$.
+  \ii \textbf{Checking each Gram--Schmidt step immediately:} Before normalizing $w_j$, verify $\ip{w_j}{e_k}=0$ (or equivalently $\ip{w_j}{v_k}=0$) for all $k<j$. Catching an arithmetic slip in $w_2$ saves recomputing $w_3$.
+  \ii \textbf{Reading off the Riesz vector in an ONB:} To solve $\psi(u)=\ip uv$ for $v$, evaluate $\psi$ on an orthonormal basis $e_1,\dots,e_n$ and conjugate the outputs: $v=\sum_{k=1}^n\overline{\psi(e_k)}e_k$.
+\end{shortcuts}
 
 \begin{trapbox}
-  \ii Orthogonal vectors are independent only if nonzero.
-  \ii $P^2=P$ does not make $P$ orthogonal: $P(x,y)=(x+y,0)$ has $\|P(1,1)\|=2>\sqrt2$.
-  \ii $V=U\oplus U^\perp$ can fail for infinite-dimensional $U$: in $\ell^2$, the finitely supported sequences have $U^\perp=\{0\}$. Also $\ell^2$ has no orthonormal (Hamel) basis.
-  \ii Gram--Schmidt depends on the order and on the inner product; normalize only after subtracting.
-  \ii Riesz over $\CC$: the coefficients are conjugated.
+  \ii \textbf{Orthogonal lists are linearly independent only if every vector is nonzero:} An \emph{orthonormal} list cannot contain $0$ (since $\|e_k\|=1$), so it is always linearly independent. An \emph{orthogonal} list $v_1,\dots,v_m$ can contain $0$ (since $0\perp v$ for all $v$), and is linearly independent iff $v_k\ne 0$ for every $k$.
+  \ii \textbf{Do not forget the complex conjugate in Riesz representation:} In $v=\sum_{k=1}^n\overline{\psi(e_k)}e_k$, the coefficients are $\overline{\psi(e_k)}$, not $\psi(e_k)$, because $v$ sits in the \emph{second} (conjugate-linear) slot of $\psi(u)=\ip uv$. Consequently, the Riesz map $\Phi\colon V\to V'$ given by $\Phi(v)(u)=\ip uv$ is \emph{conjugate-linear} over $\CC$: $\Phi(\lambda v)=\bar\lambda\Phi(v)$.
+  \ii \textbf{Gram--Schmidt depends on the ordering of $v_1,\dots,v_m$:} Permuting the input list $v_1,\dots,v_m$ changes the nested subspaces $\spn(v_1,\dots,v_j)$ and produces a different orthonormal list.
 \end{trapbox}
 
-\clearpage
+\subsection{Orthogonal complements, projections, best approximation, and the pseudoinverse (Ch.~18, LADR 6C)}
+
+\begin{qbox}
+  Given a vector $v\in V$ and a finite-dimensional subspace $U\subseteq V$ (for instance, a plane in $\RR^3$ or the subspace $\PP_5(\RR)$ of degree-$5$ polynomials inside $C([-\pi,\pi])$), which vector $u\in U$ is closest to $v$ in the norm $\|\cdot\|$, and how can we compute $u$ and the minimum distance $\min_{u\in U}\|v-u\|$ directly?
+\end{qbox}
+
+When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-inner-products}{name-ladr-6-13-orthogonal-decomposition}{LADR 6.13} decomposed every $v\in V$ into $v=u+w$ with $u=\ip v{e_1}e_1\in U$ and $w=v-u\perp U$. Extending this idea to any finite-dimensional subspace $U$ splits $V$ into the direct sum of $U$ and the subspace $U^\perp$ of vectors perpendicular to all of $U$.
+
+\begin{definition*}[Def.~47 / LADR 6.46: Orthogonal complement $U^\perp$]\target{def-47}
+  For any subset $U\subseteq V$, the \vocab{orthogonal complement} of $U$, denoted $U^\perp$, is the set of all vectors in $V$ that are orthogonal to every vector in $U$:
+  \[
+    U^\perp = \{v\in V : \ip vu = 0 \text{ for all }u\in U\}.
+  \]
+\end{definition*}
+
+\begin{itemize}
+  \ii \textbf{Basic properties of the orthogonal complement (LADR 6.48):}
+  \begin{enumerate}[(a)]
+    \ii If $U$ is any subset of $V$, then $U^\perp$ is a \emph{subspace} of $V$ (since $\ip 0u=0$ and $\ip{\lambda v+w}{u}=\lambda\ip vu+\ip wu=0$ for all $u\in U$).
+    \ii $\{0\}^\perp = V$ and $V^\perp = \{0\}$ (if $v\in V^\perp$, then $\ip vv=0$, so definiteness gives $v=0$).
+    \ii If $U$ is a subspace of $V$, then $U\cap U^\perp = \{0\}$ (any $u\in U\cap U^\perp$ satisfies $\ip uu=0$, so $u=0$).
+    \ii If $U\subseteq W\subseteq V$, then $W^\perp\subseteq U^\perp$ (a vector orthogonal to all of $W$ is orthogonal to all of $U$).
+    \ii For any subspaces $U,W\subseteq V$, $(U+W)^\perp = U^\perp\cap W^\perp$ (since $v\perp u+w$ for all $u\in U,w\in W$ iff $v\perp u$ for all $u\in U$ and $v\perp w$ for all $w\in W$).
+  \end{enumerate}
+\end{itemize}
+
+\begin{theorem*}[Prop.~89 / LADR 6.49, 6.50: Direct sum $V=U\oplus U^\perp$ and $\dim U^\perp$]\target{prop-89}
+  Suppose $U$ is a finite-dimensional subspace of $V$. Then
+  \[
+    V = U \oplus U^\perp.
+  \]
+  If in addition $\dim V<\infty$, then
+  \[
+    \dim U^\perp = \dim V - \dim U.
+  \]
+\end{theorem*}
+\begin{ideabox}
+  To decompose an arbitrary vector $v\in V$ as $v=u+w$ with $u\in U$ and $w\in U^\perp$, choose an orthonormal basis $e_1,\dots,e_m$ of the finite-dimensional subspace $U$ (which exists by Gram--Schmidt, \ilink{prop-87}{Prop.~87}). Just as in Bessel's inequality, set $u=\sum_{k=1}^m\ip v{e_k}e_k\in U$ and $w=v-u$. Because subtracting $\ip v{e_k}e_k$ cancels the inner product with each $e_k$, we have $\ip w{e_k}=0$ for $k=1,\dots,m$, so $w$ is orthogonal to every linear combination of $e_1,\dots,e_m$, meaning $w\in U^\perp$. Uniqueness of the decomposition is guaranteed by $U\cap U^\perp=\{0\}$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Choose an orthonormal basis $e_1,\dots,e_m$ of the finite-dimensional subspace $U$. For any $v\in V$, define
+    \[
+      u = \sum_{k=1}^m \ip v{e_k}e_k \in U \qquad\text{and}\qquad w = v - u.
+    \]
+    \ii Clearly $v=u+w$. For each $j\in\{1,\dots,m\}$, $\ip w{e_j}=\ip v{e_j}-\sum_{k=1}^m\ip v{e_k}\delta_{kj}=0$. Since $e_1,\dots,e_m$ spans $U$, conjugate-linearity in the second slot implies $\ip wz=0$ for every $z\in U$, so $w\in U^\perp$. Thus $V=U+U^\perp$.
+    \ii By LADR 6.48(c), $U\cap U^\perp=\{0\}$, so the sum is direct: $V=U\oplus U^\perp$.
+    \ii When $\dim V<\infty$, taking dimensions of $V=U\oplus U^\perp$ gives $\dim V=\dim U+\dim U^\perp$, so $\dim U^\perp=\dim V-\dim U$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[Prop.~90 / LADR 6.52: Double orthogonal complement $(U^\perp)^\perp=U$]\target{prop-90}
+  Suppose $U$ is a finite-dimensional subspace of $V$. Then
+  \[
+    (U^\perp)^\perp = U.
+  \]
+  Furthermore, if $\dim V<\infty$ and $U,W\subseteq V$ are subspaces, then $(U\cap W)^\perp = U^\perp + W^\perp$.
+\end{proposition*}
+\begin{ideabox}
+  Every $u\in U$ is orthogonal to every $w\in U^\perp$ by the definition of $U^\perp$, so the inclusion $U\subseteq(U^\perp)^\perp$ is automatic. To show that no vector outside $U$ can sneak into $(U^\perp)^\perp$ (even when $V$ is infinite-dimensional!), take any $v\in(U^\perp)^\perp$ and split $v=u+w$ with $u\in U$ and $w\in U^\perp$ using \ilink{prop-89}{Prop.~89}. Since both $v$ and $u$ lie in the subspace $(U^\perp)^\perp$, their difference $w=v-u$ lies in $(U^\perp)^\perp$ as well as in $U^\perp$, so $w$ is orthogonal to itself and must be $0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Let $u\in U$. For every $w\in U^\perp$, $\ip uw=\overline{\ip wu}=0$, so $u\in(U^\perp)^\perp$. Thus $U\subseteq(U^\perp)^\perp$.
+    \ii Conversely, let $v\in(U^\perp)^\perp$. By \ilink{prop-89}{Prop.~89}, write $v=u+w$ with $u\in U$ and $w\in U^\perp$.
+    \ii By Step~1, $u\in(U^\perp)^\perp$; since $v\in(U^\perp)^\perp$ and $(U^\perp)^\perp$ is a subspace, $w=v-u\in(U^\perp)^\perp$. Because $w\in U^\perp$ as well, we have $\ip ww=0$, so definiteness gives $w=0$ and $v=u\in U$. Thus $(U^\perp)^\perp=U$.
+    \ii When $\dim V<\infty$, applying LADR 6.48(e) to $U^\perp$ and $W^\perp$ gives $(U^\perp+W^\perp)^\perp=(U^\perp)^\perp\cap(W^\perp)^\perp=U\cap W$; taking $\perp$ of both sides gives $U^\perp+W^\perp=(U\cap W)^\perp$.
+  \end{steps}
+\end{proof}
+
+\begin{definition*}[Def.~48 / LADR 6.55: Orthogonal projection $P_U$]\target{def-48}
+  Suppose $U$ is a finite-dimensional subspace of $V$. The \vocab{orthogonal projection} of $V$ onto $U$ is the operator $P_U\in\LL(V)$ defined as follows: for each $v\in V$, write $v=u+w$ with $u\in U$ and $w\in U^\perp$ (\ilink{prop-89}{Prop.~89}), and set
+  \[
+    P_U v = u.
+  \]
+\end{definition*}
+
+\begin{proposition*}[Prop.~91--92 / LADR 6.57: Projectors and the nine properties of $P_U$]\target{prop-91}\target{prop-92}
+  \begin{enumerate}[(A)]
+    \ii \textbf{General projectors (Prop.~91):} If $P\in\LL(V)$ satisfies $P^2=P$, then $V=\nul P\oplus\range P$. Such an idempotent operator $P$ is an orthogonal projection ($P=P_U$ for $U=\range P$, with $\dim U<\infty$) if and only if $\nul P=(\range P)^\perp$, if and only if $\|Pv\|\le\|v\|$ for all $v\in V$.
+    \ii \textbf{Nine properties of the orthogonal projection $P_U$ (LADR 6.57):} For any finite-dimensional subspace $U\subseteq V$:
+    \begin{enumerate}[(a)]
+      \ii $P_U\in\LL(V)$ ($P_U$ is a linear operator on $V$);
+      \ii $P_U u = u$ for every $u\in U$;
+      \ii $P_U w = 0$ for every $w\in U^\perp$;
+      \ii $\range P_U = U$;
+      \ii $\nul P_U = U^\perp$;
+      \ii $v - P_U v \in U^\perp$ for every $v\in V$ (and if $\dim V<\infty$, then $I-P_U=P_{U^\perp}$);
+      \ii $P_U^2 = P_U$;
+      \ii $\|P_U v\| \le \|v\|$ for every $v\in V$, with equality if and only if $v\in U$;
+      \ii \textbf{Orthonormal basis formula (Prop.~92):} if $e_1,\dots,e_m$ is any orthonormal basis of $U$, then
+      \[
+        P_U v = \ip v{e_1}e_1 + \dots + \ip v{e_m}e_m = \sum_{k=1}^m \ip v{e_k}e_k \qquad\text{for all }v\in V.
+      \]
+    \end{enumerate}
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+  Every property of $P_U$ flows directly from the unique orthogonal decomposition $v=u+w$ ($u\in U$, $w\in U^\perp$): $P_U$ keeps the $U$-piece $u$ and discards the $U^\perp$-piece $w$, while $I-P_U$ keeps $w=v-P_U v\in U^\perp$. Applying Pythagoras to the orthogonal pieces $u=P_U v$ and $w=v-P_U v$ gives $\|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2\ge\|P_U v\|^2$. And why does the formula $P_U v=\sum_{k=1}^m\ip v{e_k}e_k$ in an orthonormal basis $e_1,\dots,e_m$ of $U$ use $\ip v{e_k}$ instead of $\ip{P_U v}{e_k}$? Because $v-P_U v\in U^\perp$ is orthogonal to $e_k$, so $\ip v{e_k}=\ip{P_U v}{e_k}+\ip{v-P_U v}{e_k}=\ip{P_U v}{e_k}$!
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii For (A), if $P^2=P$, then $v=(v-Pv)+Pv$ with $P(v-Pv)=0$ and $Pv\in\range P$, and if $x\in\nul P\cap\range P$ then $x=Py\implies x=P^2y=Px=0$, so $V=\nul P\oplus\range P$. Thus $P=P_{\range P}$ iff $\nul P=(\range P)^\perp$ (and see HW10~P7 for why this is equivalent to $\|Pv\|\le\|v\|$ for all $v$).
+    \ii In (B), if $v_1=u_1+w_1$ and $v_2=u_2+w_2$ ($u_i\in U$, $w_i\in U^\perp$), then $v_1+v_2=(u_1+u_2)+(w_1+w_2)$ and $\lambda v_1=\lambda u_1+\lambda w_1$ are the unique $U\oplus U^\perp$ decompositions, proving (a).
+    \ii For $u\in U$, $u=u+0$ gives $P_U u=u$ (b); for $w\in U^\perp$, $w=0+w$ gives $P_U w=0$ (c). Hence $\range P_U=U$ (d), $\nul P_U=U^\perp$ (e), $v-P_U v=w\in U^\perp$ (f), and $P_U(P_U v)=P_U u=u=P_U v$ (g).
+    \ii Since $P_U v=u\in U$ and $v-P_U v=w\in U^\perp$ are orthogonal, Pythagoras gives $\|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2\ge\|P_U v\|^2$, with equality iff $v-P_U v=0$, i.e.\ $v\in U$, proving (h).
+    \ii Finally, in any orthonormal basis $e_1,\dots,e_m$ of $U$, the proof of \ilink{prop-89}{Prop.~89} showed that $u=\sum_{k=1}^m\ip v{e_k}e_k\in U$ satisfies $v-u\in U^\perp$, so by uniqueness of the decomposition $v=u+w$, $P_U v=u=\sum_{k=1}^m\ip v{e_k}e_k$, proving (i).
+  \end{steps}
+\end{proof}
+
+\begin{itemize}
+  \ii \textbf{Coordinate-free geometric proof of Riesz representation via $U^\perp$ (LADR 6.58):} Now that we have \ilink{prop-89}{Prop.~89} and \ilink{prop-91}{Prop.~91}, we can see the geometry of \ilink{prop-88}{Prop.~88} ($\psi(u)=\ip uv$) without choosing a basis of $V$. If $\psi=0$, then $v=0$. If $\psi\ne 0$, let $U=\nul\psi$; by rank--nullity (T1), $U$ is a hyperplane of dimension $n-1$, so \ilink{prop-89}{Prop.~89} gives $\dim U^\perp=1$. Choose a unit vector $e\in U^\perp$ ($U^\perp=\spn(e)$). For every $u\in V$, $P_{U^\perp}u=\ip ue\,e$, and $u-P_{U^\perp}u=P_U u\in U=\nul\psi$. Applying $\psi$ to $u=P_U u+\ip ue\,e$ gives
+  \[
+    \psi(u) = 0 + \ip ue\psi(e) = \ip{u}{\overline{\psi(e)}e},
+  \]
+  so the representing vector $v=\overline{\psi(e)}e$ is simply the unique vector in the $1$-dimensional line $(\nul\psi)^\perp$ with $\psi(v)=\|v\|^2$!
+\end{itemize}
+
+\begin{theorem*}[LADR 6.61 / HW10 P5: Minimization of distance to a subspace (best approximation)]\target{name-best-approximation}\target{name-hw10-p5-ladr-6-61-best-approximation}
+  Suppose $U$ is a finite-dimensional subspace of $V$, $v\in V$, and $u\in U$. Then
+  \[
+    \|v - P_U v\| \le \|v - u\|.
+  \]
+  Furthermore, the inequality is an equality if and only if $u = P_U v$. Thus $P_U v$ is the unique point in $U$ closest to $v$, and $\|v-P_U v\|$ is the distance from $v$ to $U$.
+\end{theorem*}
+\begin{ideabox}
+  To compare the distance $\|v-u\|$ from $v$ to an arbitrary candidate $u\in U$ against the perpendicular distance $\|v-P_U v\|$, insert $P_U v$ into the difference: $v-u=(v-P_U v)+(P_U v-u)$. The first piece $v-P_U v$ lies in $U^\perp$ (and does not depend on $u$), while the second piece $P_U v-u$ lies in $U$ because both $P_U v$ and $u$ are in the subspace $U$. Therefore the two pieces are orthogonal, and the Pythagorean theorem splits the squared error into
+  \[
+    \|v-u\|^2 = \|v-P_U v\|^2 + \|P_U v-u\|^2.
+  \]
+  Since the first term is fixed and the second term $\|P_U v-u\|^2\ge 0$ vanishes if and only if $u=P_U v$, the unique minimizer is $u=P_U v$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Write $v-u = (v-P_U v) + (P_U v-u)$. By \ilink{prop-91}{LADR 6.57(f)}, $v-P_U v\in U^\perp$, while $P_U v-u\in U$ because $P_U v\in U$ and $u\in U$.
+    \ii Hence $(v-P_U v)\perp(P_U v-u)$. Applying the Pythagorean theorem gives
+    \[
+      \|v-u\|^2 = \|v-P_U v\|^2 + \|P_U v-u\|^2 \ge \|v-P_U v\|^2.
+    \]
+    \ii Taking nonnegative square roots gives $\|v-P_U v\|\le\|v-u\|$, with equality iff $\|P_U v-u\|^2=0$, which by definiteness holds iff $u=P_U v$.
+  \end{steps}
+\end{proof}
+
+\begin{fig}
+\tdplotsetmaincoords{68}{115}
+\begin{tikzpicture}[tdplot_main_coords,scale=1.15,>=Stealth]
+  \begin{scope}[tdplot_screen_coords]
+    \fill[figbg,rounded corners=4pt] (-4.5,-2.0) rectangle (5.7,3.45);
+    \draw[figslate!30,rounded corners=4pt] (-4.5,-2.0) rectangle (5.7,3.45);
+  \end{scope}
+
+  % Subspace plane U
+  \fill[figplane] (-1.5,-1.2,0) -- (3.3,-1.2,0) -- (3.3,3.3,0) -- (-1.5,3.3,0) -- cycle;
+  \draw[figblue!45,thin] (-1.5,-1.2,0) -- (3.3,-1.2,0) -- (3.3,3.3,0) -- (-1.5,3.3,0) -- cycle;
+  \node[figblue!85!black,font=\small\bfseries] at (2.7,-0.75,0) {$U$};
+
+  \coordinate (O) at (0,0,0);
+  \coordinate (PU) at (2.15,0.65,0);
+  \coordinate (V) at (2.15,0.65,2.45);
+  \coordinate (Upt) at (-0.35,2.85,0);
+  \coordinate (W) at (0,0,2.45);
+
+  % Axes
+  \draw[figaxis] (-1.2,0,0) -- (3.1,0,0);
+  \draw[figaxis] (0,-1.0,0) -- (0,3.2,0);
+  \draw[figaxis] (0,0,0) -- (0,0,2.95) node[above,font=\footnotesize,text=figgreen] {$U^\perp$};
+
+  % Right-angle mark at PU between vertical leg and horizontal leg to Upt
+  \draw[figslate,thin] (2.15,0.65,0.28) -- (1.92,0.85,0.28) -- (1.92,0.85,0);
+
+  % Orthogonal projection P_U v
+  \draw[figvec,figblue,very thick] (O) -- (PU);
+  \node[figblue,font=\small,below left,xshift=-2pt] at (PU) {$P_U v$};
+
+  % Vector v
+  \draw[figvec,figslate!90!black,very thick] (O) -- (V) node[above,yshift=2pt] {$v$};
+
+  % Perpendicular error v - P_U v (label placed cleanly on the left with halo)
+  \draw[figvec,figgreen,very thick] (PU) -- (V);
+  \node[figgreen,halo,font=\footnotesize,left,xshift=-4pt] at (2.15,0.65,1.15) {$v - P_U v \in U^\perp$};
+
+  % (I - P_U)v on U^\perp axis
+  \draw[figvec,figgreen,thick] (O) -- (W) node[above left,xshift=-2pt,font=\footnotesize] {$P_{U^\perp}v = v - P_U v$};
+  \draw[figguide] (W) -- (V);
+
+  % Competitor u in U and right-triangle leg P_U v - u and hypotenuse v - u
+  \draw[figvec,figamber,very thick] (Upt) -- (PU);
+  \node[figamber!90!black,halo,font=\footnotesize,below right,xshift=2pt,yshift=-2pt] at (0.95,1.75,0) {$P_U v - u \in U$};
+
+  \draw[figvec,figred,very thick,dashed] (Upt) -- (V);
+  \node[figred,halo,font=\footnotesize,above right,xshift=4pt] at (0.8,1.85,1.35) {$v - u$};
+
+  \fill[black] (O) circle (1.4pt) node[below left,font=\scriptsize] {$0$};
+  \fill[figblue] (PU) circle (1.6pt);
+  \fill[figamber!90!black] (Upt) circle (1.6pt) node[right,xshift=2pt,font=\small] {$u\in U$};
+\end{tikzpicture}
+\figcap{Three-dimensional geometry of orthogonal decomposition $v=P_U v+P_{U^\perp}v$ and Best Approximation (LADR 6.61). For any point $u\in U$, the error vector $v-u$ is the hypotenuse of a right triangle in $V$ whose vertical leg $v-P_U v\in U^\perp$ is orthogonal to the horizontal leg $P_U v-u\in U$. By Pythagoras, $\|v-u\|^2=\|v-P_U v\|^2+\|P_U v-u\|^2$, which is minimized uniquely when the horizontal leg vanishes ($u=P_U v$).}
+\end{fig}
+
+\begin{example*}[Ex.~71: Best linear approximation of $x^3$ on ${[0,1]}$]\target{ex-71}
+  In $C([0,1])$ with $\ip pq=\int_0^1 p(x)q(x)\,dx$, let $U=\PP_1(\RR)=\spn(1,x)$ and $v(x)=x^3$. Using the orthonormal basis $e_1=1$, $e_2=\sqrt{3}(2x-1)$ of $U$ from \ilink{ex-70}{Ex.~70}, we compute
+  \[
+    \ip{x^3}{e_1} = \int_0^1 x^3\,dx = \frac{1}{4}, \qquad \ip{x^3}{e_2} = \sqrt{3}\int_0^1 x^3(2x-1)\,dx = \sqrt{3}\left(\frac{2}{5}-\frac{1}{4}\right) = \frac{3\sqrt 3}{20}.
+  \]
+  By \ilink{prop-92}{Prop.~92}, the orthogonal projection (and unique best $L^2([0,1])$ linear approximation to $x^3$) is
+  \[
+    P_U(x^3) = \ip{x^3}{e_1}e_1 + \ip{x^3}{e_2}e_2 = \frac{1}{4}\cdot 1 + \frac{3\sqrt 3}{20}\cdot\sqrt{3}(2x-1) = \frac{1}{4} + \frac{9}{20}(2x-1) = \frac{9}{10}x - \frac{1}{5}.
+  \]
+  \emph{Check:} The residual $x^3-P_U(x^3)=x^3-\frac{9}{10}x+\frac{1}{5}$ satisfies $\int_0^1(x^3-\frac{9}{10}x+\frac{1}{5})\,dx=\frac{1}{4}-\frac{9}{20}+\frac{1}{5}=0$ and $\int_0^1 x(x^3-\frac{9}{10}x+\frac{1}{5})\,dx=\frac{1}{5}-\frac{3}{10}+\frac{1}{10}=0$, confirming $v-P_U v\in U^\perp$.
+\end{example*}
+
+\begin{itemize}
+  \ii \textbf{Polynomial approximation of $\sin x$ on $[-\pi,\pi]$ vs.\ Taylor polynomials (LADR 6.63):} On $C([-\pi,\pi])$ with $\ip fg=\int_{-\pi}^\pi f(x)g(x)\,dx$, suppose we want a degree-$5$ polynomial $u\in U=\PP_5(\RR)$ approximating $v(x)=\sin x$ on the entire interval $[-\pi,\pi]$. The degree-$5$ Taylor polynomial $T_5(x)=x-\frac{x^3}{6}+\frac{x^5}{120}$ is engineered to match derivatives at $x=0$ only, so near the endpoints $x=\pm\pi$ its error balloons to $|T_5(\pi)-\sin\pi|\approx 0.524$. By contrast, applying Gram--Schmidt to $1,x,x^2,x^3,x^4,x^5$ on $[-\pi,\pi]$ and computing the orthogonal projection $P_U(\sin x)$ (since $\sin x$ is odd, its inner products with the even basis polynomials vanish!) yields
+  \[
+    P_{\PP_5}(\sin x) \approx 0.987862\,x - 0.155271\,x^3 + 0.005643\,x^5,
+  \]
+  whose maximum pointwise error on $[-\pi,\pi]$ is less than $0.0056$---nearly $100$ times smaller than Taylor's!
+\end{itemize}
+
+\begin{fig}
+\begin{tikzpicture}
+  \begin{axis}[
+    handoutplot,
+    width=11.2cm,
+    height=4.8cm,
+    xmin=-3.25, xmax=3.25,
+    ymin=-1.35, ymax=1.35,
+    xlabel={$x$},
+    ylabel={$y$},
+    xtick={-3.14159,-1.5708,0,1.5708,3.14159},
+    xticklabels={$-\pi$,$-\pi/2$,$0$,$\pi/2$,$\pi$},
+    ytick={-1,0,1},
+    legend style={at={(0.5,1.06)},anchor=south,font=\scriptsize,fill=white,draw=figslate!30},
+    legend cell align={left},
+  ]
+    % True sin(x) and L2 projection (visually indistinguishable at plot scale)
+    \addplot[figblue,very thick,samples=120,domain=-3.14159:3.14159] {sin(deg(x))};
+    \addlegendentry{$\sin x$ and $P_{\PP_5}(\sin x)$ (max error $<0.0056$ on $[-\pi,\pi]$)}
+
+    % Degree-5 Taylor polynomial
+    \addplot[figred,thick,dashed,samples=120,domain=-3.14159:3.14159] {x - x^3/6 + x^5/120};
+    \addlegendentry{Degree-$5$ Taylor $x - x^3/6 + x^5/120$ (error $0.524$ at $\pm\pi$)}
+  \end{axis}
+\end{tikzpicture}
+\figcap{Comparison of $\sin x$ on $[-\pi,\pi]$ with its degree-$5$ Taylor polynomial about $0$ (dashed red) and its $L^2([-\pi,\pi])$ orthogonal projection $P_{\PP_5}(\sin x)\approx 0.987862x-0.155271x^3+0.005643x^5$ onto $\PP_5(\RR)$ (LADR 6.63). Orthogonal projection minimizes $\int_{-\pi}^\pi|\sin x-p(x)|^2\,dx$, distributing error evenly across $[-\pi,\pi]$ so that $P_{\PP_5}(\sin x)$ is visually indistinguishable from $\sin x$ on the entire interval.}
+\end{fig}
+
+\needspace{10\baselineskip}\textbf{The pseudoinverse $T^\dagger$ and linear equations $Tx=b$ (LADR 6.67--6.70).} Suppose $V,W$ are inner product spaces with $\dim V<\infty$ and $T\in\LL(V,W)$. When $T$ is not invertible, $Tx=b$ may have no solution (if $b\notin\range T$) or infinitely many solutions (if $\nul T\ne\{0\}$). Orthogonal projections resolve both obstacles simultaneously:
+\begin{itemize}
+  \ii \textbf{Bijection from $(\nul T)^\perp$ onto $\range T$ (LADR 6.67):} Because $V=\nul T\oplus(\nul T)^\perp$ (\ilink{prop-89}{Prop.~89}), the restriction $T|_{(\nul T)^\perp}\colon(\nul T)^\perp\to\range T$ is a linear bijection: it is injective because $\nul(T|_{(\nul T)^\perp})=\nul T\cap(\nul T)^\perp=\{0\}$, and surjective because for any $v=u+w$ ($u\in\nul T$, $w\in(\nul T)^\perp$), $Tv=Tu+Tw=Tw\in\range(T|_{(\nul T)^\perp})$.
+  \ii \textbf{Definition of the pseudoinverse $T^\dagger\in\LL(W,V)$ (LADR 6.68):} First project $w\in W$ orthogonally onto $\range T$ via $P_{\range T}$, then pull back to $(\nul T)^\perp$ by the inverse of $T|_{(\nul T)^\perp}$:
+  \[
+    T^\dagger w = \big(T|_{(\nul T)^\perp}\big)^{-1}(P_{\range T}w) \qquad\text{for all }w\in W.
+  \]
+  \ii \textbf{Algebraic properties of $T^\dagger$ (LADR 6.69):}
+  \begin{enumerate}[(a)]
+    \ii If $T$ is invertible, then $T^\dagger = T^{-1}$ (since $(\nul T)^\perp=V$ and $P_{\range T}=I_W$).
+    \ii $TT^\dagger = P_{\range T}$ is the orthogonal projection of $W$ onto $\range T$, and $T^\dagger T = P_{(\nul T)^\perp}$ is the orthogonal projection of $V$ onto $(\nul T)^\perp$.
+  \end{enumerate}
+  \ii \textbf{Best approximate and minimum-norm solution of $Tx=b$ (LADR 6.70):} For any $b\in W$ and $x\in V$:
+  \begin{enumerate}[(a)]
+    \ii $\|T(T^\dagger b)-b\| = \|P_{\range T}b-b\| \le \|Tx-b\|$, with equality if and only if $Tx=P_{\range T}b$, which holds if and only if $x\in T^\dagger b+\nul T$. Thus $x_*=T^\dagger b$ makes $Tx$ as close to $b$ as possible (a \emph{least-squares solution}).
+    \ii For every $x\in T^\dagger b+\nul T$ (say $x=T^\dagger b+u$ with $u\in\nul T$), since $T^\dagger b\in(\nul T)^\perp$ is orthogonal to $u\in\nul T$, Pythagoras gives $\|x\|^2=\|T^\dagger b\|^2+\|u\|^2\ge\|T^\dagger b\|^2$, with equality iff $u=0$ ($x=T^\dagger b$). Thus among all vectors $x\in V$ that minimize $\|Tx-b\|$, $x_*=T^\dagger b$ is the unique vector of smallest norm!
+  \end{enumerate}
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{Two ways to compute $P_U v$:}
+  \begin{enumerate}[(1)]
+    \ii \emph{Orthonormal basis method (\ilink{prop-92}{Prop.~92}):} Run Gram--Schmidt on a basis of $U$ to get an ONB $e_1,\dots,e_m$, then compute $P_U v=\sum_{k=1}^m\ip v{e_k}e_k$. Best when $\dim U$ is small or an ONB is already known.
+    \ii \emph{Normal equations method:} If $u_1,\dots,u_m$ is any basis of $U$, write $P_U v=\sum_{i=1}^m c_iu_i$ with unknown scalars $c_i$ and impose $v-P_U v\in U^\perp$ by solving the $m\times m$ linear system $\ip{v-\sum_{i=1}^m c_iu_i}{u_j}=0$ ($j=1,\dots,m$). Best when $\dim U=1$ or $2$ and normalizing involves square roots.
+  \end{enumerate}
+  \ii \textbf{Using $I-P_U=P_{U^\perp}$ when $\dim U^\perp<\dim U$:} If $\dim V=4$ and $\dim U=3$, then $\dim U^\perp=1$. Instead of finding an orthonormal basis of $3$ vectors for $U$, find one nonzero vector $w\in U^\perp$ and compute $P_U v = v - P_{U^\perp}v = v - \frac{\ip vw}{\|w\|^2}w$.
+  \ii \textbf{Finding $U^\perp$ as a null space:} If $U=\spn(u_1,\dots,u_m)$, then $v\in U^\perp\iff\ip v{u_j}=0$ for $j=1,\dots,m$. In $\FF^n$ with the standard inner product, $U^\perp$ is simply the null space of the $m\times n$ matrix whose rows are $\overline{u_1}^{\mathsf T},\dots,\overline{u_m}^{\mathsf T}$.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Not every idempotent operator ($P^2=P$) is an orthogonal projection:} On $\RR^2$, $P(x,y)=(x+y,0)$ satisfies $P^2=P$, $\range P=\spn(e_1)$, and $\nul P=\spn((1,-1))$. Since $\nul P$ is \emph{not} orthogonal to $\range P$, $P$ is an oblique projection, not an orthogonal projection---and indeed $\|P(1,1)\|=\|(2,0)\|=2>\sqrt{2}=\|(1,1)\|$, violating $\|P_U v\|\le\|v\|$.
+  \ii \textbf{Finite dimensionality of $U$ is essential for $V=U\oplus U^\perp$ and $(U^\perp)^\perp=U$:} In the infinite-dimensional space $V=C([0,1])$ with $\ip fg=\int_0^1 f(x)g(x)\,dx$ (or $\PP(\RR)$), the infinite-dimensional subspace $U=\{f\in C([0,1]):f(0)=0\}$ has $U^\perp=\{0\}$, so $U\oplus U^\perp=U\ne V$ and $(U^\perp)^\perp=V\ne U$.
+  \ii \textbf{Projecting onto $u_1,\dots,u_m$ separately works ONLY if $u_1,\dots,u_m$ are mutually orthogonal:} If $u_1,u_2$ is a non-orthogonal basis of $U$, $P_U v$ is \emph{not} $\frac{\ip v{u_1}}{\|u_1\|^2}u_1+\frac{\ip v{u_2}}{\|u_2\|^2}u_2$. You must orthogonalize the basis of $U$ first (or solve the normal equations).
+\end{trapbox}
 
 \section{Problem set}
 
