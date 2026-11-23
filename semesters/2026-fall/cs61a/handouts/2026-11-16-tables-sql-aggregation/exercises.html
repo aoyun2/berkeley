@@ -4,8 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Week 13 exercises &mdash; COMPSCI 61A</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/styles/github.min.css">
 <link rel="stylesheet" href="../../../../../assets/exercises.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/sql/sql.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/languages/sql.min.js"></script>
 </head>
 <body>
 
@@ -28,37 +34,39 @@
   </div>
 </div>
 
-<details open>
-  <summary>Database tables (books, loans)</summary>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>books: title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
-      <tbody>
-        <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
-        <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
-        <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
-        <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
-        <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
-        <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
-        <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
-      </tbody>
-    </table>
+<section class="schema-panel">
+  <h2>Database tables (<code>books</code>, <code>loans</code>)</h2>
+  <div class="schema-grid">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>books: title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
+        <tbody>
+          <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
+          <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
+          <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
+          <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
+          <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
+          <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
+          <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>loans: title</th><th>member</th><th>days</th></tr></thead>
+        <tbody>
+          <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
+          <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
+          <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
+          <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
+          <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
+          <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
+          <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>loans: title</th><th>member</th><th>days</th></tr></thead>
-      <tbody>
-        <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
-        <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
-        <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
-        <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
-        <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
-        <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
-        <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
-      </tbody>
-    </table>
-  </div>
-</details>
+</section>
 
 <!-- E1 -->
 <div class="exercise-block">
@@ -73,8 +81,8 @@
   <div class="test-output" id="output-e1" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e1 as
-  select title from books where pages &gt; 260 order by pages desc;</pre>
+    <pre><code class="language-sql">create table e1 as
+  select title from books where pages &gt; 260 order by pages desc;</code></pre>
   </details>
 </div>
 
@@ -91,9 +99,9 @@
   <div class="test-output" id="output-e2" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e2 as
+    <pre><code class="language-sql">create table e2 as
   select author, count(*) as n, sum(pages) as total from books
-    group by author having count(*) &gt;= 2 order by author;</pre>
+    group by author having count(*) &gt;= 2 order by author;</code></pre>
   </details>
 </div>
 
@@ -110,8 +118,8 @@
   <div class="test-output" id="output-e3" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e3 as
-  select member, l.title, author from loans as l join books as b on l.title = b.title;</pre>
+    <pre><code class="language-sql">create table e3 as
+  select member, l.title, author from loans as l join books as b on l.title = b.title;</code></pre>
   </details>
 </div>
 
@@ -128,9 +136,9 @@
   <div class="test-output" id="output-e4" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e4 as
+    <pre><code class="language-sql">create table e4 as
   select a.title as first, b.title as second from books as a, books as b
-    where a.author = b.author and a.title &lt; b.title;</pre>
+    where a.author = b.author and a.title &lt; b.title;</code></pre>
   </details>
 </div>
 
@@ -147,8 +155,8 @@
   <div class="test-output" id="output-e5" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e5 as
-  select member, sum(days) as total from loans group by member order by total desc limit 1;</pre>
+    <pre><code class="language-sql">create table e5 as
+  select member, sum(days) as total from loans group by member order by total desc limit 1;</code></pre>
   </details>
 </div>
 
@@ -165,9 +173,9 @@
   <div class="test-output" id="output-e6" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e6 as
+    <pre><code class="language-sql">create table e6 as
   select author from books as b join loans as l on b.title = l.title
-    group by author having count(distinct member) &gt;= 2;</pre>
+    group by author having count(distinct member) &gt;= 2;</code></pre>
   </details>
 </div>
 
@@ -184,8 +192,8 @@
   <div class="test-output" id="output-e7" style="display: none;"></div>
   <details>
     <summary>Solution</summary>
-    <pre>create table e7 as
-  select year/10*10 as decade, count(*) as n from books group by decade order by decade;</pre>
+    <pre><code class="language-sql">create table e7 as
+  select year/10*10 as decade, count(*) as n from books group by decade order by decade;</code></pre>
   </details>
 </div>
 
@@ -233,22 +241,18 @@ const EXPECTED = {
 
 let SQL_ENGINE = null;
 let passState = { e1: false, e2: false, e3: false, e4: false, e5: false, e6: false, e7: false };
+const cmInstances = {};
 
-function enableTabSupport(textarea) {
-  textarea.addEventListener('keydown', function(e) {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const s = this.selectionStart, end = this.selectionEnd;
-      this.value = this.value.substring(0, s) + '  ' + this.value.substring(end);
-      this.selectionStart = this.selectionEnd = s + 2;
-      triggerSave();
-    } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      const id = this.id.replace('code-', '');
-      runExercise(id);
-    }
-  });
-  textarea.addEventListener('input', triggerSave);
+function getSqlValue(k) {
+  return cmInstances[k] ? cmInstances[k].getValue() : document.getElementById('code-' + k).value;
+}
+
+function setSqlValue(k, val) {
+  if (cmInstances[k]) {
+    cmInstances[k].setValue(val);
+  } else {
+    document.getElementById('code-' + k).value = val;
+  }
 }
 
 let saveTimer = null;
@@ -256,8 +260,7 @@ function triggerSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     Object.keys(STARTER).forEach(k => {
-      const el = document.getElementById('code-' + k);
-      if (el) localStorage.setItem('cs61a_sql_' + k, el.value);
+      localStorage.setItem('cs61a_sql_' + k, getSqlValue(k));
     });
   }, 400);
 }
@@ -267,19 +270,36 @@ function loadSaved() {
     const el = document.getElementById('code-' + k);
     const saved = localStorage.getItem('cs61a_sql_' + k);
     el.value = saved !== null ? saved : STARTER[k];
-    enableTabSupport(el);
+    if (window.CodeMirror) {
+      const cm = CodeMirror.fromTextArea(el, {
+        mode: 'text/x-sql',
+        lineNumbers: true,
+        viewportMargin: Infinity,
+        indentUnit: 2,
+        tabSize: 2,
+        lineWrapping: true,
+        extraKeys: {
+          'Ctrl-Enter': () => runExercise(k),
+          'Cmd-Enter': () => runExercise(k)
+        }
+      });
+      cm.on('change', triggerSave);
+      cmInstances[k] = cm;
+    } else {
+      el.addEventListener('input', triggerSave);
+    }
   });
 }
 
 function assembleFullScript() {
   return `-- CS 61A Week 13 exercises: fill in each query. Tables are in data.sql.\n\n` +
-    `-- E1. Titles of books with more than 260 pages, longest first.\n${document.getElementById('code-e1').value.trim()}\n\n` +
-    `-- E2. Each author with number of books and total pages (authors with at least two books), by author.\n${document.getElementById('code-e2').value.trim()}\n\n` +
-    `-- E3. For each loan: member, title, author.\n${document.getElementById('code-e3').value.trim()}\n\n` +
-    `-- E4. Pairs of different books by the same author, each pair once.\n${document.getElementById('code-e4').value.trim()}\n\n` +
-    `-- E5. The member with the most total loan days, and the total.\n${document.getElementById('code-e5').value.trim()}\n\n` +
-    `-- E6. Authors whose books were borrowed by at least two different members.\n${document.getElementById('code-e6').value.trim()}\n\n` +
-    `-- E7. Decade of each book with the number of books from it, oldest first.\n${document.getElementById('code-e7').value.trim()}\n`;
+    `-- E1. Titles of books with more than 260 pages, longest first.\n${getSqlValue('e1').trim()}\n\n` +
+    `-- E2. Each author with number of books and total pages (authors with at least two books), by author.\n${getSqlValue('e2').trim()}\n\n` +
+    `-- E3. For each loan: member, title, author.\n${getSqlValue('e3').trim()}\n\n` +
+    `-- E4. Pairs of different books by the same author, each pair once.\n${getSqlValue('e4').trim()}\n\n` +
+    `-- E5. The member with the most total loan days, and the total.\n${getSqlValue('e5').trim()}\n\n` +
+    `-- E6. Authors whose books were borrowed by at least two different members.\n${getSqlValue('e6').trim()}\n\n` +
+    `-- E7. Decade of each book with the number of books from it, oldest first.\n${getSqlValue('e7').trim()}\n`;
 }
 
 function normalizeCode(key, raw) {
@@ -328,7 +348,7 @@ function updateScore() {
 
 function runExercise(key) {
   if (!SQL_ENGINE) return;
-  const raw = document.getElementById('code-' + key).value;
+  const raw = getSqlValue(key);
   const statusEl = document.getElementById('status-' + key);
   const outEl = document.getElementById('output-' + key);
   outEl.style.display = 'block';
@@ -380,7 +400,7 @@ document.querySelectorAll('.btn-reset').forEach(b => {
   b.addEventListener('click', () => {
     const k = b.dataset.target;
     localStorage.removeItem('cs61a_sql_' + k);
-    document.getElementById('code-' + k).value = STARTER[k];
+    setSqlValue(k, STARTER[k]);
     document.getElementById('status-' + k).textContent = '';
     document.getElementById('output-' + k).style.display = 'none';
     passState[k] = false;
@@ -394,7 +414,7 @@ document.getElementById('btn-reset-all').addEventListener('click', () => {
   if (!confirm('Reset all exercises?')) return;
   Object.keys(STARTER).forEach(k => {
     localStorage.removeItem('cs61a_sql_' + k);
-    document.getElementById('code-' + k).value = STARTER[k];
+    setSqlValue(k, STARTER[k]);
     document.getElementById('status-' + k).textContent = '';
     document.getElementById('output-' + k).style.display = 'none';
     passState[k] = false;
@@ -413,6 +433,9 @@ document.getElementById('btn-download-sql').addEventListener('click', () => {
 
 window.addEventListener('DOMContentLoaded', async () => {
   loadSaved();
+  if (window.hljs) {
+    hljs.highlightAll();
+  }
   const statusEl = document.getElementById('engine-status');
   try {
     SQL_ENGINE = await initSqlJs({
