@@ -108,7 +108,7 @@ For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: $Ne_1=0$ and $Ne_2=e_1$.
   If $T$ has an upper-triangular matrix in some basis, the eigenvalues of $T$ are exactly the diagonal entries of that matrix.
 \end{proposition*}
 \begin{ideabox}
-$\lambda$ is an eigenvalue exactly when $T-\lambda I$ is not injective (T7). The matrix of $T-\lambda I$ is again upper-triangular, with diagonal entries $\lambda_k-\lambda$. So the question is: when is an upper-triangular matrix injective?
+$\lambda$ is an eigenvalue exactly when $T-\lambda I$ is not injective (T7). The matrix of $T-\lambda I$ is upper-triangular with diagonal entries $\lambda_k-\lambda$, so invertibility reduces to checking whether an upper-triangular matrix has nonzero diagonal entries.
 
 Try $\begin{psmallmatrix}2&5\\0&3\end{psmallmatrix}(x,y)^{\mathsf T}=0$. The bottom row says $3y=0$, so $y=0$; then the top row says $2x=0$, so $x=0$. Each row, read from the bottom up, forces one more coordinate to be $0$, as long as the diagonal entry in that row is not $0$. So a nonzero diagonal gives an injective matrix.
 
@@ -141,7 +141,7 @@ If instead some diagonal entry is $0$, say in position $j$, then $v_j$ is sent i
 \begin{ideabox}
 By \hyperref[prop-59]{Prop.~59} we need a basis in which each $Tv_k$ lies in the span of $v_k$ and the earlier vectors. Induction suggests: find a smaller invariant subspace $U$, take such a basis of $U$ (induction), and then add more vectors. The added vectors $v$ must satisfy $Tv\in U+\spn(v)$.
 
-Which $U$ makes that automatic? Write $Tv=(T-\lambda I)v+\lambda v$. The second term is a multiple of $v$. The first term lies in $\range(T-\lambda I)$, whatever $v$ is. So take $U=\range(T-\lambda I)$: then \emph{every} vector $v$ satisfies $Tv\in U+\spn(v)$.
+Writing $Tv=(T-\lambda I)v+\lambda v$, the second term is a multiple of $v$ and the first lies in $\range(T-\lambda I)$ for every $v$. Taking $U=\range(T-\lambda I)$ therefore ensures $Tv\in U+\spn(v)$ for \emph{every} vector $v$.
 
 For induction $U$ has to be smaller than $V$, i.e.\ $T-\lambda I$ must not be surjective, which for operators is the same as not injective (T2). That is exactly the condition that $\lambda$ is an eigenvalue. Over $\CC$ an eigenvalue always exists (T7); over a general field $\FF$, if $m_T(z)=(z-\lambda_1)\cdots(z-\lambda_m)$ splits over $\FF$, then $\lambda_m\in\FF$ is an eigenvalue of $T$ and the restriction $T|_U$ has minimal polynomial dividing $m_T$, which still splits over $\FF$.
 \end{ideabox}
@@ -256,7 +256,7 @@ For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: the only eigenvalue is $
   Then every eigenvalue $\lambda\in\FF$ of $T$ lies in at least one Gershgorin disk $D_j$ ($j\in\{1,\dots,n\}$).
 \end{theorem*}
 \begin{ideabox}
-  How do we locate the eigenvalues of an arbitrary $n\times n$ matrix $A$ without solving a degree-$n$ polynomial? Suppose $Ax=\lambda x$ with $x=(x_1,\dots,x_n)^{\mathsf T}\ne 0$, and consider a coordinate $x_j$ of largest modulus: $|x_j|=\max_{1\le k\le n}|x_k|>0$. Row~$j$ of $Ax=\lambda x$ reads $\sum_{k=1}^n a_{jk}x_k=\lambda x_j$; isolating $(\lambda-a_{jj})x_j=\sum_{k\ne j}a_{jk}x_k$, taking absolute values, and using $|x_k|\le|x_j|$ gives $|\lambda-a_{jj}|\,|x_j|\le\sum_{k\ne j}|a_{jk}|\,|x_j|$. Dividing by $|x_j|>0$ places $\lambda$ inside disk $D_j$.
+  Suppose $Ax=\lambda x$ with $x=(x_1,\dots,x_n)^{\mathsf T}\ne 0$, and choose a coordinate $x_j$ of largest modulus: $|x_j|=\max_{1\le k\le n}|x_k|>0$. Row~$j$ of $Ax=\lambda x$ reads $\sum_{k=1}^n a_{jk}x_k=\lambda x_j$; isolating $(\lambda-a_{jj})x_j=\sum_{k\ne j}a_{jk}x_k$, taking absolute values, and using $|x_k|\le|x_j|$ gives $|\lambda-a_{jj}|\,|x_j|\le\sum_{k\ne j}|a_{jk}|\,|x_j|$. Dividing by $|x_j|>0$ places $\lambda$ inside disk $D_j$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -397,7 +397,7 @@ The notes call each $a_jv_j$ an \vocab{eigenmode}. Under repeated application of
   For $q\in\PP(\FF)$: $q(T)=0\iff m_T\mid q$.
 \end{proposition*}
 \begin{ideabox}
-Why must every polynomial $q$ that annihilates $T$ be a multiple of $m_T$? Because $m_T$ has the smallest degree among nonzero polynomials that annihilate $T$, and polynomials can be divided with remainder ($q=m_Tr+s$ with $\deg s<\deg m_T$). Evaluating at $T$ shows that the remainder $s$ also annihilates $T$, and its degree is smaller than $\deg m_T$, forcing $s=0$.
+Every polynomial $q$ annihilating $T$ must be a multiple of $m_T$ because $m_T$ has least degree among nonzero annihilating polynomials: dividing with remainder gives $q=m_Tr+s$ ($\deg s<\deg m_T$), and evaluating at $T$ shows $s(T)=0$, forcing $s=0$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -414,9 +414,9 @@ Why must every polynomial $q$ that annihilates $T$ be a multiple of $m_T$? Becau
   The eigenvalues of $T$ are exactly the roots of $m_T$ in $\FF$. If $m_T=(x-\lambda)s$, then $s(T)\ne0$, and every nonzero vector $s(T)w$ is an eigenvector for $\lambda$.
 \end{proposition*}
 \begin{ideabox}
-Why is $m_T(\lambda)=0$ for each eigenvalue $\lambda$? On an eigenvector $v$, any polynomial in $T$ acts as multiplication by the scalar $p(\lambda)$ (T7): $0=m_T(T)v=m_T(\lambda)v\implies m_T(\lambda)=0$.
+On an eigenvector $v$ for an eigenvalue $\lambda$, any polynomial in $T$ acts as scalar multiplication by $p(\lambda)$ (T7), so $0=m_T(T)v=m_T(\lambda)v\implies m_T(\lambda)=0$.
 
-Conversely, how do we construct an eigenvector for any root $\lambda$ of $m_T$? Factor $m_T=(x-\lambda)s$. Then $(T-\lambda I)s(T)=m_T(T)=0$, so $T-\lambda I$ annihilates every vector of the form $s(T)w$. Such a vector can be chosen nonzero because $\deg s<\deg m_T$, so $s(T)\ne0$.
+Conversely, if $\lambda$ is a root of $m_T$, factoring $m_T=(x-\lambda)s$ gives $(T-\lambda I)s(T)=m_T(T)=0$, so $T-\lambda I$ annihilates every vector $s(T)w$. Because $\deg s<\deg m_T$, we have $s(T)\ne 0$, yielding a nonzero vector $s(T)w$ in $\nul(T-\lambda I)$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -431,7 +431,7 @@ Conversely, how do we construct an eigenvector for any root $\lambda$ of $m_T$? 
   $\deg m_T\le n$.
 \end{proposition*}
 \begin{ideabox}
-How do we construct a nonzero polynomial of degree $\le n$ that annihilates $T$ (so that $m_T$ divides it by \hyperref[prop-65]{Prop.~65})? For a single vector $v\ne0$, the $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $q(T)v=0$ for some $q\ne0$ of degree $\le n$. This annihilates $v$, though not necessarily all of $V$. (Doing this for each basis vector and multiplying the $q$'s would give degree up to $n^2$.)
+For any nonzero vector $v\ne 0$, the $n+1$ vectors $v,Tv,\dots,T^nv$ are linearly dependent, so $q(T)v=0$ for some $q\ne 0$ of degree $\le n$. This annihilates $v$ cleanly (whereas multiplying separate $q$'s across a basis would raise the degree to $n^2$).
 
 Instead, use induction on $\dim V$: the subspace $U=\nul q(T)$ is $T$-invariant and contains $v\ne 0$. If $U\ne V$, both $U$ and $V/U$ have dimension strictly smaller than $\dim V$. By induction, a polynomial $r$ of degree $\le\dim U$ annihilates $T|_U$, and a polynomial $p$ of degree $\le\dim V/U$ annihilates $T/U$, which means $p(T)$ sends $V$ into $U$. Thus $r(T)p(T)$ annihilates all of $V$, and its degree is $\le\dim U+\dim V/U=n$.
 \end{ideabox}
@@ -463,9 +463,9 @@ Instead, use induction on $\dim V$: the subspace $U=\nul q(T)$ is $T$-invariant 
   $T$ is diagonalizable $\iff m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ with $\lambda_1,\dots,\lambda_m\in\FF$ distinct.
 \end{proposition*}
 \begin{ideabox}
-Why does diagonalizability imply $\prod_i(T-\lambda_iI)=0$ where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues? On an eigenvector for $\lambda_j$, the factor $T-\lambda_jI$ gives $0$, and the factors commute, so let that factor act first. When $V$ has an eigenbasis, the product annihilates every basis vector and therefore annihilates $V$. Then $m_T$ divides $\prod(x-\lambda_i)$ and contains every factor $x-\lambda_i$ (\hyperref[prop-66]{Prop.~66}), so $m_T=\prod(x-\lambda_i)$.
+On an eigenvector for $\lambda_j$, the factor $T-\lambda_jI$ vanishes; since the factors of $\prod_i(T-\lambda_iI)$ commute, letting $T-\lambda_jI$ act first annihilates that eigenvector. When $V$ has an eigenbasis, the product therefore vanishes on all of $V$, so $m_T$ divides $\prod(x-\lambda_i)$ and contains every factor $x-\lambda_i$ (\hyperref[prop-66]{Prop.~66}), forcing $m_T=\prod(x-\lambda_i)$.
 
-Conversely, when $m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ has distinct roots, how do we decompose every $v\in V$ as a sum of eigenvectors? Since $(T-\lambda_jI)\prod_{i\ne j}(T-\lambda_iI)=m_T(T)=0$, every vector of the form $\prod_{i\ne j}(T-\lambda_iI)w$ lies in $E(\lambda_j,T)$. Rescaling by the Lagrange interpolation polynomials $g_j(x)=\prod_{i\ne j}\frac{x-\lambda_i}{\lambda_j-\lambda_i}$ (which equal $1$ at $\lambda_j$ and $0$ at $\lambda_i$ for $i\ne j$) makes $\sum_{j=1}^m g_j(x)-1$ a polynomial of degree $<m$ with $m$ roots, so $\sum_{j=1}^m g_j(x)=1$. Evaluating at $T$ gives $v=\sum_{j=1}^m g_j(T)v$ with each $g_j(T)v\in E(\lambda_j,T)$.
+Conversely, when $m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ has distinct roots, $(T-\lambda_jI)\prod_{i\ne j}(T-\lambda_iI)=m_T(T)=0$ implies that every vector $\prod_{i\ne j}(T-\lambda_iI)w$ lies in $E(\lambda_j,T)$. Rescaling by the Lagrange interpolation polynomials $g_j(x)=\prod_{i\ne j}\frac{x-\lambda_i}{\lambda_j-\lambda_i}$ ($1$ at $\lambda_j$ and $0$ at $\lambda_i$ for $i\ne j$) makes $\sum_{j=1}^m g_j(x)-1$ a polynomial of degree $<m$ with $m$ roots, so $\sum_{j=1}^m g_j(x)=1$. Evaluating at $T$ decomposes any $v\in V$ as $v=\sum_{j=1}^m g_j(T)v$ with $g_j(T)v\in E(\lambda_j,T)$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -506,7 +506,7 @@ Throughout, write $m_T=x^d+c_{d-1}x^{d-1}+\dots+c_1x+c_0$.
   $T$ is invertible $\iff c_0\ne0$. In that case $T^{-1}=-\dfrac1{c_0}\bigl(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I\bigr)$, a polynomial in $T$.
 \end{proposition*}
 \begin{ideabox}
-How do we express $T^{-1}$ as a polynomial in $T$ when $c_0\ne 0$? Because $m_T(T)=0$, every term of $m_T(T)$ except the constant term $c_0I$ contains a factor of $T$. Moving $c_0I$ to the other side and factoring out $T$ gives $T\cdot(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I)=-c_0I$, so dividing by $-c_0$ produces $T^{-1}$ explicitly as a polynomial in $T$.
+When $c_0\ne 0$, every term of $m_T(T)=0$ except $c_0I$ contains a factor of $T$. Moving $c_0I$ to the other side and factoring out $T$ gives $T\cdot(T^{d-1}+c_{d-1}T^{d-2}+\dots+c_1I)=-c_0I$, so dividing by $-c_0$ expresses $T^{-1}$ explicitly as a polynomial in $T$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -580,7 +580,7 @@ How do we express $T^{-1}$ as a polynomial in $T$ when $c_0\ne 0$? Because $m_T(
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-How do we determine the minimal polynomial of a transformed operator built from $T$? Any polynomial in the new operator is a polynomial in $T$ after a variable substitution: $q(T-\lambda I)=r(T)$ with $r(x)=q(x-\lambda)$. Because the substitution is reversible and preserves degree, it matches the polynomials that annihilate the new operator with the polynomials that annihilate $T$, mapping the monic polynomial of least degree to the monic polynomial of least degree.
+Any polynomial in a shifted operator is a polynomial in $T$ after a change of variable: $q(T-\lambda I)=r(T)$ with $r(x)=q(x-\lambda)$. Because this substitution is reversible and preserves degree, it matches polynomials annihilating $T-\lambda I$ with polynomials annihilating $T$, mapping the minimal polynomial of one to the minimal polynomial of the other.
 \end{ideabox}
 \begin{proof}
   (a)
@@ -609,7 +609,7 @@ How do we determine the minimal polynomial of a transformed operator built from 
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-How can we find $m_T$ from single-vector computations $v,Tv,T^2v,\dots$ (which are faster than computing matrix powers $T^k$)? Polynomials that annihilate a single vector $v$ obey the same division argument as \hyperref[prop-65]{Prop.~65}: $q(T)v=0\iff p_v\mid q$. Because an operator is $0$ iff it vanishes on every basis vector $v_1,\dots,v_n$, $q(T)=0$ holds iff $p_{v_i}\mid q$ for every $i=1,\dots,n$, giving $m_T=\operatorname{lcm}(p_{v_1},\dots,p_{v_n})$.
+Minimal polynomials $p_v$ of single vectors $v$ obey the same division argument as \hyperref[prop-65]{Prop.~65}: $q(T)v=0\iff p_v\mid q$. Because an operator vanishes iff it vanishes on every vector of a basis $v_1,\dots,v_n$, $q(T)=0$ holds iff $p_{v_i}\mid q$ for every $i=1,\dots,n$, giving $m_T=\operatorname{lcm}(p_{v_1},\dots,p_{v_n})$ from single-vector orbits $v,Tv,T^2v,\dots$ without computing matrix powers $T^k$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -624,7 +624,7 @@ How can we find $m_T$ from single-vector computations $v,Tv,T^2v,\dots$ (which a
   For a real matrix $A$, $m_A$ is the same over $\RR$ and over $\CC$. So $A$ is diagonalizable over $\CC$ $\iff m_A$ has distinct roots, and diagonalizable over $\RR$ $\iff$ in addition every root is real.
 \end{proposition*}
 \begin{ideabox}
-Why does computing $m_A$ over $\CC$ give the same polynomial as over $\RR$ when $A$ has real entries? Because \ilink{def-36}{Def.~36} finds $m_A$ by solving a system of linear equations $A^k=a_{k-1}A^{k-1}+\dots+a_0I$ whose coefficients are the real entries of powers of $A$, and Gaussian elimination on a real system finds any existing solution within $\RR$.
+Computing $m_A$ over $\CC$ gives the same polynomial as over $\RR$ when $A$ has real entries because \ilink{def-36}{Def.~36} determines $m_A$ from the real linear system $A^k=a_{k-1}A^{k-1}+\dots+a_0I$, and Gaussian elimination over $\RR$ finds any existing solution.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -650,7 +650,7 @@ Why does computing $m_A$ over $\CC$ give the same polynomial as over $\RR$ when 
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-How can we test whether a polynomial $p$ has a repeated root without factoring $p$? Geometrically, at a double root the graph of $p$ is tangent to the horizontal axis, so both $p(\lambda)$ and $p'(\lambda)$ vanish. Algebraically, the product rule applied to $(x-\lambda)^2q(x)$ leaves a factor of $x-\lambda$ in $p'(x)$, so $\gcd(p,p')\ne 1$ detects repeated roots directly.
+At a double root $\lambda$, the graph of $p$ is tangent to the horizontal axis, so both $p(\lambda)$ and $p'(\lambda)$ vanish. Algebraically, the product rule applied to $(x-\lambda)^2q(x)$ leaves a factor of $x-\lambda$ in $p'(x)$, so $\gcd(p,p')\ne 1$ detects repeated roots without factoring $p$.
 \end{ideabox}
 \begin{proof}
   (a)
@@ -674,7 +674,12 @@ How can we test whether a polynomial $p$ has a repeated root without factoring $
   Every operator on an odd-dimensional real vector space has an eigenvalue.
 \end{proposition*}
 \begin{ideabox}
-Why must every operator $T$ on an odd-dimensional real space $V$ have a real eigenvalue (a real root of $m_T$ by \hyperref[prop-66]{Prop.~66})? Over $\RR^2$, the $90^\circ$ rotation has $m_T(x)=x^2+1$ and no real root, because $\dim\RR^2=2$ is even. In general, having no real root forces $\dim V$ to be even in three steps: (A) a real polynomial with no real root is a product of irreducible quadratics $x^2+bx+c$ with $b^2<4c$; (B) for such a quadratic $p$, $\dim\nul p(T)$ is always even because each nonzero $u\in\nul p(T)$ generates a $2$-dimensional $T$-invariant plane $\spn(u,Tu)$; and (C) passing to $\range p(T)$ reduces the dimension by an even number $\dim\nul p(T)>0$, inductively forcing $\dim V$ to be even.
+Over $\RR^2$, the $90^\circ$ rotation has $m_T(x)=x^2+1$ and no real root because $\dim\RR^2=2$ is even. In general, having no real root forces $\dim V$ to be even in three steps:
+\begin{enumerate}[(A)]
+  \ii a real polynomial with no real root factors into irreducible quadratics $x^2+bx+c$ with $b^2<4c$;
+  \ii for such a quadratic $p$, $\dim\nul p(T)$ is always even because each nonzero $u\in\nul p(T)$ generates a $2$-dimensional $T$-invariant plane $\spn(u,Tu)$;
+  \ii passing to $\range p(T)$ lowers the dimension by the even integer $\dim\nul p(T)>0$, inductively forcing $\dim V$ to be even.
+\end{enumerate}
 \end{ideabox}
 \needspace{7\baselineskip}\textbf{Step A: real polynomials.} A real polynomial is a product of real linear factors and real quadratics $x^2+bx+c$ with $b^2<4c$.
 \begin{steps}
