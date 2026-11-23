@@ -78,9 +78,13 @@ else:
 \end{steps}
 \cd{not <exp>} is \cd{True} if the value of \cd{<exp>} is a false value and \cd{False} otherwise. (\cd{not} always gives \cd{True} or \cd{False}; \cd{and}/\cd{or} give one of their operands' values.)
 \begin{ideabox}
-Why these rules? For \cd{and}, a false left side already decides the answer, so Python stops and hands back what it has. For \cd{or}, a true left side already decides it. In both cases the value of the whole expression is \emph{the value of the last operand Python evaluated}. That one sentence answers every such question: find where evaluation stops, and report that operand's value.
+For \cd{and}, a false left side already decides the answer, so Python stops and hands back what it has. For \cd{or}, a true left side already decides it. In both cases the value of the whole expression is \emph{the value of the last operand Python evaluated}. That one sentence answers every such question: find where evaluation stops, and report that operand's value.
 
-Two consequences used on exams. (1) An operand that is skipped has no effect: no printing, no error. \cd{True or 1 / 0} is \cd{True}, with no division by zero. (2) A \cd{print} call as an operand has value \cd{None}, a false value, so \cd{print(1) or 2} continues to \cd{2}, and \cd{print(1) and 2} stops with \cd{None}.
+Two consequences used on exams:
+\begin{enumerate}[(1)]
+  \ii An operand that is skipped has no effect: no printing, no error. \cd{True or 1 / 0} is \cd{True}, with no division by zero.
+  \ii A \cd{print} call as an operand has value \cd{None}, a false value, so \cd{print(1) or 2} continues to \cd{2}, and \cd{print(1) and 2} stops with \cd{None}.
+\end{enumerate}
 \end{ideabox}
 \begin{py}
 >>> 1 or 2
@@ -138,7 +142,7 @@ def smallest_factor(n):
     return k
 \end{py}
 \begin{ideabox}
-The job is split in two: one function finds one factor, the other repeats. Each loop has one name that changes (\cd{k} in one, \cd{n} in the other) and a condition that says when to stop. Why is the smallest factor greater than 1 always prime? If it had a smaller factor greater than 1, that would be a smaller factor of \cd{n}.
+The job is split in two: one function finds one factor, the other repeats. Each loop has one name that changes (\cd{k} in one, \cd{n} in the other) and a condition that says when to stop. The smallest factor greater than 1 is always prime because a smaller factor of it greater than 1 would already be a smaller factor of \cd{n}.
 \end{ideabox}
 \textbf{The digit loop.} Almost every Midterm 1 iteration question walks through the digits of a number from the right:
 \begin{py}
@@ -151,8 +155,8 @@ Lecture 4's \cd{same\_length(a, b)} counts digits this way (add 1 per pass) for 
 
 \textbf{Worked exam question (Fall 2022 Midterm 1, Q3, from Lecture 5).} \cd{classify(n)} returns \cd{'perfect'}, \cd{'abundant'} or \cd{'deficient'} according to whether the sum of the factors of \cd{n} below \cd{n} equals, exceeds, or is less than \cd{n}.
 \begin{steps}
-  \ii What must be computed? The \emph{sum} of the proper factors. So one name accumulates a sum: \cd{total}, starting at \cd{0}.
-  \ii What do we loop over? We cannot loop over factors directly; loop over every integer \cd{k} from \cd{1} to \cd{n - 1} and test each: \cd{n \% k == 0}.
+  \ii Accumulate the \emph{sum} of the proper factors in a name \cd{total}, starting at \cd{0}.
+  \ii Loop over every integer \cd{k} from \cd{1} to \cd{n - 1} and test divisibility with \cd{n \% k == 0}.
   \ii After the loop, compare \cd{total} with \cd{n}.
 \end{steps}
 \begin{py}
@@ -174,7 +178,7 @@ def classify(n):
 \begin{itemize}
   \ii A function's \vocab{domain} is the set of arguments it can take; its \vocab{range} is the set of values it can return; its \vocab{behaviour} is the relationship between input and output. For \cd{square}: any number; a non-negative number; the square of the input.
   \ii Give each function exactly one job, but make it apply to many related situations (\cd{round(1.23)} is \cd{1}, \cd{round(1.23, 1)} is \cd{1.2}).
-  \ii \textbf{Don't repeat yourself}: implement a process once and call it many times.
+  \ii \textbf{Do not repeat yourself}: implement a process once and call it many times.
   \ii A \vocab{docstring} describes the function; examples in it written with \cd{>>>} are \vocab{doctests}, run with \cd{python3 -m doctest file.py}.
   \ii A \vocab{default argument value}, \cd{def f(x, y=10):}, is used when the call does not supply that argument.
 \end{itemize}
@@ -287,7 +291,7 @@ So to predict what a name means inside a function, look at where the function wa
   \ii \textbf{Digit problems}: \cd{while n > 0}, \cd{n \% 10}, \cd{n // 10}. Comparing neighbouring digits: \cd{n \% 10} and \cd{n // 10 \% 10}.
   \ii \textbf{Fill-in-the-blank loops}: first say in words what each given name means (\cd{total}, \cd{k}, \cd{count}, \cd{group\_size}); the blanks then follow.
   \ii \textbf{Accumulating a maximum without \cd{if}}: \cd{largest = max(largest, candidate)}.
-  \ii \textbf{Function or call?} \cd{f} is a value; \cd{f(x)} runs the body. Count the pairs of parentheses to count the calls.
+  \ii \textbf{Function versus call:} \cd{f} is a value; \cd{f(x)} runs the body. Count the pairs of parentheses to count the calls.
   \ii \textbf{Parents}: write \cd{[parent=...]} on a function the moment it is defined; copy it when the function is called. Never decide a parent from where the call happens.
   \ii \textbf{Late lookup}: a name in a function body is looked up when the body runs, so it sees the latest binding in the frame.
   \ii \textbf{\cd{return} inside a loop} ends the whole function at once: use it for ``find the first \dots''.

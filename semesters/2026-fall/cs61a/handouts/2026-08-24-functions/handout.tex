@@ -33,6 +33,7 @@ The procedure refers to itself: step 2 says ``evaluate each operand'', and an op
 
 The order matters as soon as evaluating an operand \emph{does} something visible, such as printing. On exams, the order of the displayed lines is decided by this procedure and by nothing else.
 \end{ideabox}
+\Needspace{16\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[level distance=11mm,
   level 1/.style={sibling distance=84mm},level 2/.style={sibling distance=26mm},level 3/.style={sibling distance=12mm},
@@ -123,7 +124,7 @@ def g(y):
   \ii An assignment inside a function body binds the name in the \emph{local} frame. It does not change any other frame.
 \end{itemize}
 \begin{ideabox}
-Why organise names this way? The person who writes \cd{g} should be free to choose the names \cd{x} and \cd{y} without knowing which names the rest of the program uses. Local frames give that: every call gets a fresh frame, the body looks there first, and assignments in the body stay there. When the call returns, the frame is no longer used.
+Whoever writes \cd{g} must be free to choose the names \cd{x} and \cd{y} without knowing which names the rest of the program uses. Local frames give that: every call gets a fresh frame, the body looks there first, and assignments in the body stay there. When the call returns, the frame is no longer used.
 
 An environment diagram is the bookkeeping for these rules. Drawing one is slow but mechanical, and it removes all guessing from questions about what a name refers to.
 \end{ideabox}
@@ -239,11 +240,16 @@ If \cd{noisy} used \cd{print(x + 1)} instead of \cd{return x + 1}, then \cd{nois
 \textbf{Search, the lecture's closing example.} Discussion 0 asked for the shortest expression built from \cd{f(x) = x + 1}, \cd{g(x) = 2 * x - 1}, \cd{h(x, y)} (concatenate digits) and the number \cd{5} that evaluates to \cd{2026}. The lecture's program tries every expression with 3 calls, then 4 calls, and so on, and finds \cd{f(g(h(f(g(5)),g(f(f(5))))))} with 8 calls. The point for the course: a program can examine many alternatives by repeating simple operations. The code uses classes, generators and recursion, which come later.
 
 \begin{shortcuts}
-  \ii \textbf{What Would Python Display}: work one line at a time. For each line write, in order, (1) everything displayed while operands are evaluated, left to right and inside out, then (2) what the outermost call displays, then (3) the line's value if you are at \cd{>>>} and it is not \cd{None}.
+  \ii \textbf{What Would Python Display}: work one line at a time. For each line write, in order:
+  \begin{enumerate}[(1)]
+    \ii everything displayed while operands are evaluated, left to right and inside out;
+    \ii what the outermost call displays;
+    \ii the line's value if you are at \cd{>>>} and it is not \cd{None}.
+  \end{enumerate}
   \ii \textbf{Label every call with its return value} as you go. For \cd{print} the label is always \cd{None}.
   \ii \textbf{Last digit / the rest}: \cd{n \% 10} and \cd{n // 10}.
   \ii \textbf{Environment diagrams}: an assignment never changes another frame; the frame label uses the name from the \cd{def} line, not the name used in the call.
-  \ii \textbf{Is the body run now?} Not at \cd{def}; only at a call. A name that does not exist inside a body causes an error only when that line is executed.
+  \ii \textbf{When the body runs}: not at \cd{def}; only at a call. A name that does not exist inside a body causes an error only when that line is executed.
   \ii \textbf{Operands before the call}: an operand is evaluated in the frame where the call expression is written, not in the new frame.
 \end{shortcuts}
 \begin{trapbox}

@@ -33,7 +33,11 @@ summation(5, lambda x: pow(1/2, x))
   \ii The body is not evaluated when the lambda expression is evaluated; only when the resulting function is called. (Same as \cd{def}.)
   \ii Several parameters: \cd{lambda x, y: x + y}. None: \cd{lambda: 42}.
 \end{itemize}
-\textbf{Two differences from \cd{def}.} (1) A \cd{def} binds a name; a lambda expression binds nothing by itself. (2) A function made by \cd{def} knows its name; a lambda function is shown as \cd{func $\lambda$(x) <line N> [parent=...]} in diagrams, and its frames are labelled \cd{$\lambda$ <line N>}.
+\textbf{Two differences from \cd{def}:}
+\begin{enumerate}[(1)]
+  \ii A \cd{def} binds a name; a lambda expression binds nothing by itself.
+  \ii A function made by \cd{def} knows its name; a lambda function is shown as \cd{func $\lambda$(x) <line N> [parent=...]} in diagrams, and its frames are labelled \cd{$\lambda$ <line N>}.
+\end{enumerate}
 
 \textbf{Reading nested lambdas.} \cd{lambda f: lambda x: f(f(x))} is a function of \cd{f} whose body is another lambda expression: it \emph{returns a function} of \cd{x}. The lecture's example:
 \begin{py}
@@ -91,7 +95,7 @@ def curry(f):
 \end{py}
 Equivalently \cd{curry = lambda f: lambda x: lambda y: f(x, y)}.
 \begin{ideabox}
-Why would anyone want this? \cd{summation} needs a \emph{one}-argument function, and \cd{pow} takes two. Supplying the first argument now and the second later bridges the gap: \cd{curry(pow)(3)} is the one-argument function $k\mapsto3^k$, so \cd{summation(5, curry(pow)(3))} is $3+9+27+81+243=363$.
+\cd{summation} needs a \emph{one}-argument function, and \cd{pow} takes two. Supplying the first argument now and the second later bridges the gap: \cd{curry(pow)(3)} is the one-argument function $k\mapsto3^k$, so \cd{summation(5, curry(pow)(3))} is $3+9+27+81+243=363$.
 
 How to read \cd{curry(pow)(3)(k)}: three calls, left to right. \cd{curry(pow)} returns \cd{g} (remembering \cd{f = pow}). \cd{g(3)} returns \cd{h} (remembering \cd{x = 3}). \cd{h(k)} returns \cd{pow(3, k)}.
 \end{ideabox}
@@ -136,7 +140,7 @@ while y < 10:
         max = y
     y = y + 1
 \end{py}
-This ends with the error \cd{'int' object is not callable}. Why?
+This ends with the error \cd{'int' object is not callable}, for the following reason.
 \begin{steps}
   \ii First pass, global \cd{y} is \cd{1}. \cd{f(1)}: frame \cd{f1}, \cd{x} is \cd{1}; \cd{y} in \cd{f1} is \cd{max(1, 3) = 3}; \cd{zero} has parent \cd{f1}; returns \cd{zero}.
   \ii The lambda expression is evaluated in the global frame, so its parent is global.
@@ -152,8 +156,8 @@ The built-in \cd{max} still exists, but the global binding is found first. Three
   \ii Read the description. Verify the doctest examples by hand and pick one simple example to work with.
   \ii Describe in plain English a process that computes the output from the input in simple steps.
   \ii Read the template. Annotate each name in it with its value for your example. Decide what any additional names mean.
-  \ii Write the code. Ask: can I stop early? What kind of value must be returned?
-  \ii Check: did you return the right thing? Run the other examples through your code.
+  \ii Write the code, checking whether the loop can return early and what type of value must be returned.
+  \ii Verify that the code returns the expected value by tracing the remaining examples.
 \end{steps}
 \Needspace{20\baselineskip}
 \textbf{Worked: \cd{nearest\_prime} (variant of Fall 2022 Midterm 1 Q3(b), Lecture 7).} Return the prime nearest to \cd{n} (\cd{n > 5}); in a tie the larger one. \cd{is\_prime} is given.
@@ -171,7 +175,7 @@ def nearest_prime(n):
 \begin{steps}
   \ii Example \cd{n = 21}: candidates in order of distance, larger first on ties: 21, 22, 20, 23. \cd{23} is prime.
   \ii So \cd{k} is an offset taking the values \cd{0, 1, -1, 2, -2, 3, \dots}, and the candidate is \cd{n + k}. First blanks: \cd{if is\_prime(n + k): return n + k}.
-  \ii How does \cd{k} move? From a positive \cd{k} go to \cd{-k} (same distance, other side). From \cd{0} or a negative \cd{k} go to \cd{-k + 1} (next distance, larger side first).
+  \ii Offset update: from a positive \cd{k} go to \cd{-k} (same distance, other side); from \cd{0} or a negative \cd{k} go to \cd{-k + 1} (next distance, larger side first).
 \end{steps}
 \begin{py}
         if is_prime(n + k):
@@ -191,7 +195,7 @@ def all_digits(n, cond):
     return True
 \end{py}
 \begin{itemize}
-  \ii ``Can you stop before going through all the digits?'' Yes: one failing digit decides the answer, so \cd{return False} inside the loop. \cd{True} can only be returned after the loop.
+  \ii Early return: one failing digit settles the answer immediately, so \cd{return False} goes inside the loop, while \cd{True} can only be returned after the loop.
 \end{itemize}
 A \emph{prefix} of \cd{n} is \cd{n // pow(10, p)}: 3456 has prefixes 3456, 345, 34, 3, 0. \cd{prefix\_digits(n, cond)} returns the largest prefix all of whose digits satisfy \cd{cond}. Given the helper
 \begin{py}
@@ -203,7 +207,7 @@ def process(n, check):
     return 0
 \end{py}
 \begin{steps}
-  \ii What does \cd{process} do? It tries \cd{n}, then \cd{n // 10}, \dots\ (the prefixes, largest first) and returns the first one for which \cd{check} is true.
+  \ii \cd{process} tries \cd{n}, then \cd{n // 10}, \dots\ (the prefixes, largest first) and returns the first one for which \cd{check} is true.
   \ii So \cd{check} must take a whole prefix \cd{k} and say whether all of its digits satisfy \cd{cond}. That is \cd{all\_digits(k, cond)}.
   \ii \cd{return process(n, lambda k: all\_digits(k, cond))}. The lambda adapts a two-argument function to the one-argument shape \cd{process} expects, and it finds \cd{cond} in its parent frame.
 \end{steps}
@@ -212,7 +216,7 @@ def process(n, check):
   \ii \textbf{Lambda}: no name, no \cd{return}, one expression. Rewrite it as a \cd{def} in the margin if the nesting is confusing.
   \ii \textbf{Count the arrows of calls}: in \cd{f(a)(b)(c)} each pair of parentheses is one call, applied left to right to the result of the previous one.
   \ii \textbf{Adapting a function to a required shape} is the commonest blank: \cd{lambda k: g(k, extra)} or \cd{lambda k: term(2 * k - 1)}.
-  \ii \textbf{Which frame?} For any name in a body: local frame, then the frame where the function was defined, and so on. Never the caller's frame.
+  \ii \textbf{Frame lookup order}: for any name in a body, check the local frame, then the frame where the function was defined, and so on. Never the caller's frame.
   \ii \textbf{Early return}: ``for every'' questions return \cd{False} inside the loop and \cd{True} after it; ``find the first'' questions return the value inside the loop.
   \ii \textbf{\cd{while True}} with a \cd{return} inside: use it when the stopping point is discovered in the middle of the body.
   \ii \textbf{Rebinding a built-in} (\cd{max = y}, \cd{print = ...}) is a classic exam device: track it like any other name.

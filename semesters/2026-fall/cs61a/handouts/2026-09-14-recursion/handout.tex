@@ -88,7 +88,7 @@ def streak(n):
 \end{py}
 \begin{steps}
   \ii Smaller instance: \cd{n // 10}, the number without its last digit. For \cd{22222} that is \cd{2222}.
-  \ii How does the answer for \cd{2222} help? In a streak, everything except the last digit is a streak, \emph{and} the last digit matches the digit before it.
+  \ii Connect back to \cd{2222}: in a streak, everything except the last digit is a streak, \emph{and} the last digit matches the digit before it.
   \ii ``The last two digits match'': \cd{n \% 10 == n // 10 \% 10}.
   \ii Base case: a single digit from 1 to 6 (already given). A single digit outside 1--6, such as \cd{9}, fails both sides and gives \cd{False}; that is how \cd{99999} is rejected.
 \end{steps}
@@ -227,7 +227,7 @@ def count_park(n):
 
 \textbf{Lecture example: counting partitions.} \cd{count\_partitions(n, m)} is the number of ways to write \cd{n} as a sum of positive integers, each at most \cd{m}, in non-decreasing order. \cd{count\_partitions(6, 4)} is 9: $2+4$, $1+1+4$, $3+3$, $1+2+3$, $1+1+1+3$, $2+2+2$, $1+1+2+2$, $1+1+1+1+2$, $1+1+1+1+1+1$.
 \begin{ideabox}
-Choose a yes/no question that splits the partitions into two groups, each of which is a smaller instance of the same problem. The question: \emph{is the largest allowed part, \cd{m}, used at least once?}
+Split the partitions into two disjoint groups that are smaller instances of the same problem by checking whether the largest allowed part, \cd{m}, is used at least once:
 \begin{itemize}
   \ii Yes: remove one \cd{m}. What remains is a partition of \cd{n - m} with parts up to \cd{m} (another \cd{m} may still be used). \cd{count\_partitions(n - m, m)}.
   \ii No: every part is at most \cd{m - 1}. \cd{count\_partitions(n, m - 1)}.
