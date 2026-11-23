@@ -1,6 +1,6 @@
 # Handout standard
 
-Every handout, review packet and solutions file, in every course, follows this document. It replaces all earlier versions and notes.
+Every handout, review packet and solutions file follows this document and [the course standard](course-standard.md). Programming exercises also follow [the programming-exercise standard](programming-exercise-standard.md).
 
 **Purpose.** Aaron uses a handout to understand the ideas well enough to rebuild every result from memory, and to solve exam problems quickly. A rule below exists only to serve that. A longer handout is not a better one.
 
@@ -39,7 +39,7 @@ Bad (rejected): "*Want.* Decide whether the available eigenspaces provide a full
 Good: "One vector is easy: v, Tv, …, Tⁿv are n + 1 vectors in an n-dimensional space, so q(T)v = 0 for some q of degree ≤ n. The problem is that q(T) may not be 0 on other vectors. So collect every vector q(T) sends to 0 into U = null q(T). A polynomial p that is 0 for the quotient T/U sends every vector into U, and a polynomial r that is 0 on U then sends it to 0. So r(T)p(T) = 0, and its degree is at most dim U + dim V/U = n."
 
 ### Proof steps are full sentences
-Every proof step states what is being assumed, what is being shown, and the reason, in complete sentences. No noun-phrase shorthand that the reader has to decode ("Existence is spanning", "Same argument", "the other inclusion is clear", "swap the roles"). When a proof has two directions, each direction opens with its assumption in bold ("Assume the list is a basis.") and labels each sub-goal ("The list spans V."). If a step repeats an earlier argument, write it out again.
+Every proof step states what is being assumed, what is being shown, and the reason, in complete sentences. No noun-phrase shorthand that the reader has to decode ("Existence is spanning", "Same argument", "the other inclusion is clear", "swap the roles"). When a proof has two directions, each direction opens with its assumption in bold ("Assume the list is a basis.") and labels each sub-goal ("The list spans V."). When a step uses an earlier argument, name the exact result and state how its assumptions apply here. Repeat the computation only when the new case changes it or the repetition serves an explicit practice objective.
 
 ## 4. Writing
 - Write natural, direct explanatory sentences with ordinary words and literal statements. Prioritize **intuition and motivation** directly: explain why an object is defined this way or how someone would discover the proof, without filler.
@@ -55,10 +55,18 @@ Every proof step states what is being assumed, what is being shown, and the reas
 - Examples use small, clean numbers.
 - No intro or overview paragraph, no "how to use this handout", no meta sections.
 
+### Clarity without loss of detail
+
+- Preserve hypotheses, definitions, nonroutine reasoning, intermediate computations, examples, exceptions, and required source coverage. Do not shorten to meet a word-count target.
+- Give each paragraph one purpose. Put a reason beside the equation or code step it explains; split paragraphs that mix a claim, proof, interpretation, and several caveats.
+- Remove repeated conclusions and procedural narration. Motivation must explain a choice, not summarize the proof a second time.
+- Keep a main reading sequence and label alternative proofs or extensions by their purpose. Required material remains visible and available.
+- During editing, compare a before/after coverage list. Record any removed substantive content and its justification in the audit; a shorter page is not itself evidence of improvement.
+
 ## 5. Page elements (all in `templates/handout.sty`)
 - **Statement** in a theorem box, labelled with the notes number and textbook number.
 - **The idea** (`ideabox`, free text) before the proof, when the proof has a real idea (Section 3).
-- **Proof** as numbered steps (`steps`), one or two lines each, each citing what it uses. A proof with parts: give each part a name that says what it proves and one line saying how the parts connect; never bare "Lemma"/"Theorem" in running text.
+- **Proof** as numbered steps (`steps`), each stating its claim and reason. Use the space a nonroutine derivation needs; do not compress it to a fixed line count. A proof with parts: give each part a name that says what it proves and one line saying how the parts connect; never bare "Lemma"/"Theorem" in running text.
 - **Examples** in example boxes, with the computation shown.
 - **Figures** (`fig`, TikZ/pgfplots): compact, placed next to the mathematics they illustrate, drawing a concrete, numerically verified example with a short caption saying what to see. Follow `standards/reference/math110-quiz-minpoly-geneig.pdf` (the interpolation plot and nilpotent chain diagram):
   - **Reproducible spot-color ink style:** Use `templates/figure-ink.sty` for fixed vector grain, slender ink strokes, narrow filled arrowheads, and tight white glyph halos. Native TikZ/PGFPlots geometry must satisfy the stated equations; do not use generated raster drawings for mathematical figures. Use the shared blue/red/green/ochre/slate palette to distinguish mathematical roles, not for decoration. See `samples/ink-figures/README.md` and the repository LaTeX skill for exact commands.
@@ -73,25 +81,18 @@ Every proof step states what is being assumed, what is being shown, and the reas
   - **Piece-by-piece `tabularx` code breakdown tables**: always declare the description column as `>{\raggedright\arraybackslash}X` (never bare full-justified `X`, which stretches inter-word gaps around inline `\cd{...}` code), separate multi-line rows with `\cmidrule(lr){1-3}`, and order rows in execution order.
   - Visually inspect every new or modified figure in rendered high-res (`240 dpi`) tight-crop PNG zoom sheets before committing.
   - When running `pdflatex` directly inside a handout folder, always put `.` first in `TEXINPUTS` (`TEXINPUTS=".;<repo>/templates;"`) so `templates/handout.tex` never shadows `./handout.tex`. Delete `.aux`, `.log`, `.out`, and `.toc` before committing.
-- **Shortcuts** box per section: every time-saving trick, each with its reason, its conditions and a worked instance.
-- **Traps** box per section: common wrong claims, each with a counterexample.
+- **Shortcuts** box where useful: include a time-saving method with its reason, conditions and a worked instance; omit an empty or repetitive box.
+- **Traps** box where useful: a relevant common wrong claim with a counterexample; do not invent one merely to fill a section.
 - **Problem set** at the end: the week's homework, then real exam problems. Put permitted hints in a separate keyed section after all questions, preserving problem labels and references. Include unaided practice that requires selecting a method; do not give the method away beside every prompt.
-- **Solutions** in a separate PDF: an *Idea.* line explaining the choice of argument, then numbered steps.
+- **Solutions** in a separate PDF: explain the choice of argument when it needs explanation, then give the reasoning in numbered steps. Do not add a repetitive Idea line.
 - **Layout and anti-cutoff guards.** Nothing split across pages (`templates/handout.sty` applies `\Needspace{14\baselineskip}` on theorem/prop/lemma/corollary environments; keep boxes `nobreak`, headings with what follows, problems and solutions in `prob`). Add explicit `\Needspace{14\baselineskip}`–`\Needspace{16\baselineskip}` before tall figures, multi-line code listings, or tightly coupled heading + callout pairs whenever a page break could strand a title, theorem statement, or short box above an orphan split. Avoid big blank gaps and never shrink type to fit.
 
-## 5a. Courses with programming (CS 61A, STAT 20, and later ones)
-Theory and written problems are not enough. Every week's folder also has `exercises/` (and web-facing interactive `exercises.html` + downloadable `exercises.zip` where provided), held to the clarity standard of `cs61a.org` and `stat20.berkeley.edu`:
-- **Piece-by-piece code breakdowns (in both PDFs and `exercises.html`)**: break down every recurring SQL clause (`SELECT`, `FROM`, `JOIN ... ON`, self-joins, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`, `LIMIT`) and every R verb/pipeline (`dplyr`, `infer`, `lm`, `glm(..., family = "binomial")`, `predict(..., type = "response")`, `ifelse`), explicitly explaining every argument, input/output table shape, execution order, and common mistake. Include a `<section class="code-guide">` with `<table class="code-anatomy">` near the top of `exercises.html`.
-- **Programming exercises Aaron implements himself**: starter files with function signatures, docstrings and doctests (CS 61A: Python/SQL in the style of the course's labs and homework; STAT 20: tidyverse-style R case studies on realistic course datasets, modeled on UC Berkeley STAT 20 prediction and inference case studies), ordered from warm-up to exam level. No solutions in the starter files.
-- **Widened readable layout & flat scrollable interactive `exercises.html` UI (no per-task dropdowns)**: keep root/course index containers at `max-width: 56rem` (`10px 16px` cell padding) and `assets/exercises.css` at `max-width: 60rem` with `68ch` prose measure and `line-height: 1.65`. Present every code guide, case study, dataset schema table, sample rows, question prompt, and interactive code cell in a flat scrollable flow with a top `.toc-bar` navigation index. Do **not** wrap tasks or schemas inside collapsible `<details>` dropdowns.
-- **Syntax highlighting and automatic light/dark theme sync**: equip every interactive cell with CodeMirror 5 (`mode/r` or `mode/sql`) and static code snippets with `highlight.js`. Load `assets/exercises.css` **LAST** among `<link rel="stylesheet">` tags in `<head>` (after CodeMirror and highlight.js stylesheets) so its `@media (prefers-color-scheme: dark)` rules synchronize backgrounds, borders, scrollbars, and syntax token colors automatically with `index.html`.
-- **Self-contained browser runtime**: verify that every STAT 20 WebR block (including any base-R tidyverse helper shim needed when CRAN binaries are absent) and every CS 61A SQLite/Python cell executes with zero JS/R/SQL errors in both light and dark browser color schemes.
-- **A test file** that checks his answers (`python3 -m doctest`, or a test script), and a separate `solutions/` folder.
-- **Before every quiz and exam**: a timed set that mixes writing code by hand with code to run, covering each topic on that quiz.
-- Run every solution and every test before committing.
+## 5a. Courses with programming
+
+Follow [the programming-exercise standard](programming-exercise-standard.md) for exercise contracts, scaffolding, starter files, tests, datasets, browser behavior, downloads, and verification. It applies to CS 61A, STAT 20, and future programming courses. Explain a new construct once with a worked example, then explain only new behavior in later uses. Use a compact code-anatomy table when it makes execution order or data shape easier to understand; do not repeat a full syntax guide beside every exercise or in both artifacts without a distinct need.
 
 ## 5b. Graded work and each course's rules on AI tools
-The handouts exist so Aaron can do the graded work himself. Each course's own rule decides what a handout may contain; read the syllabus in `materials/` when adding a course and record its rule here.
+The handouts exist so Aaron can do the graded work himself. Each course's own rule decides what a handout may contain; read the available syllabus when adding a course and record its source, version, and rule in the canonical `course-profile.md`. The summaries below preserve previously recorded policies; they are not evidence that current source policies have been reverified.
 - **CS 61A** (syllabus: "Do not use AI tools such as Github Copilot or ChatGPT to fill in or correct your code"; "Do not post your solutions publicly during or after the semester"; homework says "do not use AI tools other than Preceptor"): never write solutions, partial solutions or problem-specific hints for a homework, lab or project question, whether or not it is past due. Teach the week's ideas with the lecture's own examples and with original exercises of the same kind; use official past exams (with their published solutions) for exam practice. `exercises/` and `solutions/` contain only original exercises.
 - **MATH 54** (syllabus: GenAI "may be used as a learning aid ... should not be used to complete graded work for you"): no solutions or problem-specific hints for assigned homework exercises that are not yet past due. Use worked examples of the same type with different numbers. Past-due homework may be solved for review.
 - **STAT 20** (syllabus: AI help with concepts and coding errors is allowed; copying AI output into a solution is not): the same rule as MATH 54 for worksheets and labs.
@@ -102,7 +103,7 @@ The handouts exist so Aaron can do the graded work himself. Each course's own ru
 1. Verify every number and answer by computation (sympy; for code, run it).
 2. Render every page and look at it: intact boxes, readable labels, no overfull lines, no large gaps.
 3. One fresh review pass against the sources and this standard: (a) correctness and coverage, (b) teaching quality: quote each passage where a reader would have to fill a gap, and fix it.
-4. Append to the course `log.md`; commit, `git pull --rebase`, push. One week per commit.
+4. Record the revision and validation evidence in the packet audit and course log when present. Commit within the requested scope; pushing or publishing follows the user’s authorization, not an automatic requirement of this standard.
 
 
 ### Page-by-page visual review (required before sending)
