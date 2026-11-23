@@ -49,14 +49,18 @@ SQLite prints one row per line using vertical bars (\cd{|}) between column value
 \medskip\noindent\textbf{Piece-by-piece breakdown of table creation.} Every clause in the query above performs one specific structural operation:
 
 \medskip
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.3cm}X@{}}
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.1cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Piece} & \textbf{What it names or accepts} & \textbf{What SQLite produces} \\
 \midrule
 \cd{CREATE TABLE cities AS} & New permanent table identifier & Binds \cd{cities} in the database to the table returned by the query below. \\
+\cmidrule(lr){1-3}
 \cd{SELECT 38 AS latitude, ...} & Three literal expressions + column aliases & A 1-row, 3-column table whose column headers are \cd{latitude}, \cd{longitude}, and \cd{name}. \\
+\cmidrule(lr){1-3}
 \cd{UNION} & Another \cd{SELECT} with 3 columns & Stacks rows vertically and removes exact duplicate rows (\cd{UNION ALL} keeps duplicates). \\
+\cmidrule(lr){1-3}
 \cd{SELECT 42, 71, "Cambridge"} & Positional column values & Second row appended under the first query's headers; any \cd{AS} aliases here would be ignored. \\
+\cmidrule(lr){1-3}
 \cd{SELECT * FROM cities;} & Table name; \cd{*} selects all columns & Returns all 3 rows and 3 columns; row order is arbitrary unless \cd{ORDER BY} is given. \\
 \bottomrule
 \end{tabularx}
@@ -128,21 +132,21 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
 \Needspace{16\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>=Stealth,font=\small]
-  % Left table: cities (1980s monochrome sharp hairline frame)
+  % Left table: cities (sharp hairline frame)
   \node[font=\footnotesize\bfseries] at (1.3,2.35) {\cd{cities} (3 rows)};
   \draw[black,fill=black!3,line width=0.55pt] (0,0) rectangle (2.6,2.0);
-  \node[font=\ttfamily\footnotesize] (c1) at (1.3,1.55) {Berkeley};
-  \node[font=\ttfamily\footnotesize] (c2) at (1.3,1.00) {Cambridge};
-  \node[font=\ttfamily\footnotesize] (c3) at (1.3,0.45) {Minneapolis};
+  \node[font=\ttfamily\footnotesize,text=figblue!90!black] (c1) at (1.3,1.55) {Berkeley};
+  \node[font=\ttfamily\footnotesize,text=figslate]         (c2) at (1.3,1.00) {Cambridge};
+  \node[font=\ttfamily\footnotesize,text=figblue!90!black] (c3) at (1.3,0.45) {Minneapolis};
 
   % Right table: temps
   \node[font=\footnotesize\bfseries] at (6.9,2.35) {\cd{temps} (3 rows)};
   \draw[black,fill=black!3,line width=0.55pt] (5.6,0) rectangle (8.2,2.0);
-  \node[font=\ttfamily\footnotesize] (t1) at (6.9,1.55) {Berkeley};
-  \node[font=\ttfamily\footnotesize] (t2) at (6.9,1.00) {Chicago};
-  \node[font=\ttfamily\footnotesize] (t3) at (6.9,0.45) {Minneapolis};
+  \node[font=\ttfamily\footnotesize,text=figblue!90!black] (t1) at (6.9,1.55) {Berkeley};
+  \node[font=\ttfamily\footnotesize,text=figslate]         (t2) at (6.9,1.00) {Chicago};
+  \node[font=\ttfamily\footnotesize,text=figblue!90!black] (t3) at (6.9,0.45) {Minneapolis};
 
-  % Cartesian arrows (light) vs kept matches (thick black)
+  % Cartesian arrows (light) vs kept matches (thick figblue)
   \draw[black!22,thin,dashed] (c1.east) -- (t2.west);
   \draw[black!22,thin,dashed] (c1.east) -- (t3.west);
   \draw[black!22,thin,dashed] (c2.east) -- (t1.west);
@@ -151,8 +155,8 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
   \draw[black!22,thin,dashed] (c3.east) -- (t1.west);
   \draw[black!22,thin,dashed] (c3.east) -- (t2.west);
 
-  \draw[black,very thick,->] (c1.east) -- (t1.west) node[midway,above=1pt,font=\scriptsize] {kept};
-  \draw[black,very thick,->] (c3.east) -- (t3.west) node[midway,below=1pt,font=\scriptsize] {kept};
+  \draw[figblue,very thick,->] (c1.east) -- (t1.west) node[midway,above=1pt,font=\scriptsize,text=figblue!90!black] {kept};
+  \draw[figblue,very thick,->] (c3.east) -- (t3.west) node[midway,below=1pt,font=\scriptsize,text=figblue!90!black] {kept};
 
   % Result summary on right
   \node[anchor=west,align=left,font=\footnotesize] at (8.7,1.25) {%
@@ -161,7 +165,7 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
     (\cd{Berkeley|38|68}, \cd{Minneapolis|45|55})
   };
 \end{tikzpicture}
-\figcap{Inner join of \cd{cities} and \cd{temps}: the \cd{FROM} stage pairs all $3\times 3 = 9$ combinations, and the \cd{ON}/\cd{WHERE} condition \cd{name = city} keeps only the $2$ matching pairs.}
+\figcap{Inner join of \cd{cities} and \cd{temps}: the \cd{FROM} stage pairs all $3\times 3 = 9$ combinations (dashed gray), and the \cd{ON}/\cd{WHERE} condition \cd{name = city} keeps only the $2$ matching pairs (solid blue).}
 \end{fig}
 
 \medskip\noindent\textbf{Self-joins and table aliases.} To compare two rows within the same table, join the table to itself using distinct aliases (\cd{AS a} and \cd{AS b}). Whenever two joined tables share a column name, every reference to that column must be qualified with \cd{alias.column}. Using \cd{a.city < b.city} breaks symmetry so each unordered pair appears exactly once in lexicographic order (W1), and pairs of a city with itself are excluded:
@@ -176,12 +180,14 @@ WHERE  a.city < b.city;
 \medskip\noindent\textbf{Piece-by-piece breakdown of the self-join query.} Notice how each piece narrows or transforms the working table:
 
 \medskip
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.1cm}X@{}}
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{SQL Piece} & \textbf{Input $\to$ Output shape} & \textbf{Mechanism} \\
 \midrule
 \cd{FROM temps AS a, temps AS b} & Two 3-row tables $\to$ 9 pairs & Binds aliases \cd{a} and \cd{b} so both copies have distinct column prefixes \cd{a.city}, \cd{a.temp}, \cd{b.city}, \cd{b.temp}. \\
+\cmidrule(lr){1-3}
 \cd{WHERE a.city < b.city} & 9 pairs $\to$ 3 unordered pairs & Drops self-pairs (\cd{"Berkeley" < "Berkeley"} is false) and reverses (\cd{"Chicago" < "Berkeley"} is false). \\
+\cmidrule(lr){1-3}
 \cd{SELECT a.city, b.city, ...} & 3 rows $\to$ 3 formatted rows & Evaluates \cd{a.temp - b.temp} for each surviving pair and names the third column \cd{diff}. \\
 \bottomrule
 \end{tabularx}
@@ -253,26 +259,26 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
 \Needspace{15\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>=Stealth,font=\small]
-  % Group 1: legs = 2 (sharp 0pt 1980s monochrome frame)
-  \node[font=\footnotesize\bfseries] at (1.9,2.2) {Group 1: \cd{legs = 2}};
-  \draw[black,fill=black!3,line width=0.55pt] (0,0.4) rectangle (3.8,1.9);
+  % Group 1: legs = 2 (sharp 0pt frame, figblue accent)
+  \node[font=\footnotesize\bfseries,text=figblue!90!black] at (1.9,2.2) {Group 1: \cd{legs = 2}};
+  \draw[figblue!80!black,fill=figblue!4,line width=0.55pt] (0,0.4) rectangle (3.8,1.9);
   \node[font=\ttfamily\footnotesize,align=left] at (1.9,1.15) {t-rex   | 2 | 12000\\penguin | 2 | 10\\bird    | 2 | 6};
 
-  % Group 2: legs = 4
-  \node[font=\footnotesize\bfseries] at (6.7,2.2) {Group 2: \cd{legs = 4}};
-  \draw[black,fill=black!3,line width=0.55pt] (4.8,0.4) rectangle (8.6,1.9);
+  % Group 2: legs = 4 (sharp 0pt frame, figgreen accent)
+  \node[font=\footnotesize\bfseries,text=figgreen!90!black] at (6.7,2.2) {Group 2: \cd{legs = 4}};
+  \draw[figgreen!80!black,fill=figgreen!4,line width=0.55pt] (4.8,0.4) rectangle (8.6,1.9);
   \node[font=\ttfamily\footnotesize,align=left] at (6.7,1.15) {dog    | 4 | 20\\cat    | 4 | 10\\ferret | 4 | 10};
 
   % Arrows to collapsed output
-  \draw[->,black,thick] (1.9,0.35) -- (1.9,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
-  \draw[->,black,thick] (6.7,0.35) -- (6.7,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
+  \draw[->,figblue!85!black,thick] (1.9,0.35) -- (1.9,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
+  \draw[->,figgreen!85!black,thick] (6.7,0.35) -- (6.7,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
 
-  \draw[black,line width=0.55pt] (0.5,-1.2) rectangle (3.3,-0.5);
+  \draw[figblue!85!black,fill=figblue!5,line width=0.55pt] (0.5,-1.2) rectangle (3.3,-0.5);
   \node[font=\ttfamily\footnotesize] at (1.9,-0.85) {2 | 12000};
-  \draw[black,line width=0.55pt] (5.3,-1.2) rectangle (8.1,-0.5);
+  \draw[figgreen!85!black,fill=figgreen!5,line width=0.55pt] (5.3,-1.2) rectangle (8.1,-0.5);
   \node[font=\ttfamily\footnotesize] at (6.7,-0.85) {4 | 20};
 \end{tikzpicture}
-\figcap{\cd{GROUP BY legs}: SQLite partitions the six rows of \cd{animals} into two buckets (\cd{legs = 2} and \cd{legs = 4}), computes \cd{MAX(weight)} separately in each bucket, and outputs one row per group.}
+\figcap{\cd{GROUP BY legs}: SQLite partitions the six rows of \cd{animals} into two buckets (\cd{legs = 2} in blue and \cd{legs = 4} in green), computes \cd{MAX(weight)} separately in each bucket, and outputs one row per group.}
 \end{fig}
 
 \medskip\noindent\textbf{Multi-key and computed grouping.} Writing \cd{GROUP BY legs, weight} creates one group for every distinct \cd{(legs, weight)} pair present in the data, and computed keys such as \cd{GROUP BY weight / legs} group rows by integer quotient (\cd{2, 3, 5, 6000}).
@@ -314,16 +320,21 @@ ORDER BY total_w DESC;
 \end{sql}
 
 \medskip
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.0cm}X@{}}
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Stage / Clause} & \textbf{Working set after clause} & \textbf{Role and legality rule} \\
 \midrule
-\cd{FROM animals} & 6 rows & Loads the base table \cd{animals}. \\
-\cd{WHERE weight >= 10} & 5 rows (\cd{bird} removed) & Filters individual rows \emph{before} grouping; aggregate calls are forbidden here. \\
-\cd{GROUP BY legs} & 2 buckets (\cd{2} has 2 rows; \cd{4} has 3 rows) & Collapses rows sharing the same \cd{legs} key into separate buckets. \\
-\cd{HAVING COUNT(*) >= 2} & Both buckets remain & Filters whole groups; aggregate calls are legal here because groups already exist. \\
-\cd{SELECT legs, SUM(weight) ...} & \cd{(2, 12010)}, \cd{(4, 40)} & Evaluates one output row per surviving group and binds alias \cd{total\_w}. \\
-\cd{ORDER BY total\_w DESC} & \cd{2|12010} then \cd{4|40} & Sorts the final grouped output using the computed column alias. \\
+\cd{1. FROM animals} & 6 rows & Loads the base table \cd{animals}. \\
+\cmidrule(lr){1-3}
+\cd{2. WHERE weight >= 10} & 5 rows (\cd{bird} removed) & Filters individual rows \emph{before} grouping; aggregate calls are forbidden here. \\
+\cmidrule(lr){1-3}
+\cd{3. GROUP BY legs} & 2 buckets (\cd{2} has 2 rows; \cd{4} has 3 rows) & Collapses rows sharing the same \cd{legs} key into separate buckets. \\
+\cmidrule(lr){1-3}
+\cd{4. HAVING COUNT(*) >= 2} & Both buckets remain & Filters whole groups; aggregate calls are legal here because groups already exist. \\
+\cmidrule(lr){1-3}
+\cd{5. SELECT legs, SUM(weight) ...} & \cd{(2, 12010)}, \cd{(4, 40)} & Evaluates one output row per surviving group and binds alias \cd{total\_w}. \\
+\cmidrule(lr){1-3}
+\cd{6. ORDER BY total\_w DESC} & \cd{2|12010} then \cd{4|40} & Sorts the final grouped output using the computed column alias. \\
 \bottomrule
 \end{tabularx}
 
