@@ -41,7 +41,10 @@ Good: "One vector is easy: v, Tv, …, Tⁿv are n + 1 vectors in an n-dimension
 Every proof step states what is being assumed, what is being shown, and the reason, in complete sentences. No noun-phrase shorthand that the reader has to decode ("Existence is spanning", "Same argument", "the other inclusion is clear", "swap the roles"). When a proof has two directions, each direction opens with its assumption in bold ("Assume the list is a basis.") and labels each sub-goal ("The list spans V."). If a step repeats an earlier argument, write it out again.
 
 ## 4. Writing
-- Complete sentences, ordinary words, literal statements. No metaphors ("kills", "dies", "survives", "machinery", "bridge", "shadow"). A shorthand is allowed only if defined once in plain words (e.g. "q kills T means q(T) = 0").
+- Complete sentences, ordinary words, literal statements. Prioritize **intuition and motivation** directly: explain why an object is defined this way or how someone would discover the proof, without filler.
+- **No exclamation marks (`!`), no contractions, no chatty banter, and no rhetorical `Why?` / `How?` filler prompts** inside prose (state the reason or mechanism directly).
+- **No inline wall-of-text lists**: never pack `(i) ... (ii) ...` or `(1) ... (2) ...` with multi-sentence clauses into one paragraph. Put two or more structured points in a proper `\begin{itemize}` or `\begin{enumerate}` block.
+- No metaphors ("kills", "dies", "survives", "machinery", "bridge", "shadow"). A shorthand is allowed only if defined once in plain words (e.g. "q kills T means q(T) = 0").
 - Never hide an argument behind a name: not "by invariance", "by degree", "by an adapted basis", "repeat the argument". Say which subspace, degree or basis, and show the step.
 - Show intermediate computations: the matrix, the multiplication, the equations solved.
 - Say what an equation does **not** prove when that is a common mistake, with a counterexample.
@@ -55,16 +58,24 @@ Every proof step states what is being assumed, what is being shown, and the reas
 - **The idea** (`ideabox`, free text) before the proof, when the proof has a real idea (Section 3).
 - **Proof** as numbered steps (`steps`), one or two lines each, each citing what it uses. A proof with parts: give each part a name that says what it proves and one line saying how the parts connect; never bare "Lemma"/"Theorem" in running text.
 - **Examples** in example boxes, with the computation shown.
-- **Figures** (`fig`, TikZ/pgfplots): compact, placed next to the mathematics they illustrate, drawing the example used in the text, with a short caption saying what to see. Models: the interpolation plot, the vector chain, the null-space-dimension plot and the annotated block matrix in the reference. Add one wherever the reader would otherwise have to imagine a geometric or structural step.
+- **Figures** (`fig`, TikZ/pgfplots): compact, placed next to the mathematics they illustrate, drawing a concrete, numerically verified example with a short caption saying what to see. Models: the interpolation plot, the vector chain, the null-space-dimension plot and the annotated block matrix in the reference. Add one wherever the reader would otherwise have to imagine a geometric or structural step. Figure rules:
+  - Choose concrete numerical values so distinct points, centers, disks, and eigenvalues are clearly visually separated (e.g., never bunch eigenvectors, Gershgorin centers, and eigenvalues on top of one another).
+  - For function and ODE plots in `pgfplots`, use bottom/left axes (`axis lines*=left` with a dashed `y=0` reference line when curves cross zero) instead of `axis lines=middle` where tick labels collide with curves.
+  - Place labels outside filled regions or inside opaque white/background pills (`fill=figbg` or `fill=white,inner sep=1.5pt`), and always write `text=<color>` in TikZ node options so `<color>` does not overwrite `fill`.
+  - Never use `\usetikzlibrary{matrix}` (`templates/handout.sty` does not load it); draw annotated matrices and grids inside TikZ using explicitly positioned `\node` entries. Put $3\times 3$ or larger matrices in display math or TikZ node grids, never inline `$...$`.
+  - When running `pdflatex` directly inside a handout folder, always put `.` first in `TEXINPUTS` (`TEXINPUTS=".;<repo>/templates;"`) so `templates/handout.tex` never shadows `./handout.tex`. Delete `.aux`, `.log`, `.out`, and `.toc` before committing.
 - **Shortcuts** box per section: every time-saving trick, each with its reason, its conditions and a worked instance.
 - **Traps** box per section: common wrong claims, each with a counterexample.
 - **Problem set** at the end: the week's homework, each with a one-line hint naming the result it uses, then real exam problems.
 - **Solutions** in a separate PDF: an *Idea.* line explaining the choice of argument, then numbered steps.
-- **Layout.** Nothing split across pages (boxes are `nobreak`, headings stay with what follows, problems and solutions in `prob`). Avoid big blank gaps: split long material into several boxes instead of one huge one. Never shrink type to fit.
+- **Layout and anti-cutoff guards.** Nothing split across pages (`templates/handout.sty` applies `\Needspace{14\baselineskip}` on theorem/prop/lemma/corollary environments; keep boxes `nobreak`, headings with what follows, problems and solutions in `prob`). Add explicit `\Needspace{14\baselineskip}`–`\Needspace{16\baselineskip}` before tall figures, multi-line code listings, or tightly coupled heading + callout pairs whenever a page break could strand a title, theorem statement, or short box above an orphan split. Avoid big blank gaps and never shrink type to fit.
 
 ## 5a. Courses with programming (CS 61A, STAT 20, and later ones)
-Theory and written problems are not enough. Every week's folder also has `exercises/`:
-- **Programming exercises Aaron implements himself**: starter files with function signatures, docstrings and doctests (CS 61A: Python, in the style of the course's labs and homework; STAT 20: R or the course's language, on the course's kind of data), ordered from warm-up to exam level. No solutions in the starter files.
+Theory and written problems are not enough. Every week's folder also has `exercises/` (and web-facing interactive `exercises.html` + downloadable `exercises.zip` where provided):
+- **Programming exercises Aaron implements himself**: starter files with function signatures, docstrings and doctests (CS 61A: Python/SQL in the style of the course's labs and homework; STAT 20: tidyverse-style R case studies on realistic course datasets, modeled on UC Berkeley STAT 20 prediction and inference case studies), ordered from warm-up to exam level. No solutions in the starter files.
+- **Flat, scrollable interactive `exercises.html` UI (no per-task dropdowns)**: present every case study, dataset schema table, sample rows, question prompt, and interactive code cell in a flat scrollable flow with a top `.toc-bar` navigation index. Do **not** wrap tasks, schemas, or prompts inside collapsible `<details>` dropdowns.
+- **Syntax highlighting and automatic light/dark theme sync**: equip every interactive cell with CodeMirror 5 (`mode/r` or `mode/sql`) and static code snippets with `highlight.js`. Load `../../../../assets/exercises.css` **LAST** in `<head>` (after CodeMirror and highlight.js stylesheets) so its `@media (prefers-color-scheme: dark)` rules synchronize backgrounds, borders, scrollbars, and syntax token colors automatically with `index.html`.
+- **Self-contained browser runtime**: verify that every STAT 20 WebR block (including any base-R tidyverse helper shim needed when CRAN binaries are absent) and every CS 61A SQLite/Python cell executes with zero JS/R/SQL errors in both light and dark browser color schemes.
 - **A test file** that checks his answers (`python3 -m doctest`, or a test script), and a separate `solutions/` folder.
 - **Before every quiz and exam**: a timed set that mixes writing code by hand with code to run, covering each topic on that quiz.
 - Run every solution and every test before committing.
