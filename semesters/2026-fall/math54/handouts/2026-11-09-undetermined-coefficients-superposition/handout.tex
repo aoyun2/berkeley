@@ -83,24 +83,36 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0,>=Stealth]
-  % Clean 3-column mathematical comparison (1980s monochrome ink)
-  \node[anchor=north,text width=4.0cm,align=center,font=\scriptsize] at (2.1,2.15) {%
-    {\footnotesize\bfseries Case $p(r)\neq 0$ ($s=0$)}\\[5pt]
-    The map $M$ preserves $\deg q$ because its matrix is upper-triangular with nonzero diagonal $p(r)$, so $q$ has degree~$m$.};
+  % 3-panel textbook schematic: degree shift of M(q) = a q'' + p'(r) q' + p(r) q = C t^m
+  \tikzset{
+    cpanel/.style={draw=#1!65!black,fill=#1!4,line width=0.6pt,minimum width=5.30cm,minimum height=3.15cm,anchor=north west},
+    chead/.style={fill=#1!16,draw=#1!65!black,line width=0.6pt,minimum width=5.30cm,minimum height=0.58cm,anchor=north west,font=\scriptsize\bfseries,text=#1!85!black,align=center}
+  }
+  % Panel 1: s = 0
+  \node[cpanel=figblue] (p0) at (0,0) {};
+  \node[chead=figblue]  at (0,0) {Non-root: $p(r)\neq 0$ ($s=0$)};
+  \node[font=\scriptsize,align=center] at (2.65,-1.00) {$a q'' + p'(r)q' + {\color{figblue}\mathbf{p(r)}}q = Ct^m$};
+  \draw[->,figblue,thick] (0.90,-1.52) -- node[above,font=\scriptsize,text=figblue!90!black] {preserves degree} (4.40,-1.52);
+  \node[font=\scriptsize,align=center,text=black!80] at (2.65,-1.85) {$\deg q = m \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\scriptsize,align=center,draw=figblue!50,fill=white,inner sep=3pt] at (2.65,-2.58) {$y_p = Q_m(t)\,e^{rt}$};
 
-  \draw[black!22] (4.35,0.1) -- (4.35,2.15);
+  % Panel 2: s = 1
+  \node[cpanel=figamber] (p1) at (5.75,0) {};
+  \node[chead=figamber]  at (5.75,0) {Simple root: $p(r)=0$ ($s=1$)};
+  \node[font=\scriptsize,align=center] at (8.40,-1.00) {$a q'' + {\color{figamber}\mathbf{p'(r)}}q' + {\color{black!30}0\cdot q} = Ct^m$};
+  \draw[->,figamber!90!black,thick] (6.65,-1.52) -- node[above,font=\scriptsize,text=figamber!90!black] {drops degree by $1$} (10.15,-1.52);
+  \node[font=\scriptsize,align=center,text=black!80] at (8.40,-1.85) {$\deg q = m{+}1 \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\scriptsize,align=center,draw=figamber!60,fill=white,inner sep=3pt] at (8.40,-2.58) {$y_p = {\color{figamber!90!black}\mathbf{t}}\,Q_m(t)\,e^{rt}$};
 
-  \node[anchor=north,text width=4.4cm,align=center,font=\scriptsize] at (6.8,2.15) {%
-    {\footnotesize\bfseries Simple root ($s=1$)}\\[5pt]
-    Because $p(r)=0$, $p(r)q$ vanishes; solving $aq''+p'(r)q'=Ct^m$ yields $q'=u\in\mathbb P_m$, so $q$ is $t$ times a degree-$m$ polynomial.};
-
-  \draw[black!22] (9.25,0.1) -- (9.25,2.15);
-
-  \node[anchor=north,text width=4.0cm,align=center,font=\scriptsize] at (11.5,2.15) {%
-    {\footnotesize\bfseries Double root ($s=2$)}\\[5pt]
-    Because $p(r)=p'(r)=0$, only $aq''=Ct^m$ remains, so integrating twice gives $q=Ct^{m+2}/[a(m+1)(m+2)]$.};
+  % Panel 3: s = 2
+  \node[cpanel=figred] (p2) at (11.50,0) {};
+  \node[chead=figred]  at (11.50,0) {Double root: $p(r)=p'(r)=0$ ($s=2$)};
+  \node[font=\scriptsize,align=center] at (14.15,-1.00) {${\color{figred}\mathbf{a}}\,q'' + {\color{black!30}0\cdot q' + 0\cdot q} = Ct^m$};
+  \draw[->,figred,thick] (12.40,-1.52) -- node[above,font=\scriptsize,text=figred!90!black] {drops degree by $2$} (15.90,-1.52);
+  \node[font=\scriptsize,align=center,text=black!80] at (14.15,-1.85) {$\deg q = m{+}2 \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\scriptsize,align=center,draw=figred!55,fill=white,inner sep=3pt] at (14.15,-2.58) {$y_p = {\color{figred}\mathbf{t^2}}\,Q_m(t)\,e^{rt}$};
 \end{tikzpicture}
-\figcap{Why the factor $t^s$ equals the multiplicity of $r$ as a root of $p$: each vanishing coefficient in $aq''+p'(r)q'+p(r)q=Ct^m$ lowers degree by~$1$, shifting the trial polynomial upward by one factor of $t$.}
+\figcap{Why the factor $t^s$ equals the multiplicity of $r$ as a root of $p$: each vanishing leading coefficient in $M(q)=aq''+p'(r)q'+p(r)q=Ct^m$ drops the output degree by~$1$, shifting the required trial polynomial upward by one factor of $t$ (with $Q_m\in\mathbb P_m$).}
 \end{fig}
 
 \begin{theorem*}[Method of undetermined coefficients (Nagle 4.4)]\target{name-undetermined-coefficients}\target{thm-nagle-4-undetermined}
@@ -145,18 +157,19 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
 \begin{example*}[Worked examples 5--7 (Nagle): choosing forms and complex roots]
   For $y''+2y'-3y=f$, $p(r)=(r-1)(r+3)$. For $y''-2y'+y=f$, $p(r)=(r-1)^2$.
   \begin{center}
-  \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{lll}
-    \hline
-    $f(t)$ & Form for $y''+2y'-3y=f$ & Form for $y''-2y'+y=f$ \\
-    \hline
+  \small
+  \renewcommand{\arraystretch}{1.22}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    $f(t)$ & Form for $y''+2y'-3y=f$ \;\scriptsize($r=1,-3$) & Form for $y''-2y'+y=f$ \;\scriptsize($r=1,1$) \\
+    \midrule
     $7\cos 3t$ & $A\cos 3t+B\sin 3t$ & same \\
     $2te^t\sin t$ & $(A_1t+A_0)e^t\cos t+(B_1t+B_0)e^t\sin t$ & same \\
     $t^2\cos\pi t$ & $(A_2t^2+A_1t+A_0)\cos\pi t+(B_2t^2+B_1t+B_0)\sin\pi t$ & same \\
-    $5e^{-3t}$ & $Ate^{-3t}$ ($r=-3$ simple root) & $Ae^{-3t}$ \\
-    $3te^t$ & $t(A_1t+A_0)e^t$ ($r=1$ simple root) & $t^2(A_1t+A_0)e^t$ ($r=1$ double root) \\
+    $5e^{-3t}$ & $Ate^{-3t}$ \;($r=-3$ simple) & $Ae^{-3t}$ \\
+    $3te^t$ & $t(A_1t+A_0)e^t$ \;($r=1$ simple) & $t^2(A_1t+A_0)e^t$ \;($r=1$ double) \\
     $t^2e^t$ & $t(A_2t^2+A_1t+A_0)e^t$ & $t^2(A_2t^2+A_1t+A_0)e^t$ \\
-    \hline
+    \bottomrule
   \end{tabular}
   \end{center}
   \textbf{Ex.~7 (complex root):} For $y''-2y'+2y=5te^t\cos t$, $p(r)=r^2-2r+2$ has roots $1\pm i$. Since $\alpha+i\beta=1+i$ is a root, $s=1$:
@@ -173,24 +186,30 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   \begin{axis}[
-    width=9.2cm,height=4.3cm,
+    width=11.0cm,height=4.7cm,
     axis lines*=left,
-    xmin=0,xmax=14.0,ymin=-7.5,ymax=7.5,
-    xtick={0,4,8,12},ytick={-6,-3,0,3,6},
+    xmin=0,xmax=13.6,ymin=-7.6,ymax=7.6,
+    xtick={0,3.1416,6.2832,9.4248,12.5664},
+    xticklabels={$0$,$\pi$,$2\pi$,$3\pi$,$4\pi$},
+    ytick={-6,-3,0,3,6},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={$t$},ylabel={$y$},
-    legend style={at={(0.5,1.06)},anchor=south,legend columns=2,font=\scriptsize,draw=none,fill=none},
+    legend style={at={(0.5,1.05)},anchor=south,legend columns=2,font=\scriptsize,draw=none,fill=none,legend cell align=left,/tikz/every even column/.append style={column sep=16pt}},
     clip=false
   ]
-    \draw[black!25,dashed] (axis cs:0,0) -- (axis cs:14,0);
-    \addplot[domain=0:13.8,samples=160,figred,very thick] {0.5*x*sin(deg(x))};
-    \addlegendentry{$y''+y=\cos t$: $y_p=\tfrac t2\sin t$ ($s=1$)}
-    \addplot[domain=0:13.8,samples=140,figblue,thick,dashed] {-cos(deg(2*x))/3};
-    \addlegendentry{$y''+y=\cos 2t$: $y_p=-\tfrac13\cos 2t$ ($s=0$)}
-    \addplot[domain=0:13.8,samples=20,figred!65,densely dotted] {0.5*x};
-    \addplot[domain=0:13.8,samples=20,figred!65,densely dotted] {-0.5*x};
+    \draw[black!22,dashed] (axis cs:0,0) -- (axis cs:13.6,0);
+    \addplot[domain=0:13.5,samples=180,figred,very thick] {0.5*x*sin(deg(x))};
+    \addlegendentry{$y''+y=\cos t$: $y_p=\tfrac{t}{2}\sin t$ ($s=1$)}
+    \addplot[domain=0:13.5,samples=160,figblue,thick,dashed] {-cos(deg(2*x))/3};
+    \addlegendentry{$y''+y=\cos 2t$: $y_p=-\tfrac{1}{3}\cos 2t$ ($s=0$)}
+    \addplot[domain=0:13.5,samples=20,figred!65,densely dotted,thick,forget plot] {0.5*x};
+    \addplot[domain=0:13.5,samples=20,figred!65,densely dotted,thick,forget plot] {-0.5*x};
+    \node[font=\scriptsize,text=figred!85!black,above=2pt] at (axis cs:10.3,5.25) {$y = +\tfrac{t}{2}$};
+    \node[font=\scriptsize,text=figred!85!black,below=2pt] at (axis cs:8.2,-4.20) {$y = -\tfrac{t}{2}$};
   \end{axis}
 \end{tikzpicture}
-\figcap{Resonance vs.\ bounded response for $y''+y=f(t)$ ($p(r)=r^2+1$ has roots $\pm i$). For $f=\cos t$, $i$ is a root ($s=1$) so amplitude grows unboundedly inside $\pm t/2$; for $f=\cos 2t$, $2i$ is not a root ($s=0$) and the response stays bounded.}
+\figcap{Resonance vs.\ bounded response for $y''+y=f(t)$ ($p(r)=r^2+1$ has roots $\pm i$). For $f=\cos t$, $i$ is a root ($s=1$) so amplitude grows unboundedly inside the dotted envelope $\pm t/2$; for $f=\cos 2t$, $2i$ is not a root ($s=0$) and the response stays bounded.}
 \end{fig}
 
 \noindent\textbf{Limits of the method.} Undetermined coefficients requires constant coefficients (not $ty''-y'+2y=\sin 3t$) and right-hand sides whose derivatives stay finite-dimensional (not $\tan t,\sec t, 1/t, t^{-1}e^t$, handled in Nagle 4.6 by variation of parameters).
@@ -274,24 +293,34 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   \begin{axis}[
-    width=9.5cm,height=4.3cm,
+    width=11.4cm,height=4.5cm,
     axis lines*=left,
-    xmin=0,xmax=13.0,ymin=-4.0,ymax=4.0,
+    xmin=0,xmax=12.8,ymin=-3.8,ymax=3.9,
     xtick={0,2,4,6,8,10,12},ytick={-3,0,3},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={$t$},ylabel={$y$},
-    legend style={at={(0.5,1.06)},anchor=south,legend columns=2,font=\scriptsize,draw=none,fill=none},
+    legend style={at={(0.5,1.06)},anchor=south,legend columns=3,font=\scriptsize,draw=none,fill=none,legend cell align=left,/tikz/every even column/.append style={column sep=10pt}},
     clip=false
   ]
-    \draw[black!25,dashed] (axis cs:0,0) -- (axis cs:13.0,0);
-    \addplot[domain=0:12.6,samples=160,figblue,very thick] {exp(-x)*(2*cos(deg(x))+sin(deg(x))) + 3*sin(deg(x)) - cos(deg(x))};
-    \addlegendentry{total solution $y$}
-    \addplot[domain=0:12.6,samples=140,figgreen!85!black,thick,densely dotted] {3*sin(deg(x)) - cos(deg(x))};
-    \addlegendentry{steady state $y_p=3\sin t-\cos t$}
-    \addplot[domain=0:12.6,samples=120,figred,dashed,thick] {exp(-x)*(2*cos(deg(x))+sin(deg(x)))};
-    \addlegendentry{transient $e^{-t}(2\cos t+\sin t)$}
+    % Subtle tint marking the initial transient window
+    \fill[figred!5] (axis cs:0,-3.7) rectangle (axis cs:3.6,3.8);
+    \draw[figred!35,densely dotted] (axis cs:3.6,-3.7) -- (axis cs:3.6,3.8);
+    \node[font=\scriptsize,text=figred!75!black,anchor=north] at (axis cs:1.8,-2.65) {transient phase};
+    \draw[black!22,dashed] (axis cs:0,0) -- (axis cs:12.8,0);
+    \addplot[domain=0:12.6,samples=180,figblue!85,line width=1.65pt] {exp(-x)*(2*cos(deg(x))+sin(deg(x))) + 3*sin(deg(x)) - cos(deg(x))};
+    \addlegendentry{total $y = y_h + y_p$}
+    \addplot[domain=0:12.6,samples=160,figgreen!80!black,line width=1.05pt,densely dotted] {3*sin(deg(x)) - cos(deg(x))};
+    \addlegendentry{steady state $y_p = 3\sin t - \cos t$}
+    \addplot[domain=0:12.6,samples=140,figred,dashed,thick] {exp(-x)*(2*cos(deg(x))+sin(deg(x)))};
+    \addlegendentry{transient $y_h = e^{-t}(2\cos t + \sin t)$}
+    % Mark t = 0 values cleanly
+    \fill[figred] (axis cs:0,2) circle (1.7pt);
+    \fill[figblue] (axis cs:0,1) circle (1.7pt);
+    \fill[figgreen!80!black] (axis cs:0,-1) circle (1.7pt);
   \end{axis}
 \end{tikzpicture}
-\figcap{Example~3: the homogeneous \textbf{transient} $e^{-t}(2\cos t+\sin t)$ (dashed) rapidly decays to $0$, leaving the total solution $y$ (solid) tracking the \textbf{steady-state} oscillation $y_p=3\sin t-\cos t$ (dotted).}
+\figcap{Example~3: the homogeneous \textbf{transient} $y_h=e^{-t}(2\cos t+\sin t)$ (red dashed) rapidly decays to $0$ during the shaded transient phase, leaving the total solution $y$ (solid blue, $y(0)=1$) tracking the \textbf{steady-state} oscillation $y_p=3\sin t-\cos t$ (green dotted).}
 \end{fig}
 
 \begin{theorem*}[Method of undetermined coefficients, revisited (Nagle 4.5)]\target{name-undetermined-revisited}

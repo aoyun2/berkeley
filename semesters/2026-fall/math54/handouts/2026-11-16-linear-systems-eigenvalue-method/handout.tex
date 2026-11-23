@@ -45,27 +45,35 @@ where $\vv x(t)=(x_1(t),\dots,x_n(t))^{\mathsf T}$, $A(t)$ is an $n\times n$ mat
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0,>=Stealth]
-  % Left: Two connected brine tanks (sharp 0pt 1980s schematic)
-  \draw[draw=black,line width=0.6pt] (0,0.4) rectangle (1.85,1.9);
-  \node[font=\footnotesize\bfseries] at (0.925,1.4) {Tank 1};
-  \node[font=\scriptsize] at (0.925,0.85) {salt $x(t)$};
+  % Left: Two connected brine tanks
+  \node[font=\footnotesize\bfseries] at (3.25,2.65) {(a) Coupled brine tanks};
+  \draw[draw=figblue!85!black,fill=figblue!6,line width=0.65pt] (0.0,0.75) rectangle (1.85,2.15);
+  \node[font=\footnotesize\bfseries,text=figblue!90!black] at (0.925,1.68) {Tank 1};
+  \node[font=\scriptsize] at (0.925,1.15) {salt $x(t)$};
 
-  \draw[draw=black,line width=0.6pt] (3.4,0.4) rectangle (5.25,1.9);
-  \node[font=\footnotesize\bfseries] at (4.325,1.4) {Tank 2};
-  \node[font=\scriptsize] at (4.325,0.85) {salt $y(t)$};
+  \draw[draw=figblue!85!black,fill=figblue!6,line width=0.65pt] (3.45,0.75) rectangle (5.30,2.15);
+  \node[font=\footnotesize\bfseries,text=figblue!90!black] at (4.375,1.68) {Tank 2};
+  \node[font=\scriptsize] at (4.375,1.15) {salt $y(t)$};
 
-  \draw[->,line width=0.65pt] (1.92,1.48) -- node[above,font=\scriptsize] {$4x$} (3.33,1.48);
-  \draw[->,line width=0.65pt] (3.33,0.82) -- node[below,font=\scriptsize] {$2y$} (1.92,0.82);
-  \draw[->,line width=0.65pt] (5.32,1.15) -- (6.05,1.15) node[right,font=\scriptsize] {drain $2y$};
+  \draw[->,figblue,line width=0.8pt] (1.92,1.76) -- node[above=1pt,font=\scriptsize,text=figblue!90!black] {$4x$} (3.38,1.76);
+  \draw[->,figblue,line width=0.8pt] (3.38,1.14) -- node[below=1pt,font=\scriptsize,text=figblue!90!black] {$2y$} (1.92,1.14);
+  \draw[->,figred,line width=0.8pt] (5.37,1.45) -- (6.15,1.45) node[right=2pt,font=\scriptsize,text=figred!90!black] {drain $2y$};
+  \node[font=\scriptsize,text=black!80] at (2.65,0.28) {$x' = -4x + 2y,\qquad y' = 4x - 4y$};
+
+  % Vertical separator
+  \draw[black!18,line width=0.5pt] (7.75,0.08) -- (7.75,2.80);
 
   % Right: Order-n scalar ODE -> first-order state vector schematic
-  \begin{scope}[xshift=7.75cm,yshift=0.15cm]
-    \node[font=\footnotesize] at (2.8,1.72) {$y^{(n)} + p_{n-1}y^{(n-1)} + \dots + p_0 y = g$};
-    \draw[->,line width=0.65pt] (2.8,1.42) -- node[right=3pt,font=\scriptsize] {$\vv x = (y,\,y',\,\dots,\,y^{(n-1)})^{\mathsf T}$} (2.8,0.82);
-    \node[draw=black!65,line width=0.5pt,inner sep=4pt,font=\scriptsize] at (2.8,0.42) {$x_k' = x_{k+1}\ (k<n),\quad x_n' = -\sum p_k x_{k+1} + g$};
+  \begin{scope}[xshift=8.25cm]
+    \node[font=\footnotesize\bfseries] at (3.75,2.65) {(b) Order-$n$ ODE $\to$ first-order system};
+    \node[draw=figslate!80!black,fill=figslate!5,line width=0.55pt,inner sep=4.5pt,font=\scriptsize] (ode) at (3.75,1.98)
+      {$y^{(n)} + p_{n-1}y^{(n-1)} + \dots + p_0 y = g$};
+    \node[draw=figgreen!80!black,fill=figgreen!6,line width=0.55pt,inner sep=4.5pt,font=\scriptsize] (sys) at (3.75,0.42)
+      {$x_k' = x_{k+1}\ (k<n),\quad x_n' = -\sum_{k=0}^{n-1} p_k x_{k+1} + g$};
+    \draw[->,figblue,line width=0.85pt] (ode.south) -- node[right=5pt,font=\scriptsize,text=figblue!90!black] {$\vv x = (y,\,y',\,\dots,\,y^{(n-1)})^{\mathsf T}$} (sys.north);
   \end{scope}
 \end{tikzpicture}
-\figcap{\textbf{Left:} Coupled brine tanks produce $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$ cleanly by conservation of flow. \textbf{Right:} Tracking position together with every lower derivative turns any order-$n$ scalar ODE into an equivalent $n\times n$ first-order normal system.}
+\figcap{\textbf{(a)} Coupled brine tanks produce $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$ by conservation of flow (blue transfer, red outflow). \textbf{(b)} Tracking $y$ together with its first $n-1$ derivatives turns any order-$n$ scalar ODE into an equivalent $n\times n$ first-order normal system.}
 \end{fig}
 
 \begin{example*}[Worked examples 1--3 (Nagle 9.1): variable coefficients, single spring, coupled springs]
@@ -283,63 +291,91 @@ So $e^{rt}\vv u$ is a solution iff $r$ is an eigenvalue of $A$ (root of the \tex
 Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving outward from $\vv 0$) and $c_2e^{-t}(1,1)$ (decaying to $\vv 0$). For every generic initial state with $c_1\neq 0$, $e^t$ dominates as $t\to\infty$, so trajectories grow unboundedly while aligning asymptotically with $\pm(3,1)$.
 
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
+\begin{tikzpicture}[
+  scale=1.0,>=Stealth,
+  traj/.style={
+    black!65, line width=0.65pt,
+    postaction={decorate},
+    decoration={markings, mark=at position #1 with {\arrow[black!85]{Stealth[length=4.0pt,width=2.7pt]}}}
+  }
+]
   % Left: Saddle of Example 3
-  \begin{scope}[xshift=2.6cm,yshift=2.0cm,scale=0.66]
-    \draw[figaxis] (-3.9,0) -- (3.8,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.4) -- (0,2.4) node[above,font=\scriptsize] {$x_2$};
-    % Hyperbolic trajectories x(t) = c1 e^t (3,1) + c2 e^-t (1,1)
-    \foreach \ca/\cb in {0.45/0.8, 0.45/-0.8, -0.45/-0.8, -0.45/0.8} {
-      \draw[black!65,thick] plot[domain=-0.65:0.75,samples=30] ({\ca*exp(\x)*3 + \cb*exp(-\x)*1}, {\ca*exp(\x)*1 + \cb*exp(-\x)*1});
-    }
-    \draw[->,black!75,thick] (1.6,1.12) -- (1.85,1.19);
-    \draw[->,black!75,thick] (-1.6,-1.12) -- (-1.85,-1.19);
-    \draw[->,black!75,thick] (0.52,-0.32) -- (0.8,-0.15);
-    \draw[->,black!75,thick] (-0.52,0.32) -- (-0.8,0.15);
-    % Eigenvector lines and transparent labels in open whitespace
-    \draw[figred,very thick,->] (0,0) -- (3.6,1.2);
-    \draw[figred,very thick,->] (0,0) -- (-3.6,-1.2);
-    \node[halo,font=\scriptsize,text=figred!90!black,above=2pt] at (2.45,2.05) {$\vv u_1=(3,1),\ r=1$};
-    \draw[->,figred,thin] (2.45,2.02) -- (2.95,1.02);
-    \draw[figblue,very thick,->] (2.2,2.2) -- (0.2,0.2);
-    \draw[figblue,very thick,->] (-2.2,-2.2) -- (-0.2,-0.2);
-    \node[halo,font=\scriptsize,text=figblue!90!black,anchor=north] at (-1.75,-2.25) {$\vv u_2=(1,1),\ r=-1$};
-    \node[font=\footnotesize,anchor=north] at (0,-2.75) {Saddle ($r_1>0>r_2$, Ex.~3)};
+  \begin{scope}[xshift=2.85cm,yshift=2.35cm,scale=0.68]
+    \draw[figaxis] (-3.55,0) -- (3.55,0) node[right=1pt,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.45) -- (0,2.45) node[above=1pt,font=\scriptsize] {$x_2$};
+    % Exact hyperbolic trajectories x(t) = c1 e^t (3,1) + c2 e^-t (1,1) clipped to box
+    \begin{scope}
+      \clip (-3.25,-2.10) rectangle (3.25,2.10);
+      % Q1 & Q3 branches (narrow wedge between u2 and u1)
+      \foreach \s in {1,-1} {
+        \draw[traj=0.52] plot[domain=-1.55:1.65,samples=40] ({\s*(0.20*exp(\x)*3 + 0.48*exp(-\x)*1)}, {\s*(0.20*exp(\x)*1 + 0.48*exp(-\x)*1)});
+      }
+      % Q4 & Q2 branches (wide sectors between -u2 and u1, and u2 and -u1)
+      \foreach \s in {1,-1} {
+        \draw[traj=0.52] plot[domain=-1.45:1.72,samples=40] ({\s*(0.20*exp(\x)*3 - 0.55*exp(-\x)*1)}, {\s*(0.20*exp(\x)*1 - 0.55*exp(-\x)*1)});
+        \draw[traj=0.52] plot[domain=-0.72:1.05,samples=35] ({\s*(0.45*exp(\x)*3 - 1.25*exp(-\x)*1)}, {\s*(0.45*exp(\x)*1 - 1.25*exp(-\x)*1)});
+      }
+    \end{scope}
+    % Eigenvector lines
+    \draw[figred,very thick,->] (0,0) -- (3.25,1.083);
+    \draw[figred,very thick,->] (0,0) -- (-3.25,-1.083);
+    \draw[figblue,very thick,->] (2.10,2.10) -- (0.18,0.18);
+    \draw[figblue,very thick,->] (-2.10,-2.10) -- (-0.18,-0.18);
+    \fill[black] (0,0) circle (1.8pt);
+    % Labels placed in 100% open space with zero line/arrowhead crossings
+    \node[font=\scriptsize,text=figblue!90!black,anchor=south west] at (0.35,2.15) {$\vv u_2=(1,1),\; r=-1$};
+    \node[font=\scriptsize,text=figred!90!black,anchor=south west] at (2.05,1.44) {$\vv u_1=(3,1),\; r=1$};
+    \draw[->,figred!85!black,thin] (2.68,1.42) -- (2.42,0.86);
   \end{scope}
 
-  % Middle: Sink
-  \begin{scope}[xshift=8.45cm,yshift=2.0cm,scale=0.68]
-    \draw[figaxis] (-2.2,0) -- (2.2,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.2) -- (0,2.2) node[above,font=\scriptsize] {$x_2$};
-    \draw[figblue,thick,->] (2.0,0) -- (0.2,0);
-    \draw[figblue,thick,->] (-2.0,0) -- (-0.2,0);
-    \draw[figred!70,thick,->] (0,2.0) -- (0,0.2);
-    \draw[figred!70,thick,->] (0,-2.0) -- (0,-0.2);
-    \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
-      \draw[black!65,thick] plot[domain=0.2:1.6,samples=25] ({\sx*1.3*exp(-0.7*\x)}, {\sy*1.1*exp(-2.2*\x)});
-      \draw[->,black!75,thick] ({\sx*1.3*exp(0.25)}, {\sy*1.1*exp(-0.55)}) -- ({\sx*1.3*exp(0.50)}, {\sy*1.1*exp(-1.1)});
-    }
-    \node[halo,font=\scriptsize,text=figblue!90!black] at (1.35,-1.55) {slower $r_1$};
-    \node[font=\footnotesize,anchor=north] at (0,-2.75) {Sink ($r_2<r_1<0$: all $\to\vv 0$)};
+  % Middle: Sink (r2 < r1 < 0)
+  \begin{scope}[xshift=8.85cm,yshift=2.35cm,scale=0.68]
+    \draw[figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {$x_2$};
+    \begin{scope}
+      \clip (-2.00,-1.88) rectangle (2.00,1.88);
+      % Exact trajectories x2 = +- k x1^3 moving INWARD toward (0,0), tangent to slow x1-axis
+      \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
+        \draw[traj=0.50] plot[domain=1.52:0.06,samples=30] ({\sx*\x}, {\sy*0.55*\x*\x*\x});
+        \draw[traj=0.50] plot[domain=0.93:0.06,samples=30] ({\sx*\x}, {\sy*2.40*\x*\x*\x});
+      }
+    \end{scope}
+    \draw[figblue,very thick,->] (2.00,0) -- (0.18,0);
+    \draw[figblue,very thick,->] (-2.00,0) -- (-0.18,0);
+    \draw[figred!85,very thick,->] (0,1.95) -- (0,0.18);
+    \draw[figred!85,very thick,->] (0,-1.95) -- (0,-0.18);
+    \fill[black] (0,0) circle (1.8pt);
+    \node[font=\scriptsize,text=figblue!90!black,anchor=north west] at (1.18,-0.22) {slower $r_1$};
+    \node[font=\scriptsize,text=figred!90!black,anchor=south west] at (0.18,1.94) {faster $r_2$};
   \end{scope}
 
-  % Right: Source
-  \begin{scope}[xshift=12.55cm,yshift=2.0cm,scale=0.68]
-    \draw[figaxis] (-2.2,0) -- (2.2,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.2) -- (0,2.2) node[above,font=\scriptsize] {$x_2$};
-    \draw[figblue,thick,->] (0,0) -- (2.0,0);
-    \draw[figblue,thick,->] (0,0) -- (-2.0,0);
-    \draw[figred,thick,->] (0,0) -- (0,2.0);
-    \draw[figred,thick,->] (0,0) -- (0,-2.0);
-    \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
-      \draw[black!65,thick] plot[domain=-0.15:1.6,samples=25] ({\sx*1.3*exp(-0.7*\x)}, {\sy*1.1*exp(-2.2*\x)});
-      \draw[->,black!75,thick] ({\sx*1.3*exp(0.45)}, {\sy*1.1*exp(-1.0)}) -- ({\sx*1.3*exp(0.15)}, {\sy*1.1*exp(-0.33)});
-    }
-    \node[halo,font=\scriptsize,text=figred!90!black,right=3pt] at (0.12,1.82) {faster $r_2$};
-    \node[font=\footnotesize,anchor=north] at (0,-2.65) {Source ($0<r_1<r_2$: all $\to\infty$)};
+  % Right: Source (0 < r1 < r2)
+  \begin{scope}[xshift=13.85cm,yshift=2.35cm,scale=0.68]
+    \draw[figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {$x_2$};
+    \begin{scope}
+      \clip (-2.00,-1.88) rectangle (2.00,1.88);
+      % Exact trajectories x2 = +- k x1^3 moving OUTWARD from (0,0), sweeping parallel to fast x2-axis
+      \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
+        \draw[traj=0.52] plot[domain=0.06:1.52,samples=30] ({\sx*\x}, {\sy*0.55*\x*\x*\x});
+        \draw[traj=0.52] plot[domain=0.06:0.93,samples=30] ({\sx*\x}, {\sy*2.40*\x*\x*\x});
+      }
+    \end{scope}
+    \draw[figblue,very thick,->] (0,0) -- (2.00,0);
+    \draw[figblue,very thick,->] (0,0) -- (-2.00,0);
+    \draw[figred,very thick,->] (0,0) -- (0,1.95);
+    \draw[figred,very thick,->] (0,0) -- (0,-1.95);
+    \fill[black] (0,0) circle (1.8pt);
+    \node[font=\scriptsize,text=figblue!90!black,anchor=north west] at (1.18,-0.22) {slower $r_1$};
+    \node[font=\scriptsize,text=figred!90!black,anchor=south west] at (0.18,1.94) {faster $r_2$};
   \end{scope}
+
+  % Strictly aligned panel titles on one shared baseline
+  \node[font=\footnotesize,anchor=north] at (2.85,0.22) {Saddle ($r_1>0>r_2$, Ex.~3)};
+  \node[font=\footnotesize,anchor=north] at (8.85,0.22) {Sink ($r_2<r_1<0$: all $\to\vv 0$)};
+  \node[font=\footnotesize,anchor=north] at (13.85,0.22) {Source ($0<r_1<r_2$: all $\to\infty$)};
 \end{tikzpicture}
-\figcap{Phase portraits organized by eigenvalue signs. \textbf{Left (Ex.~3 saddle):} Trajectories come in along $\vv u_2$ ($r=-1<0$) and move outward along $\vv u_1$ ($r=1>0$). \textbf{Middle (sink):} Negative eigenvalues pull all solutions into $\vv 0$, tangent to the slower decaying eigenvector. \textbf{Right (source):} Positive eigenvalues push all nonzero solutions outward along the faster growing direction.}
+\figcap{Phase portraits organized by eigenvalue signs. \textbf{Left (Ex.~3 saddle):} Trajectories come in along $\vv u_2$ (blue, $r=-1<0$) and sweep outward along $\vv u_1$ (red, $r=1>0$). \textbf{Middle (sink):} Negative eigenvalues pull all solutions into $\vv 0$, tangent to the slower decaying eigenvector $r_1$. \textbf{Right (source):} Positive eigenvalues push all nonzero solutions outward along the faster growing direction $r_2$.}
 \end{fig}
 
 \begin{example*}[Worked examples 4--5 (Nagle 9.5): 3D IVP \& symmetric repeated eigenvalue]

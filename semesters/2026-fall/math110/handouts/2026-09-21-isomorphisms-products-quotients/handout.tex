@@ -118,18 +118,24 @@
 \end{proof}
 
 \begin{fig}
-\[
-\begin{tikzcd}[column sep=9.5em, row sep=3.4em]
-  \MM(v,B')\in\FF^{n,1}
-    \arrow[r, "{\MM(T,B') = A^{-1}\MM(T,B)A}"]
-    \arrow[d, "{A = \MM(I,B',B)}"']
-  & \MM(Tv,B')\in\FF^{n,1} \\[2pt]
-  \MM(v,B)\in\FF^{n,1}
-    \arrow[r, "{\MM(T,B)}"']
-  & \MM(Tv,B)\in\FF^{n,1}
-    \arrow[u, "{A^{-1} = \MM(I,B,B')}"']
-\end{tikzcd}
-\]
+\begin{tikzpicture}[>=Stealth,scale=0.95]
+  % Boxed coordinate spaces: B'-coordinates (figblue) vs B-coordinates (figgreen)
+  \node[figbox,draw=figblue!80!black,fill=figblue!5,minimum width=3.05cm,minimum height=0.72cm,font=\footnotesize,text=figblue!90!black] (TL) at (0,2.45) {$\MM(v,B')\in\FF^{n,1}$};
+  \node[figbox,draw=figblue!80!black,fill=figblue!5,minimum width=3.05cm,minimum height=0.72cm,font=\footnotesize,text=figblue!90!black] (TR) at (7.4,2.45) {$\MM(Tv,B')\in\FF^{n,1}$};
+  \node[figbox,draw=figgreen!80!black,fill=figgreen!5,minimum width=3.05cm,minimum height=0.72cm,font=\footnotesize,text=figgreen!90!black] (BL) at (0,0) {$\MM(v,B)\in\FF^{n,1}$};
+  \node[figbox,draw=figgreen!80!black,fill=figgreen!5,minimum width=3.05cm,minimum height=0.72cm,font=\footnotesize,text=figgreen!90!black] (BR) at (7.4,0) {$\MM(Tv,B)\in\FF^{n,1}$};
+
+  % Horizontal operator arrows
+  \draw[->,figblue,line width=0.9pt] (TL.east) -- node[above=3pt,font=\footnotesize,text=figblue!90!black] {$\MM(T,B') = A^{-1}\MM(T,B)A$} (TR.west);
+  \draw[->,figgreen!90!black,line width=0.9pt] (BL.east) -- node[below=3pt,font=\footnotesize,text=figgreen!90!black] {$\MM(T,B)$} (BR.west);
+
+  % Vertical change-of-basis arrows (compact two-line labels keep total width balanced)
+  \draw[->,figred!85!black,line width=0.85pt] (TL.south) -- node[left=5pt,align=right,font=\scriptsize,text=figred!90!black] {$A = \MM(I,B',B)$\\[1pt]\color{figslate}($B'\!\to B$ coords)} (BL.north);
+  \draw[->,figred!85!black,line width=0.85pt] (BR.north) -- node[right=5pt,align=left,font=\scriptsize,text=figred!90!black] {$A^{-1} = \MM(I,B,B')$\\[1pt]\color{figslate}($B\!\to B'$ coords)} (TR.south);
+
+  % Subtle center note
+  \node[font=\scriptsize,text=figslate] at (3.7,1.225) {commutes: top arrow $=$ detour via $B$};
+\end{tikzpicture}
 \figcap{Commutative diagram for the Change-of-Basis Formula $\MM(T,B')=A^{-1}\MM(T,B)A$ (LADR 3.84): to apply $T$ in $B'$-coordinates, multiply by $A=\MM(I,B',B)$ to convert to $B$-coordinates, multiply by $\MM(T,B)$, and multiply by $A^{-1}$ to convert back to $B'$-coordinates.}
 \end{fig}
 
@@ -174,28 +180,38 @@
 \end{ideabox}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth]
-  % x-axis
-  \draw[figaxis] (-0.9,0) -- (5.2,0) node[right,font=\scriptsize] {$x$};
+\begin{tikzpicture}[>=Stealth,scale=0.95]
+  % x-axis (clean horizontal span framing U = 0+U through (3,1.5)+U)
+  \draw[figaxis] (-0.95,0) -- (7.15,0) node[right=2pt,font=\footnotesize] {$x$};
 
-  % Vertical coset lines x = -0.6, 0, 1.4, 2.8, 4.2
-  \draw[black!25,thin] (-0.6,-0.4) -- (-0.6,2.6);
-  \draw[figblue,line width=1.4pt] (0,-0.4) -- (0,2.6) node[above=2pt,font=\footnotesize\bfseries,text=figblue!90!black] {$U = 0+U$};
-  \draw[figgreen!85!black,thick] (1.4,-0.4) -- (1.4,2.6);
-  \draw[figamber!85!black,thick,dashed] (2.8,-0.4) -- (2.8,2.6);
-  \draw[figred!85!black,thick,dash dot] (4.2,-0.4) -- (4.2,2.6);
+  % Vertical coset lines (true linear scale: x_unit = 1.95, y_unit = 0.85)
+  \draw[figblue,line width=1.4pt] (0,-0.45) -- (0,3.30) node[above=3pt,font=\footnotesize\bfseries,text=figblue!90!black] {$U = 0+U$};
+  \draw[figgreen!85!black,thick] (1.95,-0.45) -- (1.95,3.30);
+  \draw[figamber!85!black,thick,dashed] (3.90,-0.45) -- (3.90,3.30);
+  \draw[figred!85!black,thick,dash dot] (5.85,-0.45) -- (5.85,3.30);
 
-  % Points on the lines (with white halo so coset lines never touch text)
-  \fill[figgreen!85!black] (1.4,0.95) circle (1.9pt) node[halo,right=3pt,font=\scriptsize] {$(1,1)$};
-  \fill[figgreen!85!black] (1.4,2.15) circle (1.9pt) node[halo,right=3pt,font=\scriptsize] {$(1,3)$};
-  \fill[figamber!85!black] (2.8,0.65) circle (1.9pt) node[halo,right=3pt,font=\scriptsize] {$(2,0.5)$};
-  \fill[figred!85!black] (4.2,1.5) circle (1.9pt) node[halo,right=3pt,font=\scriptsize] {$(3,1.5)$};
-  \fill[figred!85!black] (4.2,2.45) circle (1.9pt) node[halo,right=3pt,font=\scriptsize] {$(3,3.5)$};
+  % Proportionally placed points on coset lines (y_screen = 0.85 * y_math)
+  \coordinate (P1) at (1.95,0.85);
+  \coordinate (P2) at (1.95,2.55);
+  \coordinate (Q)  at (3.90,0.425);
+  \coordinate (R1) at (5.85,1.275);
+  \coordinate (R2) at (5.85,2.975);
 
-  % Staggered coset labels at bottom
-  \node[font=\scriptsize,text=figgreen!90!black] at (1.4,-0.65) {$(1,1)+U$};
-  \node[font=\scriptsize,text=figamber!90!black] at (2.8,-1.05) {$(2,0.5)+U$};
-  \node[font=\scriptsize,text=figred!90!black] at (4.2,-0.65) {$(3,1.5)+U$};
+  % Parallel translation arrows demonstrating well-definedness of coset addition +(2,0.5)
+  \draw[->,figamber!85!black,thick,shorten >=2.5pt,shorten <=2.5pt] (P1) -- node[pos=0.26,sloped,above=2pt,font=\scriptsize,text=figamber!90!black] {$+(2,0.5)$} (R1);
+  \draw[->,figamber!85!black,thick,densely dashed,shorten >=2.5pt,shorten <=2.5pt] (P2) -- node[pos=0.26,sloped,above=2pt,font=\scriptsize,text=figamber!90!black] {$+(2,0.5)$} (R2);
+
+  % Point dots and crisp halo-free labels in open space
+  \fill[figgreen!85!black] (P1) circle (2.0pt) node[left=3pt,font=\scriptsize,text=figgreen!90!black] {$(1,1)$};
+  \fill[figgreen!85!black] (P2) circle (2.0pt) node[left=3pt,font=\scriptsize,text=figgreen!90!black] {$(1,3)$};
+  \fill[figamber!85!black] (Q)  circle (2.0pt) node[right=3pt,font=\scriptsize,text=figamber!90!black] {$(2,0.5)$};
+  \fill[figred!85!black]   (R1) circle (2.0pt) node[right=3pt,font=\scriptsize,text=figred!90!black] {$(3,1.5)$};
+  \fill[figred!85!black]   (R2) circle (2.0pt) node[right=3pt,font=\scriptsize,text=figred!90!black] {$(3,3.5)$};
+
+  % Aligned coset labels on one clean horizontal baseline
+  \node[font=\scriptsize,text=figgreen!90!black] at (1.95,-0.74) {$(1,1)+U$};
+  \node[font=\scriptsize,text=figamber!90!black] at (3.90,-0.74) {$(2,0.5)+U$};
+  \node[font=\scriptsize,text=figred!90!black]   at (5.85,-0.74) {$(3,1.5)+U$};
 \end{tikzpicture}
 \figcap{Geometry of the quotient space $\RR^2/U$ where $U=\spn((0,1))$ is the vertical axis: elements of $\RR^2/U$ are the vertical lines parallel to $U$. Notice $(1,1)+(2,0.5)=(3,1.5)$ and $(1,3)+(2,0.5)=(3,3.5)$ land on the same vertical line $(3,1.5)+U$, so coset addition is independent of representatives.}
 \end{fig}

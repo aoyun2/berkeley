@@ -53,8 +53,10 @@ Everyday statements such as ``aspirin cured the headache'' or ``graduating from 
 
 \medskip\noindent\textbf{Potential outcomes and the fundamental problem.} Consider a binary treatment $X \in \{0,1\}$ ($1$ treated, $0$ control). Every unit $i$ carries two \vocab{potential outcomes}: $Y_{c,i} = Y_i(0)$ under control and $Y_{t,i} = Y_i(1)$ under treatment. The individual \vocab{treatment effect} is $\delta_i = Y_{t,i} - Y_{c,i}$. Because a single unit can be observed under only one condition, the other potential outcome is permanently missing (\cd{NA}):
 
-\medskip
-\noindent\begin{tabular}{@{}lcc@{}}
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}lrr@{}}
 \toprule
 Data view (Evelyn Fix, from Notes) & $Y_t$ (went to Cal) & $Y_c$ (did not go to Cal) \\
 \midrule
@@ -62,6 +64,7 @@ Ideal counterfactual table & \$150{,}000 & \$112{,}000 \\
 Observed table & \$150{,}000 & \cd{NA} \\
 \bottomrule
 \end{tabular}
+\end{center}
 
 \medskip\noindent Because only one column is ever observed for each unit, $\delta_i = Y_{t,i} - Y_{c,i}$ cannot be computed directly for any individual. Instead, population claims target the mean difference across units.
 
@@ -117,31 +120,36 @@ In an \vocab{experiment}, the researcher assigns units to conditions; in an \voc
   \ii \textbf{Blinding:} Keeping subjects unaware (\vocab{single-blind}, using a look-alike \vocab{placebo} when safe and ethical) removes expectation effects; keeping both subjects and researchers unaware (\vocab{double-blind}) also removes differences in how staff interact with treated vs.\ control units.
 \end{itemize}
 
-\Needspace{15\baselineskip}
+\Needspace{16\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>=Stealth,font=\small]
-  \tikzset{nd/.style={draw=black,line width=0.55pt,minimum width=2.2cm,minimum height=0.72cm,align=center,font=\footnotesize}}
-  % Left: Observational confounding
-  \node[font=\footnotesize\bfseries] at (2.1,2.45) {(a) Observational study (confounded)};
-  \node[nd,draw=figred!85!black,fill=figred!6] (z1) at (2.1,1.65) {Confounder $Z$\\(e.g.\ prior GPA)};
-  \node[nd]              (x1) at (0.3,0.15) {Group $X$\\(PDF / Web)};
-  \node[nd]              (y1) at (3.9,0.15) {Outcome $Y$\\(Understanding)};
-  \draw[->,figred,thick] (z1) -- (x1);
-  \draw[->,figred,thick] (z1) -- (y1);
-  \draw[->,figblue,thick] (x1) -- (y1);
+  \tikzset{nd/.style={draw=black!85,line width=0.6pt,minimum width=2.55cm,minimum height=0.84cm,align=center,font=\footnotesize,inner sep=4pt}}
+  % Left: Observational confounding (centered at x = 2.1)
+  \node[font=\footnotesize\bfseries] at (2.10,2.85) {(a) Observational study (confounded)};
+  \node[nd,draw=figred!85!black,fill=figred!6] (z1) at (2.10,1.95) {Confounder $Z$\\(e.g.\ prior GPA)};
+  \node[nd] (x1) at (0.18,0.0) {Group $X$\\(PDF / Web)};
+  \node[nd] (y1) at (4.02,0.0) {Outcome $Y$\\(Understanding)};
+  \draw[->,figred,line width=0.9pt] (z1) -- (x1);
+  \draw[->,figred,line width=0.9pt] (z1) -- (y1);
+  \draw[->,figblue,line width=0.95pt] (x1) -- (y1);
 
-  % Right: Randomized experiment
-  \node[font=\footnotesize\bfseries] at (9.6,2.45) {(b) Randomized controlled trial (unconfounded)};
-  \node[nd]              (z2) at (10.7,1.65) {Pre-treatment $Z$\\(prior GPA, major)};
-  \node[nd,draw=figblue!85!black,fill=figblue!6] (r2) at (7.5,1.65) {Random\\Assignment};
-  \node[nd]              (x2) at (7.5,0.15) {Group $X$\\(PDF / Web)};
-  \node[nd]              (y2) at (10.7,0.15) {Outcome $Y$\\(Understanding)};
-  \draw[->,figblue,thick] (r2) -- (x2);
-  \draw[->,figslate,thick,dashed] (z2) -- (y2);
-  \draw[figred!70,dashed] (z2) -- node[midway,halo,font=\scriptsize,text=figred!85!black] {$\times$ broken} (x2);
-  \draw[->,figblue,thick] (x2) -- (y2);
+  % Subtle panel divider
+  \draw[black!18,line width=0.5pt] (6.15,-0.55) -- (6.15,3.00);
+
+  % Right: Randomized experiment (centered at x = 10.22)
+  \node[font=\footnotesize\bfseries] at (10.22,2.85) {(b) Randomized controlled trial (unconfounded)};
+  \node[nd,draw=figblue!85!black,fill=figblue!6] (r2) at (8.30,1.95) {Random\\Assignment};
+  \node[nd] (z2) at (12.14,1.95) {Pre-treatment $Z$\\(prior GPA, major)};
+  \node[nd] (x2) at (8.30,0.0) {Group $X$\\(PDF / Web)};
+  \node[nd] (y2) at (12.14,0.0) {Outcome $Y$\\(Understanding)};
+  \draw[->,figblue,line width=0.95pt] (r2) -- (x2);
+  \draw[->,figslate,line width=0.85pt,dashed] (z2) -- (y2);
+  \draw[->,figred!60,line width=0.75pt,dashed] (z2.south west) -- (x2.north east)
+    node[pos=0.50,font=\small\bfseries,text=figred!90!black] {$\times$}
+    node[pos=0.52,below right=2pt and 0pt,font=\scriptsize,text=figred!85!black] {broken};
+  \draw[->,figblue,line width=0.95pt] (x2) -- (y2);
 \end{tikzpicture}
-\figcap{\textbf{Left:} In an observational study, a pre-existing confounder $Z$ (red) drives both treatment choice $X$ and outcome $Y$. \textbf{Right:} Random assignment (blue) controls how $X$ is chosen, severing the link from every measured and unmeasured confounder $Z$ to $X$.}
+\figcap{\textbf{(a)} In an observational study, a pre-existing confounder $Z$ (red) drives both treatment choice $X$ and outcome $Y$. \textbf{(b)} Random assignment (blue) controls $X$, severing the link from every measured and unmeasured pre-treatment variable $Z$ to $X$.}
 \end{fig}
 
 \begin{theorem*}[Random assignment gives an unbiased estimate of the ATE]\target{thm-unbiased-rct}
@@ -186,58 +194,74 @@ For our six-student dataset, PDF GPAs ($3.81, 3.63, 3.20$) have $\bar x_{\text{p
 \]
 For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in PDF have difference $+1/3$; using sample variance $\frac{k}{k-1}p(1-p) = 1/3$ gives $+1/\sqrt{3} \approx +0.58$, while \cd{cobalt::bal.tab(..., binary = "std")} uses $p(1-p) = 2/9$ and gives $(1/3)/\sqrt{2/9} \approx +0.71$. Native speakers are $2/3$ in both groups ($\mathrm{SMD} = 0$).
 
-\Needspace{15\baselineskip}
+\Needspace{16\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   % Left: Love plot of SMDs (website minus pdf)
   \begin{axis}[
     at={(0,0)},anchor=south west,
-    width=6.0cm,height=4.0cm,
+    width=6.1cm,height=4.3cm,
     axis lines*=left,
-    xmin=-1.05,xmax=1.05,ymin=0.5,ymax=3.5,
+    xmin=-1.05,xmax=1.05,ymin=0.5,ymax=3.65,
     xtick={-1,-0.5,0,0.5,1},
     ytick={1,2,3},
     yticklabels={Native speaker,Statistics major,GPA},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={$\mathrm{SMD}$ (website $-$ pdf)},
-    title={\footnotesize Love plot of pre-treatment covariates},
+    title={\footnotesize Love plot of pre-treatment covariates\strut},
+    title style={yshift=8pt},
     clip=false
   ]
-    \draw[black!35,dashed] (axis cs:0,0.5) -- (axis cs:0,3.5);
-    \addplot[only marks,mark=*,mark size=2.5pt,figblue] coordinates {(0,1) (0.71,2) (-0.66,3)};
-    \node[halo,font=\scriptsize,above right=2pt] at (axis cs:-0.66,3) {$-0.66$};
-    \node[halo,font=\scriptsize,above left=2pt]  at (axis cs:0.71,2) {$+0.71$};
-    \node[halo,font=\scriptsize,above right=2pt] at (axis cs:0.04,1) {$0$};
+    \draw[black!14,densely dotted] (axis cs:-1.05,1) -- (axis cs:1.05,1);
+    \draw[black!14,densely dotted] (axis cs:-1.05,2) -- (axis cs:1.05,2);
+    \draw[black!14,densely dotted] (axis cs:-1.05,3) -- (axis cs:1.05,3);
+    \draw[black!35,dashed] (axis cs:0,0.5) -- (axis cs:0,3.55);
+    \draw[figblue!60,line width=1.1pt] (axis cs:0,3) -- (axis cs:-0.66,3);
+    \draw[figblue!60,line width=1.1pt] (axis cs:0,2) -- (axis cs:0.71,2);
+    \addplot[only marks,mark=*,mark size=2.6pt,figblue] coordinates {(0,1) (0.71,2) (-0.66,3)};
+    \node[font=\scriptsize,text=figblue!90!black,above=4pt] at (axis cs:-0.66,3) {$-0.66$};
+    \node[font=\scriptsize,text=figblue!90!black,above=4pt] at (axis cs:0.71,2) {$+0.71$};
+    \node[font=\scriptsize,text=figblue!90!black,right=5pt] at (axis cs:0,1) {$0$};
   \end{axis}
 
-  % Right: Exact permutation null distribution of 20 assignments (diff in GPA)
+  % Right: Exact permutation null distribution of 20 assignments (stacked Wilkinson dotplot)
   \begin{axis}[
-    at={(7.6cm,0)},anchor=south west,
-    width=6.5cm,height=4.0cm,
+    at={(7.65cm,0)},anchor=south west,
+    width=6.9cm,height=4.3cm,
     axis lines*=left,
-    xmin=-0.78,xmax=0.78,ymin=0,ymax=3.1,
+    xmin=-0.76,xmax=0.76,ymin=0,ymax=4.9,
     xtick={-0.6,-0.3,0,0.3,0.6},
-    ytick={0,1,2},
+    ytick={0,1,2,3,4},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={$\bar x_{\text{pdf}} - \bar x_{\text{web}}$ (GPA)},
-    ylabel={Count},
-    title={\footnotesize Exact balance test ($\binom{6}{3}=20$ splits)},
+    ylabel={Stack count},
+    title={\footnotesize Exact balance test ($\binom{6}{3}=20$ splits)\strut},
+    title style={yshift=8pt},
     clip=false
   ]
-    \draw[black!35,dashed] (axis cs:0,0) -- (axis cs:0,2.8);
-    \draw[figred,thick,dashed] (axis cs:0.2667,0) -- (axis cs:0.2667,2.6);
-    \node[font=\scriptsize,text=figred!85!black,above] at (axis cs:0.2667,2.62) {obs.\ $0.267$};
-    % Non-extreme 12 hollow dots
-    \addplot[only marks,mark=o,mark options={draw=figslate,line width=0.6pt},mark size=2.3pt,figslate] coordinates {
-      (-0.260,1) (-0.260,2) (-0.253,1) (-0.147,1) (-0.033,1) (-0.027,1)
-      (0.027,1) (0.033,1) (0.147,1) (0.253,1) (0.260,1) (0.260,2)
+    % Shaded extreme tail regions (|diff| >= 0.2667)
+    \fill[figred!8] (axis cs:-0.76,0) rectangle (axis cs:-0.2667,4.42);
+    \fill[figred!8] (axis cs:0.2667,0) rectangle (axis cs:0.76,4.42);
+    \draw[black!28,dashed] (axis cs:0,0) -- (axis cs:0,4.42);
+    \draw[figred!75,thick,dashed] (axis cs:-0.2667,0) -- (axis cs:-0.2667,4.42);
+    \draw[figred!75,thick,dashed] (axis cs:0.2667,0) -- (axis cs:0.2667,4.42);
+    \node[font=\scriptsize,text=figred!85!black,above=2pt] at (axis cs:0.2667,4.42) {obs.\ $+0.267$};
+    \node[font=\scriptsize,text=figred!85!black,above=2pt] at (axis cs:-0.2667,4.42) {$-0.267$};
+    % Non-extreme 12 hollow dots (stacked cleanly with zero overlap)
+    \addplot[only marks,mark=o,mark options={draw=figslate,fill=white,line width=0.7pt},mark size=2.2pt,figslate] coordinates {
+      (-0.260,1) (-0.260,2) (-0.253,3) (-0.147,1) (-0.033,1) (-0.027,2)
+      (0.027,1) (0.033,2) (0.147,1) (0.253,1) (0.260,2) (0.260,3)
     };
     % Extreme 8 filled red dots (|diff| >= 0.2667)
-    \addplot[only marks,mark=*,mark size=2.4pt,figred] coordinates {
-      (-0.667,1) (-0.380,1) (-0.373,1) (-0.267,1)
-      (0.267,1) (0.373,1) (0.380,1) (0.667,1)
+    \addplot[only marks,mark=*,mark size=2.3pt,figred] coordinates {
+      (-0.667,1) (-0.380,1) (-0.373,2) (-0.267,4)
+      (0.267,4) (0.373,1) (0.380,2) (0.667,1)
     };
   \end{axis}
 \end{tikzpicture}
-\figcap{\textbf{Left:} Love plot showing standardized mean differences (website minus pdf) across the three covariates. \textbf{Right:} Exact permutation null distribution across all $\binom{6}{3}=20$ assignments for GPA; $8$ of $20$ splits (red filled dots) are at least as extreme as $\pm 0.2667$, giving two-sided balance $p = 0.4$.}
+\figcap{\textbf{Left:} Love plot showing standardized mean differences (website minus pdf) across the three covariates. \textbf{Right:} Exact permutation null distribution across all $\binom{6}{3}=20$ assignments for GPA (stacked vertically when nearby splits cluster); $8$ of $20$ splits (red filled dots in the shaded tails $|\text{diff}|\ge 0.267$) give two-sided balance $p = 0.4$.}
 \end{fig}
 
 \medskip\noindent\textbf{Piece-by-piece R code breakdown (STAT~20 tidyverse, \cd{cobalt}, and \cd{infer}).} Every RCT analysis in R separates into three clean pipelines:
@@ -269,29 +293,30 @@ null_dist |> get_p_value(obs_stat = obs_stat, direction = "both")
 \end{rcode}
 
 \Needspace{18\baselineskip}
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.1cm}>{\raggedright\arraybackslash}X@{}}
+{\small\renewcommand{\arraystretch}{1.15}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.8cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{R Function / Verb} & \textbf{Key arguments} & \textbf{Input $\to$ Output and exact meaning} \\
 \midrule
 \cd{group\_by(group)} & Grouping column & Attaches group metadata (\cd{pdf}, \cd{website}) to rows of \cd{format\_data}. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{summarize(...)} & Named summary formulas & Collapses $6$ rows to $2$ rows (one per group) with \cd{mean\_gpa} and \cd{n}. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{mutate(is\_website = ...)} & Logical comparison & Appends a \cd{TRUE}/\cd{FALSE} column because \cd{bal.tab} requires a $0/1$ or logical treatment. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{bal.tab(is\_website \textasciitilde{} ..., data = \_)} & Formula, \cd{s.d.denom}, \cd{binary} & Formula has treatment on the left and covariates on the right; \cd{data = \_} pipes the mutated table into the second argument; \cd{plot()} renders the Love plot. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{specify(response, explanatory)} & \cd{GPA}, \cd{group} & Declares roles without altering values (place the covariate in \cd{response} for a balance test). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{hypothesize(null = "independence")} & \cd{null = "independence"} & Declares the random-assignment null that \cd{GPA} does not depend on \cd{group}. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{generate(reps = 500, type = "permute")} & \cd{reps}, \cd{"permute"} & Shuffles \cd{group} labels $500$ times across the $6$ rows, producing $500 \times 6 = 3000$ stacked rows. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{calculate(stat, order)} & \cd{"diff in means"}, \cd{c("website","pdf")} & Returns $500$ differences $\bar x_{\text{website}} - \bar x_{\text{pdf}}$ (one row per replicate). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{get\_p\_value(obs\_stat, direction)} & Observed tibble, \cd{"both"} & Proportion of null statistics at least as extreme as \cd{obs\_stat} in the observed tail, doubled and capped at $1$. \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \medskip\noindent\textbf{The question answered.} Although GPA has $\mathrm{SMD} = -0.66$ (higher in the PDF group), listing all $\binom{6}{3}=20$ possible assignments yields an exact two-sided balance $p$-value of $8/20 = 0.4$. With only three students per group, an imbalance of this size occurs routinely under fair random assignment, so it motivates larger sample sizes rather than proving assignment bias.
 

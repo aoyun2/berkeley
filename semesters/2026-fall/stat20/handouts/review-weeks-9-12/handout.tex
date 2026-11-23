@@ -69,15 +69,18 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
 \begin{example*}[Exact bootstrap distribution for five penguins (Notes)]
   In $5$ penguins with $2$ Chinstraps, each draw with replacement selects a Chinstrap independently with probability $p = 2/5 = 0.4$. The count $K$ of Chinstraps follows $\mathrm{Binomial}(5, 0.4)$ (W2), and $\hat p^* = K/5$:
 
-  \medskip
-  \noindent\begin{tabular}{@{}lcccccc@{}}
+  \begin{center}
+  \small
+  \renewcommand{\arraystretch}{1.18}
+  \begin{tabular}{@{}lcccccc@{}}
   \toprule
-  $\hat p^*$ & $0$ & $0.2$ & $0.4$ & $0.6$ & $0.8$ & $1.0$ \\
+  $\hat p^*$ & $0.0$ & $0.2$ & $0.4$ & $0.6$ & $0.8$ & $1.0$ \\
   \midrule
   Probability & $0.0778$ & $0.2592$ & $0.3456$ & $0.2304$ & $0.0768$ & $0.0102$ \\
   Cumulative probability & $0.0778$ & $0.3370$ & $0.6826$ & $0.9130$ & $0.9898$ & $1.0000$ \\
   \bottomrule
   \end{tabular}
+  \end{center}
 
   \medskip
   Because $\mathbb P(\hat p^* = 0) = 0.6^5 = 0.0778 > 0.025$, the $2.5\%$ quantile is $0$. Cumulative probability first crosses $0.975$ at $0.8$ ($0.9898$), giving the exact $95\%$ percentile interval $[0, 0.8]$.
@@ -85,26 +88,40 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[scale=1.0,>=Stealth]
   \begin{axis}[
-    width=8.6cm,height=4.0cm,
+    width=9.6cm,height=4.4cm,
     axis lines*=left,
     ybar,bar width=16pt,bar shift=0pt,
-    xmin=-0.12,xmax=1.12,ymin=0,ymax=0.40,
+    xmin=-0.16,xmax=1.16,ymin=0,ymax=0.44,
     xtick={0,0.2,0.4,0.6,0.8,1.0},
+    xticklabels={$0.0$,$0.2$,$0.4$,$0.6$,$0.8$,$1.0$},
     ytick={0,0.1,0.2,0.3,0.4},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={Bootstrap proportion $\hat p^*$},
     ylabel={Probability},
     clip=false
   ]
-    \addplot[fill=figblue!22,draw=figblue!85!black,line width=0.6pt] coordinates {
-      (0,0.0778) (0.2,0.2592) (0.4,0.3456) (0.6,0.2304) (0.8,0.0768) (1.0,0.0102)
+    % Bars inside 95% percentile interval [0, 0.8]
+    \addplot[fill=figblue!24,draw=figblue!85!black,line width=0.65pt] coordinates {
+      (0,0.0778) (0.2,0.2592) (0.4,0.3456) (0.6,0.2304) (0.8,0.0768)
     };
-    \node[font=\scriptsize,text=figred!85!black,above=3pt] at (axis cs:0,0.080) {$q_{0.025}=0$};
-    \node[font=\scriptsize,text=figred!85!black,above=3pt] at (axis cs:0.8,0.080) {$q_{0.975}=0.8$};
+    % Excluded right-tail bar at 1.0
+    \addplot[fill=figslate!15,draw=figslate!75!black,line width=0.6pt] coordinates {
+      (1.0,0.0102)
+    };
+    % Clean quantile pointers well clear of y-axis and neighbor bars
+    \node[font=\scriptsize,text=figred!85!black,anchor=south] (qlo) at (axis cs:0.0,0.165) {$q_{0.025}=0$};
+    \draw[->,figred!85!black,thin] (axis cs:0.0,0.162) -- (axis cs:0.0,0.086);
+    \node[font=\scriptsize,text=figred!85!black,anchor=south] (qhi) at (axis cs:0.86,0.165) {$q_{0.975}=0.8$};
+    \draw[->,figred!85!black,thin] (axis cs:0.84,0.162) -- (axis cs:0.80,0.086);
+    % 95% percentile interval span bracket
+    \draw[<->,figblue!85!black,thick] (axis cs:0.0,0.392) -- (axis cs:0.8,0.392);
+    \node[font=\scriptsize,text=figblue!90!black,above=1pt] at (axis cs:0.4,0.392) {$95\%$ percentile interval $[0,\,0.8]$};
   \end{axis}
 \end{tikzpicture}
-\figcap{Exact bootstrap distribution of $\hat p^*$ for $2$ Chinstraps in $5$ penguins. Discrete jumps place the $2.5\%$ cut inside the bar at $0$ and the $97.5\%$ cut at $0.8$.}
+\figcap{Exact bootstrap distribution of $\hat p^*$ for $2$ Chinstraps in $5$ penguins. Discrete probability mass places the $2.5\%$ quantile inside the bar at $0.0$ and the $97.5\%$ quantile at $0.8$ (blue bars), excluding only $1.0$ (gray bar, probability $0.0102$).}
 \end{fig}
 
 \noindent\textbf{Edge cases and properties of bootstrap intervals.}
@@ -143,29 +160,30 @@ quantile(boot_means, probs = c(0.025, 0.975))
 \end{rcode}
 
 \Needspace{16\baselineskip}
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.1cm}>{\raggedright\arraybackslash}X@{}}
+{\small\renewcommand{\arraystretch}{1.15}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{R Function / Stage} & \textbf{What it takes} & \textbf{Output structure and exact role} \\
 \midrule
 \cd{1. specify(response, success)} & Column name + target level & Drops \cd{NA} rows and tags metadata; for logical columns set \cd{success = "TRUE"}. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{2. generate(reps, type = "bootstrap")} & \cd{reps = 500}, replacement flag & Draws $500$ size-$n$ row resamples with replacement and stacks them with a \cd{replicate} ID column. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{3a. calculate(stat = "prop")} & Statistic name (\cd{"mean"}, \cd{"median"}, \cd{"prop"}, \cd{"diff in means"}) & Collapses each replicate into one number, returning a $500 \times 2$ data frame (\cd{replicate}, \cd{stat}). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{3b. fit()} & Replaces \cd{calculate()} after a multi-predictor formula in \cd{specify()} & Fits the linear model inside every replicate, returning one row per coefficient per replicate (\cd{replicate}, \cd{term}, \cd{estimate}). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{4. get\_ci(level = 0.95)} & Confidence level in $(0,1)$ & Computes percentile endpoints via R's \cd{quantile()} and outputs \cd{lower\_ci}, \cd{upper\_ci}. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{sample(x, size = length(x), replace = TRUE)} & Base R numeric vector \cd{x}, \cd{replace = TRUE} & Safe for $\text{length}(x) > 1$; if length can be $1$, use \cd{x[sample.int(length(x), replace = TRUE)]} so R does not draw from \cd{1:x}. \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \medskip\noindent\textbf{The question answered.} The lower endpoint $0$ is completely valid: $7.8\%$ of all size-$5$ resamples contain zero Chinstraps, which exceeds $2.5\%$. Using $10{,}000$ resamples keeps the $95\%$ interval near $[0, 0.8]$ rather than narrowing it, because interval width shrinks only as $n$ increases.
 
 \begin{shortcuts}
   \ii \textbf{Exact bootstrap distribution of a proportion:} Count $K$ follows $\mathrm{Binomial}(n, \hat p)$ (W2), avoiding simulation when $n$ is tiny.
-  \ii \textbf{Bootstrap SE of a mean directly:} Compute $\hat\sigma/\sqrt{n}$ with plug-in variance divisor $n$ (\ref{thm-boot-mean}). For $2, 4, 6, 8$: $\hat\sigma^2 = (9+1+1+9)/4 = 5$, so $\mathrm{SE} = \sqrt{5}/2 \approx 1.12$.
+  \ii \textbf{Bootstrap SE of a mean directly:} Compute $\hat\sigma/\sqrt{n}$ with plug-in variance divisor $n$ (\hyperref[thm-boot-mean]{Thm.\ above}). For $2, 4, 6, 8$: $\hat\sigma^2 = (9+1+1+9)/4 = 5$, so $\mathrm{SE} = \sqrt{5}/2 \approx 1.12$.
   \ii \textbf{Valid bootstrap resample check:} Must contain exactly $n$ values drawn purely from the original sample with repeats permitted.
   \ii \textbf{Confidence nesting:} On the same bootstrap replicates, a $99\%$ interval always contains the $95\%$ interval, which contains the $90\%$ interval.
 \end{shortcuts}
@@ -200,31 +218,36 @@ At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right ta
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[scale=1.0,>=Stealth]
   \begin{axis}[
-    width=9.2cm,height=4.2cm,
+    width=10.6cm,height=4.5cm,
     axis lines*=left,
-    ybar,bar width=14pt,bar shift=0pt,
-    xmin=-0.39,xmax=0.39,ymin=0,ymax=0.31,
+    ybar,bar width=16pt,bar shift=0pt,
+    xmin=-0.39,xmax=0.39,ymin=0,ymax=0.345,
     xtick={-0.324,-0.232,-0.140,-0.048,0.044,0.136,0.228,0.320},
     xticklabels={$-0.32$,$-0.23$,$-0.14$,$-0.05$,$0.044$,$0.14$,$0.23$,$0.32$},
-    xticklabel style={font=\tiny},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     ytick={0,0.1,0.2,0.3},
     xlabel={Simulated difference $\hat p_s - \hat p_n = \frac{k}{34}-\frac{14-k}{16}$ ($k=6,\dots,13$)},
     ylabel={Exact probability},
     clip=false
   ]
+    % Subtle null-zero divider separating k <= 9 from k >= 10
+    \draw[black!30,dashed,thick] (axis cs:0.00,0) -- (axis cs:0.00,0.305);
     % Non-extreme bars (K < 10)
     \addplot[fill=figslate!18,draw=figslate!85!black,line width=0.55pt] coordinates {
       (-0.3235,0.0049) (-0.2316,0.0293) (-0.1397,0.1046) (-0.0478,0.2233)
     };
     % Extreme right-tail bars (K >= 10)
-    \addplot[fill=figred!38,draw=figred!80!black,line width=0.65pt] coordinates {
+    \addplot[fill=figred!36,draw=figred!80!black,line width=0.65pt] coordinates {
       (0.0441,0.2680) (0.1360,0.1787) (0.2279,0.0558) (0.3199,0.0086)
     };
-    \draw[figred!85!black,very thick,dashed] (axis cs:0.00,0) -- (axis cs:0.00,0.295);
-    \node[halo,font=\scriptsize,text=figred!85!black,above] at (axis cs:0.065,0.273) {obs.\ $0.044$ ($k=10$)};
-    \node[font=\scriptsize\bfseries,text=figred!85!black,anchor=west] at (axis cs:0.155,0.225) {Right tail $p = 0.513$};
+    % Observed bar callout cleanly above bar k = 10 (zero clipping of dashed line)
+    \node[font=\scriptsize,text=figred!85!black,anchor=south] at (axis cs:0.065,0.312) {obs.\ $0.044$ ($k=10$)};
+    \draw[->,figred!85!black,thin] (axis cs:0.052,0.310) -- (axis cs:0.0441,0.273);
+    % Right-tail sum callout cleanly in open right space within axis bounds
+    \node[font=\scriptsize,text=figred!85!black,align=center] at (axis cs:0.265,0.242) {\textbf{Right tail} ($k\ge 10$)\\$p = 0.513$};
   \end{axis}
 \end{tikzpicture}
 \figcap{Exact permutation null distribution of $\hat p_s - \hat p_n$ in the $50$-person yawning experiment ($k=6,\dots,13$ yawners in the seeded group, equally spaced by $25/272 \approx 0.092$). Over half of the total probability mass ($0.513$, red bars $k \ge 10$) lies at or above the observed $0.044$.}
@@ -273,23 +296,24 @@ rolls |> mutate(face = as.character(face)) |>
 \end{rcode}
 
 \Needspace{24\baselineskip}
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{3.9cm}>{\raggedright\arraybackslash}X@{}}
+{\small\renewcommand{\arraystretch}{1.15}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.8cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Pipeline Stage / Argument} & \textbf{Valid options} & \textbf{What \cd{infer} does at this step} \\
 \midrule
 \cd{0. mutate(face = as.character(face))} & Numeric category column & Run \emph{before} \cd{specify()} when categories are stored as numbers ($1$--$6$ on a die) so \cd{calculate(stat = "Chisq")} treats them as $k \ge 3$ categories. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{1. specify(response, explanatory, success)} & One variable or \cd{y \textasciitilde{} x}, plus \cd{success = "..."} & Declares variable roles and target category; omit \cd{explanatory} for one-sample point-null tests (coin tosses or die rolls). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{2. hypothesize(null = ...)} & \cd{"independence"} or \cd{"point"} & Declares $H_0$: use \cd{"independence"} for two variables, or \cd{"point"} with \cd{p = ...} (proportions) or \cd{mu = ...} (mean). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{3. generate(reps, type = ...)} & \cd{"permute"}, \cd{"draw"}, \cd{"bootstrap"} & Simulates $500$ datasets under $H_0$: \cd{"permute"} shuffles \cd{response} against \cd{explanatory}; \cd{"draw"} samples from the null \cd{p} box; \cd{"bootstrap"} resamples shifted data ($x_i - \bar x + \mu_0$). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{4. calculate(stat = ..., order = ...)} & \cd{"diff in props"}, \cd{"prop"}, \cd{"Chisq"}, plus \cd{order = c(g1, g2)} & Summarizes each simulated dataset into one statistic; \cd{order = c("stimulus", "no stimulus")} fixes $\hat p_{\text{stim}} - \hat p_{\text{no}}$ (omitting it uses alphabetical order and flips the sign). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{5. get\_p\_value(obs\_stat, direction)} & \cd{"greater"}, \cd{"less"}, \cd{"both"} & Computes the tail proportion at or beyond \cd{obs\_stat} ($\ge$ or $\le$); \cd{"both"} doubles the smaller one-sided tail and caps at $1$. \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \medskip\noindent\textbf{What the $p$-value does \emph{not} mean.} (1) It is \emph{not} $\mathbb P(H_0\text{ is true})$ (it is calculated assuming $H_0$). (2) A large $p$-value does not prove $H_0$ is true. (3) It is not ``the probability of the observed data'', but the chance of a statistic at least this extreme if $H_0$ holds.
 
@@ -306,42 +330,46 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
   \ii \textbf{Power:} $\mathbb P(\text{reject }H_0 \mid H_A\text{ true}) = 1 - \beta$ (W1). Power depends on true effect size, sample size $n$, and $\alpha$.
 \end{itemize}
 
-\Needspace{15\baselineskip}
+\Needspace{16\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[scale=1.0,>=Stealth]
   \begin{axis}[
-    width=10.2cm,height=4.3cm,
+    width=11.4cm,height=4.9cm,
     axis lines*=left,
-    xmin=-3.2,xmax=6.0,ymin=0,ymax=0.45,
+    xmin=-3.4,xmax=6.3,ymin=0,ymax=0.47,
     xtick={0,1.645,2.56},
     xticklabels={$0$,$c$,$2.56$},
     ytick={0,0.2,0.4},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={Test statistic},
     ylabel={Density},
-    legend style={at={(0.5,1.03)},anchor=south,legend columns=2,draw=none,fill=none,font=\scriptsize},
+    legend style={at={(0.5,1.04)},anchor=south,legend columns=2,draw=none,fill=none,font=\scriptsize,legend cell align=left,/tikz/every even column/.append style={column sep=18pt}},
     clip=false
   ]
-    % Shaded Type I tail under H0 (right of c = 1.645)
-    \addplot[forget plot,domain=1.645:4.2,samples=40,fill=figred!32,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
+    % Light blue shaded Power region under HA (right of c = 1.645)
+    \addplot[forget plot,domain=1.645:5.8,samples=60,fill=figblue!11,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
     % Hatched Type II area under HA (left of c = 1.645, mean 2.56, sd 1)
-    \addplot[forget plot,domain=-1.2:1.645,samples=40,pattern=north east lines,pattern color=figamber!85!black,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    \addplot[forget plot,domain=-1.2:1.645,samples=50,pattern=north east lines,pattern color=figamber!85!black,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    % Shaded Type I tail under H0 (right of c = 1.645) drawn on top of Power tint
+    \addplot[forget plot,domain=1.645:4.2,samples=45,fill=figred!36,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
     % H0 curve
-    \addplot[domain=-3.1:4.0,samples=90,black,very thick] {exp(-0.5*x^2)/sqrt(2*pi)};
+    \addplot[domain=-3.2:4.1,samples=100,black,very thick] {exp(-0.5*x^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_0$ (null)}
     % HA curve (mean = 2.56 -> Phi(1.645 - 2.56) = Phi(-0.915) = 0.18)
-    \addplot[domain=-1.2:5.8,samples=90,figblue,very thick,dashed] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
+    \addplot[domain=-1.2:5.9,samples=100,figblue,very thick,dashed] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_A$ (alternative)}
-    % Critical line & clear region annotations (with white halos so zero strokes cross text)
-    \draw[black!70,thick,dashed] (axis cs:1.645,0) -- (axis cs:1.645,0.40);
-    \node[halo,font=\scriptsize,text=figred!85!black,anchor=west] (albl) at (axis cs:4.15,0.085) {$\alpha=0.05$ (Type I)};
-    \draw[->,figred!85!black,thin] (axis cs:4.12,0.075) -- (axis cs:2.10,0.025);
-    \node[halo,font=\scriptsize,text=figamber!85!black,anchor=east] at (axis cs:-0.85,0.16) {$\beta=0.18$ (Type II)};
-    \draw[->,figamber!85!black,thin] (axis cs:-0.82,0.145) -- (axis cs:1.05,0.055);
-    \node[halo,font=\scriptsize,text=figblue!85!black,anchor=west] at (axis cs:3.85,0.28) {Power $= 1-\beta = 0.82$};
-    \draw[->,figblue!85!black,thin] (axis cs:3.82,0.265) -- (axis cs:2.75,0.20);
+    % Critical line
+    \draw[black!75,thick,dashed] (axis cs:1.645,0) -- (axis cs:1.645,0.425);
+    % Labels placed cleanly in 100% open space (zero halo knockouts clipping curves)
+    \node[font=\scriptsize,text=figblue!90!black,align=center] at (axis cs:2.64,0.238) {\textbf{Power}\\$1-\beta=0.82$};
+    \node[font=\scriptsize,text=figamber!85!black,anchor=east,align=right] at (axis cs:-1.38,0.305) {$\beta=0.18$\\(Type II)};
+    \draw[->,figamber!85!black,thin] (axis cs:-1.35,0.285) -- (axis cs:1.05,0.068);
+    \node[font=\scriptsize,text=figred!85!black,anchor=west,align=left] at (axis cs:4.50,0.135) {$\alpha=0.05$\\(Type I)};
+    \draw[->,figred!85!black,thin] (axis cs:4.46,0.125) -- (axis cs:2.12,0.025);
   \end{axis}
 \end{tikzpicture}
-\figcap{Rejection region $x > c$ for a one-sided test. Red shaded tail under $H_0$ gives Type I error rate $\alpha = 0.05$; hatched area under $H_A$ left of $c$ gives Type II error rate $\beta = 0.18$, leaving power $1 - \beta = 0.82$ under $H_A$ to the right of $c$.}
+\figcap{Rejection region $x > c$ for a one-sided test. Red shaded tail under $H_0$ gives Type I error rate $\alpha = 0.05$; amber hatched area under $H_A$ left of $c$ gives Type II error rate $\beta = 0.18$, leaving blue-tinted power $1 - \beta = 0.82$ under $H_A$ to the right of $c$.}
 \end{fig}
 
 \noindent\textbf{Design edge cases and trade-offs.}
@@ -392,31 +420,61 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
 
 \noindent\textbf{Worked calculation.} For $x = (1,2,3,4)$, $y = (2,3,5,6)$, $\bar x = 2.5$, $\bar y = 4$, deviations $(-1.5,-0.5,0.5,1.5)$ and $(-2,-1,1,2)$ give $S_{xy} = 7$, $S_{xx} = 5$, $S_{yy} = 10$, so $\hat b_1 = 7/5 = 1.4$ and $\hat b_0 = 4 - 1.4(2.5) = 0.5$. Residuals are $(0.1, -0.3, 0.3, -0.1)$, giving OLS $\mathrm{MSE} = 0.05$ against baseline $\mathrm{MSE} = 10/4 = 2.5$. If $x = (3,3,3,3)$, $S_{xx} = 0$, every slope gives $\mathrm{MSE} = 2.5$, and R outputs slope \cd{NA} while predicting $\bar y$.
 
-\Needspace{15\baselineskip}
+\Needspace{16\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
+  % Left: Scatterplot with OLS line vs constant baseline
   \begin{axis}[
-    width=8.0cm,height=4.0cm,
+    at={(0,0)},anchor=south west,
+    width=7.1cm,height=4.4cm,
     axis lines*=left,
-    xmin=0.5,xmax=4.5,ymin=1.2,ymax=6.8,
+    xmin=0.5,xmax=4.5,ymin=1.2,ymax=6.9,
     xtick={1,2,3,4},ytick={2,4,6},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={$x$},ylabel={$y$},
-    legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize},
+    title={\footnotesize OLS line vs.\ constant baseline\strut},
+    legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize,legend cell align=left},
     clip=false
   ]
     \addplot[domain=0.6:4.4,samples=10,figblue,very thick] {0.5 + 1.4*x};
-    \addlegendentry{OLS line $\hat y = 0.5 + 1.4x$}
+    \addlegendentry{OLS $\hat y = 0.5 + 1.4x$}
     \addplot[domain=0.6:4.4,samples=10,figslate,dashed,thick] {4};
     \addlegendentry{Baseline $\bar y = 4$}
     % Residuals
-    \draw[figred,thick,densely dotted] (axis cs:1,1.9) -- (axis cs:1,2);
-    \draw[figred,thick,densely dotted] (axis cs:2,3.3) -- (axis cs:2,3);
-    \draw[figred,thick,densely dotted] (axis cs:3,4.7) -- (axis cs:3,5);
-    \draw[figred,thick,densely dotted] (axis cs:4,6.1) -- (axis cs:4,6);
-    \addplot[only marks,mark=*,mark size=2.3pt,black] coordinates {(1,2) (2,3) (3,5) (4,6)};
+    \draw[figred,line width=0.9pt] (axis cs:1,1.9) -- (axis cs:1,2);
+    \draw[figred,line width=0.9pt] (axis cs:2,3.3) -- (axis cs:2,3);
+    \draw[figred,line width=0.9pt] (axis cs:3,4.7) -- (axis cs:3,5);
+    \draw[figred,line width=0.9pt] (axis cs:4,6.1) -- (axis cs:4,6);
+    \addplot[only marks,mark=*,mark size=1.9pt,black] coordinates {(1,2) (2,3) (3,5) (4,6)};
+  \end{axis}
+
+  % Right: Zoomed residual plot showing the four exact residuals clearly
+  \begin{axis}[
+    at={(8.35cm,0)},anchor=south west,
+    width=6.4cm,height=4.4cm,
+    axis lines*=left,
+    xmin=0.5,xmax=4.5,ymin=-0.46,ymax=0.46,
+    xtick={1,2,3,4},ytick={-0.3,0,0.3},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
+    xlabel={$x$},ylabel={Residual $\hat e_i = y_i - \hat y_i$},
+    title={\footnotesize Residuals ($\textstyle\sum \hat e_i = 0$, $\mathrm{MSE}=0.05$)\strut},
+    clip=false
+  ]
+    \draw[figblue!70,dashed,thick] (axis cs:0.5,0) -- (axis cs:4.5,0);
+    \draw[figred,very thick] (axis cs:1,0) -- (axis cs:1,0.1);
+    \draw[figred,very thick] (axis cs:2,0) -- (axis cs:2,-0.3);
+    \draw[figred,very thick] (axis cs:3,0) -- (axis cs:3,0.3);
+    \draw[figred,very thick] (axis cs:4,0) -- (axis cs:4,-0.1);
+    \addplot[only marks,mark=*,mark size=2.3pt,figred] coordinates {(1,0.1) (2,-0.3) (3,0.3) (4,-0.1)};
+    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:1,0.1) {$+0.1$};
+    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:2,-0.3) {$-0.3$};
+    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:3,0.3) {$+0.3$};
+    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:4,-0.1) {$-0.1$};
   \end{axis}
 \end{tikzpicture}
-\figcap{Least-squares line $\hat y = 0.5 + 1.4x$ (solid blue, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). Dotted red vertical segments show the four residuals $+0.1, -0.3, +0.3, -0.1$.}
+\figcap{\textbf{Left:} Least-squares line $\hat y = 0.5 + 1.4x$ (solid blue, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). \textbf{Right:} Magnified residual plot showing all four vertical residuals $\hat e_i = y_i - \hat y_i \in \{+0.1, -0.3, +0.3, -0.1\}$, which balance to $\sum \hat e_i = 0$.}
 \end{fig}
 
 \noindent\textbf{Iterative optimization in R (\cd{optim}).} Instead of closed-form formulas, \cd{optim()} numerically searches for coefficients minimizing MSE (Nelder--Mead for $\ge 2$ parameters; use \cd{optimize()} for $1$ parameter, since Nelder--Mead warns in 1D and only returns an approximation such as $-0.4$ for $(x+0.5)^2$):
@@ -446,27 +504,32 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   \begin{axis}[
-    width=8.6cm,height=4.0cm,
+    width=9.6cm,height=4.5cm,
     axis lines*=left,
-    xmin=0.8,xmax=6.2,ymin=-0.4,ymax=1.08,
-    xtick={1,2,3,4,5,6},ytick={-0.3,0,0.5,1},
+    xmin=0.75,xmax=6.25,ymin=-0.52,ymax=1.08,
+    xtick={1,2,3,4,5,6},ytick={-0.5,0,0.5,1},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={Polynomial degree},
     ylabel={$R^2$},
-    legend style={at={(0.05,0.52)},anchor=west,draw=none,fill=none,font=\scriptsize},
+    legend style={at={(0.05,0.50)},anchor=west,draw=none,fill=none,font=\scriptsize,legend cell align=left},
     clip=false
   ]
-    \draw[black!35,dashed] (axis cs:0.8,0) -- (axis cs:6.2,0);
-    \addplot[figblue,very thick,mark=*,mark size=2pt] coordinates {
+    % Subtle tint where R^2 < 0 (worse than constant test mean)
+    \fill[figred!6] (axis cs:0.75,-0.52) rectangle (axis cs:6.25,0);
+    \draw[black!35,dashed] (axis cs:0.75,0) -- (axis cs:6.25,0);
+    \node[font=\scriptsize,text=figred!80!black,anchor=west] at (axis cs:0.95,-0.28) {worse than baseline ($R^2<0$)};
+    \addplot[figblue,very thick,mark=*,mark size=2.1pt] coordinates {
       (1,0.835) (2,0.855) (3,0.865) (4,0.880) (5,0.910) (6,0.935)
     };
     \addlegendentry{Training $R^2$ ($12$ points)}
-    \addplot[figred,thick,dashed,mark=o,mark options={solid,draw=figred,line width=0.7pt},mark size=2.2pt] coordinates {
+    \addplot[figred,thick,dashed,mark=o,mark options={solid,draw=figred,fill=white,line width=0.8pt},mark size=2.3pt] coordinates {
       (1,0.813) (2,0.790) (3,0.750) (4,0.620) (5,0.280) (6,-0.250)
     };
     \addlegendentry{Test $R^2$ ($200$ points)}
   \end{axis}
 \end{tikzpicture}
-\figcap{Training $R^2$ (blue) rises monotonically with polynomial degree, whereas held-out test $R^2$ (red dashed) peaks at the true degree~$1$ linear relationship and turns negative under severe overfitting (degree~$6$ onward).}
+\figcap{Training $R^2$ (solid blue) rises monotonically with polynomial degree, whereas held-out test $R^2$ (red dashed) peaks at the true degree~$1$ linear relationship and drops into the shaded negative region under severe overfitting (degree~$6$ onward).}
 \end{fig}
 
 \Needspace{16\baselineskip}
@@ -495,19 +558,20 @@ bio_test |>
   mutate(Rsq = 1 - MSE / MSE_baseline, RMSE = sqrt(MSE))
 \end{rcode}
 
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X@{}}
+{\small\renewcommand{\arraystretch}{1.15}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Piece} & \textbf{Purpose} & \textbf{Critical behavior and pitfalls} \\
 \midrule
 \cd{poly(x, 3, raw = TRUE)} & Adds $x, x^2, x^3$ features & \cd{raw = TRUE} prints standard monomial coefficients $c_1, c_2, c_3$; \cd{I(x\^{}2)} adds $x^2$ alone (without \cd{I()}, R collapses \cd{x\^{}2} back to \cd{x}). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{slice\_sample(..., replace = FALSE)} & Randomly reorders rows & Sampling \cd{n = nrow} without replacement shuffles rows before \cd{slice(train\_rows)} vs.\ \cd{slice(-train\_rows)} split cleanly with zero overlap. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{predict(model, newdata)} & Evaluates model on new rows & \cd{newdata} must carry exact feature names; unseen categorical factor levels or missing covariates throw errors. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{mean(e\_hat\^{}2)} vs.\ \cd{sum()} & Test MSE calculation & Dividing by $n_{\text{test}}$ (\cd{mean()}) matches $\mathrm{MSE}_{\text{baseline}}$; accidentally using \cd{sum()} scales test MSE up by $n_{\text{test}}$ and produces absurd negative $R^2$. \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \section{Logistic regression and classification workflow}
 
@@ -521,25 +585,31 @@ For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   \begin{axis}[
-    width=8.4cm,height=3.8cm,
+    width=9.6cm,height=4.4cm,
     axis lines*=left,
     xmin=-4.4,xmax=4.4,ymin=0,ymax=1.08,
-    xtick={-4,-1,0,1,4},ytick={0,0.5,1},
+    xtick={-4,-2,0,2,4},ytick={0,0.5,1},
+    tick label style={font=\scriptsize},
+    label style={font=\footnotesize},
     xlabel={Linear combination $h = b_0 + b_1 X_1 + \dots$},
     ylabel={$\hat p = f(h)$},
     clip=false
   ]
-    \draw[black!35,dashed] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
-    \draw[black!35,dashed] (axis cs:0,0) -- (axis cs:0,1.02);
-    \addplot[domain=-4.2:4.2,samples=90,figblue,very thick] {1/(1+exp(-x))};
+    % Subtle shaded decision half-plane for h >= 0
+    \fill[figblue!6] (axis cs:0,0) rectangle (axis cs:4.4,1.04);
+    \draw[black!30,dashed] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
+    \draw[black!35,dashed,thick] (axis cs:0,0) -- (axis cs:0,1.04);
+    \addplot[domain=-4.2:4.2,samples=100,figblue,very thick] {1/(1+exp(-x))};
     \addplot[only marks,mark=*,mark size=2.3pt,figred] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
-    \node[halo,font=\scriptsize,above left=4pt]  at (axis cs:-1.1,0.29) {$(-1, 0.27)$};
-    \node[halo,font=\scriptsize,above left=4pt]  at (axis cs:-0.12,0.53) {$(0, 0.50)$};
-    \node[halo,font=\scriptsize,below right=4pt] at (axis cs:1.12,0.71) {$(1, 0.73)$};
-    \node[halo,font=\scriptsize,text=figblue!85!black] at (axis cs:2.55,0.18) {Predict $\hat Y=1$ for $h \ge 0$};
+    % Clean labels in 100% open space (zero halo knockouts clipping dashed lines)
+    \node[font=\scriptsize,anchor=east] at (axis cs:-1.20,0.29) {$(-1,\,0.27)$};
+    \node[font=\scriptsize,anchor=south east] at (axis cs:-0.16,0.56) {$(0,\,0.50)$};
+    \node[font=\scriptsize,anchor=west] at (axis cs:1.22,0.72) {$(1,\,0.73)$};
+    \node[font=\scriptsize,text=figslate!90!black] at (axis cs:-2.35,0.86) {Predict $\hat Y=0$ ($h < 0$)};
+    \node[font=\scriptsize,text=figblue!90!black] at (axis cs:2.35,0.18) {Predict $\hat Y=1$ ($h \ge 0$)};
   \end{axis}
 \end{tikzpicture}
-\figcap{Standard logistic curve $f(h) = (1+e^{-h})^{-1}$. Because $f(0) = 0.5$ and $f$ is strictly increasing, classifying $\hat p \ge 0.5$ is equivalent to checking whether the linear predictor $h \ge 0$.}
+\figcap{Standard logistic curve $f(h) = (1+e^{-h})^{-1}$. Because $f(0) = 0.5$ and $f$ is strictly increasing, classifying $\hat p \ge 0.5$ is equivalent to checking whether the linear predictor $h \ge 0$ (shaded right region).}
 \end{fig}
 
 \noindent\textbf{Confusion matrix and classifier metrics.} From true negatives (TN), false positives (FP), false negatives (FN), and true positives (TP) across $n = \mathrm{TN}+\mathrm{FP}+\mathrm{FN}+\mathrm{TP}$ cases:
@@ -566,21 +636,22 @@ email_scored |> filter(y_hat == 1)   |> summarize(Precision = mean(is_spam == 1)
 email_scored |> filter(is_spam == 1) |> summarize(Recall    = mean(y_hat == 1))
 \end{rcode}
 
-\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X@{}}
+{\small\renewcommand{\arraystretch}{1.15}%
+\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Piece} & \textbf{Argument / Role} & \textbf{What happens and critical pitfalls} \\
 \midrule
 \cd{glm(..., family = "binomial")} & Fits logistic regression & Target must be $0/1$, logical, or two-level factor (for factors, \cd{glm} models the \emph{second} alphabetical level); character columns fail. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{predict(m1, ..., type = "response")} & Returns probability $\hat p$ in $(0,1)$ & Omitting \cd{type = "response"} defaults to \cd{type = "link"}, returning unbounded log-odds $h$ instead of probabilities. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{ifelse(p\_hat > 0.5, 1, 0)} & Classification rule & Thresholds probabilities to $0/1$ labels (notes write $\ge 0.5$; exact $h = 0$ is rare on real data). \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{mean(is\_spam != y\_hat)} & Misclassification rate & Averages logical values ($1$ for error, $0$ for match) cleanly into $\mathrm{MCR}$. \\
-\cmidrule(lr){1-3}
+\cmidrule{1-3}
 \cd{filter(y\_hat == 1) |> summarize(mean(...))} & Positive predictions subset & Computes Precision directly from definition; returns \cd{NaN} if zero rows have \cd{y\_hat == 1}. \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \medskip\noindent\textbf{Edge cases.} Perfectly separable classes drive coefficients toward $\pm\infty$ (R warns of fitted probabilities numerically $0$ or $1$); $\log(0) = -\infty$ crashes \cd{glm}; negative coefficients lower $h$ (and thus $\hat p$), never turning $\hat p$ negative.
 

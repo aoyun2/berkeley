@@ -90,33 +90,62 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.92]
-  % Left matrix A (pivot columns highlighted directly by color & bold weight, zero misaligned boxes)
-  \node[font=\footnotesize\bfseries,text=figblue!90!black] at (2.35,2.65) {Original $A$ (pivot cols $1,3,5\to\Col A$)};
-
-  \node[text width=4.6cm,align=center] at (2.35,1.1) {\[\begin{bmatrix}
+\begin{tikzpicture}[>=Stealth,scale=0.94]
+  % Left matrix A as a TikZ math matrix for exact background column highlighting
+  \matrix (A) [matrix of math nodes, left delimiter={[}, right delimiter={]},
+    nodes={minimum width=1.65em, minimum height=1.25em, anchor=center, inner sep=1pt, font=\small},
+    column sep=3pt, row sep=2pt] at (0,0) {
     \textcolor{figblue!90!black}{\mathbf{1}} & 4 & \textcolor{figblue!90!black}{\mathbf{0}} & 2 & \textcolor{figblue!90!black}{\mathbf{-1}} \\
     \textcolor{figblue!90!black}{\mathbf{3}} & 12 & \textcolor{figblue!90!black}{\mathbf{1}} & 5 & \textcolor{figblue!90!black}{\mathbf{5}} \\
     \textcolor{figblue!90!black}{\mathbf{2}} & 8 & \textcolor{figblue!90!black}{\mathbf{1}} & 3 & \textcolor{figblue!90!black}{\mathbf{2}} \\
-    \textcolor{figblue!90!black}{\mathbf{5}} & 20 & \textcolor{figblue!90!black}{\mathbf{2}} & 8 & \textcolor{figblue!90!black}{\mathbf{8}}
-  \end{bmatrix}\]};
-  \node[font=\scriptsize,text=figblue!90!black] at (2.35,-0.48) {Pivot cols 1, 3, 5 of $A$ (blue) $=$ basis for $\Col A\subseteq\RR^4$};
-  \node[font=\scriptsize] at (2.35,-0.85) {(Notice $\vv a_2=4\vv a_1$ and $\vv a_4=2\vv a_1-\vv a_3$)};
+    \textcolor{figblue!90!black}{\mathbf{5}} & 20 & \textcolor{figblue!90!black}{\mathbf{2}} & 8 & \textcolor{figblue!90!black}{\mathbf{8}} \\
+  };
 
-  % Arrow between A and RREF(A)
-  \draw[figvec,very thick] (4.85,1.1) -- node[above,font=\scriptsize\bfseries] {row reduce} node[below,font=\scriptsize] {same $A\vv x=\vv 0$} (6.75,1.1);
-
-  % Right matrix B = RREF(A) (nonzero rows highlighted directly in green)
-  \node[font=\footnotesize\bfseries,text=figgreen!90!black] at (10.25,2.65) {Echelon form $B=\operatorname{rref}(A)$ (nonzero rows $\to\Row A$)};
-
-  \node[text width=4.6cm,align=center] at (10.25,1.1) {\[\begin{bmatrix}
+  % Right matrix B = RREF(A) as a TikZ math matrix for exact row highlighting & pivot boxes
+  \matrix (B) [matrix of math nodes, left delimiter={[}, right delimiter={]},
+    nodes={minimum width=1.65em, minimum height=1.25em, anchor=center, inner sep=1pt, font=\small},
+    column sep=3pt, row sep=2pt] at (8.1,0) {
     \textcolor{figgreen!90!black}{\mathbf{1}} & \textcolor{figgreen!90!black}{4} & \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{2} & \textcolor{figgreen!90!black}{0} \\
     \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{\mathbf{1}} & \textcolor{figgreen!90!black}{-1} & \textcolor{figgreen!90!black}{0} \\
     \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{0} & \textcolor{figgreen!90!black}{\mathbf{1}} \\
-    0 & 0 & 0 & 0 & 0
-  \end{bmatrix}\]};
-  \node[font=\scriptsize] at (10.25,-0.48) {Nonzero rows 1, 2, 3 of $B$ $=$ basis for $\Row A\subseteq\RR^5$};
-  \node[font=\scriptsize] at (10.25,-0.85) {Free cols 2, 4 of $B$ $\implies 2$ basis vectors for $\Nul A\subseteq\RR^5$};
+    0 & 0 & 0 & 0 & 0 \\
+  };
+
+  % Exact background column highlights on A and row highlights on B
+  \begin{scope}[on background layer]
+    \foreach \c in {1,3,5} {
+      \node[fit=(A-1-\c)(A-4-\c), fill=figblue!10, draw=figblue!55, line width=0.45pt, inner sep=1.2pt] {};
+    }
+    \foreach \r in {1,2,3} {
+      \node[fit=(B-\r-1)(B-\r-5), fill=figgreen!10, draw=figgreen!55, line width=0.45pt, inner sep=1pt] {};
+    }
+    % Crisp pivot outlines on B
+    \foreach \r/\c in {1/1, 2/3, 3/5} {
+      \node[fit=(B-\r-\c), draw=figgreen!90!black, line width=0.7pt, inner sep=0.5pt] {};
+    }
+  \end{scope}
+
+  % Column role tags cleanly above brackets
+  \foreach \c in {1,3,5} {
+    \node[font=\scriptsize, text=figblue!90!black, above=4pt] at (A-1-\c.north) {c\c};
+  }
+  \foreach \c/\lbl/\col in {1/piv/figgreen!90!black, 2/free/figred!90!black, 3/piv/figgreen!90!black, 4/free/figred!90!black, 5/piv/figgreen!90!black} {
+    \node[font=\scriptsize, text=\col, above=4pt] at (B-1-\c.north) {\lbl};
+  }
+
+  % Titles positioned harmoniously above column tags
+  \node[font=\footnotesize\bfseries, text=figblue!90!black, above=18pt] at (A.north) {Original $A$ (pivot cols $1,3,5\to\Col A$)};
+  \node[font=\footnotesize\bfseries, text=figgreen!90!black, above=18pt] at (B.north) {Echelon form $B=\operatorname{rref}(A)$ (nonzero rows $\to\Row A$)};
+
+  % Arrow strictly clear of matrix brackets
+  \draw[figvec,very thick] ([xshift=14pt]A.east) -- node[above=2pt,font=\scriptsize\bfseries,text=figblue!90!black] {row reduce} node[below=2pt,font=\scriptsize,text=black!80] {same $A\vv x=\vv 0$} ([xshift=-14pt]B.west);
+
+  % Bottom annotations
+  \node[font=\scriptsize, text=figblue!90!black, below=8pt] at (A.south) {Pivot cols $1,3,5$ of $A$ (blue) $=$ basis for $\Col A\subseteq\RR^4$};
+  \node[font=\scriptsize, text=black!80, below=20pt] at (A.south) {(Notice $\vv a_2=4\vv a_1$ and $\vv a_4=2\vv a_1-\vv a_3$)};
+
+  \node[font=\scriptsize, text=figgreen!90!black, below=8pt] at (B.south) {Nonzero rows $1,2,3$ of $B$ (green) $=$ basis for $\Row A\subseteq\RR^5$};
+  \node[font=\scriptsize, text=figred!90!black, below=20pt] at (B.south) {Free cols $2,4$ of $B$ (red) $\implies 2$ basis vectors for $\Nul A\subseteq\RR^5$};
 \end{tikzpicture}
 \figcap{How a single row reduction $A\to B=\operatorname{rref}(A)$ produces bases for all three subspaces: (1)~for $\Col A$, take the pivot columns \textbf{of $A$ itself} (\ilink{thm-lay-4-6}{Thm.~4.6}); (2)~for $\Row A$, take the nonzero rows \textbf{of the echelon form $B$} (\ilink{thm-lay-4-7}{Thm.~4.7}); (3)~for $\Nul A$, solve $B\vv x=\vv 0$ in parametric vector form ($x_1=-4x_2-2x_4,\,x_3=x_4,\,x_5=0$), giving basis $\{(-4,1,0,0,0),\,(-2,0,1,1,0)\}$.}
 \end{fig}
@@ -220,23 +249,27 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.95]
-  \node[font=\small\bfseries] at (-3.9,1.92) {Domain $\RR^n$ ($n$ columns of $A$)};
+\begin{tikzpicture}[>=Stealth,scale=0.94]
+  \node[font=\small\bfseries] at (-4.35,2.25) {Domain $\RR^n$ ($n$ columns of $A$)};
 
-  \node[draw=figblue!85!black,fill=figblue!5,line width=0.65pt,minimum width=4.2cm,minimum height=1.15cm,align=center,font=\scriptsize,text=figblue!90!black] (Row) at (-3.9,0.92) {\textbf{Row Space $\Row A\subseteq\RR^n$}\\[2pt]$\dim\Row A = r = \operatorname{rank}A$\\[1pt]($r$ pivots / nonzero echelon rows)};
+  \node[draw=figblue!85!black,fill=figblue!6,line width=0.65pt,inner xsep=7pt,inner ysep=5pt,minimum width=4.65cm,minimum height=1.22cm,align=center,font=\scriptsize,text=figblue!90!black] (Row) at (-4.35,1.10) {\textbf{Row Space $\Row A\subseteq\RR^n$}\\[2pt]$\dim\Row A = r = \operatorname{rank}A$\\[1pt]($r$ pivots / nonzero echelon rows)};
 
-  \node[font=\scriptsize] at (-3.9,0.12) {$\oplus$ \quad ($\Row A \cap \Nul A = \{\vv 0\}$)};
+  \node[font=\scriptsize,text=black!80] at (-4.35,0.08) {$\oplus$\quad ($\Row A \cap \Nul A = \{\vv 0\}$)};
 
-  \node[draw=figred!85!black,fill=figred!5,dashed,line width=0.6pt,minimum width=4.2cm,minimum height=1.15cm,align=center,font=\scriptsize,text=figred!90!black] (Nul) at (-3.9,-0.68) {\textbf{Null Space $\Nul A\subseteq\RR^n$}\\[2pt]$\dim\Nul A = \nullity A = n - r$\\[1pt]($n-r$ free variables / non-pivot cols)};
+  \node[draw=figred!85!black,fill=figred!6,dashed,line width=0.6pt,inner xsep=7pt,inner ysep=5pt,minimum width=4.65cm,minimum height=1.22cm,align=center,font=\scriptsize,text=figred!90!black] (Nul) at (-4.35,-0.95) {\textbf{Null Space $\Nul A\subseteq\RR^n$}\\[2pt]$\dim\Nul A = \nullity A = n - r$\\[1pt]($n-r$ free variables / non-pivot cols)};
 
-  \node[font=\small\bfseries] at (3.9,1.92) {Codomain $\RR^m$ ($m$ rows of $A$)};
+  % Left brace illustrating total domain dimension r + (n-r) = n
+  \draw[decorate,decoration={brace,amplitude=5pt,mirror},thick,black!65]
+    ([xshift=-6pt]Row.north west) -- node[left=7pt,align=right,font=\scriptsize,text=black!80] {$\dim\RR^n = n$\\[1pt]$r + (n-r)$} ([xshift=-6pt]Nul.south west);
 
-  \node[draw=figblue!85!black,fill=figblue!5,line width=0.65pt,minimum width=4.2cm,minimum height=1.15cm,align=center,font=\scriptsize,text=figblue!90!black] (Col) at (3.9,0.92) {\textbf{Column Space $\Col A\subseteq\RR^m$}\\[2pt]$\dim\Col A = r = \operatorname{rank}A$\\[1pt]($r$ pivot columns of $A$; $r\le\min(m,n)$)};
+  \node[font=\small\bfseries] at (4.35,2.25) {Codomain $\RR^m$ ($m$ rows of $A$)};
 
-  \node[draw=figred!85!black,fill=figred!4,line width=0.55pt,minimum width=4.2cm,minimum height=1.15cm,align=center,font=\scriptsize,text=figred!90!black] (Zero) at (3.9,-0.68) {\textbf{Zero Vector $\{\vv 0\}\subseteq\RR^m$}\\[2pt]$A\vv x = \vv 0$ for all $\vv x\in\Nul A$\\[1pt]$\Col A=\RR^m \iff r=m$};
+  \node[draw=figblue!85!black,fill=figblue!6,line width=0.65pt,inner xsep=7pt,inner ysep=5pt,minimum width=4.65cm,minimum height=1.22cm,align=center,font=\scriptsize,text=figblue!90!black] (Col) at (4.35,1.10) {\textbf{Column Space $\Col A\subseteq\RR^m$}\\[2pt]$\dim\Col A = r = \operatorname{rank}A$\\[1pt]($r$ pivot columns of $A$; $r\le\min(m,n)$)};
 
-  \draw[->,figblue,thick] (Row.east) -- node[above,font=\scriptsize,text=figblue!90!black] {$\vv x\mapsto A\vv x$ (bijection)} node[below,font=\scriptsize,text=figblue!90!black] {$\dim r$} (Col.west);
-  \draw[->,figred!85!black,dashed,thick] (Nul.east) -- node[above,font=\scriptsize,text=figred!90!black] {$A(\Nul A)=\{\vv 0\}$} (Zero.west);
+  \node[draw=figred!85!black,fill=figred!5,line width=0.55pt,inner xsep=7pt,inner ysep=5pt,minimum width=4.65cm,minimum height=1.22cm,align=center,font=\scriptsize,text=figred!90!black] (Zero) at (4.35,-0.95) {\textbf{Zero Vector $\{\vv 0\}\subseteq\RR^m$}\\[2pt]$A\vv x = \vv 0$ for all $\vv x\in\Nul A$\\[1pt]$\Col A=\RR^m \iff r=m$};
+
+  \draw[->,figblue,very thick,shorten <=4pt,shorten >=4pt] (Row.east) -- node[above=2pt,font=\scriptsize,text=figblue!90!black] {$\vv x\mapsto A\vv x$ (bijection)} node[below=2pt,font=\scriptsize,text=figblue!90!black] {$\dim r \to \dim r$} (Col.west);
+  \draw[->,figred!85!black,dashed,very thick,shorten <=4pt,shorten >=4pt] (Nul.east) -- node[above=2pt,font=\scriptsize,text=figred!90!black] {$A(\Nul A)=\{\vv 0\}$} (Zero.west);
 \end{tikzpicture}
 \figcap{Dimension balance of the Rank Theorem (\ilink{thm-lay-4-14}{Thm.~4.14}) for an $m\times n$ matrix $A$ with $r$ pivots: the $n$ columns of $A$ partition into $r$ pivot columns ($\operatorname{rank}A=\dim\Col A=\dim\Row A=r$, blue) and $n-r$ non-pivot columns ($\dim\Nul A=n-r$, red), so $\operatorname{rank}A+\dim\Nul A=n$.}
 \end{fig}

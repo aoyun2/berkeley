@@ -21,13 +21,14 @@
 \subsection{Print versus return, once more (Lecture 3)}
 With \cd{def f(x): return x + 1}, compare four versions of \cd{h} called as \cd{h(3)}:
 \begin{center}\small
-\begin{tabular}{llll}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}lccl@{}}
 \toprule
-body of \cd{h(x)} & displays & returns & why\\\midrule
-\cd{f(x)} & nothing & \cd{None} & the value \cd{4} is computed and dropped; no \cd{return}\\
-\cd{print(f(x))} & \cd{4} & \cd{None} & no \cd{return}\\
-\cd{return print(f(x))} & \cd{4} & \cd{None} & returns the value of the \cd{print} call, which is \cd{None}\\
-\cd{return f(x)} & nothing & \cd{4} & \\\bottomrule
+\textbf{Body of \cd{h(x)}} & \textbf{Displays} & \textbf{Returns} & \textbf{Why} \\\midrule
+\cd{f(x)} & \emph{nothing} & \cd{None} & evaluates \cd{4} and discards it; no \cd{return} \\
+\cd{print(f(x))} & \cd{4} & \cd{None} & prints \cd{4}, then falls off the end (no \cd{return}) \\
+\cd{return print(f(x))} & \cd{4} & \cd{None} & returns the value of \cd{print(\dots)}, which is \cd{None} \\
+\cd{return f(x)} & \emph{nothing} & \cd{4} & returns the value of \cd{f(x)} directly; nothing printed \\\bottomrule
 \end{tabular}
 \end{center}
 \textbf{Print, then return, the value of \cd{f(x)}.} Two candidates:
@@ -251,24 +252,80 @@ The parent is fixed at definition time, not at call time. \cd{adder} was created
 
 So to predict what a name means inside a function, look at where the function was \emph{defined}, never at where it is called.
 \end{ideabox}
+\Needspace{24\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,font=\ttfamily\small]
-  \def\row#1#2#3{\node[anchor=east] at (2.4,#1) {#2}; \draw (2.5,#1-0.22) rectangle (4.6,#1+0.22); #3}
-  \draw[thick] (0,-0.1) rectangle (4.8,1.3); \node[anchor=west,font=\small\bfseries] at (0,1.55) {Global frame};
-  \row{0.95}{make\_adder}{\fill (3.55,0.95) circle (1.5pt); \draw[->] (3.55,0.95) -- (6.4,0.95);}
-  \row{0.3}{add\_three}{\fill (3.55,0.3) circle (1.5pt); \draw[->] (3.55,0.3) -- (5.6,0.3) -- (5.6,-1.45) -- (6.4,-1.45);}
-  \node[anchor=west] at (6.5,0.95) {func make\_adder(n) [parent=Global]};
-  \draw[thick] (0,-3.2) rectangle (4.8,-0.9); \node[anchor=west,font=\small\bfseries] at (0,-0.65) {f1: make\_adder [parent=Global]};
-  \row{-1.3}{n}{\node at (3.55,-1.3) {3};}
-  \row{-1.95}{adder}{\fill (3.55,-1.95) circle (1.5pt); \draw[->] (3.55,-1.95) -- (6.0,-1.95) -- (6.0,-1.6) -- (6.4,-1.6);}
-  \row{-2.7}{\rmfamily\small Return value}{\fill (3.55,-2.7) circle (1.5pt); \draw[->] (3.55,-2.7) -- (6.2,-2.7) -- (6.2,-1.75) -- (6.4,-1.75);}
-  \node[anchor=west] at (6.5,-1.6) {func adder(k) [parent=f1]};
-  \draw[thick] (0,-5.5) rectangle (4.8,-4.1); \node[anchor=west,font=\small\bfseries] at (0,-3.85) {f2: adder [parent=f1]};
-  \row{-4.5}{k}{\node at (3.55,-4.5) {4};}
-  \row{-5.15}{\rmfamily\small Return value}{\node at (3.55,-5.15) {7};}
-  \node[anchor=west,text width=6.4cm,font=\rmfamily\small] at (6.5,-4.6) {In \cd{f2}, \cd{k} is found locally. \cd{n} is not in \cd{f2}; lookup continues in its parent \cd{f1}, where \cd{n} is 3.};
+\begin{tikzpicture}[>=Stealth,font=\ttfamily\footnotesize]
+  % ---- Global frame ----
+  \fill[figslate!10] (-0.1,1.35) rectangle (5.45,1.85);
+  \draw[figslate!45,line width=0.45pt] (-0.1,1.35) -- (5.45,1.35);
+  \draw[figslate!85!black,line width=0.7pt] (-0.1,0.0) rectangle (5.45,1.85);
+  \node[anchor=west,font=\footnotesize\bfseries,text=black] at (0.10,1.60) {Global frame};
+
+  \node[anchor=east] at (2.45,1.00) {make\_adder};
+  \draw[figslate!75,line width=0.5pt] (2.60,0.78) rectangle (5.15,1.22);
+  \fill[figpurple!90!black] (3.88,1.00) circle (1.7pt);
+
+  \node[anchor=east] at (2.45,0.36) {add\_three};
+  \draw[figslate!75,line width=0.5pt] (2.60,0.14) rectangle (5.15,0.58);
+  \fill[figblue] (3.88,0.36) circle (1.7pt);
+
+  % ---- Local frame f1 ----
+  \fill[figblue!10] (-0.1,-1.25) rectangle (5.45,-0.75);
+  \draw[figblue!45,line width=0.45pt] (-0.1,-1.25) -- (5.45,-1.25);
+  \draw[figblue!80!black,line width=0.7pt] (-0.1,-3.52) rectangle (5.45,-0.75);
+  \node[anchor=west,font=\footnotesize\bfseries,text=figblue!90!black] at (0.10,-1.00) {\cd{f1}: \cd{make\_adder} \rmfamily\normalfont\scriptsize\color{figslate}[parent=Global]};
+
+  \node[anchor=east] at (2.45,-1.60) {n};
+  \draw[figamber!80!black,fill=figamber!12,line width=0.55pt] (2.60,-1.82) rectangle (5.15,-1.38);
+  \node[text=figamber!85!black,font=\ttfamily\footnotesize\bfseries] at (3.88,-1.60) {3};
+
+  \node[anchor=east] at (2.45,-2.22) {adder};
+  \draw[figslate!75,line width=0.5pt] (2.60,-2.44) rectangle (5.15,-2.00);
+  \fill[figblue] (3.88,-2.22) circle (1.7pt);
+
+  \node[anchor=east,font=\rmfamily\footnotesize,text=figslate!90!black] at (2.45,-3.08) {Return value};
+  \draw[figslate!75,line width=0.5pt] (2.60,-3.30) rectangle (5.15,-2.86);
+  \fill[figblue] (3.88,-3.08) circle (1.7pt);
+
+  % ---- Local frame f2 ----
+  \fill[figgreen!10] (-0.1,-4.72) rectangle (5.45,-4.22);
+  \draw[figgreen!45,line width=0.45pt] (-0.1,-4.72) -- (5.45,-4.72);
+  \draw[figgreen!80!black,line width=0.7pt] (-0.1,-6.12) rectangle (5.45,-4.22);
+  \node[anchor=west,font=\footnotesize\bfseries,text=figgreen!85!black] at (0.10,-4.47) {\cd{f2}: \cd{adder} \rmfamily\normalfont\scriptsize\color{figblue!90!black}[\textbf{parent=f1}]};
+
+  \node[anchor=east] at (2.45,-5.07) {k};
+  \draw[figslate!75,line width=0.5pt] (2.60,-5.29) rectangle (5.15,-4.85);
+  \node at (3.88,-5.07) {4};
+
+  \node[anchor=east,font=\rmfamily\footnotesize,text=figgreen!80!black] at (2.45,-5.71) {Return value};
+  \draw[figgreen!75!black,fill=figgreen!8,line width=0.55pt] (2.60,-5.93) rectangle (5.15,-5.49);
+  \node[text=figgreen!85!black,font=\ttfamily\footnotesize\bfseries] at (3.88,-5.71) {7};
+
+  % ---- Parent lookup chain indicator on left margin ----
+  \draw[->,figamber!85!black,line width=0.8pt,densely dashed] (-0.1,-4.47) -- (-0.85,-4.47) -- (-0.85,-1.60) -- (-0.12,-1.60);
+  \node[rotate=90,anchor=south,font=\rmfamily\scriptsize\bfseries,text=figamber!85!black] at (-0.92,-3.04) {lookup \cd{n} in parent \cd{f1}};
+
+  % ---- Function objects on right ----
+  \node[anchor=west,draw=figpurple!80!black,fill=figpurple!5,line width=0.6pt,inner xsep=7pt,inner ysep=5pt,align=left] (fma) at (6.9,1.00) {%
+    \ttfamily\footnotesize\textbf{\color{figpurple!90!black}func make\_adder(n)}\\[-1pt]
+    \rmfamily\scriptsize\color{figslate}[parent=Global]};
+  \draw[->,figpurple!85!black,line width=0.8pt] (3.88,1.00) -- (fma.west);
+
+  \node[anchor=west,draw=figblue!85!black,fill=figblue!5,line width=0.65pt,inner xsep=7pt,inner ysep=5pt,align=left] (fadd) at (6.9,-2.22) {%
+    \ttfamily\footnotesize\textbf{\color{figblue!90!black}func adder(k)}\\[-1pt]
+    \rmfamily\scriptsize\color{figblue!85!black}[\textbf{parent=f1}]};
+
+  % Three cleanly separated orthogonal pointers to north, west, and south edges of adder card
+  \draw[->,figblue,line width=0.8pt] (3.88,0.36)  -| (fadd.north);
+  \draw[->,figblue,line width=0.8pt] (3.88,-2.22) -- (fadd.west);
+  \draw[->,figblue,line width=0.8pt] (3.88,-3.08) -| (fadd.south);
+
+  % ---- Lookup explanation card aligned with f2 ----
+  \node[anchor=west,draw=figamber!75!black,fill=figamber!5,line width=0.55pt,inner sep=6pt,text width=6.2cm,font=\rmfamily\footnotesize,align=left] at (6.9,-5.17) {%
+    \textbf{\color{figamber!85!black}Parent-chain lookup.}\\[2pt]
+    In \cd{f2}, \cd{k} is local (\cd{4}). Since \cd{n} is not in \cd{f2}, lookup follows \cd{[parent=f1]} to \cd{f1}, where \cd{n} is \textbf{3}.};
 \end{tikzpicture}
-\figcap{Environment diagram for \cd{add\_three = make\_adder(3)} followed by \cd{add\_three(4)}.}
+\figcap{Environment diagram for \cd{add\_three = make\_adder(3)} followed by \cd{add\_three(4)}. All three blue arrows point to the same \cd{adder} function object; the dashed amber path on the left traces how \cd{f2} resolves \cd{n} in its parent frame \cd{f1}.}
 \end{fig}
 \method{Additions to the diagram recipe of Week 1.}
 \begin{steps}

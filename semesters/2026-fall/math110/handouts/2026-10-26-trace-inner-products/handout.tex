@@ -253,28 +253,32 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \begin{fig}
 \begin{tikzpicture}[scale=1.22,>=Stealth]
   % Span(v) line
-  \draw[black!55,thin] (-0.5,0) -- (5.1,0) node[right,font=\scriptsize] {$\spn(v)$};
+  \draw[black!45,thin] (-0.55,0) -- (5.2,0) node[right=2pt,font=\scriptsize,text=black!75] {$\spn(v)$};
 
   % Right-angle mark at (2.4, 0)
-  \draw[black!70,thin] (2.18,0) -- (2.18,0.22) -- (2.4,0.22);
+  \draw[black!65,thin] (2.18,0) -- (2.18,0.22) -- (2.4,0.22);
 
   % Vector v (full)
-  \draw[figvecsub] (0,0) -- (4.3,0) node[below,yshift=-2pt] {$v$};
+  \draw[figvecsub] (0,0) -- (4.35,0);
+  \node[below=3pt,font=\small,text=figslate] at (3.65,0) {$v$};
 
   % Component cv along v
-  \draw[figvec,very thick] (0,0) -- (2.4,0);
-  \node[below,yshift=-3pt,font=\small,text=figblue!90!black] at (1.2,0) {$cv = \dfrac{\ip uv}{\|v\|^2}v$};
+  \draw[figvec,very thick,shorten >=1.6pt] (0,0) -- (2.4,0);
+  \node[below=4pt,font=\small,text=figblue!90!black] at (1.2,0) {$cv = \dfrac{\ip uv}{\|v\|^2}v$};
 
   % Vector u
-  \draw[figvec,draw=black,very thick] (0,0) -- (2.4,1.85) node[above left,xshift=-1pt] {$u$};
-  \node[halo,above left=3pt,font=\scriptsize] at (1.15,1.02) {$\|u\|^2 = \|cv\|^2 + \|w\|^2$};
+  \draw[figvec,draw=black,very thick,shorten >=1.2pt] (0,0) -- (2.4,1.95)
+    node[pos=0.56,above left=2pt,font=\small,text=black] {$u$};
+
+  % Pythagorean identity placed cleanly in open upper-left space
+  \node[font=\scriptsize,text=black!80,anchor=west] at (-0.45,1.72) {$\|u\|^2 = \|cv\|^2 + \|w\|^2$};
 
   % Orthogonal residual w = u - cv
-  \draw[figvec,draw=figred,dashed] (2.4,0) -- (2.4,1.85);
-  \node[right,xshift=4pt,font=\small,text=figred!90!black] at (2.4,0.92) {$w = u - cv \perp v$};
+  \draw[figvec,draw=figred,thick,dashed,shorten <=1.6pt,shorten >=2.2pt] (2.4,0) -- (2.4,1.95);
+  \node[right=6pt,font=\small,text=figred!90!black] at (2.4,0.98) {$w = u - cv \perp v$};
 
-  % Origin dot
-  \fill[black] (0,0) circle (1.5pt) node[below left,font=\scriptsize] {$0$};
+  % Origin and foot-of-perpendicular dots
+  \fill[black] (0,0) circle (1.5pt) node[below left=2pt,font=\scriptsize] {$0$};
   \fill[black] (2.4,0) circle (1.5pt);
 \end{tikzpicture}
 \figcap{Orthogonal decomposition $u=cv+w$ along $v\ne 0$ (LADR 6.13). Choosing $c=\ip uv/\|v\|^2$ forces $w\perp v$ and therefore $w\perp cv$. Applying the Pythagorean theorem to the right triangle with legs $cv$ and $w$ gives $\|u\|^2=\|cv\|^2+\|w\|^2=\frac{|\ip uv|^2}{\|v\|^2}+\|w\|^2\ge\frac{|\ip uv|^2}{\|v\|^2}$, which rearranges directly into the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$, with equality iff the vertical leg $w$ is zero.}
@@ -358,64 +362,70 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 
 \begin{fig}
 \begin{tikzpicture}[>=Stealth]
-  % Left panel: Parallelogram Law on pure white (monochrome)
+  % Left panel: Parallelogram Law
   \begin{scope}[shift={(0,0)},scale=0.95]
-    \node[font=\footnotesize\bfseries] at (2.35,2.72) {(a) Parallelogram equality};
+    \node[font=\footnotesize\bfseries] at (2.4,3.05) {(a) Parallelogram equality};
 
-    \coordinate (O) at (0.1,0.1);
-    \coordinate (U) at (3.5,0.1);
-    \coordinate (V) at (1.3,2.05);
-    \coordinate (UV) at (4.7,2.05);
+    \coordinate (O) at (0,0);
+    \coordinate (U) at (3.6,0);
+    \coordinate (V) at (1.2,2.15);
+    \coordinate (UV) at (4.8,2.15);
 
-    \fill[black!5] (O) -- (U) -- (UV) -- (V) -- cycle;
+    \fill[figblue!4] (O) -- (U) -- (UV) -- (V) -- cycle;
 
-    % Sides
-    \draw[figvec] (O) -- (U) node[midway,below=2pt] {$u$};
-    \draw[black!70,thin] (V) -- (UV) node[midway,above=2pt,font=\small] {$u$};
-    \draw[figvec] (O) -- (V) node[midway,left=2pt] {$v$};
-    \draw[black!70,thin] (U) -- (UV) node[midway,right=2pt,font=\small] {$v$};
+    % Sides (neutral dark ink so colored diagonals pop)
+    \draw[figvec,draw=black!85] (O) -- (U) node[midway,below=3pt,font=\small,text=black] {$u$};
+    \draw[black!45,thin] (V) -- (UV) node[midway,above=2pt,font=\small,text=black!75] {$u$};
+    \draw[figvec,draw=black!85] (O) -- (V) node[midway,above left=1pt,font=\small,text=black] {$v$};
+    \draw[black!45,thin] (U) -- (UV) node[midway,below right=1pt,font=\small,text=black!75] {$v$};
 
-    % Diagonals with white-halo labels cleanly separated from both diagonal lines
-    \draw[figvec,draw=figblue,very thick] (O) -- (UV);
-    \draw[figvec,draw=figred,dashed] (V) -- (U);
+    % Diagonals with cleanly offset labels (no white halo knockout!)
+    \draw[figvec,draw=figblue,very thick,shorten >=1.5pt] (O) -- (UV)
+      node[pos=0.73,sloped,above=2pt,font=\small,text=figblue!90!black] {$u+v$};
+    \draw[figvec,draw=figred,thick,dashed,shorten <=1.5pt,shorten >=2.8pt] (V) -- (U);
+    \node[font=\small,text=figred!90!black] at (1.38,1.38) {$u-v$};
 
-    \node[halo,font=\small,text=figblue!90!black] at (3.65,1.35) {$u+v$};
-    \node[halo,font=\small,text=figred!90!black] at (1.65,1.35) {$u-v$};
-
-    \fill[black] (O) circle (1.5pt) node[below left=1pt,font=\scriptsize] {$0$};
-    \node[font=\scriptsize] at (2.35,-0.58) {$\|u+v\|^2 + \|u-v\|^2 = 2\|u\|^2 + 2\|v\|^2$};
+    \fill[black] (O) circle (1.5pt) node[below left=2pt,font=\scriptsize] {$0$};
+    \node[font=\scriptsize] at (2.4,-0.68) {$\|u+v\|^2 + \|u-v\|^2 = 2\|u\|^2 + 2\|v\|^2$};
   \end{scope}
 
   % Right panel: Unit balls of l1, l2, l_infty
-  \begin{scope}[shift={(9.3,0)},scale=0.95]
-    \node[font=\footnotesize\bfseries] at (0.1,2.72) {(b) Unit balls $\|x\|=1$ on $\RR^2$};
+  \begin{scope}[shift={(7.9,0)},scale=0.95]
+    \node[font=\footnotesize\bfseries] at (1.15,3.05) {(b) Unit balls $\|x\|=1$ on $\RR^2$};
 
-    \coordinate (C) at (-0.15,0.92);
-    \def\R{0.98}
+    \coordinate (C) at (0,1.05);
+    \def\R{1.00}
 
     % Axes
-    \draw[figaxis] ($(C)+(-1.40,0)$) -- ($(C)+(1.55,0)$) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] ($(C)+(0,-1.20)$) -- ($(C)+(0,1.35)$) node[right=2pt,font=\scriptsize] {$x_2$};
+    \draw[figaxis] ($(C)+(-1.38,0)$) -- ($(C)+(1.52,0)$) node[right=1pt,font=\scriptsize] {$x_1$};
+    \draw[figaxis] ($(C)+(0,-1.25)$) -- ($(C)+(0,1.42)$) node[right=2pt,font=\scriptsize] {$x_2$};
 
     % l_infty square
     \draw[figblue,thick,dashed] ($(C)+(-\R,-\R)$) rectangle ($(C)+(\R,\R)$);
-    \node[font=\scriptsize,text=figblue!90!black,anchor=west] at ($(C)+(\R+0.28,0.92*\R)$) {$\ell_\infty$: $\max|x_i|=1$};
-    \draw[->,figblue,thin] ($(C)+(\R+0.24,0.88*\R)$) -- ($(C)+(\R+0.03,0.78*\R)$);
 
     % l_2 circle
     \draw[black,very thick] (C) circle (\R);
-    \node[font=\scriptsize,anchor=west] at ($(C)+(\R+0.28,-0.75*\R)$) {$\ell_2$: $\|x\|_2=1$};
-    \draw[->,black,thin] ($(C)+(\R+0.24,-0.72*\R)$) -- ($(C)+(0.76*\R,-0.67*\R)$);
 
     % l_1 diamond
     \draw[figred,thick,densely dotted] ($(C)+(\R,0)$) -- ($(C)+(0,\R)$) -- ($(C)+(-\R,0)$) -- ($(C)+(0,-\R)$) -- cycle;
-    \node[font=\scriptsize,text=figred!90!black,anchor=east] at ($(C)+(-\R-0.28,0.68*\R)$) {$\ell_1$: $|x_1|+|x_2|=1$};
-    \draw[->,figred,thin] ($(C)+(-\R-0.24,0.64*\R)$) -- ($(C)+(-0.54*\R,0.48*\R)$);
 
-    \fill[black] ($(C)+(\R,0)$) circle (1.6pt) node[below right=2pt,font=\scriptsize] {$e_1$};
-    \fill[black] ($(C)+(0,\R)$) circle (1.6pt) node[above left=2pt,font=\scriptsize] {$e_2$};
+    % Right-column callouts with clean non-crossing leader arrows
+    \node[font=\scriptsize,text=figblue!90!black,anchor=west] (linf) at ($(C)+(1.48,0.96)$) {$\ell_\infty$: $\max|x_i|=1$};
+    \draw[->,figblue,thin] (linf.west) -- ($(C)+(\R+0.04,0.88)$);
 
-    \node[font=\scriptsize] at (0.1,-0.58) {At $e_1,e_2$: $\|e_1+e_2\|_\infty^2+\|e_1-e_2\|_\infty^2 = 1+1 \ne 2(1+1)$};
+    \node[font=\scriptsize,text=black,anchor=west] (ltwo) at ($(C)+(1.48,0.46)$) {$\ell_2$: $\|x\|_2=1$};
+    \draw[->,black,thin] (ltwo.west) -- ($(C)+(0.86,0.52)$);
+
+    \node[font=\scriptsize,text=figred!90!black,anchor=west] (lone) at ($(C)+(1.48,-0.64)$) {$\ell_1$: $|x_1|+|x_2|=1$};
+    \draw[->,figred,thin] (lone.west) -- ($(C)+(0.58,-0.46)$);
+
+    % Basis dots e_1, e_2 with clean exterior labels
+    \fill[black] ($(C)+(\R,0)$) circle (1.6pt);
+    \node[font=\scriptsize,anchor=north west] at ($(C)+(\R+0.03,-0.04)$) {$e_1$};
+    \fill[black] ($(C)+(0,\R)$) circle (1.6pt);
+    \node[font=\scriptsize,anchor=south east] at ($(C)+(-0.04,\R+0.03)$) {$e_2$};
+
+    \node[font=\scriptsize] at (1.15,-0.68) {At $e_1,e_2$: $\|e_1\pm e_2\|_\infty=1 \implies 1^2+1^2\ne 2(1^2+1^2)$};
   \end{scope}
 \end{tikzpicture}
 \figcap{(a) In any inner product space, the sum of the squared lengths of the two diagonals of a parallelogram equals the sum of the squared lengths of its four sides (\ilink{prop-83}{Prop.~83}). (b) Testing the standard basis vectors $u=e_1=(1,0)$ and $v=e_2=(0,1)$ in $\RR^2$: for the $\ell_\infty$ norm $\|x\|_\infty=\max(|x_1|,|x_2|)$, $\|e_1\pm e_2\|_\infty^2=1^2=1$, so $\|e_1+e_2\|_\infty^2+\|e_1-e_2\|_\infty^2=2\ne 4=2\|e_1\|_\infty^2+2\|e_2\|_\infty^2$; for the $\ell_1$ norm $\|x\|_1=|x_1|+|x_2|$, $\|e_1\pm e_2\|_1^2=2^2=4$, so $4+4=8\ne 4$. Thus neither $\|\cdot\|_1$ nor $\|\cdot\|_\infty$ arises from any inner product.}

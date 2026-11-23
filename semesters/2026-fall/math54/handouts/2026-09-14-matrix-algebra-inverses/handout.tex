@@ -60,17 +60,28 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \end{definition*}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.98]
-  % Clean textbook composition diagram (plain math nodes + thin outlines/arrows)
-  \node[align=center,font=\small] (Rp) at (-4.3,0.15) {$\RR^p$\\[-1pt]\scriptsize ($\vv x\in\RR^p$)};
-  \node[align=center,font=\small] (Rn) at (0,0.15)    {$\RR^n$\\[-1pt]\scriptsize ($\vv y = B\vv x\in\RR^n$)};
-  \node[align=center,font=\small] (Rm) at (4.3,0.15)  {$\RR^m$\\[-1pt]\scriptsize ($A(B\vv x)=(AB)\vv x$)};
+\begin{tikzpicture}[>=Stealth,scale=1.0]
+  % Top row: Vector spaces with clean sharp frames
+  \node[draw=figslate!65,fill=figbg,line width=0.55pt,minimum width=1.15cm,minimum height=0.62cm,font=\small\bfseries] (Rp) at (-4.3,0.45) {$\RR^p$};
+  \node[draw=figslate!65,fill=figbg,line width=0.55pt,minimum width=1.15cm,minimum height=0.62cm,font=\small\bfseries] (Rn) at (0,0.45) {$\RR^n$};
+  \node[draw=figslate!65,fill=figbg,line width=0.55pt,minimum width=1.15cm,minimum height=0.62cm,font=\small\bfseries] (Rm) at (4.3,0.45) {$\RR^m$};
 
-  \draw[->,thick] (Rp.east) -- node[above=2pt,font=\footnotesize] {$B$} node[below=2pt,font=\scriptsize] {$n\times p$} (Rn.west);
-  \draw[->,thick] (Rn.east) -- node[above=2pt,font=\footnotesize] {$A$} node[below=2pt,font=\scriptsize] {$m\times n$} (Rm.west);
-  \draw[->,thick,black] (Rp.north) to[bend left=22] node[above=2pt,font=\footnotesize] {Composite $AB = [\,A\vv b_1\ \ \cdots\ \ A\vv b_p\,]$ ($m\times p$)} (Rm.north);
+  % Straight transformation arrows aligned cleanly on the space row
+  \draw[figvec,draw=figblue,very thick] (Rp.east) -- node[above=2pt,font=\footnotesize\bfseries,text=figblue!90!black] {$B$} node[below=2pt,font=\scriptsize,text=figblue!85!black] {$n\times p$} (Rn.west);
+  \draw[figvec,draw=figred,very thick] (Rn.east) -- node[above=2pt,font=\footnotesize\bfseries,text=figred!90!black] {$A$} node[below=2pt,font=\scriptsize,text=figred!85!black] {$m\times n$} (Rm.west);
+
+  % Composite arrow arching cleanly over the top
+  \draw[figvec,draw=figpurple,very thick] (Rp.north) to[bend left=18] node[above=3pt,font=\footnotesize,text=figpurple!90!black] {Composite $AB = [\,A\vv b_1\ \ \cdots\ \ A\vv b_p\,]$ \ ($m\times p$)} (Rm.north);
+
+  % Bottom row: Element-level tracking aligned directly under each space
+  \node[font=\footnotesize,text=figslate!90!black] (xp) at (-4.3,-0.55) {$\vv x$};
+  \node[font=\footnotesize,text=figslate!90!black] (yn) at (0,-0.55) {$\vv y = B\vv x$};
+  \node[font=\footnotesize,text=figslate!90!black] (zm) at (4.3,-0.55) {$A(B\vv x) = (AB)\vv x$};
+
+  \draw[{Bar[width=3.6pt]}-{Stealth[length=4.5pt,width=2.8pt]},figblue!80!black,line width=0.65pt] ($(xp.east)+(0.20,0)$) -- ($(yn.west)+(-0.20,0)$);
+  \draw[{Bar[width=3.6pt]}-{Stealth[length=4.5pt,width=2.8pt]},figred!80!black,line width=0.65pt] ($(yn.east)+(0.20,0)$) -- ($(zm.west)+(-0.20,0)$);
 \end{tikzpicture}
-\figcap{Matrix multiplication as composition of linear transformations: applying $B\colon\RR^p\to\RR^n$ followed by $A\colon\RR^n\to\RR^m$ sends $\vv x\in\RR^p$ to $A(B\vv x)=(AB)\vv x\in\RR^m$ (inner dimensions $n$ match; $AB$ applies $B$ first, then $A$).}
+\figcap{Matrix multiplication as composition of linear transformations: applying $B\colon\RR^p\to\RR^n$ (blue) followed by $A\colon\RR^n\to\RR^m$ (red) sends $\vv x\in\RR^p$ to $A(B\vv x)=(AB)\vv x\in\RR^m$ (purple). Inner dimensions $n$ match; $AB$ applies $B$ first, then $A$.}
 \end{fig}
 
 \begin{theorem*}[Lay 2.1 Thm.~2: Properties of matrix multiplication]\target{thm-lay-2-2}
@@ -272,17 +283,39 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.95]
-  \node[draw=black,line width=0.6pt,minimum width=3.1cm,minimum height=1.35cm,align=center,font=\scriptsize] (hub) at (0,0.2) {\textbf{Square Pivot Hub}\\[2pt] (b) $A\sim I_n$ \quad (c) $n$ pivots\\[1pt] (a) $A$ inv.\ \quad (l) $A^{\mathsf T}$ inv.};
+\begin{tikzpicture}[>=Stealth]
+  % Central Hub: Square Pivot Hub (figpurple = blue + red unified)
+  \node[draw=figpurple!90!black,fill=figpurple!6,line width=0.9pt,inner xsep=7pt,inner ysep=6pt,minimum height=2.10cm,align=left,font=\scriptsize] (hub) at (0,0) {
+    {\color{figpurple!90!black}\footnotesize\bfseries Square Pivot Hub ($n\times n$)}\\[3pt]
+    (a) $A$ is invertible\\[1.5pt]
+    (b) $A$ row equivalent to $I_n$\\[1.5pt]
+    (c) $A$ has $n$ pivot positions\\[1.5pt]
+    (l) $A^{\mathsf T}$ is invertible
+  };
 
-  \node[draw=black!65,dashed,line width=0.55pt,minimum width=3.9cm,minimum height=1.4cm,align=left,font=\scriptsize] (left) at (-5.35,0.2) {\textbf{Column / Uniqueness}\\[2pt] (d) $A\vv x=\vv 0$ only trivial\\[1pt] (e) Columns of $A$ independent\\[1pt] (f) $\vv x\mapsto A\vv x$ is one-to-one\\[1pt] (j) Left inverse $CA=I_n$ exists};
+  % Left card: Column / Uniqueness (figblue), placed with guaranteed 1.65cm bridge gap
+  \node[draw=figblue!85!black,fill=figblue!5,line width=0.65pt,inner xsep=7pt,inner ysep=6pt,minimum height=2.10cm,align=left,font=\scriptsize,left=1.65cm of hub] (left) {
+    {\color{figblue!90!black}\footnotesize\bfseries Column / Uniqueness}\\[3pt]
+    (d) $A\vv x=\vv 0$ only trivial\\[1.5pt]
+    (e) Columns of $A$ independent\\[1.5pt]
+    (f) $\vv x\mapsto A\vv x$ is one-to-one\\[1.5pt]
+    (j) Left inverse $CA=I_n$ exists
+  };
 
-  \node[draw=black!65,dashed,line width=0.55pt,minimum width=3.9cm,minimum height=1.4cm,align=left,font=\scriptsize] (right) at (5.35,0.2) {\textbf{Row / Existence}\\[2pt] (g) $A\vv x=\vv b$ consistent $\forall\,\vv b$\\[1pt] (h) Columns of $A$ span $\RR^n$\\[1pt] (i) $\vv x\mapsto A\vv x$ is onto $\RR^n$\\[1pt] (k) Right inverse $AD=I_n$ exists};
+  % Right card: Row / Existence (figred), placed with guaranteed 1.65cm bridge gap
+  \node[draw=figred!85!black,fill=figred!5,line width=0.65pt,inner xsep=7pt,inner ysep=6pt,minimum height=2.10cm,align=left,font=\scriptsize,right=1.65cm of hub] (right) {
+    {\color{figred!90!black}\footnotesize\bfseries Row / Existence}\\[3pt]
+    (g) $A\vv x=\vv b$ consistent $\forall\,\vv b$\\[1.5pt]
+    (h) Columns of $A$ span $\RR^n$\\[1.5pt]
+    (i) $\vv x\mapsto A\vv x$ is onto $\RR^n$\\[1.5pt]
+    (k) Right inverse $AD=I_n$ exists
+  };
 
-  \draw[<->,thick] (left.east) -- node[above=3pt,font=\scriptsize] {$n$ cols} (hub.west);
-  \draw[<->,thick] (hub.east) -- node[above=3pt,font=\scriptsize] {$n$ rows} (right.west);
+  % Equivalence bridges with generous clearance on both sides
+  \draw[<->,figblue!90!black,thick] (left.east) -- node[above=3pt,font=\scriptsize\bfseries,text=figblue!90!black] {$n$ cols} node[below=3pt,font=\scriptsize,text=figslate] {pivot/col} (hub.west);
+  \draw[<->,figred!90!black,thick] (hub.east) -- node[above=3pt,font=\scriptsize\bfseries,text=figred!90!black] {$n$ rows} node[below=3pt,font=\scriptsize,text=figslate] {pivot/row} (right.west);
 \end{tikzpicture}
-\figcap{Logical structure of the Invertible Matrix Theorem (\ilink{thm-lay-2-8}{Thm.~2.8}): for a square $n\times n$ matrix $A$, the uniqueness/one-to-one conditions (left) and existence/onto conditions (right) are locked together through the central condition of $n$ pivots.}
+\figcap{Logical structure of the Invertible Matrix Theorem (\ilink{thm-lay-2-8}{Thm.~2.8}): for a square $n\times n$ matrix $A$, the column/uniqueness conditions (blue, left) and row/existence conditions (red, right) are locked together through the central hub of $n$ pivots (purple).}
 \end{fig}
 
 \begin{theorem*}[Lay 2.3 Thm.~9: Invertible linear transformations]\target{thm-lay-2-9}
