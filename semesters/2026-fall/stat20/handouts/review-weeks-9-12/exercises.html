@@ -1,419 +1,501 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quiz 4 review exercises &mdash; STAT 20</title>
+<title>Weeks 9&ndash;12 Case Studies: Prediction, Bootstrap &amp; Classification</title>
 <link rel="stylesheet" href="../../../../../assets/exercises.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
 
-<p class="sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">STAT 20</a></p>
-
-<h1>Quiz 4 review exercises (Weeks 9&ndash;12)</h1>
-<p class="sub">Fall 2026</p>
-
-<p class="sub"><a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/review-weeks-9-12/handout.pdf" target="_blank" rel="noopener">Handout</a>, <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/stat20/handouts/review-weeks-9-12/solutions.pdf" target="_blank" rel="noopener">Solutions</a>, <a href="exercises.zip">exercises.zip</a></p>
-
 <div class="top-bar">
   <div class="top-bar-left">
-    <button id="btn-run-all" disabled>Run all</button>
-    <button id="btn-reset-all">Reset all</button>
-    <button id="btn-download-r">Download review.R</button>
+    <a href="../../index.html">&larr; STAT 20</a>
+    <span class="sub">Review · Weeks 9–12</span>
   </div>
   <div class="top-bar-right">
-    <span id="score" class="sub">0 / 11 ok</span>
-    <span id="engine-status" class="sub" style="margin-left: 8px;">loading WebR...</span>
+    <button id="btn-restart-r" class="btn-secondary" disabled>Restart R session</button>
+    <button id="btn-reset-all" class="btn-secondary">Reset all</button>
+    <a class="download" href="exercises.zip" download>.zip</a>
+    <span id="engine-status" class="sub" style="margin-left: 8px;">loading R...</span>
   </div>
 </div>
 
-<!-- 1. boot_stats -->
-<div class="exercise-block">
-  <h2>1. boot_stats</h2>
-  <p><code>reps</code> statistics, each <code>stat</code> applied to a resample of <code>x</code> (size <code>length(x)</code>, with replacement). Returns a numeric vector. It must work when <code>x</code> has length 1.</p>
-  <textarea class="code-editor" id="code-ex1" rows="5" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex1" disabled>Run</button>
-    <button class="btn-reset" data-target="ex1">Reset</button>
-    <span class="exercise-status" id="status-ex1"></span>
-  </div>
-  <div class="test-output" id="output-ex1" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>boot_stats &lt;- function(x, stat, reps) {
-  n &lt;- length(x)
-  replicate(reps, stat(x[sample.int(n, size = n, replace = TRUE)]))
-}</pre>
-  </details>
-</div>
+<h1>Weeks 9&ndash;12 Case Studies: Prediction, Bootstrap &amp; Classification</h1>
+<p class="sub" style="margin-bottom: 18px;">
+  Each case study combines conceptual interpretation questions with a shared interactive R session
+  (datasets and <code>dplyr</code>-style verbs <code>filter</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>select</code>, <code>count</code>, and <code>|&gt;</code> are preloaded).
+  Assignments in one editor stay available in later editors until you click <strong>Restart R session</strong>.
+</p>
 
-<!-- 2. percentile_ci -->
-<div class="exercise-block">
-  <h2>2. percentile_ci</h2>
-  <p>Percentile interval: the <code>(1 - level)/2</code> and <code>(1 + level)/2</code> quantiles of <code>stats</code> (use <code>quantile()</code> with its default type). Returns a length-2 numeric vector with no names.</p>
-  <textarea class="code-editor" id="code-ex2" rows="4" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex2" disabled>Run</button>
-    <button class="btn-reset" data-target="ex2">Reset</button>
-    <span class="exercise-status" id="status-ex2"></span>
-  </div>
-  <div class="test-output" id="output-ex2" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>percentile_ci &lt;- function(stats, level) {
-  unname(quantile(stats, probs = c((1 - level) / 2, (1 + level) / 2)))
-}</pre>
-  </details>
-</div>
 
-<!-- 3. two_sided_p -->
-<div class="exercise-block">
-  <h2>3. two_sided_p</h2>
-  <p>Two-sided p-value from a null distribution, as <code>infer</code> computes it: twice the smaller of <code>mean(null &gt;= obs)</code> and <code>mean(null &lt;= obs)</code>, capped at 1.</p>
-  <textarea class="code-editor" id="code-ex3" rows="4" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex3" disabled>Run</button>
-    <button class="btn-reset" data-target="ex3">Reset</button>
-    <span class="exercise-status" id="status-ex3"></span>
-  </div>
-  <div class="test-output" id="output-ex3" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>two_sided_p &lt;- function(null_stats, obs) {
-  min(1, 2 * min(mean(null_stats &gt;= obs), mean(null_stats &lt;= obs)))
-}</pre>
-  </details>
-</div>
+<details class="case-study" open>
+  <summary>Case Study 1: Ice Cream Sales &amp; Temperature (Simple Linear Regression)</summary>
+  <div class="case-body">
+    <div class="case-meta">Datasets: <code>icecream</code> (12 training days), <code>new_icecream</code> (4 held-out days)</div>
+    <p>A park vendor records daily high temperature <code>temp_f</code> ($^\circ\text{F}$) and daily cones sold <code>cones</code> across 12 summer days in <code>icecream</code>, and holds out 4 days in <code>new_icecream</code> to test out-of-sample accuracy.</p>
+    <div class="tablewrap"><table><thead><tr><th>temp_f</th><th>cones</th></tr></thead><tbody><tr><td>66</td><td>118</td></tr><tr><td>69</td><td>129</td></tr><tr><td>72</td><td>145</td></tr><tr><td>74</td><td>152</td></tr><tr><td>77</td><td>171</td></tr><tr><td>79</td><td>178</td></tr></tbody></table></div>
+    <pre class="console-output">lm(cones ~ temp_f, data = icecream)
+Intercept: -221.04   Slope (temp_f): 5.08   R-squared: 0.9973</pre>
+    
+    <div class="q-block">
+      <div class="q-label">Question 1.1</div>
+      <p>Interpret the slope and intercept in context. Should we trust the model to predict cone sales on a winter day with <code>temp_f = 30</code>$^\circ\text{F}$?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Each $1^\circ\text{F}$ increase in daily high temperature is associated with an average increase of <strong>5.08 cones sold</strong>. The intercept (-221.04) predicts sales at $0^\circ\text{F}$ and has no physical meaning. Predicting at $30^\circ\text{F}$ is unsafe <strong>extrapolation</strong> well outside the observed 66--91$^\circ\text{F}$ training range (and gives negative sales).</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 1.2</div>
+      <p>Compute the predicted value and residual $e_i = y_i - \hat{y}_i$ for day 3 in <code>icecream</code> (<code>temp_f = 72</code>, <code>cones = 145</code>).</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Using $\hat{y} = -221.04 + 5.08(72) \approx 144.97$, the residual is $e_3 = 145 - 144.97 = +0.03$. Because it is negative, the vendor sold slightly fewer cones than the regression line predicted.</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 1.3</div>
+      <p>Why evaluate prediction error (RMSE) on <code>new_icecream</code> instead of on <code>icecream</code>?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Training residuals are minimized by OLS on the same observations used to fit the parameters, which understates out-of-sample error. Evaluating on held-out days in <code>new_icecream</code> measures how accurately the fitted line predicts unseen days (expected test RMSE $\approx 1.88$ cones).</div>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>1a. Summarize and fit <code>m_ice</code></h3>
+      <p>Compute the mean temperature, mean sales, correlation, and fit <code>m_ice &lt;- lm(cones ~ temp_f, data = icecream)</code>.</p>
+      <textarea class="code-editor" id="code-c1a" rows="9" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c1a" disabled>Run</button>
+        <button class="btn-reset" data-target="c1a">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c1a">Load solution</button>
+        <span class="exercise-status" id="status-c1a"></span>
+      </div>
+      <div class="test-output" id="output-c1a" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>icecream |&gt;
+  summarize(
+    mean_temp = mean(temp_f),
+    mean_cones = mean(cones),
+    r = cor(temp_f, cones)
+  )
 
-<!-- 4. chisq_stat -->
-<div class="exercise-block">
-  <h2>4. chisq_stat</h2>
-  <p>Chi-squared statistic: observed counts and null proportions <code>p</code> (same order, <code>p</code> sums to 1).</p>
-  <textarea class="code-editor" id="code-ex4" rows="5" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex4" disabled>Run</button>
-    <button class="btn-reset" data-target="ex4">Reset</button>
-    <span class="exercise-status" id="status-ex4"></span>
+m_ice &lt;- lm(cones ~ temp_f, data = icecream)
+coef(m_ice)</pre>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>1b. Evaluate test RMSE on <code>new_icecream</code></h3>
+      <p>Add predicted cones and residuals to <code>new_icecream</code> with <code>mutate()</code> and compute test RMSE.</p>
+      <textarea class="code-editor" id="code-c1b" rows="7" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c1b" disabled>Run</button>
+        <button class="btn-reset" data-target="c1b">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c1b">Load solution</button>
+        <span class="exercise-status" id="status-c1b"></span>
+      </div>
+      <div class="test-output" id="output-c1b" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>new_eval &lt;- new_icecream |&gt;
+  mutate(
+    pred = predict(m_ice, newdata = new_icecream),
+    resid = cones - pred
+  )
+new_eval
+sqrt(mean(new_eval$resid^2))</pre>
+      </details>
+    </div>
   </div>
-  <div class="test-output" id="output-ex4" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>chisq_stat &lt;- function(observed, p) {
-  expected &lt;- sum(observed) * p
-  sum((observed - expected)^2 / expected)
-}</pre>
-  </details>
-</div>
-
-<!-- 5. ls_coef -->
-<div class="exercise-block">
-  <h2>5. ls_coef</h2>
-  <p>Least squares line: <code>c(b0, b1)</code> from the formulas <code>b1 = Sxy / Sxx</code>, <code>b0 = mean(y) - b1 * mean(x)</code>. If all <code>x</code> are equal, return <code>c(mean(y), NA)</code>, as <code>lm()</code> does.</p>
-  <textarea class="code-editor" id="code-ex5" rows="6" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex5" disabled>Run</button>
-    <button class="btn-reset" data-target="ex5">Reset</button>
-    <span class="exercise-status" id="status-ex5"></span>
+</details>
+<details class="case-study">
+  <summary>Case Study 2: Highway Speed &amp; Stopping Distance (Nonlinearity &amp; Indicators)</summary>
+  <div class="case-body">
+    <div class="case-meta">Datasets: <code>driving</code> (18 training runs), <code>new_driving</code> (6 test runs)</div>
+    <p>Brake tests record vehicle speed <code>speed_mph</code>, road surface indicator <code>wet_road</code> (<code>0</code> = dry, <code>1</code> = wet), and stopping distance <code>dist_ft</code> (ft). Because braking energy scales with speed squared, a linear additive model systematically misses the curvature.</p>
+    <div class="tablewrap"><table><thead><tr><th>speed_mph</th><th>wet_road</th><th>dist_ft</th></tr></thead><tbody><tr><td>25</td><td>0</td><td>56</td></tr><tr><td>30</td><td>0</td><td>74</td></tr><tr><td>35</td><td>0</td><td>92</td></tr><tr><td>40</td><td>0</td><td>118</td></tr><tr><td>45</td><td>0</td><td>142</td></tr><tr><td>50</td><td>0</td><td>166</td></tr></tbody></table></div>
+    <pre class="console-output">Linear:    R^2 = 0.9878   | Test RMSE = 8.03 ft
+Quadratic: R^2 = 0.9997   | Test RMSE = 0.99 ft
+coef(m_quad): (Intercept)=0.88, speed=1.07, speed^2=0.0454, wet_road=28.20</pre>
+    
+    <div class="q-block">
+      <div class="q-label">Question 2.1</div>
+      <p>Why does adding <code>I(speed_mph^2)</code> reduce test RMSE so sharply relative to <code>m_lin</code>?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Total stopping distance combines reaction distance (linear in speed) and braking distance (quadratic in speed, proportional to kinetic energy $\frac{1}{2}mv^2$). A straight line underpredicts at both low and high speeds while overpredicting in the middle; adding <code>I(speed_mph^2)</code> removes this systematic bias.</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 2.2</div>
+      <p>In <code>m_quad</code>, how do you interpret the coefficient on <code>wet_road</code> ($\approx 28.2$ ft)?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Holding <code>speed_mph</code> fixed, a wet road adds about <strong>28.2 ft</strong> to predicted stopping distance compared with a dry road.</div>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>2a. Fit linear and quadratic models</h3>
+      <p>Fit <code>m_lin</code> and <code>m_quad</code> on <code>driving</code>, compare $R^2$, and inspect coefficients.</p>
+      <textarea class="code-editor" id="code-c2a" rows="6" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c2a" disabled>Run</button>
+        <button class="btn-reset" data-target="c2a">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c2a">Load solution</button>
+        <span class="exercise-status" id="status-c2a"></span>
+      </div>
+      <div class="test-output" id="output-c2a" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>m_lin &lt;- lm(dist_ft ~ speed_mph + wet_road, data = driving)
+m_quad &lt;- lm(dist_ft ~ speed_mph + I(speed_mph^2) + wet_road, data = driving)
+c(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)
+coef(m_quad)</pre>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>2b. Compare test RMSE on <code>new_driving</code></h3>
+      <p>Compute out-of-sample RMSE for both <code>m_lin</code> and <code>m_quad</code> on <code>new_driving</code>.</p>
+      <textarea class="code-editor" id="code-c2b" rows="6" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c2b" disabled>Run</button>
+        <button class="btn-reset" data-target="c2b">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c2b">Load solution</button>
+        <span class="exercise-status" id="status-c2b"></span>
+      </div>
+      <div class="test-output" id="output-c2b" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>rmse &lt;- function(y, yhat) sqrt(mean((y - yhat)^2))
+c(
+  lin_test_rmse = rmse(new_driving$dist_ft, predict(m_lin, newdata = new_driving)),
+  quad_test_rmse = rmse(new_driving$dist_ft, predict(m_quad, newdata = new_driving))
+)</pre>
+      </details>
+    </div>
   </div>
-  <div class="test-output" id="output-ex5" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>ls_coef &lt;- function(x, y) {
-  sxx &lt;- sum((x - mean(x))^2)
-  if (sxx == 0) return(c(mean(y), NA))
-  b1 &lt;- sum((x - mean(x)) * (y - mean(y))) / sxx
-  c(mean(y) - b1 * mean(x), b1)
-}</pre>
-  </details>
-</div>
-
-<!-- 6. r_squared -->
-<div class="exercise-block">
-  <h2>6. r_squared</h2>
-  <p><code>R&sup2;</code> of predictions <code>y_hat</code> for targets <code>y</code>, with the baseline <code>mean(y)</code> taken from the same <code>y</code> (so it can be negative on a test set).</p>
-  <textarea class="code-editor" id="code-ex6" rows="4" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex6" disabled>Run</button>
-    <button class="btn-reset" data-target="ex6">Reset</button>
-    <span class="exercise-status" id="status-ex6"></span>
+</details>
+<details class="case-study">
+  <summary>Case Study 3: Used Car Prices (Interactions &amp; Overfitting)</summary>
+  <div class="case-body">
+    <div class="case-meta">Datasets: <code>cars_train</code> (24 cars), <code>cars_test</code> (12 cars)</div>
+    <p>Listings report <code>age_yr</code>, <code>mileage_k</code> (thousands of miles), <code>hybrid</code> (<code>0</code> = gas, <code>1</code> = hybrid), and asking price <code>price_k</code> (\$1000s).</p>
+    <div class="tablewrap"><table><thead><tr><th>age_yr</th><th>mileage_k</th><th>hybrid</th><th>price_k</th></tr></thead><tbody><tr><td>1</td><td>12</td><td>0</td><td>29.33</td></tr><tr><td>2</td><td>24</td><td>0</td><td>26.46</td></tr><tr><td>3</td><td>35</td><td>0</td><td>21.62</td></tr><tr><td>4</td><td>48</td><td>0</td><td>20.11</td></tr><tr><td>5</td><td>62</td><td>0</td><td>17.71</td></tr><tr><td>6</td><td>74</td><td>0</td><td>14.78</td></tr></tbody></table></div>
+    <pre class="console-output">Additive R^2 = 0.9750    | Test RMSE = 1.455
+Interaction R^2 = 0.9898 | Test RMSE = 0.913
+Interaction term (age_yr:hybrid) = +0.776</pre>
+    
+    <div class="q-block">
+      <div class="q-label">Question 3.1</div>
+      <p>What does the <code>age_yr:hybrid</code> interaction term measure?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">It measures how the yearly depreciation slope differs between hybrids and gas cars. Since <code>age_yr</code> has slope -1.84 for gas cars and <code>age_yr:hybrid</code> is +0.78, hybrids lose $0.78k less value per year of age (i.e., depreciate more slowly).</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 3.2</div>
+      <p>A student fits degree-6 polynomials in age interacted with <code>hybrid</code> plus degree-3 polynomials in mileage. Training $R^2$ approaches $1$, yet test RMSE spikes. Diagnose why.</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">With only 24 training cars, a high-degree model has nearly as many parameters as data points: it memorizes random listing noise in <code>cars_train</code> (low bias, very high variance). Those wild polynomial wiggles fail to generalize to <code>cars_test</code> (<strong>overfitting</strong>).</div>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>3a. Additive vs. interaction models</h3>
+      <p>Fit <code>m_car_add</code> and <code>m_car_int</code> on <code>cars_train</code> and inspect coefficients and training $R^2$.</p>
+      <textarea class="code-editor" id="code-c3a" rows="6" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c3a" disabled>Run</button>
+        <button class="btn-reset" data-target="c3a">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c3a">Load solution</button>
+        <span class="exercise-status" id="status-c3a"></span>
+      </div>
+      <div class="test-output" id="output-c3a" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>m_car_add &lt;- lm(price_k ~ age_yr + mileage_k + hybrid, data = cars_train)
+m_car_int &lt;- lm(price_k ~ age_yr * hybrid + mileage_k, data = cars_train)
+coef(m_car_int)
+c(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)</pre>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>3b. See overfitting on <code>cars_test</code></h3>
+      <p>Compare held-out RMSE across <code>m_car_add</code>, <code>m_car_int</code>, and the overfit polynomial model <code>m_car_over</code>.</p>
+      <textarea class="code-editor" id="code-c3b" rows="8" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c3b" disabled>Run</button>
+        <button class="btn-reset" data-target="c3b">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c3b">Load solution</button>
+        <span class="exercise-status" id="status-c3b"></span>
+      </div>
+      <div class="test-output" id="output-c3b" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>m_car_over &lt;- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)
+rmse &lt;- function(y, yhat) sqrt(mean((y - yhat)^2))
+c(
+  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),
+  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),
+  over_test = rmse(cars_test$price_k, predict(m_car_over, newdata = cars_test))
+)</pre>
+      </details>
+    </div>
   </div>
-  <div class="test-output" id="output-ex6" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>r_squared &lt;- function(y, y_hat) {
-  1 - mean((y - y_hat)^2) / mean((y - mean(y))^2)
-}</pre>
-  </details>
-</div>
-
-<!-- 7. logistic, classify -->
-<div class="exercise-block">
-  <h2>7. logistic, classify</h2>
-  <p>Logistic function and classification with threshold 0.5 (<code>p &gt;= 0.5 -&gt; 1</code>).</p>
-  <textarea class="code-editor" id="code-ex7" rows="7" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex7" disabled>Run</button>
-    <button class="btn-reset" data-target="ex7">Reset</button>
-    <span class="exercise-status" id="status-ex7"></span>
+</details>
+<details class="case-study">
+  <summary>Case Study 4: Palmer Penguins (Grouped Summaries &amp; Bootstrap CI)</summary>
+  <div class="case-body">
+    <div class="case-meta">Dataset: <code>penguins_sample</code> (36 penguins across 3 species)</div>
+    <p>Measurements of <code>bill_length_mm</code> and <code>body_mass_g</code> for 12 penguins from each species allow us to summarize group means and quantify uncertainty using the percentile bootstrap.</p>
+    <div class="tablewrap"><table><thead><tr><th>species</th><th>bill_length_mm</th><th>body_mass_g</th></tr></thead><tbody><tr><td>Adelie</td><td>38.3</td><td>3660</td></tr><tr><td>Adelie</td><td>38.2</td><td>3390</td></tr><tr><td>Adelie</td><td>36.6</td><td>3860</td></tr><tr><td>Adelie</td><td>36.3</td><td>3500</td></tr><tr><td>Adelie</td><td>41.0</td><td>3970</td></tr><tr><td>Adelie</td><td>38.8</td><td>3240</td></tr></tbody></table></div>
+    <pre class="console-output">Sample Adelie (n=12):    mean = 38.52 mm, sd = 2.48 mm
+Sample Chinstrap (n=12): mean = 48.11 mm, sd = 3.84 mm
+Sample Gentoo (n=12):    mean = 46.56 mm, sd = 4.12 mm</pre>
+    
+    <div class="q-block">
+      <div class="q-label">Question 4.1</div>
+      <p>In bootstrap resampling, why do we sample $n$ observations <em>with replacement</em>, and what changes if we increase $B$ from $500$ to $2000$ resamples?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Sampling $n$ items with replacement mimics drawing fresh samples of size $n$ from the population using the empirical sample as our plug-in population. Increasing $B$ reduces Monte Carlo simulation jitter in the histogram/quantiles, but it does <em>not</em> shrink the standard error (which depends on sample size $n$, roughly $s/\sqrt{n}$) and cannot remove sampling bias.</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 4.2</div>
+      <p>Suppose a 95% bootstrap percentile CI for the Adelie mean bill length is $[L, U]$. Is it true that 95% of all Adelie penguins have bill lengths between $L$ and $U$?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">No. The interval targets the <strong>population mean</strong> bill length of Adelie penguins, not individual penguins. The individual distribution is much wider (around $\pm 2 s \approx \pm 5.0$ mm).</div>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>4a. Summarize by species</h3>
+      <p>Use <code>group_by(species) |&gt; summarize(...)</code> to compute count, mean, and SD of <code>bill_length_mm</code>.</p>
+      <textarea class="code-editor" id="code-c4a" rows="8" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c4a" disabled>Run</button>
+        <button class="btn-reset" data-target="c4a">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c4a">Load solution</button>
+        <span class="exercise-status" id="status-c4a"></span>
+      </div>
+      <div class="test-output" id="output-c4a" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>penguins_sample |&gt;
+  group_by(species) |&gt;
+  summarize(
+    count = n(),
+    mean_bill = mean(bill_length_mm),
+    sd_bill = sd(bill_length_mm)
+  )</pre>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>4b. 95% Bootstrap percentile CI for Adelie mean</h3>
+      <p>Resample Adelie bill lengths 1,000 times with replacement using <code>set.seed(20)</code> and take the 2.5% and 97.5% quantiles.</p>
+      <textarea class="code-editor" id="code-c4b" rows="6" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c4b" disabled>Run</button>
+        <button class="btn-reset" data-target="c4b">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c4b">Load solution</button>
+        <span class="exercise-status" id="status-c4b"></span>
+      </div>
+      <div class="test-output" id="output-c4b" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>adelie &lt;- penguins_sample |&gt; filter(species == &quot;Adelie&quot;) |&gt; pull(bill_length_mm)
+set.seed(20)
+boot_means &lt;- replicate(1000, mean(sample(adelie, length(adelie), replace = TRUE)))
+quantile(boot_means, c(0.025, 0.975))</pre>
+      </details>
+    </div>
   </div>
-  <div class="test-output" id="output-ex7" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>logistic &lt;- function(t) {
-  1 / (1 + exp(-t))
-}
-classify &lt;- function(p_hat) {
-  ifelse(p_hat &gt;= 0.5, 1, 0)
-}</pre>
-  </details>
-</div>
-
-<!-- 8. metrics -->
-<div class="exercise-block">
-  <h2>8. metrics</h2>
-  <p>Metrics for 0/1 vectors <code>y</code> and <code>y_hat</code>: a named vector <code>c(mcr = , precision = , recall = )</code>; 0/0 gives NaN.</p>
-  <textarea class="code-editor" id="code-ex8" rows="8" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex8" disabled>Run</button>
-    <button class="btn-reset" data-target="ex8">Reset</button>
-    <span class="exercise-status" id="status-ex8"></span>
+</details>
+<details class="case-study">
+  <summary>Case Study 5: Resume Callback Audit (Logistic Regression &amp; Classification)</summary>
+  <div class="case-body">
+    <div class="case-meta">Dataset: <code>resumes</code> (40 applications)</div>
+    <p>An audit records candidate experience <code>exp_years</code>, honors indicator <code>honors</code> (<code>0</code>/<code>1</code>), and whether they received an interview <code>callback</code> (<code>0</code>/<code>1</code>).</p>
+    <div class="tablewrap"><table><thead><tr><th>exp_years</th><th>honors</th><th>callback</th></tr></thead><tbody><tr><td>0.5</td><td>1</td><td>0</td></tr><tr><td>1.6</td><td>0</td><td>1</td></tr><tr><td>2.7</td><td>0</td><td>0</td></tr><tr><td>3.8</td><td>0</td><td>0</td></tr><tr><td>4.9</td><td>1</td><td>1</td></tr><tr><td>6.0</td><td>0</td><td>0</td></tr></tbody></table></div>
+    <pre class="console-output">glm(callback ~ exp_years + honors, family = binomial)
+Coefficients: (Intercept)=-2.729, exp_years=0.390, honors=1.881
+Odds ratios:  exp(exp_years)=1.476, exp(honors)=6.558
+Threshold 0.5: MCR=0.275, Precision=0.727, Recall=0.762</pre>
+    
+    <div class="q-block">
+      <div class="q-label">Question 5.1</div>
+      <p>Interpret the <code>exp_years</code> coefficient on both the log-odds scale and the odds ratio scale. Why is $\hat{\beta}_1$ not a constant change in probability?</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Holding <code>honors</code> fixed, one extra year of experience increases the <strong>log-odds</strong> of a callback by 0.390, which multiplies the <strong>odds</strong> by $e^{0.390} \approx 1.48$. Because the logistic curve $\sigma(\eta) = 1/(1+e^{-\eta})$ is S-shaped, a fixed step in log-odds changes probability most near $p = 0.5$ and very little near $0$ or $1$.</div>
+      </details>
+    </div>
+    
+    <div class="q-block">
+      <div class="q-label">Question 5.2</div>
+      <p>Explain the tradeoff between <strong>precision</strong> and <strong>recall</strong> if we lower the classification threshold from $0.5$ to $0.3$.</p>
+      <details>
+        <summary>Show answer</summary>
+        <div class="ans-box">Lowering the threshold predicts positive (<code>y_hat = 1</code>) more often, reducing false negatives (so <strong>recall increases</strong> or stays the same) while typically increasing false positives (which tends to lower <strong>precision</strong>).</div>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>5a. Fit logistic regression &amp; compute odds ratios</h3>
+      <p>Fit <code>m_log &lt;- glm(callback ~ exp_years + honors, data = resumes, family = binomial)</code> and exponentiate coefficients.</p>
+      <textarea class="code-editor" id="code-c5a" rows="5" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c5a" disabled>Run</button>
+        <button class="btn-reset" data-target="c5a">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c5a">Load solution</button>
+        <span class="exercise-status" id="status-c5a"></span>
+      </div>
+      <div class="test-output" id="output-c5a" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>m_log &lt;- glm(callback ~ exp_years + honors, data = resumes, family = binomial)
+coef(m_log)
+exp(coef(m_log))</pre>
+      </details>
+    </div>
+    
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>5b. Evaluate MCR, precision, and recall at threshold 0.5</h3>
+      <p>Extract predicted probabilities with <code>predict(m_log, type = "response")</code>, threshold at <code>0.5</code>, and compute metrics.</p>
+      <textarea class="code-editor" id="code-c5b" rows="9" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c5b" disabled>Run</button>
+        <button class="btn-reset" data-target="c5b">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c5b">Load solution</button>
+        <span class="exercise-status" id="status-c5b"></span>
+      </div>
+      <div class="test-output" id="output-c5b" style="display: none;"></div>
+      <details>
+        <summary>Show solution</summary>
+        <pre>p_hat &lt;- predict(m_log, type = &quot;response&quot;)
+y_hat &lt;- as.integer(p_hat &gt;= 0.5)
+y &lt;- resumes$callback
+tp &lt;- sum(y == 1 &amp; y_hat == 1)
+fp &lt;- sum(y == 0 &amp; y_hat == 1)
+fn &lt;- sum(y == 1 &amp; y_hat == 0)
+c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))</pre>
+      </details>
+    </div>
   </div>
-  <div class="test-output" id="output-ex8" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>metrics &lt;- function(y, y_hat) {
-  tp &lt;- sum(y == 1 &amp; y_hat == 1)
-  fp &lt;- sum(y == 0 &amp; y_hat == 1)
-  fn &lt;- sum(y == 1 &amp; y_hat == 0)
-  c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))
-}</pre>
-  </details>
-</div>
-
-<!-- 9. perm_null -->
-<div class="exercise-block">
-  <h2>9. perm_null</h2>
-  <p><code>reps</code> values of <code>mean(y[g == "a"]) - mean(y[g == "b"])</code> where <code>g</code> is a shuffled copy of <code>group</code> (<code>sample(group)</code> keeps the group sizes). <code>group</code> has values "a" and "b".</p>
-  <textarea class="code-editor" id="code-ex9" rows="8" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex9" disabled>Run</button>
-    <button class="btn-reset" data-target="ex9">Reset</button>
-    <span class="exercise-status" id="status-ex9"></span>
-  </div>
-  <div class="test-output" id="output-ex9" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>perm_null &lt;- function(y, group, reps) {
-  replicate(reps, {
-    g &lt;- sample(group)
-    mean(y[g == "a"]) - mean(y[g == "b"])
-  })
-}</pre>
-  </details>
-</div>
-
-<!-- 10. split_rows -->
-<div class="exercise-block">
-  <h2>10. split_rows</h2>
-  <p>Train/test split of rows 1..n: shuffle the row numbers, the first <code>floor(n * frac)</code> form the training set, the rest the test set. Returns <code>list(train = , test = )</code> of row numbers; train may be empty.</p>
-  <textarea class="code-editor" id="code-ex10" rows="7" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex10" disabled>Run</button>
-    <button class="btn-reset" data-target="ex10">Reset</button>
-    <span class="exercise-status" id="status-ex10"></span>
-  </div>
-  <div class="test-output" id="output-ex10" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>split_rows &lt;- function(n, frac) {
-  rows &lt;- sample.int(n)
-  k &lt;- floor(n * frac)
-  list(train = rows[seq_len(k)], test = rows[setdiff(seq_len(n), seq_len(k))])
-}</pre>
-  </details>
-</div>
-
-<!-- 11. binom_test_power -->
-<div class="exercise-block">
-  <h2>11. binom_test_power</h2>
-  <p>Exact size and power of the one-sided test of H0: p = p0 against HA: p &gt; p0 with n tosses that rejects when X &gt;= c, where c is the smallest count with P(X &gt;= c | p0) &lt;= alpha. Returns <code>c(c = , size = , power = )</code> with power computed at p1. If no count qualifies, c is n + 1 and size and power are 0.</p>
-  <textarea class="code-editor" id="code-ex11" rows="9" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="ex11" disabled>Run</button>
-    <button class="btn-reset" data-target="ex11">Reset</button>
-    <span class="exercise-status" id="status-ex11"></span>
-  </div>
-  <div class="test-output" id="output-ex11" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre>binom_test_power &lt;- function(n, p0, p1, alpha) {
-  tail0 &lt;- 1 - pbinom(0:n - 1, n, p0)
-  ok &lt;- which(tail0 &lt;= alpha)
-  if (length(ok) == 0) return(c(c = n + 1, size = 0, power = 0))
-  k &lt;- ok[1] - 1
-  c(c = k, size = 1 - pbinom(k - 1, n, p0), power = 1 - pbinom(k - 1, n, p1))
-}</pre>
-  </details>
-</div>
+</details>
 
 <script type="module">
 import { WebR, ChannelType } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
-const STARTER = {
-  ex1: 'boot_stats <- function(x, stat, reps) {\n  stop("todo")\n}',
-  ex2: 'percentile_ci <- function(stats, level) {\n  stop("todo")\n}',
-  ex3: 'two_sided_p <- function(null_stats, obs) {\n  stop("todo")\n}',
-  ex4: 'chisq_stat <- function(observed, p) {\n  stop("todo")\n}',
-  ex5: 'ls_coef <- function(x, y) {\n  stop("todo")\n}',
-  ex6: 'r_squared <- function(y, y_hat) {\n  stop("todo")\n}',
-  ex7: 'logistic <- function(t) {\n  stop("todo")\n}\nclassify <- function(p_hat) {\n  stop("todo")\n}',
-  ex8: 'metrics <- function(y, y_hat) {\n  stop("todo")\n}',
-  ex9: 'perm_null <- function(y, group, reps) {\n  stop("todo")\n}',
-  ex10: 'split_rows <- function(n, frac) {\n  stop("todo")\n}',
-  ex11: 'binom_test_power <- function(n, p0, p1, alpha) {\n  stop("todo")\n}'
+const EDITORS = {
+  "c1a": {
+    "starter": "# Explore icecream and fit a simple linear model\nicecream |>\n  summarize(\n    mean_temp = ___,\n    mean_cones = ___,\n    r = ___\n  )\n\nm_ice <- lm(___, data = icecream)\ncoef(m_ice)\n",
+    "solution": "icecream |>\n  summarize(\n    mean_temp = mean(temp_f),\n    mean_cones = mean(cones),\n    r = cor(temp_f, cones)\n  )\n\nm_ice <- lm(cones ~ temp_f, data = icecream)\ncoef(m_ice)"
+  },
+  "c1b": {
+    "starter": "# Uses m_ice from above: predict on new_icecream and compute test RMSE\nnew_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = ___\n  )\nnew_eval\nsqrt(mean(new_eval$resid^2))\n",
+    "solution": "new_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = cones - pred\n  )\nnew_eval\nsqrt(mean(new_eval$resid^2))"
+  },
+  "c2a": {
+    "starter": "# Fit linear vs quadratic stopping-distance models on driving\nm_lin <- lm(dist_ft ~ speed_mph + wet_road, data = driving)\nm_quad <- lm(___, data = driving)\nc(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)\ncoef(m_quad)\n",
+    "solution": "m_lin <- lm(dist_ft ~ speed_mph + wet_road, data = driving)\nm_quad <- lm(dist_ft ~ speed_mph + I(speed_mph^2) + wet_road, data = driving)\nc(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)\ncoef(m_quad)"
+  },
+  "c2b": {
+    "starter": "# Evaluate linear vs quadratic test RMSE on new_driving\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  lin_test_rmse = rmse(new_driving$dist_ft, ___),\n  quad_test_rmse = rmse(new_driving$dist_ft, ___)\n)\n",
+    "solution": "rmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  lin_test_rmse = rmse(new_driving$dist_ft, predict(m_lin, newdata = new_driving)),\n  quad_test_rmse = rmse(new_driving$dist_ft, predict(m_quad, newdata = new_driving))\n)"
+  },
+  "c3a": {
+    "starter": "# Compare additive vs interaction used-car price models\nm_car_add <- lm(price_k ~ age_yr + mileage_k + hybrid, data = cars_train)\nm_car_int <- lm(price_k ~ age_yr * hybrid + mileage_k, data = cars_train)\ncoef(m_car_int)\nc(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)\n",
+    "solution": "m_car_add <- lm(price_k ~ age_yr + mileage_k + hybrid, data = cars_train)\nm_car_int <- lm(price_k ~ age_yr * hybrid + mileage_k, data = cars_train)\ncoef(m_car_int)\nc(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)"
+  },
+  "c3b": {
+    "starter": "# Fit an overly flexible polynomial and compare test RMSE on cars_test\nm_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = ___\n)\n",
+    "solution": "m_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = rmse(cars_test$price_k, predict(m_car_over, newdata = cars_test))\n)"
+  },
+  "c4a": {
+    "starter": "# Group-wise summary of bill length by species\npenguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = ___,\n    sd_bill = ___\n  )\n",
+    "solution": "penguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = mean(bill_length_mm),\n    sd_bill = sd(bill_length_mm)\n  )"
+  },
+  "c4b": {
+    "starter": "# 1000-replicate bootstrap 95% percentile CI for Adelie mean bill length\nadelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, ___)\nquantile(boot_means, c(0.025, 0.975))\n",
+    "solution": "adelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, mean(sample(adelie, length(adelie), replace = TRUE)))\nquantile(boot_means, c(0.025, 0.975))"
+  },
+  "c5a": {
+    "starter": "# Logistic regression for callback probability\nm_log <- glm(callback ~ exp_years + honors, data = resumes, family = binomial)\ncoef(m_log)\nexp(coef(m_log))  # odds ratios\n",
+    "solution": "m_log <- glm(callback ~ exp_years + honors, data = resumes, family = binomial)\ncoef(m_log)\nexp(coef(m_log))"
+  },
+  "c5b": {
+    "starter": "# Classify at threshold 0.5 and compute MCR, precision, recall\np_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc(mcr = ___, precision = ___, recall = ___)\n",
+    "solution": "p_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))"
+  }
 };
-
-const TESTS = {
-  ex1: `
-set.seed(1)
-b <- tryCatch(boot_stats(c(2, 4, 6, 8), mean, 200), error = function(e) NULL)
-check("boot_stats: one statistic per resample", length(b) == 200)
-check("boot_stats: values from resamples", length(b) == 200 && all(b >= 2 & b <= 8))
-check("boot_stats: all values equal gives one point", all(boot_stats(c(5, 5, 5), mean, 50) == 5))
-check("boot_stats: n = 1 gives one point", all(boot_stats(7, median, 20) == 7))
-check("boot_stats: max never exceeds sample max", max(boot_stats(c(1, 9, 3, 4), max, 300)) == 9)
-check("boot_stats: resamples vary (with replacement)", length(unique(boot_stats(c(2, 4, 6, 8), mean, 200))) > 1)
-check("boot_stats: resample size is n", all(boot_stats(c(1, 2, 3), length, 20) == 3))
-check("boot_stats: max can miss sample max", min(boot_stats(c(1, 9, 3, 4), max, 300)) < 9)
-`,
-  ex2: `
-check("percentile_ci: 95% of 1..101", near(percentile_ci(1:101, 0.95), c(3.5, 98.5)))
-check("percentile_ci: 99% contains 95%", {
-  s <- rnorm(500); a <- percentile_ci(s, 0.95); w <- percentile_ci(s, 0.99)
-  w[1] <= a[1] && w[2] >= a[2]
-})
-check("percentile_ci: no names", is.null(names(percentile_ci(1:10, 0.9))))
-`,
-  ex3: `
-null <- c(rep(-3, 40), rep(0, 448), rep(3, 12))
-check("two_sided_p: right tail smaller", near(two_sided_p(null, 3), 0.048))
-check("two_sided_p: left tail smaller", near(two_sided_p(null, -3), 0.16))
-check("two_sided_p: capped at 1", two_sided_p(null, 0) == 1)
-check("two_sided_p: ties count as extreme", near(two_sided_p(c(1, 2, 3, 4), 4), 0.5))
-`,
-  ex4: `
-check("chisq_stat: die", near(chisq_stat(c(5, 8, 9, 8, 10, 20), rep(1/6, 6)), 13.4))
-check("chisq_stat: perfect match is 0", chisq_stat(c(25, 75), c(0.25, 0.75)) == 0)
-`,
-  ex5: `
-check("ls_coef: hand example", near(ls_coef(1:4, c(2, 3, 5, 6)), c(0.5, 1.4)))
-check("ls_coef: agrees with lm", near(ls_coef(c(0, 1, 2), c(1, 1, 4)), unname(coef(lm(c(1, 1, 4) ~ c(0, 1, 2))))))
-check("ls_coef: constant x", {
-  r <- ls_coef(c(3, 3, 3), c(1, 2, 6)); r[1] == 3 && is.na(r[2])
-})
-`,
-  ex6: `
-check("r_squared: hand example", near(r_squared(c(2, 3, 5, 6), c(1.9, 3.3, 4.7, 6.1)), 0.98))
-check("r_squared: negative on test data", near(r_squared(c(1, 2, 3), c(3, 3, 3)), -1.5))
-check("r_squared: baseline gives 0", near(r_squared(c(1, 2, 6), c(3, 3, 3)), 0))
-`,
-  ex7: `
-check("logistic: values", near(logistic(c(0, 1, -1)), c(0.5, 0.7310586, 0.2689414)))
-check("classify: 0.5 is 1", length(classify(c(0.49, 0.5, 0.9))) == 3 && all(classify(c(0.49, 0.5, 0.9)) == c(0, 1, 1)))
-`,
-  ex8: `
-m <- tryCatch(metrics(c(rep(1, 10), rep(0, 90)), c(rep(1, 6), rep(0, 4), rep(1, 2), rep(0, 88))), error = function(e) NULL)
-check("metrics: spam filter", near(m, c(0.06, 0.75, 0.6)) && identical(names(m), c("mcr", "precision", "recall")))
-check("metrics: no positive predictions", {
-  z <- metrics(c(1, 0, 0, 0), c(0, 0, 0, 0)); near(z[["mcr"]], 0.25) && is.nan(z[["precision"]]) && z[["recall"]] == 0
-})
-check("metrics: no positive cases", is.nan(metrics(c(0, 0, 0), c(0, 1, 0))[["recall"]]))
-`,
-  ex9: `
-set.seed(2)
-grp <- rep(c("a", "b"), each = 10)
-pn <- tryCatch(perm_null(1:20, grp, 400), error = function(e) NULL)
-check("perm_null: one value per shuffle", length(pn) == 400)
-check("perm_null: centered near 0", length(pn) == 400 && abs(mean(pn)) < 1)
-check("perm_null: values in possible range", length(pn) == 400 && all(pn >= -10 & pn <= 10))
-check("perm_null: varies", length(unique(pn)) > 1)
-`,
-  ex10: `
-sp <- tryCatch(split_rows(16, 0.8), error = function(e) NULL)
-check("split_rows: 12 training rows of 16", length(sp$train) == 12 && length(sp$test) == 4)
-check("split_rows: disjoint and complete", length(intersect(sp$train, sp$test)) == 0 && setequal(c(sp$train, sp$test), 1:16))
-check("split_rows: shuffled", !is.null(sp) && !identical(sort(sp$train), 1:12))
-check("split_rows: n = 1 gives empty training set", {
-  z <- split_rows(1, 0.8); length(z$train) == 0 && identical(as.integer(z$test), 1L)
-})
-`,
-  ex11: `
-check("binom_test_power: n = 10, p1 = 0.8", near(binom_test_power(10, 0.5, 0.8, 0.05), c(9, 11/1024, 0.3758096)))
-check("binom_test_power: too few tosses", near(binom_test_power(4, 0.5, 0.9, 0.05), c(5, 0, 0)))
-check("binom_test_power: size at most alpha", binom_test_power(30, 0.5, 0.7, 0.05)[["size"]] <= 0.05)
-check("binom_test_power: tail equal to alpha allowed", near(binom_test_power(5, 0.5, 0.9, 1/32), c(5, 1/32, 0.9^5)))
-`
-};
+const PRELUDE = "`%>%` <- function(lhs, rhs) {\n  call <- substitute(rhs)\n  if (is.name(call)) call <- as.call(list(call))\n  if (is.call(call)) {\n    call <- as.call(c(list(call[[1]], lhs), as.list(call[-1])))\n  }\n  eval(call, parent.frame())\n}\n\n.tidy_n <- function() {\n  get(\".CURRENT_GROUP_N\", envir = parent.frame(), inherits = TRUE)\n}\nn <- function() .tidy_n()\n\nas_tibble <- function(x) {\n  df <- as.data.frame(x, stringsAsFactors = FALSE)\n  class(df) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  attr(df, \"row.names\") <- .set_row_names(nrow(df))\n  df\n}\n\ntibble <- function(...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  env <- new.env(parent = parent.frame())\n  cols <- list()\n  for (i in seq_along(dots)) {\n    nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n    val <- eval(dots[[i]], envir = env)\n    assign(nm, val, envir = env)\n    cols[[nm]] <- val\n  }\n  df <- as.data.frame(cols, stringsAsFactors = FALSE)\n  class(df) <- c(\"tbl_df\", \"tbl\", \"data.frame\")\n  df\n}\n\ngroup_by <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- vapply(dots, function(d) as.character(d)[1L], character(1))\n  attr(.data, \"groups\") <- gcols\n  .data\n}\n\nungroup <- function(.data) {\n  attr(.data, \"groups\") <- NULL\n  .data\n}\n\ndesc <- function(x) {\n  structure(-xtfrm(x), desc_order = TRUE)\n}\n\narrange <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) == 0) return(.data)\n  keys <- lapply(dots, function(expr) eval(expr, envir = .data, enclos = parent.frame()))\n  ord <- do.call(order, keys)\n  out <- .data[ord, , drop = FALSE]\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- attr(.data, \"groups\")\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nselect <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  cols <- names(.data)\n  keep <- character(0)\n  drop <- character(0)\n  for (d in dots) {\n    if (is.call(d) && identical(d[[1L]], as.name(\"-\"))) {\n      drop <- c(drop, as.character(d[[2L]]))\n    } else if (is.call(d) && identical(d[[1L]], as.name(\":\"))) {\n      a <- match(as.character(d[[2L]]), cols)\n      b <- match(as.character(d[[3L]]), cols)\n      keep <- c(keep, cols[a:b])\n    } else {\n      keep <- c(keep, as.character(d))\n    }\n  }\n  if (length(keep) == 0 && length(drop) > 0) {\n    keep <- setdiff(cols, drop)\n  } else if (length(drop) > 0) {\n    keep <- setdiff(keep, drop)\n  }\n  out <- .data[, keep, drop = FALSE]\n  attr(out, \"groups\") <- intersect(attr(.data, \"groups\"), keep)\n  if (length(attr(out, \"groups\")) == 0) attr(out, \"groups\") <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\npull <- function(.data, var = -1) {\n  v <- substitute(var)\n  if (is.name(v)) {\n    .data[[as.character(v)]]\n  } else {\n    idx <- eval(v, parent.frame())\n    if (idx < 0) idx <- ncol(.data) + idx + 1L\n    .data[[idx]]\n  }\n}\n\nfilter <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    env <- as.environment(as.list(sub_df))\n    parent.env(env) <- pf\n    assign(\".CURRENT_GROUP_N\", nrow(sub_df), envir = env)\n    mask <- rep(TRUE, nrow(sub_df))\n    for (expr in dots) {\n      res <- eval(expr, envir = env)\n      res[is.na(res)] <- FALSE\n      mask <- mask & res\n    }\n    sub_df[mask, , drop = FALSE]\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    sp <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    parts <- lapply(sp, function(idx) eval_sub(.data[idx, , drop = FALSE]))\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nmutate <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    assign(\".CURRENT_GROUP_N\", nrow(sub_df), envir = env)\n    for (i in seq_along(dots)) {\n      nm <- nms[i]\n      val <- eval(dots[[i]], envir = env)\n      if (is.null(val)) {\n        sub_df[[nm]] <- NULL\n        if (exists(nm, envir = env, inherits = FALSE)) rm(list = nm, envir = env)\n      } else {\n        if (length(val) == 1L && nrow(sub_df) > 1L) val <- rep(val, nrow(sub_df))\n        assign(nm, val, envir = env)\n        sub_df[[nm]] <- val\n      }\n    }\n    sub_df\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    idx_groups <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    out <- .data\n    for (idx in idx_groups) {\n      sub_out <- eval_sub(.data[idx, , drop = FALSE])\n      for (cn in names(sub_out)) out[[cn]][idx] <- sub_out[[cn]]\n    }\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nsummarize <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_grp <- function(sub_df) {\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    assign(\".CURRENT_GROUP_N\", nrow(sub_df), envir = env)\n    res <- list()\n    for (i in seq_along(dots)) {\n      nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n      val <- eval(dots[[i]], envir = env)\n      assign(nm, val, envir = env)\n      res[[nm]] <- val\n    }\n    as.data.frame(res, stringsAsFactors = FALSE)\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_grp(.data)\n  } else {\n    key_df <- unique(.data[, gcols, drop = FALSE])\n    ord <- do.call(order, key_df)\n    key_df <- key_df[ord, , drop = FALSE]\n    parts <- vector(\"list\", nrow(key_df))\n    for (r in seq_len(nrow(key_df))) {\n      mask <- rep(TRUE, nrow(.data))\n      for (gc in gcols) mask <- mask & (.data[[gc]] == key_df[[gc]][r])\n      sub_df <- .data[mask, , drop = FALSE]\n      s_df <- eval_grp(sub_df)\n      parts[[r]] <- cbind(key_df[rep(r, nrow(s_df)), , drop = FALSE], s_df)\n    }\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  if (!is.null(gcols) && length(gcols) > 1L) {\n    attr(out, \"groups\") <- gcols[-length(gcols)]\n  } else {\n    attr(out, \"groups\") <- NULL\n  }\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\nsummarise <- summarize\n\ncount <- function(.data, ..., sort = FALSE) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) > 0L) {\n    g <- do.call(group_by, c(list(.data), dots))\n  } else {\n    g <- .data\n  }\n  out <- summarize(g, n = n())\n  out <- ungroup(out)\n  if (sort) out <- arrange(out, desc(n))\n  out\n}\n\nslice_head <- function(.data, n = 6L) {\n  k <- min(n, nrow(.data))\n  out <- .data[seq_len(k), , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nslice_sample <- function(.data, n = 1L, replace = FALSE) {\n  idx <- sample.int(nrow(.data), size = n, replace = replace)\n  out <- .data[idx, , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nprint.tbl_df <- function(x, ...) {\n  print.data.frame(x, row.names = FALSE, ...)\n  invisible(x)\n}\n\nicecream <- tibble(\n  temp_f = c(66, 69, 72, 74, 77, 79, 81, 83, 85, 87, 89, 91),\n  cones = c(118, 129, 145, 152, 171, 178, 188, 203, 211, 224, 232, 241)\n)\n\nnew_icecream <- tibble(\n  temp_f = c(68, 76, 82, 88),\n  cones = c(126, 165, 198, 229)\n)\n\ndriving <- tibble(\n  speed_mph = c(25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 30, 40, 45, 50, 55, 60, 65, 75),\n  wet_road = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1),\n  dist_ft = c(56, 74, 92, 118, 142, 166, 199, 229, 260, 299, 102, 144, 170, 196, 227, 255, 289, 366)\n)\n\nnew_driving <- tibble(\n  speed_mph = c(28, 42, 58, 35, 52, 68),\n  wet_road = c(0, 0, 0, 1, 1, 1),\n  dist_ft = c(67, 126, 215, 122, 208, 314)\n)\n\ncars_train <- tibble(\n  age_yr = c(1, 2, 3, 4, 5, 6, 7, 8, 2, 4, 6, 8, 1, 2, 3, 4, 5, 6, 7, 8, 2, 3, 5, 7),\n  mileage_k = c(12, 24, 35, 48, 62, 74, 85, 96, 19, 52, 68, 102, 10, 21, 34, 44, 58, 70, 80, 92, 28, 39, 61, 88),\n  hybrid = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\n  price_k = c(29.33, 26.46, 21.62, 20.11, 17.71, 14.78, 10.93, 8.37, 26.36, 19.06, 14.66, 7.31, 32.56, 29.34, 28.08, 26.89, 24.53, 22.09, 17.74, 17.21, 29.47, 26.67, 23.43, 19.12)\n)\n\ncars_test <- tibble(\n  age_yr = c(1, 3, 5, 7, 4, 6, 1, 3, 5, 7, 4, 6),\n  mileage_k = c(15, 38, 60, 82, 45, 77, 14, 31, 55, 84, 49, 66),\n  hybrid = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\n  price_k = c(29.98, 22.73, 18.28, 9.44, 20.14, 14.26, 31.86, 28.89, 23.46, 19.5, 26.28, 20.73)\n)\n\npenguins_sample <- tibble(\n  species = c(\"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\"),\n  bill_length_mm = c(38.3, 38.2, 36.6, 36.3, 41.0, 38.8, 33.2, 38.7, 41.4, 38.2, 39.0, 42.5, 49.9, 46.3, 46.6, 52.1, 45.4, 57.1, 45.0, 47.5, 49.9, 42.4, 46.4, 48.7, 45.4, 44.2, 41.2, 47.3, 42.3, 48.8, 51.9, 45.0, 51.0, 48.2, 40.6, 52.8),\n  body_mass_g = c(3660, 3390, 3860, 3500, 3970, 3240, 3740, 4050, 3530, 3690, 3880, 3860, 3630, 3460, 3760, 3420, 3830, 3300, 3610, 3470, 3350, 3820, 3850, 3820, 4690, 5180, 5120, 5460, 5030, 4660, 4720, 5760, 5370, 4670, 5330, 4940)\n)\n\nresumes <- tibble(\n  exp_years = c(0.5, 1.6, 2.7, 3.8, 4.9, 6.0, 7.1, 8.2, 9.3, 10.4, 0.5, 1.6, 2.7, 3.8, 4.9, 6.0, 7.1, 8.2, 9.3, 10.4, 0.9, 2.0, 3.1, 4.2, 5.3, 6.4, 7.5, 8.6, 9.7, 10.8, 0.9, 2.0, 3.1, 4.2, 5.3, 6.4, 7.5, 8.6, 9.7, 10.8),\n  honors = c(1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0),\n  callback = c(0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1)\n)";
+const STORAGE_PREFIX = "stat20_rev_cs_";
 
 let webR = null;
-let passState = { ex1: false, ex2: false, ex3: false, ex4: false, ex5: false, ex6: false, ex7: false, ex8: false, ex9: false, ex10: false, ex11: false };
-
-function enableTabSupport(textarea) {
-  textarea.addEventListener('keydown', function(e) {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const s = this.selectionStart, end = this.selectionEnd;
-      this.value = this.value.substring(0, s) + '  ' + this.value.substring(end);
-      this.selectionStart = this.selectionEnd = s + 2;
-      triggerSave();
-    } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      const id = this.id.replace('code-', '');
-      runExercise(id);
-    }
-  });
-  textarea.addEventListener('input', triggerSave);
-}
-
-let saveTimer = null;
-function triggerSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    Object.keys(STARTER).forEach(k => {
-      const el = document.getElementById('code-' + k);
-      if (el) localStorage.setItem('stat20_rev_' + k, el.value);
-    });
-  }, 400);
-}
-
-function loadSaved() {
-  Object.keys(STARTER).forEach(k => {
-    const el = document.getElementById('code-' + k);
-    const saved = localStorage.getItem('stat20_rev_' + k);
-    el.value = saved !== null ? saved : STARTER[k];
-    enableTabSupport(el);
-  });
-}
-
-function assembleFullScript() {
-  let s = `# STAT 20 review, Weeks 9-12: exercises in base R.\n\n`;
-  for (let i = 1; i <= 11; i++) {
-    const k = 'ex' + i;
-    s += `# --- Exercise ${i} ---\n${document.getElementById('code-' + k).value.trim()}\n\n`;
-  }
-  return s;
-}
-
-function updateScore() {
-  const n = Object.values(passState).filter(Boolean).length;
-  document.getElementById('score').textContent = `${n} / 11 ok`;
-}
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-async function runExercise(key) {
+function loadEditors() {
+  for (const [key, info] of Object.entries(EDITORS)) {
+    const ta = document.getElementById('code-' + key);
+    if (!ta) continue;
+    const saved = localStorage.getItem(STORAGE_PREFIX + key);
+    ta.value = saved !== null ? saved : info.starter;
+    ta.addEventListener('input', () => {
+      localStorage.setItem(STORAGE_PREFIX + key, ta.value);
+    });
+  }
+}
+
+async function initSession() {
+  const statusEl = document.getElementById('engine-status');
+  const restartBtn = document.getElementById('btn-restart-r');
+  statusEl.textContent = 'loading R...';
+  restartBtn.disabled = true;
+  document.querySelectorAll('.btn-run').forEach(b => b.disabled = true);
+
+  try {
+    webR = new WebR({ channelType: ChannelType.PostMessage });
+    await webR.init();
+    const shelter = await new webR.Shelter();
+    try {
+      await shelter.captureR(PRELUDE);
+    } finally {
+      await shelter.purge();
+    }
+    statusEl.textContent = 'ready';
+    restartBtn.disabled = false;
+    document.querySelectorAll('.btn-run').forEach(b => b.disabled = false);
+  } catch (e) {
+    statusEl.textContent = 'WebR failed to load';
+    console.error(e);
+  }
+}
+
+async function runEditor(key) {
   if (!webR) return;
   const btn = document.querySelector(`.btn-run[data-target="${key}"]`);
   if (btn) btn.disabled = true;
@@ -424,136 +506,107 @@ async function runExercise(key) {
   statusEl.textContent = 'running...';
   outEl.style.display = 'block';
 
-  const userCode = document.getElementById('code-' + key).value;
-  const testCode = TESTS[key];
-
-  const script = `
-failed <- 0
-.test_lines <- c()
-near <- function(a, b, tol = 1e-6) {
-  if (is.null(a) || is.null(b)) return(FALSE)
-  if (length(a) != length(b)) return(FALSE)
-  all(abs(a - b) < tol, na.rm = FALSE)
-}
-check <- function(name, expr) {
-  ok <- tryCatch(isTRUE(expr), error = function(e) FALSE)
-  if (!ok) failed <<- failed + 1
-  .test_lines <<- c(.test_lines, sprintf("%s %s", if (ok) "PASS" else "FAIL", name))
-}
-
-${userCode}
-${testCode}
-
-cat(paste(.test_lines, collapse = "\\n"), "\\n")
-if (failed == 0) cat("__ALL_OK__\\n")
-`;
+  const code = document.getElementById('code-' + key).value;
 
   try {
     const shelter = await new webR.Shelter();
     let capture;
     try {
-      capture = await shelter.captureR(script);
+      capture = await shelter.captureR(code, {
+        withAutoprint: true,
+        captureStreams: true,
+        captureConditions: true
+      });
     } finally {
       await shelter.purge();
     }
 
     const lines = [];
-    let isAllOk = false;
     let hasError = false;
-
-    capture.output.forEach(o => {
-      const text = o.data;
-      if (text.includes('__ALL_OK__')) {
-        isAllOk = true;
-      } else {
-        lines.push(text);
-      }
-      if (o.type === 'error' || o.type === 'stderr') {
+    for (const o of capture.output) {
+      if (o.type === 'stderr' || o.type === 'error') {
         hasError = true;
       }
-    });
+      if (o.data !== undefined && o.data !== null) {
+        const s = String(o.data);
+        if (s.trim().length > 0) lines.push(s);
+      }
+    }
 
-    const outputText = lines.join('').trim();
-    passState[key] = isAllOk && !hasError;
-
-    if (isAllOk && !hasError) {
-      statusEl.className = 'exercise-status pass';
-      statusEl.textContent = 'ok';
-      outEl.innerHTML = `<span class="pass-text">${escapeHtml(outputText)}</span>`;
-    } else {
+    const text = lines.join('\n').trim();
+    if (hasError) {
       statusEl.className = 'exercise-status fail';
-      statusEl.textContent = 'FAIL';
-      outEl.innerHTML = `<span class="fail-text">${escapeHtml(outputText || 'error evaluating function')}</span>`;
+      statusEl.textContent = 'error';
+      outEl.innerHTML = `<span class="fail-text">${escapeHtml(text || 'R error')}</span>`;
+    } else {
+      statusEl.className = 'exercise-status pass';
+      statusEl.textContent = 'ran';
+      outEl.textContent = text || '(executed; no printed output)';
     }
   } catch (e) {
-    passState[key] = false;
     statusEl.className = 'exercise-status fail';
-    statusEl.textContent = 'FAIL';
+    statusEl.textContent = 'error';
     outEl.innerHTML = `<span class="fail-text">error: ${escapeHtml(e.message || String(e))}</span>`;
   } finally {
     if (btn) btn.disabled = false;
-    updateScore();
-  }
-}
-
-async function runAll() {
-  for (const k of Object.keys(STARTER)) {
-    await runExercise(k);
   }
 }
 
 document.querySelectorAll('.btn-run').forEach(b => {
-  b.addEventListener('click', () => runExercise(b.dataset.target));
+  b.addEventListener('click', () => runEditor(b.dataset.target));
 });
 
 document.querySelectorAll('.btn-reset').forEach(b => {
   b.addEventListener('click', () => {
     const k = b.dataset.target;
-    localStorage.removeItem('stat20_rev_' + k);
-    document.getElementById('code-' + k).value = STARTER[k];
+    localStorage.removeItem(STORAGE_PREFIX + k);
+    document.getElementById('code-' + k).value = EDITORS[k].starter;
     document.getElementById('status-' + k).textContent = '';
     document.getElementById('output-' + k).style.display = 'none';
-    passState[k] = false;
-    updateScore();
   });
 });
 
-document.getElementById('btn-run-all').addEventListener('click', runAll);
+document.querySelectorAll('.btn-copy-sol').forEach(b => {
+  b.addEventListener('click', () => {
+    const k = b.dataset.target;
+    const ta = document.getElementById('code-' + k);
+    ta.value = EDITORS[k].solution;
+    localStorage.setItem(STORAGE_PREFIX + k, ta.value);
+  });
+});
+
+document.getElementById('btn-restart-r').addEventListener('click', async () => {
+  await initSession();
+  for (const k of Object.keys(EDITORS)) {
+    const st = document.getElementById('status-' + k);
+    if (st) st.textContent = '';
+  }
+});
 
 document.getElementById('btn-reset-all').addEventListener('click', () => {
-  if (!confirm('Reset all exercises?')) return;
-  Object.keys(STARTER).forEach(k => {
-    localStorage.removeItem('stat20_rev_' + k);
-    document.getElementById('code-' + k).value = STARTER[k];
-    document.getElementById('status-' + k).textContent = '';
-    document.getElementById('output-' + k).style.display = 'none';
-    passState[k] = false;
-  });
-  updateScore();
-});
-
-document.getElementById('btn-download-r').addEventListener('click', () => {
-  const blob = new Blob([assembleFullScript()], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'review.R';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  for (const k of Object.keys(EDITORS)) {
+    localStorage.removeItem(STORAGE_PREFIX + k);
+    const ta = document.getElementById('code-' + k);
+    if (ta) ta.value = EDITORS[k].starter;
+    const st = document.getElementById('status-' + k);
+    if (st) st.textContent = '';
+    const out = document.getElementById('output-' + k);
+    if (out) out.style.display = 'none';
+  }
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
-  loadSaved();
-  const statusEl = document.getElementById('engine-status');
-  try {
-    webR = new WebR({ channelType: ChannelType.PostMessage });
-    await webR.init();
-    statusEl.textContent = 'ready';
-    document.getElementById('btn-run-all').disabled = false;
-    document.querySelectorAll('.btn-run').forEach(b => b.disabled = false);
-  } catch (e) {
-    statusEl.textContent = 'WebR failed to load';
-    console.error(e);
+  loadEditors();
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
   }
+  await initSession();
 });
 </script>
 
