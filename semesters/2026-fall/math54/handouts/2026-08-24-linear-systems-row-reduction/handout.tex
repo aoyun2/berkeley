@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
 \title{Math 54 --- Week 1}
 \subtitle{Systems of linear equations; row reduction and echelon forms (Lay 1.1--1.2)}
@@ -16,7 +17,7 @@
   Given $m$ linear equations in $n$ unknowns $x_1,\dots,x_n$, how can we systematically simplify the system without losing or gaining a single solution, and why must the number of solutions always be either $0$, $1$, or $\infty$ (never $2$ or $3$)?
 \end{qbox}
 
-In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a line in $\RR^2$; in three variables $x_1,x_2,x_3$, an equation $a_1x_1+a_2x_2+a_3x_3=b$ defines a plane in $\RR^3$. Solving a system of linear equations means finding all points $(s_1,\dots,s_n)$ that lie simultaneously on every line or plane in the collection.
+When at least one variable coefficient is nonzero, a linear equation $a_1x_1+a_2x_2=b$ defines a line in $\RR^2$ in two variables $x_1,x_2$; in three variables $x_1,x_2,x_3$, an equation $a_1x_1+a_2x_2+a_3x_3=b$ defines a plane in $\RR^3$. Solving a system of linear equations means finding all points $(s_1,\dots,s_n)$ that lie simultaneously on every line or plane in the collection.
 
 \begin{definition*}[Linear equations, linear systems, and consistency (Lay 1.1)]
   A \vocab{linear equation} in the variables $x_1,\dots,x_n$ is an equation that can be written in the form
@@ -43,47 +44,47 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
   %              2x1 + 3x2 = 8 => x2 = (8 - 2*x1)/3
   % Exact intersection: (13/7, 10/7) = (1.857, 1.429)
   \begin{scope}[shift={(0,0)},scale=0.86]
-    \draw[figaxis] (-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {$x_2$};
+    \InkStroke[figaxis]{(-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \InkStroke[figaxis]{(0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
-    \draw[black,line width=0.85pt] (-0.3,0.35) -- (3.3,2.15);
-    \node[font=\scriptsize,anchor=west] at (2.22,1.34) {$x_1-2x_2=-1$};
-    \draw[black,line width=0.85pt] (-0.1,2.733) -- (3.4,0.40);
-    \node[font=\scriptsize,anchor=west] at (0.36,2.62) {$2x_1+3x_2=8$};
+    \InkStroke[inkblue,ink line]{(-0.3,0.35) -- (3.3,2.15)}
+    \node[font=\scriptsize,anchor=west] at (2.22,1.34) {\InkLabel{$x_1-2x_2=-1$}};
+    \InkStroke[inkred,ink line]{(-0.1,{41/15}) -- (3.4,0.40)}
+    \node[font=\scriptsize,anchor=west] at (0.36,2.62) {\InkLabel{$2x_1+3x_2=8$}};
 
-    \fill[black] (1.857,1.429) circle (1.9pt);
-    \node[font=\scriptsize,anchor=south] at (1.94,1.67) {$(s_1,s_2)$};
+    \fill[black] ({13/7},{10/7}) circle (1.9pt);
+    \node[font=\scriptsize,anchor=south] at (1.94,1.67) {\InkLabel{$(s_1,s_2)$}};
 
-    \node[font=\footnotesize] at (1.70,-0.78) {(a)};
+    \node[font=\footnotesize] at (1.70,-0.78) {\InkLabel{(a)}};
   \end{scope}
 
   % Panel (b): No solution (parallel distinct lines)
   % Exact lines: x1 - 2x2 = -1 => x2 = 0.5*x1 + 0.5
   %              -x1 + 2x2 = 3 => x2 = 0.5*x1 + 1.5
   \begin{scope}[shift={(4.95,0)},scale=0.86]
-    \draw[figaxis] (-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {$x_2$};
+    \InkStroke[figaxis]{(-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \InkStroke[figaxis]{(0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
-    \draw[black,line width=0.85pt] (-0.3,0.35) -- (3.1,2.05);
-    \node[font=\scriptsize,anchor=west] at (1.50,0.82) {$x_1-2x_2=-1$};
-    \draw[black,line width=0.85pt] (-0.3,1.35) -- (2.7,2.85);
-    \node[font=\scriptsize,anchor=south west] at (0.06,2.62) {$-x_1+2x_2=3$};
+    \InkStroke[inkblue,ink line]{(-0.3,0.35) -- (3.1,2.05)}
+    \node[font=\scriptsize,anchor=west] at (1.50,0.82) {\InkLabel{$x_1-2x_2=-1$}};
+    \InkStroke[inkred,ink line]{(-0.3,1.35) -- (2.7,2.85)}
+    \node[font=\scriptsize,anchor=south west] at (0.06,2.62) {\InkLabel{$-x_1+2x_2=3$}};
 
-    \node[font=\footnotesize] at (1.70,-0.78) {(b)};
+    \node[font=\footnotesize] at (1.70,-0.78) {\InkLabel{(b)}};
   \end{scope}
 
   % Panel (c): Infinitely many solutions (coincident lines)
   % Exact coincident line: x1 - 2x2 = -1 and -2x1 + 4x2 = 2
   \begin{scope}[shift={(9.9,0)},scale=0.86]
-    \draw[figaxis] (-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {$x_2$};
+    \InkStroke[figaxis]{(-0.45,0) -- (3.85,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \InkStroke[figaxis]{(0,-0.35) -- (0,2.95) node[left=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
-    \draw[black!16,line width=3.2pt] (-0.3,0.35) -- (3.3,2.15);
-    \draw[black,line width=0.95pt] (-0.3,0.35) -- (3.3,2.15);
-    \node[font=\scriptsize,anchor=south west] at (0.22,1.66) {$x_1-2x_2=-1$};
-    \node[font=\scriptsize,anchor=north west] at (1.22,1.02) {$-2x_1+4x_2=2$};
 
-    \node[font=\footnotesize] at (1.70,-0.78) {(c)};
+    \InkStroke[inkblue,ink line]{(-0.3,0.35) -- (3.3,2.15)}
+    \node[font=\scriptsize,anchor=south west] at (0.22,1.66) {\InkLabel{$x_1-2x_2=-1$}};
+    \node[font=\scriptsize,anchor=north west] at (1.22,1.02) {\InkLabel{$-2x_1+4x_2=2$}};
+
+    \node[font=\footnotesize] at (1.70,-0.78) {\InkLabel{(c)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{The three solution regimes for two linear equations in two variables: (a) intersecting lines yield a unique solution $(s_1,s_2)$; (b) parallel distinct lines yield no solution (inconsistent); (c) coincident lines yield infinitely many solutions. The Existence and Uniqueness Theorem (\ilink{thm-lay-1-2}{Thm.~1.2}) proves that these three regimes are the only possibilities for any linear system of any size.}
@@ -178,106 +179,7 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
   \end{enumerate}
 \end{definition*}
 
-\begin{fig}
-\begin{tikzpicture}
-  % Left panel: Echelon Form (REF)
-  \begin{scope}[shift={(0,0)},scale=0.92]
-    % Soft neutral gray wash at pivot cells
-    \fill[black!10] (0.86,1.64) rectangle (1.56,2.18);
-    \fill[black!10] (1.66,1.04) rectangle (2.36,1.58);
-    \fill[black!10] (3.26,0.44) rectangle (3.96,0.98);
 
-    % Crisp staircase boundary
-    \draw[black,line width=0.75pt] (0.82,2.18) -- (0.82,1.60) -- (1.60,1.60) -- (1.60,1.00) -- (3.20,1.00) -- (3.20,0.40) -- (4.76,0.40);
-
-    % Matrix brackets
-    \draw[black,line width=0.75pt] (0.84,2.30) -- (0.62,2.30) -- (0.62,-0.30) -- (0.84,-0.30);
-    \draw[black,line width=0.75pt] (4.76,2.30) -- (4.98,2.30) -- (4.98,-0.30) -- (4.76,-0.30);
-
-    % Entries: pivots, arbitrary *, muted zeros
-    \node[font=\scriptsize] at (1.2,1.9) {$\blacksquare$};
-    \node[font=\small] at (2.0,1.9) {$*$};
-    \node[font=\small] at (2.8,1.9) {$*$};
-    \node[font=\small] at (3.6,1.9) {$*$};
-    \node[font=\small] at (4.4,1.9) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,1.3) {$0$};
-    \node[font=\scriptsize] at (2.0,1.3) {$\blacksquare$};
-    \node[font=\small] at (2.8,1.3) {$*$};
-    \node[font=\small] at (3.6,1.3) {$*$};
-    \node[font=\small] at (4.4,1.3) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,0.7) {$0$};
-    \node[font=\small,text=black!40] at (2.0,0.7) {$0$};
-    \node[font=\small,text=black!40] at (2.8,0.7) {$0$};
-    \node[font=\scriptsize] at (3.6,0.7) {$\blacksquare$};
-    \node[font=\small] at (4.4,0.7) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,0.1) {$0$};
-    \node[font=\small,text=black!40] at (2.0,0.1) {$0$};
-    \node[font=\small,text=black!40] at (2.8,0.1) {$0$};
-    \node[font=\small,text=black!40] at (3.6,0.1) {$0$};
-    \node[font=\small,text=black!40] at (4.4,0.1) {$0$};
-
-    \node[font=\footnotesize] at (2.8,-0.78) {(a)};
-  \end{scope}
-
-  % Right panel: Reduced Echelon Form (RREF)
-  \begin{scope}[shift={(6.9,0)},scale=0.92]
-    % Soft neutral gray wash on cleared pivot columns; free columns stay stark white
-    \fill[black!8] (0.85,-0.20) rectangle (1.55,2.20);
-    \fill[black!8] (1.65,-0.20) rectangle (2.35,2.20);
-    \fill[black!8] (3.25,-0.20) rectangle (3.95,2.20);
-
-    % Crisp hairline white frames around leading 1s
-    \fill[white] (0.93,1.67) rectangle (1.47,2.13);
-    \draw[black,line width=0.5pt] (0.93,1.67) rectangle (1.47,2.13);
-    \fill[white] (1.73,1.07) rectangle (2.27,1.53);
-    \draw[black,line width=0.5pt] (1.73,1.07) rectangle (2.27,1.53);
-    \fill[white] (3.33,0.47) rectangle (3.87,0.93);
-    \draw[black,line width=0.5pt] (3.33,0.47) rectangle (3.87,0.93);
-
-    % Atomic column labels
-    \node[font=\scriptsize] at (1.2,2.48) {$x_1$};
-    \node[font=\scriptsize] at (2.0,2.48) {$x_2$};
-    \node[font=\scriptsize,text=black!60] at (2.8,2.48) {$x_3$};
-    \node[font=\scriptsize] at (3.6,2.48) {$x_4$};
-    \node[font=\scriptsize,text=black!60] at (4.4,2.48) {$x_5$};
-
-    % Matrix brackets
-    \draw[black,line width=0.75pt] (0.84,2.30) -- (0.62,2.30) -- (0.62,-0.30) -- (0.84,-0.30);
-    \draw[black,line width=0.75pt] (4.76,2.30) -- (4.98,2.30) -- (4.98,-0.30) -- (4.76,-0.30);
-
-    % Entries
-    \node[font=\small] at (1.2,1.9) {$1$};
-    \node[font=\small,text=black!40] at (2.0,1.9) {$0$};
-    \node[font=\small] at (2.8,1.9) {$*$};
-    \node[font=\small,text=black!40] at (3.6,1.9) {$0$};
-    \node[font=\small] at (4.4,1.9) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,1.3) {$0$};
-    \node[font=\small] at (2.0,1.3) {$1$};
-    \node[font=\small] at (2.8,1.3) {$*$};
-    \node[font=\small,text=black!40] at (3.6,1.3) {$0$};
-    \node[font=\small] at (4.4,1.3) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,0.7) {$0$};
-    \node[font=\small,text=black!40] at (2.0,0.7) {$0$};
-    \node[font=\small,text=black!40] at (2.8,0.7) {$0$};
-    \node[font=\small] at (3.6,0.7) {$1$};
-    \node[font=\small] at (4.4,0.7) {$*$};
-
-    \node[font=\small,text=black!40] at (1.2,0.1) {$0$};
-    \node[font=\small,text=black!40] at (2.0,0.1) {$0$};
-    \node[font=\small,text=black!40] at (2.8,0.1) {$0$};
-    \node[font=\small,text=black!40] at (3.6,0.1) {$0$};
-    \node[font=\small,text=black!40] at (4.4,0.1) {$0$};
-
-    \node[font=\footnotesize] at (2.8,-0.78) {(b)};
-  \end{scope}
-\end{tikzpicture}
-\figcap{Anatomy of (a) an echelon form (REF), with nonzero pivots $\blacksquare$ along the staircase and zeros below it, and (b) the unique reduced echelon form (RREF). In RREF, every pivot equals $1$ and is the \emph{only} nonzero entry in its shaded pivot column ($x_1,x_2,x_4$), so each basic variable appears in exactly one equation, while free columns ($x_3,x_5$) remain unrestricted.}
-\end{fig}
 
 \begin{theorem*}[Lay 1.2 Thm.~1: Uniqueness of the Reduced Echelon Form]\target{thm-lay-1-1}
   Each matrix is row equivalent to one and only one reduced echelon matrix.
@@ -293,10 +195,33 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
   \end{itemize}
 \end{definition*}
 
+\begin{fig}
+\begin{tikzpicture}[font=\small]
+  % Symbolic matrices remain native LaTeX; colored entries mark pivot positions.
+  \node at (0,0) {$\displaystyle
+    \begin{bmatrix}
+      \InkLabel[inkblue]{$p_1$}& *& *& *& *\\
+      0&\InkLabel[inkblue]{$p_2$}& *& *& *\\
+      0&0&0&\InkLabel[inkblue]{$p_3$}& *\\
+      0&0&0&0&0
+    \end{bmatrix}$};
+  \node at (7,0) {$\displaystyle
+    \begin{bmatrix}
+      \InkLabel[inkblue]{$1$}&\InkLabel[inkblue]{$0$}& *&\InkLabel[inkblue]{$0$}& *\\
+      \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$1$}& *&\InkLabel[inkblue]{$0$}& *\\
+      \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$0$}&0&\InkLabel[inkblue]{$1$}& *\\
+      \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$0$}&0&\InkLabel[inkblue]{$0$}&0
+    \end{bmatrix}$};
+  \node at (0,-1.35) {\InkLabel{(a)}};
+  \node at (7,-1.35) {\InkLabel{(b)}};
+\end{tikzpicture}
+\figcap{(a) An echelon form (REF), with nonzero leading entries $p_1,p_2,p_3$ in columns $1,2,4$. (b) The corresponding reduced echelon form (RREF): each leading entry is $1$ and is the only nonzero entry in its column (blue). Stars denote arbitrary entries, possibly zero; their values may change during reduction. If these are coefficient matrices of a consistent system, $x_1,x_2,x_4$ are basic variables and $x_3,x_5$ are free variables.}
+\end{fig}
+
 \needspace{8\baselineskip}\method{The five-step row reduction algorithm (Gaussian elimination + Gauss--Jordan backward phase).}
 \begin{steps}
   \ii \textbf{Step 1 (Locate leftmost nonzero column):} Begin with the leftmost nonzero column. This is a pivot column; the pivot position is at the top.
-  \ii \textbf{Step 2 (Select pivot):} Select a nonzero entry in the pivot column as a pivot. If necessary, interchange rows to move this entry into the pivot position at the top. (\emph{Numerical note:} In computer arithmetic, \vocab{partial pivoting} chooses the entry of largest absolute value in the column as the pivot to minimize roundoff error when dividing by the pivot.)
+  \ii \textbf{Step 2 (Select pivot):} Select a nonzero entry in the pivot column as a pivot. If necessary, interchange rows to move this entry into the pivot position at the top. (\emph{Numerical note:} In computer arithmetic, \vocab{partial pivoting} chooses the remaining entry of largest absolute value in the column as the pivot. This keeps the elimination multipliers at most $1$ in absolute value and generally improves numerical stability; it does not guarantee the smallest roundoff error.)
   \ii \textbf{Step 3 (Clear below pivot):} Use row replacement operations to create zeros in all positions below the pivot.
   \ii \textbf{Step 4 (Cover and repeat---Forward phase to REF):} Cover (or ignore) the row containing the pivot position and all rows, if any, above it. Apply Steps~1--3 to the submatrix that remains. Repeat the process until there are no more nonzero rows to modify. The entire matrix is now in \emph{echelon form (REF)}.
   \ii \textbf{Step 5 (Clear above pivots and scale to $1$---Backward phase to RREF):} Beginning with the \emph{rightmost} pivot and working upward and to the left, create zeros above each pivot. If a pivot is not $1$, make it $1$ by a scaling operation. The matrix is now in \emph{reduced echelon form (RREF)}.
@@ -325,6 +250,27 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
   This \vocab{parametric description} generates every solution: assigning any real values to the free parameters $(x_2,x_4)$ uniquely determines the basic variables $(x_1,x_3)$ (for example, $x_2=x_4=0$ yields $(1,0,3,0)$).
 \end{steps}
 
+\begin{fig}
+% Exact linear projection: x -> (2.4,.85), y -> (1.4,-.8), z -> (0,2).
+% Every patch is parametrized by (x,y,z) with x in [-1,1].
+% P1: z=0; P2: z=y; P3: y=0. Thus all pairwise intersections are L=(t,0,0).
+\begin{tikzpicture}[x={(2.4cm,.85cm)},y={(1.4cm,-.8cm)},z={(0cm,2cm)},font=\small]
+  % Transparent grain: no opaque base fill, so the drawing makes no hidden-edge claim.
+  \path[ink grain=inkblue] (-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle;
+  \path[ink grain=inkred] (-1,-1,-1)--(1,-1,-1)--(1,1,1)--(-1,1,1)--cycle;
+  \path[ink grain=inkgreen] (-1,0,-1)--(1,0,-1)--(1,0,1)--(-1,0,1)--cycle;
+  \InkStroke[inkblue]{(-1,-1,0)--(1,-1,0)--(1,1,0)--(-1,1,0)--cycle}
+  \InkStroke[inkred]{(-1,-1,-1)--(1,-1,-1)--(1,1,1)--(-1,1,1)--cycle}
+  \InkStroke[inkgreen]{(-1,0,-1)--(1,0,-1)--(1,0,1)--(-1,0,1)--cycle}
+  \InkStroke[line width=.8pt]{(-1.35,0,0)--(1.35,0,0)}
+  \node[below right] at (1.35,0,0) {\InkLabel{$L$}};
+  \node at (.35,.8,0) {\InkLabel[inkblue]{$P_1$}};
+  \node at (-.45,-.8,-.8) {\InkLabel[inkred]{$P_2$}};
+  \node at (-.45,0,.75) {\InkLabel[inkgreen]{$P_3$}};
+\end{tikzpicture}
+\figcap{The planes $P_1\colon z=0$, $P_2\colon z=y$, and $P_3\colon y=0$ share exactly the line $L=\{(t,0,0):t\in\RR\}$. The equations reduce to $y=z=0$, leaving $x=t$ free: two pivots and one free variable. The drawing uses transparent finite patches; each plane extends without bound.}
+\end{fig}
+
 \textbf{Worked example: detecting an inconsistent system in the forward phase.}
 \[
   \aug{rrr|r}{1 & 2 & 3 & 1 \\ 2 & 5 & 4 & 2 \\ 3 & 7 & 7 & 4}
@@ -335,32 +281,7 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
 \]
 The third row of the echelon form represents the equation $0x_1+0x_2+0x_3=1$, which has no solution. You can stop immediately at the echelon form without doing the backward phase: the system is \textbf{inconsistent}.
 
-\begin{fig}
-\newcommand{\hstamp}[3]{\makebox[0pt][l]{\kern#1pt\raisebox{#2pt}[0pt][0pt]{#3}}}
-\newcommand{\mathhalo}[2][black]{%
-  \leavevmode\mbox{%
-    \rlap{\textcolor{white}{%
-      \hstamp{1.40}{0.00}{#2}\hstamp{1.29}{0.54}{#2}\hstamp{0.99}{0.99}{#2}\hstamp{0.54}{1.29}{#2}%
-      \hstamp{0.00}{1.40}{#2}\hstamp{-0.54}{1.29}{#2}\hstamp{-0.99}{0.99}{#2}\hstamp{-1.29}{0.54}{#2}%
-      \hstamp{-1.40}{0.00}{#2}\hstamp{-1.29}{-0.54}{#2}\hstamp{-0.99}{-0.99}{#2}\hstamp{-0.54}{-1.29}{#2}%
-      \hstamp{0.00}{-1.40}{#2}\hstamp{0.54}{-1.29}{#2}\hstamp{0.99}{-0.99}{#2}\hstamp{1.29}{-0.54}{#2}%
-      \hstamp{0.70}{0.00}{#2}\hstamp{0.49}{0.49}{#2}\hstamp{0.00}{0.70}{#2}\hstamp{-0.49}{0.49}{#2}%
-      \hstamp{-0.70}{0.00}{#2}\hstamp{-0.49}{-0.49}{#2}\hstamp{0.00}{-0.70}{#2}\hstamp{0.49}{-0.49}{#2}%
-    }}%
-    \textcolor{#1}{#2}%
-  }%
-}
-\begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (img) at (0,0) {\includegraphics[width=8.2cm]{figures/fig3_three_planes.png}};
-\begin{scope}[x={(img.south east)},y={(img.north west)}]
-\node[font=\scriptsize] at (0.82,0.52) {\mathhalo[figblue]{$P_1$}};
-\node[font=\scriptsize] at (0.3,0.66) {\mathhalo[figred]{$P_2$}};
-\node[font=\scriptsize] at (0.58,0.78) {\mathhalo[figgreen]{$P_3$}};
-\node[font=\scriptsize] at (0.76,0.69) {\mathhalo[black]{$L$}};
-\end{scope}
-\end{tikzpicture}
-\figcap{Geometric view in $\RR^3$ of a consistent $3\times 3$ system whose reduced echelon form has $2$ pivots and $1$ free variable (plus a zero row $0=0$): the three planes $P_1$, $P_2$, and $P_3$ all share a single line $L$, producing a $1$-parameter line of solutions.}
-\end{fig}
+
 
 \begin{theorem*}[Lay 1.2 Thm.~2: Existence and Uniqueness Theorem]\target{thm-lay-1-2}
   A linear system is consistent if and only if the rightmost column of the augmented matrix is \emph{not} a pivot column---that is, if and only if an echelon form of the augmented matrix has no row of the form

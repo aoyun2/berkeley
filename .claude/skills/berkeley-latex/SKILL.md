@@ -7,6 +7,25 @@ description: Author and visually audit UC Berkeley math, statistics, and CS LaTe
 
 Follow this guide whenever authoring or fixing `.tex` handouts, diagrams, plots, or code breakdown tables in `semesters/`.
 
+## Reproducible ink pilot (November 2026)
+
+For the following packets only, the user's approved grain-and-ink pilot supersedes
+this skill's monochrome/one-accent defaults:
+
+- `math54/handouts/2026-08-24-linear-systems-row-reduction`
+- `math110/handouts/2026-10-19-generalized-eigenvectors-jordan`
+- `math110/handouts/2026-11-09-adjoints-spectral-theorem`
+
+Paths are under `semesters/2026-fall/`. Load `figure-ink` and follow
+[the reproducible examples and build instructions](../../../samples/ink-figures/README.md).
+Use exact native TikZ/PGFPlots geometry, the fixed vector grain, and
+`\InkLabel` glyph-shaped white halos. Do not regenerate geometric drawings
+with image generation. For a multicolor matrix, halo each colored entry using
+`\InkLabel[color]{$...$}`; nested text colors inside a halo defeat its white outline.
+Check the mathematical relationships before drawing, then inspect the PDF at
+240 DPI after two compilation passes. The user is reviewing this pilot before
+any collection-wide conversion; do not expand its scope automatically.
+
 ## 1. Visual Gold Standard: Michael Spivak (*Calculus on Manifolds*, 1965)
 Every figure across all courses must have the calm, understated, artistic monograph elegance of **Michael Spivak (*Calculus on Manifolds*)**:
 - **Pure black ink + soft neutral gray washes (`fill=black!8`–`black!18`) on stark white paper** is the default visual language. Use **zero** 4–5 color rainbows and **zero** pastel-filled UI cards. Allow at most **1 restrained accent color** (`figblue` or `figred`, or `figgreen` ONLY when 3 symmetric peer curves intersect on the same axes) where contrast genuinely clarifies the math.

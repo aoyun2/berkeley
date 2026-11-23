@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
@@ -98,18 +99,21 @@ $V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Throughout, w
   \ii An operator $N$ is \vocab{nilpotent} if $N^k=0$ for some $k$ (\hyperref[def-39]{Def.~39}), e.g.\ $N$ above. So $G(\lambda,T)$ is the part of $V$ on which $T-\lambda I$ acts nilpotently.
 \end{itemize}
 \begin{fig}
-\begin{tikzpicture}[node distance=1.65cm]
-  \node[inner sep=3.5pt] (v) {$v$};
-  \node[right=of v, inner sep=3.5pt] (v1) {$(T-\lambda I)v$};
-  \node[right=of v1, inner sep=3.5pt] (d) {$\cdots$};
-  \node[fill=black!8, inner sep=4pt, minimum width=0.58cm, right=of d] (w) {$w$};
-  \node[right=of w, inner sep=3.5pt] (z) {$0$};
-  \foreach \a/\b in {v/v1,v1/d,d/w,w/z}
-    \draw[->, line width=0.55pt, black!85] (\a) -- node[above=2pt, font=\scriptsize, text=black!80] {$T-\lambda I$} (\b);
-  \node[below=3.5pt, font=\scriptsize, text=black!60] at (v |- w.south) {$G(\lambda,T)$};
-  \node[below=3.5pt, font=\scriptsize, text=black!60] at (w.south) {$E(\lambda,T)$};
+\begin{tikzpicture}[font=\small]
+  \InkRegion[inkblue]{(8.2,-.28) rectangle (8.8,.28)}
+  \node (v) at (0,0) {\InkLabel{$v$}};
+  \node (v1) at (3,0) {\InkLabel{$(T-\lambda I)v$}};
+  \node (d) at (6,0) {\InkLabel{$\cdots$}};
+  \node (w) at (8.5,0) {\InkLabel[inkblue]{$w$}};
+  \node (z) at (11,0) {\InkLabel{$0$}};
+  \foreach \a/\b in {v/v1,v1/d,d/w,w/z} {
+    \InkStroke[ink arrow]{(\a)--(\b)}
+    \node[above=3pt,font=\scriptsize] at ($(\a)!.5!(\b)$) {\InkLabel{$T-\lambda I$}};
+  }
+  \node[below=5pt,font=\scriptsize] at (v.south) {\InkLabel{$G(\lambda,T)$}};
+  \node[below=5pt,font=\scriptsize] at (w.south) {\InkLabel[inkblue]{$E(\lambda,T)$}};
 \end{tikzpicture}
-\figcap{Repeatedly applying $T-\lambda I$ to a generalized eigenvector $v\in G(\lambda,T)$ eventually reaches $0$. The last nonzero vector $w$ (shaded) satisfies $(T-\lambda I)w=0$, so $w\in E(\lambda,T)$ is an eigenvector (\hyperref[prop-71]{Prop.~71}). Smallest case: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_2\mapsto e_1\mapsto0$.}
+\figcap{Repeatedly applying $T-\lambda I$ to a nonzero generalized eigenvector $v\in G(\lambda,T)$ eventually reaches $0$. The last nonzero vector $w$ (shaded) satisfies $(T-\lambda I)w=0$, so $w\in E(\lambda,T)$ is an eigenvector (\hyperref[prop-71]{Prop.~71}). Smallest case: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_2\mapsto e_1\mapsto0$.}
 \end{fig}
 
 \begin{proposition*}[Prop.~69 / LADR 8.1, 8.2: the null-space chain]\hypertarget{prop-69}{}\label{prop-69}
@@ -132,7 +136,7 @@ Example: The shift on $\FF^3$ ($e_3\mapsto e_2\mapsto e_1\mapsto0$) has $\dim\nu
   $\nul T^n=\nul T^{n+1}$. Hence $G(\lambda,T)=\nul(T-\lambda I)^n$, a $T$-invariant subspace.
 \end{proposition*}
 \begin{ideabox}
-The ascending chain of null spaces stabilizes by power $n=\dim V$ because until it stops, each step strictly enlarges the subspace and raises its dimension by at least $1$. Since no subspace of $V$ can have dimension exceeding $n$ and $\dim\nul T^0=0$, there cannot be $n+1$ strict increases, so one of the first $n$ steps satisfies $\nul T^m=\nul T^{m+1}$ ($m\le n$), after which the chain is constant (\hyperref[prop-69]{Prop.~69}). Consequently, the union defining $G(\lambda,T)$ equals $\nul(T-\lambda I)^n$, which is a $T$-invariant subspace by \ilink{T5}{(T5)}.
+The ascending chain of null spaces stabilizes by power $n=\dim V$ because until it stops, each step strictly enlarges the subspace and raises its dimension by at least $1$. Since no subspace of $V$ can have dimension exceeding $n$ and $\dim\nul T^0=0$, there cannot be $n+1$ strict increases, so some $m\le n$ satisfies $\nul T^m=\nul T^{m+1}$, after which the chain is constant (\hyperref[prop-69]{Prop.~69}). Consequently, the union defining $G(\lambda,T)$ equals $\nul(T-\lambda I)^n$, which is a $T$-invariant subspace by \ilink{T5}{(T5)}.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -142,19 +146,26 @@ The ascending chain of null spaces stabilizes by power $n=\dim V$ because until 
   \end{steps}
 \end{proof}
 \begin{fig}
-\begin{tikzpicture}[x=0.92cm, y=0.48cm]
-  \draw[figaxis] (0,0) -- (7.6,0) node[right=2pt, font=\scriptsize] {$k$};
-  \draw[figaxis] (0,0) -- (0,6.2) node[above=2pt, font=\scriptsize] {$\dim\nul N^k$};
-  \foreach \k in {0,...,7} \draw[black!55, line width=0.38pt] (\k,0.11) -- (\k,-0.11) node[below=2pt, font=\scriptsize, text=black] {$\k$};
-  \foreach \y in {1,...,5} \draw[black!55, line width=0.38pt] (0.08,\y) -- (-0.08,\y) node[left=2pt, font=\scriptsize, text=black] {$\y$};
-
-  % Subtle asymptote n=5 and stabilization drop line at k=3
-  \draw[dashed, black!40, line width=0.42pt] (0,5) -- (7.35,5) node[right=2pt, font=\scriptsize, text=black!65] {$n = 5$};
-  \draw[densely dotted, black!40, line width=0.42pt] (3,0) -- (3,5);
-
-  % Pure black monograph curve with crisp point markers
-  \draw[black, line width=0.95pt] (0,0) -- (1,2) -- (2,4) -- (3,5) -- (7,5);
-  \foreach \k/\d in {0/0,1/2,2/4,3/5,4/5,5/5,6/5,7/5} \fill[black] (\k,\d) circle (1.7pt);
+\begin{tikzpicture}[x=.92cm,y=.48cm,font=\scriptsize]
+  \InkStroke[ink arrow,inkslate]{(0,0)--(7.6,0)}
+  \InkStroke[ink arrow,inkslate]{(0,0)--(0,6.2)}
+  \node[right] at (7.6,0) {\InkLabel{$k$}};
+  \node[above] at (0,6.2) {\InkLabel{$\dim\nul N^k$}};
+  \foreach \k in {0,...,7} {
+    \InkStroke[inkslate]{(\k,.11)--(\k,-.11)}
+    \node[below=2pt] at (\k,-.11) {\InkLabel{$\k$}};
+  }
+  \foreach \y in {1,...,5} {
+    \InkStroke[inkslate]{(.08,\y)--(-.08,\y)}
+    \node[left=2pt] at (-.08,\y) {\InkLabel{$\y$}};
+  }
+  \InkStroke[ink guide,inkslate]{(0,5)--(7.35,5)}
+  \InkStroke[ink guide,inkslate]{(3,0)--(3,5)}
+  \node[right] at (7.35,5) {\InkLabel{$n=5$}};
+  % k is discrete: markers carry the data; thin segments only guide the eye.
+  \InkStroke[inkblue]{(0,0)--(1,2)--(2,4)--(3,5)--(7,5)}
+  \foreach \k/\d in {0/0,1/2,2/4,3/5,4/5,5/5,6/5,7/5}
+    \fill[inkblue] (\k,\d) circle (1.35pt);
 \end{tikzpicture}
 \figcap{$N$ on $\FF^5$ with $Ne_1=0$, $Ne_2=e_1$, $Ne_3=e_2$, $Ne_4=0$, $Ne_5=e_4$. Then $\nul N=\spn(e_1,e_4)$, $\nul N^2=\spn(e_1,e_2,e_4,e_5)$, and $\nul N^3=\FF^5$, giving $\dim\nul N^k=0,2,4,5,5,\dots$ While the chain strictly grows ($k\le 3$) it gains at least $1$ per step and cannot exceed $n=5$, so it stops by $k=n$ (\hyperref[prop-70]{Prop.~70}); once two consecutive terms agree, all later terms stay constant (\hyperref[prop-69]{Prop.~69}).}
 \end{fig}
@@ -270,7 +281,7 @@ Because $V$ splits into the $T$-invariant direct sum $\bigoplus_{i=1}^m G(\lambd
   \end{steps}
 \end{proof}
 
-\method{Computing $m_T$ from null-space dimensions.} For each eigenvalue $\lambda$, compute $d_k=\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$ for $k=1,2,\dots$. The first $k$ at which $d_k$ stops growing (equivalently, reaches the algebraic multiplicity) is the exponent of $x-\lambda$.
+\method{Computing $m_T$ from null-space dimensions.} For each eigenvalue $\lambda$, compute $d_k=\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$ for $k=1,2,\dots$. The exponent of $x-\lambda$ is the least $k$ for which $d_{k+1}=d_k$; equivalently, it is the least $k$ for which $d_k$ reaches the algebraic multiplicity.
 
 \begin{proposition*}[LADR 8.31: diagonal of a triangular matrix]\hypertarget{name-ladr-8-31-diagonal-of-a-triangular-matrix}{}\label{name-ladr-8-31-diagonal-of-a-triangular-matrix}
   Over $\CC$, if $\MM(T)$ is upper-triangular, then $\dim G(\lambda,T)$ is the number of times $\lambda$ appears on the diagonal.
@@ -381,34 +392,19 @@ Since $N^kv=0$ implies $N^{k-1}(Nv)=0$, the operator $N$ maps $\nul N^k$ into $\
   \end{steps}
 \end{proof}
 \begin{fig}
-\begin{tikzpicture}
-  \matrix (M) [matrix of math nodes,
-    left delimiter=(, right delimiter=),
-    inner xsep=7pt, inner ysep=4pt,
-    nodes={minimum width=1.6em, minimum height=1.35em, anchor=center, inner sep=1pt},
-    column sep=5pt, row sep=3pt] {
-    \lambda_1 & * & * &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\
-    |[text=black!35]| 0 & \lambda_1 & * &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\
-    |[text=black!35]| 0 & |[text=black!35]| 0 & \lambda_1 &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\[6pt]
-    |[text=black!35]| 0 & |[text=black!35]| 0 & |[text=black!35]| 0 &[6pt] \lambda_2 & * \\
-    |[text=black!35]| 0 & |[text=black!35]| 0 & |[text=black!35]| 0 &[6pt] |[text=black!35]| 0 & \lambda_2 \\
-  };
-
-  \begin{scope}[on background layer]
-    \node[fit=(M-1-1)(M-3-3), fill=black!8, draw=black!30, line width=0.38pt, inner sep=1.5pt] {};
-    \node[fit=(M-4-4)(M-5-5), fill=black!8, draw=black!30, line width=0.38pt, inner sep=1.5pt] {};
-  \end{scope}
-
-  \node[left=14pt of M] {$\MM(T) =$};
-
-  \draw[decorate, decoration={brace, amplitude=3.5pt}, black!65, line width=0.45pt]
-    ([xshift=20pt]M-1-5.north east) -- ([xshift=20pt]M-3-5.south east)
-    node[midway, right=6pt, font=\scriptsize] {$G(\lambda_1,T)$};
-  \draw[decorate, decoration={brace, amplitude=3.5pt}, black!65, line width=0.45pt]
-    ([xshift=20pt]M-4-5.north east) -- ([xshift=20pt]M-5-5.south east)
-    node[midway, right=6pt, font=\scriptsize] {$G(\lambda_2,T)$};
+\begin{tikzpicture}[font=\small]
+  \node at (0,0) {$\displaystyle\MM(T)=
+  \begin{pmatrix}
+    \InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel[inkblue]{$*$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
+    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
+    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
+    \InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[inkred]{$\lambda_2$}&\InkLabel[inkred]{$*$}\\
+    \InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[inkred]{$0$}&\InkLabel[inkred]{$\lambda_2$}
+  \end{pmatrix}$};
+  \node[anchor=west,align=left] at (3.4,.35) {\InkLabel[inkblue]{$G(\lambda_1,T)$: first three basis vectors}};
+  \node[anchor=west,align=left] at (3.4,-.35) {\InkLabel[inkred]{$G(\lambda_2,T)$: last two basis vectors}};
 \end{tikzpicture}
-\figcap{Block diagonal form by generalized eigenspaces (LADR 8.37): the off-diagonal zero blocks come from splitting $V=G(\lambda_1,T)\oplus G(\lambda_2,T)$ into invariant pieces (\hyperref[prop-73]{Prop.~73}, T9; here $d_1=3$, $d_2=2$), and each shaded diagonal block is $\lambda_i I$ plus a strictly upper-triangular nilpotent part (LADR 8.18).}
+\figcap{Block diagonal form by generalized eigenspaces (LADR 8.37): the off-diagonal zero blocks come from splitting $V=G(\lambda_1,T)\oplus G(\lambda_2,T)$ into invariant pieces (\hyperref[prop-73]{Prop.~73}, T9; here $d_1=3$, $d_2=2$), and each colored diagonal block is $\lambda_i I$ plus a strictly upper-triangular nilpotent part (LADR 8.18).}
 \end{fig}
 
 \begin{proposition*}[Chain lemma]\hypertarget{name-chain-lemma}{}\label{name-chain-lemma}
@@ -439,36 +435,28 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 \textbf{What is left to check.} That the new list has $n$ vectors, and that it is independent. The count is rank--nullity: the old list has $\dim\range N$ vectors, and we added one top per chain ($r$ of them) and $l$ vectors $w$, where $r+l=\dim\nul N$. Independence is the step that needs care. The plan: apply $N$ to a relation. That removes the $w$'s and the bottoms and turns everything else into vectors of the old chain basis of $U$, which we know is independent.
 \end{ideabox}
 \begin{fig}
-\begin{tikzpicture}[x=1.50cm, y=1.12cm,
-    added/.style={draw=figblue!85!black, fill=white, inner sep=3.2pt, line width=0.5pt, text=figblue!90!black},
-    old/.style={densely dashed, draw=black!45, line width=0.42pt}]
-  \node[added] (u1) at (0,3.25) {$u_1$};
-  \node[added] (u2) at (2.15,2.15) {$u_2$};
-  \node[added] (w1) at (3.45,0) {$w_1$};
-
-  \node (v1) at (0,2.05) {$v_1=Nu_1$};
-  \node (m1) at (0,1.02) {$Nv_1$};
-  \node (b1) at (0,0) {$b_1=N^2v_1$};
-  \node (v2) at (2.15,1.02) {$v_2=Nu_2$};
-  \node (b2) at (2.15,0) {$b_2=Nv_2$};
-
-  \foreach \a/\b in {u1/v1, v1/m1, m1/b1, u2/v2, v2/b2}
-    \draw[->, line width=0.52pt, black!80] (\a) -- (\b);
-
-  % Soft Spivak gray wash for null N and hairline dashed frames for old chains of U = range N
-  \begin{scope}[on background layer]
-    \fill[black!8] (-1.02,-0.52) rectangle (3.92,0.44);
-    \draw[old] (-0.80,-0.34) rectangle (0.80,2.45);
-    \draw[old] (1.38,-0.34) rectangle (2.92,1.42);
-  \end{scope}
-
-  \node[font=\scriptsize, text=black!65, anchor=east] at (-0.94,1.95) {$U = \range N$};
-  \node[font=\scriptsize, text=black!75, anchor=west] at (4.06,-0.04) {$\nul N$};
-  \draw[->, black!75, line width=0.55pt] (1.45,-0.52) -- (1.45,-1.05)
-    node[midway, right=2pt, font=\scriptsize] {$N$};
-  \node[font=\small] (z) at (1.45,-1.28) {$0$};
+\begin{tikzpicture}[x=1.5cm,y=1.0cm,font=\small]
+  % The band collects basis vectors of null N; it is not a geometric region of V.
+  \InkRegion[inkblue]{(-.9,-.38) rectangle (3.9,.38)}
+  \InkStroke[ink guide,inkslate]{(-.8,-.3) rectangle (.8,2.4)}
+  \InkStroke[ink guide,inkslate]{(1.4,-.3) rectangle (2.9,1.4)}
+  \node[draw=inkred,inner sep=3pt] (u1) at (0,3.2) {\InkLabel[inkred]{$u_1$}};
+  \node[draw=inkred,inner sep=3pt] (u2) at (2.15,2.15) {\InkLabel[inkred]{$u_2$}};
+  \node[draw=inkred,inner sep=3pt] (w1) at (3.45,0) {\InkLabel[inkred]{$w_1$}};
+  \node (v1) at (0,2.05) {\InkLabel{$v_1=Nu_1$}};
+  \node (m1) at (0,1.02) {\InkLabel{$Nv_1$}};
+  \node (b1) at (0,0) {\InkLabel{$b_1=N^2v_1$}};
+  \node (v2) at (2.15,1.02) {\InkLabel{$v_2=Nu_2$}};
+  \node (b2) at (2.15,0) {\InkLabel{$b_2=Nv_2$}};
+  \foreach \a/\b in {u1/v1,v1/m1,m1/b1,u2/v2,v2/b2} {\InkStroke[ink arrow]{(\a)--(\b)}}
+  \node[font=\scriptsize,anchor=east] at (-.95,1.95) {\InkLabel{$U=\range N$}};
+  \node[font=\scriptsize,anchor=west] at (4.0,0) {\InkLabel[inkblue]{$\nul N$}};
+  \foreach \a in {b1,b2,w1} {
+    \InkStroke[ink arrow]{(\a.south)--($(\a.south)+(0,-.6)$)}
+    \node[below] at ($(\a.south)+(0,-.6)$) {\InkLabel{$0$}};
+  }
 \end{tikzpicture}
-\figcap{Nilpotent chain extension: framed vectors $u_1,u_2$ (new chain tops) and $w_1$ (a length-one chain) are added in the induction step to the old chains of $U=\range N$ (dashed rectangles; $d_1=2$, $d_2=1$). Arrows denote the action of $N$. The bottoms $b_1,b_2$ together with $w_1$ form a basis of $\nul N$ (shaded band), which $N$ maps to $0$.}
+\figcap{Nilpotent chain extension: framed vectors $u_1,u_2$ (new chain tops) and $w_1$ (a length-one chain) are added in the induction step to the old chains of $U=\range N$ (dashed rectangles; $d_1=2$, $d_2=1$). Arrows denote the action of $N$. The band groups basis vectors, rather than depicting a region of $V$. The bottoms $b_1,b_2$ together with $w_1$ form a basis of $\nul N$ (shaded band), which $N$ maps to $0$.}
 \end{fig}
 \begin{proof}
   \begin{steps}
@@ -527,41 +515,36 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(T9)}. A block $J_j(\mu)$ for $\mu\ne\lambda$ is invertible under $T-\lambda I$ and contributes $0$ to $d_k=\dim\nul(T-\lambda I)^k$, whereas $J_j(\lambda)-\lambda I=N_j$ is a shift with $\dim\nul N_j^k=\min(k,j)$: its contribution increases by $1$ at each step from $k-1$ to $k$ while $k\le j$, and stops growing once $k>j$. Thus $d_k-d_{k-1}$ equals the basis-independent number of blocks $J_j(\lambda)$ of size $j\ge k$, proving uniqueness up to block order.
 \end{ideabox}
 \begin{fig}
-\newcommand{\hstamp}[3]{\makebox[0pt][l]{\kern#1pt\raisebox{#2pt}[0pt][0pt]{#3}}}
-\newcommand{\mathhalo}[2][black]{%
-  \leavevmode\mbox{%
-    \rlap{\textcolor{white}{%
-      \hstamp{1.40}{0.00}{#2}\hstamp{1.29}{0.54}{#2}\hstamp{0.99}{0.99}{#2}\hstamp{0.54}{1.29}{#2}%
-      \hstamp{0.00}{1.40}{#2}\hstamp{-0.54}{1.29}{#2}\hstamp{-0.99}{0.99}{#2}\hstamp{-1.29}{0.54}{#2}%
-      \hstamp{-1.40}{0.00}{#2}\hstamp{-1.29}{-0.54}{#2}\hstamp{-0.99}{-0.99}{#2}\hstamp{-0.54}{-1.29}{#2}%
-      \hstamp{0.00}{-1.40}{#2}\hstamp{0.54}{-1.29}{#2}\hstamp{0.99}{-0.99}{#2}\hstamp{1.29}{-0.54}{#2}%
-      \hstamp{0.70}{0.00}{#2}\hstamp{0.49}{0.49}{#2}\hstamp{0.00}{0.70}{#2}\hstamp{-0.49}{0.49}{#2}%
-      \hstamp{-0.70}{0.00}{#2}\hstamp{-0.49}{-0.49}{#2}\hstamp{0.00}{-0.70}{#2}\hstamp{0.49}{-0.49}{#2}%
-    }}%
-    \textcolor{#1}{#2}%
-  }%
-}
-\begin{tikzpicture}
-\node[anchor=south west,inner sep=0] (img) at (0,0) {\includegraphics[width=11.5cm]{figures/fig5_jordan_counting.png}};
-\begin{scope}[x={(img.south east)},y={(img.north west)}]
-\node[font=\scriptsize] at (0.172,0.19) {\mathhalo[black]{$J_3(0)$}};
-\node[font=\scriptsize] at (0.258,0.19) {\mathhalo[black]{$J_2(0)$}};
-\node[font=\scriptsize] at (0.34,0.19) {\mathhalo[black]{$J_2(0)$}};
-\node[font=\scriptsize] at (0.424,0.19) {\mathhalo[black]{$J_1(0)$}};
-\node[font=\scriptsize] at (0.607,0.19) {\mathhalo[black]{$J_3(0)$}};
-\node[font=\scriptsize] at (0.693,0.19) {\mathhalo[black]{$J_2(0)$}};
-\node[font=\scriptsize] at (0.777,0.19) {\mathhalo[black]{$J_2(0)$}};
-\node[font=\scriptsize] at (0.862,0.19) {\mathhalo[black]{$J_1(0)$}};
-\node[font=\scriptsize] at (0.06,0.32) {\mathhalo[black]{$1$}};
-\node[font=\scriptsize] at (0.06,0.5) {\mathhalo[black]{$2$}};
-\node[font=\scriptsize] at (0.06,0.68) {\mathhalo[black]{$3$}};
-\node[font=\scriptsize] at (0.098,0.81) {\mathhalo[black]{$N$}};
-\node[font=\scriptsize] at (0.29,0.08) {\mathhalo[black]{(a)}};
-\node[font=\scriptsize] at (0.73,0.08) {\mathhalo[black]{(b)}};
-\node[font=\scriptsize] at (0.31,0.84) {\mathhalo[figblue]{$r_2=d_2-d_1=3$}};
-\node[font=\scriptsize] at (0.74,0.84) {\mathhalo[figgreen]{$r_2-r_3=2$}};
-\end{scope}
-\node[anchor=west,font=\scriptsize,align=left] at (11.4,2.4) {$r_k=d_k-d_{k-1}$\\[4pt]$d_k=\dim\nul N^k$};
+\begin{tikzpicture}[font=\scriptsize,x=1cm,y=1cm]
+  \foreach \panel in {0,1} {
+    \begin{scope}[xshift=\panel*6cm]
+      \foreach \x/\h in {0/3,1/2,2/2,3/1} {
+        \foreach \row in {1,...,\h} {
+          \pgfmathsetmacro{\bottom}{(\row-1)*.7}
+          \def\cellcolor{inkslate}
+          \ifnum\row=2 \def\cellcolor{inkblue}\fi
+          \ifnum\panel=1
+            \ifnum\row>1
+              \ifnum\x=0 \def\cellcolor{inkred}\else\def\cellcolor{inkgreen}\fi
+            \fi
+          \fi
+          \ifnum\panel=0
+            \ifnum\row=3 \path[fill=white] (\x,\bottom) rectangle ++(.7,.7);
+            \else\InkRegion[\cellcolor]{(\x,\bottom) rectangle ++(.7,.7)}\fi
+          \else\InkRegion[\cellcolor]{(\x,\bottom) rectangle ++(.7,.7)}\fi
+          \InkStroke{(\x,\bottom) rectangle ++(.7,.7)}
+        }
+        \node[below=4pt] at (\x+.35,0) {\InkLabel{$J_{\h}(0)$}};
+      }
+    \end{scope}
+  }
+  \InkStroke[ink arrow]{(-.45,2.1)--(-.45,0)}
+  \node[above] at (-.45,2.1) {\InkLabel{$N$}};
+  \foreach \row in {1,2,3} \node[left] at (-.6,\row*.7-.35) {\InkLabel{$\row$}};
+  \node[above,inkblue] at (1.85,2.3) {\InkLabel[inkblue]{$d_2-d_1=3$}};
+  \node[above] at (7.85,2.3) {\InkLabel[inkgreen]{$(d_2-d_1)-(d_3-d_2)=2$}};
+  \node at (1.85,-.7) {\InkLabel{(a)}};
+  \node at (7.85,-.7) {\InkLabel{(b)}};
 \end{tikzpicture}
 \figcap{Complementary counting for a nilpotent $N$ with blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ ($d_1=4$, $d_2=7$, $d_3=8$). Each column is a chain of basis vectors stacked vertically, and $N$ steps down one row (sending row~$1$ to $0$). \textbf{(a)}~Since $N^k$ annihilates the bottom $k$ rows, subtracting row~$1$ ($d_1=4$) from the bottom two rows ($d_2=7$) isolates row~$2$: its $d_2-d_1=3$ blue cells count all blocks of size $\ge 2$. \textbf{(b)}~Removing the $d_3-d_2=1$ taller column continuing into row~$3$ (red, $J_3$) leaves $(d_2-d_1)-(d_3-d_2)=2$ blocks of exact size~$2$ (green cells in row~$2$).}
 \end{fig}
