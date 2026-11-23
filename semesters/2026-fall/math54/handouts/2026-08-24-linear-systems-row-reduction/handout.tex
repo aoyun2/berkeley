@@ -336,43 +336,28 @@ In two variables $x_1,x_2$, a single linear equation $a_1x_1+a_2x_2=b$ defines a
 The third row of the echelon form represents the equation $0x_1+0x_2+0x_3=1$, which has no solution. You can stop immediately at the echelon form without doing the backward phase: the system is \textbf{inconsistent}.
 
 \begin{fig}
-\tdplotsetmaincoords{68}{118}
-\begin{tikzpicture}[tdplot_main_coords,scale=0.96]
-  % Book of three planes sharing common line L: x = y, z = 0
-  % Graded Spivak gray washes: P1 = black!6, P2 = black!14, P3 = black!22
-
-  % Lower half of P3 (vertical, below z = 0)
-  \fill[black!22,fill opacity=0.84] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (1.8,1.8,-1.55) -- (-1.5,-1.5,-1.55) -- cycle;
-  \draw[black!70,line width=0.45pt] (-1.5,-1.5,0) -- (-1.5,-1.5,-1.55) -- (1.8,1.8,-1.55) -- (1.8,1.8,0);
-
-  % Lower-left half of P2 (slanted, below z = 0)
-  \fill[black!14,fill opacity=0.84] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (2.75,0.85,-1.25) -- (-0.55,-2.45,-1.25) -- cycle;
-  \draw[black!65,line width=0.45pt] (-1.5,-1.5,0) -- (-0.55,-2.45,-1.25) -- (2.75,0.85,-1.25) -- (1.8,1.8,0);
-
-  % Back half of P1 (horizontal, x < y)
-  \fill[black!6,fill opacity=0.88] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (0.15,3.45,0) -- (-3.15,0.15,0) -- cycle;
-  \draw[black!60,line width=0.45pt] (-1.5,-1.5,0) -- (-3.15,0.15,0) -- (0.15,3.45,0) -- (1.8,1.8,0);
-
-  % Front half of P1 (horizontal, x > y)
-  \fill[black!6,fill opacity=0.86] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (3.45,0.15,0) -- (0.15,-3.15,0) -- cycle;
-  \draw[black!60,line width=0.45pt] (-1.5,-1.5,0) -- (0.15,-3.15,0) -- (3.45,0.15,0) -- (1.8,1.8,0);
-
-  % Upper-right half of P2 (slanted, above z = 0)
-  \fill[black!14,fill opacity=0.84] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (0.85,2.75,1.25) -- (-2.45,-0.55,1.25) -- cycle;
-  \draw[black!65,line width=0.45pt] (-1.5,-1.5,0) -- (-2.45,-0.55,1.25) -- (0.85,2.75,1.25) -- (1.8,1.8,0);
-
-  % Upper half of P3 (vertical, above z = 0)
-  \fill[black!22,fill opacity=0.80] (-1.5,-1.5,0) -- (1.8,1.8,0) -- (1.8,1.8,1.55) -- (-1.5,-1.5,1.55) -- cycle;
-  \draw[black!70,line width=0.45pt] (-1.5,-1.5,0) -- (-1.5,-1.5,1.55) -- (1.8,1.8,1.55) -- (1.8,1.8,0);
-
-  % Bold black common intersection line L
-  \draw[black,line width=1.4pt,line cap=round] (-1.85,-1.85,0) -- (2.20,2.20,0);
-
-  % Quiet atomic labels
-  \node[font=\footnotesize] at (0.55,2.48,0) {$P_1$};
-  \node[font=\footnotesize] at (0.18,1.92,0.90) {$P_2$};
-  \node[font=\footnotesize] at (-0.55,-0.55,1.02) {$P_3$};
-  \node[font=\footnotesize,below right=1pt] at (2.22,2.22,0) {$L$};
+\newcommand{\hstamp}[3]{\makebox[0pt][l]{\kern#1pt\raisebox{#2pt}[0pt][0pt]{#3}}}
+\newcommand{\mathhalo}[2][black]{%
+  \leavevmode\mbox{%
+    \rlap{\textcolor{white}{%
+      \hstamp{1.40}{0.00}{#2}\hstamp{1.29}{0.54}{#2}\hstamp{0.99}{0.99}{#2}\hstamp{0.54}{1.29}{#2}%
+      \hstamp{0.00}{1.40}{#2}\hstamp{-0.54}{1.29}{#2}\hstamp{-0.99}{0.99}{#2}\hstamp{-1.29}{0.54}{#2}%
+      \hstamp{-1.40}{0.00}{#2}\hstamp{-1.29}{-0.54}{#2}\hstamp{-0.99}{-0.99}{#2}\hstamp{-0.54}{-1.29}{#2}%
+      \hstamp{0.00}{-1.40}{#2}\hstamp{0.54}{-1.29}{#2}\hstamp{0.99}{-0.99}{#2}\hstamp{1.29}{-0.54}{#2}%
+      \hstamp{0.70}{0.00}{#2}\hstamp{0.49}{0.49}{#2}\hstamp{0.00}{0.70}{#2}\hstamp{-0.49}{0.49}{#2}%
+      \hstamp{-0.70}{0.00}{#2}\hstamp{-0.49}{-0.49}{#2}\hstamp{0.00}{-0.70}{#2}\hstamp{0.49}{-0.49}{#2}%
+    }}%
+    \textcolor{#1}{#2}%
+  }%
+}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0] (img) at (0,0) {\includegraphics[width=8.2cm]{figures/fig3_three_planes.png}};
+\begin{scope}[x={(img.south east)},y={(img.north west)}]
+\node[font=\scriptsize] at (0.82,0.52) {\mathhalo[figblue]{$P_1$}};
+\node[font=\scriptsize] at (0.3,0.66) {\mathhalo[figred]{$P_2$}};
+\node[font=\scriptsize] at (0.58,0.78) {\mathhalo[figgreen]{$P_3$}};
+\node[font=\scriptsize] at (0.76,0.69) {\mathhalo[black]{$L$}};
+\end{scope}
 \end{tikzpicture}
 \figcap{Geometric view in $\RR^3$ of a consistent $3\times 3$ system whose reduced echelon form has $2$ pivots and $1$ free variable (plus a zero row $0=0$): the three planes $P_1$, $P_2$, and $P_3$ all share a single line $L$, producing a $1$-parameter line of solutions.}
 \end{fig}
