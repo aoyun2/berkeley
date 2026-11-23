@@ -1,12 +1,30 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
 \newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}\newcommand{\T}{\mathsf T}
 \newcommand{\one}{\mathbf 1}
 \title{Math 110 --- Week 6}
 \subtitle{Invariant subspaces, eigenvalues and eigenvectors, PageRank (Notes Ch.~11, LADR 4, 5A, HW6)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -65,44 +83,44 @@
 \begin{tikzpicture}
   % Left: serene Spivak coordinate plane with invariant eigenspaces and one deflected vector
   \begin{scope}[scale=0.92]
-    \draw[figaxis] (-1.35,0) -- (3.55,0) node[right=2pt, font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.55) -- (0,3.55) node[above=2pt, font=\scriptsize] {$x_2$};
+    \PacketInkPath[figaxis]{(-1.35,0) -- (3.55,0) node[right=2pt, font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.55) -- (0,3.55) node[above=2pt, font=\scriptsize] {\InkLabel{$x_2$}}}
 
     % Hair-thin axis ticks
     \foreach \t in {-1,1,2,3} {
-      \draw[black!45, line width=0.35pt] (\t,0.06) -- (\t,-0.06);
-      \draw[black!45, line width=0.35pt] (0.06,\t) -- (-0.06,\t);
+      \PacketInkPath[black!45, line width=0.35pt]{(\t,0.06) -- (\t,-0.06)}
+      \PacketInkPath[black!45, line width=0.35pt]{(0.06,\t) -- (-0.06,\t)}
     }
 
     % Symmetric peer eigenspace lines (consistent solid hairlines)
-    \draw[black!45, line width=0.45pt] (-1.15,-1.15) -- (3.32,3.32)
-      node[above=1pt, font=\scriptsize, text=black!80] {$E(3,A)$};
-    \draw[black!45, line width=0.45pt] (-1.10,1.10) -- (1.42,-1.42)
-      node[right=2pt, font=\scriptsize, text=black!80] {$E(1,A)$};
+    \PacketInkPath[black!45, line width=0.45pt]{(-1.15,-1.15) -- (3.32,3.32)
+      node[above=1pt, font=\scriptsize, text=black!80] {\InkLabel{$E(3,A)$}}}
+    \PacketInkPath[black!45, line width=0.45pt]{(-1.10,1.10) -- (1.42,-1.42)
+      node[right=2pt, font=\scriptsize, text=black!80] {\InkLabel{$E(1,A)$}}}
 
     % Eigenvector v = (1,1) -> Av = 3v (pure black hierarchy: thin v, bold Av, uninterrupted E(3,A))
-    \draw[->, black, line width=0.68pt, line cap=round] (0,0) -- (1,1);
-    \draw[->, black, line width=1.18pt, line cap=round] (1.06,1.06) -- (3,3);
-    \node[font=\scriptsize, above left=1pt] at (0.88,0.92) {$v$};
-    \node[font=\scriptsize, above left=2pt] at (2.45,2.45) {$Av = 3v$};
+    \PacketInkPath[->, black, line width=0.55pt, line cap=round]{(0,0) -- (1,1)}
+    \PacketInkPath[->, black, line width=0.55pt, line cap=round]{(0,0) -- (3,3)}
+    \node[font=\scriptsize, above left=1pt] at (0.88,0.92) {\InkLabel{$v$}};
+    \node[font=\scriptsize, above left=2pt] at (2.45,2.45) {\InkLabel{$Av = 3v$}};
 
     % Eigenvector w = (1,-1) = Aw
-    \draw[->, black, line width=1.15pt, line cap=round] (0,0) -- (1,-1);
-    \node[font=\scriptsize, above right=1pt] at (1.02,-0.96) {$w = Aw$};
+    \PacketInkPath[->, black, line width=0.55pt, line cap=round]{(0,0) -- (1,-1)}
+    \node[font=\scriptsize, above right=1pt] at (1.02,-0.96) {\InkLabel{$w = Aw$}};
 
     % Non-eigenvector e_1 -> Ae_1 (single restrained accent, delicate deflection arc)
-    \draw[->, figred, line width=0.65pt, line cap=round] (0,0) -- (1,0);
-    \node[font=\scriptsize, text=figred, below=2pt] at (0.95,-0.04) {$e_1$};
-    \draw[->, figred, line width=1.15pt, line cap=round] (0,0) -- (2,1);
-    \node[font=\scriptsize, text=figred, above right=1pt] at (2.00,1.00) {$Ae_1$};
-    \draw[->, figred!75, line width=0.45pt] (1.48,0) arc[start angle=0, end angle=25.5, radius=1.48];
+    \PacketInkPath[->, figred, line width=0.55pt, line cap=round]{(0,0) -- (1,0)}
+    \node[font=\scriptsize, text=figred, below=2pt] at (0.95,-0.04) {\InkLabel{$e_1$}};
+    \PacketInkPath[->, figred, line width=0.55pt, line cap=round]{(0,0) -- (2,1)}
+    \node[font=\scriptsize, text=figred, above right=1pt] at (2.00,1.00) {\InkLabel{$Ae_1$}};
+    \PacketInkPath[->, figred!75, line width=0.45pt]{(1.48,0) arc[start angle=0, end angle=25.5, radius=1.48]}
 
     \fill[black] (0,0) circle (1.4pt);
   \end{scope}
 
   % Right: clean black matrix with generous negative space
   \node[anchor=west] at (4.35, 1.05) {%
-    $\displaystyle A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$};
+    \InkLabel{$\displaystyle A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$}};
 \end{tikzpicture}
 \figcap{Geometry of eigenvectors and invariant lines for $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$: eigenvectors $v=(1,1)$ ($Av=3v$) and $w=(1,-1)$ ($Aw=w$) remain on their $1$-dimensional eigenspaces $E(3,A)$ and $E(1,A)$, whereas the non-eigenvector $e_1=(1,0)$ (red) is deflected to $Ae_1=(2,1)$ outside $\spn(e_1)$.}
 \end{fig}
@@ -294,21 +312,21 @@
 \begin{tikzpicture}[
     page/.style={circle, draw=black!85, fill=white, line width=0.55pt, minimum size=0.68cm, font=\footnotesize}]
   % Pure monochrome directed web graph
-  \node[page] (P1) at (0,1.35) {$1$};
-  \node[page] (P2) at (3.10,1.35) {$2$};
-  \node[page] (P3) at (1.55,-0.85) {$3$};
+  \node[page] (P1) at (0,1.35) {\InkLabel{$1$}};
+  \node[page] (P2) at (3.10,1.35) {\InkLabel{$2$}};
+  \node[page] (P3) at (1.55,-0.85) {\InkLabel{$3$}};
 
-  \draw[->, black!85, line width=0.6pt, bend left=14] (P1) to node[above=2pt, font=\scriptsize] {$1/2$} (P2);
-  \draw[->, black!85, line width=0.6pt, bend left=14] (P1) to node[above right=1pt, font=\scriptsize] {$1/2$} (P3);
-  \draw[->, black!85, line width=0.6pt, bend left=14] (P2) to node[below right=2pt, font=\scriptsize] {$1$} (P3);
-  \draw[->, black!85, line width=0.6pt, bend left=14] (P3) to node[below left=2pt, font=\scriptsize] {$1$} (P1);
+  \PacketInkPath[->, black!85, line width=0.55pt, bend left=14]{(P1) to node[above=2pt, font=\scriptsize] {\InkLabel{$1/2$}} (P2)}
+  \PacketInkPath[->, black!85, line width=0.55pt, bend left=14]{(P1) to node[above right=1pt, font=\scriptsize] {\InkLabel{$1/2$}} (P3)}
+  \PacketInkPath[->, black!85, line width=0.55pt, bend left=14]{(P2) to node[below right=2pt, font=\scriptsize] {\InkLabel{$1$}} (P3)}
+  \PacketInkPath[->, black!85, line width=0.55pt, bend left=14]{(P3) to node[below left=2pt, font=\scriptsize] {\InkLabel{$1$}} (P1)}
 
   % Right: crisp black stochastic transition matrix (muted zeros)
   \node[anchor=west] at (4.55, 0.35) {%
     $\displaystyle P = \begin{pmatrix}
-      \textcolor{black!35}{0} & \textcolor{black!35}{0} & 1 \\[4pt]
-      \tfrac{1}{2} & \textcolor{black!35}{0} & \textcolor{black!35}{0} \\[4pt]
-      \tfrac{1}{2} & 1 & \textcolor{black!35}{0}
+      \InkLabel[black!35]{$0$} & \InkLabel[black!35]{$0$} & 1 \\[4pt]
+      \tfrac{1}{2} & \InkLabel[black!35]{$0$} & \InkLabel[black!35]{$0$} \\[4pt]
+      \tfrac{1}{2} & 1 & \InkLabel[black!35]{$0$}
     \end{pmatrix}$};
 \end{tikzpicture}
 \figcap{Three-page web graph and its stochastic transition matrix $P$: outgoing links from pages $1,2,3$ form columns $1,2,3$ of $P$, splitting probability equally among out-links. The stationary distribution is $\pi=(\tfrac{2}{5},\tfrac{1}{5},\tfrac{2}{5})^{\T}$ ($P\pi=\pi$), and solving $(I-\alpha P)r=(1-\alpha)v$ with $\alpha=\tfrac{1}{2}$ and uniform $v$ yields the damped PageRank vector $r=\tfrac{1}{39}(14,10,15)^{\T}$.}
@@ -335,15 +353,15 @@
 
 \begin{prob}\textbf{HW6 P1.}\ Let $P\colon V\to V$ satisfy $P^2=P$. (a) Prove that every eigenvalue of $P$ belongs to $\{0,1\}$. (b) Prove that $V=\nul P\oplus\range P$.\target{prob-HW6-P1}
 
-\emph{Hint:} (a) apply $P$ twice to an eigenvector. (b) $v=(v-Pv)+Pv$.
+
 \end{prob}
 \begin{prob}\textbf{HW6 P2.}\ Let $D\colon\PP_n(\FF)\to\PP_n(\FF)$ be differentiation, $\FF=\RR$ or $\CC$. (a) Determine all eigenvalues and eigenspaces of $D$. (b) Explain why the answer is different on the space of smooth functions on $\RR$.\target{prob-HW6-P2}
 
-\emph{Hint:} compare degrees in $p'=\lambda p$.
+
 \end{prob}
 \begin{prob}\textbf{HW6 P3.}\ Let $S\colon V\to V$ be invertible and $R=S^{-1}TS$. Prove that $T$ and $R$ have the same eigenvalues; more precisely $E(\lambda,R)=S^{-1}E(\lambda,T)$ for every $\lambda$.\target{prob-HW6-P3}
 
-\emph{Hint:} rewrite $Rv=\lambda v$ as a statement about $Sv$.
+
 \end{prob}
 \begin{prob}\textbf{HW6 P4.}\ Let $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. Using only the $2\times2$ determinant formula, prove $\det(tI-A)=t^2-(a+d)t+(ad-bc)$. Then prove that $\lambda$ is an eigenvalue of $A$ if and only if it is a root of this polynomial.\target{prob-HW6-P4}
 \end{prob}
@@ -351,7 +369,7 @@
 \end{prob}
 \begin{prob}\textbf{HW6 P6 (optional).}\ Let $T\colon V\to V$ and $v\ne0$. Define $C(v,T)=\spn(v,Tv,T^2v,\dots)$. (a) Prove that $C(v,T)$ is $T$-invariant. (b) If $V$ is finite-dimensional, prove there is $m\le\dim V$ with $C(v,T)=\spn(v,Tv,\dots,T^{m-1}v)$.\target{prob-HW6-P6}
 
-\emph{Hint:} (b) take the first power $T^mv$ that depends on the earlier ones.
+
 \end{prob}
 \begin{prob}\textbf{HW6 P7 (optional).}\ For the stochastic matrix
 \[
@@ -367,5 +385,16 @@ find a probability vector $p$ with $Pp=p$ and explain its meaning for the three-
 \end{prob}
 \begin{prob}\textbf{E1 (PageRank by hand).}\ For the three-page web in the text (links $1\to2$, $1\to3$, $2\to3$, $3\to1$) with $\alpha=\frac12$ and uniform $v$, solve $r=\alpha Pr+(1-\alpha)v$.
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW6-P1}{HW6 P1.}} \emph{Hint:} (a) apply $P$ twice to an eigenvector. (b) $v=(v-Pv)+Pv$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW6-P2}{HW6 P2.}} \emph{Hint:} compare degrees in $p'=\lambda p$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW6-P3}{HW6 P3.}} \emph{Hint:} rewrite $Rv=\lambda v$ as a statement about $Sv$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW6-P6}{HW6 P6 (optional).}} \emph{Hint:} (b) take the first power $T^mv$ that depends on the earlier ones.
 
 \end{document}

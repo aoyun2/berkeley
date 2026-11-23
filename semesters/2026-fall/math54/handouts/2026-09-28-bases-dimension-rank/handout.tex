@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
 \newcommand{\vv}[1]{\mathbf{#1}}
 \DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\nullity}{nullity}
@@ -90,57 +91,26 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,scale=0.95]
-  % Left matrix A: pure black math numerals with delicate gray column washes
-  \matrix (A) [matrix of math nodes, left delimiter={[}, right delimiter={]},
-    nodes={minimum width=1.65em, minimum height=1.25em, anchor=center, inner sep=1pt, font=\small},
-    column sep=3pt, row sep=2pt] at (0,0) {
-    1 & 4 & 0 & 2 & -1 \\
-    3 & 12 & 1 & 5 & 5 \\
-    2 & 8 & 1 & 3 & 2 \\
-    5 & 20 & 2 & 8 & 8 \\
-  };
 
-  % Right matrix B = rref(A): delicate row washes + hairline pivot frames
-  \matrix (B) [matrix of math nodes, left delimiter={[}, right delimiter={]},
-    nodes={minimum width=1.65em, minimum height=1.25em, anchor=center, inner sep=1pt, font=\small},
-    column sep=3pt, row sep=3.2pt] at (7.6,0) {
-    1 & 4 & 0 & 2 & 0 \\
-    0 & 0 & 1 & -1 & 0 \\
-    0 & 0 & 0 & 0 & 1 \\
-    0 & 0 & 0 & 0 & 0 \\
-  };
-
-  % Soft borderless neutral gray washes on background layer
-  \begin{scope}[on background layer]
-    \foreach \c in {1,3,5} {
-      \node[fit=(A-1-\c)(A-4-\c), fill=black!9, draw=none, inner sep=1.2pt] {};
-    }
-    \foreach \r in {1,2,3} {
-      \node[fit=(B-\r-1)(B-\r-5), fill=black!8, draw=none, inner xsep=1.2pt, inner ysep=0.25pt] {};
-    }
-    % Crisp hairline pivot frames on B
-    \foreach \r/\c in {1/1, 2/3, 3/5} {
-      \node[fit=(B-\r-\c), draw=black!85, line width=0.5pt, inner sep=0.4pt] {};
-    }
-  \end{scope}
-
-  % Subtle free-column indicators on B
-  \foreach \c in {2,4} {
-    \node[font=\scriptsize, text=black!60, above=3pt] at (B-1-\c.north) {free};
-  }
-
-  % Plain restrained matrix labels above
-  \node[font=\footnotesize, above=14pt] at (A.north) {$A$};
-  \node[font=\footnotesize, above=14pt] at (B.north) {$B=\operatorname{rref}(A)$};
-
-  % Sleek black reduction arrow
-  \draw[-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.6pt] ([xshift=14pt]A.east) -- node[above=2pt,font=\scriptsize] {row reduce} ([xshift=-14pt]B.west);
-
-  % Concise bottom labels
-  \node[font=\scriptsize, text=black!75, below=7pt] at (A.south) {pivot cols $\to \Col A$};
-  \node[font=\scriptsize, text=black!75, below=7pt] at (B.south) {nonzero rows $\to \Row A$};
+\begin{tikzpicture}[font=\small]
+\node (A) at (0,0) {$\displaystyle\begin{bmatrix}
+\textcolor{inkblue}{1}&4&\textcolor{inkblue}{0}&2&\textcolor{inkblue}{-1}\\
+\textcolor{inkblue}{3}&12&\textcolor{inkblue}{1}&5&\textcolor{inkblue}{5}\\
+\textcolor{inkblue}{2}&8&\textcolor{inkblue}{1}&3&\textcolor{inkblue}{2}\\
+\textcolor{inkblue}{5}&20&\textcolor{inkblue}{2}&8&\textcolor{inkblue}{8}
+\end{bmatrix}$};
+\node (B) at (7.6,0) {$\displaystyle\begin{bmatrix}
+\textcolor{inkgreen}{1}&\textcolor{inkgreen}{4}&\textcolor{inkgreen}{0}&\textcolor{inkgreen}{2}&\textcolor{inkgreen}{0}\\
+\textcolor{inkgreen}{0}&\textcolor{inkgreen}{0}&\textcolor{inkgreen}{1}&\textcolor{inkgreen}{-1}&\textcolor{inkgreen}{0}\\
+\textcolor{inkgreen}{0}&\textcolor{inkgreen}{0}&\textcolor{inkgreen}{0}&\textcolor{inkgreen}{0}&\textcolor{inkgreen}{1}\\0&0&0&0&0
+\end{bmatrix}$};
+\node[above=5pt] at (A.north) {\InkLabel{$A$}};
+\node[above=5pt] at (B.north) {\InkLabel{$B=\operatorname{rref}(A)$}};
+\draw[ink arrow] ([xshift=12pt]A.east)--node[above,font=\scriptsize]{row reduce} ([xshift=-12pt]B.west);
+\node[below=6pt,font=\scriptsize] at (A.south) {\InkLabel[inkblue]{columns $1,3,5$}};
+\node[below=6pt,font=\scriptsize] at (B.south) {\InkLabel[inkgreen]{nonzero rows}};
 \end{tikzpicture}
+
 \figcap{How a single row reduction $A\to B=\operatorname{rref}(A)$ produces bases for all three subspaces: (1)~for $\Col A$, take the pivot columns \textbf{of $A$ itself} (\ilink{thm-lay-4-6}{Thm.~4.6}); (2)~for $\Row A$, take the nonzero rows \textbf{of the echelon form $B$} (\ilink{thm-lay-4-7}{Thm.~4.7}); (3)~for $\Nul A$, solve $B\vv x=\vv 0$ in parametric vector form ($x_1=-4x_2-2x_4,\,x_3=x_4,\,x_5=0$), giving basis $\{(-4,1,0,0,0),\,(-2,0,1,1,0)\}$.}
 \end{fig}
 
@@ -244,22 +214,22 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 
 \begin{fig}
 \begin{tikzpicture}[>=Stealth]
-  \node[font=\footnotesize] at (-3.3,1.82) {$\RR^n$};
-  \node[font=\footnotesize] at (3.3,1.82) {$\RR^m$};
+  \node[font=\footnotesize] at (-3.3,1.82) {\InkLabel{$\RR^n$}};
+  \node[font=\footnotesize] at (3.3,1.82) {\InkLabel{$\RR^m$}};
 
-  \node[draw=black!85,fill=black!8,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Row) at (-3.3,0.92) {\footnotesize $\Row A$\\[2pt]\scriptsize $\dim = r$};
-  \node[font=\scriptsize,text=black!75] at (-3.3,0.0) {$\oplus$};
-  \node[draw=black!80,fill=white,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Nul) at (-3.3,-0.92) {\footnotesize $\Nul A$\\[2pt]\scriptsize $\dim = n-r$};
+  \node[draw=black!85,pattern=inkgrain,pattern color=inkblue,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Row) at (-3.3,0.92) {\footnotesize \InkLabel{$\Row A$}\\[2pt]\scriptsize \InkLabel{$\dim = r$}};
+  \node[font=\scriptsize,text=black!75] at (-3.3,0.0) {\InkLabel{$\oplus$}};
+  \node[draw=black!80,fill=white,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Nul) at (-3.3,-0.92) {\footnotesize \InkLabel{$\Nul A$}\\[2pt]\scriptsize \InkLabel{$\dim = n-r$}};
 
   % Delicate left brace for total domain dimension
   \draw[decorate,decoration={brace,amplitude=4.5pt,mirror},black!60,line width=0.45pt]
-    ([xshift=-6pt]Row.north west) -- node[left=6pt,font=\scriptsize,text=black!80] {$\dim\RR^n=n$} ([xshift=-6pt]Nul.south west);
+    ([xshift=-6pt]Row.north west) -- node[left=6pt,font=\scriptsize,text=black!80] {\InkLabel{$\dim\RR^n=n$}} ([xshift=-6pt]Nul.south west);
 
-  \node[draw=black!85,fill=black!8,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Col) at (3.3,0.92) {\footnotesize $\Col A$\\[2pt]\scriptsize $\dim = r$};
-  \node[draw=black!60,fill=white,line width=0.42pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Zero) at (3.3,-0.92) {\footnotesize $\{\vv 0\}$\\[2pt]\scriptsize $\dim = 0$};
+  \node[draw=black!85,pattern=inkgrain,pattern color=inkblue,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Col) at (3.3,0.92) {\footnotesize \InkLabel{$\Col A$}\\[2pt]\scriptsize \InkLabel{$\dim = r$}};
+  \node[draw=black!60,fill=white,line width=0.42pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Zero) at (3.3,-0.92) {\footnotesize \InkLabel{$\{\vv 0\}$}\\[2pt]\scriptsize \InkLabel{$\dim = 0$}};
 
-  \draw[-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt,shorten <=6pt,shorten >=6pt] (Row.east) -- node[above=2pt,font=\scriptsize] {$\vv x\mapsto A\vv x$} node[below=2pt,font=\scriptsize,text=black!70] {bijection} (Col.west);
-  \draw[-{Stealth[length=3.8pt,width=2.2pt]},black!65,line width=0.45pt,dashed,shorten <=6pt,shorten >=6pt] (Nul.east) -- node[above=2pt,font=\scriptsize,text=black!75] {$A\vv x=\vv 0$} (Zero.west);
+  \draw[ink line,-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt,shorten <=6pt,shorten >=6pt] (Row.east) -- node[above=2pt,font=\scriptsize] {\InkLabel{$\vv x\mapsto A\vv x$}} node[below=2pt,font=\scriptsize,text=black!70] {bijection} (Col.west);
+  \draw[ink line,-{Stealth[length=3.8pt,width=2.2pt]},black!65,line width=0.45pt,dashed,shorten <=6pt,shorten >=6pt] (Nul.east) -- node[above=2pt,font=\scriptsize,text=black!75] {\InkLabel{$A\vv x=\vv 0$}} (Zero.west);
 \end{tikzpicture}
 \figcap{Dimension balance of the Rank Theorem (\ilink{thm-lay-4-14}{Thm.~4.14}) for an $m\times n$ matrix $A$ with $r$ pivots: the $n$ columns of $A$ partition into $r$ pivot columns ($\operatorname{rank}A=\dim\Col A=\dim\Row A=r$, shaded) and $n-r$ non-pivot columns ($\dim\Nul A=n-r$), so $\operatorname{rank}A+\dim\Nul A=n$.}
 \end{fig}

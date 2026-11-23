@@ -1,11 +1,29 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}
 \newcommand{\PP}{\mathcal P}
 \title{Math 110 --- Week 2}
 \subtitle{Linear independence, span, bases, dimension (Notes Ch.~3--4, LADR 2A--2C, HW2)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \setlength{\parskip}{3pt}
 \maketitle
@@ -225,49 +243,49 @@
   % Left panel: Two planes in R^3 intersecting in a line (soft neutral gray washes + true 3D occlusion)
   \begin{scope}[shift={(0,0)},scale=0.94]
     % Lower half of steep plane W (below U), protruding cleanly below front edge of U
-    \fill[black!13] (-1.25,-0.30) -- (1.25,0.30) -- (1.25,-1.15) -- (-1.25,-1.75) -- cycle;
-    \draw[black!30,densely dashed,line width=0.35pt] (-1.25,-0.30) -- (-1.25,-0.785);
-    \draw[black!30,densely dashed,line width=0.35pt] (1.25,0.30) -- (1.25,-0.965);
+    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,-1.15) -- (-1.25,-1.75) -- cycle}
+    \PacketInkPath[black!30,densely dashed,line width=0.35pt]{(-1.25,-0.30) -- (-1.25,-0.785)}
+    \PacketInkPath[black!30,densely dashed,line width=0.35pt]{(1.25,0.30) -- (1.25,-0.965)}
 
     % Plane U (horizontal-tilted soft neutral gray wash, whisper-edged)
-    \fill[black!8,fill opacity=0.92] (-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle;
-    \draw[black!38,line width=0.38pt] (-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle;
-    \node[font=\footnotesize] at (-1.62,1.16) {$U$};
+    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \PacketInkPath[black!38,line width=0.38pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel{$U$}};
 
     % Visible lower edges of W protruding below front edge of U
-    \draw[black!45,line width=0.38pt] (-1.25,-0.785) -- (-1.25,-1.75) -- (1.25,-1.15) -- (1.25,-0.965);
+    \PacketInkPath[black!45,line width=0.38pt]{(-1.25,-0.785) -- (-1.25,-1.75) -- (1.25,-1.15) -- (1.25,-0.965)}
 
     % Upper half of steep plane W (rising above U)
-    \fill[black!15,fill opacity=0.80] (-1.25,-0.30) -- (1.25,0.30) -- (1.25,1.65) -- (-1.25,1.05) -- cycle;
-    \draw[black!45,line width=0.38pt] (-1.25,-0.30) -- (-1.25,1.05) -- (1.25,1.65) -- (1.25,0.30);
-    \node[font=\footnotesize] at (1.35,1.82) {$W$};
+    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,1.65) -- (-1.25,1.05) -- cycle}
+    \PacketInkPath[black!45,line width=0.38pt]{(-1.25,-0.30) -- (-1.25,1.05) -- (1.25,1.65) -- (1.25,0.30)}
+    \node[font=\footnotesize] at (1.35,1.82) {\InkLabel{$W$}};
 
     % Intersection line U \cap W in crisp pure black
-    \draw[black,line width=1.25pt] (-1.85,-0.444) -- (1.98,0.475);
-    \node[font=\footnotesize,right=3pt] at (1.98,0.475) {$U\cap W$};
+    \PacketInkPath[black,line width=0.55pt]{(-1.85,-0.444) -- (1.98,0.475)}
+    \node[font=\footnotesize,right=3pt] at (1.98,0.475) {\InkLabel{$U\cap W$}};
     \node[figdot] at (0,0) {};
-    \node[below right=2pt,font=\scriptsize] at (0,0) {$0$};
+    \node[below right=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
 
-    \node[font=\footnotesize] at (0.15,-2.15) {(a)};
+    \node[font=\footnotesize] at (0.15,-2.15) {\InkLabel{(a)}};
   \end{scope}
 
   % Right panel: Plane U and transverse line W (Direct sum, true 3D occlusion)
   \begin{scope}[shift={(7.10,0)},scale=0.94]
     % Plane U (matching soft neutral gray wash)
-    \fill[black!8] (-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle;
-    \draw[black!38,line width=0.38pt] (-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle;
-    \node[font=\footnotesize] at (-1.62,1.16) {$U$};
+    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \PacketInkPath[black!38,line width=0.38pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel{$U$}};
 
     % Transverse line W: solid below front edge, dashed behind plane, solid above plane
-    \draw[black,line width=1.15pt] (-0.49,-1.55) -- (-0.270,-0.855);
-    \draw[black!45,densely dashed,line width=0.65pt] (-0.270,-0.855) -- (0,0);
-    \draw[black,line width=1.15pt] (0,0) -- (0.50,1.58) node[right=3pt,font=\footnotesize] {$W$};
+    \PacketInkPath[black,line width=0.55pt]{(-0.49,-1.55) -- (-0.270,-0.855)}
+    \PacketInkPath[black!45,densely dashed,line width=0.55pt]{(-0.270,-0.855) -- (0,0)}
+    \PacketInkPath[black,line width=0.55pt]{(0,0) -- (0.50,1.58) node[right=3pt,font=\footnotesize] {\InkLabel{$W$}}}
 
     % Origin
     \node[figdot] at (0,0) {};
-    \node[below right=2.5pt,font=\scriptsize] at (0,0) {$0$};
+    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
 
-    \node[font=\footnotesize] at (0.0,-2.15) {(b)};
+    \node[font=\footnotesize] at (0.0,-2.15) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{Geometry of \ilink{prop-15}{Prop.~15} in $\RR^3$: (a)~two distinct planes $U,W$ through $0$ span $\RR^3$, so $\dim(U\cap W)=2+2-3=1$ (they must intersect in a line, and $U+W$ is not direct); (b)~a plane $U$ ($\dim 2$) and a line $W$ not contained in $U$ ($\dim 1$) satisfy $U\cap W=\{0\}$ and $\dim U+\dim W=3=\dim\RR^3$, so $\RR^3=U\oplus W$.}
@@ -299,27 +317,27 @@
 
 \begin{prob}\textbf{HW2 P1 (LADR 2A.11).}\ Prove or give a counterexample: if $v_1,\dots,v_n$ and $w_1,\dots,w_n$ are linearly independent lists in $V$, then $v_1+w_1,\dots,v_n+w_n$ is linearly independent.\target{prob-HW2-P1}
 
-\emph{Hint:} try $n=1$.
+
 \end{prob}
 \begin{prob}\textbf{HW2 P2.}\ Let $\FF^\infty$ be the space of all sequences $(a_1,a_2,\dots)$, $a_j\in\FF$, and $e_j$ the sequence with $1$ in position $j$ and $0$ elsewhere. (a) Verify that $\FF^\infty$ is a vector space. (b) Prove that it is infinite-dimensional. (c) Prove that $e_1,e_2,\dots$ do not span $\FF^\infty$.\target{prob-HW2-P2}
 
-\emph{Hint:} (b) \ilink{prop-10}{Prop.~10}: a finite spanning list bounds the length of independent lists. (c) a finite combination has only finitely many nonzero entries.
+
 \end{prob}
 \begin{prob}\textbf{HW2 P3 (LADR 2B.5).}\ Suppose $V$ is finite-dimensional and $U,W$ are subspaces with $V=U+W$. Prove that $V$ has a basis all of whose vectors belong to $U\cup W$.\target{prob-HW2-P3}
 
-\emph{Hint:} a spanning list contains a basis (\ilink{prop-9}{Prop.~9}).
+
 \end{prob}
 \begin{prob}\textbf{HW2 P4.}\ (a) Prove that every nonzero proper subspace of $\FF^2$ has the form $\spn(v)$ for some $v\ne0$. (b) Let $v,w\in\FF^2$. Prove that $v,w$ is a basis of $\FF^2$ if and only if neither is a scalar multiple of the other.\target{prob-HW2-P4}
 
-\emph{Hint:} dimensions of subspaces (\ilink{prop-14}{Prop.~14}) and \ilink{prop-13}{Prop.~13}.
+
 \end{prob}
 \begin{prob}\textbf{HW2 P5 (LADR 2C.12).}\ Suppose $U,W$ are subspaces of $\RR^8$ with $\dim U=3$, $\dim W=5$ and $U+W=\RR^8$. Prove that $\RR^8=U\oplus W$.\target{prob-HW2-P5}
 
-\emph{Hint:} the dimension formula.
+
 \end{prob}
 \begin{prob}\textbf{HW2 P6.}\ Let $U=\{p\in\PP_4(\RR):p(1)=p'(1)=0\}$. (a) Prove that $U$ is a subspace. (b) Find a basis of $U$ and determine $\dim U$ directly, without rank--nullity.\target{prob-HW2-P6}
 
-\emph{Hint:} write $p$ in the basis $1,(x-1),\dots,(x-1)^4$ of Ex.~18.
+
 \end{prob}
 \begin{prob}\textbf{R1 (Practice Midterm 1, Question 1).}\ Let $u_1=(1,1,0,0)$, $u_2=(0,1,1,0)$, $w_1=(0,0,1,1)$, $w_2=(1,0,0,-1)$, $U=\spn(u_1,u_2)$, $W=\spn(w_1,w_2)$. (a) Prove that $\RR^4=U\oplus W$. (b) Write $(2,1,3,0)$ as $u+w$ with $u\in U$, $w\in W$.
 \end{prob}
@@ -327,5 +345,20 @@
 \end{prob}
 \begin{prob}\textbf{R3 (Midterm 1 review, Exercise 3).}\ Let $V=\{p\in\PP_2(\RR):p'(1)=p(2)\}$. Construct a basis of $V$ and prove it is a basis.
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P1}{HW2 P1 (LADR 2A.11).}} \emph{Hint:} try $n=1$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P2}{HW2 P2.}} \emph{Hint:} (b) \ilink{prop-10}{Prop.~10}: a finite spanning list bounds the length of independent lists. (c) a finite combination has only finitely many nonzero entries.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P3}{HW2 P3 (LADR 2B.5).}} \emph{Hint:} a spanning list contains a basis (\ilink{prop-9}{Prop.~9}).
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P4}{HW2 P4.}} \emph{Hint:} dimensions of subspaces (\ilink{prop-14}{Prop.~14}) and \ilink{prop-13}{Prop.~13}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P5}{HW2 P5 (LADR 2C.12).}} \emph{Hint:} the dimension formula.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P6}{HW2 P6.}} \emph{Hint:} write $p$ in the basis $1,(x-1),\dots,(x-1)^4$ of Ex.~18.
 
 \end{document}

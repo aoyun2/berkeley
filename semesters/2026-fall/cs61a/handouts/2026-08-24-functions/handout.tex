@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \title{CS 61A --- Week 1}
 \subtitle{Expressions, names, functions, environment diagrams, print and None (Lectures 1--2, Composing Programs 1.1--1.3)}
 \author{}\date{}\ihead{}
@@ -35,48 +36,48 @@ The order matters as soon as evaluating an operand \emph{does} something visible
 \end{ideabox}
 \Needspace{18\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   call/.style={draw=black!85,fill=white,line width=0.45pt,inner xsep=5.5pt,inner ysep=3.4pt,align=center,font=\ttfamily\footnotesize},
   leaf/.style={inner xsep=3pt,inner ysep=2pt,font=\ttfamily\footnotesize,text=black,text height=1.5ex,text depth=0.25ex},
   edge/.style={draw=black!65,line width=0.45pt}]
   % Level 0: root call expression
-  \node[call] (R) at (6.8,0) {mul(add(4, mul(4, 6)), add(3, 5))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 224$}\quad\textcolor{black!55}{(4th)}};
+  \node[call] (R) at (6.8,0) {\InkLabel{\shortstack[c]{mul(add(4, mul(4, 6)), add(3, 5))\\[1.5pt]\rmfamily\scriptsize$\Rightarrow 224$\quad(4th)}}};
 
   % Level 1: operator + two call-expression operands
-  \node[leaf] (L0) at (2.0,-1.70) {mul};
-  \node[call] (M1) at (5.4,-1.70) {add(4, mul(4, 6))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 28$}\quad\textcolor{black!55}{(2nd)}};
-  \node[call] (R1) at (11.2,-1.70) {add(3, 5)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 8$}\quad\textcolor{black!55}{(3rd)}};
+  \node[leaf] (L0) at (2.0,-1.70) {\InkLabel{mul}};
+  \node[call] (M1) at (5.4,-1.70) {\InkLabel{\shortstack[c]{add(4, mul(4, 6))\\[1.5pt]\rmfamily\scriptsize$\Rightarrow 28$\quad(2nd)}}};
+  \node[call] (R1) at (11.2,-1.70) {\InkLabel{\shortstack[c]{add(3, 5)\\[1.5pt]\rmfamily\scriptsize$\Rightarrow 8$\quad(3rd)}}};
 
   % Level 2: children of M1 and R1
-  \node[leaf] (M1a) at (2.8,-3.35) {add};
-  \node[leaf] (M1b) at (4.5,-3.35) {4};
-  \node[call] (M1c) at (6.8,-3.35) {mul(4, 6)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 24$}\quad\textcolor{black!55}{(1st)}};
+  \node[leaf] (M1a) at (2.8,-3.35) {\InkLabel{add}};
+  \node[leaf] (M1b) at (4.5,-3.35) {\InkLabel{4}};
+  \node[call] (M1c) at (6.8,-3.35) {\InkLabel{\shortstack[c]{mul(4, 6)\\[1.5pt]\rmfamily\scriptsize$\Rightarrow 24$\quad(1st)}}};
 
-  \node[leaf] (R1a) at (9.7,-3.35) {add};
-  \node[leaf] (R1b) at (11.2,-3.35) {3};
-  \node[leaf] (R1c) at (12.7,-3.35) {5};
+  \node[leaf] (R1a) at (9.7,-3.35) {\InkLabel{add}};
+  \node[leaf] (R1b) at (11.2,-3.35) {\InkLabel{3}};
+  \node[leaf] (R1c) at (12.7,-3.35) {\InkLabel{5}};
 
   % Level 3: children of M1c
-  \node[leaf] (M2a) at (5.3,-4.85) {mul};
-  \node[leaf] (M2b) at (6.8,-4.85) {4};
-  \node[leaf] (M2c) at (8.3,-4.85) {6};
+  \node[leaf] (M2a) at (5.3,-4.85) {\InkLabel{mul}};
+  \node[leaf] (M2b) at (6.8,-4.85) {\InkLabel{4}};
+  \node[leaf] (M2c) at (8.3,-4.85) {\InkLabel{6}};
 
   % Edges
-  \draw[edge] ([xshift=-1.8cm]R.south) -- (L0.north);
-  \draw[edge] ([xshift=-0.5cm]R.south) -- (M1.north);
-  \draw[edge] ([xshift= 1.7cm]R.south) -- (R1.north);
+  \InkStroke[edge]{([xshift=-1.8cm]R.south) -- (L0.north)}
+  \InkStroke[edge]{([xshift=-0.5cm]R.south) -- (M1.north)}
+  \InkStroke[edge]{([xshift= 1.7cm]R.south) -- (R1.north)}
 
-  \draw[edge] ([xshift=-0.85cm]M1.south) -- (M1a.north);
-  \draw[edge] ([xshift=-0.20cm]M1.south) -- (M1b.north);
-  \draw[edge] ([xshift= 0.75cm]M1.south) -- (M1c.north);
+  \InkStroke[edge]{([xshift=-0.85cm]M1.south) -- (M1a.north)}
+  \InkStroke[edge]{([xshift=-0.20cm]M1.south) -- (M1b.north)}
+  \InkStroke[edge]{([xshift= 0.75cm]M1.south) -- (M1c.north)}
 
-  \draw[edge] ([xshift=-0.45cm]R1.south) -- (R1a.north);
-  \draw[edge] (R1.south)                 -- (R1b.north);
-  \draw[edge] ([xshift= 0.45cm]R1.south) -- (R1c.north);
+  \InkStroke[edge]{([xshift=-0.45cm]R1.south) -- (R1a.north)}
+  \InkStroke[edge]{(R1.south)                 -- (R1b.north)}
+  \InkStroke[edge]{([xshift= 0.45cm]R1.south) -- (R1c.north)}
 
-  \draw[edge] ([xshift=-0.45cm]M1c.south) -- (M2a.north);
-  \draw[edge] (M1c.south)                 -- (M2b.north);
-  \draw[edge] ([xshift= 0.45cm]M1c.south) -- (M2c.north);
+  \InkStroke[edge]{([xshift=-0.45cm]M1c.south) -- (M2a.north)}
+  \InkStroke[edge]{(M1c.south)                 -- (M2b.north)}
+  \InkStroke[edge]{([xshift= 0.45cm]M1c.south) -- (M2c.north)}
 \end{tikzpicture}
 \figcap{Expression tree. Every boxed call expression has its operator as its leftmost child and its operands to the right, and finishes after all of its children: \cd{mul(4, 6)} (1st), \cd{add(4, 24)} (2nd), \cd{add(3, 5)} (3rd), and \cd{mul(28, 8)} (4th).}
 \end{fig}
@@ -181,44 +182,44 @@ print(x)
   \ii \cd{print(x)}: \cd{x} is looked up in the global frame: displays \cd{2}.
 \end{steps}
 \begin{fig}
-\begin{tikzpicture}[font=\ttfamily\footnotesize]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},font=\ttfamily\footnotesize]
   % ---- Global frame ----
-  \fill[black!6] (-0.2,1.35) rectangle (4.7,1.82);
-  \draw[black!35,line width=0.35pt] (-0.2,1.35) -- (4.7,1.35);
-  \draw[black!85,line width=0.45pt] (-0.2,0.0) rectangle (4.7,1.82);
-  \node[anchor=west,font=\footnotesize,text=black] at (0.02,1.59) {\textbf{Global frame}};
+  \InkRegion[inkblue]{(-0.2,1.35) rectangle (4.7,1.82)}
+  \InkStroke[black!35,line width=0.35pt]{(-0.2,1.35) -- (4.7,1.35)}
+  \InkStroke[black!85,line width=0.45pt]{(-0.2,0.0) rectangle (4.7,1.82)}
+  \node[anchor=west,font=\footnotesize,text=black] at (0.02,1.59) {\InkLabel{\textbf{Global frame}}};
 
-  \node[anchor=east] at (2.10,1.00) {g};
-  \draw[black!65,fill=white,line width=0.4pt] (2.25,0.79) rectangle (4.45,1.21);
+  \node[anchor=east] at (2.10,1.00) {\InkLabel{g}};
+  \InkStroke[black!65,fill=white,line width=0.4pt]{(2.25,0.79) rectangle (4.45,1.21)}
   \fill[figblue] (3.35,1.00) circle (1.5pt);
 
-  \node[anchor=east] at (2.10,0.36) {x};
-  \draw[black,fill=white,line width=0.8pt] (2.25,0.15) rectangle (4.45,0.57);
-  \node[text=black] at (3.35,0.36) {2};
+  \node[anchor=east] at (2.10,0.36) {\InkLabel{x}};
+  \InkStroke[black,fill=white,line width=0.8pt]{(2.25,0.15) rectangle (4.45,0.57)}
+  \node[text=black] at (3.35,0.36) {\InkLabel{2}};
 
   % ---- Function object ----
-  \node[anchor=west,draw=black!85,fill=white,line width=0.45pt,inner xsep=7pt,inner ysep=4.5pt,align=left] (fg) at (6.1,1.00) {%
+  \node[anchor=west,draw=black!85,fill=white,line width=0.45pt,inner xsep=7pt,inner ysep=4.5pt,align=left] (fg) at (6.1,1.00) {\InkLabel{\shortstack[c]{%
     \ttfamily\footnotesize func g(y)\\[-1pt]
-    \rmfamily\scriptsize\color{black!60}[parent=Global]};
-  \draw[->,figblue,line width=0.65pt] (3.35,1.00) -- (fg.west);
+    \rmfamily\scriptsize[parent=Global]}}};
+  \InkStroke[->,figblue,line width=0.65pt]{(3.35,1.00) -- (fg.west)}
 
   % ---- Local frame f1 ----
-  \fill[black!6] (-0.2,-1.18) rectangle (4.7,-0.71);
-  \draw[black!40,line width=0.35pt] (-0.2,-1.18) -- (4.7,-1.18);
-  \draw[black!85,line width=0.45pt] (-0.2,-3.22) rectangle (4.7,-0.71);
-  \node[anchor=west,font=\footnotesize,text=black] at (0.02,-0.95) {\textbf{\cd{f1}: \cd{g}} \rmfamily\scriptsize\color{black!60}[parent=Global]};
+  \InkRegion[inkblue]{(-0.2,-1.18) rectangle (4.7,-0.71)}
+  \InkStroke[black!40,line width=0.35pt]{(-0.2,-1.18) -- (4.7,-1.18)}
+  \InkStroke[black!85,line width=0.45pt]{(-0.2,-3.22) rectangle (4.7,-0.71)}
+  \node[anchor=west,font=\footnotesize,text=black] at (0.02,-0.95) {\InkLabel{\textbf{\cd{f1}: \cd{g}} \rmfamily\scriptsize[parent=Global]}};
 
-  \node[anchor=east] at (2.10,-1.54) {y};
-  \draw[black!60,fill=white,line width=0.4pt] (2.25,-1.75) rectangle (4.45,-1.33);
-  \node at (3.35,-1.54) {6};
+  \node[anchor=east] at (2.10,-1.54) {\InkLabel{y}};
+  \InkStroke[black!60,fill=white,line width=0.4pt]{(2.25,-1.75) rectangle (4.45,-1.33)}
+  \node at (3.35,-1.54) {\InkLabel{6}};
 
-  \node[anchor=east] at (2.10,-2.18) {x};
-  \draw[black,fill=white,line width=0.8pt] (2.25,-2.39) rectangle (4.45,-1.97);
-  \node[text=black] at (3.35,-2.18) {12};
+  \node[anchor=east] at (2.10,-2.18) {\InkLabel{x}};
+  \InkStroke[black,fill=white,line width=0.8pt]{(2.25,-2.39) rectangle (4.45,-1.97)}
+  \node[text=black] at (3.35,-2.18) {\InkLabel{12}};
 
-  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.10,-2.84) {Return value};
-  \draw[black!65,fill=white,line width=0.4pt] (2.25,-3.05) rectangle (4.45,-2.63);
-  \node at (3.35,-2.84) {13};
+  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.10,-2.84) {\InkLabel{Return value}};
+  \InkStroke[black!65,fill=white,line width=0.4pt]{(2.25,-3.05) rectangle (4.45,-2.63)}
+  \node at (3.35,-2.84) {\InkLabel{13}};
 \end{tikzpicture}
 \figcap{Environment diagram at the moment \cd{g} returns. Each frame header records its name and parent; the two emphasized cells mark the independent bindings of \cd{x}---inside \cd{f1}, lookup finds \cd{x = 12} locally, while in the global frame \cd{x} remains \cd{2}.}
 \end{fig}

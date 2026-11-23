@@ -1,12 +1,30 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
 \newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}\newcommand{\T}{\mathsf T}
 \newcommand{\Tt}{\widetilde T}
 \title{Math 110 --- Week 5}
 \subtitle{Quotient maps, isomorphism theorems, dual spaces (Notes Ch.~9--10, LADR 3E--3F, HW5)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -71,14 +89,14 @@
 
 \begin{fig}
 \[
-\begin{tikzcd}[column sep=5.8em, row sep=3.4em]
-  V \arrow[r, "T"]
-    \arrow[d, two heads, "\pi"']
-  & W \\
-  V\!/\!\nul T
-    \arrow[r, "\Tt"{yshift=1pt}, "\cong"'{yshift=-1pt}]
-  & \range T
-    \arrow[u, hook, "\iota"']
+\begin{tikzcd}[arrows={line width=.42pt},column sep=5.8em, row sep=3.4em]
+  \InkLabel{$V$} \arrow[r, "{\InkLabel{$T$}}"]
+    \arrow[d, two heads, "{\InkLabel{$\pi$}}"']
+  & \InkLabel{$W$} \\
+  \InkLabel{$V\!/\!\nul T$}
+    \arrow[r, "{\InkLabel{$\Tt$}}"{yshift=1pt}, "{\InkLabel{$\cong$}}"'{yshift=-1pt}]
+  & \InkLabel{$\range T$}
+    \arrow[u, hook, "{\InkLabel{$\iota$}}"']
 \end{tikzcd}
 \]
 \figcap{Canonical factorization $T=\iota\circ\Tt\circ\pi$ from the First Isomorphism Theorem (\ilink{prop-41}{Prop.~41} / LADR 3.107): the surjective quotient map $\pi$ ($\twoheadrightarrow$) collapses each coset $v+\nul T$ to one point, $\Tt$ is an isomorphism onto $\range T$ giving $\dim(V/\nul T)=\dim V-\dim\nul T=\dim\range T$, and $\iota$ ($\hookrightarrow$) is the inclusion into $W$.}
@@ -259,7 +277,7 @@
 \begin{ideabox}
   By definition, $\varphi\in\nul T'\iff T'\varphi=0\iff\varphi(Tv)=0$ for all $v\in V\iff\varphi$ vanishes on $\range T\iff\varphi\in(\range T)^0$, giving $\nul T'=(\range T)^0$. For $\range T'=(\nul T)^0$, if $\varphi=T'\psi=\psi\circ T\in\range T'$, then for any $v\in\nul T$, $\varphi(v)=\psi(Tv)=\psi(0)=0$, so $\range T'\subseteq(\nul T)^0$; comparing dimensions via \ilink{name-ladr-3-125-dimension-of-the-annihilator}{LADR 3.125} and Rank--Nullity immediately forces equality:
   \[
-    \dim\range T' = \dim W' - \dim\nul T' = \dim W - \dim(\range T)^0 = \dim\range T = \dim V - \dim\nul T = \dim(\nul T)^0!
+    \begin{aligned}\dim\range T' &= \dim W' - \dim\nul T' = \dim W - \dim(\range T)^0\\ &= \dim\range T = \dim V - \dim\nul T = \dim(\nul T)^0.\end{aligned}
   \]
   Finally, for $\MM(T')$: the $(k,j)$-entry of $\MM(T')$ is the $k$-th coordinate of $T'(\psi_j)$ in the dual basis $\varphi_1,\dots,\varphi_n$. By \ilink{prop-45}{Prop.~45(b)}, that $k$-th coordinate is found by evaluating $T'(\psi_j)$ at $v_k$: $(T'\psi_j)(v_k)=\psi_j(Tv_k)=a_{jk}$, which is the $(j,k)$-entry of $\MM(T)$.
 \end{ideabox}
@@ -274,22 +292,22 @@
 \begin{fig}
 \begin{tikzpicture}[
     space/.style={align=center, inner sep=4pt}]
-  \node[space] (V)  at (0,2.35)   {$V$\\[1pt]{\scriptsize\color{black!65}$\nul T \subseteq V$}};
-  \node[space] (W)  at (5.8,2.35) {$W$\\[1pt]{\scriptsize\color{black!65}$\range T \subseteq W$}};
-  \node[space] (Vp) at (0,0)      {$V'$\\[1pt]{\scriptsize\color{black!65}$\range T' = (\nul T)^0$}};
-  \node[space] (Wp) at (5.8,0)    {$W'$\\[1pt]{\scriptsize\color{black!65}$\nul T' = (\range T)^0$}};
+  \node[space] (V)  at (0,2.35)   {\InkLabel{$V$}\\[1pt]{\scriptsize\color{black!65}\InkLabel{$\nul T \subseteq V$}}};
+  \node[space] (W)  at (5.8,2.35) {\InkLabel{$W$}\\[1pt]{\scriptsize\color{black!65}\InkLabel{$\range T \subseteq W$}}};
+  \node[space] (Vp) at (0,0)      {\InkLabel{$V'$}\\[1pt]{\scriptsize\color{black!65}\InkLabel{$\range T' = (\nul T)^0$}}};
+  \node[space] (Wp) at (5.8,0)    {\InkLabel{$W'$}\\[1pt]{\scriptsize\color{black!65}\InkLabel{$\nul T' = (\range T)^0$}}};
 
-  \draw[->, black, line width=0.65pt] ([xshift=6pt]V.east) -- ([xshift=-6pt]W.west)
-    node[midway, above=2pt, font=\footnotesize] {$T$}
-    node[midway, below=2pt, font=\scriptsize, text=black!70] {$\MM(T) = A$};
-  \draw[->, black, line width=0.65pt] ([xshift=-6pt]Wp.west) -- ([xshift=6pt]Vp.east)
-    node[midway, above=2pt, font=\footnotesize] {$T'$}
-    node[midway, below=2pt, font=\scriptsize, text=black!70] {$\MM(T') = A^{\T}$};
+  \PacketInkPath[->, black, line width=0.55pt]{([xshift=6pt]V.east) -- ([xshift=-6pt]W.west)
+    node[midway, above=2pt, font=\footnotesize] {\InkLabel{$T$}}
+    node[midway, below=2pt, font=\scriptsize, text=black!70] {\InkLabel{$\MM(T) = A$}}}
+  \PacketInkPath[->, black, line width=0.55pt]{([xshift=-6pt]Wp.west) -- ([xshift=6pt]Vp.east)
+    node[midway, above=2pt, font=\footnotesize] {\InkLabel{$T'$}}
+    node[midway, below=2pt, font=\scriptsize, text=black!70] {\InkLabel{$\MM(T') = A^{\T}$}}}
 
-  \draw[<->, densely dashed, black!45, line width=0.45pt] ([yshift=-2pt]V.south) -- ([yshift=2pt]Vp.north)
-    node[midway, left=4pt, font=\scriptsize, text=black!65] {$U \leftrightarrow U^0$};
-  \draw[<->, densely dashed, black!45, line width=0.45pt] ([yshift=-2pt]W.south) -- ([yshift=2pt]Wp.north)
-    node[midway, right=4pt, font=\scriptsize, text=black!65] {$U \leftrightarrow U^0$};
+  \PacketInkPath[<->, densely dashed, black!45, line width=0.45pt]{([yshift=-2pt]V.south) -- ([yshift=2pt]Vp.north)
+    node[midway, left=4pt, font=\scriptsize, text=black!65] {\InkLabel{$U \leftrightarrow U^0$}}}
+  \PacketInkPath[<->, densely dashed, black!45, line width=0.45pt]{([yshift=-2pt]W.south) -- ([yshift=2pt]Wp.north)
+    node[midway, right=4pt, font=\scriptsize, text=black!65] {\InkLabel{$U \leftrightarrow U^0$}}}
 \end{tikzpicture}
 \figcap{Duality between $T\colon V\to W$ (top) and its dual map $T'\colon W'\to V'$ (bottom; \ilink{prop-49}{Prop.~49--51} / LADR 3.128--3.132): $T'$ pulls linear functionals on $W$ back to $V$ via $\varphi\mapsto\varphi\circ T$, reversing arrow direction, transposing the matrix, and pairing null spaces with ranges via annihilators $U\leftrightarrow U^0$.}
 \end{fig}
@@ -311,23 +329,23 @@
 
 \begin{prob}\textbf{HW5 P1.}\ Define $T\colon\PP_3(\RR)\to\RR^2$, $T(p)=(p(0),p(1))$. (a) Determine $\nul T$ and prove that $T$ is surjective. (b) Describe explicitly the induced isomorphism $\PP_3(\RR)/\nul T\to\RR^2$ from the first isomorphism theorem. (c) Find a basis of $\PP_3(\RR)/\nul T$.\target{prob-HW5-P1}
 
-\emph{Hint:} a polynomial with zeros at $0$ and $1$ is divisible by $x(x-1)$. For (c), an isomorphism carries a basis back to a basis.
+
 \end{prob}
 \begin{prob}\textbf{HW5 P2.}\ Let $T\colon V\to W$ be linear and $U$ a subspace of $V$ contained in $\nul T$. Prove that there is a unique linear map $\Tt\colon V/U\to W$ with $\Tt(v+U)=Tv$ for every $v$. Determine $\nul\Tt$ in terms of $\nul T$ and $U$.\target{prob-HW5-P2}
 
-\emph{Hint:} well-definedness is the only issue for existence.
+
 \end{prob}
 \begin{prob}\textbf{HW5 P3 (LADR 3F, Exercise 1).}\ Prove that every linear functional $\varphi\colon V\to\FF$ is either the zero map or surjective.\target{prob-HW5-P3}
 
-\emph{Hint:} $\range\varphi$ is a subspace of the one-dimensional space $\FF$; or scale a vector with $\varphi(v)\ne0$.
+
 \end{prob}
 \begin{prob}\textbf{HW5 P4.}\ Let $v_1,\dots,v_n$ be a basis of $V$ with dual basis $\varphi_1,\dots,\varphi_n$. (a) Prove $v=\sum_{j=1}^n\varphi_j(v)v_j$ for every $v\in V$. (b) Prove $\psi=\sum_{j=1}^n\psi(v_j)\varphi_j$ for every $\psi\in V'$.\target{prob-HW5-P4}
 
-\emph{Hint:} (a) apply $\varphi_j$ to $v=\sum a_kv_k$. (b) evaluate both sides at $v_k$.
+
 \end{prob}
 \begin{prob}\textbf{HW5 P5.}\ Let $T\colon V\to W$ be linear between finite-dimensional spaces with matrix $A$ in bases $B$, $C$. Prove that the matrix of $T'\colon W'\to V'$, $T'(\psi)=\psi\circ T$, in the dual bases is $A^\T$.\target{prob-HW5-P5}
 
-\emph{Hint:} evaluate $T'(w_j')$ at $v_k$.
+
 \end{prob}
 \begin{prob}\textbf{HW5 P6.}\ Let $U=\spn\bigl((1,1,0),(0,1,1)\bigr)\subseteq\RR^3$. (a) Determine $U^0\subseteq(\RR^3)'$, writing functionals as row vectors. (b) Verify that $\dim U+\dim U^0=3$.\target{prob-HW5-P6}
 \end{prob}
@@ -339,5 +357,18 @@
 \end{prob}
 \begin{prob}\textbf{E1 (dual basis computation).}\ Find the dual basis of the basis $v_1=(1,1)$, $v_2=(1,-1)$ of $\RR^2$, as row vectors. Then write the functional $\psi(x,y)=3x+y$ in that dual basis.
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW5-P1}{HW5 P1.}} \emph{Hint:} a polynomial with zeros at $0$ and $1$ is divisible by $x(x-1)$. For (c), an isomorphism carries a basis back to a basis.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW5-P2}{HW5 P2.}} \emph{Hint:} well-definedness is the only issue for existence.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW5-P3}{HW5 P3 (LADR 3F, Exercise 1).}} \emph{Hint:} $\range\varphi$ is a subspace of the one-dimensional space $\FF$; or scale a vector with $\varphi(v)\ne0$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW5-P4}{HW5 P4.}} \emph{Hint:} (a) apply $\varphi_j$ to $v=\sum a_kv_k$. (b) evaluate both sides at $v_k$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW5-P5}{HW5 P5.}} \emph{Hint:} evaluate $T'(w_j')$ at $v_k$.
 
 \end{document}

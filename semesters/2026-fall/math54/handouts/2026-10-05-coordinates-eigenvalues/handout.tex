@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
 \newcommand{\vv}[1]{\mathbf{#1}}
 \DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}
@@ -82,35 +83,35 @@ Check: $3(2,1)+2(-1,1)=(4,5)$, which is unique by Thm.~8.
 \begin{tikzpicture}[>=Stealth]
   \begin{scope}[scale=0.56]
     % Soft borderless gray wash for the fundamental basis cell [b1, b2]
-    \fill[black!7] (0,0) -- (2,1) -- (1,2) -- (-1,1) -- cycle;
+    \path[pattern=inkgrain,pattern color=inkblue] (0,0) -- (2,1) -- (1,2) -- (-1,1) -- cycle;
 
     % Delicate Spivak skewed B-grid for c1 in [-1,3], c2 in [0,2]
     \foreach \i in {-1,0,1,2,3} {
-      \draw[black!18,line width=0.28pt] ({2*\i},{\i}) -- ({2*\i-2},{\i+2});
+      \InkStroke[black!18,line width=0.28pt]{({2*\i},{\i}) -- ({2*\i-2},{\i+2})}
     }
     \foreach \j in {0,1,2} {
-      \draw[black!18,line width=0.28pt] ({-2-\j},{-1+\j}) -- ({6-\j},{3+\j});
+      \InkStroke[black!18,line width=0.28pt]{({-2-\j},{-1+\j}) -- ({6-\j},{3+\j})}
     }
 
     % Hairline axes
-    \draw[figaxis] (-4.4,0) -- (7.3,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.4) -- (0,6.1) node[above,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-4.4,0) -- (7.3,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-1.4) -- (0,6.1) node[above,font=\scriptsize] {\InkLabel{$x_2$}};
 
     % Basis vectors b1, b2 (restrained dark ink)
-    \draw[figvec,draw=black!85,line width=0.75pt] (0,0) -- (2,1);
-    \node[font=\scriptsize] at (2.15,0.42) {$\vv b_1$};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(0,0) -- (2,1)}
+    \node[font=\scriptsize] at (2.15,0.42) {\InkLabel{$\vv b_1$}};
 
-    \draw[figvec,draw=black!85,line width=0.75pt] (0,0) -- (-1,1);
-    \node[font=\scriptsize] at (-1.52,1.45) {$\vv b_2$};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(0,0) -- (-1,1)}
+    \node[font=\scriptsize] at (-1.52,1.45) {\InkLabel{$\vv b_2$}};
 
     % Delicate dashed coordinate path 3 b1 + 2 b2
-    \draw[-{Stealth[length=3.6pt,width=2.1pt]},black!55,dashed,line width=0.48pt] (2,1) -- (6,3) node[below right=2pt,font=\scriptsize,text=black!75] {$3\vv b_1$};
-    \draw[-{Stealth[length=3.6pt,width=2.1pt]},black!55,dashed,line width=0.48pt,shorten >=3pt] (6,3) -- (4,5) node[midway,above right=2pt,font=\scriptsize,text=black!75] {$2\vv b_2$};
+    \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black!55,dashed,line width=0.48pt] (2,1) -- (6,3) node[below right=2pt,font=\scriptsize,text=black!75] {\InkLabel{$3\vv b_1$}};
+    \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black!55,dashed,line width=0.48pt,shorten >=3pt] (6,3) -- (4,5) node[midway,above right=2pt,font=\scriptsize,text=black!75] {\InkLabel{$2\vv b_2$}};
 
     % Focal vector x
-    \draw[figvec,draw=black,line width=1.05pt,shorten >=2.8pt] (0,0) -- (4,5);
+    \InkStroke[figvec,draw=black,line width=0.65pt,shorten >=2.8pt]{(0,0) -- (4,5)}
     \node[figdot] at (4,5) {};
-    \node[above=4pt,font=\scriptsize] at (4,5) {$\vv x = 3\vv b_1+2\vv b_2$};
+    \node[above=4pt,font=\scriptsize] at (4,5) {\InkLabel{$\vv x = 3\vv b_1+2\vv b_2$}};
   \end{scope}
 \end{tikzpicture}
 \figcap{The skewed grid of $\mathcal B=\{(2,1),(-1,1)\}$ on $\RR^2$: moving $3$ steps along $\vv b_1$ and $2$ steps along $\vv b_2$ computes $\vv x = 3\vv b_1 + 2\vv b_2 = (4,5)$ via $[\vv x]_{\mathcal B}=(3,2)^{\mathsf T}$.}
@@ -223,36 +224,36 @@ meaning $\vv x=2\vv b_1-\vv b_2=(1,0)=1\vv c_1+0\vv c_2$.
 \begin{tikzpicture}[>=Stealth]
   % (a) Two coordinate representations of the same vector x = (1,0)
   \begin{scope}[xshift=0cm,yshift=0cm,scale=1.22]
-    \draw[figaxis] (-0.5,0) -- (2.85,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-0.45) -- (0,2.4) node[above,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-0.5,0) -- (2.85,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-0.45) -- (0,2.4) node[above,font=\scriptsize] {\InkLabel{$x_2$}};
 
     % B-basis (single restrained accent figblue) and dashed path 2b1 - b2
-    \draw[figvec,draw=figblue,line width=0.75pt] (0,0) -- (1,1);
-    \node[font=\scriptsize,text=figblue!90!black] at (0.82,1.10) {$\vv b_1$};
-    \draw[figvec,draw=figblue,line width=0.75pt] (0,0) -- (1,2) node[above left=1pt,font=\scriptsize,text=figblue!90!black] {$\vv b_2$};
-    \draw[-{Stealth[length=3.6pt,width=2.1pt]},figblue!65,dashed,line width=0.45pt] (1,1) -- (2,2) node[above=2pt,font=\scriptsize,text=figblue!90!black] {$2\vv b_1$};
-    \draw[-{Stealth[length=3.6pt,width=2.1pt]},figblue!65,dashed,line width=0.45pt,shorten >=2.8pt] (2,2) -- (1,0) node[pos=0.35,right=3pt,font=\scriptsize,text=figblue!90!black] {$-\vv b_2$};
+    \InkStroke[figvec,draw=figblue,line width=0.65pt]{(0,0) -- (1,1)}
+    \node[font=\scriptsize,text=figblue!90!black] at (0.82,1.10) {\InkLabel{$\vv b_1$}};
+    \draw[ink line,figvec,draw=figblue,line width=0.65pt] (0,0) -- (1,2) node[above left=1pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$\vv b_2$}};
+    \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},figblue!65,dashed,line width=0.45pt] (1,1) -- (2,2) node[above=2pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$2\vv b_1$}};
+    \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},figblue!65,dashed,line width=0.45pt,shorten >=2.8pt] (2,2) -- (1,0) node[pos=0.35,right=3pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$-\vv b_2$}};
 
     % C-basis vector c2 and focal vector x = c1 (pure black ink)
-    \draw[figvec,draw=black!65,line width=0.68pt] (0,0) -- (2,1) node[right=3pt,font=\scriptsize,text=black!75] {$\vv c_2$};
-    \draw[figvec,draw=black,line width=1.05pt,shorten >=2.4pt] (0,0) -- (1,0);
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (0,0) -- (2,1) node[right=3pt,font=\scriptsize,text=black!75] {\InkLabel{$\vv c_2$}};
+    \InkStroke[figvec,draw=black,line width=0.65pt,shorten >=2.4pt]{(0,0) -- (1,0)}
     \node[figdot] at (1,0) {};
-    \node[below=3pt,font=\scriptsize] at (1,0) {$\vv x=\vv c_1$};
+    \node[below=3pt,font=\scriptsize] at (1,0) {\InkLabel{$\vv x=\vv c_1$}};
 
-    \node[font=\footnotesize] at (1.15,-0.78) {(a)};
+    \node[font=\footnotesize] at (1.15,-0.78) {\InkLabel{(a)}};
   \end{scope}
 
   % (b) Plain commutative triangle on white (no tinted boxes)
   \begin{scope}[xshift=6.4cm,yshift=0.55cm]
-    \node[font=\small] (std) at (2.25,1.85) {$\vv x\in\RR^n$};
-    \node[font=\small] (B) at (0,0) {$[\vv x]_{\mathcal B}$};
-    \node[font=\small] (C) at (4.5,0) {$[\vv x]_{\mathcal C}$};
+    \node[font=\small] (std) at (2.25,1.85) {\InkLabel{$\vv x\in\RR^n$}};
+    \node[font=\small] (B) at (0,0) {\InkLabel{$[\vv x]_{\mathcal B}$}};
+    \node[font=\small] (C) at (4.5,0) {\InkLabel{$[\vv x]_{\mathcal C}$}};
 
-    \draw[-{Stealth[length=4.0pt,width=2.3pt]},black!85,line width=0.55pt,shorten <=4pt,shorten >=4pt] (B) -- node[above left=1pt,font=\scriptsize] {$P_{\mathcal B}$} (std);
-    \draw[-{Stealth[length=4.0pt,width=2.3pt]},black!85,line width=0.55pt,shorten <=4pt,shorten >=4pt] (C) -- node[above right=1pt,font=\scriptsize] {$P_{\mathcal C}$} (std);
-    \draw[-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.72pt,shorten <=4pt,shorten >=4pt] (B) -- node[below=4pt,font=\scriptsize] {$P_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}P_{\mathcal B}$} (C);
+    \draw[ink line,-{Stealth[length=4.0pt,width=2.3pt]},black!85,line width=0.55pt,shorten <=4pt,shorten >=4pt] (B) -- node[above left=1pt,font=\scriptsize] {\InkLabel{$P_{\mathcal B}$}} (std);
+    \draw[ink line,-{Stealth[length=4.0pt,width=2.3pt]},black!85,line width=0.55pt,shorten <=4pt,shorten >=4pt] (C) -- node[above right=1pt,font=\scriptsize] {\InkLabel{$P_{\mathcal C}$}} (std);
+    \draw[ink line,-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt,shorten <=4pt,shorten >=4pt] (B) -- node[below=4pt,font=\scriptsize] {\InkLabel{$P_{\mathcal C\leftarrow\mathcal B}=P_{\mathcal C}^{-1}P_{\mathcal B}$}} (C);
 
-    \node[font=\footnotesize] at (2.25,-1.50) {(b)};
+    \node[font=\footnotesize] at (2.25,-1.50) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{\textbf{(a)} Both $\mathcal B$-coordinates $(2,-1)$ (blue) and $\mathcal C$-coordinates $(1,0)$ locate the same vector $\vv x=(1,0)=2\vv b_1-\vv b_2=\vv c_1$. \textbf{(b)} Converting $\mathcal B\to\mathcal C$ in $\RR^n$ factors through standard coordinates as $P_{\mathcal C}^{-1}P_{\mathcal B}$.}
@@ -340,38 +341,38 @@ As an immediate consequence, an $n\times n$ matrix has at most $n$ distinct eige
 \begin{tikzpicture}[>=Stealth]
   % (a) Eigenvectors stay on their invariant lines (inputs black, images figblue)
   \begin{scope}[xshift=0cm,yshift=0cm,scale=0.145]
-    \draw[figaxis] (-26,0) -- (15,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-9.5) -- (0,23) node[above,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-26,0) -- (15,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-9.5) -- (0,23) node[above,font=\scriptsize] {\InkLabel{$x_2$}};
 
     % Hairline dashed invariant lines
-    \draw[dashed,black!38,line width=0.4pt] (-25.8,21.5) -- (9.6,-8.0);
-    \draw[dashed,black!38,line width=0.4pt] (-5.5,-5.5) -- (14.2,14.2);
+    \InkStroke[dashed,black!38,line width=0.4pt]{(-25.8,21.5) -- (9.6,-8.0)}
+    \InkStroke[dashed,black!38,line width=0.4pt]{(-5.5,-5.5) -- (14.2,14.2)}
 
     % Images under A (restrained figblue) drawn first so inputs sit crisply on top
-    \draw[figvec,draw=figblue,line width=0.9pt] (0,0) -- (-24,20) node[above right=2pt,font=\scriptsize,text=figblue!90!black] {$A\vv v=-4\vv v$};
-    \draw[figvec,draw=figblue,line width=0.9pt] (0,0) -- (12.6,12.6) node[above left=2pt,font=\scriptsize,text=figblue!90!black] {$A\vv w=7\vv w$};
+    \draw[ink line,figvec,draw=figblue,line width=0.65pt] (0,0) -- (-24,20) node[above right=2pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$A\vv v=-4\vv v$}};
+    \draw[ink line,figvec,draw=figblue,line width=0.65pt] (0,0) -- (12.6,12.6) node[above left=2pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$A\vv w=7\vv w$}};
 
     % Input eigenvectors (pure black)
-    \draw[figvec,draw=black,line width=0.95pt] (0,0) -- (6,-5) node[below=3pt,font=\scriptsize] {$\vv v$};
-    \draw[figvec,draw=black,line width=0.95pt] (0,0) -- (1.8,1.8);
-    \node[right=4pt,font=\scriptsize] at (2.1,2.0) {$\vv w$};
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (0,0) -- (6,-5) node[below=3pt,font=\scriptsize] {\InkLabel{$\vv v$}};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(0,0) -- (1.8,1.8)}
+    \node[right=4pt,font=\scriptsize] at (2.1,2.0) {\InkLabel{$\vv w$}};
 
-    \node[font=\footnotesize] at (-5.5,-13.0) {(a)};
+    \node[font=\footnotesize] at (-5.5,-13.0) {\InkLabel{(a)}};
   \end{scope}
 
   % (b) Non-eigenvector leaves its dashed line (no cartoonish curved arrow)
   \begin{scope}[xshift=6.6cm,yshift=-0.25cm,scale=0.195]
-    \draw[figaxis] (-11.5,0) -- (7.0,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-5.5) -- (0,13.5) node[above,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-11.5,0) -- (7.0,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-5.5) -- (0,13.5) node[above,font=\scriptsize] {\InkLabel{$x_2$}};
 
     % Dashed line spanned by u = (3,-2)
-    \draw[dashed,black!42,line width=0.4pt] (-10.8,7.2) -- (4.8,-3.2);
+    \InkStroke[dashed,black!42,line width=0.4pt]{(-10.8,7.2) -- (4.8,-3.2)}
 
     % Input vector u (black) and image Au (figblue, solid)
-    \draw[figvec,draw=black,line width=0.95pt] (0,0) -- (3,-2) node[below=3pt,font=\scriptsize] {$\vv u$};
-    \draw[figvec,draw=figblue,line width=0.95pt] (0,0) -- (-9,11) node[above left=2pt,font=\scriptsize,text=figblue!90!black] {$A\vv u$};
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (0,0) -- (3,-2) node[below=3pt,font=\scriptsize] {\InkLabel{$\vv u$}};
+    \draw[ink line,figvec,draw=figblue,line width=0.65pt] (0,0) -- (-9,11) node[above left=2pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$A\vv u$}};
 
-    \node[font=\footnotesize] at (-2.0,-8.4) {(b)};
+    \node[font=\footnotesize] at (-2.0,-8.4) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{Action of $A=\begin{psmallmatrix}1&6\\5&2\end{psmallmatrix}$ (inputs in black, images under $A$ in blue). \textbf{(a)} Eigenvectors $\vv v=(6,-5)$ ($\lambda=-4$) and $\vv w\parallel(1,1)$ ($\lambda=7$) remain on their dashed invariant lines. \textbf{(b)} The non-eigenvector $\vv u=(3,-2)$ is sent off its dashed line to $A\vv u=(-9,11)$.}

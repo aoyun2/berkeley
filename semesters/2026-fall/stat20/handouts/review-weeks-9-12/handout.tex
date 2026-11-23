@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
@@ -88,7 +89,7 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0,>=Stealth]
   \begin{axis}[
     width=9.6cm,height=4.4cm,
     axis lines*=left,
@@ -106,21 +107,21 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
     clip=false
   ]
     % Bars inside 95% percentile interval [0, 0.8] (single muted figblue accent)
-    \addplot[fill=figblue!18,draw=figblue!75!black,line width=0.45pt] coordinates {
+    \addplot[fill=white,pattern=inkgrain,pattern color=inkblue,draw=figblue!75!black,line width=0.45pt] coordinates {
       (0,0.0778) (0.2,0.2592) (0.4,0.3456) (0.6,0.2304) (0.8,0.0768)
     };
     % Excluded right-tail bar at 1.0 (clean monochrome gray)
-    \addplot[fill=black!10,draw=black!55,line width=0.45pt] coordinates {
+    \addplot[fill=white,pattern=inkgrain,pattern color=inkslate,draw=black!55,line width=0.45pt] coordinates {
       (1.0,0.0102)
     };
     % Clean monochrome quantile pointers
-    \node[font=\scriptsize,text=black!85,anchor=south] (qlo) at (axis cs:0.0,0.165) {$q_{0.025}=0$};
+    \node[font=\scriptsize,text=black!85,anchor=south] (qlo) at (axis cs:0.0,0.165) {\InkLabel{$q_{0.025}=0$}};
     \draw[-{Stealth[length=3.4pt,width=2.0pt]},black!75,line width=0.42pt] (axis cs:0.0,0.162) -- (axis cs:0.0,0.086);
-    \node[font=\scriptsize,text=black!85,anchor=south] (qhi) at (axis cs:0.86,0.165) {$q_{0.975}=0.8$};
+    \node[font=\scriptsize,text=black!85,anchor=south] (qhi) at (axis cs:0.86,0.165) {\InkLabel{$q_{0.975}=0.8$}};
     \draw[-{Stealth[length=3.4pt,width=2.0pt]},black!75,line width=0.42pt] (axis cs:0.84,0.162) -- (axis cs:0.80,0.086);
     % 95% percentile interval span
     \draw[{Stealth[length=3.6pt,width=2.1pt]}-{Stealth[length=3.6pt,width=2.1pt]},figblue!85!black,line width=0.55pt] (axis cs:0.0,0.392) -- (axis cs:0.8,0.392);
-    \node[font=\scriptsize,text=figblue!90!black,above=1.5pt] at (axis cs:0.4,0.392) {$95\%$ percentile interval $[0,\,0.8]$};
+    \node[font=\scriptsize,text=figblue!90!black,above=1.5pt] at (axis cs:0.4,0.392) {\InkLabel{$95\%$ percentile interval $[0,\,0.8]$}};
   \end{axis}
 \end{tikzpicture}
 \figcap{Exact bootstrap distribution of $\hat p^*$ for $2$ Chinstraps in $5$ penguins. Discrete probability mass places the $2.5\%$ quantile inside the bar at $0.0$ and the $97.5\%$ quantile at $0.8$ (blue bars), excluding only $1.0$ (gray bar, probability $0.0102$).}
@@ -220,41 +221,26 @@ At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right ta
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
-  \begin{axis}[
-    width=10.6cm,height=4.5cm,
-    axis lines*=left,
-    axis line style={draw=black!75,line width=0.42pt},
-    tick style={draw=black!50,line width=0.35pt},
-    ybar,bar width=16pt,bar shift=0pt,
-    xmin=-0.39,xmax=0.39,ymin=0,ymax=0.345,
-    xtick={-0.324,-0.232,-0.140,-0.048,0.044,0.136,0.228,0.320},
-    xticklabels={$-0.32$,$-0.23$,$-0.14$,$-0.05$,$0.044$,$0.14$,$0.23$,$0.32$},
-    tick label style={font=\scriptsize,text=black},
-    label style={font=\footnotesize,text=black},
-    ytick={0,0.1,0.2,0.3},
-    xlabel={Simulated difference $\hat p_s - \hat p_n = \frac{k}{34}-\frac{14-k}{16}$ ($k=6,\dots,13$)},
-    ylabel={Exact probability},
-    clip=false
-  ]
-    % Hairline null-zero divider separating k <= 9 from k >= 10
-    \draw[black!35,line width=0.4pt,dashed] (axis cs:0.00,0) -- (axis cs:0.00,0.305);
-    % Non-extreme bars (K < 10): clean monochrome gray
-    \addplot[fill=black!10,draw=black!65,line width=0.42pt] coordinates {
-      (-0.3235,0.0049) (-0.2316,0.0293) (-0.1397,0.1046) (-0.0478,0.2233)
-    };
-    % Extreme right-tail bars (K >= 10): muted figred accent
-    \addplot[fill=figred!24,draw=figred!80!black,line width=0.48pt] coordinates {
-      (0.0441,0.2680) (0.1360,0.1787) (0.2279,0.0558) (0.3199,0.0086)
-    };
-    % Observed bar callout cleanly above bar k = 10
-    \node[font=\scriptsize,text=figred!90!black,anchor=south] at (axis cs:0.068,0.312) {obs.\ $0.044$ ($k=10$)};
-    \draw[-{Stealth[length=3.4pt,width=2.0pt]},figred!85!black,line width=0.42pt] (axis cs:0.052,0.310) -- (axis cs:0.0441,0.273);
-    % Restrained right-tail annotation in open space
-    \node[font=\scriptsize,text=figred!90!black,align=center] at (axis cs:0.265,0.242) {right tail ($k\ge 10$)\\$p = 0.513$};
-  \end{axis}
+\begin{tikzpicture}
+\begin{axis}[
+ width=11.4cm,height=4.8cm,axis lines*=left,axis on top,
+ axis line style={ink line,black!75},tick style={black!50},
+ ybar,bar width=10pt,bar shift=0pt,
+ xmin=-.94,xmax=.47,ymin=0,ymax=.34,
+ xtick={-.8,-.6,-.4,-.2,0,.2,.4},ytick={0,.1,.2,.3},
+ tick label style={font=\scriptsize},label style={font=\footnotesize},
+ xlabel={Difference $\hat p_s-\hat p_n=k/34-(14-k)/16$},ylabel={Probability},clip=false]
+\addplot[fill=white,pattern=inkgrain,pattern color=inkslate,draw=inkslate,line width=.42pt] coordinates {
+(-0.875000000,0.000000000128) (-0.783088235,0.000000020302) (-0.691176471,0.000001088687) (-0.599264706,0.000027870377) (-0.507352941,0.000395991606) (-0.415441176,0.003394213769) (-0.323529412,0.018456037370) (-0.231617647,0.065621466205) (-0.139705882,0.155030713908) (-0.047794118,0.244290821916) };
+\addplot[fill=white,pattern=inkgrain,pattern color=inkred,draw=inkred,line width=.42pt] coordinates {
+(0.044117647,0.254469606163) (0.136029412,0.170832742599) (0.227941176,0.070163447853) (0.319852941,0.015831752336) (0.411764706,0.001484226782) };
+\draw[ink guide,inkslate] (axis cs:0,0)--(axis cs:0,.29);
+\node[font=\scriptsize,anchor=south,text=inkred] at (axis cs:.0441,.285) {\InkLabel{obs.\ $0.044$}};
+\draw[ink arrow,inkred] (axis cs:.0441,.28)--(axis cs:.0441,.26);
+\node[font=\scriptsize,align=center,text=inkred] at (axis cs:.30,.22) {\InkLabel{\shortstack{$K\ge10$\\$p=0.513$}}};
+\end{axis}
 \end{tikzpicture}
-\figcap{Exact permutation null distribution of $\hat p_s - \hat p_n$ in the $50$-person yawning experiment ($k=6,\dots,13$ yawners in the seeded group, equally spaced by $25/272 \approx 0.092$). Over half of the total probability mass ($0.513$, red bars $k \ge 10$) lies at or above the observed $0.044$.}
+\figcap{Exact permutation null distribution for the yawning experiment, with all possible counts $k=0,\dots,14$ included. The red bars have total probability $\mathbb P(K\ge10)=0.5128$; the observed difference is $10/34-4/16\approx0.044$. Bar heights are computed from the hypergeometric formula above, not from simulated frequencies.}
 \end{fig}
 
 \subsection{Point nulls: box draws and the chi-squared statistic}
@@ -336,7 +322,7 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
 
 \Needspace{16\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0,>=Stealth]
   \begin{axis}[
     width=11.4cm,height=4.8cm,
     axis lines*=left,
@@ -355,24 +341,24 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
     clip=false
   ]
     % Whisper-light blue wash for Power under HA (right of c = 1.645)
-    \addplot[forget plot,domain=1.645:5.8,samples=60,fill=figblue!10,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    \addplot[forget plot,domain=1.645:5.8,samples=60,fill=white,pattern=inkgrain,pattern color=inkblue,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
     % Quiet neutral Spivak gray wash for Type II area under HA (left of c = 1.645)
-    \addplot[forget plot,domain=-1.2:1.645,samples=50,fill=black!13,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    \addplot[forget plot,domain=-1.2:1.645,samples=50,fill=white,pattern=inkgrain,pattern color=inkslate,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
     % Muted red wash for Type I tail under H0 (right of c = 1.645)
-    \addplot[forget plot,domain=1.645:4.2,samples=45,fill=figred!26,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
+    \addplot[forget plot,domain=1.645:4.2,samples=45,fill=white,pattern=inkgrain,pattern color=inkred,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
     % H0 curve (crisp black)
-    \addplot[domain=-3.2:4.1,samples=100,black,line width=0.95pt] {exp(-0.5*x^2)/sqrt(2*pi)};
+    \addplot[domain=-3.2:4.1,samples=100,black,line width=0.65pt] {exp(-0.5*x^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_0$ (null)}
     % HA curve (muted figblue dashed)
-    \addplot[domain=-1.2:5.9,samples=100,figblue,line width=0.85pt,dashed] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
+    \addplot[domain=-1.2:5.9,samples=100,figblue,line width=0.65pt] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_A$ (alternative)}
     % Hairline critical value vertical rule
-    \draw[black!70,line width=0.45pt,dashed] (axis cs:1.645,0) -- (axis cs:1.645,0.425);
+    \InkStroke[black!70,line width=0.45pt,dashed]{(axis cs:1.645,0) -- (axis cs:1.645,0.425)}
     % Calm restrained labels with short non-crossing pointers
-    \node[font=\scriptsize,text=figblue!90!black,align=center] at (axis cs:2.64,0.238) {Power\\$1-\beta=0.82$};
-    \node[font=\scriptsize,text=black!80,anchor=east,align=right] at (axis cs:0.32,0.135) {$\beta=0.18$\\[-1pt]{\scriptsize(Type II)}};
+    \node[font=\scriptsize,text=figblue!90!black,align=center] at (axis cs:2.64,0.238) {\InkLabel{\shortstack[c]{Power\\$1-\beta=0.82$}}};
+    \node[font=\scriptsize,text=black!80,anchor=east,align=right] at (axis cs:0.32,0.135) {\InkLabel{\shortstack[c]{$\beta=0.18$\\[-1pt]{\scriptsize(Type II)}}}};
     \draw[-{Stealth[length=3.4pt,width=2.0pt]},black!70,line width=0.42pt] (axis cs:0.36,0.120) -- (axis cs:1.18,0.082);
-    \node[font=\scriptsize,text=figred!90!black,anchor=west,align=left] at (axis cs:4.45,0.130) {$\alpha=0.05$\\[-1pt]{\scriptsize(Type I)}};
+    \node[font=\scriptsize,text=figred!90!black,anchor=west,align=left] at (axis cs:4.45,0.130) {\InkLabel{\shortstack[c]{$\alpha=0.05$\\[-1pt]{\scriptsize(Type I)}}}};
     \draw[-{Stealth[length=3.4pt,width=2.0pt]},figred!85!black,line width=0.42pt] (axis cs:4.40,0.120) -- (axis cs:2.10,0.025);
   \end{axis}
 \end{tikzpicture}
@@ -429,7 +415,7 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
 
 \Needspace{16\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0]
   % (a) Scatterplot with OLS line vs constant baseline
   \begin{axis}[
     at={(0,0)},anchor=south west,
@@ -445,18 +431,18 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
     legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize,legend cell align=left},
     clip=false
   ]
-    \addplot[domain=0.6:4.4,samples=10,black,line width=0.95pt] {0.5 + 1.4*x};
+    \addplot[domain=0.6:4.4,samples=10,black,line width=0.65pt] {0.5 + 1.4*x};
     \addlegendentry{OLS $\hat y = 0.5 + 1.4x$}
     \addplot[domain=0.6:4.4,samples=10,black!45,dashed,line width=0.55pt] {4};
     \addlegendentry{Baseline $\bar y = 4$}
     % Residuals (single muted figred accent)
-    \draw[figred,line width=0.65pt] (axis cs:1,1.9) -- (axis cs:1,2);
-    \draw[figred,line width=0.65pt] (axis cs:2,3.3) -- (axis cs:2,3);
-    \draw[figred,line width=0.65pt] (axis cs:3,4.7) -- (axis cs:3,5);
-    \draw[figred,line width=0.65pt] (axis cs:4,6.1) -- (axis cs:4,6);
+    \InkStroke[figred,line width=0.65pt]{(axis cs:1,1.9) -- (axis cs:1,2)}
+    \InkStroke[figred,line width=0.65pt]{(axis cs:2,3.3) -- (axis cs:2,3)}
+    \InkStroke[figred,line width=0.65pt]{(axis cs:3,4.7) -- (axis cs:3,5)}
+    \InkStroke[figred,line width=0.65pt]{(axis cs:4,6.1) -- (axis cs:4,6)}
     \addplot[only marks,mark=*,mark size=1.8pt,black] coordinates {(1,2) (2,3) (3,5) (4,6)};
   \end{axis}
-  \node[font=\footnotesize,text=black] at (2.75cm,-1.32cm) {(a)};
+  \node[font=\footnotesize,text=black] at (2.75cm,-1.32cm) {\InkLabel{(a)}};
 
   % (b) Zoomed residual plot showing the four exact residuals cleanly
   \begin{axis}[
@@ -472,18 +458,18 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
     xlabel={$x$},ylabel={Residual $\hat e_i = y_i - \hat y_i$},
     clip=false
   ]
-    \draw[black!45,line width=0.45pt,dashed] (axis cs:0.5,0) -- (axis cs:4.5,0);
-    \draw[figred,line width=0.8pt] (axis cs:1,0) -- (axis cs:1,0.1);
-    \draw[figred,line width=0.8pt] (axis cs:2,0) -- (axis cs:2,-0.3);
-    \draw[figred,line width=0.8pt] (axis cs:3,0) -- (axis cs:3,0.3);
-    \draw[figred,line width=0.8pt] (axis cs:4,0) -- (axis cs:4,-0.1);
+    \InkStroke[black!45,line width=0.45pt,dashed]{(axis cs:0.5,0) -- (axis cs:4.5,0)}
+    \InkStroke[figred,line width=0.8pt]{(axis cs:1,0) -- (axis cs:1,0.1)}
+    \InkStroke[figred,line width=0.8pt]{(axis cs:2,0) -- (axis cs:2,-0.3)}
+    \InkStroke[figred,line width=0.8pt]{(axis cs:3,0) -- (axis cs:3,0.3)}
+    \InkStroke[figred,line width=0.8pt]{(axis cs:4,0) -- (axis cs:4,-0.1)}
     \addplot[only marks,mark=*,mark size=1.9pt,figred] coordinates {(1,0.1) (2,-0.3) (3,0.3) (4,-0.1)};
-    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:1,0.1) {$+0.1$};
-    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:2,-0.3) {$-0.3$};
-    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:3,0.3) {$+0.3$};
-    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:4,-0.1) {$-0.1$};
+    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:1,0.1) {\InkLabel{$+0.1$}};
+    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:2,-0.3) {\InkLabel{$-0.3$}};
+    \node[font=\scriptsize,text=figred!90!black,above=3pt] at (axis cs:3,0.3) {\InkLabel{$+0.3$}};
+    \node[font=\scriptsize,text=figred!90!black,below=3pt] at (axis cs:4,-0.1) {\InkLabel{$-0.1$}};
   \end{axis}
-  \node[font=\footnotesize,text=black] at (10.75cm,-1.32cm) {(b)};
+  \node[font=\footnotesize,text=black] at (10.75cm,-1.32cm) {\InkLabel{(b)}};
 \end{tikzpicture}
 \figcap{\textbf{(a)} Least-squares line $\hat y = 0.5 + 1.4x$ (solid black, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). \textbf{(b)} Magnified residual plot showing all four vertical residuals $\hat e_i = y_i - \hat y_i \in \{+0.1, -0.3, +0.3, -0.1\}$ (red), which balance to $\sum \hat e_i = 0$.}
 \end{fig}
@@ -513,7 +499,7 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0]
   \begin{axis}[
     width=9.6cm,height=4.5cm,
     axis lines*=left,
@@ -530,20 +516,20 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
     clip=false
   ]
     % Quiet neutral gray wash where R^2 < 0 (worse than constant test mean)
-    \fill[black!6] (axis cs:0.75,-0.52) rectangle (axis cs:6.25,0);
-    \draw[black!35,line width=0.4pt,dashed] (axis cs:0.75,0) -- (axis cs:6.25,0);
-    \node[font=\scriptsize\itshape,text=black!55,anchor=west] at (axis cs:0.95,-0.28) {worse than baseline ($R^2<0$)};
-    \addplot[black,line width=0.95pt,mark=*,mark size=1.8pt] coordinates {
+    \InkRegion[inkblue]{(axis cs:0.75,-0.52) rectangle (axis cs:6.25,0)}
+    \InkStroke[black!35,line width=0.4pt,dashed]{(axis cs:0.75,0) -- (axis cs:6.25,0)}
+    \node[font=\scriptsize\itshape,text=black!55,anchor=west] at (axis cs:0.95,-0.28) {\InkLabel{worse than baseline ($R^2<0$)}};
+    \addplot[black,line width=0.65pt,mark=*,mark size=1.8pt] coordinates {
       (1,0.835) (2,0.855) (3,0.865) (4,0.880) (5,0.910) (6,0.935)
     };
-    \addlegendentry{Training $R^2$ ($12$ points)}
-    \addplot[figred,line width=0.8pt,dashed,mark=o,mark options={solid,draw=figred,fill=white,line width=0.65pt},mark size=2.0pt] coordinates {
+    \addlegendentry{Training $R^2$}
+    \addplot[figred,line width=0.65pt,mark=o,mark options={solid,draw=figred,fill=white,line width=0.65pt},mark size=2.0pt] coordinates {
       (1,0.813) (2,0.790) (3,0.750) (4,0.620) (5,0.280) (6,-0.250)
     };
-    \addlegendentry{Test $R^2$ ($200$ points)}
+    \addlegendentry{Test $R^2$}
   \end{axis}
 \end{tikzpicture}
-\figcap{Training $R^2$ (solid black) rises monotonically with polynomial degree, whereas held-out test $R^2$ (red dashed) peaks at the true degree~$1$ linear relationship and drops into the shaded negative region under severe overfitting (degree~$6$ onward).}
+\figcap{Illustrative training and test curves for nested polynomial models. Training $R^2$ (black) cannot decrease as degree increases. Test $R^2$ (red) can decrease and become negative; its best degree depends on the data. These plotted values illustrate that behavior rather than report a fitted dataset.}
 \end{fig}
 
 \Needspace{16\baselineskip}
@@ -597,7 +583,7 @@ For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,
 
 \Needspace{15\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0]
   \begin{axis}[
     width=9.6cm,height=4.4cm,
     axis lines*=left,
@@ -613,16 +599,16 @@ For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,
     clip=false
   ]
     % Quiet neutral Spivak gray wash for decision half-plane h >= 0
-    \fill[black!6] (axis cs:0,0) rectangle (axis cs:4.4,1.04);
-    \draw[black!30,line width=0.38pt,dashed] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
-    \draw[black!40,line width=0.42pt,dashed] (axis cs:0,0) -- (axis cs:0,1.04);
-    \addplot[domain=-4.2:4.2,samples=100,black,line width=1.05pt] {1/(1+exp(-x))};
+    \InkRegion[inkblue]{(axis cs:0,0) rectangle (axis cs:4.4,1.04)}
+    \InkStroke[black!30,line width=0.38pt,dashed]{(axis cs:-4.4,0.5) -- (axis cs:4.4,0.5)}
+    \InkStroke[black!40,line width=0.42pt,dashed]{(axis cs:0,0) -- (axis cs:0,1.04)}
+    \addplot[domain=-4.2:4.2,samples=100,black,line width=0.65pt] {1/(1+exp(-x))};
     \addplot[only marks,mark=*,mark size=1.8pt,black] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
-    \node[font=\scriptsize,text=black,anchor=east] at (axis cs:-1.18,0.29) {$(-1,\,0.27)$};
-    \node[font=\scriptsize,text=black,anchor=south east] at (axis cs:-0.16,0.56) {$(0,\,0.50)$};
-    \node[font=\scriptsize,text=black,anchor=west] at (axis cs:1.20,0.72) {$(1,\,0.73)$};
-    \node[font=\scriptsize,text=black!60] at (axis cs:-2.35,0.86) {$\hat Y=0$ \ ($h < 0$)};
-    \node[font=\scriptsize,text=black!75] at (axis cs:2.35,0.18) {$\hat Y=1$ \ ($h \ge 0$)};
+    \node[font=\scriptsize,text=black,anchor=east] at (axis cs:-1.18,0.29) {\InkLabel{$(-1,\,0.27)$}};
+    \node[font=\scriptsize,text=black,anchor=south east] at (axis cs:-0.16,0.56) {\InkLabel{$(0,\,0.50)$}};
+    \node[font=\scriptsize,text=black,anchor=west] at (axis cs:1.20,0.72) {\InkLabel{$(1,\,0.73)$}};
+    \node[font=\scriptsize,text=black!60] at (axis cs:-2.35,0.86) {\InkLabel{$\hat Y=0$ \ ($h < 0$)}};
+    \node[font=\scriptsize,text=black!75] at (axis cs:2.35,0.18) {\InkLabel{$\hat Y=1$ \ ($h \ge 0$)}};
   \end{axis}
 \end{tikzpicture}
 \figcap{Standard logistic curve $f(h) = (1+e^{-h})^{-1}$. Because $f(0) = 0.5$ and $f$ is strictly increasing, classifying $\hat p \ge 0.5$ is equivalent to checking whether the linear predictor $h \ge 0$ (shaded right region).}

@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
@@ -122,36 +123,35 @@ In an \vocab{experiment}, the researcher assigns units to conditions; in an \voc
 
 \Needspace{16\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,font=\small]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},font=\small]
   \tikzset{
     dagnd/.style={align=center,font=\footnotesize,inner sep=4pt},
     dagarr/.style={-{Stealth[length=3.8pt,width=2.2pt]},line width=0.6pt,shorten <=2pt,shorten >=2pt}
   }
   % (a) Observational study (confounded)
-  \node[dagnd] (z1) at (2.15,1.88) {Confounder $Z$\\[-1pt]{\scriptsize\color{black!55}prior GPA}};
-  \node[dagnd] (x1) at (0.35,0.0)  {Group $X$\\[-1pt]{\scriptsize\color{black!55}PDF / Web}};
-  \node[dagnd] (y1) at (3.95,0.0)  {Outcome $Y$\\[-1pt]{\scriptsize\color{black!55}understanding}};
-  \draw[dagarr,figred] (z1) -- (x1);
-  \draw[dagarr,figred] (z1) -- (y1);
-  \draw[dagarr,black!85] (x1) -- (y1);
-  \node[font=\footnotesize,text=black] at (2.15,-0.88) {(a)};
+  \node[dagnd] (z1) at (2.15,1.88) {\InkLabel{\shortstack[c]{Confounder $Z$\\[-1pt]{\scriptsize prior GPA}}}};
+  \node[dagnd] (x1) at (0.35,0.0)  {\InkLabel{\shortstack[c]{Group $X$\\[-1pt]{\scriptsize PDF / Web}}}};
+  \node[dagnd] (y1) at (3.95,0.0)  {\InkLabel{\shortstack[c]{Outcome $Y$\\[-1pt]{\scriptsize understanding}}}};
+  \InkStroke[dagarr,figred]{(z1) -- (x1)}
+  \InkStroke[dagarr,figred]{(z1) -- (y1)}
+  \InkStroke[dagarr,black!85]{(x1) -- (y1)}
+  \node[font=\footnotesize,text=black] at (2.15,-0.88) {\InkLabel{(a)}};
 
   % Subtle vertical divider
-  \draw[black!15,line width=0.35pt] (6.05,-0.92) -- (6.05,2.28);
+  \InkStroke[black!15,line width=0.35pt]{(6.05,-0.92) -- (6.05,2.28)}
 
   % (b) Randomized controlled trial (unconfounded)
-  \node[dagnd] (r2) at (8.15,1.88)  {Random assignment};
-  \node[dagnd] (z2) at (11.75,1.88) {Pre-treatment $Z$\\[-1pt]{\scriptsize\color{black!55}prior GPA, major}};
-  \node[dagnd] (x2) at (8.15,0.0)   {Group $X$\\[-1pt]{\scriptsize\color{black!55}PDF / Web}};
-  \node[dagnd] (y2) at (11.75,0.0)  {Outcome $Y$\\[-1pt]{\scriptsize\color{black!55}understanding}};
-  \draw[dagarr,black!85] (r2) -- (x2);
-  \draw[dagarr,black!50,dashed] (z2) -- (y2);
-  \draw[dagarr,figred!60,dashed] (z2.south west) -- (x2.north east)
-    node[pos=0.50,font=\footnotesize,text=figred] {$\times$};
-  \draw[dagarr,black!85] (x2) -- (y2);
-  \node[font=\footnotesize,text=black] at (9.95,-0.88) {(b)};
+  \node[dagnd] (r2) at (8.15,1.88)  {\InkLabel{Random assignment}};
+  \node[dagnd] (z2) at (11.75,1.88) {\InkLabel{\shortstack[c]{Pre-treatment $Z$\\[-1pt]{\scriptsize prior GPA, major}}}};
+  \node[dagnd] (x2) at (8.15,0.0)   {\InkLabel{\shortstack[c]{Group $X$\\[-1pt]{\scriptsize PDF / Web}}}};
+  \node[dagnd] (y2) at (11.75,0.0)  {\InkLabel{\shortstack[c]{Outcome $Y$\\[-1pt]{\scriptsize understanding}}}};
+  \InkStroke[dagarr,black!85]{(r2) -- (x2)}
+  \InkStroke[dagarr,figred]{(z2) -- (y2)}
+
+  \InkStroke[dagarr,black!85]{(x2) -- (y2)}
+  \node[font=\footnotesize,text=black] at (9.95,-0.88) {\InkLabel{(b)}};
 \end{tikzpicture}
-\figcap{\textbf{(a)} In an observational study, a pre-existing confounder $Z$ (red paths) drives both treatment choice $X$ and outcome $Y$. \textbf{(b)} Random assignment controls $X$, severing the link from every measured and unmeasured pre-treatment variable $Z$ to $X$.}
+\figcap{\textbf{(a)} In an observational study, a pre-existing confounder $Z$ (red paths) drives both treatment choice $X$ and outcome $Y$. \textbf{(b)} Random assignment controls $X$, so pre-treatment $Z$ does not determine assignment to $X$. $Z$ may still affect $Y$; randomization does not guarantee exact balance in a realized sample.}
 \end{fig}
 
 \begin{theorem*}[Random assignment gives an unbiased estimate of the ATE]\target{thm-unbiased-rct}
@@ -198,7 +198,7 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
 
 \Needspace{16\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},scale=1.0]
   % (a) Love plot of SMDs (website minus pdf) — pure monochrome Tufte style
   \begin{axis}[
     at={(0,0)},anchor=south west,
@@ -215,18 +215,18 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
     xlabel={$\mathrm{SMD}$ (website $-$ pdf)},
     clip=false
   ]
-    \draw[black!12,line width=0.3pt,densely dotted] (axis cs:-1.05,1) -- (axis cs:1.05,1);
-    \draw[black!12,line width=0.3pt,densely dotted] (axis cs:-1.05,2) -- (axis cs:1.05,2);
-    \draw[black!12,line width=0.3pt,densely dotted] (axis cs:-1.05,3) -- (axis cs:1.05,3);
-    \draw[black!35,line width=0.4pt,dashed] (axis cs:0,0.5) -- (axis cs:0,3.55);
-    \draw[black!75,line width=0.75pt] (axis cs:0,3) -- (axis cs:-0.66,3);
-    \draw[black!75,line width=0.75pt] (axis cs:0,2) -- (axis cs:0.71,2);
+    \InkStroke[black!12,line width=0.3pt,densely dotted]{(axis cs:-1.05,1) -- (axis cs:1.05,1)}
+    \InkStroke[black!12,line width=0.3pt,densely dotted]{(axis cs:-1.05,2) -- (axis cs:1.05,2)}
+    \InkStroke[black!12,line width=0.3pt,densely dotted]{(axis cs:-1.05,3) -- (axis cs:1.05,3)}
+    \InkStroke[black!35,line width=0.4pt,dashed]{(axis cs:0,0.5) -- (axis cs:0,3.55)}
+    \InkStroke[black!75,line width=0.75pt]{(axis cs:0,3) -- (axis cs:-0.66,3)}
+    \InkStroke[black!75,line width=0.75pt]{(axis cs:0,2) -- (axis cs:0.71,2)}
     \addplot[only marks,mark=*,mark size=2.1pt,black] coordinates {(0,1) (0.71,2) (-0.66,3)};
-    \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:-0.66,3) {$-0.66$};
-    \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:0.71,2) {$+0.71$};
-    \node[font=\scriptsize,text=black!85,right=4.5pt] at (axis cs:0,1) {$0$};
+    \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:-0.66,3) {\InkLabel{$-0.66$}};
+    \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:0.71,2) {\InkLabel{$+0.71$}};
+    \node[font=\scriptsize,text=black!85,right=4.5pt] at (axis cs:0,1) {\InkLabel{$0$}};
   \end{axis}
-  \node[font=\footnotesize,text=black] at (2.25cm,-1.35cm) {(a)};
+  \node[font=\footnotesize,text=black] at (2.25cm,-1.35cm) {\InkLabel{(a)}};
 
   % (b) Exact permutation null distribution of 20 assignments (stacked dotplot)
   \begin{axis}[
@@ -245,14 +245,14 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
     ylabel={Stack count},
     clip=false
   ]
-    % Soft neutral gray washes for extreme tail regions (|diff| >= 0.2667)
-    \fill[black!6] (axis cs:-0.76,0) rectangle (axis cs:-0.2667,4.42);
-    \fill[black!6] (axis cs:0.2667,0) rectangle (axis cs:0.76,4.42);
-    \draw[black!25,line width=0.35pt,dashed] (axis cs:0,0) -- (axis cs:0,4.42);
-    \draw[figred!75,line width=0.5pt,dashed] (axis cs:-0.2667,0) -- (axis cs:-0.2667,4.42);
-    \draw[figred!75,line width=0.5pt,dashed] (axis cs:0.2667,0) -- (axis cs:0.2667,4.42);
-    \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:0.2667,4.42) {obs.\ $+0.267$};
-    \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:-0.2667,4.42) {$-0.267$};
+    % Red grain marks extreme tail regions (|diff| >= 0.2667)
+    \InkRegion[inkred]{(axis cs:-0.76,0) rectangle (axis cs:-0.2667,4.42)}
+    \InkRegion[inkred]{(axis cs:0.2667,0) rectangle (axis cs:0.76,4.42)}
+    \InkStroke[black!25,line width=0.35pt,dashed]{(axis cs:0,0) -- (axis cs:0,4.42)}
+    \InkStroke[figred!75,line width=0.5pt,dashed]{(axis cs:-0.2667,0) -- (axis cs:-0.2667,4.42)}
+    \InkStroke[figred!75,line width=0.5pt,dashed]{(axis cs:0.2667,0) -- (axis cs:0.2667,4.42)}
+    \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:0.2667,4.42) {\InkLabel{obs.\ $+0.267$}};
+    \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:-0.2667,4.42) {\InkLabel{$-0.267$}};
     % Non-extreme 12 hollow dots
     \addplot[only marks,mark=o,mark options={draw=black!65,fill=white,line width=0.55pt},mark size=1.95pt,black!65] coordinates {
       (-0.260,1) (-0.260,2) (-0.253,3) (-0.147,1) (-0.033,1) (-0.027,2)
@@ -264,7 +264,7 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
       (0.267,4) (0.373,1) (0.380,2) (0.667,1)
     };
   \end{axis}
-  \node[font=\footnotesize,text=black] at (10.35cm,-1.35cm) {(b)};
+  \node[font=\footnotesize,text=black] at (10.35cm,-1.35cm) {\InkLabel{(b)}};
 \end{tikzpicture}
 \figcap{\textbf{(a)} Love plot showing standardized mean differences (website minus pdf) across the three pre-treatment covariates. \textbf{(b)} Exact permutation null distribution across all $\binom{6}{3}=20$ assignments for GPA (stacked vertically when nearby splits cluster); $8$ of $20$ splits (red filled dots in the shaded tails $|\text{diff}|\ge 0.267$) give two-sided balance $p = 0.4$.}
 \end{fig}

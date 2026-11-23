@@ -1,11 +1,29 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
 \newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 4}
 \subtitle{Isomorphisms, change of basis, products, quotient spaces (Notes Ch.~7--8, LADR 3D--3E, HW4)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -120,18 +138,18 @@
 \begin{fig}
 \begin{tikzpicture}[scale=0.95]
   % Plain thin-bordered white coordinate nodes (monograph style)
-  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (TL) at (0,2.30) {$\MM(v,B')\in\FF^{n,1}$};
-  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (TR) at (7.7,2.30) {$\MM(Tv,B')\in\FF^{n,1}$};
-  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (BL) at (0,0) {$\MM(v,B)\in\FF^{n,1}$};
-  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (BR) at (7.7,0) {$\MM(Tv,B)\in\FF^{n,1}$};
+  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (TL) at (0,2.30) {\InkLabel{$\MM(v,B')\in\FF^{n,1}$}};
+  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (TR) at (7.7,2.30) {\InkLabel{$\MM(Tv,B')\in\FF^{n,1}$}};
+  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (BL) at (0,0) {\InkLabel{$\MM(v,B)\in\FF^{n,1}$}};
+  \node[figbox,minimum width=2.85cm,minimum height=0.68cm,font=\footnotesize] (BR) at (7.7,0) {\InkLabel{$\MM(Tv,B)\in\FF^{n,1}$}};
 
   % Horizontal operator arrows (focal top formula slightly firmer, pure black)
-  \draw[->,black,line width=0.85pt] (TL.east) -- node[above=3pt,font=\footnotesize] {$\MM(T,B') = A^{-1}\MM(T,B)A$} (TR.west);
-  \draw[->,black!80,line width=0.60pt] (BL.east) -- node[below=3pt,font=\footnotesize] {$\MM(T,B)$} (BR.west);
+  \PacketInkPath[->,black,line width=0.55pt]{(TL.east) -- node[above=3pt,font=\footnotesize] {\InkLabel{$\MM(T,B') = A^{-1}\MM(T,B)A$}} (TR.west)}
+  \PacketInkPath[->,black!80,line width=0.55pt]{(BL.east) -- node[below=3pt,font=\footnotesize] {\InkLabel{$\MM(T,B)$}} (BR.west)}
 
   % Vertical change-of-basis arrows (atomic math labels only)
-  \draw[->,black!80,line width=0.60pt] (TL.south) -- node[left=4pt,font=\scriptsize] {$A = \MM(I,B',B)$} (BL.north);
-  \draw[->,black!80,line width=0.60pt] (BR.north) -- node[right=4pt,font=\scriptsize] {$A^{-1} = \MM(I,B,B')$} (TR.south);
+  \PacketInkPath[->,black!80,line width=0.55pt]{(TL.south) -- node[left=4pt,font=\scriptsize] {\InkLabel{$A = \MM(I,B',B)$}} (BL.north)}
+  \PacketInkPath[->,black!80,line width=0.55pt]{(BR.north) -- node[right=4pt,font=\scriptsize] {\InkLabel{$A^{-1} = \MM(I,B,B')$}} (TR.south)}
 \end{tikzpicture}
 \figcap{Commutative diagram for the Change-of-Basis Formula $\MM(T,B')=A^{-1}\MM(T,B)A$ (LADR 3.84): to apply $T$ in $B'$-coordinates, multiply by $A=\MM(I,B',B)$ to convert to $B$-coordinates, multiply by $\MM(T,B)$, and multiply by $A^{-1}$ to convert back to $B'$-coordinates.}
 \end{fig}
@@ -186,32 +204,32 @@
   \coordinate (R2) at (5.70,2.87);
 
   % Soft borderless gray wash tying the two representative-independent parallel shifts
-  \fill[black!6] (P1) -- (R1) -- (R2) -- (P2) -- cycle;
+  \InkRegion[inkblue]{(P1) -- (R1) -- (R2) -- (P2) -- cycle}
 
   % Delicate horizontal axis
-  \draw[figaxis] (-0.90,0) -- (6.95,0) node[right=2pt,font=\footnotesize] {$x$};
+  \PacketInkPath[figaxis]{(-0.90,0) -- (6.95,0) node[right=2pt,font=\footnotesize] {\InkLabel{$x$}}}
 
   % Subspace U (bold black) and parallel coset lines (consistent solid mid-gray)
-  \draw[black,line width=1.10pt] (0,-0.45) -- (0,3.20) node[above=3pt,font=\scriptsize] {$U = 0+U$};
-  \draw[black!50,line width=0.50pt] (1.90,-0.45) -- (1.90,3.20);
-  \draw[black!50,line width=0.50pt] (3.80,-0.45) -- (3.80,3.20);
-  \draw[black!50,line width=0.50pt] (5.70,-0.45) -- (5.70,3.20);
+  \PacketInkPath[black,line width=0.55pt]{(0,-0.45) -- (0,3.20) node[above=3pt,font=\scriptsize] {\InkLabel{$U = 0+U$}}}
+  \PacketInkPath[black!50,line width=0.5pt]{(1.90,-0.45) -- (1.90,3.20)}
+  \PacketInkPath[black!50,line width=0.5pt]{(3.80,-0.45) -- (3.80,3.20)}
+  \PacketInkPath[black!50,line width=0.5pt]{(5.70,-0.45) -- (5.70,3.20)}
 
   % Peer parallel translation arrows (consistent solid crisp black)
-  \draw[figvec,line width=0.80pt,shorten >=2.5pt,shorten <=2.0pt] (P1) -- node[pos=0.25,sloped,above=2pt,font=\scriptsize] {$+(2,0.5)$} (R1);
-  \draw[figvec,line width=0.80pt,shorten >=2.5pt,shorten <=2.0pt] (P2) -- node[pos=0.25,sloped,above=2pt,font=\scriptsize] {$+(2,0.5)$} (R2);
+  \PacketInkPath[figvec,line width=0.55pt,shorten >=2.5pt,shorten <=2.0pt]{(P1) -- node[pos=0.25,sloped,above=2pt,font=\scriptsize] {\InkLabel{$+(2,0.5)$}} (R1)}
+  \PacketInkPath[figvec,line width=0.55pt,shorten >=2.5pt,shorten <=2.0pt]{(P2) -- node[pos=0.25,sloped,above=2pt,font=\scriptsize] {\InkLabel{$+(2,0.5)$}} (R2)}
 
   % Crisp black dots and atomic labels
-  \node[figdot] at (P1) {}; \node[left=3pt,font=\scriptsize]  at (P1) {$(1,1)$};
-  \node[figdot] at (P2) {}; \node[left=3pt,font=\scriptsize]  at (P2) {$(1,3)$};
-  \node[figdot] at (Q)  {}; \node[right=3pt,font=\scriptsize] at (Q)  {$(2,0.5)$};
-  \node[figdot] at (R1) {}; \node[right=3pt,font=\scriptsize] at (R1) {$(3,1.5)$};
-  \node[figdot] at (R2) {}; \node[right=3pt,font=\scriptsize] at (R2) {$(3,3.5)$};
+  \node[figdot] at (P1) {}; \node[left=3pt,font=\scriptsize]  at (P1) {\InkLabel{$(1,1)$}};
+  \node[figdot] at (P2) {}; \node[left=3pt,font=\scriptsize]  at (P2) {\InkLabel{$(1,3)$}};
+  \node[figdot] at (Q)  {}; \node[right=3pt,font=\scriptsize] at (Q)  {\InkLabel{$(2,0.5)$}};
+  \node[figdot] at (R1) {}; \node[right=3pt,font=\scriptsize] at (R1) {\InkLabel{$(3,1.5)$}};
+  \node[figdot] at (R2) {}; \node[right=3pt,font=\scriptsize] at (R2) {\InkLabel{$(3,3.5)$}};
 
   % Aligned coset labels on one clean baseline
-  \node[font=\scriptsize] at (1.90,-0.74) {$(1,1)+U$};
-  \node[font=\scriptsize] at (3.80,-0.74) {$(2,0.5)+U$};
-  \node[font=\scriptsize] at (5.70,-0.74) {$(3,1.5)+U$};
+  \node[font=\scriptsize] at (1.90,-0.74) {\InkLabel{$(1,1)+U$}};
+  \node[font=\scriptsize] at (3.80,-0.74) {\InkLabel{$(2,0.5)+U$}};
+  \node[font=\scriptsize] at (5.70,-0.74) {\InkLabel{$(3,1.5)+U$}};
 \end{tikzpicture}
 \figcap{Geometry of the quotient space $\RR^2/U$ where $U=\spn((0,1))$ is the vertical axis: elements of $\RR^2/U$ are the vertical lines parallel to $U$. Notice $(1,1)+(2,0.5)=(3,1.5)$ and $(1,3)+(2,0.5)=(3,3.5)$ land on the same vertical line $(3,1.5)+U$, so coset addition is independent of representatives.}
 \end{fig}
@@ -230,32 +248,32 @@
 
 \begin{prob}\textbf{HW4 P1.}\ Let $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$. (a) Verify by direct multiplication that $A\begin{psmallmatrix}d&-b\\-c&a\end{psmallmatrix}=(ad-bc)I$. (b) Define $\det A=ad-bc$. Prove that if $\det A\ne0$ then $A$ is invertible, and derive the formula for $A^{-1}$. (c) Prove, without any general determinant theory, that if $\det A=0$ then $A$ is not invertible.\target{prob-HW4-P1}
 
-\emph{Hint for (c):} if $A$ were invertible, multiply the identity in (a) by $A^{-1}$.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P2.}\ Decide which are invertible, and find the inverse when it exists:\target{prob-HW4-P2}
 $\begin{psmallmatrix}2&1\\5&3\end{psmallmatrix}$,\quad $\begin{psmallmatrix}1&i\\i&-1\end{psmallmatrix}$ over $\CC$,\quad $\begin{psmallmatrix}1&2\\3&1\end{psmallmatrix}$ over $\FF_5$.
 
-\emph{Hint:} compute $ad-bc$ in the given field.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P3 (LADR 3D, Exercise 3).}\ Let $V$ be finite-dimensional and $T\colon V\to V$ linear. Prove that the following are equivalent: (a) $T$ is an isomorphism; (b) for every basis $v_1,\dots,v_n$ of $V$, the list $Tv_1,\dots,Tv_n$ is a basis of $V$.\target{prob-HW4-P3}
 
-\emph{Hint:} an injective map sends independent lists to independent lists; then count.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P4.}\ Suppose $BC$ is defined. (a) Prove $\operatorname{rank}(BC)\le\min\{\operatorname{rank}B,\operatorname{rank}C\}$. (b) Give an example where the inequality is strict although $B$ and $C$ both have positive rank.\target{prob-HW4-P4}
 
-\emph{Hint:} $\range(BC)$ is contained in $\range B$, and it is the image of $\range C$ under $B$.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P5.}\ Let $V,W$ be finite-dimensional. Prove $\dim(V\times W)=\dim V+\dim W$ by constructing a basis of $V\times W$ from bases of $V$ and $W$.\target{prob-HW4-P5}
 
-\emph{Hint:} $(v_i,0)$ and $(0,w_j)$.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P6.}\ Let $U$ be a subspace of $V$ and $v,v'\in V$. (a) Prove that $v+U$ is a subspace of $V$ if and only if $v\in U$; in that case $v+U=U$. (b) Prove that $v+U=v'+U$ if and only if $v-v'\in U$.\target{prob-HW4-P6}
 
-\emph{Hint:} a subspace contains $0$.
+
 \end{prob}
 \begin{prob}\textbf{HW4 P7 (optional).}\ Suppose $U$ is a subspace of a finite-dimensional $V$ and $S\colon U\to V$ is injective. Prove that $S$ extends to an invertible operator $T\colon V\to V$.\target{prob-HW4-P7}
 
-\emph{Hint:} extend a basis of $U$ and, separately, the images of that basis; send the new vectors to the new vectors.
+
 \end{prob}
 \begin{prob}\textbf{R1 (Practice Midterm 1, Question 2: a left inverse).}\ Let $V,W$ be finite-dimensional and $T\colon V\to W$ injective. (a) For a basis $v_1,\dots,v_n$ of $V$, prove $Tv_1,\dots,Tv_n$ is independent in $W$. (b) Prove there is a linear $S\colon W\to V$ with $ST=I_V$.
 \end{prob}
@@ -270,5 +288,22 @@ $\begin{psmallmatrix}2&1\\5&3\end{psmallmatrix}$,\quad $\begin{psmallmatrix}1&i\
   \MM(D) = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{pmatrix}.
 \]
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P1}{HW4 P1.}} \emph{Hint for (c):} if $A$ were invertible, multiply the identity in (a) by $A^{-1}$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P2}{HW4 P2.}} \emph{Hint:} compute $ad-bc$ in the given field.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P3}{HW4 P3 (LADR 3D, Exercise 3).}} \emph{Hint:} an injective map sends independent lists to independent lists; then count.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P4}{HW4 P4.}} \emph{Hint:} $\range(BC)$ is contained in $\range B$, and it is the image of $\range C$ under $B$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P5}{HW4 P5.}} \emph{Hint:} $(v_i,0)$ and $(0,w_j)$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P6}{HW4 P6.}} \emph{Hint:} a subspace contains $0$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW4-P7}{HW4 P7 (optional).}} \emph{Hint:} extend a basis of $U$ and, separately, the images of that basis; send the new vectors to the new vectors.
 
 \end{document}

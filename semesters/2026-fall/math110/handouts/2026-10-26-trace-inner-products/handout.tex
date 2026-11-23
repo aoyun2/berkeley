@@ -1,12 +1,30 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 9}
 \subtitle{Trace and inner products (Notes Ch.~16--17, LADR 8D, 6A, HW9)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -253,29 +271,29 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \begin{fig}
 \begin{tikzpicture}[scale=1.18]
   % Line span(v)
-  \draw[black!45,line width=0.4pt] (-0.5,0) -- (5.0,0) node[right=3pt,font=\scriptsize,text=black!75] {$\spn(v)$};
+  \PacketInkPath[black!45,line width=0.4pt]{(-0.5,0) -- (5.0,0) node[right=3pt,font=\scriptsize,text=black!75] {\InkLabel{$\spn(v)$}}}
 
   % Right-angle mark at foot of perpendicular
-  \draw[black!60,line width=0.38pt] (2.20,0) -- (2.20,0.20) -- (2.40,0.20);
+  \PacketInkPath[black!60,line width=0.38pt]{(2.20,0) -- (2.20,0.20) -- (2.40,0.20)}
 
   % Vector v
-  \draw[figvecsub] (0,0) -- (4.20,0);
-  \node[below=3pt,font=\small,text=black!70] at (3.55,0) {$v$};
+  \PacketInkPath[figvecsub]{(0,0) -- (4.20,0)}
+  \node[below=3pt,font=\small,text=black!70] at (3.55,0) {\InkLabel{$v$}};
 
   % Component cv along v (single restrained accent)
-  \draw[->,draw=figblue,line width=0.95pt,shorten >=1.4pt] (0,0) -- (2.40,0);
-  \node[below=3pt,font=\small,text=figblue!90!black] at (1.20,0) {$cv$};
+  \PacketInkPath[->,draw=figblue,line width=0.55pt,shorten >=1.4pt]{(0,0) -- (2.40,0)}
+  \node[below=3pt,font=\small,text=figblue!90!black] at (1.20,0) {\InkLabel{$cv$}};
 
   % Focal vector u
-  \draw[->,draw=black,line width=1.05pt,shorten >=1.0pt] (0,0) -- (2.40,1.88)
-    node[pos=0.55,above left=2pt,font=\small,text=black] {$u$};
+  \PacketInkPath[->,draw=black,line width=0.55pt,shorten >=1.0pt]{(0,0) -- (2.40,1.88)
+    node[pos=0.55,above left=2pt,font=\small,text=black] {\InkLabel{$u$}}}
 
   % Orthogonal residual w = u - cv
-  \draw[->,draw=black!75,line width=0.65pt,dashed,shorten <=1.4pt,shorten >=2.0pt] (2.40,0) -- (2.40,1.88);
-  \node[right=4pt,font=\small,text=black!85] at (2.40,0.94) {$w$};
+  \PacketInkPath[->,draw=black!75,line width=0.55pt,dashed,shorten <=1.4pt,shorten >=2.0pt]{(2.40,0) -- (2.40,1.88)}
+  \node[right=4pt,font=\small,text=black!85] at (2.40,0.94) {\InkLabel{$w$}};
 
   % Origin and foot dots
-  \fill[black] (0,0) circle (1.3pt) node[below left=2pt,font=\scriptsize] {$0$};
+  \fill[black] (0,0) circle (1.3pt) node[below left=2pt,font=\scriptsize] {\InkLabel{$0$}};
   \fill[black] (2.40,0) circle (1.3pt);
 \end{tikzpicture}
 \figcap{Orthogonal decomposition $u=cv+w$ along $v\ne 0$ (LADR 6.13), with $cv=\frac{\ip uv}{\|v\|^2}v$ and $w=u-cv\perp v$. Applying the Pythagorean theorem to the right triangle with legs $cv$ and $w$ gives $\|u\|^2=\|cv\|^2+\|w\|^2=\frac{|\ip uv|^2}{\|v\|^2}+\|w\|^2\ge\frac{|\ip uv|^2}{\|v\|^2}$, which rearranges directly into the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$, with equality iff $w=0$.}
@@ -366,22 +384,22 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \coordinate (V) at (1.15,2.15);
     \coordinate (UV) at (4.65,2.15);
 
-    \fill[black!7] (O) -- (U) -- (UV) -- (V) -- cycle;
+    \InkRegion[inkblue]{(O) -- (U) -- (UV) -- (V) -- cycle}
 
     % Sides
-    \draw[->,black,line width=0.85pt] (O) -- (U) node[midway,below=3pt,font=\small] {$u$};
-    \draw[black!45,line width=0.42pt] (V) -- (UV);
-    \draw[->,black,line width=0.85pt] (O) -- (V) node[midway,above left=1pt,font=\small] {$v$};
-    \draw[black!45,line width=0.42pt] (U) -- (UV);
+    \PacketInkPath[->,black,line width=0.55pt]{(O) -- (U) node[midway,below=3pt,font=\small] {\InkLabel{$u$}}}
+    \PacketInkPath[black!45,line width=0.42pt]{(V) -- (UV)}
+    \PacketInkPath[->,black,line width=0.55pt]{(O) -- (V) node[midway,above left=1pt,font=\small] {\InkLabel{$v$}}}
+    \PacketInkPath[black!45,line width=0.42pt]{(U) -- (UV)}
 
     % Diagonals
-    \draw[->,draw=figblue,line width=1.0pt,shorten >=1.2pt] (O) -- (UV)
-      node[pos=0.73,sloped,above=2pt,font=\small,text=figblue!90!black] {$u+v$};
-    \draw[->,draw=black!75,line width=0.65pt,dashed,shorten <=1.2pt,shorten >=2.2pt] (V) -- (U);
-    \node[font=\small,text=black!85] at (1.28,1.34) {$u-v$};
+    \PacketInkPath[->,draw=figblue,line width=0.55pt,shorten >=1.2pt]{(O) -- (UV)
+      node[pos=0.73,sloped,above=2pt,font=\small,text=figblue!90!black] {\InkLabel{$u+v$}}}
+    \PacketInkPath[->,draw=black!75,line width=0.55pt,dashed,shorten <=1.2pt,shorten >=2.2pt]{(V) -- (U)}
+    \node[font=\small,text=black!85] at (1.28,1.34) {\InkLabel{$u-v$}};
 
-    \fill[black] (O) circle (1.3pt) node[below left=2pt,font=\scriptsize] {$0$};
-    \node[font=\footnotesize] at (2.32,-0.88) {(a)};
+    \fill[black] (O) circle (1.3pt) node[below left=2pt,font=\scriptsize] {\InkLabel{$0$}};
+    \node[font=\footnotesize] at (2.32,-0.88) {\InkLabel{(a)}};
   \end{scope}
 
   % Panel (b): Unit balls of l1, l2, l_infty
@@ -389,26 +407,26 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \def\R{1.22}
 
     % Hair-thin axes
-    \draw[figaxis] (-1.65,0) -- (1.78,0) node[right=2pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.55) -- (0,1.68) node[above=1pt,font=\scriptsize] {$x_2$};
+    \PacketInkPath[figaxis]{(-1.65,0) -- (1.78,0) node[right=2pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.55) -- (0,1.68) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
     % Three clean solid unit-ball curves: l_infty (mid-gray), l_2 (black), l_1 (single accent)
-    \draw[black!55,line width=0.65pt] (-\R,-\R) rectangle (\R,\R);
-    \draw[black,line width=1.0pt] (0,0) circle (\R);
-    \draw[figblue,line width=0.85pt] (\R,0) -- (0,\R) -- (-\R,0) -- (0,-\R) -- cycle;
+    \PacketInkPath[black!55,line width=0.55pt]{(-\R,-\R) rectangle (\R,\R)}
+    \PacketInkPath[black,line width=0.55pt]{(0,0) circle (\R)}
+    \PacketInkPath[figblue,line width=0.55pt]{(\R,0) -- (0,\R) -- (-\R,0) -- (0,-\R) -- cycle}
 
     % Atomic curve labels placed cleanly with zero crossings
-    \node[font=\scriptsize,text=black!75,anchor=south west] at (\R-0.02,\R-0.02) {$\ell_\infty$};
-    \node[font=\scriptsize,text=black,inner sep=0.6pt] at (-0.98,1.00) {$\ell_2$};
-    \node[font=\scriptsize,text=figblue!90!black] at (0.45,-0.43) {$\ell_1$};
+    \node[font=\scriptsize,text=black!75,anchor=south west] at (\R-0.02,\R-0.02) {\InkLabel{$\ell_\infty$}};
+    \node[font=\scriptsize,text=black,inner sep=0.6pt] at (-0.98,1.00) {\InkLabel{$\ell_2$}};
+    \node[font=\scriptsize,text=figblue!90!black] at (0.45,-0.43) {\InkLabel{$\ell_1$}};
 
     % Standard basis dots e_1, e_2
     \fill[black] (\R,0) circle (1.3pt);
-    \node[font=\scriptsize,anchor=north west] at (\R+0.02,-0.03) {$e_1$};
+    \node[font=\scriptsize,anchor=north west] at (\R+0.02,-0.03) {\InkLabel{$e_1$}};
     \fill[black] (0,\R) circle (1.3pt);
-    \node[font=\scriptsize,anchor=south east] at (-0.03,\R+0.02) {$e_2$};
+    \node[font=\scriptsize,anchor=south east] at (-0.03,\R+0.02) {\InkLabel{$e_2$}};
 
-    \node[font=\footnotesize] at (0,-1.98) {(b)};
+    \node[font=\footnotesize] at (0,-1.98) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{(a) Parallelogram equality $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$ in an inner product space (\ilink{prop-83}{Prop.~83}). (b) Unit circles $\|x\|=1$ on $\RR^2$ for $\ell_\infty$ (outer square), $\ell_2$ (Euclidean circle), and $\ell_1$ (inner diamond). Testing $e_1=(1,0)$ and $e_2=(0,1)$ gives $\|e_1\pm e_2\|_\infty^2=1$ ($1+1\ne 4$) and $\|e_1\pm e_2\|_1^2=4$ ($4+4\ne 4$), so neither $\|\cdot\|_1$ nor $\|\cdot\|_\infty$ comes from an inner product.}

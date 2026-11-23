@@ -1,7 +1,6 @@
-# Reproducible ink figure samples
+# Reproducible ink figures
 
-This directory contains the initial review samples. The three pilot packets
-listed below now use this package for all figures.
+This directory contains the initial review samples. The course handouts now use this package for reproducible figures.
 Load `figure-ink` from `templates/figure-ink.sty`. No image generator, API,
 Python package, or external raster texture is needed to compile them.
 
@@ -13,15 +12,36 @@ Python package, or external raster texture is needed to compile them.
 2. Copy the relevant example from `samples.tex`. Use `\InkRegion[color]{closed
    TikZ path}` for grain and `\InkStroke[options]{TikZ path}` for outlines.
    Use `ink arrow` for vectors and `ink guide` for construction lines.
+   For very small circles and sampled plot paths, use exact `ink line` styles
+   without random-step decoration (PGF arithmetic can overflow). Draw labels
+   separately from `\InkStroke`, which draws its path twice.
 3. Draw all regions first, then strokes, then labels. Use native LaTeX labels
    in empty space, wrapped with `\InkLabel{$...$}` for a 0.65pt white glyph
    outline. For colored entries use `\InkLabel[inkblue]{$...$}` individually;
    do not put nested `\textcolor` inside the halo. State what a finite patch
    represents in the caption.
-4. Run `build.ps1` in this directory. Inspect the compiled figure at 240 DPI.
+4. For the sample, run `build.ps1` in this directory. For a course packet,
+   compile twice from that packet directory using the commands below.
+   Inspect the compiled figure at 240 DPI.
    Fix collisions and overfull boxes before accepting a figure.
 5. Preserve the shared texture and stroke settings. Change coordinates to
    express the mathematics; do not add arbitrary organic silhouettes.
+
+## Building a course packet
+
+Run from the directory containing its `handout.tex`:
+
+```powershell
+$figureTemplates = Join-Path (git rev-parse --show-toplevel) 'templates'
+$env:TEXINPUTS = ".;$figureTemplates;"
+pdflatex -interaction=nonstopmode -halt-on-error handout.tex
+pdflatex -interaction=nonstopmode -halt-on-error handout.tex
+Select-String -Path handout.log -Pattern '^!|Overfull|Output written'
+```
+
+A successful build does not verify the geometry. Inspect every changed figure
+at 240 DPI after checking the equations and data. Clean the packet's `.aux`,
+`.log`, `.out`, and `.toc` files after checks; retain `.tex` and `.pdf`.
 
 ## Fixed rendering parameters
 
@@ -45,11 +65,11 @@ TeX/PGF versions for identical rendering; PDF metadata may vary between builds.
 - Jordan block sizes (3,2,2,1) give dim(null(N^k))=(0,4,7,8) for k=0,1,2,3.
   There are three blocks of size at least two and two of size exactly two.
 
-## Pilot packets
+## Reference packets
 
-All figure geometry is native TikZ, tikz-cd, or PGFPlots; no generated image
-is used by these three packets. The glyph halos preserve the current text
-color by default. The package is opt-in and does not restyle other handouts.
+All figure geometry is native TikZ, tikz-cd, or PGFPlots. These three initial
+packets provide worked examples. The glyph halos preserve the current text
+color by default. Each packet loads the package explicitly.
 
 - Math 54: `2026-08-24-linear-systems-row-reduction` (3 figures).
 - Math 110: `2026-10-19-generalized-eigenvectors-jordan` (5 figures).
@@ -59,3 +79,43 @@ In each packet directory, use the same two-pass build with the repository
 `templates` directory on TEXINPUTS. These changes do not create or change
 Claude's schedule; the shared source and instructions are available to its
 existing scheduled workflow.
+
+## Full packet catalog
+
+All 88 figures in the 31 illustrated packets use the shared reproducible style.
+The zero-figure CS 61A lambda packet is included for completeness.
+
+| Course | Packet | Figures |
+| --- | --- | ---: |
+| cs61a | [2026-08-24-functions](../../semesters/2026-fall/cs61a/handouts/2026-08-24-functions/handout.pdf) | 2 |
+| cs61a | [2026-08-31-control-higher-order](../../semesters/2026-fall/cs61a/handouts/2026-08-31-control-higher-order/handout.pdf) | 1 |
+| cs61a | [2026-09-07-lambda-midterm1-review](../../semesters/2026-fall/cs61a/handouts/2026-09-07-lambda-midterm1-review/handout.pdf) | 0 |
+| cs61a | [2026-09-14-recursion](../../semesters/2026-fall/cs61a/handouts/2026-09-14-recursion/handout.pdf) | 2 |
+| cs61a | [2026-11-16-tables-sql-aggregation](../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/handout.pdf) | 3 |
+| math110 | [2026-08-31-sets-fields-subspaces](../../semesters/2026-fall/math110/handouts/2026-08-31-sets-fields-subspaces/handout.pdf) | 3 |
+| math110 | [2026-09-07-bases-dimension](../../semesters/2026-fall/math110/handouts/2026-09-07-bases-dimension/handout.pdf) | 1 |
+| math110 | [2026-09-14-linear-maps-matrices](../../semesters/2026-fall/math110/handouts/2026-09-14-linear-maps-matrices/handout.pdf) | 2 |
+| math110 | [2026-09-21-isomorphisms-products-quotients](../../semesters/2026-fall/math110/handouts/2026-09-21-isomorphisms-products-quotients/handout.pdf) | 2 |
+| math110 | [2026-09-28-quotients-duality](../../semesters/2026-fall/math110/handouts/2026-09-28-quotients-duality/handout.pdf) | 2 |
+| math110 | [2026-10-05-eigenvalues-pagerank](../../semesters/2026-fall/math110/handouts/2026-10-05-eigenvalues-pagerank/handout.pdf) | 2 |
+| math110 | [2026-10-12-diagonalization-minimal-polynomial](../../semesters/2026-fall/math110/handouts/2026-10-12-diagonalization-minimal-polynomial/handout.pdf) | 3 |
+| math110 | [2026-10-19-generalized-eigenvectors-jordan](../../semesters/2026-fall/math110/handouts/2026-10-19-generalized-eigenvectors-jordan/handout.pdf) | 5 |
+| math110 | [2026-10-26-trace-inner-products](../../semesters/2026-fall/math110/handouts/2026-10-26-trace-inner-products/handout.pdf) | 2 |
+| math110 | [2026-11-02-orthogonality-projections](../../semesters/2026-fall/math110/handouts/2026-11-02-orthogonality-projections/handout.pdf) | 3 |
+| math110 | [2026-11-09-adjoints-spectral-theorem](../../semesters/2026-fall/math110/handouts/2026-11-09-adjoints-spectral-theorem/handout.pdf) | 4 |
+| math110 | [2026-11-16-positive-isometries-svd](../../semesters/2026-fall/math110/handouts/2026-11-16-positive-isometries-svd/handout.pdf) | 4 |
+| math54 | [2026-08-24-linear-systems-row-reduction](../../semesters/2026-fall/math54/handouts/2026-08-24-linear-systems-row-reduction/handout.pdf) | 3 |
+| math54 | [2026-08-31-vectors-ax-b-solution-sets](../../semesters/2026-fall/math54/handouts/2026-08-31-vectors-ax-b-solution-sets/handout.pdf) | 3 |
+| math54 | [2026-09-07-independence-linear-transformations](../../semesters/2026-fall/math54/handouts/2026-09-07-independence-linear-transformations/handout.pdf) | 2 |
+| math54 | [2026-09-14-matrix-algebra-inverses](../../semesters/2026-fall/math54/handouts/2026-09-14-matrix-algebra-inverses/handout.pdf) | 2 |
+| math54 | [2026-09-21-determinants-vector-spaces](../../semesters/2026-fall/math54/handouts/2026-09-21-determinants-vector-spaces/handout.pdf) | 2 |
+| math54 | [2026-09-28-bases-dimension-rank](../../semesters/2026-fall/math54/handouts/2026-09-28-bases-dimension-rank/handout.pdf) | 2 |
+| math54 | [2026-10-05-coordinates-eigenvalues](../../semesters/2026-fall/math54/handouts/2026-10-05-coordinates-eigenvalues/handout.pdf) | 3 |
+| math54 | [2026-10-12-diagonalization-complex-eigenvalues](../../semesters/2026-fall/math54/handouts/2026-10-12-diagonalization-complex-eigenvalues/handout.pdf) | 4 |
+| math54 | [2026-10-19-orthogonality-projections](../../semesters/2026-fall/math54/handouts/2026-10-19-orthogonality-projections/handout.pdf) | 4 |
+| math54 | [2026-10-26-gram-schmidt-least-squares](../../semesters/2026-fall/math54/handouts/2026-10-26-gram-schmidt-least-squares/handout.pdf) | 3 |
+| math54 | [2026-11-02-symmetric-svd-second-order](../../semesters/2026-fall/math54/handouts/2026-11-02-symmetric-svd-second-order/handout.pdf) | 6 |
+| math54 | [2026-11-09-undetermined-coefficients-superposition](../../semesters/2026-fall/math54/handouts/2026-11-09-undetermined-coefficients-superposition/handout.pdf) | 3 |
+| math54 | [2026-11-16-linear-systems-eigenvalue-method](../../semesters/2026-fall/math54/handouts/2026-11-16-linear-systems-eigenvalue-method/handout.pdf) | 2 |
+| stat20 | [2026-11-16-causation-experiments](../../semesters/2026-fall/stat20/handouts/2026-11-16-causation-experiments/handout.pdf) | 2 |
+| stat20 | [review-weeks-9-12](../../semesters/2026-fall/stat20/handouts/review-weeks-9-12/handout.pdf) | 6 |

@@ -1,10 +1,28 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}
 \title{Math 110 --- Week 1}
 \subtitle{Proofs, sets, fields, vector spaces, subspaces (Notes Ch.~1--2, LADR 1A--1C, HW1)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -133,8 +151,8 @@
 \begin{fig}
 \begin{tikzpicture}[scale=0.92]
   % Delicate axes
-  \draw[figaxis] (-3.15,0) -- (3.85,0) node[right=2pt,font=\footnotesize] {$\operatorname{Re}$};
-  \draw[figaxis] (0,-2.05) -- (0,2.15) node[above=2pt,font=\footnotesize] {$\operatorname{Im}$};
+  \PacketInkPath[figaxis]{(-3.15,0) -- (3.85,0) node[right=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Re}$}}}
+  \PacketInkPath[figaxis]{(0,-2.05) -- (0,2.15) node[above=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Im}$}}}
 
   \coordinate (O) at (0,0);
   \coordinate (Z) at (2.65,1.65);
@@ -142,34 +160,34 @@
   \coordinate (mZ) at (-2.65,-1.65);
 
   % Hairline dashed projections
-  \draw[figguide] (2.65,-1.65) -- (2.65,1.65);
-  \draw[figguide] (0,1.65) -- (2.65,1.65);
-  \draw[figguide] (0,-1.65) -- (2.65,-1.65);
+  \PacketInkPath[figguide]{(2.65,-1.65) -- (2.65,1.65)}
+  \PacketInkPath[figguide]{(0,1.65) -- (2.65,1.65)}
+  \PacketInkPath[figguide]{(0,-1.65) -- (2.65,-1.65)}
 
   % Right-angle mark
-  \draw[black!55,line width=0.38pt] (2.47,0) -- (2.47,0.18) -- (2.65,0.18);
+  \PacketInkPath[black!55,line width=0.38pt]{(2.47,0) -- (2.47,0.18) -- (2.65,0.18)}
 
   % Delicate angle arcs
-  \draw[black!55,line width=0.38pt] (0.64,0) arc (0:31.9:0.64);
-  \node[font=\scriptsize] at (0.88,0.22) {$\theta$};
-  \draw[black!55,line width=0.38pt] (0.64,0) arc (0:-31.9:0.64);
-  \node[font=\scriptsize] at (0.96,-0.23) {$-\theta$};
+  \PacketInkPath[black!55,line width=0.38pt]{(0.64,0) arc (0:31.9:0.64)}
+  \node[font=\scriptsize] at (0.88,0.22) {\InkLabel{$\theta$}};
+  \PacketInkPath[black!55,line width=0.38pt]{(0.64,0) arc (0:-31.9:0.64)}
+  \node[font=\scriptsize] at (0.96,-0.23) {\InkLabel{$-\theta$}};
 
   % Vectors: pure black for z and \bar z, muted gray for -z
-  \draw[figvec,line width=0.95pt] (O) -- node[pos=0.48,sloped,above=2pt,font=\scriptsize] {$|z|$} (Z);
-  \node[above right=2pt,font=\footnotesize] at (Z) {$z = a+bi$};
+  \PacketInkPath[figvec,line width=0.55pt]{(O) -- node[pos=0.48,sloped,above=2pt,font=\scriptsize] {\InkLabel{$|z|$}} (Z)}
+  \node[above right=2pt,font=\footnotesize] at (Z) {\InkLabel{$z = a+bi$}};
 
-  \draw[figvec,line width=0.95pt] (O) -- (Zbar);
-  \node[below right=2pt,font=\footnotesize] at (Zbar) {$\bar z = a-bi$};
+  \PacketInkPath[figvec,line width=0.55pt]{(O) -- (Zbar)}
+  \node[below right=2pt,font=\footnotesize] at (Zbar) {\InkLabel{$\bar z = a-bi$}};
 
-  \draw[figvecsub,densely dashed] (O) -- (mZ);
-  \node[below=3pt,font=\footnotesize,text=black!70] at (mZ) {$-z$};
+  \PacketInkPath[figvecsub,densely dashed]{(O) -- (mZ)}
+  \node[below=3pt,font=\footnotesize,text=black!70] at (mZ) {\InkLabel{$-z$}};
 
   % Atomic coordinate labels
-  \node[font=\scriptsize,below right=2pt] at (2.65,0) {$a$};
-  \node[font=\scriptsize,left=3pt] at (0,1.65) {$b$};
-  \node[font=\scriptsize,left=3pt] at (0,-1.65) {$-b$};
-  \node[font=\scriptsize,above left=2pt] at (O) {$0$};
+  \node[font=\scriptsize,below right=2pt] at (2.65,0) {\InkLabel{$a$}};
+  \node[font=\scriptsize,left=3pt] at (0,1.65) {\InkLabel{$b$}};
+  \node[font=\scriptsize,left=3pt] at (0,-1.65) {\InkLabel{$-b$}};
+  \node[font=\scriptsize,above left=2pt] at (O) {\InkLabel{$0$}};
 
   \node[figdot] at (O) {};
 \end{tikzpicture}
@@ -242,44 +260,44 @@
 \begin{tikzpicture}
   % Panel (a): Subspace line through 0
   \begin{scope}[shift={(0,0)},scale=0.92]
-    \draw[figaxis] (-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {$x_2$};
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
-    \draw[black,line width=1.15pt] (-1.25,-0.75) -- node[pos=0.76,sloped,above=2.5pt,font=\scriptsize] {$x_2=mx_1$} (1.65,0.99);
+    \PacketInkPath[black,line width=0.55pt]{(-1.25,-0.75) -- node[pos=0.76,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$x_2=mx_1$}} (1.65,0.99)}
     \node[figdot] at (0,0) {};
-    \node[below right=2pt,font=\scriptsize] at (0,0) {$0$};
-    \node[font=\footnotesize] at (0.25,-1.48) {(a)};
+    \node[below right=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
+    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(a)}};
   \end{scope}
 
   % Panel (b): Shifted line missing 0
   \begin{scope}[shift={(4.95,0)},scale=0.92]
-    \draw[figaxis] (-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {$x_2$};
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
-    \draw[black,line width=1.15pt] (-1.25,-0.04) -- node[pos=0.82,sloped,above=2.5pt,font=\scriptsize] {$x_2=mx_1+b$} (1.75,1.22);
-    \draw[fill=white,draw=black,line width=0.65pt] (0,0) circle (1.7pt);
-    \node[below right=2.5pt,font=\scriptsize] at (0,0) {$0\notin U$};
-    \node[font=\footnotesize] at (0.25,-1.48) {(b)};
+    \PacketInkPath[black,line width=0.55pt]{(-1.25,-0.04) -- node[pos=0.82,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$x_2=mx_1+b$}} (1.75,1.22)}
+    \draw[ink line,fill=white,draw=black,line width=0.55pt] (0,0) circle (1.7pt);
+    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0\notin U$}};
+    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(b)}};
   \end{scope}
 
   % Panel (c): Union of axes
   \begin{scope}[shift={(9.90,0)},scale=0.92]
-    \draw[figaxis] (-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {$x_2$};
-    \draw[black,line width=1.15pt] (-1.28,0) -- (1.65,0);
-    \draw[black,line width=1.15pt] (0,-0.98) -- (0,1.38);
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
+    \PacketInkPath[black,line width=0.55pt]{(-1.28,0) -- (1.65,0)}
+    \PacketInkPath[black,line width=0.55pt]{(0,-0.98) -- (0,1.38)}
 
-    \draw[figguide] (1.05,0) -- (1.05,1.05) -- (0,1.05);
+    \PacketInkPath[figguide]{(1.05,0) -- (1.05,1.05) -- (0,1.05)}
 
     \node[figdot] at (1.05,0) {};
-    \node[below=2.5pt,font=\scriptsize] at (1.05,0) {$e_1$};
+    \node[below=2.5pt,font=\scriptsize] at (1.05,0) {\InkLabel{$e_1$}};
     \node[figdot] at (0,1.05) {};
-    \node[left=2.5pt,font=\scriptsize] at (0,1.05) {$e_2$};
+    \node[left=2.5pt,font=\scriptsize] at (0,1.05) {\InkLabel{$e_2$}};
     \node[figdot] at (0,0) {};
-    \node[below left=1.5pt,font=\scriptsize] at (0,0) {$0$};
-    \draw[fill=white,draw=black,line width=0.65pt] (1.05,1.05) circle (1.7pt);
-    \node[above right=2pt,font=\scriptsize] at (1.05,1.05) {$e_1+e_2\notin U$};
-    \node[font=\footnotesize] at (0.25,-1.48) {(c)};
+    \node[below left=1.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
+    \draw[ink line,fill=white,draw=black,line width=0.55pt] (1.05,1.05) circle (1.7pt);
+    \node[above right=2pt,font=\scriptsize] at (1.05,1.05) {\InkLabel{$e_1+e_2\notin U$}};
+    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(c)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{Subspaces vs.\ non-subspaces of $\RR^2$: (a) the lines through $0$ (along with $\{0\}$ and $\RR^2$) are the only subspaces of $\RR^2$; (b) any line not passing through $0$ fails condition~(i); (c) the union of the two axes $\{x_1x_2=0\}$ contains $0$ and is closed under scalar multiples, but fails closure under addition.}
@@ -334,42 +352,42 @@
   % Left panel: Direct sum of 2 lines in R^2
   \begin{scope}[shift={(0,0)},scale=0.94]
     \coordinate (V) at (1.55,1.05);
-    \fill[black!7] (0,0) -- (1.55,0) -- (V) -- (0,1.05) -- cycle;
+    \InkRegion[inkblue]{(0,0) -- (1.55,0) -- (V) -- (0,1.05) -- cycle}
 
-    \draw[black!70,line width=0.55pt] (-1.65,0) -- (2.25,0) node[right=2pt,font=\footnotesize,text=black] {$U_2$};
-    \draw[black!70,line width=0.55pt] (0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {$U_3$};
+    \PacketInkPath[black!70,line width=0.55pt]{(-1.65,0) -- (2.25,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
+    \PacketInkPath[black!70,line width=0.55pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
 
-    \draw[figguide] (1.55,0) -- (V) -- (0,1.05);
-    \draw[figvec,line width=0.95pt] (0,0) -- (V);
+    \PacketInkPath[figguide]{(1.55,0) -- (V) -- (0,1.05)}
+    \PacketInkPath[figvec,line width=0.55pt]{(0,0) -- (V)}
 
     \node[figdot] at (1.55,0) {};
-    \node[below=3pt,font=\scriptsize] at (1.55,0) {$u_2$};
+    \node[below=3pt,font=\scriptsize] at (1.55,0) {\InkLabel{$u_2$}};
     \node[figdot] at (0,1.05) {};
-    \node[left=3pt,font=\scriptsize] at (0,1.05) {$u_3$};
-    \node[above right=2pt,font=\scriptsize] at (V) {$v=u_2+u_3$};
+    \node[left=3pt,font=\scriptsize] at (0,1.05) {\InkLabel{$u_3$}};
+    \node[above right=2pt,font=\scriptsize] at (V) {\InkLabel{$v=u_2+u_3$}};
     \node[figdot] at (0,0) {};
-    \node[below left=2pt,font=\scriptsize] at (0,0) {$0$};
+    \node[below left=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
 
-    \node[font=\footnotesize] at (0.30,-1.48) {(a)};
+    \node[font=\footnotesize] at (0.30,-1.48) {\InkLabel{(a)}};
   \end{scope}
 
   % Right panel: Three peer lines in R^2 with closed vector loop summing to 0
   \begin{scope}[shift={(6.50,0)},scale=0.94]
-    \fill[black!7] (0,0) -- (1.50,1.50) -- (1.50,0) -- cycle;
+    \InkRegion[inkblue]{(0,0) -- (1.50,1.50) -- (1.50,0) -- cycle}
 
     % All three peer lines drawn consistently solid and delicate
-    \draw[black!40,line width=0.45pt] (-1.25,0) -- (2.45,0) node[right=2pt,font=\footnotesize,text=black] {$U_2$};
-    \draw[black!40,line width=0.45pt] (0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {$U_3$};
-    \draw[black!40,line width=0.45pt] (-0.90,-0.90) -- (1.78,1.78) node[above right=1pt,font=\footnotesize,text=black] {$U_1$};
+    \PacketInkPath[black!40,line width=0.45pt]{(-1.25,0) -- (2.45,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
+    \PacketInkPath[black!40,line width=0.45pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
+    \PacketInkPath[black!40,line width=0.45pt]{(-0.90,-0.90) -- (1.78,1.78) node[above right=1pt,font=\footnotesize,text=black] {\InkLabel{$U_1$}}}
 
     % Nontrivial closed loop in crisp black ink
-    \draw[figvec,line width=0.9pt,shorten >=1.2pt] (0,0) -- node[pos=0.56,sloped,above=2.5pt,font=\scriptsize] {$(1,1)$} (1.50,1.50);
-    \draw[figvec,line width=0.9pt,shorten >=1.2pt] (1.50,1.50) -- node[midway,right=3pt,font=\scriptsize] {$(0,-1)$} (1.50,0);
-    \draw[figvec,line width=0.9pt,shorten >=2.2pt] (1.50,0) -- node[midway,below=3pt,font=\scriptsize] {$(-1,0)$} (0,0);
+    \PacketInkPath[figvec,line width=0.55pt,shorten >=1.2pt]{(0,0) -- node[pos=0.56,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$(1,1)$}} (1.50,1.50)}
+    \PacketInkPath[figvec,line width=0.55pt,shorten >=1.2pt]{(1.50,1.50) -- node[midway,right=3pt,font=\scriptsize] {\InkLabel{$(0,-1)$}} (1.50,0)}
+    \PacketInkPath[figvec,line width=0.55pt,shorten >=2.2pt]{(1.50,0) -- node[midway,below=3pt,font=\scriptsize] {\InkLabel{$(-1,0)$}} (0,0)}
 
     \node[figdot] at (0,0) {};
-    \node[above left=2pt,font=\scriptsize] at (0,0) {$0$};
-    \node[font=\footnotesize] at (0.55,-1.48) {(b)};
+    \node[above left=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
+    \node[font=\footnotesize] at (0.55,-1.48) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{(a) Two distinct lines through $0$ in $\RR^2$ satisfy $U_2\cap U_3=\{0\}$, so $\RR^2=U_2\oplus U_3$. (b) Adding a third line $U_1=\{(t,t)\}$ gives $U_i\cap U_j=\{0\}$ for all $i\ne j$, yet $(1,1)+(-1,0)+(0,-1)=0$ is a nontrivial representation of $0$, so $U_1+U_2+U_3$ is \emph{not} direct, and $U_1\cap(U_2+U_3)=U_1\ne\{0\}=(U_1\cap U_2)+(U_1\cap U_3)$.}
@@ -392,31 +410,31 @@
   \ii Prove $f(f^{-1}(V))\subseteq V$. \ii Prove $U\subseteq f^{-1}(f(U))$.
   \ii Give examples where each inclusion is strict. Determine exactly when equality holds in (a) and in (b).
 \end{enumerate}
-\emph{Hint:} take an arbitrary element and unfold both definitions; for (c) think about surjective and injective.
+
 \end{prob}
 \begin{prob}\textbf{HW1 P2 (LADR 1A.7).}\ Show that $\dfrac{-1+\sqrt3\,i}{2}$ is a cube root of $1$.\target{prob-HW1-P2}
 
-\emph{Hint:} square it first, then multiply once more.
+
 \end{prob}
 \begin{prob}\textbf{HW1 P3.}\ Let $a,b\in\FF$. Prove that if $ab=0$ then $a=0$ or $b=0$.\target{prob-HW1-P3}
 
-\emph{Hint:} multiplicative inverse (field axiom (vii)).
+
 \end{prob}
 \begin{prob}\textbf{HW1 P4 (LADR 1B.2).}\ If $a\in\FF$, $v\in V$ and $av=0$, prove $a=0$ or $v=0$.\target{prob-HW1-P4}
 
-\emph{Hint:} same idea as P3, with \ilink{prop-4}{Prop.~4(ii)}.
+
 \end{prob}
 \begin{prob}\textbf{HW1 P5 (LADR 1C.4).}\ Let $b\in\RR$. Show that the set of continuous $f\colon[0,1]\to\RR$ with $\int_0^1f=b$ is a subspace of $\RR^{[0,1]}$ if and only if $b=0$.\target{prob-HW1-P5}
 
-\emph{Hint:} the zero function for one direction, linearity of the integral for the other.
+
 \end{prob}
 \begin{prob}\textbf{HW1 P6 (LADR 1C.5).}\ Is $\RR^2$ a subspace of the complex vector space $\CC^2$?\target{prob-HW1-P6}
 
-\emph{Hint:} which scalars are allowed in $\CC^2$?
+
 \end{prob}
 \begin{prob}\textbf{HW1 P7.}\ Over $\FF_2$, expand $(x+1)^8$ by computing $(x+1)^2$ and squaring repeatedly. Explain where the calculation differs from the one over $\RR$.\target{prob-HW1-P7}
 
-\emph{Hint:} $2=0$ in $\FF_2$.
+
 \end{prob}
 \begin{prob}\textbf{R1 (Midterm 1 review, Exercise 7).}\ Prove that the intersection of subspaces is a subspace. What about the union?
 \end{prob}
@@ -424,5 +442,22 @@
 \end{prob}
 \begin{prob}\textbf{E2.}\ In $\RR^3$ let $U=\{(x,y,0)\}$, $W=\{(0,y,z)\}$, $X=\{(t,t,t)\}$. Which of the sums $U+W$, $U+X$, $W+X$ are direct? Is $\RR^3=U\oplus X$?
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P1}{HW1 P1.}} \emph{Hint:} take an arbitrary element and unfold both definitions; for (c) think about surjective and injective.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P2}{HW1 P2 (LADR 1A.7).}} \emph{Hint:} square it first, then multiply once more.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P3}{HW1 P3.}} \emph{Hint:} multiplicative inverse (field axiom (vii)).
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P4}{HW1 P4 (LADR 1B.2).}} \emph{Hint:} same idea as P3, with \ilink{prop-4}{Prop.~4(ii)}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P5}{HW1 P5 (LADR 1C.4).}} \emph{Hint:} the zero function for one direction, linearity of the integral for the other.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P6}{HW1 P6 (LADR 1C.5).}} \emph{Hint:} which scalars are allowed in $\CC^2$?
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P7}{HW1 P7.}} \emph{Hint:} $2=0$ in $\FF_2$.
 
 \end{document}

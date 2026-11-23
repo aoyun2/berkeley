@@ -1,12 +1,30 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 7}
 \subtitle{Diagonalizability and the minimal polynomial (Notes Ch.~12--13, LADR 5C, 5D, 5B, HW7)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 \section{Facts used from earlier weeks}
@@ -156,47 +174,28 @@ For induction $U$ has to be smaller than $V$, i.e.\ $T-\lambda I$ must not be su
 \end{proof}
 
 \begin{fig}
-\newcommand{\hstamp}[3]{\makebox[0pt][l]{\kern#1pt\raisebox{#2pt}[0pt][0pt]{#3}}}
-\newcommand{\mathhalo}[2][black]{%
-  \leavevmode\mbox{%
-    \rlap{\textcolor{white}{%
-      \hstamp{1.40}{0.00}{#2}\hstamp{1.29}{0.54}{#2}\hstamp{0.99}{0.99}{#2}\hstamp{0.54}{1.29}{#2}%
-      \hstamp{0.00}{1.40}{#2}\hstamp{-0.54}{1.29}{#2}\hstamp{-0.99}{0.99}{#2}\hstamp{-1.29}{0.54}{#2}%
-      \hstamp{-1.40}{0.00}{#2}\hstamp{-1.29}{-0.54}{#2}\hstamp{-0.99}{-0.99}{#2}\hstamp{-0.54}{-1.29}{#2}%
-      \hstamp{0.00}{-1.40}{#2}\hstamp{0.54}{-1.29}{#2}\hstamp{0.99}{-0.99}{#2}\hstamp{1.29}{-0.54}{#2}%
-      \hstamp{0.70}{0.00}{#2}\hstamp{0.49}{0.49}{#2}\hstamp{0.00}{0.70}{#2}\hstamp{-0.49}{0.49}{#2}%
-      \hstamp{-0.70}{0.00}{#2}\hstamp{-0.49}{-0.49}{#2}\hstamp{0.00}{-0.70}{#2}\hstamp{0.49}{-0.49}{#2}%
-    }}%
-    \textcolor{#1}{#2}%
-  }%
-}
-\begin{tikzpicture}
-  % Left: Generated 1965-style spot-color micro-stipple plate + contoured Computer Modern LaTeX overlay
-  \node[anchor=south west,inner sep=0] (img) at (0,0)
-    {\includegraphics[width=7.6cm]{figures/fig1_upper_tri.png}};
-  \begin{scope}[x={(img.south east)},y={(img.north west)}]
-    \node[font=\footnotesize, text=figblue!90!black] at (0.300,0.785) {$U_2$};
-    \node[font=\footnotesize, text=figred] at (0.095,0.235) {$U_1$};
-    \node[font=\scriptsize] at (0.255,0.220) {\mathhalo{$0$}};
-    \node[font=\scriptsize] at (0.420,0.220) {\mathhalo{$v_1$}};
-    \node[font=\scriptsize, text=figred] at (0.805,0.220) {$Tv_1$};
-    \node[font=\scriptsize] at (0.365,0.510) {\mathhalo{$v_2$}};
-    \node[font=\scriptsize] at (0.620,0.690) {\mathhalo[figamber]{$+a_{12}v_1$}};
-    \node[font=\scriptsize] at (0.460,0.635) {\mathhalo[figslate]{$\lambda_2v_2$}};
-    \node[font=\footnotesize] at (0.650,0.420) {\mathhalo{$T$}};
-    \node[font=\scriptsize, anchor=west] at (0.775,0.640) {\mathhalo[figblue]{$Tv_2$}};
-  \end{scope}
-
-  % Right: clean spot-color linked upper-triangular matrix
-  \node[anchor=west] at (8.15,2.45) {%
-    $\displaystyle \MM(T) = \begin{pmatrix}
-      \textcolor{figred}{\lambda_1} & \textcolor{figamber}{a_{12}} & \cdots & a_{1n} \\
-      \textcolor{black!35}{0} & \textcolor{figblue}{\lambda_2} & \cdots & a_{2n} \\
-      \textcolor{black!35}{\vdots} & \textcolor{black!35}{\vdots} & \ddots & \vdots \\
-      \textcolor{black!35}{0} & \textcolor{black!35}{0} & \cdots & \textcolor{figgreen}{\lambda_n}
-    \end{pmatrix}$};
+\begin{tikzpicture}[font=\small]
+\InkRegion[inkblue]{(-.7,-.45)--(4.9,-.45)--(5.8,2.65)--(.2,2.65)--cycle}
+\InkStroke[inkblue!65]{(-.7,-.45)--(.2,2.65)--(5.8,2.65)}
+\InkStroke[inkblue!65]{(-.7,-.45)--(4.9,-.45)--(5.8,2.65)}
+\InkStroke[inkred]{(-.8,0)--(5.5,0)}
+\InkStroke[ink arrow,inkred]{(0,0)--(3,0)}
+\InkStroke[ink arrow]{(0,0)--(1,0)}
+\InkStroke[ink guide,inkslate]{(1,1)--(2,2)}
+\InkStroke[ink guide,inkamber,-{Stealth[length=4pt,width=1.8pt]},shorten >=4pt]{(2,2)--(4,2)}
+\InkStroke[ink arrow,inkblue]{(0,0)--(4,2)}
+\InkStroke[ink arrow]{(0,0)--(1,1)}
+\fill (0,0) circle (.9pt);
+\node[below left] at (0,0) {\InkLabel{$0$}};
+\node[below] at (1,0) {\InkLabel{$v_1$}};\node[below,inkred] at (3,0) {\InkLabel{$Tv_1$}};
+\node[above left] at (1,1) {\InkLabel{$v_2$}};
+\node[above left,inkslate] at (2,2) {\InkLabel{$2v_2$}};
+\node[above,inkamber] at (3,2) {\InkLabel{$+2v_1$}};
+\node[right,inkblue] at (4,2) {\InkLabel{$Tv_2$}};
+\node[below,inkred] at (5.4,0) {\InkLabel{$U_1$}};\node[inkblue] at (.7,2.35) {\InkLabel{$U_2$}};
+\node[anchor=west] at (6.5,1.2) {$\displaystyle\mathcal M(T)=\begin{pmatrix}\textcolor{inkred}{3}&\textcolor{inkamber}{2}\\0&\textcolor{inkblue}{2}\end{pmatrix}$};
 \end{tikzpicture}
-\figcap{Geometry of an upper-triangular matrix (\hyperref[prop-59]{Prop.~59--61} / LADR 5.39--5.47): in the basis $v_1,\dots,v_n$, the map $T$ sends $v_1$ to $Tv_1=\lambda_1 v_1$ along the line $U_1=\spn(v_1)$ (column~$1$), and sends $v_2$ to $Tv_2=a_{12}v_1+\lambda_2 v_2$ inside the plane $U_2=\spn(v_1,v_2)$ (column~$2$). In general, $\MM(T)$ is upper-triangular iff the subspaces $U_j=\spn(v_1,\dots,v_j)$ form a nested chain of $T$-invariant subspaces $\{0\}\subset U_1\subset U_2\subset\dots\subset U_n=V$.}
+\figcap{Concrete case $v_1=(1,0)$, $v_2=(1,1)$, $\lambda_1=3$, $\lambda_2=2$, $a_{12}=2$: the finite shaded patch depicts part of $U_2$. Geometry of an upper-triangular matrix (\hyperref[prop-59]{Prop.~59--61} / LADR 5.39--5.47): in the basis $v_1,\dots,v_n$, the map $T$ sends $v_1$ to $Tv_1=\lambda_1 v_1$ along the line $U_1=\spn(v_1)$ (column~$1$), and sends $v_2$ to $Tv_2=a_{12}v_1+\lambda_2 v_2$ inside the plane $U_2=\spn(v_1,v_2)$ (column~$2$). In general, $\MM(T)$ is upper-triangular iff the subspaces $U_j=\spn(v_1,\dots,v_j)$ form a nested chain of $T$-invariant subspaces $\{0\}\subset U_1\subset U_2\subset\dots\subset U_n=V$.}
 \end{fig}
 \begin{itemize}
   \ii Over $\RR$ this can fail. In an upper-triangular basis, $Tv_1\in\spn(v_1)$, so $v_1$ is an eigenvector. The rotation $\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ of $\RR^2$ has no eigenvector, so it has no upper-triangular matrix over $\RR$.
@@ -290,58 +289,58 @@ For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$: the only eigenvalue is $
 \begin{tikzpicture}
   % Left: Spivak soft gray washes and crisp 0.5pt solid circles for all three peer disks
   \begin{scope}[scale=0.52]
-    \fill[black, fill opacity=0.075] (-3,3) circle (3);
-    \fill[black, fill opacity=0.075] (2,4) circle (4);
-    \fill[black, fill opacity=0.075] (7,-1) circle (2);
+    \path[pattern=inkgrain,pattern color=inkblue] (-3,3) circle (3);
+    \path[pattern=inkgrain,pattern color=inkblue] (2,4) circle (4);
+    \path[pattern=inkgrain,pattern color=inkblue] (7,-1) circle (2);
 
     % Hair-thin axes and origin
-    \draw[figaxis] (-6.5,0) -- (9.8,0) node[right=2pt, font=\scriptsize] {$\operatorname{Re} z$};
-    \draw[figaxis] (0,-3.5) -- (0,8.7) node[above=2pt, font=\scriptsize] {$\operatorname{Im} z$};
+    \PacketInkPath[figaxis]{(-6.5,0) -- (9.8,0) node[right=2pt, font=\scriptsize] {\InkLabel{$\operatorname{Re} z$}}}
+    \PacketInkPath[figaxis]{(0,-3.5) -- (0,8.7) node[above=2pt, font=\scriptsize] {\InkLabel{$\operatorname{Im} z$}}}
     \fill[black] (0,0) circle (2.0pt);
-    \node[font=\scriptsize, below left=2pt] at (0,0) {$0$};
+    \node[font=\scriptsize, below left=2pt] at (0,0) {\InkLabel{$0$}};
 
     % Consistent crisp 0.5pt solid outlines for all three Gershgorin disks
-    \draw[black!80, line width=0.5pt] (-3,3) circle (3);
-    \draw[black!80, line width=0.5pt] (2,4) circle (4);
-    \draw[black!80, line width=0.5pt] (7,-1) circle (2);
+    \PacketInkPath[black!80, line width=0.5pt]{(-3,3) circle (3)}
+    \PacketInkPath[black!80, line width=0.5pt]{(2,4) circle (4)}
+    \PacketInkPath[black!80, line width=0.5pt]{(7,-1) circle (2)}
 
     % Delicate dashed radii
-    \draw[->, black!55, densely dashed, line width=0.42pt] (-3,3) -- ++(135:3)
-      node[midway, above right=1pt, font=\scriptsize, text=black!75] {$r_1=3$};
-    \draw[->, black!55, densely dashed, line width=0.42pt] (2,4) -- ++(45:4)
-      node[midway, above left=2pt, font=\scriptsize, text=black!75] {$r_2=4$};
-    \draw[->, black!55, densely dashed, line width=0.42pt] (7,-1) -- ++(-135:2)
-      node[midway, below right=2pt, font=\scriptsize, text=black!75] {$r_3=2$};
+    \PacketInkPath[->, black!55, densely dashed, line width=0.42pt]{(-3,3) -- ++(135:3)
+      node[midway, above right=1pt, font=\scriptsize, text=black!75] {\InkLabel{$r_1=3$}}}
+    \PacketInkPath[->, black!55, densely dashed, line width=0.42pt]{(2,4) -- ++(45:4)
+      node[midway, above left=2pt, font=\scriptsize, text=black!75] {\InkLabel{$r_2=4$}}}
+    \PacketInkPath[->, black!55, densely dashed, line width=0.42pt]{(7,-1) -- ++(-135:2)
+      node[midway, below right=2pt, font=\scriptsize, text=black!75] {\InkLabel{$r_3=2$}}}
 
     % Centers (small solid dots) and disk labels
     \fill[black!80] (-3,3) circle (2.0pt);
-    \node[font=\scriptsize, below=3pt] at (-3,3) {$a_{11}$};
-    \node[font=\footnotesize, above=3pt] at (-3,6) {$D_1$};
+    \node[font=\scriptsize, below=3pt] at (-3,3) {\InkLabel{$a_{11}$}};
+    \node[font=\footnotesize, above=3pt] at (-3,6) {\InkLabel{$D_1$}};
 
     \fill[black!80] (2,4) circle (2.0pt);
-    \node[font=\scriptsize, above left=2pt] at (2,4) {$a_{22}$};
-    \node[font=\footnotesize, above=3pt] at (2,8) {$D_2$};
+    \node[font=\scriptsize, above left=2pt] at (2,4) {\InkLabel{$a_{22}$}};
+    \node[font=\footnotesize, above=3pt] at (2,8) {\InkLabel{$D_2$}};
 
     \fill[black!80] (7,-1) circle (2.0pt);
-    \node[font=\scriptsize, left=3pt] at (7,-1) {$a_{33}$};
-    \node[font=\footnotesize, right=3pt] at (9,-1) {$D_3$};
+    \node[font=\scriptsize, left=3pt] at (7,-1) {\InkLabel{$a_{33}$}};
+    \node[font=\footnotesize, right=3pt] at (9,-1) {\InkLabel{$D_3$}};
 
     % Exact eigenvalues (crisp cross marks)
     \foreach \ex/\ey in {-4.032/3.135, 2.613/3.458, 7.419/-0.592} {
-      \draw[black, line width=0.8pt] (\ex,\ey) ++(-2.5pt,-2.5pt) -- ++(5.0pt,5.0pt) ++(-5.0pt,0) -- ++(5.0pt,-5.0pt);
+      \PacketInkPath[black, line width=0.55pt]{(\ex,\ey) ++(-2.5pt,-2.5pt) -- ++(5.0pt,5.0pt) ++(-5.0pt,0) -- ++(5.0pt,-5.0pt)}
     }
-    \node[font=\scriptsize, below=3pt] at (-4.032,3.135) {$\lambda_1$};
-    \node[font=\scriptsize, below right=2pt] at (2.613,3.458) {$\lambda_2$};
-    \node[font=\scriptsize, below right=2pt] at (7.419,-0.592) {$\lambda_3$};
+    \node[font=\scriptsize, below=3pt] at (-4.032,3.135) {\InkLabel{$\lambda_1$}};
+    \node[font=\scriptsize, below right=2pt] at (2.613,3.458) {\InkLabel{$\lambda_2$}};
+    \node[font=\scriptsize, below right=2pt] at (7.419,-0.592) {\InkLabel{$\lambda_3$}};
   \end{scope}
 
   % Right: pure black matrix with serene negative space
   \node[anchor=west] at (5.75, 1.55) {%
-    $\displaystyle A = \begin{pmatrix}
+    \InkLabel{$\displaystyle A = \begin{pmatrix}
       -3+3i & 3 & 0 \\
       2 & 2+4i & 2 \\
       0 & 2 & 7-i
-    \end{pmatrix}$};
+    \end{pmatrix}$}};
 \end{tikzpicture}
 \figcap{Gershgorin Disk Theorem (LADR 5.67): every eigenvalue of $A=(a_{jk})$ lies in the union of the disks $D_j=\{z\in\CC:|z-a_{jj}|\le r_j\}$ centered at $a_{jj}$ ($\bullet$) with radii $r_j=\sum_{k\ne j}|a_{jk}|$. Here the exact eigenvalues ($\times$) are $\lambda_1\approx -4.03+3.13i$, $\lambda_2\approx 2.61+3.46i$, and $\lambda_3\approx 7.42-0.59i$; because $0\notin D_1\cup D_2\cup D_3$, $A$ is invertible.}
 \end{fig}
@@ -515,31 +514,31 @@ Conversely, when $m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ has distinct roots, $(T-
   xmin=0.55, xmax=3.65, ymin=-1.15, ymax=1.90,
   axis lines=left,
   axis line style={-{Stealth[length=3.6pt,width=2.1pt]}, black!80, line width=0.42pt},
-  xlabel={$x$}, ylabel={$y$},
+  xlabel={\InkLabel{$x$}}, ylabel={\InkLabel{$y$}},
   xlabel style={at={(ticklabel* cs:1.01)}, anchor=west, font=\scriptsize},
   ylabel style={at={(ticklabel* cs:1.01)}, anchor=south, font=\scriptsize, rotate=-90},
-  xtick={1,2,3}, xticklabels={$\lambda_1$,$\lambda_2$,$\lambda_3$},
+  xtick={1,2,3}, xticklabels={\InkLabel{$\lambda_1$},\InkLabel{$\lambda_2$},\InkLabel{$\lambda_3$}},
   ytick={0,1},
   tick style={black!60, line width=0.35pt},
   tick label style={font=\scriptsize},
   domain=0.62:3.38, samples=100,
   clip=false
 ]
-  \addplot[black!30, line width=0.35pt, domain=0.55:3.52] {0};
-  \draw[black!22, densely dotted, line width=0.35pt] (axis cs:1,-1.15) -- (axis cs:1,1);
-  \draw[black!22, densely dotted, line width=0.35pt] (axis cs:2,-1.15) -- (axis cs:2,1);
-  \draw[black!22, densely dotted, line width=0.35pt] (axis cs:3,-1.15) -- (axis cs:3,1);
-  \draw[black!50, densely dashed, line width=0.42pt] (axis cs:0.55,1) -- (axis cs:3.52,1)
-    node[right=2pt, font=\scriptsize, text=black!70] {$g_1+g_2+g_3=1$};
+  \addplot[ink plot,black!30, line width=0.35pt, domain=0.55:3.52] {0};
+  \PacketInkPath[black!22, densely dotted, line width=0.35pt]{(axis cs:1,-1.15) -- (axis cs:1,1)}
+  \PacketInkPath[black!22, densely dotted, line width=0.35pt]{(axis cs:2,-1.15) -- (axis cs:2,1)}
+  \PacketInkPath[black!22, densely dotted, line width=0.35pt]{(axis cs:3,-1.15) -- (axis cs:3,1)}
+  \PacketInkPath[black!50, densely dashed, line width=0.42pt]{(axis cs:0.55,1) -- (axis cs:3.52,1)
+    node[right=2pt, font=\scriptsize, text=black!70] {\InkLabel{$g_1+g_2+g_3=1$}}}
 
-  \addplot[figblue, line width=0.95pt] {(x-2)*(x-3)/2};
-  \addplot[figred, line width=0.95pt] {-(x-1)*(x-3)};
-  \addplot[figgreen, line width=0.95pt] {(x-1)*(x-2)/2};
+  \addplot[ink plot,figblue, line width=0.55pt] {(x-2)*(x-3)/2};
+  \addplot[ink plot,figred, line width=0.55pt] {-(x-1)*(x-3)};
+  \addplot[ink plot,figgreen, line width=0.55pt] {(x-1)*(x-2)/2};
 
   % Direct atomic curve labels (Spivak style, no separate legend box)
-  \node[font=\scriptsize, text=figblue, anchor=south west] at (axis cs:0.68,1.42) {$g_1$};
-  \node[font=\scriptsize, text=figred, anchor=south] at (axis cs:2.0,1.08) {$g_2$};
-  \node[font=\scriptsize, text=figgreen, anchor=south east] at (axis cs:3.32,1.42) {$g_3$};
+  \node[font=\scriptsize, text=figblue, anchor=south west] at (axis cs:0.68,1.42) {\InkLabel{$g_1$}};
+  \node[font=\scriptsize, text=figred, anchor=south] at (axis cs:2.0,1.08) {\InkLabel{$g_2$}};
+  \node[font=\scriptsize, text=figgreen, anchor=south east] at (axis cs:3.32,1.42) {\InkLabel{$g_3$}};
 
   % Zero values (hollow dots) and unit values (solid dots)
   \addplot[only marks, mark=*, mark size=1.55pt, mark options={fill=white, draw=black!80, line width=0.5pt}]
@@ -886,7 +885,7 @@ The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and 
 
 \begin{prob}
 \textbf{HW7 P3. }\ Let $T$ be an invertible operator on a finite-dimensional vector space, and let $m_T(x)=x^d+a_{d-1}x^{d-1}+\dots+a_1x+a_0$ be its minimal polynomial.\target{prob-HW7-P3}
-\par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} For (a), $0$ is an eigenvalue iff $a_0=0$ (\hyperref[prop-66]{Prop.~66}); for (b), isolate $a_0I$ and factor out $T$.
+
 \begin{enumerate}[(a)]
   \ii Prove that $a_0\ne0$.
   \ii Prove that $T^{-1}$ is a polynomial in $T$.
@@ -896,7 +895,7 @@ The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and 
 
 \begin{prob}
 \textbf{HW7 P4. (optional)}\ Let $m_T$ be the minimal polynomial of an operator $T$.\target{prob-HW7-P4}
-\par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Apply \hyperref[prop-65]{Prop.~65} to test monic polynomials annihilating $T-\lambda I$ and $cT$, then check degree minimality.
+
 \begin{enumerate}[(a)]
   \ii Prove that the minimal polynomial of $T-\lambda I$ is $m_T(x+\lambda)$.
   \ii If $c\ne0$ and $d=\deg m_T$, prove that the minimal polynomial of $cT$ is $c^dm_T(x/c)$.
@@ -905,7 +904,7 @@ The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and 
 
 \begin{prob}
 \textbf{HW7 P5. }\ Let $A$ be a $2\times2$ complex matrix whose only eigenvalue is $\lambda$. Prove that its minimal polynomial is either $x-\lambda$ or $(x-\lambda)^2$. Show that the first case occurs exactly when $A=\lambda I$, and conclude that $A$ is diagonalizable if and only if $A=\lambda I$.\target{prob-HW7-P5}
-\par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Roots of $m_A$ are the eigenvalues (\hyperref[prop-66]{Prop.~66}) and $\deg m_A\le 2$; $m_A(x)=x-\lambda\iff A-\lambda I=0$.
+
 \end{prob}
 
 \begin{prob}
@@ -914,12 +913,12 @@ The first matrix is a \vocab{companion matrix}: if $Ae_j=e_{j+1}$ for $j<n$ and 
   C=\begin{pmatrix}2&1&0\\0&2&0\\0&0&3\end{pmatrix}.
 \]
 Find its eigenvalues, eigenspaces, and minimal polynomial. Decide whether $C$ is diagonalizable.\target{prob-HW7-P6}
-\par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Use block diagonal structure: $m_C=\operatorname{lcm}(m_{C_1},m_{C_2})$ (Method 3). Diagonalizability requires $m_C$ to have distinct linear factors (\hyperref[prop-67]{Prop.~67}).
+
 \end{prob}
 
 \begin{prob}
 \textbf{HW7 P7. (optional)}\ Let $T$ be an operator whose minimal polynomial splits as $m_T(x)=(x-\lambda_1)\cdots(x-\lambda_r)$ with distinct roots. For a fixed $j$, construct a polynomial $p_j$ such that $p_j(\lambda_j)=1$ and $p_j(\lambda_k)=0$ for $k\ne j$, and explain why $p_j(T)$ is the projection onto $E(\lambda_j,T)$ along the sum of the other eigenspaces.\target{prob-HW7-P7}
-\par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Use Lagrange interpolation: $p_j(x)=\prod_{k\ne j}\frac{x-\lambda_k}{\lambda_j-\lambda_k}$. Test $p_j(T)$ on each eigenspace $E(\lambda_i,T)$ using \ilink{T7}{(T7)}.
+
 \end{prob}
 
 \begin{prob}
@@ -954,5 +953,19 @@ Find its eigenvalues, eigenspaces, and minimal polynomial. Decide whether $C$ is
 \begin{prob}
 \textbf{M9. Using the minimal polynomial to compute.}\ Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$. Find $m_A$, write $A^{-1}$ as a polynomial in $A$, and write $A^3$ as $aA+bI$.
 \end{prob}
+
+\clearpage
+\section*{Hints}
+Try each problem before consulting its hint.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW7-P3}{HW7 P3}} For (a), $0$ is an eigenvalue iff $a_0=0$ (\hyperref[prop-66]{Prop.~66}); for (b), isolate $a_0I$ and factor out $T$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW7-P4}{HW7 P4. (optional)}} Apply \hyperref[prop-65]{Prop.~65} to test monic polynomials annihilating $T-\lambda I$ and $cT$, then check degree minimality.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW7-P5}{HW7 P5}} Roots of $m_A$ are the eigenvalues (\hyperref[prop-66]{Prop.~66}) and $\deg m_A\le 2$; $m_A(x)=x-\lambda\iff A-\lambda I=0$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW7-P6}{HW7 P6}} Use block diagonal structure: $m_C=\operatorname{lcm}(m_{C_1},m_{C_2})$ (Method 3). Diagonalizability requires $m_C$ to have distinct linear factors (\hyperref[prop-67]{Prop.~67}).
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW7-P7}{HW7 P7. (optional)}} Use Lagrange interpolation: $p_j(x)=\prod_{k\ne j}\frac{x-\lambda_k}{\lambda_j-\lambda_k}$. Test $p_j(T)$ on each eigenspace $E(\lambda_i,T)$ using \ilink{T7}{(T7)}.
 
 \end{document}

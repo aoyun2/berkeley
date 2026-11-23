@@ -1,12 +1,30 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 12}
 \subtitle{Positive operators, isometries, polar decomposition, singular values (Notes Ch.~21--22, LADR 7C--7F, HW12)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -172,53 +190,51 @@ Among self-adjoint operators (the ``real numbers'' of $\LL(V)$), positive operat
 \begin{tikzpicture}[scale=1.0]
   % Panel (a): Positive definite level set (ellipse)
   \begin{scope}[xshift=2.8cm,yshift=1.95cm,scale=1.24]
-    \draw[figaxis] (-1.42,0) -- (1.55,0) node[right=2pt,font=\scriptsize] {$x$};
-    \draw[figaxis] (0,-1.30) -- (0,1.42) node[above=1pt,font=\scriptsize] {$y$};
+  \InkRegion[inkblue]{(0,0) [rotate=45] ellipse (1 and 0.57735)}
+    \PacketInkPath[figaxis]{(-1.42,0) -- (1.55,0) node[right=2pt,font=\scriptsize] {\InkLabel{$x$}}}
+    \PacketInkPath[figaxis]{(0,-1.30) -- (0,1.42) node[above=1pt,font=\scriptsize] {\InkLabel{$y$}}}
     % Orthonormal eigenvector axes (delicate dashed)
-    \draw[dashed,black!40,line width=0.38pt] (-1.00,-1.00) -- (1.08,1.08)
-      node[above right=0pt,font=\scriptsize,text=black!75] {$u$};
-    \draw[dashed,black!40,line width=0.38pt] (0.90,-0.90) -- (-0.95,0.95)
-      node[above left=0pt,font=\scriptsize,text=black!75] {$w$};
+    \PacketInkPath[dashed,black!40,line width=0.38pt]{(-1.00,-1.00) -- (1.08,1.08)
+      node[above right=0pt,font=\scriptsize,text=black!75] {\InkLabel{$u$}}}
+    \PacketInkPath[dashed,black!40,line width=0.38pt]{(0.90,-0.90) -- (-0.95,0.95)
+      node[above left=0pt,font=\scriptsize,text=black!75] {\InkLabel{$w$}}}
 
     % Soft neutral gray wash + crisp black ellipse
-    \fill[black!8] (0,0) [rotate=45] ellipse (1 and 0.57735);
-    \draw[black,line width=1.0pt,rotate=45] (0,0) ellipse (1 and 0.57735);
+      \PacketInkPath[black,line width=0.55pt,rotate=45]{(0,0) ellipse (1 and 0.57735)}
 
     % Semi-axis lengths
-    \draw[->,black!80,line width=0.58pt,shorten <=1.0pt,shorten >=0.8pt] (0,0) -- (0.707,0.707);
-    \node[font=\scriptsize,text=black!85] at (0.50,0.22) {$1$};
+    \PacketInkPath[->,black!80,line width=0.55pt,shorten <=1.0pt,shorten >=0.8pt]{(0,0) -- (0.707,0.707)}
+    \node[font=\scriptsize,text=black!85] at (0.50,0.22) {\InkLabel{$1$}};
 
-    \draw[->,black!80,line width=0.58pt,shorten <=1.0pt,shorten >=0.8pt] (0,0) -- (-0.408,0.408);
-    \node[font=\scriptsize,text=black!85,anchor=east] (minorlbl) at (-0.82,0.34) {$1/\sqrt{3}$};
-    \draw[black!50,line width=0.35pt] (minorlbl.east) -- (-0.24,0.24);
+    \PacketInkPath[->,black!80,line width=0.55pt,shorten <=1.0pt,shorten >=0.8pt]{(0,0) -- (-0.408,0.408)}
+    \node[font=\scriptsize,text=black!85,anchor=east] (minorlbl) at (-0.82,0.34) {\InkLabel{$1/\sqrt{3}$}};
+    \PacketInkPath[black!50,line width=0.35pt]{(minorlbl.east) -- (-0.24,0.24)}
 
     \fill[black] (0,0) circle (1.2pt);
-    \node[font=\footnotesize,anchor=north] at (0,-1.40) {(a)};
+    \node[font=\footnotesize,anchor=north] at (0,-1.40) {\InkLabel{(a)}};
   \end{scope}
 
   % Panel (b): Indefinite level set (hyperbola)
   \begin{scope}[xshift=9.6cm,yshift=1.95cm,scale=1.24]
-    \draw[figaxis] (-1.42,0) -- (1.55,0) node[right=2pt,font=\scriptsize] {$x$};
-    \draw[figaxis] (0,-1.30) -- (0,1.42) node[above=1pt,font=\scriptsize] {$y$};
+    \PacketInkPath[figaxis]{(-1.42,0) -- (1.55,0) node[right=2pt,font=\scriptsize] {\InkLabel{$x$}}}
+    \PacketInkPath[figaxis]{(0,-1.30) -- (0,1.42) node[above=1pt,font=\scriptsize] {\InkLabel{$y$}}}
     % Orthonormal eigenvector axes (delicate dashed)
-    \draw[dashed,black!40,line width=0.38pt] (-1.00,-1.00) -- (1.08,1.08)
-      node[above right=0pt,font=\scriptsize,text=black!75] {$u$};
-    \draw[dashed,black!40,line width=0.38pt] (-0.95,0.95) -- (0.95,-0.95)
-      node[below right=0pt,font=\scriptsize,text=black!75] {$w$};
+    \PacketInkPath[dashed,black!40,line width=0.38pt]{(-1.00,-1.00) -- (1.08,1.08)
+      node[above right=0pt,font=\scriptsize,text=black!75] {\InkLabel{$u$}}}
+    \PacketInkPath[dashed,black!40,line width=0.38pt]{(-0.95,0.95) -- (0.95,-0.95)
+      node[below right=0pt,font=\scriptsize,text=black!75] {\InkLabel{$w$}}}
 
     % Crisp pure black hyperbola branches
-    \draw[black,line width=1.0pt,smooth,domain=-1.00:1.00,samples=70,variable=\t,rotate=45]
-      plot ({0.5*cosh(\t)},{0.7071*sinh(\t)});
-    \draw[black,line width=1.0pt,smooth,domain=-1.00:1.00,samples=70,variable=\t,rotate=45]
-      plot ({-0.5*cosh(\t)},{0.7071*sinh(\t)});
+    \draw[ink line,black,line width=0.55pt,smooth,domain=-1.00:1.00,samples=70,variable=\t,rotate=45] plot ({0.5*cosh(\t)},{0.7071*sinh(\t)});
+    \draw[ink line,black,line width=0.55pt,smooth,domain=-1.00:1.00,samples=70,variable=\t,rotate=45] plot ({-0.5*cosh(\t)},{0.7071*sinh(\t)});
 
-    \node[font=\scriptsize,text=black!80] at (1.02,0.50) {$>0$};
-    \node[font=\scriptsize,text=black!60] at (-1.00,0.40) {$<0$};
+    \node[font=\scriptsize,text=black!80] at (1.02,0.50) {\InkLabel{$>0$}};
+    \node[font=\scriptsize,text=black!60] at (-1.00,0.40) {\InkLabel{$<0$}};
     \fill[black] (0,0) circle (1.2pt);
-    \node[font=\footnotesize,anchor=north] at (0,-1.40) {(b)};
+    \node[font=\footnotesize,anchor=north] at (0,-1.40) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{Level sets $\langle Av,v\rangle=1$ along the orthonormal eigenvector axes $u,w$ (dashed). (a) Positive definite $A_1$ ($\lambda_1=1,\lambda_2=3$) gives the closed ellipse $u^2+3w^2=1$ with semi-axes $1$ and $1/\sqrt{3}$. (b) Indefinite $A_2$ ($\lambda_1=4,\lambda_2=-2$) gives the hyperbola $4u^2-2w^2=1$, taking both positive and negative values ($\langle A_2(1,-1),(1,-1)\rangle=-4$).}
+\figcap{Level sets $\langle Av,v\rangle=1$ along the orthonormal eigenvector axes $u,w$ (gray). (a) Positive definite $A_1$ ($\lambda_1=1,\lambda_2=3$) gives the closed ellipse $u^2+3w^2=1$ with semi-axes $1$ and $1/\sqrt{3}$. (b) Indefinite $A_2$ ($\lambda_1=4,\lambda_2=-2$) has the hyperbola $4u^2-2w^2=1$ as its level set at $1$; the quadratic form itself takes both positive and negative values ($\langle A_2(1,-1),(1,-1)\rangle=-4$).}
 \end{fig}
 
 \noindent\textbf{The question answered.} $A_1$ has $\tr A_1=4$, $\det A_1=3$, eigenvalues $3,1>0$, so $A_1$ is positive definite (Prop.~106), and $\sqrt{A_1}=\frac{A_1+\sqrt{3}I}{\sqrt{4+2\sqrt{3}}}=\frac{1}{2}\begin{bmatrix}\sqrt{3}+1&1-\sqrt{3}\\1-\sqrt{3}&\sqrt{3}+1\end{bmatrix}$. Meanwhile $\det A_2=-8<0$ (eigenvalues $4,-2$), so $A_2$ is \emph{not} positive ($\langle A_2(1,-1),(1,-1)\rangle=-4$) and has no symmetric square root.
@@ -320,15 +336,15 @@ Among self-adjoint operators (the ``real numbers'' of $\LL(V)$), positive operat
   % Orthogonal frame rotated by 16 degrees
   \begin{scope}[rotate=16]
     % Hyperplane u^\perp and normal line span(u)
-    \draw[black!85,line width=0.82pt] (-2.05,0) -- (2.95,0);
-    \draw[dashed,black!40,line width=0.4pt] (0,-1.40) -- (0,1.70);
+    \PacketInkPath[black!85,line width=0.55pt]{(-2.05,0) -- (2.95,0)}
+    \PacketInkPath[dashed,black!40,line width=0.4pt]{(0,-1.40) -- (0,1.70)}
 
     % Delicate right-angle marks at origin and projection foot W
-    \draw[black!55,line width=0.38pt] (0.20,0) -- (0.20,0.20) -- (0,0.20);
-    \draw[black!55,line width=0.38pt] (2.20,0) -- (2.20,0.20) -- (2.40,0.20);
+    \PacketInkPath[black!55,line width=0.38pt]{(0.20,0) -- (0.20,0.20) -- (0,0.20)}
+    \PacketInkPath[black!55,line width=0.38pt]{(2.20,0) -- (2.20,0.20) -- (2.40,0.20)}
 
     % Unit normal vector u
-    \draw[->,black!65,line width=0.65pt] (0,0) -- (0,1.12) node[left=3pt,font=\small,text=black!80] {$u$};
+    \PacketInkPath[->,black!65,line width=0.55pt]{(0,0) -- (0,1) node[left=3pt,font=\small,text=black!80] {\InkLabel{$u$}}}
 
     \coordinate (O) at (0,0);
     \coordinate (W) at (2.40,0);
@@ -338,26 +354,26 @@ Among self-adjoint operators (the ``real numbers'' of $\LL(V)$), positive operat
     \coordinate (SpanUEnd) at (0,-1.40);
 
     % Focal vectors v (black), Hv (single restrained accent), projection w (mid-gray)
-    \draw[->,line width=1.05pt,black] (O) -- (V);
-    \draw[->,line width=1.0pt,figblue] (O) -- (HV);
-    \draw[->,line width=0.72pt,black!65,shorten >=1.8pt] (O) -- (W)
-      node[pos=0.58,sloped,below=2pt,font=\scriptsize,text=black!75] {$w$};
+    \PacketInkPath[->,line width=0.55pt,black]{(O) -- (V)}
+    \PacketInkPath[->,line width=0.55pt,figblue]{(O) -- (HV)}
+    \PacketInkPath[->,line width=0.55pt,black!65,shorten >=1.8pt]{(O) -- (W)
+      node[pos=0.58,sloped,below=2pt,font=\scriptsize,text=black!75] {\InkLabel{$w$}}}
 
     % Two equal normal steps -(u^T v)u (delicate dashed)
-    \draw[->,black!60,dashed,line width=0.52pt,shorten <=1.6pt,shorten >=2.2pt] (V) -- (W);
-    \draw[->,black!60,dashed,line width=0.52pt,shorten <=2.2pt,shorten >=2.2pt] (W) -- (HV);
+    \PacketInkPath[->,black!60,dashed,line width=0.52pt,shorten <=1.6pt,shorten >=2.2pt]{(V) -- (W)}
+    \PacketInkPath[->,black!60,dashed,line width=0.52pt,shorten <=2.2pt,shorten >=2.2pt]{(W) -- (HV)}
 
     \fill[black] (O) circle (1.3pt);
     \fill[black] (W) circle (1.3pt);
   \end{scope}
 
   % Unrotated crisp labels
-  \node[right=4pt,font=\small] at (UperpEnd) {$u^\perp$};
-  \node[below=2pt,font=\scriptsize,text=black!70] at (SpanUEnd) {$\spn(u)$};
-  \node[above right=1pt,font=\small] at (V) {$v$};
-  \node[below right=1pt,font=\small,text=figblue!90!black] at (HV) {$Hv$};
-  \node[right=5pt,font=\scriptsize,text=black!75] at ($(V)!0.5!(W)$) {$-(u^{\mathsf T}v)u$};
-  \node[right=5pt,font=\scriptsize,text=black!75] at ($(W)!0.5!(HV)$) {$-(u^{\mathsf T}v)u$};
+  \node[right=4pt,font=\small] at (UperpEnd) {\InkLabel{$u^\perp$}};
+  \node[below=2pt,font=\scriptsize,text=black!70] at (SpanUEnd) {\InkLabel{$\spn(u)$}};
+  \node[above right=1pt,font=\small] at (V) {\InkLabel{$v$}};
+  \node[below right=1pt,font=\small,text=figblue!90!black] at (HV) {\InkLabel{$Hv$}};
+  \node[right=5pt,font=\scriptsize,text=black!75] at ($(V)!0.5!(W)$) {\InkLabel{$-(u^{\mathsf T}v)u$}};
+  \node[right=5pt,font=\scriptsize,text=black!75] at ($(W)!0.5!(HV)$) {\InkLabel{$-(u^{\mathsf T}v)u$}};
 \end{tikzpicture}
 \figcap{Householder reflection across $u^\perp$: with $w=P_{u^\perp}v$ fixed (eigenvalue $+1$ on $u^\perp$), subtracting twice the normal component $(u^{\mathsf T}v)u$ along $\spn(u)$ (eigenvalue $-1$) sends $v$ to its mirror image $Hv$.}
 \end{fig}
@@ -449,49 +465,49 @@ Equation~$(\ast)$ says $Pv$ and $Tv$ always have the same length.
 \begin{tikzpicture}[scale=1.0]
   % Uniform scale=0.52 across all 3 panels
   \begin{scope}[xshift=1.4cm,yshift=1.7cm,scale=0.52]
-    \draw[figaxis,draw=black!35] (-1.8,0) -- (1.9,0);
-    \draw[figaxis,draw=black!35] (0,-1.8) -- (0,1.9);
-    \fill[black!8] (0,0) circle (1);
-    \draw[black,line width=0.95pt] (0,0) circle (1);
-    \draw[black!55,line width=0.38pt,rotate=-45] (0.34,0) -- (0.34,0.34) -- (0,0.34);
-    \draw[->,line width=0.9pt,figblue] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)})
-      node[above right=1pt,font=\scriptsize,text=figblue!90!black] {$e_1$};
-    \draw[->,line width=0.8pt,black] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})
-      node[below right=1pt,font=\scriptsize] {$e_2$};
+  \InkRegion[inkblue]{(0,0) circle (1)}
+    \PacketInkPath[figaxis,draw=black!35]{(-1.8,0) -- (1.9,0)}
+    \PacketInkPath[figaxis,draw=black!35]{(0,-1.8) -- (0,1.9)}
+      \PacketInkPath[black,line width=0.55pt]{(0,0) circle (1)}
+    \PacketInkPath[black!55,line width=0.38pt,rotate=-45]{(0.34,0) -- (0.34,0.34) -- (0,0.34)}
+    \PacketInkPath[->,line width=0.55pt,figblue]{(0,0) -- ({1/sqrt(2)},{1/sqrt(2)})
+      node[above right=1pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$e_1$}}}
+    \PacketInkPath[->,line width=0.55pt,black]{(0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})
+      node[below right=1pt,font=\scriptsize] {\InkLabel{$e_2$}}}
   \end{scope}
-  \node[font=\footnotesize,anchor=north] at (1.4,0.12) {(a)};
+  \node[font=\footnotesize,anchor=north] at (1.4,0.12) {\InkLabel{(a)}};
 
-  \draw[->,line width=0.6pt,black!75] (2.65,1.7) -- node[above=2pt,font=\footnotesize] {$P=\sqrt{A^{\mathsf T}A}$} (4.35,1.7);
+  \PacketInkPath[->,line width=0.55pt,black!75]{(2.65,1.7) -- node[above=2pt,font=\footnotesize] {\InkLabel{$P=\sqrt{A^{\mathsf T}A}$}} (4.35,1.7)}
 
   \begin{scope}[xshift=6.4cm,yshift=1.7cm,scale=0.52]
-    \draw[figaxis,draw=black!35] (-2.9,0) -- (3.0,0);
-    \draw[figaxis,draw=black!35] (0,-2.6) -- (0,2.75);
-    \fill[black!8] (0,0) [rotate=45] ellipse (3 and 1);
-    \draw[black!30,line width=0.38pt,dashed] (0,0) circle (1);
-    \draw[black,line width=0.95pt,rotate=45] (0,0) ellipse (3 and 1);
-    \draw[black!55,line width=0.38pt,rotate=-45] (0.34,0) -- (0.34,0.34) -- (0,0.34);
-    \draw[->,line width=0.9pt,figblue] (0,0) -- ({3/sqrt(2)},{3/sqrt(2)})
-      node[above right=1pt,font=\scriptsize,text=figblue!90!black] {$3e_1$};
-    \draw[->,line width=0.8pt,black] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})
-      node[below right=2pt,font=\scriptsize] {$e_2$};
+  \InkRegion[inkblue]{(0,0) [rotate=45] ellipse (3 and 1)}
+    \PacketInkPath[figaxis,draw=black!35]{(-2.9,0) -- (3.0,0)}
+    \PacketInkPath[figaxis,draw=black!35]{(0,-2.6) -- (0,2.75)}
+      \PacketInkPath[black!30,line width=0.38pt,dashed]{(0,0) circle (1)}
+    \PacketInkPath[black,line width=0.55pt,rotate=45]{(0,0) ellipse (3 and 1)}
+    \PacketInkPath[black!55,line width=0.38pt,rotate=-45]{(0.34,0) -- (0.34,0.34) -- (0,0.34)}
+    \PacketInkPath[->,line width=0.55pt,figblue]{(0,0) -- ({3/sqrt(2)},{3/sqrt(2)})
+      node[above right=1pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$3e_1$}}}
+    \PacketInkPath[->,line width=0.55pt,black]{(0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})
+      node[below right=2pt,font=\scriptsize] {\InkLabel{$e_2$}}}
   \end{scope}
-  \node[font=\footnotesize,anchor=north] at (6.4,0.12) {(b)};
+  \node[font=\footnotesize,anchor=north] at (6.4,0.12) {\InkLabel{(b)}};
 
-  \draw[->,line width=0.6pt,black!75] (8.25,1.7) -- node[above=2pt,font=\footnotesize] {$S$} (9.95,1.7);
+  \PacketInkPath[->,line width=0.55pt,black!75]{(8.25,1.7) -- node[above=2pt,font=\footnotesize] {\InkLabel{$S$}} (9.95,1.7)}
 
   \begin{scope}[xshift=12.0cm,yshift=1.7cm,scale=0.52]
-    \draw[figaxis,draw=black!35] (-2.9,0) -- (3.0,0);
-    \draw[figaxis,draw=black!35] (0,-2.6) -- (0,2.75);
-    \fill[black!8] (0,0) [rotate=135] ellipse (3 and 1);
-    \draw[black!30,line width=0.38pt,dashed] (0,0) circle (1);
-    \draw[black,line width=0.95pt,rotate=135] (0,0) ellipse (3 and 1);
-    \draw[black!55,line width=0.38pt,rotate=45] (0.34,0) -- (0.34,0.34) -- (0,0.34);
-    \draw[->,line width=0.9pt,figblue] (0,0) -- ({-3/sqrt(2)},{3/sqrt(2)})
-      node[above left=1pt,font=\scriptsize,text=figblue!90!black] {$3f_1$};
-    \draw[->,line width=0.8pt,black] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)})
-      node[above right=2pt,font=\scriptsize] {$f_2$};
+  \InkRegion[inkblue]{(0,0) [rotate=135] ellipse (3 and 1)}
+    \PacketInkPath[figaxis,draw=black!35]{(-2.9,0) -- (3.0,0)}
+    \PacketInkPath[figaxis,draw=black!35]{(0,-2.6) -- (0,2.75)}
+      \PacketInkPath[black!30,line width=0.38pt,dashed]{(0,0) circle (1)}
+    \PacketInkPath[black,line width=0.55pt,rotate=135]{(0,0) ellipse (3 and 1)}
+    \PacketInkPath[black!55,line width=0.38pt,rotate=45]{(0.34,0) -- (0.34,0.34) -- (0,0.34)}
+    \PacketInkPath[->,line width=0.55pt,figblue]{(0,0) -- ({-3/sqrt(2)},{3/sqrt(2)})
+      node[above left=1pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$3f_1$}}}
+    \PacketInkPath[->,line width=0.55pt,black]{(0,0) -- ({1/sqrt(2)},{1/sqrt(2)})
+      node[above right=2pt,font=\scriptsize] {\InkLabel{$f_2$}}}
   \end{scope}
-  \node[font=\footnotesize,anchor=north] at (12.0,0.12) {(c)};
+  \node[font=\footnotesize,anchor=north] at (12.0,0.12) {\InkLabel{(c)}};
 \end{tikzpicture}
 \figcap{Polar decomposition and SVD of $A=\begin{psmallmatrix}-1&-2\\2&1\end{psmallmatrix}$ at uniform scale (dashed reference unit circle shown): (a) unit circle with orthonormal basis $e_1=\frac{1}{\sqrt{2}}(1,1)$, $e_2=\frac{1}{\sqrt{2}}(1,-1)$; (b) $P=\sqrt{A^{\mathsf T}A}$ stretches by $s_1=3$ along $e_1$ and $s_2=1$ along $e_2$; (c) the isometry $S$ rotates by $90^\circ$ ($e_j\mapsto f_j$) to yield $A(\text{circle})=SP(\text{circle})$.}
 \end{fig}
@@ -630,36 +646,36 @@ For rectangular maps $T\in\LL(V,W)$, eigenvalues do not even make sense because 
     ymin=0,ymax=4.85,
     xmin=0.4,xmax=5.6,
     xtick={1,2,3,4,5},
-    xticklabels={$s_1$,$s_2$,$s_3$,$s_4$,$s_5$},
+    xticklabels={\InkLabel{$s_1$},\InkLabel{$s_2$},\InkLabel{$s_3$},\InkLabel{$s_4$},\InkLabel{$s_5$}},
     ytick={0,2,4},
     extra y ticks={0.95},
-    extra y tick labels={\color{figred!90!black}$s_3$},
+    extra y tick labels={\color{figred!90!black}\InkLabel{$s_3$}},
     extra y tick style={tick style={draw=figred!85!black}},
     axis line style={draw=black!75,line width=0.45pt},
     tick style={draw=black!60,line width=0.38pt},
     tick label style={font=\scriptsize},
     label style={font=\footnotesize},
-    ylabel={$s_j$},
+    ylabel={\InkLabel{$s_j$}},
     axis lines*=left,
     clip=false
   ]
     % Vertical cutoff at k = 2
-    \draw[densely dotted,black!50,line width=0.5pt] (axis cs:2.5,0) -- (axis cs:2.5,4.65);
+    \PacketInkPath[densely dotted,black!50,line width=0.5pt]{(axis cs:2.5,0) -- (axis cs:2.5,4.65)}
 
     % Kept modes (soft gray wash), leading discarded mode s_3 (single accent), tail (white hairline)
-    \addplot[fill=black!16,draw=black!85,line width=0.5pt] coordinates {(1,4.0) (2,2.4)};
-    \addplot[fill=figred!14,draw=figred!85!black,line width=0.6pt] coordinates {(3,0.95)};
-    \addplot[fill=white,draw=black!65,line width=0.45pt] coordinates {(4,0.45) (5,0.2)};
+    \addplot[pattern=inkgrain,pattern color=inkblue,draw=inkblue,line width=.45pt] coordinates {(1,4.0) (2,2.4)};
+    \addplot[pattern=inkgrain,pattern color=inkred,draw=inkred,line width=.45pt] coordinates {(3,0.95)};
+    \addplot[ink plot,fill=white,draw=black!65,line width=0.45pt] coordinates {(4,0.45) (5,0.2)};
 
     % Spectral-norm error threshold line at s_3
-    \draw[dashed,figred!85!black,line width=0.55pt] (axis cs:0.4,0.95) -- (axis cs:5.55,0.95);
+    \PacketInkPath[dashed,figred!85!black,line width=0.55pt]{(axis cs:0.4,0.95) -- (axis cs:5.55,0.95)}
 
     % Quiet atomic group labels
-    \node[font=\scriptsize,text=black!75] at (axis cs:1.50,4.55) {$j\le k$};
-    \node[font=\scriptsize,text=black!65] at (axis cs:4.05,4.55) {$j>k$};
+    \node[font=\scriptsize,text=black!75] at (axis cs:1.50,4.55) {\InkLabel{$j\le k$}};
+    \node[font=\scriptsize,text=black!65] at (axis cs:4.05,4.55) {\InkLabel{$j>k$}};
 
     % Clean error label seated above dashed line
-    \node[font=\scriptsize,text=figred!90!black,anchor=south] at (axis cs:4.50,1.08) {$\|T-T_k\|_2 = s_3$};
+    \node[font=\scriptsize,text=figred!90!black,anchor=south] at (axis cs:4.50,1.08) {\InkLabel{$\|T-T_k\|_2 = s_3$}};
   \end{axis}
 \end{tikzpicture}
 \figcap{Eckart--Young best rank-$k$ approximation ($k=2$): keeping the leading singular modes $s_1,s_2$ (shaded) leaves the discarded tail $j>k$, whose largest singular value $s_{k+1}=s_3$ sets the exact spectral-norm error $\|T-T_k\|_2=s_{k+1}$.}
@@ -705,57 +721,83 @@ For rectangular maps $T\in\LL(V,W)$, eigenvalues do not even make sense because 
     B=\begin{bmatrix}1&2\\2&1\end{bmatrix},\qquad
     C=\begin{bmatrix}1&1\\1&1\end{bmatrix}.
   \]
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-105}{Props.~105--106}; $\det$ and $\tr$ are the product and sum of the eigenvalues \ilink{T9}{(T9)}.
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P2}
   \textbf{HW12 P2.}\ Find the positive square root of $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$ as an explicit $2\times2$ matrix.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} The \ilink{name-square-root-2x2}{square-root formula}; note $4+2\sqrt{3}=(1+\sqrt{3})^2$.
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P3}
   \textbf{HW12 P3.}\ Let $S\colon V\to W$ be linear between finite-dimensional inner product spaces, and $e_1,\dots,e_n$ an orthonormal basis of $V$. Prove that $S$ is an isometry if and only if $Se_1,\dots,Se_n$ is an orthonormal list in $W$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-110}{Prop.~110}: (i)$\Rightarrow$(ii)$\Rightarrow$(iii) and (iv)$\Rightarrow$(i).
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P4}
   \textbf{HW12 P4.}\ Find the polar decomposition $A=S\sqrt{A^*A}$ of $A=\begin{bmatrix}0&2\\1&0\end{bmatrix}$ acting on $\RR^2$ with the standard inner product.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $A^{\mathsf T}A$ is diagonal; then $S=AP^{-1}$.
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P5}
   \textbf{HW12 P5.}\ Find a singular value decomposition of $A=\begin{bmatrix}1&1\\1&1\end{bmatrix}$: give the singular values and orthonormal bases $e_1,e_2$ and $f_1,f_2$ with $Ae_j=s_jf_j$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Follow the SVD method; one singular value is $0$, so extend $\{f_1\}$ to an orthonormal basis.
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P6}
   \textbf{HW12 P6 (optional).}\ Let $T$ be an invertible operator. Prove that the singular values of $T^{-1}$ are the reciprocals of the singular values of $T$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} From $Te_k=s_kf_k$, solve for $T^{-1}f_k$; then \ilink{prop-116}{Prop.~116}.
+
 \end{prob}
 
 \begin{prob}\target{prob-HW12-P7}
   \textbf{HW12 P7 (optional).}\ Let $T$ have singular values $s_1\ge\dots\ge s_n\ge0$. Prove that $\|Tv\|\le s_1\|v\|$ for every $v$, and that equality holds for some $v\neq0$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-113}{Prop.~113} and the calculation in \ilink{prop-114}{Prop.~114}.
+
 \end{prob}
 
 \begin{prob}\target{prob-O1}
   \textbf{O1 (commuting positive operators).}\ Let $S,T\in\LL(V)$ be positive with $ST=TS$. Prove that $ST$ is positive. Show by an example that $ST$ need not be positive if $ST\neq TS$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $T$ preserves each eigenspace of $S$, on which $\sqrt{S}$ is a scalar multiple of $I$ (\ilink{prop-107}{Prop.~107}); hence $\sqrt{S}$ commutes with $T$, and $\langle STv,v\rangle=\langle T\sqrt{S}v,\sqrt{S}v\rangle$.
+
 \end{prob}
 
 \begin{prob}\target{prob-O2}
   \textbf{O2 (a $2\times3$ matrix).}\ Find a singular value decomposition $A=F\Sigma E^{\mathsf T}$ of $A=\begin{bmatrix}1&0&1\\0&1&1\end{bmatrix}$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $AA^{\mathsf T}$ is only $2\times2$; find its unit eigenvectors $f_j$ first, then set $e_j=A^{\mathsf T}f_j/s_j$.
+
 \end{prob}
 
 \begin{prob}\target{prob-O3}
   \textbf{O3 (polar decomposition and SVD).}\ Find the polar decomposition and a singular value decomposition of $A=\begin{bmatrix}3&0\\4&5\end{bmatrix}$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $A^{\mathsf T}A$ has $\tr=50$ and $\det=225$; apply the \ilink{name-square-root-2x2}{square-root formula} or \ilink{name-polar-2x2}{polar formula}.
+
 \end{prob}
 
 \begin{prob}\target{prob-O4}
   \textbf{O4 (norm of $T^*T$).}\ Prove that $\|T^*T\|_2=\|T\|_2^2$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $T^*T$ is positive, so its singular values coincide with its eigenvalues $s_j^2$.
+
 \end{prob}
+
+\clearpage
+\section*{Hints}
+Try each problem before consulting its hint.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P1}{HW12 P1}} \ilink{prop-105}{Props.~105--106}; $\det$ and $\tr$ are the product and sum of the eigenvalues \ilink{T9}{(T9)}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P2}{HW12 P2}} The \ilink{name-square-root-2x2}{square-root formula}; note $4+2\sqrt{3}=(1+\sqrt{3})^2$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P3}{HW12 P3}} \ilink{prop-110}{Prop.~110}: (i)$\Rightarrow$(ii)$\Rightarrow$(iii) and (iv)$\Rightarrow$(i).
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P4}{HW12 P4}} $A^{\mathsf T}A$ is diagonal; then $S=AP^{-1}$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P5}{HW12 P5}} Follow the SVD method; one singular value is $0$, so extend $\{f_1\}$ to an orthonormal basis.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P6}{HW12 P6 (optional)}} From $Te_k=s_kf_k$, solve for $T^{-1}f_k$; then \ilink{prop-116}{Prop.~116}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW12-P7}{HW12 P7 (optional)}} \ilink{prop-113}{Prop.~113} and the calculation in \ilink{prop-114}{Prop.~114}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-O1}{O1 (commuting positive operators)}} $T$ preserves each eigenspace of $S$, on which $\sqrt{S}$ is a scalar multiple of $I$ (\ilink{prop-107}{Prop.~107}); hence $\sqrt{S}$ commutes with $T$, and $\langle STv,v\rangle=\langle T\sqrt{S}v,\sqrt{S}v\rangle$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-O2}{O2 (a $2\times3$ matrix)}} $AA^{\mathsf T}$ is only $2\times2$; find its unit eigenvectors $f_j$ first, then set $e_j=A^{\mathsf T}f_j/s_j$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-O3}{O3 (polar decomposition and SVD)}} $A^{\mathsf T}A$ has $\tr=50$ and $\det=225$; apply the \ilink{name-square-root-2x2}{square-root formula} or \ilink{name-polar-2x2}{polar formula}.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-O4}{O4 (norm of $T^*T$)}} $T^*T$ is positive, so its singular values coincide with its eigenvalues $s_j^2$.
 
 \end{document}

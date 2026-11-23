@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \title{CS 61A --- Week 4}
 \subtitle{Recursion, mutual recursion, tree recursion (Lectures 9--10, Composing Programs 1.7)}
 \author{}\date{}\ihead{}
@@ -55,25 +56,25 @@ Nothing new happens in the environment: each call gets its own frame with its ow
 \end{ideabox}
 \Needspace{14\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   caller/.style={draw=black!50,fill=white,densely dashed,line width=0.4pt,minimum width=1.5cm,minimum height=1.34cm,align=center,font=\rmfamily\footnotesize,text=black!65},
   rframe/.style={draw=black!85,fill=white,line width=0.45pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize},
   bframe/.style={draw=black,fill=white,line width=0.85pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize}]
   % Frames left-to-right
-  \node[caller] (c)  at (0.0,0)  {Caller};
-  \node[rframe] (f3) at (3.6,0)  {\strut fact(3)\\[1.5pt]\strut n = 3\\[1.5pt]\rmfamily\scriptsize\color{black!55}\strut waits: $\square \times 3$};
-  \node[rframe] (f2) at (8.2,0)  {\strut fact(2)\\[1.5pt]\strut n = 2\\[1.5pt]\rmfamily\scriptsize\color{black!55}\strut waits: $\square \times 2$};
-  \node[bframe] (f1) at (12.8,0) {\strut fact(1)\\[1.5pt]\strut n = 1\\[1.5pt]\rmfamily\scriptsize\color{black!65}\strut base case};
+  \node[caller] (c)  at (0.0,0)  {\InkLabel{Caller}};
+  \node[rframe] (f3) at (3.6,0)  {\InkLabel{\shortstack[c]{\strut fact(3)\\[1.5pt]\strut n = 3\\[1.5pt]\rmfamily\scriptsize\strut waits: $\square \times 3$}}};
+  \node[rframe] (f2) at (8.2,0)  {\InkLabel{\shortstack[c]{\strut fact(2)\\[1.5pt]\strut n = 2\\[1.5pt]\rmfamily\scriptsize\strut waits: $\square \times 2$}}};
+  \node[bframe] (f1) at (12.8,0) {\InkLabel{\shortstack[c]{\strut fact(1)\\[1.5pt]\strut n = 1\\[1.5pt]\rmfamily\scriptsize\strut base case}}};
 
   % Top call rails (solid black)
-  \draw[->,black!85,line width=0.6pt] (c.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{fact(3)} ([xshift=-0.42cm]f3.north);
-  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f3.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{fact(2)} ([xshift=-0.42cm]f2.north);
-  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f2.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{fact(1)} (f1.north);
+  \draw[->,black!85,line width=0.6pt] (c.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(3)}} ([xshift=-0.42cm]f3.north);
+  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f3.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(2)}} ([xshift=-0.42cm]f2.north);
+  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f2.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(1)}} (f1.north);
 
   % Bottom return rails (dashed figblue)
-  \draw[->,figblue,line width=0.6pt,densely dashed] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{$1$} ([xshift=0.42cm]f2.south);
-  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{$1 \times 2 = 2$} ([xshift=0.42cm]f3.south);
-  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{$2 \times 3 = 6$} (c.south);
+  \draw[->,figblue,line width=0.6pt,densely dashed] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$1$}} ([xshift=0.42cm]f2.south);
+  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$1 \times 2 = 2$}} ([xshift=0.42cm]f3.south);
+  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$2 \times 3 = 6$}} (c.south);
 \end{tikzpicture}
 \figcap{Three frames for one call to \cd{fact(3)}. Recursive calls move right (solid black) until the base case \cd{fact(1)} (heavy outline); return values unwind back left (dashed blue) to complete each waiting multiplication.}
 \end{fig}
@@ -225,40 +226,40 @@ def count_park(n):
 \cd{count\_park(1) = 2}, \cd{count\_park(2) = 5}, \cd{count\_park(3) = 12}, \cd{count\_park(4) = 29}.
 \Needspace{18\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[
+\begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   rcall/.style={draw=black!85,fill=white,line width=0.45pt,inner xsep=5.5pt,inner ysep=3.2pt,align=center,font=\ttfamily\footnotesize},
   bpos/.style={draw=black,fill=white,line width=0.8pt,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black},
   bneg/.style={draw=black!50,fill=white,line width=0.45pt,densely dashed,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black!60},
   edge/.style={draw=black!65,line width=0.45pt}]
   % Level 0
-  \node[rcall] (n3)   at (7.6, 0.00)  {cp(3)\\[1pt]\rmfamily\scriptsize\color{figblue}$2\cdot 5 + 2 = 12$};
+  \node[rcall] (n3)   at (7.6, 0.00)  {\InkLabel{\shortstack[c]{cp(3)\\[1pt]\rmfamily\scriptsize$2\cdot 5 + 2 = 12$}}};
 
   % Level 1
-  \node[rcall] (n2)   at (4.1,-1.70)  {cp(2)\\[1pt]\rmfamily\scriptsize\color{figblue}$2\cdot 2 + 1 = 5$};
-  \node[rcall] (n1r)  at (11.1,-1.70) {cp(1)\\[1pt]\rmfamily\scriptsize\color{figblue}$2\cdot 1 + 0 = 2$};
+  \node[rcall] (n2)   at (4.1,-1.70)  {\InkLabel{\shortstack[c]{cp(2)\\[1pt]\rmfamily\scriptsize$2\cdot 2 + 1 = 5$}}};
+  \node[rcall] (n1r)  at (11.1,-1.70) {\InkLabel{\shortstack[c]{cp(1)\\[1pt]\rmfamily\scriptsize$2\cdot 1 + 0 = 2$}}};
 
   % Level 2
-  \node[rcall] (n1l)  at (2.2,-3.40)  {cp(1)\\[1pt]\rmfamily\scriptsize\color{figblue}$2\cdot 1 + 0 = 2$};
-  \node[bpos]  (n0m)  at (6.0,-3.40)  {cp(0) = 1};
-  \node[bpos]  (n0r)  at (9.3,-3.40)  {cp(0) = 1};
-  \node[bneg]  (nm1r) at (12.9,-3.40) {cp(-1) = 0};
+  \node[rcall] (n1l)  at (2.2,-3.40)  {\InkLabel{\shortstack[c]{cp(1)\\[1pt]\rmfamily\scriptsize$2\cdot 1 + 0 = 2$}}};
+  \node[bpos]  (n0m)  at (6.0,-3.40)  {\InkLabel{cp(0) = 1}};
+  \node[bpos]  (n0r)  at (9.3,-3.40)  {\InkLabel{cp(0) = 1}};
+  \node[bneg]  (nm1r) at (12.9,-3.40) {\InkLabel{cp(-1) = 0}};
 
   % Level 3
-  \node[bpos]  (n0l)  at (0.7,-5.00)  {cp(0) = 1};
-  \node[bneg]  (nm1l) at (3.7,-5.00)  {cp(-1) = 0};
+  \node[bpos]  (n0l)  at (0.7,-5.00)  {\InkLabel{cp(0) = 1}};
+  \node[bneg]  (nm1l) at (3.7,-5.00)  {\InkLabel{cp(-1) = 0}};
 
   % Tree edges with branch weights (left = 2*cp(n-1), right = +cp(n-2))
-  \draw[edge] ([xshift=-0.45cm]n3.south)  -- (n2.north)   node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{$2\times$};
-  \draw[edge] ([xshift= 0.45cm]n3.south)  -- (n1r.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{$+$};
+  \draw[edge] ([xshift=-0.45cm]n3.south)  -- (n2.north)   node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.45cm]n3.south)  -- (n1r.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n2.south)  -- (n1l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{$2\times$};
-  \draw[edge] ([xshift= 0.38cm]n2.south)  -- (n0m.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{$+$};
+  \draw[edge] ([xshift=-0.38cm]n2.south)  -- (n1l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n2.south)  -- (n0m.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n1r.south) -- (n0r.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{$2\times$};
-  \draw[edge] ([xshift= 0.38cm]n1r.south) -- (nm1r.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{$+$};
+  \draw[edge] ([xshift=-0.38cm]n1r.south) -- (n0r.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n1r.south) -- (nm1r.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n1l.south) -- (n0l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{$2\times$};
-  \draw[edge] ([xshift= 0.38cm]n1l.south) -- (nm1l.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{$+$};
+  \draw[edge] ([xshift=-0.38cm]n1l.south) -- (n0l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n1l.south) -- (nm1l.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
 \end{tikzpicture}
 \figcap{The tree of calls for \cd{count\_park(3)} (written \cd{cp}). Every left branch recurses on $n-1$ (counted twice: empty spot or motorcycle) and every right branch on $n-2$ (a two-spot car); solid heavy leaves reach $n=0$ ($1$ way) and dashed leaves overshoot to $n<0$ ($0$ ways).}
 \end{fig}

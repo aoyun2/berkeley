@@ -1,11 +1,29 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \DeclareMathOperator{\spn}{span}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}
 \newcommand{\PP}{\mathcal P}\newcommand{\LL}{\mathcal L}\newcommand{\MM}{\mathcal M}
 \title{Math 110 --- Week 3}
 \subtitle{Linear maps, null space and range, matrices (Notes Ch.~5--6, LADR 3A--3C, HW3)}
 \author{}\date{}\ihead{}
+
+% Deterministic ink rendering; preaction textures the path without redrawing labels.
+\newcommand{\PacketInkPath}[2][]{%
+  \begingroup\pgfmathsetseed{1965}%
+  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
+    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
+  \endgroup}
+\tikzset{
+  >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
+  figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
+  figvec/.style={ink arrow,draw=inkblue},
+  figvecsub/.style={ink arrow,draw=inkslate},
+  figguide/.style={ink guide,draw=inkslate},
+  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
+    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+}
+
 \begin{document}
 \maketitle
 
@@ -123,31 +141,31 @@
 \begin{fig}
 \begin{tikzpicture}[scale=0.95]
   % Domain V: single thin-bordered rectangle split horizontally into extended basis and null T
-  \fill[black!8] (0,0) rectangle (3.10,1.08);
-  \draw[black!80,line width=0.45pt] (0,0) rectangle (3.10,2.45);
-  \draw[black!45,line width=0.40pt] (0,1.08) -- (3.10,1.08);
-  \node[font=\small] at (1.55,2.74) {$V$};
+  \InkRegion[inkblue]{(0,0) rectangle (3.10,1.08)}
+  \PacketInkPath[black!80,line width=0.45pt]{(0,0) rectangle (3.10,2.45)}
+  \PacketInkPath[black!45,line width=0.4pt]{(0,1.08) -- (3.10,1.08)}
+  \node[font=\small] at (1.55,2.74) {\InkLabel{$V$}};
 
-  \node[font=\footnotesize] at (1.55,1.76) {$v_1,\dots,v_n$};
-  \node[font=\footnotesize] at (1.55,0.68) {$u_1,\dots,u_m$};
-  \node[font=\scriptsize,text=black!65] at (1.55,0.26) {$\nul T$};
+  \node[font=\footnotesize] at (1.55,1.76) {\InkLabel{$v_1,\dots,v_n$}};
+  \node[font=\footnotesize] at (1.55,0.68) {\InkLabel{$u_1,\dots,u_m$}};
+  \node[font=\scriptsize,text=black!65] at (1.55,0.26) {\InkLabel{$\nul T$}};
 
   % Codomain W containing range T and 0 \in range T
-  \draw[black!80,line width=0.45pt] (6.15,0) rectangle (9.65,2.45);
-  \node[font=\small] at (7.90,2.74) {$W$};
+  \PacketInkPath[black!80,line width=0.45pt]{(6.15,0) rectangle (9.65,2.45)}
+  \node[font=\small] at (7.90,2.74) {\InkLabel{$W$}};
 
-  \draw[black!50,line width=0.40pt] (6.50,0.26) rectangle (9.30,2.22);
-  \node[font=\footnotesize] at (7.90,1.76) {$Tv_1,\dots,Tv_n$};
-  \node[font=\scriptsize,text=black!65] at (7.90,1.32) {$\range T$};
+  \PacketInkPath[black!50,line width=0.4pt]{(6.50,0.26) rectangle (9.30,2.22)}
+  \node[font=\footnotesize] at (7.90,1.76) {\InkLabel{$Tv_1,\dots,Tv_n$}};
+  \node[font=\scriptsize,text=black!65] at (7.90,1.32) {\InkLabel{$\range T$}};
 
   \node[figdot] (Z) at (7.90,0.54) {};
-  \node[right=3pt,font=\scriptsize] at (Z) {$0$};
+  \node[right=3pt,font=\scriptsize] at (Z) {\InkLabel{$0$}};
 
   % Clean straight horizontal mapping arrows (labels centered in the gap between V and W)
-  \draw[->,black,line width=0.80pt,shorten >=2.5pt] (3.10,1.76) -- (6.50,1.76);
-  \node[above=2.5pt,font=\footnotesize] at (4.625,1.76) {$T$};
-  \draw[->,black!65,densely dashed,line width=0.55pt,shorten >=3.5pt] (3.10,0.54) -- (Z);
-  \node[above=2pt,font=\scriptsize,text=black!75] at (4.625,0.54) {$Tu_i = 0$};
+  \PacketInkPath[->,black,line width=0.55pt,shorten >=2.5pt]{(3.10,1.76) -- (6.50,1.76)}
+  \node[above=2.5pt,font=\footnotesize] at (4.625,1.76) {\InkLabel{$T$}};
+  \PacketInkPath[->,black!65,densely dashed,line width=0.55pt,shorten >=3.5pt]{(3.10,0.54) -- (Z)}
+  \node[above=2pt,font=\scriptsize,text=black!75] at (4.625,0.54) {\InkLabel{$Tu_i = 0$}};
 \end{tikzpicture}
 \figcap{Proof structure of the Fundamental Theorem of Linear Maps (\ilink{prop-24}{Prop.~24}): extending a basis $u_1,\dots,u_m$ of $\nul T$ by $v_1,\dots,v_n$ to a basis of $V$ maps $v_1,\dots,v_n$ bijectively onto a basis $Tv_1,\dots,Tv_n$ of $\range T$, giving $\dim V=m+n=\dim\nul T+\dim\range T$.}
 \end{fig}
@@ -235,29 +253,29 @@
   % Dimensions: m = 1.85, n = 2.55, c = 0.96 (width(C) == height(R))
 
   % Matrix A (white)
-  \draw[black!85,line width=0.50pt] (0.0,0.10) rectangle (2.55,1.95);
-  \node[font=\small] at (1.275,1.025) {$A$};
-  \node[font=\scriptsize,above=2.5pt] at (1.275,1.95) {$n$};
-  \node[font=\scriptsize,left=3pt] at (0.0,1.025) {$m$};
+  \PacketInkPath[black!85,line width=0.5pt]{(0.0,0.10) rectangle (2.55,1.95)}
+  \node[font=\small] at (1.275,1.025) {\InkLabel{$A$}};
+  \node[font=\scriptsize,above=2.5pt] at (1.275,1.95) {\InkLabel{$n$}};
+  \node[font=\scriptsize,left=3pt] at (0.0,1.025) {\InkLabel{$m$}};
 
-  \node[font=\normalsize] at (3.20,1.025) {$=$};
+  \node[font=\normalsize] at (3.20,1.025) {\InkLabel{$=$}};
 
   % Matrix C (m x c) with soft gray wash and hair-thin column divisions
-  \fill[black!7] (3.85,0.10) rectangle (4.81,1.95);
-  \draw[black!22,line width=0.32pt] (4.17,0.10) -- (4.17,1.95);
-  \draw[black!22,line width=0.32pt] (4.49,0.10) -- (4.49,1.95);
-  \draw[black!85,line width=0.50pt] (3.85,0.10) rectangle (4.81,1.95);
-  \node[font=\small,fill=black!7,inner sep=1.8pt] at (4.33,1.025) {$C$};
-  \node[font=\scriptsize,above=2.5pt] at (4.33,1.95) {$c$};
+  \InkRegion[inkblue]{(3.85,0.10) rectangle (4.81,1.95)}
+  \PacketInkPath[black!22,line width=0.32pt]{(4.17,0.10) -- (4.17,1.95)}
+  \PacketInkPath[black!22,line width=0.32pt]{(4.49,0.10) -- (4.49,1.95)}
+  \PacketInkPath[black!85,line width=0.5pt]{(3.85,0.10) rectangle (4.81,1.95)}
+  \node[font=\small,inner sep=1.8pt] at (4.33,1.025) {\InkLabel{$C$}};
+  \node[font=\scriptsize,above=2.5pt] at (4.33,1.95) {\InkLabel{$c$}};
 
   % Matrix R (c x n) centered vertically with soft gray wash and hair-thin row divisions
-  \fill[black!7] (5.35,0.545) rectangle (7.90,1.505);
-  \draw[black!22,line width=0.32pt] (5.35,0.865) -- (7.90,0.865);
-  \draw[black!22,line width=0.32pt] (5.35,1.185) -- (7.90,1.185);
-  \draw[black!85,line width=0.50pt] (5.35,0.545) rectangle (7.90,1.505);
-  \node[font=\small,fill=black!7,inner sep=1.8pt] at (6.625,1.025) {$R$};
-  \node[font=\scriptsize,above=2.5pt] at (6.625,1.505) {$n$};
-  \node[font=\scriptsize,right=3pt] at (7.90,1.025) {$c$};
+  \InkRegion[inkblue]{(5.35,0.545) rectangle (7.90,1.505)}
+  \PacketInkPath[black!22,line width=0.32pt]{(5.35,0.865) -- (7.90,0.865)}
+  \PacketInkPath[black!22,line width=0.32pt]{(5.35,1.185) -- (7.90,1.185)}
+  \PacketInkPath[black!85,line width=0.5pt]{(5.35,0.545) rectangle (7.90,1.505)}
+  \node[font=\small,inner sep=1.8pt] at (6.625,1.025) {\InkLabel{$R$}};
+  \node[font=\scriptsize,above=2.5pt] at (6.625,1.505) {\InkLabel{$n$}};
+  \node[font=\scriptsize,right=3pt] at (7.90,1.025) {\InkLabel{$c$}};
 \end{tikzpicture}
 \figcap{Column--row factorization $A=CR$ (LADR 3.56--3.57): factoring an $m\times n$ matrix $A$ of column rank $c$ into an $m\times c$ column-basis matrix $C$ times a $c\times n$ matrix $R$ expresses all $m$ rows of $A$ as linear combinations of the $c$ rows of $R$, proving $\operatorname{row\ rank}(A)=\operatorname{col\ rank}(A)$.}
 \end{fig}
@@ -290,31 +308,31 @@
   \ii Prove $\dim T^{-1}(U)=\dim\nul T+\dim(U\cap\range T)$.
   \ii Let $D$ be differentiation on $\PP_4(\RR)$. Using (b), find the dimension of the space of $p$ with $p'(x)=ax^2+b$ for some $a,b\in\RR$.
 \end{enumerate}
-\emph{Hint:} apply rank--nullity to the restriction of $T$ to $T^{-1}(U)$.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P2.}\ (a) Find a linear map $T\colon\RR^4\to\RR^4$ with $\nul T=\range T$. (b) Prove that no linear map $T\colon\RR^5\to\RR^5$ satisfies $\nul T=\range T$.\target{prob-HW3-P2}
 
-\emph{Hint:} rank--nullity; model (a) on $N$.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P3.}\ Let $U=\{p\in\PP_4(\RR):p(1)=p'(1)=0\}$. Define a linear map $S\colon\PP_4(\RR)\to\RR^2$ with null space $U$ and use rank--nullity to find $\dim U$. Compare with Homework 2.\target{prob-HW3-P3}
 
-\emph{Hint:} $S(p)=(p(1),p'(1))$; show it is surjective.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P4.}\ Let $T\colon V\to W$ be linear. (a) Prove that if $v_1,\dots,v_n$ is dependent, so is $Tv_1,\dots,Tv_n$. (b) Give an example where an independent list is not sent to an independent list.\target{prob-HW3-P4}
 
-\emph{Hint:} apply $T$ to a relation.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P5.}\ Define $T\colon\PP_3(\RR)\to\PP_4(\RR)$ by $(Tp)(x)=x^2p'(x)+p(x)$. (a) Find the matrix of $T$ in the bases $1,x,x^2,x^3$ and $1,x,x^2,x^3,x^4$. (b) Determine $\nul T$ and $\range T$ and their dimensions. (c) Explain from (a) why the range is the span of the columns.\target{prob-HW3-P5}
 
-\emph{Hint:} column $j$ is the image of the $j$-th basis vector.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P6.}\ Solve $x+y+z+w=1$, $x+z=0$ over $\FF_2$. List all solutions.\target{prob-HW3-P6}
 
-\emph{Hint:} $-1=1$ and $2=0$.
+
 \end{prob}
 \begin{prob}\textbf{HW3 P7 (optional).}\ Let $A$ be an $n\times m$ matrix over $\FF_2$ with $Ax=b$ consistent. Express the number of solutions in terms of $m$ and $\operatorname{rank}A$.\target{prob-HW3-P7}
 
-\emph{Hint:} the solutions are one solution plus the null space.
+
 \end{prob}
 \begin{prob}\textbf{R1 (Practice Midterm 1, Question 3).}\ Define $T\colon\RR^3\to\PP_2(\RR)$ by $T(a,b,c)=(a+b)+(b+c)x+(a+c)x^2$. Use the basis $B=(1,0,0),(1,1,0),(1,1,1)$ of the domain and $C=(1,x,x^2)$ of the codomain. (a) Find $\MM(T)$. (b) Prove that $T$ is bijective.
 \end{prob}
@@ -324,5 +342,22 @@
 \end{prob}
 \begin{prob}\textbf{R4 (Midterm 1 review, Exercise 6).}\ Does there exist a linear map $T\colon\RR^4\to\RR^2$ with $\nul T=\{(x,x,x,x):x\in\RR\}$?
 \end{prob}
+
+\clearpage
+\section*{Hints}
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P1}{HW3 P1.}} \emph{Hint:} apply rank--nullity to the restriction of $T$ to $T^{-1}(U)$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P2}{HW3 P2.}} \emph{Hint:} rank--nullity; model (a) on $N$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P3}{HW3 P3.}} \emph{Hint:} $S(p)=(p(1),p'(1))$; show it is surjective.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P4}{HW3 P4.}} \emph{Hint:} apply $T$ to a relation.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P5}{HW3 P5.}} \emph{Hint:} column $j$ is the image of the $j$-th basis vector.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P6}{HW3 P6.}} \emph{Hint:} $-1=1$ and $2=0$.
+
+\par\medskip\noindent\textbf{\hyperlink{prob-HW3-P7}{HW3 P7 (optional).}} \emph{Hint:} the solutions are one solution plus the null space.
 
 \end{document}

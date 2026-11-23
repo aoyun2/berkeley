@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
 \newcommand{\vv}[1]{\mathbf{#1}}
 \DeclareMathOperator{\spn}{Span}
@@ -60,25 +61,25 @@
 \begin{tikzpicture}
   % Left panel: Parallelogram rule for vector addition
   \begin{scope}[shift={(0,0)},scale=0.90]
-    \draw[figaxis] (-0.4,0) -- (4.75,0) node[right,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-0.35) -- (0,2.50) node[left=1pt,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-0.4,0) -- (4.75,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-0.35) -- (0,2.50) node[left=1pt,font=\scriptsize] {\InkLabel{$x_2$}};
 
     \coordinate (O) at (0,0);
     \coordinate (U) at (3.0,0.75);
     \coordinate (V) at (1.05,1.60);
     \coordinate (UV) at (4.05,2.35);
 
-    \fill[black!8] (O) -- (U) -- (UV) -- (V) -- cycle;
-    \draw[figguide] (U) -- (UV);
-    \draw[figguide] (V) -- (UV);
+    \path[pattern=inkgrain,pattern color=inkblue] (O) -- (U) -- (UV) -- (V) -- cycle;
+    \InkStroke[figguide]{(U) -- (UV)}
+    \InkStroke[figguide]{(V) -- (UV)}
 
-    \draw[figvec,draw=black!80,line width=0.75pt] (O) -- (U) node[pos=0.64,below=2pt,font=\footnotesize,text=black] {$\vv u$};
-    \draw[figvec,draw=black!80,line width=0.75pt] (O) -- (V) node[pos=0.58,above left=1pt,font=\footnotesize,text=black] {$\vv v$};
-    \draw[figvec,draw=black,line width=1.1pt] (O) -- (UV) node[above right=1pt,font=\footnotesize] {$\vv u+\vv v$};
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (O) -- (U) node[pos=0.64,below=2pt,font=\footnotesize,text=black] {\InkLabel{$\vv u$}};
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (O) -- (V) node[pos=0.58,above left=1pt,font=\footnotesize,text=black] {\InkLabel{$\vv v$}};
+    \draw[ink line,figvec,draw=black,line width=0.65pt] (O) -- (UV) node[above right=1pt,font=\footnotesize] {\InkLabel{$\vv u+\vv v$}};
 
-    \fill[black] (O) circle (1.5pt) node[below left=1pt,font=\scriptsize] {$\vv 0$};
+    \fill[black] (O) circle (1.5pt) node[below left=1pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
     \fill[black] (UV) circle (1.5pt);
-    \node[font=\footnotesize] at (2.25,-0.70) {(a)};
+    \node[font=\footnotesize] at (2.25,-0.70) {\InkLabel{(a)}};
   \end{scope}
 
   % Right panel: Skewed coordinate grid for linear combinations
@@ -90,33 +91,33 @@
     \coordinate (V22) at ($(O)+2*(0.46,0.68)$);
     \coordinate (B) at ($(O)+3*(1.12,0.18)+2*(0.46,0.68)$);
 
-    \fill[black!6] (O) -- (V13) -- (B) -- (V22) -- cycle;
+    \path[pattern=inkgrain,pattern color=inkblue] (O) -- (V13) -- (B) -- (V22) -- cycle;
     \foreach \i in {0,1,2,3} {
-      \draw[black!22,line width=0.35pt] ($(O)+\i*(1.12,0.18)$) -- ($(O)+\i*(1.12,0.18)+2*(0.46,0.68)$);
+      \InkStroke[black!22,line width=0.35pt]{($(O)+\i*(1.12,0.18)$) -- ($(O)+\i*(1.12,0.18)+2*(0.46,0.68)$)}
     }
     \foreach \j in {0,1,2} {
-      \draw[black!22,line width=0.35pt] ($(O)+\j*(0.46,0.68)$) -- ($(O)+3*(1.12,0.18)+\j*(0.46,0.68)$);
+      \InkStroke[black!22,line width=0.35pt]{($(O)+\j*(0.46,0.68)$) -- ($(O)+3*(1.12,0.18)+\j*(0.46,0.68)$)}
     }
 
-    \draw[figguide] (V13) -- (B);
-    \draw[figguide] (V22) -- (B);
+    \InkStroke[figguide]{(V13) -- (B)}
+    \InkStroke[figguide]{(V22) -- (B)}
 
-    \draw[figvec,draw=black!80,line width=0.8pt] (O) -- (V1);
-    \draw[figvecsub] (V1) -- (V13);
-    \node[font=\footnotesize,below=3pt] at ($(O)+0.55*(1.12,0.18)$) {$\vv v_1$};
-    \node[font=\footnotesize,below=3pt] at (V13) {$3\vv v_1$};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(O) -- (V1)}
+    \InkStroke[figvecsub,draw=black]{(V1) -- (V13)}
+    \node[font=\footnotesize,below=3pt] at ($(O)+0.55*(1.12,0.18)$) {\InkLabel{$\vv v_1$}};
+    \node[font=\footnotesize,below=3pt] at (V13) {\InkLabel{$3\vv v_1$}};
 
-    \draw[figvec,draw=black!80,line width=0.8pt] (O) -- (V2);
-    \draw[figvecsub] (V2) -- (V22);
-    \node[font=\footnotesize,above left=1pt] at ($(O)+0.55*(0.46,0.68)$) {$\vv v_2$};
-    \node[font=\footnotesize,above left=1pt] at (V22) {$2\vv v_2$};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(O) -- (V2)}
+    \InkStroke[figvecsub,draw=black]{(V2) -- (V22)}
+    \node[font=\footnotesize,above left=1pt] at ($(O)+0.55*(0.46,0.68)$) {\InkLabel{$\vv v_2$}};
+    \node[font=\footnotesize,above left=1pt] at (V22) {\InkLabel{$2\vv v_2$}};
 
-    \draw[figvec,draw=black,line width=1.1pt] (O) -- (B);
-    \node[font=\footnotesize,above=4pt,xshift=-8pt] at (B) {$\vv b = 3\vv v_1+2\vv v_2$};
+    \InkStroke[figvec,draw=black,line width=0.65pt]{(O) -- (B)}
+    \node[font=\footnotesize,above=4pt,xshift=-8pt] at (B) {\InkLabel{$\vv b = 3\vv v_1+2\vv v_2$}};
 
-    \fill[black] (O) circle (1.5pt) node[below left=1pt,font=\scriptsize] {$\vv 0$};
+    \fill[black] (O) circle (1.5pt) node[below left=1pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
     \fill[black] (B) circle (1.6pt);
-    \node[font=\footnotesize] at (2.65,-0.70) {(b)};
+    \node[font=\footnotesize] at (2.65,-0.70) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
 \figcap{(a) Vector addition $\vv u+\vv v$ by the parallelogram rule. (b) Two non-collinear vectors $\vv v_1,\vv v_2$ generate a skewed coordinate grid in $\RR^2$: asking whether $\vv b$ is a linear combination $c_1\vv v_1+c_2\vv v_2$ asks whether $\vv b$ can be reached by moving $c_1$ units along $\vv v_1$ and $c_2$ units along $\vv v_2$.}
@@ -158,31 +159,31 @@
 \tdplotsetmaincoords{68}{116}
 \begin{tikzpicture}[tdplot_main_coords,scale=0.95]
   % Part of line Span{w} below the plane (occluded dashed hairline)
-  \draw[figblue!70,dashed,line width=0.55pt] (-0.28,-0.88,-1.08) -- (0,0,0);
+  \InkStroke[figblue!70,dashed,line width=0.55pt]{(-0.28,-0.84,-1.05) -- (0,0,0)}
 
   % Span{u, v} plane in xy-plane (soft neutral gray wash + hairline edge)
-  \fill[black!9,fill opacity=0.78] (-1.5,-1.3,0) -- (2.5,-1.3,0) -- (2.5,2.5,0) -- (-1.5,2.5,0) -- cycle;
-  \draw[black!55,line width=0.45pt] (-1.5,-1.3,0) -- (2.5,-1.3,0) -- (2.5,2.5,0) -- (-1.5,2.5,0) -- cycle;
+  \path[pattern=inkgrain,pattern color=inkblue] (-1.5,-1.3,0) -- (2.5,-1.3,0) -- (2.5,2.5,0) -- (-1.5,2.5,0) -- cycle;
+  \InkStroke[black!55,line width=0.45pt]{(-1.5,-1.3,0) -- (2.5,-1.3,0) -- (2.5,2.5,0) -- (-1.5,2.5,0) -- cycle}
 
   % Hairline axes
-  \draw[figaxis] (-1.2,0,0) -- (2.75,0,0) node[below left=1pt,font=\scriptsize] {$x_1$};
-  \draw[figaxis] (0,-1.1,0) -- (0,2.75,0) node[below right=1pt,font=\scriptsize] {$x_2$};
-  \draw[figaxis] (0,0,0) -- (0,0,2.45) node[above,font=\scriptsize] {$x_3$};
+  \draw[ink line,figaxis] (-1.2,0,0) -- (2.75,0,0) node[below left=1pt,font=\scriptsize] {\InkLabel{$x_1$}};
+  \draw[ink line,figaxis] (0,-1.1,0) -- (0,2.75,0) node[below right=1pt,font=\scriptsize] {\InkLabel{$x_2$}};
+  \draw[ink line,figaxis] (0,0,0) -- (0,0,2.45) node[above,font=\scriptsize] {\InkLabel{$x_3$}};
 
   % Upper part of line Span{w} (1 subtle accent figblue, crisp solid)
-  \draw[figblue!85,line width=0.55pt] (0,0,0) -- (0.58,1.80,2.22);
-  \draw[figvec,draw=figblue,line width=1.05pt] (0,0,0) -- (0.38,1.18,1.45) node[above left=2pt,font=\footnotesize,text=figblue] {$\vv w$};
-  \node[font=\footnotesize,text=figblue,right=4pt] at (0.52,1.62,2.00) {$\spn\{\vv w\}$};
+  \InkStroke[figblue!85,line width=0.55pt]{(0,0,0) -- (0.60,1.80,2.25)}
+  \draw[ink line,figvec,draw=figblue,line width=0.65pt] (0,0,0) -- (0.40,1.20,1.50) node[above left=2pt,font=\footnotesize,text=figblue] {\InkLabel{$\vv w$}};
+  \node[font=\footnotesize,text=figblue,right=4pt] at (0.54,1.62,2.025) {\InkLabel{$\spn\{\vv w\}$}};
 
   % Vectors u and v inside plane Span{u, v} (pure black)
-  \draw[figvec,draw=black,line width=0.85pt] (0,0,0) -- (1.45,0.95,0) node[below right=1pt,font=\footnotesize] {$\vv u$};
-  \draw[figvec,draw=black,line width=0.85pt] (0,0,0) -- (-0.65,1.45,0) node[pos=0.78,above=2pt,font=\footnotesize] {$\vv v$};
+  \draw[ink line,figvec,draw=black,line width=0.65pt] (0,0,0) -- (1.45,0.95,0) node[below right=1pt,font=\footnotesize] {\InkLabel{$\vv u$}};
+  \draw[ink line,figvec,draw=black,line width=0.65pt] (0,0,0) -- (-0.65,1.45,0) node[pos=0.78,above=2pt,font=\footnotesize] {\InkLabel{$\vv v$}};
 
   % Origin dot + quiet atomic labels
   \fill[black] (0,0,0) circle (1.5pt);
   \begin{scope}[tdplot_screen_coords]
-    \node[font=\scriptsize,anchor=east] at (-0.18,-0.02) {$\vv 0$};
-    \node[font=\footnotesize,anchor=north] at (0.25,-1.48) {$\spn\{\vv u,\vv v\}$};
+    \node[font=\scriptsize,anchor=east] at (-0.18,-0.02) {\InkLabel{$\vv 0$}};
+    \node[font=\footnotesize,anchor=north] at (0.25,-1.48) {\InkLabel{$\spn\{\vv u,\vv v\}$}};
   \end{scope}
 \end{tikzpicture}
 \figcap{Geometric description of $\spn\{\vv w\}$ and $\spn\{\vv u,\vv v\}$ in $\RR^3$: for any nonzero vector $\vv w$, $\spn\{\vv w\}$ is the line through $\vv 0$ and $\vv w$; for any two non-collinear vectors $\vv u,\vv v$, $\spn\{\vv u,\vv v\}$ is the plane through $\vv 0$, $\vv u$, and $\vv v$. Every span contains $\vv 0$ (take all weights equal to $0$).}
@@ -360,34 +361,35 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \coordinate (W) at (4.55,3.27);
 
   % Subtle gray wash highlighting the translation parallelogram
-  \fill[black!6] (O) -- (Vh) -- (W) -- (P) -- cycle;
+  \path[pattern=inkgrain,pattern color=inkblue] (O) -- (Vh) -- (W) -- (P) -- cycle;
 
   % Hairline axes
-  \draw[figaxis] (-0.85,0) -- (5.65,0) node[right,font=\scriptsize] {$x_1$};
-  \draw[figaxis] (0,-0.55) -- (0,3.35) node[above,font=\scriptsize] {$x_2$};
+  \draw[ink line,figaxis] (-0.85,0) -- (5.65,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
+  \draw[ink line,figaxis] (0,-0.55) -- (0,3.35) node[above,font=\scriptsize] {\InkLabel{$x_2$}};
 
   % Homogeneous solution line (crisp solid black, thinner than focal vectors)
-  \draw[black!70,line width=0.6pt] (-0.75,-0.30) -- (5.25,2.10);
-  \node[font=\footnotesize,right=5pt] at (5.25,2.10) {$A\vv x=\vv 0$};
+  \InkStroke[black!70,line width=0.6pt]{(-0.75,-0.30) -- (5.25,2.10)}
+  \node[font=\footnotesize,right=5pt] at (5.25,2.10) {\InkLabel{$A\vv x=\vv 0$}};
 
   % Translated nonhomogeneous solution line (solid figblue, single subtle accent)
-  \draw[figblue!80,line width=0.65pt] (-0.75,1.15) -- (5.25,3.55);
-  \node[font=\footnotesize,text=figblue,right=5pt] at (5.25,3.55) {$A\vv x=\vv b$};
+  \InkStroke[figblue!80,line width=0.65pt]{(-0.75,1.15) -- (5.25,3.55)}
+  \node[font=\footnotesize,text=figblue,right=5pt] at (5.25,3.55) {\InkLabel{$A\vv x=\vv b$}};
 
   % Translated copy of p (dashed hairline guide)
-  \draw[figguide,-{Stealth[length=3.6pt,width=2.1pt]},shorten >=1.6pt] (Vh) -- (W) node[midway,right=3pt,font=\scriptsize,text=black!65] {$+\vv p$};
+  \draw[ink line,figguide,-{Stealth[length=3.6pt,width=2.1pt]},shorten >=1.6pt] (Vh) -- (W) node[midway,right=3pt,font=\scriptsize,text=black!65] {\InkLabel{$+\vv p$}};
 
   % Vectors (crisp hierarchy over underlying lines, shortened cleanly before dots)
-  \draw[figvec,draw=black,line width=1.0pt] (O) -- (V);
-  \node[font=\footnotesize,below right=2pt] at (V) {$\vv v$};
-  \draw[figvec,draw=black,line width=0.78pt,shorten >=1.6pt] (V) -- (Vh);
-  \node[font=\footnotesize,below right=2pt] at (3.35,1.28) {$\vv v_h$};
+  \InkStroke[figvec,draw=black,line width=0.65pt,shorten >=1.6pt]{(O) -- (Vh)}
+  \InkStroke[figvec,draw=black,line width=0.65pt]{(O) -- (V)}
+  \node[font=\footnotesize,below right=2pt] at (V) {\InkLabel{$\vv v$}};
 
-  \draw[figvec,draw=black!85,line width=0.85pt,shorten >=1.6pt] (O) -- (P) node[midway,above left=1pt,font=\footnotesize,text=black] {$\vv p$};
-  \draw[figvec,draw=figblue,line width=1.05pt,shorten >=1.6pt] (O) -- (W) node[pos=0.43,sloped,above=3pt,font=\footnotesize,text=figblue] {$\vv w=\vv p+\vv v_h$};
+  \node[font=\footnotesize,below right=2pt] at (3.35,1.28) {\InkLabel{$\vv v_h$}};
+
+  \draw[ink line,figvec,draw=black,line width=0.65pt,shorten >=1.6pt] (O) -- (P) node[midway,above left=1pt,font=\footnotesize,text=black] {\InkLabel{$\vv p$}};
+  \draw[ink line,figvec,draw=figblue,line width=0.65pt,shorten >=1.6pt] (O) -- (W) node[pos=0.43,sloped,above=3pt,font=\footnotesize,text=figblue] {\InkLabel{$\vv w=\vv p+\vv v_h$}};
 
   \fill[black] (O) circle (1.5pt);
-  \node[font=\scriptsize,below right=1pt] at (O) {$\vv 0$};
+  \node[font=\scriptsize,below right=1pt] at (O) {\InkLabel{$\vv 0$}};
   \fill[black] (P) circle (1.5pt);
   \fill[black] (Vh) circle (1.5pt);
   \fill[figblue] (W) circle (1.6pt);

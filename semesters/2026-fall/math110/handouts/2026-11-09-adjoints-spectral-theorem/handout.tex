@@ -451,40 +451,22 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
     \node[font=\scriptsize,text=figblue] (bvlbl) at (axis cs:1.50,1.92) {\InkLabel{$\|Bv\|$}};
     \InkStroke[black!55,line width=0.35pt]{(bvlbl.south west) -- (axis cs:0.86,1.44)}
     \node[font=\scriptsize,text=figred,anchor=east] (bslbl) at (axis cs:-1.30,-1.60) {\InkLabel{$\|B^*v\|$}};
-    \InkStroke[figblue!70,line width=0.35pt]{(bslbl.north east) -- (axis cs:-1.44,-0.80)}
+    \InkStroke[figred!70,line width=0.35pt]{(bslbl.north east) -- (axis cs:-1.44,-0.80)}
   \end{axis}
   \node[font=\footnotesize] at (2.25,-0.55) {(a)};
 
-  % Panel (b): Spivak-clean white hairline operator hierarchy (zero pastel cards)
-  \begin{scope}[xshift=6.15cm,yshift=0.25cm]
-    \tikzset{
-      opnode/.style={draw=black!80,fill=white,line width=0.45pt,inner sep=4.2pt,align=center,font=\scriptsize},
-      inc/.style={->,draw=black!75,line width=0.5pt,shorten <=2pt,shorten >=2pt}
-    }
-    \node[opnode] (all) at (3.65,4.75) {All operators $\LL(V)$};
-
-    \node[opnode] (norm) at (3.65,3.45) {Normal\\[-1pt]$TT^*=T^*T$};
-
-    \node[opnode] (sa) at (1.55,1.95) {Self-adjoint\\[-1pt]$T^*=T$};
-
-    \node[opnode] (unit) at (5.75,1.95) {Unitary / Isometry\\[-1pt]$T^*T=I$};
-
-    \node[opnode] (pos) at (1.55,0.45) {Positive\\[-1pt]$T^*=T,\ \langle Tv,v\rangle\ge 0$};
-
-    \node[opnode,dashed,draw=black!70] (inter) at (5.55,0.45) {Self-adjoint $\cap$ Unitary\\[-1pt]$T^*=T=T^{-1}$};
-
-    % Delicate inclusion arrows
-    \InkStroke[inc]{(norm.north) -- (all.south)}
-    \InkStroke[inc]{(sa.north) -- ($(norm.south)+(-0.65,0)$)}
-    \InkStroke[inc]{(unit.north) -- ($(norm.south)+(0.65,0)$)}
-    \InkStroke[inc]{(pos.north) -- (sa.south)}
-    \InkStroke[inc,dashed,draw=black!60]{($(inter.north)+(-0.85,0)$) -- ($(sa.south)+(0.55,0)$)}
-    \InkStroke[inc,dashed,draw=black!60]{($(inter.north)+(0.20,0)$) -- (unit.south)}
-
-    \node[font=\footnotesize] at (3.65,-0.80) {(b)};
+  % Only classes already defined in this section appear here.
+  \begin{scope}[xshift=6.15cm,yshift=.25cm]
+    \tikzset{opnode/.style={draw=black!70,line width=.4pt,inner sep=5pt,align=center,font=\scriptsize}}
+    \node[opnode] (all) at (3.2,4.2) {All operators $\LL(V)$};
+    \node[opnode] (normal) at (3.2,2.7) {Normal\\$TT^*=T^*T$};
+    \node[opnode] (selfadjoint) at (3.2,1.2) {Self-adjoint\\$T^*=T$};
+    \InkStroke[ink arrow,shorten <=2pt,shorten >=2pt]{(selfadjoint.north)--(normal.south)}
+    \InkStroke[ink arrow,shorten <=2pt,shorten >=2pt]{(normal.north)--(all.south)}
+    \node[font=\footnotesize] at (3.2,-.80) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Polar plot of directional stretch $r(\theta)=\|Tv\|$ and $\|T^*v\|$ on unit vectors $v=(\cos\theta,\sin\theta)$ (\hyperref[prop-98]{Prop.~98}). Normal $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ gives identical circles of radius $\sqrt{2}$ (slate); non-normal shear $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ gives distinct curves for $\|Bv\|$ (blue) and $\|B^*v\|$ (red). (b) Inclusion hierarchy of operator classes inside $\LL(V)$ (arrows denote $\subseteq$), from positive operators (e.g.\ $\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$) and reflections ($T^*=T=T^{-1}$) up to $\LL(V)$.}
+\figcap{(a) Polar plot of directional stretch $r(\theta)=\|Tv\|$ and $\|T^*v\|$ on unit vectors $v=(\cos\theta,\sin\theta)$ (\hyperref[prop-98]{Prop.~98}). Normal $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ gives identical circles of radius $\sqrt{2}$ (slate); non-normal shear $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ gives distinct curves for $\|Bv\|$ (blue) and $\|B^*v\|$ (red). (b) Every self-adjoint operator is normal, since $TT^*=T^2=T^*T$. The arrows denote inclusion of classes. The reverse implication fails: the normal matrix $A$ in (a) is not self-adjoint.}
 \end{fig}
 
 \noindent\textbf{The question answered.} $\|Ae_1\|=\|(1,1)\|=\sqrt{2}=\|A^*e_1\|$, whereas $\|Be_1\|=1\neq \sqrt{2}=\|B^*e_1\|$. By Prop.~98, $\|Tv\|=\|T^*v\|$ holds for all $v$ precisely when $T$ is normal.
@@ -730,7 +712,7 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 
 \noindent\textbf{The question answered.} Yes: $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ is symmetric, with orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ ($\lambda=4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ ($\lambda=2$). Writing $v=au_1+bu_2$ on the unit circle ($a^2+b^2=1$) gives $Av=4au_1+2bu_2$, which traces the ellipse with perpendicular semi-axes $4$ and $2$.
 
-\noindent\textbf{Where this is used (Notes Ch.~20).} Transition operators of reversible Markov chains are self-adjoint under a stationary-distribution weighted inner product, yielding real eigenvalues whose second-largest modulus gives the spectral gap governing mixing speed. Adjacency matrices of undirected graphs and Hessian matrices of smooth functions are symmetric, explaining why their principal directions are mutually orthogonal.
+\noindent\textbf{Where this is used (Notes Ch.~20).} For a reversible finite Markov chain with a positive stationary distribution, the transition operator acting on functions is self-adjoint in the stationary-weighted inner product. Its eigenvalues are real. When the chain is irreducible and aperiodic, the nonconstant eigenmodes decay at rates determined by $|\lambda_j|$; the absolute spectral gap is $1-\max_{j\ge2}|\lambda_j|$. Adjacency matrices of undirected graphs and Hessian matrices of smooth functions are symmetric, explaining why their principal directions are mutually orthogonal.
 
 \begin{shortcuts}
   \ii \textbf{$2\times2$ symmetric:} Once one eigenvector $(a,b)$ is found for distinct eigenvalues, the second is automatically $(-b,a)$ before normalizing (LADR~7.22). (If eigenvalues coincide, $A=\lambda I$.)
@@ -757,63 +739,6 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 
 Throughout this subsection $V\neq\{0\}$ is a \textbf{complex} inner product space.
 
-\begin{theorem*}[Prop.~103: Normal operators are diagonalizable]\target{prop-103}
-  If $T\in\LL(V)$ ($V$ complex) is normal, then $T$ is diagonalizable.
-\end{theorem*}
-
-The notes give five independent proofs, each connecting normality to a different earlier week's perspective.
-
-\begin{ideabox}
-  \textbf{Proof~1 (minimal polynomial):} If $T$ failed to be diagonalizable, $m_T$ would have a repeated root $(x-\lambda)^2$ \ilink{T8}{(T8)}, yielding a nonzero $S=q(T)$ with $S^2=0$. Normality passes to polynomials in $T$, so Prop.~98 gives $\|S^*Sv\|=\|S^2v\|=0$, forcing $\|Sv\|^2=\langle S^*Sv,v\rangle=0$, so $q(T)=0$, contradicting minimality of $m_T$.
-\end{ideabox}
-\begin{proof}[Proof 1 (Minimal polynomial)]
-  \begin{steps}
-    \ii Suppose $m_T$ has a repeated root: $m_T=(x-\lambda)^2 r$. Put $q=(x-\lambda)r$, so $\deg q < \deg m_T$ forces $S=q(T)\neq0$, while $m_T\mid q^2$ gives $S^2=0$ \ilink{T8}{(T8)}.
-    \ii Since $T$ commutes with $T^*$, every polynomial $q(T)$ commutes with its adjoint $q(T)^*=\overline{q}(T^*)$ (LADR~7.5), so $S$ is normal.
-    \ii By Prop.~98, $\|S^*Sv\|=\|S(Sv)\|=0$ for every $v\in V$, so $S^*S=0$.
-    \ii Therefore $\|Sv\|^2=\langle S^*Sv,v\rangle=0$ for all $v\in V$, forcing $q(T)=S=0$, contradicting Step~1.
-    \ii Hence $m_T$ has only distinct roots over $\CC$ (T9/FTA), so $T$ is diagonalizable \ilink{T8}{(T8)}.
-  \end{steps}
-\end{proof}
-
-\begin{ideabox}
-  \textbf{Proof~2 (real and imaginary parts):} Write $T=R+iS$ as in LADR~7.23, where $R,S$ are commuting self-adjoint operators. Each is diagonalizable by Prop.~102; because $RS=SR$, each eigenspace of $S$ is $R$-invariant, so we can diagonalize $R$ separately inside each eigenspace of $S$ to obtain common eigenvectors.
-\end{ideabox}
-\begin{proof}[Proof 2 (Cartesian decomposition, LADR~7.23)]
-  \begin{steps}
-    \ii Write $T=R+iS$ with $R,S$ self-adjoint and $RS=SR$ (LADR~7.23). By Prop.~102, both $R$ and $S$ are diagonalizable.
-    \ii For any eigenvalue $\mu$ of $S$, if $v\in E(\mu,S)$ then $S(Rv)=RSv=R(\mu v)=\mu(Rv)$, so $E(\mu,S)$ is $R$-invariant.
-    \ii Thus $R|_{E(\mu,S)}$ is diagonalizable \ilink{T8}{(T8)}, giving a basis of $E(\mu,S)$ consisting of eigenvectors of both $R$ and $S$.
-    \ii Since $V=\bigoplus_\mu E(\mu,S)$ \ilink{T8}{(T8)}, combining these bases produces a basis of $V$ \ilink{T15}{(T15)} of vectors $v$ with $Rv=\rho v$, $Sv=\mu v$, hence $Tv=(\rho+i\mu)v$.
-  \end{steps}
-\end{proof}
-
-\begin{ideabox}
-  \textbf{Proof~3 (induction on $\dim V$):} Split $V$ into the eigenspace $\nul(T-\lambda I)$ and its orthogonal complement $\range(T-\lambda I)$ (Prop.~99). Normality keeps $\range(T-\lambda I)$ invariant under both $T$ and $T^*$, so induction applies to that smaller subspace.
-\end{ideabox}
-\begin{proof}[Proof 3 (Induction on $n=\dim V$)]
-  \begin{steps}
-    \ii Base $n=1$ is clear. Let $n>1$ and pick an eigenvalue $\lambda$ of $T$ \ilink{T7}{(T7)}. Put $U=\range(T-\lambda I)$. If $U=\{0\}$, $T=\lambda I$ and every basis is an eigenbasis; else $1\le \dim U < n$ \ilink{T13}{(T13)}.
-    \ii $U$ is invariant under $T$ and $T^*$: for $u=(T-\lambda I)v\in U$, $Tu=(T-\lambda I)Tv\in U$ and $T^*u=(T-\lambda I)T^*v\in U$ (since $T^*$ commutes with $T$).
-    \ii Thus $(T|_U)^*=T^*|_U$, so $T|_U$ is normal; by induction $U$ has an eigenbasis for $T$.
-    \ii By Prop.~94(i) and Prop.~99, $U^\perp = \nul\bigl((T-\lambda I)^*\bigr) = \nul(T-\lambda I)$, every nonzero vector of which is a $\lambda$-eigenvector.
-    \ii Combining bases across $V=U\oplus U^\perp$ (T5, T15) yields an eigenbasis of $V$.
-  \end{steps}
-\end{proof}
-
-\begin{ideabox}
-  \textbf{Proof~4 (Jordan chains):} Over $\CC$, $V$ has a basis of Jordan chains \ilink{T11}{(T11)}. If a chain $v_1,v_2,\dots,v_k$ had length $k\ge2$, then $v_1=(T-\lambda I)v_2$ would sit simultaneously in $\range(T-\lambda I)$ and $\nul(T-\lambda I)$, which are orthogonal by Prop.~99. A vector orthogonal to itself is $0$, impossible in a basis.
-\end{ideabox}
-\begin{proof}[Proof 4 (Jordan chains)]
-  \begin{steps}
-    \ii Suppose a Jordan chain $v_1,\dots,v_k$ for $\lambda$ had $k\ge2$ \ilink{T11}{(T11)}. Then $v_1=(T-\lambda I)v_2\in\range(T-\lambda I)$ and $v_1\in\nul(T-\lambda I)$.
-    \ii Since $T-\lambda I$ is normal (Prop.~99(b)), Prop.~99(a) gives $\range(T-\lambda I)=\nul(T-\lambda I)^\perp$, so $v_1\perp v_1$, forcing $v_1=0$, contradiction.
-    \ii Every Jordan chain has length $1$, so $T$ is diagonalizable \ilink{T11}{(T11)}.
-  \end{steps}
-\end{proof}
-
-To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis---we use Gram--Schmidt to upgrade upper-triangular bases \ilink{T10}{(T10)} to orthonormal ones.
-
 \begin{proposition*}[LADR 6.38: Schur's theorem]\target{name-schur}
   Every operator $T\in\LL(V)$ on a finite-dimensional complex inner product space has an upper-triangular matrix in some orthonormal basis of $V$.
 \end{proposition*}
@@ -821,10 +746,14 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
   By \ilink{T10}{(T10)}, choose a basis $v_1,\dots,v_n$ in which each $\spn(v_1,\dots,v_k)$ is $T$-invariant. Applying Gram--Schmidt \ilink{T3}{(T3)} yields an orthonormal basis $e_1,\dots,e_n$ with $\spn(e_1,\dots,e_k)=\spn(v_1,\dots,v_k)$ for all $k$, so the same spans are $T$-invariant, and $\MM(T)$ is upper-triangular \ilink{T10}{(T10)}.
 \end{proof}
 
+\begin{theorem*}[Prop.~103: Normal operators are diagonalizable]\target{prop-103}
+  If $T\in\LL(V)$ ($V$ complex) is normal, then $T$ is diagonalizable.
+\end{theorem*}
+
 \begin{ideabox}
-  \textbf{Proof~5 (Schur):} Put $\MM(T)=(a_{ij})$ in upper-triangular Schur form in an orthonormal basis $e_1,\dots,e_n$. Then $\|Te_1\|^2=|a_{11}|^2$ (first column) while $\|T^*e_1\|^2=|a_{11}|^2+|a_{12}|^2+\dots+|a_{1n}|^2$ (conjugate-transpose gives the first row). By Prop.~98, $\|Te_1\|=\|T^*e_1\|$, which forces $a_{12}=\dots=a_{1n}=0$. Proceeding row by row eliminates every off-diagonal entry.
+  In an orthonormal basis, column $k$ of a matrix gives $Te_k$, while row $k$ gives the coordinates of $T^*e_k$ after conjugation. Schur's theorem makes the first column especially simple. Comparing its norm with the first row uses normality to eliminate the entries above the diagonal, one row at a time.
 \end{ideabox}
-\begin{proof}[Proof 5 (Schur's theorem)]
+\begin{proof}[Principal proof (Schur; Proof 5 in the notes)]
   \begin{steps}
     \ii Choose an orthonormal basis $e_1,\dots,e_n$ where $\MM(T)=(a_{ij})$ is upper-triangular (Schur's theorem). By \ilink{T3}{(T3)} and Prop.~93, $\|Te_k\|^2=\sum_{i=1}^n |a_{ik}|^2$ (column $k$) and $\|T^*e_k\|^2=\sum_{j=1}^n |a_{kj}|^2$ (row $k$).
     \ii For $k=1$, $a_{i1}=0$ for $i>1$, so Prop.~98 ($\|Te_1\|^2=\|T^*e_1\|^2$) forces $|a_{11}|^2 = \sum_{j=1}^n |a_{1j}|^2$, hence $a_{12}=\dots=a_{1n}=0$.
@@ -833,12 +762,14 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
   \end{steps}
 \end{proof}
 
+
+
 \begin{theorem*}[Prop.~104 / LADR 7.31: The complex spectral theorem]\target{prop-104}\target{name-spectral}
   Let $V$ be a complex inner product space and $T\in\LL(V)$. Then $T$ is normal if and only if $T$ is orthogonally diagonalizable.
 \end{theorem*}
 \begin{proof}
   \begin{steps}
-    \ii ($\Rightarrow$) Already proved by Proof~5 above. Alternatively, using Prop.~103: $T$ is diagonalizable so $V=\bigoplus_i E(\lambda_i,T)$ \ilink{T8}{(T8)}; distinct eigenspaces are orthogonal by LADR~7.22; choosing an orthonormal basis in each $E(\lambda_i,T)$ \ilink{T3}{(T3)} yields an orthonormal eigenbasis of $V$ \ilink{T15}{(T15)}.
+    \ii ($\Rightarrow$) The principal proof above already gives an orthonormal eigenbasis. Equivalently, using Prop.~103: $T$ is diagonalizable so $V=\bigoplus_i E(\lambda_i,T)$ \ilink{T8}{(T8)}; distinct eigenspaces are orthogonal by LADR~7.22; choosing an orthonormal basis in each $E(\lambda_i,T)$ \ilink{T3}{(T3)} yields an orthonormal eigenbasis of $V$ \ilink{T15}{(T15)}.
     \ii ($\Leftarrow$) Suppose $e_1,\dots,e_n$ is an orthonormal basis with $Te_i=\lambda_i e_i$. In this basis $\MM(T)=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$, so by Prop.~93 $\MM(T^*)=\operatorname{diag}(\overline{\lambda_1},\dots,\overline{\lambda_n})$. Thus $T^*Te_i = |\lambda_i|^2 e_i = TT^*e_i$ for all $i$, forcing $T^*T=TT^*$.
   \end{steps}
 \end{proof}
@@ -871,16 +802,65 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
   \ii \textbf{Complex dot product needs conjugation:} $\langle(1,-i),(1,i)\rangle = 1\cdot\overline{1}+(-i)\overline{i}=0$; without conjugating the second vector, $1+(-i)i=2\neq0$.
 \end{trapbox}
 
+\subsection*{Alternative proofs of Proposition 103}
+The principal proof uses Schur's theorem. The following four arguments retain the other proofs from the notes: they connect normality to minimal polynomials, commuting self-adjoint operators, invariant orthogonal complements, and Jordan chains.
+
+\begin{ideabox}
+  This argument uses the minimal-polynomial criterion for diagonalizability. To apply the norm identity, seek a nonzero polynomial $S=q(T)$ with $S^2=0$. Removing one factor from a repeated root of $m_T$ produces the candidate.
+\end{ideabox}
+\begin{proof}[Proof 1 (Minimal polynomial)]
+  \begin{steps}
+    \ii Suppose $m_T$ has a repeated root: $m_T=(x-\lambda)^2 r$. Put $q=(x-\lambda)r$, so $\deg q < \deg m_T$ forces $S=q(T)\neq0$, while $m_T\mid q^2$ gives $S^2=0$ \ilink{T8}{(T8)}.
+    \ii Since $T$ commutes with $T^*$, every polynomial $q(T)$ commutes with its adjoint $q(T)^*=\overline{q}(T^*)$ (LADR~7.5), so $S$ is normal.
+    \ii By Prop.~98, $\|S^*Sv\|=\|S(Sv)\|=0$ for every $v\in V$, so $S^*S=0$.
+    \ii Therefore $\|Sv\|^2=\langle S^*Sv,v\rangle=0$ for all $v\in V$, forcing $q(T)=S=0$, contradicting Step~1.
+    \ii Hence $m_T$ has only distinct roots over $\CC$ (T9/FTA), so $T$ is diagonalizable \ilink{T8}{(T8)}.
+  \end{steps}
+\end{proof}
+
+\begin{ideabox}
+  The self-adjoint spectral theorem is already available. Decomposing $T$ into its real and imaginary parts reduces the remaining problem to finding eigenvectors that work for both parts.
+\end{ideabox}
+\begin{proof}[Proof 2 (Cartesian decomposition, LADR~7.23)]
+  \begin{steps}
+    \ii Write $T=R+iS$ with $R,S$ self-adjoint and $RS=SR$ (LADR~7.23). By Prop.~102, both $R$ and $S$ are diagonalizable.
+    \ii For any eigenvalue $\mu$ of $S$, if $v\in E(\mu,S)$ then $S(Rv)=RSv=R(\mu v)=\mu(Rv)$, so $E(\mu,S)$ is $R$-invariant.
+    \ii Thus $R|_{E(\mu,S)}$ is diagonalizable \ilink{T8}{(T8)}, giving a basis of $E(\mu,S)$ consisting of eigenvectors of both $R$ and $S$.
+    \ii Since $V=\bigoplus_\mu E(\mu,S)$ \ilink{T8}{(T8)}, combining these bases produces a basis of $V$ \ilink{T15}{(T15)} of vectors $v$ with $Rv=\rho v$, $Sv=\mu v$, hence $Tv=(\rho+i\mu)v$.
+  \end{steps}
+\end{proof}
+
+\begin{ideabox}
+  Induction needs a smaller subspace on which both $T$ and $T^*$ act. The range of $T-\lambda I$ provides this subspace; its orthogonal complement supplies the eigenvectors omitted by the restriction.
+\end{ideabox}
+\begin{proof}[Proof 3 (Induction on $n=\dim V$)]
+  \begin{steps}
+    \ii Base $n=1$ is clear. Let $n>1$ and pick an eigenvalue $\lambda$ of $T$ \ilink{T7}{(T7)}. Put $U=\range(T-\lambda I)$. If $U=\{0\}$, $T=\lambda I$ and every basis is an eigenbasis; else $1\le \dim U < n$ \ilink{T13}{(T13)}.
+    \ii $U$ is invariant under $T$ and $T^*$: for $u=(T-\lambda I)v\in U$, $Tu=(T-\lambda I)Tv\in U$ and $T^*u=(T-\lambda I)T^*v\in U$ (since $T^*$ commutes with $T$).
+    \ii Thus $(T|_U)^*=T^*|_U$, so $T|_U$ is normal; by induction $U$ has an eigenbasis for $T$.
+    \ii By Prop.~94(i) and Prop.~99, $U^\perp = \nul\bigl((T-\lambda I)^*\bigr) = \nul(T-\lambda I)$, every nonzero vector of which is a $\lambda$-eigenvector.
+    \ii Combining bases across $V=U\oplus U^\perp$ (T5, T15) yields an eigenbasis of $V$.
+  \end{steps}
+\end{proof}
+
+
+\begin{proof}[Proof 4 (Jordan chains)]
+  \begin{steps}
+    \ii Suppose a Jordan chain $v_1,\dots,v_k$ for $\lambda$ had $k\ge2$ \ilink{T11}{(T11)}. Then $v_1=(T-\lambda I)v_2\in\range(T-\lambda I)$ and $v_1\in\nul(T-\lambda I)$.
+    \ii Since $T-\lambda I$ is normal (Prop.~99(b)), Prop.~99(a) gives $\range(T-\lambda I)=\nul(T-\lambda I)^\perp$, so $v_1\perp v_1$, forcing $v_1=0$, contradiction.
+    \ii Every Jordan chain has length $1$, so $T$ is diagonalizable \ilink{T11}{(T11)}.
+  \end{steps}
+\end{proof}
+
+
 \section{Problem set}
 
 \begin{prob}\target{prob-HW11-P1}
   \textbf{HW11 P1.}\ Let $T\colon\FF^n\to\FF^n$ be $T(z_1,\dots,z_n)=(0,z_1,\dots,z_{n-1})$, where $\FF$ is $\RR$ or $\CC$. Find $T^*$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Use \ilink{prop-93}{Prop.~93} in the standard (orthonormal) basis.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P2}
   \textbf{HW11 P2.}\ Let $T\colon V\to W$ be linear between finite-dimensional inner product spaces. Prove that $T$ is injective if and only if $T^*$ is surjective.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-94}{Prop.~94(ii)} and $(\nul T)^\perp=V \iff \nul T=\{0\}$.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P3}
@@ -890,7 +870,6 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
     \ii Prove that $T$ is normal but not self-adjoint.
     \ii Find all eigenvalues of $T$ when $\FF=\RR$ and when $\FF=\CC$.
   \end{enumerate}
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-93}{Prop.~93}; compute $TT^*$ and $T^*T$; characteristic polynomial $\lambda^2+1$.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P4}
@@ -900,12 +879,10 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
     \ii $P$ is normal;
     \ii $P$ is the orthogonal projection onto $\range P$.
   \end{enumerate}
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} (b)$\Rightarrow$(c) by \ilink{prop-99}{Prop.~99}: $\nul P=(\range P)^\perp$; for (c)$\Rightarrow$(a) decompose $v=u+u'$ and $w=x+x'$ along $\range P\oplus(\range P)^\perp$.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P5}
   \textbf{HW11 P5.}\ Let $T$ be self-adjoint and $U$ a $T$-invariant subspace. Prove that $U^\perp$ is $T$-invariant.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-101}{Prop.~101}, Step~1.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P6}
@@ -915,42 +892,64 @@ To prepare Proof~5---which automatically yields an \emph{orthonormal} eigenbasis
     \ii Find an orthogonal $Q$ and a diagonal $D$ with $A=QDQ^{\mathsf T}$.
     \ii Find a formula for $A^m$, $m\ge1$.
   \end{enumerate}
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-102}{Real spectral theorem} and the $2\times2$ symmetric shortcut; $A^m=QD^mQ^{\mathsf T}$.
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P7}
   \textbf{HW11 P7 (optional).}\ Let $T$ be normal on a finite-dimensional complex inner product space and $p$ a polynomial. Use the complex spectral theorem to prove that $p(T)$ is normal.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{prop-104}{Prop.~104} both ways: in an orthonormal eigenbasis of $T$, $p(T)$ is diagonal.
 \end{prob}
 
 \begin{prob}\target{prob-O1}
   \textbf{O1 (adjoint for a weighted inner product).}\ On $\RR^2$ with $\langle x,y\rangle=2x_1y_1+x_2y_2$, let $T(x_1,x_2)=(x_2,0)$. Find $T^*$, and compare its matrix with the transpose of $\MM(T)$ in the standard basis.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Method of \ilink{ex-72}{Example~72}: write $T^*(e_1),T^*(e_2)$ with unknowns and enforce $\langle Tv,w\rangle=\langle v,T^*w\rangle$; or rescale $e_1$ to get an orthonormal basis and use \ilink{prop-93}{Prop.~93}.
 \end{prob}
 
 \begin{prob}\target{prob-O2}
   \textbf{O2 (eigenspaces of $T^*$).}\ Let $T\in\LL(V)$ and $\lambda\in\FF$. Prove that $\dim E(\overline{\lambda},T^*)=\dim E(\lambda,T)$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} \ilink{name-ladr-7-7}{LADR~7.7} for $T-\lambda I$, whose adjoint is $T^*-\overline{\lambda}I$.
 \end{prob}
 
 \begin{prob}\target{prob-O3}
-  \textbf{O3 (a normal complex symmetric matrix).}\ For $M=\begin{bmatrix}1&i\\i&1\end{bmatrix}$ on $\CC^2$: is $M$ self-adjoint? normal? Find an orthonormal basis of eigenvectors, if there is one.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} Compare $M$ with $M^*$, then compute $MM^*$ and $M^*M$; find eigenvalues with \ilink{T12}{(T12)}, and check orthogonality via \ilink{name-ladr-7-22}{LADR~7.22}.
+  \textbf{O3 (a complex symmetric matrix).}\ For $M=\begin{bmatrix}1&i\\i&1\end{bmatrix}$ on $\CC^2$: is $M$ self-adjoint? normal? Find an orthonormal basis of eigenvectors, if there is one.
 \end{prob}
 
 \begin{prob}\target{prob-O4}
   \textbf{O4 (real eigenvalues).}\ Let $T$ be normal on a complex $V$. Prove that $T$ is self-adjoint if and only if every eigenvalue of $T$ is real.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $(\Rightarrow)$ is \ilink{prop-95}{Prop.~95}; $(\Leftarrow)$ uses an orthonormal eigenbasis (\ilink{prop-104}{Prop.~104}) and \ilink{prop-93}{Prop.~93}.
 \end{prob}
 
 \begin{prob}\target{prob-O5}
   \textbf{O5 (LADR 7B).}\ Let $T$ be normal on a complex $V$ with $T^9=T^8$. Prove that $T$ is self-adjoint and $T^2=T$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} In an orthonormal eigenbasis (\ilink{prop-104}{Prop.~104}), $\lambda^9=\lambda^8$ for every eigenvalue, so $\lambda\in\{0,1\}$; then use \ilink{prob-O4}{O4}.
 \end{prob}
 
 \begin{prob}\target{prob-O6}
   \textbf{O6 (nilpotent and self-adjoint).}\ Let $T$ be self-adjoint with $T^2=0$. Prove that $T=0$.
-  \par\smallskip\noindent{\color{OliveGreen!75!black}\textbf{Hint:}} $\|Tv\|^2=\langle T^2v,v\rangle$ when $T$ is self-adjoint.
 \end{prob}
 
+\subsection*{Independent check}
+For each problem, choose a method and state why it applies before calculating.
+\begin{prob}\target{prob-check-1}
+  \textbf{Check 1.}\   On $\RR^2$ with $\langle x,y\rangle=x_1y_1+3x_2y_2$, let $T(x_1,x_2)=(0,x_1)$. Find $T^*$ and decide whether $T$ is normal for this inner product. Verify your adjoint using the defining identity.
+\end{prob}
+\begin{prob}\target{prob-check-2}
+  \textbf{Check 2.}\   A student argues that $A=\begin{psmallmatrix}1&2\\0&3\end{psmallmatrix}$ has two distinct eigenvalues, so it has an orthonormal eigenbasis. Identify the unsupported step and decide whether the conclusion holds for this matrix.
+\end{prob}
+\begin{prob}\target{prob-check-3}
+  \textbf{Check 3.}\   Let $T$ be normal on a finite-dimensional complex inner product space and satisfy $T^3=T$. Determine the possible eigenvalues and decide, with proof, whether $T$ must be self-adjoint.
+\end{prob}
+
+\clearpage
+\section{Hints}
+Attempt each problem before consulting its hint.
+\begin{description}[style=nextline,leftmargin=0pt,itemsep=6pt]
+\item[\ilink{prob-HW11-P1}{HW11 P1}] Use \ilink{prop-93}{Prop.~93} in the standard (orthonormal) basis.
+\item[\ilink{prob-HW11-P2}{HW11 P2}] \ilink{prop-94}{Prop.~94(ii)} and $(\nul T)^\perp=V \iff \nul T=\{0\}$.
+\item[\ilink{prob-HW11-P3}{HW11 P3}] \ilink{prop-93}{Prop.~93}; compute $TT^*$ and $T^*T$; characteristic polynomial $\lambda^2+1$.
+\item[\ilink{prob-HW11-P4}{HW11 P4}] (b)$\Rightarrow$(c) by \ilink{prop-99}{Prop.~99}: $\nul P=(\range P)^\perp$; for (c)$\Rightarrow$(a) decompose $v=u+u'$ and $w=x+x'$ along $\range P\oplus(\range P)^\perp$.
+\item[\ilink{prob-HW11-P5}{HW11 P5}] \ilink{prop-101}{Prop.~101}, Step~1.
+\item[\ilink{prob-HW11-P6}{HW11 P6}] \ilink{prop-102}{Real spectral theorem} and the $2\times2$ symmetric shortcut; $A^m=QD^mQ^{\mathsf T}$.
+\item[\ilink{prob-HW11-P7}{HW11 P7}] \ilink{prop-104}{Prop.~104} both ways: in an orthonormal eigenbasis of $T$, $p(T)$ is diagonal.
+\item[\ilink{prob-O1}{O1}] Method of \ilink{ex-72}{Example~72}: write $T^*(e_1),T^*(e_2)$ with unknowns and enforce $\langle Tv,w\rangle=\langle v,T^*w\rangle$; or rescale $e_1$ to get an orthonormal basis and use \ilink{prop-93}{Prop.~93}.
+\item[\ilink{prob-O2}{O2}] \ilink{name-ladr-7-7}{LADR~7.7} for $T-\lambda I$, whose adjoint is $T^*-\overline{\lambda}I$.
+\item[\ilink{prob-O3}{O3}] Compare $M$ with $M^*$, then compute $MM^*$ and $M^*M$; find eigenvalues with \ilink{T12}{(T12)}, and check orthogonality via \ilink{name-ladr-7-22}{LADR~7.22}.
+\item[\ilink{prob-O4}{O4}] $(\Rightarrow)$ is \ilink{prop-95}{Prop.~95}; $(\Leftarrow)$ uses an orthonormal eigenbasis (\ilink{prop-104}{Prop.~104}) and \ilink{prop-93}{Prop.~93}.
+\item[\ilink{prob-O5}{O5}] In an orthonormal eigenbasis (\ilink{prop-104}{Prop.~104}), $\lambda^9=\lambda^8$ for every eigenvalue, so $\lambda\in\{0,1\}$; then use \ilink{prob-O4}{O4}.
+\item[\ilink{prob-O6}{O6}] $\|Tv\|^2=\langle T^2v,v\rangle$ when $T$ is self-adjoint.
+\end{description}
 \end{document}

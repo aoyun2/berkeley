@@ -1,6 +1,7 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+\usepackage{figure-ink}
 \newcommand{\vv}[1]{\mathbf{#1}}
 \DeclareMathOperator{\spn}{Span}
 \DeclareMathOperator{\Col}{Col}
@@ -46,34 +47,37 @@ where $\vv x(t)=(x_1(t),\dots,x_n(t))^{\mathsf T}$, $A(t)$ is an $n\times n$ mat
 \begin{fig}
 \begin{tikzpicture}[scale=1.0,>=Stealth]
   % (a) Coupled brine tanks: crisp black-outline boxes, zero pastel fills
-  \draw[draw=black!85,fill=white,line width=0.48pt] (0.0,0.85) rectangle (1.85,2.20);
+  \draw[ink line,draw=black!85,fill=white,line width=0.48pt] (0.0,0.85) rectangle (1.85,2.20);
   \node[font=\footnotesize,text=black] at (0.925,1.74) {Tank 1};
-  \node[font=\scriptsize,text=black!75] at (0.925,1.24) {salt $x(t)$};
+  \node[font=\scriptsize,text=black!75] at (0.925,1.24) {salt \InkLabel{$x(t)$}};
 
-  \draw[draw=black!85,fill=white,line width=0.48pt] (3.45,0.85) rectangle (5.30,2.20);
+  \draw[ink line,draw=black!85,fill=white,line width=0.48pt] (3.45,0.85) rectangle (5.30,2.20);
   \node[font=\footnotesize,text=black] at (4.375,1.74) {Tank 2};
-  \node[font=\scriptsize,text=black!75] at (4.375,1.24) {salt $y(t)$};
+  \node[font=\scriptsize,text=black!75] at (4.375,1.24) {salt \InkLabel{$y(t)$}};
 
-  \draw[-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (1.92,1.82) -- node[above=1pt,font=\scriptsize] {$4x$} (3.38,1.82);
-  \draw[-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (3.38,1.22) -- node[below=1pt,font=\scriptsize] {$2y$} (1.92,1.22);
-  \draw[-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (5.37,1.52) -- (6.15,1.52) node[right=2pt,font=\scriptsize] {drain $2y$};
-  \node[font=\scriptsize,text=black!80] at (2.65,0.36) {$x' = -4x + 2y,\qquad y' = 4x - 4y$};
-  \node[font=\footnotesize,text=black] at (2.65,-0.22) {(a)};
+  \draw[ink line,-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (1.92,1.82) -- node[above=1pt,font=\scriptsize] {\InkLabel{$4x$}} (3.38,1.82);
+  \draw[ink line,-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (3.38,1.22) -- node[below=1pt,font=\scriptsize] {\InkLabel{$2y$}} (1.92,1.22);
+  \draw[ink line,-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (5.37,1.52) -- (6.15,1.52) node[right=2pt,font=\scriptsize] {drain \InkLabel{$2y$}};
+  \node[font=\scriptsize,text=black!80] at (2.65,0.36) {\InkLabel{$x' = -4x + 2y,\qquad y' = 4x - 4y$}};
+  \node[font=\footnotesize,text=black] at (2.65,-0.22) {\InkLabel{(a)}};
 
+  % Fresh-water inflow balances liquid volume while adding no salt.
+  \draw[ink arrow,inkblue] (.925,3.05)--(.925,2.26);
+  \node[font=\scriptsize,anchor=west] at (1.08,2.75) {\InkLabel[inkblue]{fresh water}};
   % Whisper-thin vertical divider
-  \draw[black!15,line width=0.35pt] (7.65,-0.28) -- (7.65,2.40);
+  \InkStroke[black!15,line width=0.35pt]{(7.65,-0.28) -- (7.65,2.40)}
 
   % (b) Order-n scalar ODE -> first-order state vector schematic (clean open typography)
   \begin{scope}[xshift=8.15cm]
     \node[font=\footnotesize,text=black] (ode) at (3.65,2.04)
-      {$y^{(n)} + p_{n-1}y^{(n-1)} + \dots + p_0 y = g$};
+      {\InkLabel{$y^{(n)} + p_{n-1}y^{(n-1)} + \dots + p_0 y = g$}};
     \node[font=\footnotesize,text=black] (sys) at (3.65,0.58)
-      {$x_k' = x_{k+1}\ (k<n),\quad x_n' = -\sum_{k=0}^{n-1} p_k x_{k+1} + g$};
-    \draw[-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (3.65,1.72) -- node[right=5pt,font=\scriptsize,text=black!80] {$\vv x = (y,\,y',\,\dots,\,y^{(n-1)})^{\mathsf T}$} (3.65,0.96);
-    \node[font=\footnotesize,text=black] at (3.65,-0.22) {(b)};
+      {\InkLabel{$x_k' = x_{k+1}\ (k<n),\quad x_n' = -\sum_{k=0}^{n-1} p_k x_{k+1} + g$}};
+    \draw[ink line,-{Stealth[length=3.8pt,width=2.2pt]},black!85,line width=0.55pt] (3.65,1.72) -- node[right=5pt,font=\scriptsize,text=black!80] {\InkLabel{$\vv x = (y,\,y',\,\dots,\,y^{(n-1)})^{\mathsf T}$}} (3.65,0.96);
+    \node[font=\footnotesize,text=black] at (3.65,-0.22) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{\textbf{(a)} Coupled brine tanks produce $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$ by conservation of flow (inter-tank transfer and outflow drain). \textbf{(b)} Tracking $y$ together with its first $n-1$ derivatives turns any order-$n$ scalar ODE into an equivalent $n\times n$ first-order normal system.}
+\figcap{\textbf{(a)} Coupled brine tanks produce $\vv x'=\begin{psmallmatrix}-4&2\\4&-4\end{psmallmatrix}\vv x$ by salt balance; arrows labeled $4x$ and $2y$ are salt-transfer rates. Fresh-water inflow maintains constant liquid volume and adds no salt. \textbf{(b)} Tracking $y$ together with its first $n-1$ derivatives turns any order-$n$ scalar ODE into an equivalent $n\times n$ first-order normal system.}
 \end{fig}
 
 \begin{example*}[Worked examples 1--3 (Nagle 9.1): variable coefficients, single spring, coupled springs]
@@ -301,8 +305,8 @@ Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving out
 ]
   % (a) Saddle of Example 3
   \begin{scope}[xshift=2.85cm,yshift=2.25cm,scale=0.68]
-    \draw[figaxis] (-3.50,0) -- (3.50,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.40) -- (0,2.40) node[above=1pt,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-3.50,0) -- (3.50,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-2.40) -- (0,2.40) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}};
     % Exact hyperbolic trajectories x(t) = c1 e^t (3,1) + c2 e^-t (1,1) clipped to box
     \begin{scope}
       \clip (-3.25,-2.10) rectangle (3.25,2.10);
@@ -315,19 +319,19 @@ Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving out
       }
     \end{scope}
     % Eigendirections: subtle figred for unstable u1, pure black for stable u2
-    \draw[figred,line width=0.95pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (3.25,1.083);
-    \draw[figred,line width=0.95pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (-3.25,-1.083);
-    \draw[black,line width=0.95pt,-{Stealth[length=4.0pt,width=2.3pt]}] (2.10,2.10) -- (0.16,0.16);
-    \draw[black,line width=0.95pt,-{Stealth[length=4.0pt,width=2.3pt]}] (-2.10,-2.10) -- (-0.16,-0.16);
+    \InkStroke[figred,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (3.25,1.083)}
+    \InkStroke[figred,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (-3.25,-1.083)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(2.10,2.10) -- (0.16,0.16)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(-2.10,-2.10) -- (-0.16,-0.16)}
     \fill[black] (0,0) circle (1.6pt);
-    \node[font=\scriptsize,text=black,anchor=south west] at (2.05,2.08) {$\vv u_2$};
-    \node[font=\scriptsize,text=figred,anchor=west] at (3.28,1.08) {$\vv u_1$};
+    \node[font=\scriptsize,text=black,anchor=south west] at (2.05,2.08) {\InkLabel{$\vv u_2$}};
+    \node[font=\scriptsize,text=figred,anchor=west] at (3.28,1.08) {\InkLabel{$\vv u_1$}};
   \end{scope}
 
   % (b) Sink (r2 < r1 < 0): pure monochrome black (all stable)
   \begin{scope}[xshift=8.85cm,yshift=2.25cm,scale=0.68]
-    \draw[figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}};
     \begin{scope}
       \clip (-2.00,-1.88) rectangle (2.00,1.88);
       \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
@@ -335,19 +339,19 @@ Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving out
         \draw[traj=0.50] plot[domain=0.93:0.06,samples=30] ({\sx*\x}, {\sy*2.40*\x*\x*\x});
       }
     \end{scope}
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (2.00,0) -- (0.16,0);
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (-2.00,0) -- (-0.16,0);
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,1.95) -- (0,0.16);
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,-1.95) -- (0,-0.16);
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(2.00,0) -- (0.16,0)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(-2.00,0) -- (-0.16,0)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,1.95) -- (0,0.16)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,-1.95) -- (0,-0.16)}
     \fill[black] (0,0) circle (1.6pt);
-    \node[font=\scriptsize,text=black,anchor=north] at (1.55,-0.18) {$r_1$};
-    \node[font=\scriptsize,text=black,anchor=west] at (0.14,1.82) {$r_2$};
+    \node[font=\scriptsize,text=black,anchor=north] at (1.55,-0.18) {\InkLabel{$r_1$}};
+    \node[font=\scriptsize,text=black,anchor=west] at (0.14,1.82) {\InkLabel{$r_2$}};
   \end{scope}
 
   % (c) Source (0 < r1 < r2): subtle figred on dominant unstable direction r2
   \begin{scope}[xshift=13.85cm,yshift=2.25cm,scale=0.68]
-    \draw[figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {$x_2$};
+    \draw[ink line,figaxis] (-2.25,0) -- (2.25,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}};
+    \draw[ink line,figaxis] (0,-2.35) -- (0,2.35) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}};
     \begin{scope}
       \clip (-2.00,-1.88) rectangle (2.00,1.88);
       \foreach \sx/\sy in {1/1, -1/1, 1/-1, -1/-1} {
@@ -355,21 +359,21 @@ Straight-line trajectories are the pure eigensolutions $c_1e^t(3,1)$ (moving out
         \draw[traj=0.52] plot[domain=0.06:0.93,samples=30] ({\sx*\x}, {\sy*2.40*\x*\x*\x});
       }
     \end{scope}
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (2.00,0);
-    \draw[black,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (-2.00,0);
-    \draw[figred,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (0,1.95);
-    \draw[figred,line width=0.9pt,-{Stealth[length=4.0pt,width=2.3pt]}] (0,0) -- (0,-1.95);
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (2.00,0)}
+    \InkStroke[black,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (-2.00,0)}
+    \InkStroke[figred,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (0,1.95)}
+    \InkStroke[figred,line width=0.65pt,-{Stealth[length=4.0pt,width=2.3pt]}]{(0,0) -- (0,-1.95)}
     \fill[black] (0,0) circle (1.6pt);
-    \node[font=\scriptsize,text=black,anchor=north] at (1.55,-0.18) {$r_1$};
-    \node[font=\scriptsize,text=figred,anchor=west] at (0.14,1.82) {$r_2$};
+    \node[font=\scriptsize,text=black,anchor=north] at (1.55,-0.18) {\InkLabel{$r_1$}};
+    \node[font=\scriptsize,text=figred,anchor=west] at (0.14,1.82) {\InkLabel{$r_2$}};
   \end{scope}
 
   % Spivak-style plain roman panel labels on one shared baseline
-  \node[font=\footnotesize,anchor=north] at (2.85,0.22) {(a)};
-  \node[font=\footnotesize,anchor=north] at (8.85,0.22) {(b)};
-  \node[font=\footnotesize,anchor=north] at (13.85,0.22) {(c)};
+  \node[font=\footnotesize,anchor=north] at (2.85,0.22) {\InkLabel{(a)}};
+  \node[font=\footnotesize,anchor=north] at (8.85,0.22) {\InkLabel{(b)}};
+  \node[font=\footnotesize,anchor=north] at (13.85,0.22) {\InkLabel{(c)}};
 \end{tikzpicture}
-\figcap{Phase portraits organized by eigenvalue signs. \textbf{(a) Saddle ($r_1>0>r_2$, Ex.~3):} Trajectories enter along the stable eigendirection $\vv u_2=(1,1)$ (black, $r=-1$) and sweep outward along the unstable eigendirection $\vv u_1=(3,1)$ (red, $r=1$). \textbf{(b) Sink ($r_2<r_1<0$):} All solutions approach $\vv 0$, tangent to the slower decaying direction~$r_1$. \textbf{(c) Source ($0<r_1<r_2$):} All nonzero solutions grow outward, aligning with the faster unstable direction~$r_2$ (red).}
+\figcap{Phase portraits organized by eigenvalue signs. \textbf{(a) Saddle ($r_1>0>r_2$, Ex.~3):} Trajectories enter along the stable eigendirection $\vv u_2=(1,1)$ (black, $r=-1$) and sweep outward along the unstable eigendirection $\vv u_1=(3,1)$ (red, $r=1$). \textbf{(b) Sink ($r_2<r_1<0$):} All solutions approach $\vv 0$; those with a nonzero $r_1$ component are tangent to the slower decaying direction~$r_1$, while the $r_2$ eigenspace is invariant. \textbf{(c) Source ($0<r_1<r_2$):} All nonzero solutions grow outward; those with a nonzero $r_2$ component align with the faster unstable direction~$r_2$ (red), while the $r_1$ eigenspace is invariant.}
 \end{fig}
 
 \begin{example*}[Worked examples 4--5 (Nagle 9.5): 3D IVP \& symmetric repeated eigenvalue]
