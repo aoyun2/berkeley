@@ -35,58 +35,50 @@ The order matters as soon as evaluating an operand \emph{does} something visible
 \end{ideabox}
 \Needspace{18\baselineskip}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,
-  call/.style={draw=figblue!80!black,fill=figblue!4,line width=0.55pt,inner xsep=5.5pt,inner ysep=3.5pt,align=center,font=\ttfamily\footnotesize},
-  op/.style={draw=figpurple!75!black,fill=figpurple!5,line width=0.5pt,densely dashed,inner xsep=5pt,inner ysep=2.8pt,font=\ttfamily\footnotesize,text=figpurple!90!black},
-  lit/.style={draw=figslate!75,fill=figbg,line width=0.5pt,inner xsep=5.5pt,inner ysep=2.8pt,font=\ttfamily\footnotesize,text=black},
-  edge/.style={draw=figslate!85,line width=0.65pt}]
+\begin{tikzpicture}[
+  call/.style={draw=black!85,fill=white,line width=0.45pt,inner xsep=5.5pt,inner ysep=3.4pt,align=center,font=\ttfamily\footnotesize},
+  leaf/.style={inner xsep=3pt,inner ysep=2pt,font=\ttfamily\footnotesize,text=black,text height=1.5ex,text depth=0.25ex},
+  edge/.style={draw=black!65,line width=0.45pt}]
   % Level 0: root call expression
-  \node[call] (R) at (6.8,0) {mul(add(4, mul(4, 6)), add(3, 5))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue!90!black}{$\Rightarrow\mathbf{224}$}\quad\textcolor{figamber!90!black}{\textbf{(4th)}}};
+  \node[call] (R) at (6.8,0) {mul(add(4, mul(4, 6)), add(3, 5))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 224$}\quad\textcolor{black!55}{(4th)}};
 
   % Level 1: operator + two call-expression operands
-  \node[op]   (L0) at (1.1,-1.75) {mul};
-  \node[call] (M1) at (5.4,-1.75) {add(4, mul(4, 6))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue!90!black}{$\Rightarrow\mathbf{28}$}\quad\textcolor{figamber!90!black}{\textbf{(2nd)}}};
-  \node[call] (R1) at (11.5,-1.75) {add(3, 5)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue!90!black}{$\Rightarrow\mathbf{8}$}\quad\textcolor{figamber!90!black}{\textbf{(3rd)}}};
+  \node[leaf] (L0) at (2.0,-1.70) {mul};
+  \node[call] (M1) at (5.4,-1.70) {add(4, mul(4, 6))\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 28$}\quad\textcolor{black!55}{(2nd)}};
+  \node[call] (R1) at (11.2,-1.70) {add(3, 5)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 8$}\quad\textcolor{black!55}{(3rd)}};
 
   % Level 2: children of M1 and R1
-  \node[op]   (M1a) at (2.4,-3.45) {add};
-  \node[lit]  (M1b) at (4.4,-3.45) {4};
-  \node[call] (M1c) at (6.9,-3.45) {mul(4, 6)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue!90!black}{$\Rightarrow\mathbf{24}$}\quad\textcolor{figamber!90!black}{\textbf{(1st)}}};
+  \node[leaf] (M1a) at (2.8,-3.35) {add};
+  \node[leaf] (M1b) at (4.5,-3.35) {4};
+  \node[call] (M1c) at (6.8,-3.35) {mul(4, 6)\\[1.5pt]\rmfamily\scriptsize\textcolor{figblue}{$\Rightarrow 24$}\quad\textcolor{black!55}{(1st)}};
 
-  \node[op]   (R1a) at (9.8,-3.45) {add};
-  \node[lit]  (R1b) at (11.5,-3.45) {3};
-  \node[lit]  (R1c) at (13.2,-3.45) {5};
+  \node[leaf] (R1a) at (9.7,-3.35) {add};
+  \node[leaf] (R1b) at (11.2,-3.35) {3};
+  \node[leaf] (R1c) at (12.7,-3.35) {5};
 
   % Level 3: children of M1c
-  \node[op]   (M2a) at (5.3,-5.05) {mul};
-  \node[lit]  (M2b) at (6.9,-5.05) {4};
-  \node[lit]  (M2c) at (8.5,-5.05) {6};
+  \node[leaf] (M2a) at (5.3,-4.85) {mul};
+  \node[leaf] (M2b) at (6.8,-4.85) {4};
+  \node[leaf] (M2c) at (8.3,-4.85) {6};
 
-  % Edges (cleanly spaced from call-box bottom borders)
-  \draw[edge] ([xshift=-2.1cm]R.south) -- (L0.north);
+  % Edges
+  \draw[edge] ([xshift=-1.8cm]R.south) -- (L0.north);
   \draw[edge] ([xshift=-0.5cm]R.south) -- (M1.north);
-  \draw[edge] ([xshift= 1.8cm]R.south) -- (R1.north);
+  \draw[edge] ([xshift= 1.7cm]R.south) -- (R1.north);
 
-  \draw[edge] ([xshift=-0.9cm]M1.south) -- (M1a.north);
-  \draw[edge] ([xshift=-0.2cm]M1.south) -- (M1b.north);
-  \draw[edge] ([xshift= 0.8cm]M1.south) -- (M1c.north);
+  \draw[edge] ([xshift=-0.85cm]M1.south) -- (M1a.north);
+  \draw[edge] ([xshift=-0.20cm]M1.south) -- (M1b.north);
+  \draw[edge] ([xshift= 0.75cm]M1.south) -- (M1c.north);
 
-  \draw[edge] ([xshift=-0.5cm]R1.south) -- (R1a.north);
-  \draw[edge] (R1.south)                -- (R1b.north);
-  \draw[edge] ([xshift= 0.5cm]R1.south) -- (R1c.north);
+  \draw[edge] ([xshift=-0.45cm]R1.south) -- (R1a.north);
+  \draw[edge] (R1.south)                 -- (R1b.north);
+  \draw[edge] ([xshift= 0.45cm]R1.south) -- (R1c.north);
 
-  \draw[edge] ([xshift=-0.5cm]M1c.south) -- (M2a.north);
-  \draw[edge] (M1c.south)                -- (M2b.north);
-  \draw[edge] ([xshift= 0.5cm]M1c.south) -- (M2c.north);
-
-  % Compact single-row horizontal legend centered below Level 3
-  \node[draw=black!22,fill=figbg,inner xsep=8pt,inner ysep=4pt,anchor=center,font=\scriptsize] at (6.8,-5.95) {%
-    \tikz[baseline=-0.5ex]\draw[figblue!80!black,fill=figblue!6,line width=0.55pt] (0,0) rectangle (0.34,0.20);\ Call expression (value \& finish order)\qquad
-    \tikz[baseline=-0.5ex]\draw[figpurple!75!black,fill=figpurple!6,densely dashed,line width=0.5pt] (0,0) rectangle (0.34,0.20);\ Operator\qquad
-    \tikz[baseline=-0.5ex]\draw[figslate!75,fill=figbg,line width=0.5pt] (0,0) rectangle (0.34,0.20);\ Literal operand
-  };
+  \draw[edge] ([xshift=-0.45cm]M1c.south) -- (M2a.north);
+  \draw[edge] (M1c.south)                 -- (M2b.north);
+  \draw[edge] ([xshift= 0.45cm]M1c.south) -- (M2c.north);
 \end{tikzpicture}
-\figcap{Expression tree. Every call expression (solid blue) has its operator (dashed purple) as its leftmost child and its operands to the right, and is evaluated after all of its children finish: \cd{mul(4, 6)} (1st), then \cd{add(4, 24)} (2nd), then \cd{add(3, 5)} (3rd), then \cd{mul(28, 8)} (4th).}
+\figcap{Expression tree. Every boxed call expression has its operator as its leftmost child and its operands to the right, and finishes after all of its children: \cd{mul(4, 6)} (1st), \cd{add(4, 24)} (2nd), \cd{add(3, 5)} (3rd), and \cd{mul(28, 8)} (4th).}
 \end{fig}
 
 \textbf{Arithmetic operators you will use constantly.}
@@ -189,51 +181,46 @@ print(x)
   \ii \cd{print(x)}: \cd{x} is looked up in the global frame: displays \cd{2}.
 \end{steps}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth,font=\ttfamily\footnotesize]
+\begin{tikzpicture}[font=\ttfamily\footnotesize]
   % ---- Global frame ----
-  \fill[figslate!10] (-0.2,1.35) rectangle (4.7,1.85);
-  \draw[figslate!45,line width=0.45pt] (-0.2,1.35) -- (4.7,1.35);
-  \draw[figslate!85!black,line width=0.7pt] (-0.2,0.0) rectangle (4.7,1.85);
-  \node[anchor=west,font=\footnotesize\bfseries,text=black] at (0.0,1.60) {Global frame};
+  \fill[black!6] (-0.2,1.35) rectangle (4.7,1.82);
+  \draw[black!35,line width=0.35pt] (-0.2,1.35) -- (4.7,1.35);
+  \draw[black!85,line width=0.45pt] (-0.2,0.0) rectangle (4.7,1.82);
+  \node[anchor=west,font=\footnotesize,text=black] at (0.02,1.59) {\textbf{Global frame}};
 
   \node[anchor=east] at (2.10,1.00) {g};
-  \draw[figslate!75,line width=0.5pt] (2.25,0.78) rectangle (4.45,1.22);
-  \fill[figblue] (3.35,1.00) circle (1.7pt);
+  \draw[black!65,fill=white,line width=0.4pt] (2.25,0.79) rectangle (4.45,1.21);
+  \fill[figblue] (3.35,1.00) circle (1.5pt);
 
   \node[anchor=east] at (2.10,0.36) {x};
-  \draw[figamber!80!black,fill=figamber!12,line width=0.55pt] (2.25,0.14) rectangle (4.45,0.58);
-  \node[text=figamber!85!black,font=\ttfamily\footnotesize\bfseries] at (3.35,0.36) {2};
+  \draw[black,fill=white,line width=0.8pt] (2.25,0.15) rectangle (4.45,0.57);
+  \node[text=black] at (3.35,0.36) {2};
 
-  % ---- Function object card ----
-  \node[anchor=west,draw=figpurple!80!black,fill=figpurple!5,line width=0.6pt,inner xsep=7pt,inner ysep=5pt,align=left] (fg) at (6.2,1.00) {%
-    \ttfamily\footnotesize\textbf{\color{figpurple!90!black}func g(y)}\\[-1pt]
-    \rmfamily\scriptsize\color{figslate}[parent=Global]};
-  \draw[->,figblue,line width=0.85pt] (3.35,1.00) -- (fg.west);
+  % ---- Function object ----
+  \node[anchor=west,draw=black!85,fill=white,line width=0.45pt,inner xsep=7pt,inner ysep=4.5pt,align=left] (fg) at (6.1,1.00) {%
+    \ttfamily\footnotesize func g(y)\\[-1pt]
+    \rmfamily\scriptsize\color{black!60}[parent=Global]};
+  \draw[->,figblue,line width=0.65pt] (3.35,1.00) -- (fg.west);
 
   % ---- Local frame f1 ----
-  \fill[figblue!10] (-0.2,-1.25) rectangle (4.7,-0.75);
-  \draw[figblue!45,line width=0.45pt] (-0.2,-1.25) -- (4.7,-1.25);
-  \draw[figblue!80!black,line width=0.7pt] (-0.2,-3.32) rectangle (4.7,-0.75);
-  \node[anchor=west,font=\footnotesize\bfseries,text=figblue!90!black] at (0.0,-1.00) {\cd{f1}: \cd{g} \rmfamily\normalfont\scriptsize\color{figslate}[parent=Global]};
+  \fill[black!6] (-0.2,-1.18) rectangle (4.7,-0.71);
+  \draw[black!40,line width=0.35pt] (-0.2,-1.18) -- (4.7,-1.18);
+  \draw[black!85,line width=0.45pt] (-0.2,-3.22) rectangle (4.7,-0.71);
+  \node[anchor=west,font=\footnotesize,text=black] at (0.02,-0.95) {\textbf{\cd{f1}: \cd{g}} \rmfamily\scriptsize\color{black!60}[parent=Global]};
 
-  \node[anchor=east] at (2.10,-1.60) {y};
-  \draw[figslate!75,line width=0.5pt] (2.25,-1.82) rectangle (4.45,-1.38);
-  \node at (3.35,-1.60) {6};
+  \node[anchor=east] at (2.10,-1.54) {y};
+  \draw[black!60,fill=white,line width=0.4pt] (2.25,-1.75) rectangle (4.45,-1.33);
+  \node at (3.35,-1.54) {6};
 
-  \node[anchor=east] at (2.10,-2.24) {x};
-  \draw[figamber!80!black,fill=figamber!12,line width=0.55pt] (2.25,-2.46) rectangle (4.45,-2.02);
-  \node[text=figamber!85!black,font=\ttfamily\footnotesize\bfseries] at (3.35,-2.24) {12};
+  \node[anchor=east] at (2.10,-2.18) {x};
+  \draw[black,fill=white,line width=0.8pt] (2.25,-2.39) rectangle (4.45,-1.97);
+  \node[text=black] at (3.35,-2.18) {12};
 
-  \node[anchor=east,font=\rmfamily\footnotesize,text=figgreen!80!black] at (2.10,-2.90) {Return value};
-  \draw[figgreen!75!black,fill=figgreen!8,line width=0.55pt] (2.25,-3.12) rectangle (4.45,-2.68);
-  \node[text=figgreen!85!black,font=\ttfamily\footnotesize\bfseries] at (3.35,-2.90) {13};
-
-  % ---- Side callout aligned with f1 ----
-  \node[anchor=west,draw=figamber!75!black,fill=figamber!5,line width=0.55pt,inner sep=6pt,text width=6.1cm,font=\rmfamily\footnotesize,align=left] at (6.2,-2.04) {%
-    \textbf{\color{figamber!85!black}Two separate bindings of \cd{x}.}\\[2pt]
-    Inside \cd{f1}, lookup finds \cd{x} locally (\textbf{12}). After \cd{g} returns, the current environment is Global alone, where \cd{x} is still \textbf{2}.};
+  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.10,-2.84) {Return value};
+  \draw[black!65,fill=white,line width=0.4pt] (2.25,-3.05) rectangle (4.45,-2.63);
+  \node at (3.35,-2.84) {13};
 \end{tikzpicture}
-\figcap{Environment diagram at the moment \cd{g} returns. Each frame header records its name and parent; the two amber cells highlight the independent bindings of \cd{x}.}
+\figcap{Environment diagram at the moment \cd{g} returns. Each frame header records its name and parent; the two emphasized cells mark the independent bindings of \cd{x}---inside \cd{f1}, lookup finds \cd{x = 12} locally, while in the global frame \cd{x} remains \cd{2}.}
 \end{fig}
 
 \method{How to draw an environment diagram.}

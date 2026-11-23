@@ -1,67 +1,35 @@
 ---
 name: berkeley-latex
-description: Author and visually audit UC Berkeley math, statistics, and CS LaTeX handouts and textbook-grade TikZ, tikz-cd, pgfplots figures, and tabularx code breakdown tables matching templates/handout.sty. Use whenever creating, editing, or reviewing .tex handouts or figures.
+description: Author and visually audit UC Berkeley math, statistics, and CS LaTeX handouts and Michael Spivak (Calculus on Manifolds) artistic minimalist TikZ, tikz-cd, pgfplots figures matching templates/handout.sty.
 ---
 
-# Berkeley LaTeX & Textbook Figure Standard
+# Berkeley LaTeX & Spivak Monograph Figure Standard
 
-Follow this guide whenever authoring or fixing `.tex` handouts, commutative diagrams, matrix illustrations, geometric plots, environment diagrams, statistical plots, or code breakdown tables in `semesters/`.
+Follow this guide whenever authoring or fixing `.tex` handouts, diagrams, plots, or code breakdown tables in `semesters/`.
 
-## 1. Visual Gold Standard: Classic Mathematics Textbook & Functional Ink Palette
-Every figure across all courses must look like a classic mathematics textbook (Springer GTM, Halmos, Axler, Strang, *SICP*, *JASA*):
-- **Zero "toy block" rounded rectangles**: never use `rounded corners` on boxes, cards, or frames inside `\begin{fig}...\end{fig}`.
-- **Functional, information-organizing color only (`templates/handout.sty`)**: use the muted textbook ink palette (`figblue` `#1B4F8A`, `figred` `#A82820`, `figgreen` `#1E6B40`, `figamber` `#A66314`, `figpurple` `#643882`, `figslate` `#525C68`) **only when color organizes distinct mathematical layers**:
-  - Multi-curve or multi-vector plots (e.g., `figblue` for primary subspace / projection / row & column spaces, `figred` for orthogonal complement / nullspace / residual error / critical rejection tail, `figgreen` for eigenvectors / secondary invariant subspace).
-  - Always pair color with distinct line styles (`solid`, `dashed`, `densely dotted`, `dash dot`) and point markers (`•`, `o`, `×`) so the figure remains completely legible in grayscale print.
-- **Zero stroke-vs-glyph collisions & `halo` white knockout**: place labels cleanly in open whitespace away from curves, axes, and borders. Whenever a label sits near a grid line, axis, or curve, apply the `halo` style (`halo/.style={fill=white, inner sep=1.3pt}` in `templates/handout.sty`, or `fill=figgreen!7, inner sep=1.2pt` inside a tinted plane) so a white outline prevents any stroke from crossing text glyphs.
+## 1. Visual Gold Standard: Michael Spivak (*Calculus on Manifolds*, 1965)
+Every figure across all courses must have the calm, understated, artistic monograph elegance of **Michael Spivak (*Calculus on Manifolds*)**:
+- **Pure black ink + soft neutral gray washes (`fill=black!8`–`black!18`) on stark white paper** is the default visual language. Use **zero** 4–5 color rainbows and **zero** pastel-filled UI cards. Allow at most **1 restrained accent color** (`figblue` or `figred`, or `figgreen` ONLY when 3 symmetric peer curves intersect on the same axes) where contrast genuinely clarifies the math.
+- **Pure white interiors on boxes and frames**: never use stacked pastel-filled cards with colored borders and bold colored headers; use crisp thin black outlines (`0.45pt`–`0.5pt`) on white, or Spivak's signature soft borderless/whisper-edged gray washes (`fill=black!8, draw=none`) for regions and planes.
+- **Hierarchy via line weight & gray value**: hair-thin construction lines and axes (`0.35pt`–`0.45pt`), soft gray washes for regions, bold pure black (`1.0pt`–`1.4pt`) for the focal curve, boundary, or transformation image. Sleek arrowheads (`Stealth[length=4.0pt,width=2.3pt]`).
+- **Extreme label economy (atomic symbols only)**: delete verbose internal banners, bold headers inside diagrams, cartoon callouts, swoopy decorative arrows, and multi-line summary blocks inside TikZ. Keep inside-figure labels to atomic math symbols ($v_1, Tv_1, U_1, U_2, \lambda_1, 0$) plus at most 1–2 short words where essential. Put plain roman `(a)`, `(b)` subtly beneath multi-panel figures, and let `\figcap` carry all prose explanations.
+- **Course-only terminology & generous whitespace**: zero non-course jargon, zero `rounded corners` toy blocks, zero circle/oval set-blob diagrams, zero collisions.
 
-## 2. Geometry by Figure Type (Ban Circle/Oval Set-Blob Diagrams)
-- **NEVER draw concentric or overlapping oval/circle "blob" diagrams around text blocks**: curved ellipses collide with rectangular text blocks near their poles while wasting space on the sides. Instead:
-  - **Operator class hierarchies** (e.g., $\mathcal{L}(V) \supset \text{Normal} \supset \text{Self-adjoint}, \text{Unitary} \supset \text{Positive}$): draw a **Hasse inclusion lattice** with sharp-cornered rectangular nodes, $2\times 2$ witness matrices, and upward inclusion arrows.
-  - **Nested invariant flags** ($\{0\} \subset U_1 \subset U_2 \subset \dots \subset U_n = V$): draw a **true geometric flag** showing the 1D line $U_1 = \spn(v_1)$ (`figred`) lying inside the 2D slanted parallelogram plane $U_2 = \spn(v_1, v_2)$ (`figgreen`), color-matched to the columns of the upper-triangular matrix $\mathcal{M}(T)$.
-  - **Domain/codomain decompositions & Strang Four Fundamental Subspaces**: use **sharp-cornered (`0pt` radius) thin hairline rectangles** (`draw=figblue, fill=figblue!6` for $\range T^* = \Row A$ and $\range T = \Col A$; `draw=figred!80!black, dashed, fill=figred!4` for $\nul T = \Nul A$ and $\nul T^* = \Nul A^{\mathsf T}$), showing $\range T^* \perp \nul T$ in $V$, $\range T \perp \nul T^*$ in $W$, the bijection $\range T^* \xrightarrow{\sim} \range T$, and nullspace collapse $\nul T \to \{0_W\}$.
-  - **Reserve circles and ellipses strictly for true geometric conic sections**: unit circles $\|v\|=1$, SVD/symmetric image ellipses, quadratic-form level sets, and Gershgorin disks in $\CC$.
+## 2. Semantic Geometry & Line Textures
+- **Consistent solid lines for symmetric peers**: never assign different dash patterns (`solid` / `dashed` / `dash dot`) to symmetric peer curves, planes, or unit balls. Reserve `dashed` / `dotted` strictly for reference lines ($y=0$, sum $=1$), orthogonal complements, drop/projection guides, residuals, or hidden back edges.
+- **Ban circle/oval set-blob diagrams**: reserve circles/ellipses strictly for true geometric conic sections (unit circles, SVD/symmetric image ellipses, level sets, Gershgorin disks).
 
-## 3. Commutative Diagrams (`tikz-cd`)
-`\RequirePackage{tikz-cd}` is loaded in `templates/handout.sty`.
-- Always draw commutative squares/triangles with `\begin{tikzcd}...\end{tikzcd}`, plain math nodes, and thin arrows.
-- **Comma trap**: Always wrap any arrow label containing a comma `,` in inner braces inside quotes:
-  ```latex
-  \arrow[r, "{\MM(T,B') = A^{-1}\MM(T,B)A}"]
-  \arrow[r, "{T'\colon \varphi\mapsto \varphi\circ T}"']
-  ```
-- **Prevent label-on-corner collisions**: When an arrow label is wide, set generous separation (`[column sep=6.5em, row sep=3.4em]` up to `column sep=9.5em`) so the arrow label never touches adjacent corner nodes.
+## 3. Commutative Diagrams (`tikz-cd`) & Matrices
+- Use `\begin{tikzcd}...\end{tikzcd}` with plain math nodes, thin arrows, generous `column sep`, and `"{...}"` around any arrow label with a comma `,`.
+- Put genuine `\begin{pmatrix}...\end{pmatrix}` / `\begin{bmatrix}...\end{bmatrix}` inside display math (`\begin{minipage}{Xcm}\[...\]\end{minipage}` inside a TikZ `\node`).
 
-## 4. Matrices Inside Figures
-- Always typeset matrices with genuine LaTeX `\begin{pmatrix}...\end{pmatrix}` or `\begin{bmatrix}...\end{bmatrix}`. Never overlay guessed TikZ rectangles behind matrix entries; highlight pivot columns or nonzero rows directly with `\textcolor{figblue}{\mathbf{...}}`.
-- Inside a TikZ `\node`, wrap display math in a minipage so `verify_handout.py` never flags an inline $3\times 3+$ matrix warning:
-  ```latex
-  \node[anchor=west] at (6.75,1.65) {%
-    \begin{minipage}{5.4cm}\[
-      \MM(T) = \begin{pmatrix}
-        \textcolor{figred!90!black}{\lambda_1} & \textcolor{figgreen!90!black}{a_{12}} & \cdots & \textcolor{figblue!90!black}{a_{1n}} \\
-        0         & \textcolor{figgreen!90!black}{\lambda_2} & \cdots & \textcolor{figblue!90!black}{a_{2n}} \\
-        \vdots    & \vdots    & \ddots & \vdots \\
-        0         & 0         & \cdots & \textcolor{figblue!90!black}{\lambda_n}
-      \end{pmatrix}
-    \]\end{minipage}};
-  ```
+## 4. `pgfplots` & `tabularx` Conventions
+- Always include `bar shift=0pt` on multi-series `ybar` plots.
+- Prefer `axis lines*=left` with a subtle dashed `y=0` reference line when curves cross zero, and borderless legends (`draw=none,fill=none`).
+- For `tabularx` code breakdown tables, use `>{\raggedright\arraybackslash}X` on the explanation column, flush `\cmidrule{1-3}` dividers, and execution order.
 
-## 5. Strict 4-Layer Order for Overlapping Disks / Regions
-Whenever disks or regions overlap (e.g., Gershgorin disks):
-1. **Layer 1 --- Faint fills FIRST**: `\fill[figblue,fill opacity=0.07] ...;`
-2. **Layer 2 --- Coordinate axes & origin**: `\draw[figaxis] ...;`
-3. **Layer 3 --- Thin outlines (`solid` / `dashed`) & dashed radii/vectors**: point radii away from neighboring disks.
-4. **Layer 4 --- ALL text/math labels LAST** (with `halo` where needed): ensures intersecting curves never obscure labels or eigenvalues.
-
-## 6. `pgfplots` & `tabularx` Conventions
-- **Multi-series `ybar` histograms (`bar shift=0pt`)**: whenever a `ybar` axis has two `\addplot` calls (e.g., non-tail bars and highlighted tail bars), always include `bar shift=0pt` in the `axis` options so `pgfplots` does not shift series 1 left and series 2 right off their true tick marks.
-- Prefer `axis lines*=left` with a dashed `y=0` reference line when curves cross zero (`\draw[dashed,black!35] (axis cs:xmin,0) -- (axis cs:xmax,0);`), and borderless transparent legends (`legend style={draw=none,fill=none}`).
-- **`tabularx` code breakdown tables**: always use `>{\raggedright\arraybackslash}X` on the description column (never bare `X`, which stretches huge whitespace gaps around inline `\cd{...}` code), add `\cmidrule(lr){1-3}` dividers between rows, and number pipeline stages in execution order.
-
-## 7. Build, Verification & Mandatory 210 dpi Visual QA
-1. **TEXINPUTS**: Always compile with `.` first so `templates/handout.tex` cannot shadow `./handout.tex`:
+## 5. Build, Verification & 220 DPI Inspection
+1. **TEXINPUTS**: Always compile with `.` first:
    - PowerShell: `$env:TEXINPUTS = ".;$repoRoot\templates;"`
-   - Bash: `TEXINPUTS=".;$repoRoot/templates;"`
-2. **Verify & Inspect**: Run `python scripts/verify_handout.py --all --no-compile --no-render` (`0` errors, `0` warnings), run a PyMuPDF geometric stroke-vs-glyph collision check (`0` collisions), and render EVERY new or modified figure at `210 dpi` tight-crop PNG to inspect visually before committing.
-3. **Hygiene**: Remove `.aux`, `.log`, `.out`, `.toc`, and temporary PNGs before staging commits.
+2. Inspect EVERY new or modified figure at **220 DPI** via `read_file` before committing.
+3. Delete `.aux`, `.log`, `.out`, `.toc`, and temporary PNGs inside `semesters/` before committing.

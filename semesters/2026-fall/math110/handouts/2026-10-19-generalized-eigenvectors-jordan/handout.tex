@@ -98,18 +98,18 @@ $V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Throughout, w
   \ii An operator $N$ is \vocab{nilpotent} if $N^k=0$ for some $k$ (\hyperref[def-39]{Def.~39}), e.g.\ $N$ above. So $G(\lambda,T)$ is the part of $V$ on which $T-\lambda I$ acts nilpotently.
 \end{itemize}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth, node distance=1.75cm]
-  \node[draw=figblue!85!black, fill=figblue!7, line width=0.6pt, inner sep=4pt, minimum height=0.62cm, text=figblue!90!black] (v) {$v$};
-  \node[right=of v] (v1) {$(T-\lambda I)v$};
-  \node[right=of v1] (d) {$\cdots$};
-  \node[draw=figgreen!85!black, fill=figgreen!7, line width=0.6pt, inner sep=4pt, minimum height=0.62cm, text=figgreen!90!black, right=of d] (w) {$w$};
-  \node[right=of w, text=figred!85!black] (z) {$0$};
+\begin{tikzpicture}[node distance=1.65cm]
+  \node[inner sep=3.5pt] (v) {$v$};
+  \node[right=of v, inner sep=3.5pt] (v1) {$(T-\lambda I)v$};
+  \node[right=of v1, inner sep=3.5pt] (d) {$\cdots$};
+  \node[fill=black!8, inner sep=4pt, minimum width=0.58cm, right=of d] (w) {$w$};
+  \node[right=of w, inner sep=3.5pt] (z) {$0$};
   \foreach \a/\b in {v/v1,v1/d,d/w,w/z}
-    \draw[->, line width=0.75pt, figslate] (\a) -- node[above=2pt, font=\scriptsize, text=black!85] {$T-\lambda I$} (\b);
-  \node[below=6pt of v, font=\scriptsize, text=figblue!90!black, align=center] {generalized\\eigenvector};
-  \node[below=6pt of w, font=\scriptsize, text=figgreen!90!black, align=center] {last nonzero vector:\\eigenvector for $\lambda$};
+    \draw[->, line width=0.55pt, black!85] (\a) -- node[above=2pt, font=\scriptsize, text=black!80] {$T-\lambda I$} (\b);
+  \node[below=3.5pt, font=\scriptsize, text=black!60] at (v |- w.south) {$G(\lambda,T)$};
+  \node[below=3.5pt, font=\scriptsize, text=black!60] at (w.south) {$E(\lambda,T)$};
 \end{tikzpicture}
-\figcap{Repeatedly applying $T-\lambda I$ to a generalized eigenvector $v$ (blue) eventually reaches $0$. The last nonzero vector $w$ (green) satisfies $(T-\lambda I)w=0$, so it is an eigenvector (\hyperref[prop-71]{Prop.~71}). Smallest case: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_2\mapsto e_1\mapsto0$.}
+\figcap{Repeatedly applying $T-\lambda I$ to a generalized eigenvector $v\in G(\lambda,T)$ eventually reaches $0$. The last nonzero vector $w$ (shaded) satisfies $(T-\lambda I)w=0$, so $w\in E(\lambda,T)$ is an eigenvector (\hyperref[prop-71]{Prop.~71}). Smallest case: $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, $e_2\mapsto e_1\mapsto0$.}
 \end{fig}
 
 \begin{proposition*}[Prop.~69 / LADR 8.1, 8.2: the null-space chain]\hypertarget{prop-69}{}\label{prop-69}
@@ -142,27 +142,21 @@ The ascending chain of null spaces stabilizes by power $n=\dim V$ because until 
   \end{steps}
 \end{proof}
 \begin{fig}
-\begin{tikzpicture}[x=0.98cm, y=0.52cm, >=Stealth]
+\begin{tikzpicture}[x=0.92cm, y=0.48cm]
   \draw[figaxis] (0,0) -- (7.6,0) node[right=2pt, font=\scriptsize] {$k$};
-  \draw[figaxis] (0,0) -- (0,6.4) node[above=2pt, font=\scriptsize] {$\dim\nul N^k$};
-  \foreach \k in {0,...,7} \draw[black!60] (\k,0.12) -- (\k,-0.12) node[below=2pt, font=\scriptsize, text=black] {$\k$};
-  \foreach \y in {1,...,5} \draw[black!60] (0.09,\y) -- (-0.09,\y) node[left=2pt, font=\scriptsize, text=black] {$\y$};
+  \draw[figaxis] (0,0) -- (0,6.2) node[above=2pt, font=\scriptsize] {$\dim\nul N^k$};
+  \foreach \k in {0,...,7} \draw[black!55, line width=0.38pt] (\k,0.11) -- (\k,-0.11) node[below=2pt, font=\scriptsize, text=black] {$\k$};
+  \foreach \y in {1,...,5} \draw[black!55, line width=0.38pt] (0.08,\y) -- (-0.08,\y) node[left=2pt, font=\scriptsize, text=black] {$\y$};
 
-  % Ceiling n=5 and stabilization marker k=3
-  \draw[dashed, figslate!70, line width=0.55pt] (0,5) -- (7.35,5) node[right=2pt, font=\scriptsize, text=figslate] {$n = 5$};
-  \draw[densely dotted, figslate!60, line width=0.55pt] (3,0) -- (3,5);
+  % Subtle asymptote n=5 and stabilization drop line at k=3
+  \draw[dashed, black!40, line width=0.42pt] (0,5) -- (7.35,5) node[right=2pt, font=\scriptsize, text=black!65] {$n = 5$};
+  \draw[densely dotted, black!40, line width=0.42pt] (3,0) -- (3,5);
 
-  % Strictly growing segment (blue) and stabilized plateau (green)
-  \draw[figblue, line width=1.15pt] (0,0) -- (1,2) -- (2,4) -- (3,5);
-  \draw[figgreen!85!black, line width=1.15pt] (3,5) -- (7,5);
-  \foreach \k/\d in {0/0,1/2,2/4} \fill[figblue] (\k,\d) circle (2.2pt);
-  \foreach \k/\d in {3/5,4/5,5/5,6/5,7/5} \fill[figgreen!85!black] (\k,\d) circle (2.2pt);
-
-  \node[font=\scriptsize, text=figblue!90!black, align=center] at (1.88, 1.18) {strictly grows\\[-1pt]($\ge 1$ per step)};
-  \draw[->, figblue!70, line width=0.5pt] (1.65, 1.85) -- (1.32, 2.38);
-  \node[font=\scriptsize, text=figgreen!90!black, anchor=south] at (5.0, 5.45) {constant after first repeat ($k \ge 3$)};
+  % Pure black monograph curve with crisp point markers
+  \draw[black, line width=0.95pt] (0,0) -- (1,2) -- (2,4) -- (3,5) -- (7,5);
+  \foreach \k/\d in {0/0,1/2,2/4,3/5,4/5,5/5,6/5,7/5} \fill[black] (\k,\d) circle (1.7pt);
 \end{tikzpicture}
-\figcap{$N$ on $\FF^5$ with $Ne_1=0$, $Ne_2=e_1$, $Ne_3=e_2$, $Ne_4=0$, $Ne_5=e_4$. Then $\nul N=\spn(e_1,e_4)$, $\nul N^2=\spn(e_1,e_2,e_4,e_5)$, $\nul N^3=\FF^5$, so $\dim\nul N^k=0,2,4,5,5,\dots$ While the chain grows (blue) it gains at least $1$ per step, and it cannot pass $n$, so it has stopped by $k=n$ (\hyperref[prop-70]{Prop.~70}). Once two neighbours agree, all later ones agree (green, \hyperref[prop-69]{Prop.~69}).}
+\figcap{$N$ on $\FF^5$ with $Ne_1=0$, $Ne_2=e_1$, $Ne_3=e_2$, $Ne_4=0$, $Ne_5=e_4$. Then $\nul N=\spn(e_1,e_4)$, $\nul N^2=\spn(e_1,e_2,e_4,e_5)$, and $\nul N^3=\FF^5$, giving $\dim\nul N^k=0,2,4,5,5,\dots$ While the chain strictly grows ($k\le 3$) it gains at least $1$ per step and cannot exceed $n=5$, so it stops by $k=n$ (\hyperref[prop-70]{Prop.~70}); once two consecutive terms agree, all later terms stay constant (\hyperref[prop-69]{Prop.~69}).}
 \end{fig}
 
 \begin{proposition*}[LADR 8.4, 8.5: splitting off the nilpotent part]\hypertarget{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}{}\label{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}
@@ -387,34 +381,34 @@ Since $N^kv=0$ implies $N^{k-1}(Nv)=0$, the operator $N$ maps $\nul N^k$ into $\
   \end{steps}
 \end{proof}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth]
+\begin{tikzpicture}
   \matrix (M) [matrix of math nodes,
     left delimiter=(, right delimiter=),
     inner xsep=7pt, inner ysep=4pt,
     nodes={minimum width=1.6em, minimum height=1.35em, anchor=center, inner sep=1pt},
     column sep=5pt, row sep=3pt] {
-    |[text=figblue!90!black]| \lambda_1 & |[text=figblue!90!black]| * & |[text=figblue!90!black]| * &[6pt] |[text=black!40]| 0 & |[text=black!40]| 0 \\
-    |[text=black!45]| 0 & |[text=figblue!90!black]| \lambda_1 & |[text=figblue!90!black]| * &[6pt] |[text=black!40]| 0 & |[text=black!40]| 0 \\
-    |[text=black!45]| 0 & |[text=black!45]| 0 & |[text=figblue!90!black]| \lambda_1 &[6pt] |[text=black!40]| 0 & |[text=black!40]| 0 \\[6pt]
-    |[text=black!40]| 0 & |[text=black!40]| 0 & |[text=black!40]| 0 &[6pt] |[text=figgreen!90!black]| \lambda_2 & |[text=figgreen!90!black]| * \\
-    |[text=black!40]| 0 & |[text=black!40]| 0 & |[text=black!40]| 0 &[6pt] |[text=black!45]| 0 & |[text=figgreen!90!black]| \lambda_2 \\
+    \lambda_1 & * & * &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\
+    |[text=black!35]| 0 & \lambda_1 & * &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\
+    |[text=black!35]| 0 & |[text=black!35]| 0 & \lambda_1 &[6pt] |[text=black!35]| 0 & |[text=black!35]| 0 \\[6pt]
+    |[text=black!35]| 0 & |[text=black!35]| 0 & |[text=black!35]| 0 &[6pt] \lambda_2 & * \\
+    |[text=black!35]| 0 & |[text=black!35]| 0 & |[text=black!35]| 0 &[6pt] |[text=black!35]| 0 & \lambda_2 \\
   };
 
   \begin{scope}[on background layer]
-    \node[fit=(M-1-1)(M-3-3), fill=figblue!7, draw=figblue!65, line width=0.5pt, inner sep=1.5pt] {};
-    \node[fit=(M-4-4)(M-5-5), fill=figgreen!7, draw=figgreen!65, line width=0.5pt, inner sep=1.5pt] {};
+    \node[fit=(M-1-1)(M-3-3), fill=black!8, draw=black!30, line width=0.38pt, inner sep=1.5pt] {};
+    \node[fit=(M-4-4)(M-5-5), fill=black!8, draw=black!30, line width=0.38pt, inner sep=1.5pt] {};
   \end{scope}
 
   \node[left=14pt of M] {$\MM(T) =$};
 
-  \draw[decorate, decoration={brace, amplitude=4pt}, figblue!85!black, line width=0.65pt]
+  \draw[decorate, decoration={brace, amplitude=3.5pt}, black!65, line width=0.45pt]
     ([xshift=20pt]M-1-5.north east) -- ([xshift=20pt]M-3-5.south east)
-    node[midway, right=6pt, font=\scriptsize, text=figblue!90!black, align=left] {basis of $G(\lambda_1,T)$ ($d_1=3$)};
-  \draw[decorate, decoration={brace, amplitude=4pt}, figgreen!85!black, line width=0.65pt]
+    node[midway, right=6pt, font=\scriptsize] {$G(\lambda_1,T)$};
+  \draw[decorate, decoration={brace, amplitude=3.5pt}, black!65, line width=0.45pt]
     ([xshift=20pt]M-4-5.north east) -- ([xshift=20pt]M-5-5.south east)
-    node[midway, right=6pt, font=\scriptsize, text=figgreen!90!black, align=left] {basis of $G(\lambda_2,T)$ ($d_2=2$)};
+    node[midway, right=6pt, font=\scriptsize] {$G(\lambda_2,T)$};
 \end{tikzpicture}
-\figcap{Block diagonal form by generalized eigenspaces (LADR 8.37): the off-diagonal zero blocks come from splitting $V=G(\lambda_1,T)\oplus G(\lambda_2,T)$ into invariant pieces (\hyperref[prop-73]{Prop.~73}, T9), and each shaded diagonal block is $\lambda_i I$ plus a strictly upper-triangular nilpotent part (LADR 8.18).}
+\figcap{Block diagonal form by generalized eigenspaces (LADR 8.37): the off-diagonal zero blocks come from splitting $V=G(\lambda_1,T)\oplus G(\lambda_2,T)$ into invariant pieces (\hyperref[prop-73]{Prop.~73}, T9; here $d_1=3$, $d_2=2$), and each shaded diagonal block is $\lambda_i I$ plus a strictly upper-triangular nilpotent part (LADR 8.18).}
 \end{fig}
 
 \begin{proposition*}[Chain lemma]\hypertarget{name-chain-lemma}{}\label{name-chain-lemma}
@@ -445,45 +439,36 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 \textbf{What is left to check.} That the new list has $n$ vectors, and that it is independent. The count is rank--nullity: the old list has $\dim\range N$ vectors, and we added one top per chain ($r$ of them) and $l$ vectors $w$, where $r+l=\dim\nul N$. Independence is the step that needs care. The plan: apply $N$ to a relation. That removes the $w$'s and the bottoms and turns everything else into vectors of the old chain basis of $U$, which we know is independent.
 \end{ideabox}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth, x=1.55cm, y=1.18cm,
-    added/.style={draw=figblue!85!black, fill=figblue!8, inner sep=3.8pt, line width=0.65pt, text=figblue!90!black},
-    old/.style={dashed, draw=figslate, line width=0.55pt}]
-  \node[added] (u1) at (0,3.35) {$u_1$};
-  \node[added] (u2) at (2.25,2.25) {$u_2$};
-  \node[added] (w1) at (3.55,0) {$w_1$};
+\begin{tikzpicture}[x=1.50cm, y=1.12cm,
+    added/.style={draw=figblue!85!black, fill=white, inner sep=3.2pt, line width=0.5pt, text=figblue!90!black},
+    old/.style={densely dashed, draw=black!45, line width=0.42pt}]
+  \node[added] (u1) at (0,3.25) {$u_1$};
+  \node[added] (u2) at (2.15,2.15) {$u_2$};
+  \node[added] (w1) at (3.45,0) {$w_1$};
 
   \node (v1) at (0,2.05) {$v_1=Nu_1$};
   \node (m1) at (0,1.02) {$Nv_1$};
   \node (b1) at (0,0) {$b_1=N^2v_1$};
-  \node (v2) at (2.25,1.02) {$v_2=Nu_2$};
-  \node (b2) at (2.25,0) {$b_2=Nv_2$};
+  \node (v2) at (2.15,1.02) {$v_2=Nu_2$};
+  \node (b2) at (2.15,0) {$b_2=Nv_2$};
 
-  \draw[->, line width=0.7pt, black!85] (u1) -- (v1);
-  \draw[->, line width=0.7pt, black!85] (u2) -- (v2);
-  \foreach \a/\b in {v1/m1, m1/b1, v2/b2}
-    \draw[->, line width=0.7pt, black!85] (\a) -- (\b);
+  \foreach \a/\b in {u1/v1, v1/m1, m1/b1, u2/v2, v2/b2}
+    \draw[->, line width=0.52pt, black!80] (\a) -- (\b);
 
-  % Background grouping boxes with clean margins (zero border collisions)
+  % Soft Spivak gray wash for null N and hairline dashed frames for old chains of U = range N
   \begin{scope}[on background layer]
-    \fill[figred!5, draw=figred!85!black, line width=0.65pt] (-1.05,-0.56) rectangle (4.05,0.48);
-    \draw[old] (-0.82,-0.34) rectangle (0.82,2.48);
-    \draw[old] (1.45,-0.34) rectangle (3.05,1.45);
+    \fill[black!8] (-1.02,-0.52) rectangle (3.92,0.44);
+    \draw[old] (-0.80,-0.34) rectangle (0.80,2.45);
+    \draw[old] (1.38,-0.34) rectangle (2.92,1.42);
   \end{scope}
 
-  \node[font=\footnotesize, text=figred!90!black, anchor=west] at (4.20,-0.04) {basis of $\nul N$};
-  \draw[->, figred!85!black, line width=0.75pt] (1.50,-0.56) -- (1.50,-1.10)
-    node[midway, right=2pt, font=\scriptsize, text=figred!90!black] {$N$};
-  \node[font=\small] (z) at (1.50,-1.32) {$0$};
-
-  % Crisp aligned legend in upper right
-  \draw[added] (3.25,3.05) rectangle ++(0.28,0.28);
-  \node[font=\scriptsize, anchor=west] at (3.62,3.19) {added vector};
-  \draw[old] (3.25,2.55) rectangle ++(0.28,0.28);
-  \node[font=\scriptsize, anchor=west] at (3.62,2.69) {old chain of $U=\range N$};
-  \draw[->, line width=0.7pt, black!85] (3.39,2.35) -- (3.39,1.98);
-  \node[font=\scriptsize, anchor=west] at (3.62,2.16) {action of $N$};
+  \node[font=\scriptsize, text=black!65, anchor=east] at (-0.94,1.95) {$U = \range N$};
+  \node[font=\scriptsize, text=black!75, anchor=west] at (4.06,-0.04) {$\nul N$};
+  \draw[->, black!75, line width=0.55pt] (1.45,-0.52) -- (1.45,-1.05)
+    node[midway, right=2pt, font=\scriptsize] {$N$};
+  \node[font=\small] (z) at (1.45,-1.28) {$0$};
 \end{tikzpicture}
-\figcap{Nilpotent chain extension. Boxed blue vectors are added in the induction step: the new tops $u_1,u_2$ and the length-one chain $w_1$. Dashed rectangles hold the old chains of $U=\range N$ ($d_1=2$, $d_2=1$). Their bottoms $b_1,b_2$, together with $w_1$, form a basis of $\nul N$ (red band), which $N$ sends to $0$.}
+\figcap{Nilpotent chain extension: framed vectors $u_1,u_2$ (new chain tops) and $w_1$ (a length-one chain) are added in the induction step to the old chains of $U=\range N$ (dashed rectangles; $d_1=2$, $d_2=1$). Arrows denote the action of $N$. The bottoms $b_1,b_2$ together with $w_1$ form a basis of $\nul N$ (shaded band), which $N$ maps to $0$.}
 \end{fig}
 \begin{proof}
   \begin{steps}
@@ -542,95 +527,65 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(T9)}. A block $J_j(\mu)$ for $\mu\ne\lambda$ is invertible under $T-\lambda I$ and contributes $0$ to $d_k=\dim\nul(T-\lambda I)^k$, whereas $J_j(\lambda)-\lambda I=N_j$ is a shift with $\dim\nul N_j^k=\min(k,j)$: its contribution increases by $1$ at each step from $k-1$ to $k$ while $k\le j$, and stops growing once $k>j$. Thus $d_k-d_{k-1}$ equals the basis-independent number of blocks $J_j(\lambda)$ of size $j\ge k$, proving uniqueness up to block order.
 \end{ideabox}
 \begin{fig}
-\begin{tikzpicture}[>=Stealth]
-  % ===== Panel (a): Step 1 — Row 2 = d2 - d1 counts blocks of size >= 2 =====
+\begin{tikzpicture}
+  % ===== Panel (a): Row 2 isolates blocks of size >= 2 =====
   \begin{scope}[xshift=0cm]
-    \node[font=\footnotesize\bfseries] at (1.89,2.52) {(a) Row $2$ counts blocks of size $\ge 2$};
+    % Subtle downward N-action arrow
+    \draw[->, black!55, line width=0.45pt] (-0.42,1.50) -- node[left=1pt, font=\scriptsize, text=black!75] {$N$} (-0.42,0.12);
 
-    % Row labels on left
-    \node[font=\scriptsize, text=black!50, anchor=east]                 at (-0.16,1.55) {row 3};
-    \node[font=\scriptsize\bfseries, text=figblue!90!black, anchor=east] at (-0.16,0.93) {row 2};
-    \node[font=\scriptsize, text=black!65, anchor=east]                 at (-0.16,0.31) {row 1};
-
-    % Subtle N-action arrow on far left showing N steps down one row
-    \draw[->, black!55, line width=0.65pt] (-1.22,1.65) -- node[left=1pt, font=\scriptsize, text=black!70] {$N$} (-1.22,0.20);
-
-    % Row 1 cells (all 4 columns: null N, d1 = 4)
-    \foreach \x in {0,1.0,2.0,3.0} {
-      \filldraw[fill=black!8, draw=black!45, line width=0.5pt] (\x,0.00) rectangle (\x+0.78,0.62);
+    % Row 1 (d_1 = 4 cells)
+    \foreach \x in {0,0.82,1.64,2.46} {
+      \filldraw[fill=black!6, draw=black!50, line width=0.45pt] (\x,0.00) rectangle (\x+0.66,0.54);
     }
-    % Row 2 cells (cols 1-3: highlighted blue, d2 - d1 = 3)
-    \foreach \x in {0,1.0,2.0} {
-      \filldraw[fill=figblue!16, draw=figblue!85!black, line width=0.8pt] (\x,0.62) rectangle (\x+0.78,1.24);
+    % Row 2 (d_2 - d_1 = 3 cells, emphasized gray wash)
+    \foreach \x in {0,0.82,1.64} {
+      \filldraw[fill=black!22, draw=black!85, line width=0.45pt] (\x,0.54) rectangle (\x+0.66,1.08);
     }
-    % Row 3 cell (col 1: unshaded above row 2)
-    \filldraw[fill=white, draw=black!35, line width=0.5pt] (0,1.24) rectangle (0.78,1.86);
+    % Row 3 (1 cell)
+    \filldraw[fill=white, draw=black!45, line width=0.45pt] (0,1.08) rectangle (0.66,1.62);
 
-    % Dashed divider showing null N^2 = bottom 2 rows (d2 = 7)
-    \draw[figblue!70, dashed, line width=0.6pt] (-0.10,1.24) -- (4.02,1.24);
-    \node[font=\scriptsize, text=figblue!90!black, anchor=west] at (2.94,0.93) {$\mathbf{3}$ cells};
+    % Atomic row count labels
+    \node[font=\scriptsize, text=black!65, anchor=west] at (3.26,0.27) {$d_1$};
+    \node[font=\scriptsize, anchor=west] at (2.46,0.81) {$d_2 - d_1$};
 
-    % Column labels (block sizes)
-    \node[font=\scriptsize] at (0.39,-0.22) {$J_3$};
-    \node[font=\scriptsize] at (1.39,-0.22) {$J_2$};
-    \node[font=\scriptsize] at (2.39,-0.22) {$J_2$};
-    \node[font=\scriptsize] at (3.39,-0.22) {$J_1$};
+    % Column labels
+    \node[font=\scriptsize] at (0.33,-0.22) {$J_3$};
+    \node[font=\scriptsize] at (1.15,-0.22) {$J_2$};
+    \node[font=\scriptsize] at (1.97,-0.22) {$J_2$};
+    \node[font=\scriptsize] at (2.79,-0.22) {$J_1$};
 
-    % Clean 3-line subtraction summary below Panel (a)
-    \node[font=\scriptsize, align=left, anchor=north west] at (-0.18,-0.52) {%
-      Bottom $2$ rows ($\nul N^2$): $d_2 = 7$ cells\\[2pt]
-      Subtract row $1$ ($\nul N$): $-d_1 = -4$ cells\\[2pt]
-      \textcolor{figblue!90!black}{\textbf{Row $2$ (size $\ge 2$):} $d_2 - d_1 = \mathbf{3}$ blocks}
-    };
+    \node[font=\footnotesize] at (1.56,-0.70) {(a)};
   \end{scope}
 
-  % ===== Panel (b): Step 2 — Subtract size >= 3 (row 3) to leave exact size 2 =====
-  \begin{scope}[xshift=7.15cm]
-    \node[font=\footnotesize\bfseries] at (1.89,2.52) {(b) Subtract size $\ge 3$ to get exact size $2$};
+  % ===== Panel (b): Subtracting row 3 leaves exact size 2 =====
+  \begin{scope}[xshift=5.70cm]
+    % Row 1 (faint base)
+    \foreach \x in {0,0.82,1.64,2.46} {
+      \filldraw[fill=black!6, draw=black!38, line width=0.45pt] (\x,0.00) rectangle (\x+0.66,0.54);
+    }
+    % Taller column J_3 (row 3 + row 2 in one muted accent)
+    \filldraw[fill=figblue!16, draw=figblue!80!black, line width=0.45pt] (0,1.08) rectangle (0.66,1.62);
+    \filldraw[fill=figblue!7,  draw=figblue!55,       line width=0.45pt] (0,0.54) rectangle (0.66,1.08);
 
-    % Row labels on left
-    \node[font=\scriptsize\bfseries, text=figred!90!black, anchor=east]   at (-0.16,1.55) {row 3};
-    \node[font=\scriptsize\bfseries, text=figgreen!90!black, anchor=east] at (-0.16,0.93) {row 2};
-    \node[font=\scriptsize, text=black!45, anchor=east]                   at (-0.16,0.31) {row 1};
-
-    % Row 1 cells (faded base)
-    \foreach \x in {0,1.0,2.0,3.0} {
-      \filldraw[fill=black!4, draw=black!28, line width=0.45pt] (\x,0.00) rectangle (\x+0.78,0.62);
+    % Exact size 2 blocks (cols 2 & 3, row 2)
+    \foreach \x in {0.82,1.64} {
+      \filldraw[fill=black!22, draw=black!90, line width=0.5pt] (\x,0.54) rectangle (\x+0.66,1.08);
     }
 
-    % Col 1 (J3): reaches row 3 -> subtract off! (red row 3 + crossed-out red row 2)
-    \filldraw[fill=figred!16, draw=figred!85!black, line width=0.8pt] (0,1.24) rectangle (0.78,1.86);
-    \filldraw[fill=figred!9, draw=figred!75!black, dashed, line width=0.75pt] (0,0.62) rectangle (0.78,1.24);
-    \draw[figred!70, line width=0.7pt] (0.10,0.70) -- (0.68,1.16);
-    \draw[figred!70, line width=0.7pt] (0.10,1.16) -- (0.68,0.70);
+    % Atomic row count labels
+    \node[font=\scriptsize, text=figblue!85!black, anchor=west] at (0.82,1.35) {$d_3 - d_2$};
+    \node[font=\scriptsize, anchor=west] at (2.46,0.81) {$(d_2 - d_1) - (d_3 - d_2)$};
 
-    % Cols 2 & 3 (J2, J2): stop at row 2 -> exact size 2! (bright green)
-    \foreach \x in {1.0,2.0} {
-      \filldraw[fill=figgreen!18, draw=figgreen!85!black, line width=0.9pt] (\x,0.62) rectangle (\x+0.78,1.24);
-    }
+    % Column labels
+    \node[font=\scriptsize, text=figblue!85!black] at (0.33,-0.22) {$J_3$};
+    \node[font=\scriptsize] at (1.15,-0.22) {$J_2$};
+    \node[font=\scriptsize] at (1.97,-0.22) {$J_2$};
+    \node[font=\scriptsize, text=black!50] at (2.79,-0.22) {$J_1$};
 
-    % Clean callout pointing directly to the 1 block extending into row 3
-    \draw[->, figred!85!black, line width=0.65pt] (1.32,1.55) -- (0.86,1.55);
-    \node[font=\scriptsize, text=figred!90!black, anchor=west] at (1.36,1.55) {continues to row $3$ ($1$)};
-
-    % Clean callout on right pointing to the 2 remaining green cells
-    \node[font=\scriptsize\bfseries, text=figgreen!90!black, anchor=west] at (2.94,0.93) {$\mathbf{2}$ stop here};
-
-    % Column labels (color-matched to show which blocks are counted)
-    \node[font=\scriptsize, text=figred!90!black]            at (0.39,-0.22) {$J_3$};
-    \node[font=\scriptsize\bfseries, text=figgreen!90!black] at (1.39,-0.22) {$J_2$};
-    \node[font=\scriptsize\bfseries, text=figgreen!90!black] at (2.39,-0.22) {$J_2$};
-    \node[font=\scriptsize, text=black!45]                   at (3.39,-0.22) {$J_1$};
-
-    % Clean 3-line complementary-counting summary below Panel (b)
-    \node[font=\scriptsize, align=left, anchor=north west] at (-0.18,-0.52) {%
-      \textcolor{figblue!90!black}{Size $\ge 2$ (row $2$): $d_2 - d_1 = 3$}\\[2pt]
-      \textcolor{figred!90!black}{Subtract size $\ge 3$ (row $3$): $-(d_3 - d_2) = -1$}\\[2pt]
-      \textcolor{figgreen!90!black}{\textbf{Exact size $2$:} $3 - 1 = \mathbf{2}$ blocks}
-    };
+    \node[font=\footnotesize] at (1.56,-0.70) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{Complementary counting for a nilpotent $N$ with blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ (so $d_1=4, d_2=7, d_3=8$). Each column is one chain of basis vectors stacked vertically, and $N$ steps down one row (sending row~$1$ to $0$). \textbf{(a)}~$N^k$ sends the bottom $k$ rows to $0$, so subtracting row~$1$ ($d_1$) from the bottom $2$ rows ($d_2$) isolates row~$2$: its $d_2-d_1=3$ blue cells count every block of height $\ge 2$. \textbf{(b)}~Crossing out the $d_3-d_2=1$ block that continues into row~$3$ (red) leaves the $(d_2-d_1)-(d_3-d_2)=2$ blocks that stop at height~$2$ (green).}
+\figcap{Complementary counting for a nilpotent $N$ with blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ ($d_1=4$, $d_2=7$, $d_3=8$). Each column is a chain of basis vectors stacked vertically, and $N$ steps down one row (sending row~$1$ to $0$). \textbf{(a)}~Since $N^k$ annihilates the bottom $k$ rows, subtracting row~$1$ ($d_1=4$) from the bottom two rows ($d_2=7$) isolates row~$2$: its $d_2-d_1=3$ dark-shaded cells count all blocks of size $\ge 2$. \textbf{(b)}~Removing the $d_3-d_2=1$ taller column continuing into row~$3$ (blue, $J_3$) leaves $(d_2-d_1)-(d_3-d_2)=2$ blocks of exact size~$2$ (dark-shaded cells in row~$2$).}
 \end{fig}
 \begin{proof}
   \begin{steps}

@@ -251,37 +251,34 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[scale=1.22,>=Stealth]
-  % Span(v) line
-  \draw[black!45,thin] (-0.55,0) -- (5.2,0) node[right=2pt,font=\scriptsize,text=black!75] {$\spn(v)$};
+\begin{tikzpicture}[scale=1.18]
+  % Line span(v)
+  \draw[black!45,line width=0.4pt] (-0.5,0) -- (5.0,0) node[right=3pt,font=\scriptsize,text=black!75] {$\spn(v)$};
 
-  % Right-angle mark at (2.4, 0)
-  \draw[black!65,thin] (2.18,0) -- (2.18,0.22) -- (2.4,0.22);
+  % Right-angle mark at foot of perpendicular
+  \draw[black!60,line width=0.38pt] (2.20,0) -- (2.20,0.20) -- (2.40,0.20);
 
-  % Vector v (full)
-  \draw[figvecsub] (0,0) -- (4.35,0);
-  \node[below=3pt,font=\small,text=figslate] at (3.65,0) {$v$};
+  % Vector v
+  \draw[figvecsub] (0,0) -- (4.20,0);
+  \node[below=3pt,font=\small,text=black!70] at (3.55,0) {$v$};
 
-  % Component cv along v
-  \draw[figvec,very thick,shorten >=1.6pt] (0,0) -- (2.4,0);
-  \node[below=4pt,font=\small,text=figblue!90!black] at (1.2,0) {$cv = \dfrac{\ip uv}{\|v\|^2}v$};
+  % Component cv along v (single restrained accent)
+  \draw[->,draw=figblue,line width=0.95pt,shorten >=1.4pt] (0,0) -- (2.40,0);
+  \node[below=3pt,font=\small,text=figblue!90!black] at (1.20,0) {$cv$};
 
-  % Vector u
-  \draw[figvec,draw=black,very thick,shorten >=1.2pt] (0,0) -- (2.4,1.95)
-    node[pos=0.56,above left=2pt,font=\small,text=black] {$u$};
-
-  % Pythagorean identity placed cleanly in open upper-left space
-  \node[font=\scriptsize,text=black!80,anchor=west] at (-0.45,1.72) {$\|u\|^2 = \|cv\|^2 + \|w\|^2$};
+  % Focal vector u
+  \draw[->,draw=black,line width=1.05pt,shorten >=1.0pt] (0,0) -- (2.40,1.88)
+    node[pos=0.55,above left=2pt,font=\small,text=black] {$u$};
 
   % Orthogonal residual w = u - cv
-  \draw[figvec,draw=figred,thick,dashed,shorten <=1.6pt,shorten >=2.2pt] (2.4,0) -- (2.4,1.95);
-  \node[right=6pt,font=\small,text=figred!90!black] at (2.4,0.98) {$w = u - cv \perp v$};
+  \draw[->,draw=black!75,line width=0.65pt,dashed,shorten <=1.4pt,shorten >=2.0pt] (2.40,0) -- (2.40,1.88);
+  \node[right=4pt,font=\small,text=black!85] at (2.40,0.94) {$w$};
 
-  % Origin and foot-of-perpendicular dots
-  \fill[black] (0,0) circle (1.5pt) node[below left=2pt,font=\scriptsize] {$0$};
-  \fill[black] (2.4,0) circle (1.5pt);
+  % Origin and foot dots
+  \fill[black] (0,0) circle (1.3pt) node[below left=2pt,font=\scriptsize] {$0$};
+  \fill[black] (2.40,0) circle (1.3pt);
 \end{tikzpicture}
-\figcap{Orthogonal decomposition $u=cv+w$ along $v\ne 0$ (LADR 6.13). Choosing $c=\ip uv/\|v\|^2$ forces $w\perp v$ and therefore $w\perp cv$. Applying the Pythagorean theorem to the right triangle with legs $cv$ and $w$ gives $\|u\|^2=\|cv\|^2+\|w\|^2=\frac{|\ip uv|^2}{\|v\|^2}+\|w\|^2\ge\frac{|\ip uv|^2}{\|v\|^2}$, which rearranges directly into the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$, with equality iff the vertical leg $w$ is zero.}
+\figcap{Orthogonal decomposition $u=cv+w$ along $v\ne 0$ (LADR 6.13), with $cv=\frac{\ip uv}{\|v\|^2}v$ and $w=u-cv\perp v$. Applying the Pythagorean theorem to the right triangle with legs $cv$ and $w$ gives $\|u\|^2=\|cv\|^2+\|w\|^2=\frac{|\ip uv|^2}{\|v\|^2}+\|w\|^2\ge\frac{|\ip uv|^2}{\|v\|^2}$, which rearranges directly into the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$, with equality iff $w=0$.}
 \end{fig}
 
 \begin{theorem*}[Prop.~82 / LADR 6.14: Cauchy--Schwarz inequality]\target{prop-82}\target{name-cauchy-schwarz}
@@ -361,74 +358,60 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[>=Stealth]
-  % Left panel: Parallelogram Law
-  \begin{scope}[shift={(0,0)},scale=0.95]
-    \node[font=\footnotesize\bfseries] at (2.4,3.05) {(a) Parallelogram equality};
-
+\begin{tikzpicture}
+  % Panel (a): Parallelogram equality
+  \begin{scope}[shift={(0,0.35)},scale=0.95]
     \coordinate (O) at (0,0);
-    \coordinate (U) at (3.6,0);
-    \coordinate (V) at (1.2,2.15);
-    \coordinate (UV) at (4.8,2.15);
+    \coordinate (U) at (3.5,0);
+    \coordinate (V) at (1.15,2.15);
+    \coordinate (UV) at (4.65,2.15);
 
-    \fill[figblue!4] (O) -- (U) -- (UV) -- (V) -- cycle;
+    \fill[black!7] (O) -- (U) -- (UV) -- (V) -- cycle;
 
-    % Sides (neutral dark ink so colored diagonals pop)
-    \draw[figvec,draw=black!85] (O) -- (U) node[midway,below=3pt,font=\small,text=black] {$u$};
-    \draw[black!45,thin] (V) -- (UV) node[midway,above=2pt,font=\small,text=black!75] {$u$};
-    \draw[figvec,draw=black!85] (O) -- (V) node[midway,above left=1pt,font=\small,text=black] {$v$};
-    \draw[black!45,thin] (U) -- (UV) node[midway,below right=1pt,font=\small,text=black!75] {$v$};
+    % Sides
+    \draw[->,black,line width=0.85pt] (O) -- (U) node[midway,below=3pt,font=\small] {$u$};
+    \draw[black!45,line width=0.42pt] (V) -- (UV);
+    \draw[->,black,line width=0.85pt] (O) -- (V) node[midway,above left=1pt,font=\small] {$v$};
+    \draw[black!45,line width=0.42pt] (U) -- (UV);
 
-    % Diagonals with cleanly offset labels (no white halo knockout!)
-    \draw[figvec,draw=figblue,very thick,shorten >=1.5pt] (O) -- (UV)
+    % Diagonals
+    \draw[->,draw=figblue,line width=1.0pt,shorten >=1.2pt] (O) -- (UV)
       node[pos=0.73,sloped,above=2pt,font=\small,text=figblue!90!black] {$u+v$};
-    \draw[figvec,draw=figred,thick,dashed,shorten <=1.5pt,shorten >=2.8pt] (V) -- (U);
-    \node[font=\small,text=figred!90!black] at (1.38,1.38) {$u-v$};
+    \draw[->,draw=black!75,line width=0.65pt,dashed,shorten <=1.2pt,shorten >=2.2pt] (V) -- (U);
+    \node[font=\small,text=black!85] at (1.28,1.34) {$u-v$};
 
-    \fill[black] (O) circle (1.5pt) node[below left=2pt,font=\scriptsize] {$0$};
-    \node[font=\scriptsize] at (2.4,-0.68) {$\|u+v\|^2 + \|u-v\|^2 = 2\|u\|^2 + 2\|v\|^2$};
+    \fill[black] (O) circle (1.3pt) node[below left=2pt,font=\scriptsize] {$0$};
+    \node[font=\footnotesize] at (2.32,-0.88) {(a)};
   \end{scope}
 
-  % Right panel: Unit balls of l1, l2, l_infty
-  \begin{scope}[shift={(7.9,0)},scale=0.95]
-    \node[font=\footnotesize\bfseries] at (1.15,3.05) {(b) Unit balls $\|x\|=1$ on $\RR^2$};
+  % Panel (b): Unit balls of l1, l2, l_infty
+  \begin{scope}[shift={(8.4,1.40)},scale=0.95]
+    \def\R{1.22}
 
-    \coordinate (C) at (0,1.05);
-    \def\R{1.00}
+    % Hair-thin axes
+    \draw[figaxis] (-1.65,0) -- (1.78,0) node[right=2pt,font=\scriptsize] {$x_1$};
+    \draw[figaxis] (0,-1.55) -- (0,1.68) node[above=1pt,font=\scriptsize] {$x_2$};
 
-    % Axes
-    \draw[figaxis] ($(C)+(-1.38,0)$) -- ($(C)+(1.52,0)$) node[right=1pt,font=\scriptsize] {$x_1$};
-    \draw[figaxis] ($(C)+(0,-1.25)$) -- ($(C)+(0,1.42)$) node[right=2pt,font=\scriptsize] {$x_2$};
+    % Three clean solid unit-ball curves: l_infty (mid-gray), l_2 (black), l_1 (single accent)
+    \draw[black!55,line width=0.65pt] (-\R,-\R) rectangle (\R,\R);
+    \draw[black,line width=1.0pt] (0,0) circle (\R);
+    \draw[figblue,line width=0.85pt] (\R,0) -- (0,\R) -- (-\R,0) -- (0,-\R) -- cycle;
 
-    % l_infty square
-    \draw[figblue,thick] ($(C)+(-\R,-\R)$) rectangle ($(C)+(\R,\R)$);
+    % Atomic curve labels placed cleanly with zero crossings
+    \node[font=\scriptsize,text=black!75,anchor=south west] at (\R-0.02,\R-0.02) {$\ell_\infty$};
+    \node[font=\scriptsize,text=black,inner sep=0.6pt] at (-0.98,1.00) {$\ell_2$};
+    \node[font=\scriptsize,text=figblue!90!black] at (0.45,-0.43) {$\ell_1$};
 
-    % l_2 circle
-    \draw[figgreen!85!black,thick] (C) circle (\R);
+    % Standard basis dots e_1, e_2
+    \fill[black] (\R,0) circle (1.3pt);
+    \node[font=\scriptsize,anchor=north west] at (\R+0.02,-0.03) {$e_1$};
+    \fill[black] (0,\R) circle (1.3pt);
+    \node[font=\scriptsize,anchor=south east] at (-0.03,\R+0.02) {$e_2$};
 
-    % l_1 diamond
-    \draw[figred,thick] ($(C)+(\R,0)$) -- ($(C)+(0,\R)$) -- ($(C)+(-\R,0)$) -- ($(C)+(0,-\R)$) -- cycle;
-
-    % Right-column callouts with clean non-crossing leader arrows
-    \node[font=\scriptsize,text=figblue!90!black,anchor=west] (linf) at ($(C)+(1.48,0.96)$) {$\ell_\infty$: $\max|x_i|=1$};
-    \draw[->,figblue,thin] (linf.west) -- ($(C)+(\R+0.04,0.88)$);
-
-    \node[font=\scriptsize,text=figgreen!90!black,anchor=west] (ltwo) at ($(C)+(1.48,0.46)$) {$\ell_2$: $\|x\|_2=1$};
-    \draw[->,figgreen!85!black,thin] (ltwo.west) -- ($(C)+(0.86,0.52)$);
-
-    \node[font=\scriptsize,text=figred!90!black,anchor=west] (lone) at ($(C)+(1.48,-0.64)$) {$\ell_1$: $|x_1|+|x_2|=1$};
-    \draw[->,figred,thin] (lone.west) -- ($(C)+(0.58,-0.46)$);
-
-    % Basis dots e_1, e_2 with clean exterior labels
-    \fill[black] ($(C)+(\R,0)$) circle (1.6pt);
-    \node[font=\scriptsize,anchor=north west] at ($(C)+(\R+0.03,-0.04)$) {$e_1$};
-    \fill[black] ($(C)+(0,\R)$) circle (1.6pt);
-    \node[font=\scriptsize,anchor=south east] at ($(C)+(-0.04,\R+0.03)$) {$e_2$};
-
-    \node[font=\scriptsize] at (1.15,-0.68) {At $e_1,e_2$: $\|e_1\pm e_2\|_\infty=1 \implies 1^2+1^2\ne 2(1^2+1^2)$};
+    \node[font=\footnotesize] at (0,-1.98) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) In any inner product space, the sum of the squared lengths of the two diagonals of a parallelogram equals the sum of the squared lengths of its four sides (\ilink{prop-83}{Prop.~83}). (b) Testing the standard basis vectors $u=e_1=(1,0)$ and $v=e_2=(0,1)$ in $\RR^2$: for the $\ell_\infty$ norm $\|x\|_\infty=\max(|x_1|,|x_2|)$, $\|e_1\pm e_2\|_\infty^2=1^2=1$, so $\|e_1+e_2\|_\infty^2+\|e_1-e_2\|_\infty^2=2\ne 4=2\|e_1\|_\infty^2+2\|e_2\|_\infty^2$; for the $\ell_1$ norm $\|x\|_1=|x_1|+|x_2|$, $\|e_1\pm e_2\|_1^2=2^2=4$, so $4+4=8\ne 4$. Thus neither $\|\cdot\|_1$ nor $\|\cdot\|_\infty$ arises from any inner product.}
+\figcap{(a) Parallelogram equality $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$ in an inner product space (\ilink{prop-83}{Prop.~83}). (b) Unit circles $\|x\|=1$ on $\RR^2$ for $\ell_\infty$ (outer square), $\ell_2$ (Euclidean circle), and $\ell_1$ (inner diamond). Testing $e_1=(1,0)$ and $e_2=(0,1)$ gives $\|e_1\pm e_2\|_\infty^2=1$ ($1+1\ne 4$) and $\|e_1\pm e_2\|_1^2=4$ ($4+4\ne 4$), so neither $\|\cdot\|_1$ nor $\|\cdot\|_\infty$ comes from an inner product.}
 \end{fig}
 
 \begin{itemize}

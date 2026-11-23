@@ -82,19 +82,19 @@ In an inner product space we measure geometric alignment via $\langle Tv,w\rangl
 \[
 \begin{tikzcd}[
   arrow style=tikz,
-  diagrams={>={Stealth[length=4.5pt,width=2.8pt]}},
-  column sep=8.6em,
-  row sep=3.8em,
+  diagrams={>={Stealth[length=3.8pt,width=2.2pt]}},
+  column sep=7.6em,
+  row sep=3.4em,
   every label/.append style={outer sep=2.5pt}
 ]
-  W \arrow[r, draw=figblue, thick, "{\color{figblue!90!black} T^* = \Gamma_V^{-1}\circ T'\circ\Gamma_W}"]
-    \arrow[d, draw=figgreen!85!black, thick, "{\color{figgreen!90!black}\substack{\Gamma_W \\ \scriptstyle w\mapsto\langle\cdot,w\rangle}}"']
-  & V \arrow[d, draw=figgreen!85!black, thick, "{\color{figgreen!90!black}\substack{\Gamma_V \\ \scriptstyle v\mapsto\langle\cdot,v\rangle}}"] \\[2pt]
-  W' \arrow[r, draw=figslate, thick, "{\color{black} T'\colon \varphi\mapsto \varphi\circ T}"']
+  W \arrow[r, draw=figblue, line width=0.72pt, "{\color{figblue!90!black} T^* = \Gamma_V^{-1}\circ T'\circ\Gamma_W}"]
+    \arrow[d, draw=black!80, line width=0.5pt, "\Gamma_W"']
+  & V \arrow[d, draw=black!80, line width=0.5pt, "\Gamma_V"] \\
+  W' \arrow[r, draw=black!80, line width=0.5pt, "T'"']
   & V'
 \end{tikzcd}
 \]
-\figcap{Both paths from $W$ to $V'$ agree: $\Gamma_V(T^*w)=T'(\Gamma_W(w))$. Because the Riesz maps $\Gamma_W,\Gamma_V$ (green) are conjugate-linear over $\CC$, transporting the dual map $T'$ back to $T^*\colon W\to V$ (blue) introduces complex conjugation on scalars.}
+\figcap{Commutative diagram defining the adjoint: both paths from $W$ to $V'$ agree, $\Gamma_V(T^*w)=T'(\Gamma_W(w))$, where $\Gamma_W(w)=\langle\cdot,w\rangle$, $\Gamma_V(v)=\langle\cdot,v\rangle$, and $T'(\varphi)=\varphi\circ T$. Because the Riesz maps $\Gamma_W,\Gamma_V$ are conjugate-linear over $\CC$, transporting $T'$ back to $T^*\colon W\to V$ conjugates scalars.}
 \end{fig}
 
 \begin{example*}[Ex.~72: Adjoint of differentiation by solving equations]\target{ex-72}
@@ -189,63 +189,68 @@ By linearity of $D^*$ in Example~72, $D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1)$.
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
+\begin{tikzpicture}[scale=1.0]
+  % Panel (a): Four fundamental subspaces schematic
   \begin{scope}
-    \node[font=\footnotesize,align=center,anchor=south] at (1.15,3.88) {\textbf{Domain $V$}\\[-1pt]\scriptsize $\range T^*\oplus\nul T$};
-    \node[font=\footnotesize,align=center,anchor=south] at (6.55,3.88) {\textbf{Codomain $W$}\\[-1pt]\scriptsize $\range T\oplus\nul T^*$};
+    \node[font=\footnotesize,anchor=south] at (1.05,3.42) {$V$};
+    \node[font=\footnotesize,anchor=south] at (6.05,3.42) {$W$};
 
-    % Domain V: range T* (blue) and null T (red)
-    \draw[draw=figblue!85!black,line width=0.65pt,fill=figblue!6] (0,2.50) rectangle (2.30,3.75);
-    \node[font=\footnotesize,align=center,text=figblue!90!black] at (1.15,3.13) {$\range T^*$\\[-1pt]\scriptsize $=(\nul T)^\perp$};
+    % Domain V: range T* (soft gray wash) and null T (white dashed hairline)
+    \draw[draw=black!80,line width=0.45pt,fill=black!7] (0,2.22) rectangle (2.10,3.32);
+    \node[font=\footnotesize] at (1.05,2.77) {$\range T^*$};
 
-    \node[font=\scriptsize] at (0.95,1.66) {$\perp$};
-    \fill[black] (2.30,1.66) circle (1.8pt) node[left=3pt,font=\scriptsize] {$0_V$};
+    \node[font=\scriptsize,text=black!75] at (0.85,1.62) {$\perp$};
+    \fill[black] (2.10,1.62) circle (1.35pt) node[left=3pt,font=\scriptsize] {$0_V$};
 
-    \draw[draw=figred!85!black,dashed,line width=0.6pt,fill=figred!5] (0,0.0) rectangle (2.30,1.25);
-    \node[font=\footnotesize,text=figred!90!black] at (1.15,0.62) {$\nul T$};
+    \draw[draw=black!75,dashed,line width=0.45pt,fill=white] (0,0.0) rectangle (2.10,1.08);
+    \node[font=\footnotesize] at (1.05,0.54) {$\nul T$};
 
-    % Codomain W: range T (blue) and null T* (red)
-    \draw[draw=figblue!85!black,line width=0.65pt,fill=figblue!6] (5.40,2.50) rectangle (7.70,3.75);
-    \node[font=\footnotesize,align=center,text=figblue!90!black] at (6.55,3.13) {$\range T$\\[-1pt]\scriptsize $=(\nul T^*)^\perp$};
+    % Codomain W: range T (soft gray wash) and null T* (white dashed hairline)
+    \draw[draw=black!80,line width=0.45pt,fill=black!7] (5.00,2.22) rectangle (7.10,3.32);
+    \node[font=\footnotesize] at (6.05,2.77) {$\range T$};
 
-    \fill[black] (5.40,1.66) circle (1.8pt) node[right=3pt,font=\scriptsize] {$0_W$};
-    \node[font=\scriptsize] at (6.75,1.66) {$\perp$};
+    \fill[black] (5.00,1.62) circle (1.35pt) node[right=3pt,font=\scriptsize] {$0_W$};
+    \node[font=\scriptsize,text=black!75] at (6.25,1.62) {$\perp$};
 
-    \draw[draw=figred!85!black,dashed,line width=0.6pt,fill=figred!5] (5.40,0.0) rectangle (7.70,1.25);
-    \node[font=\footnotesize,text=figred!90!black] at (6.55,0.62) {$\nul T^*$};
+    \draw[draw=black!75,dashed,line width=0.45pt,fill=white] (5.00,0.0) rectangle (7.10,1.08);
+    \node[font=\footnotesize] at (6.05,0.54) {$\nul T^*$};
 
-    % Bijections between range T* and range T
-    \draw[->,figblue,line width=0.8pt] (2.44,3.38) -- node[above=1pt,font=\scriptsize,text=figblue!90!black] {$T$ (bijection)} (5.26,3.38);
-    \draw[->,figblue,line width=0.8pt] (5.26,2.86) -- node[below=1pt,font=\scriptsize,text=figblue!90!black] {$T^*$ (bijection)} (2.44,2.86);
+    % Delicate bijection arrows between range T* and range T
+    \draw[->,black,line width=0.65pt] (2.26,2.98) -- node[above=1pt,font=\scriptsize] {$T$} (4.84,2.98);
+    \draw[->,black,line width=0.65pt] (4.84,2.54) -- node[below=1pt,font=\scriptsize] {$T^*$} (2.26,2.54);
 
-    % Null spaces collapse cleanly to 0_W and 0_V with generous spacing
-    \draw[->,figred!85!black,dashed,line width=0.65pt] (2.44,0.88) .. controls (3.65,1.12) and (4.45,1.42) .. (5.24,1.60);
-    \node[font=\scriptsize,text=figred!90!black] at (3.85,2.04) {$T(\nul T)=\{0_W\}$};
-    \draw[->,figred!85!black,dashed,line width=0.65pt] (5.26,0.46) .. controls (4.10,0.72) and (3.25,1.26) .. (2.46,1.56);
-    \node[font=\scriptsize,text=figred!90!black] at (3.85,0.12) {$T^*(\nul T^*)=\{0_V\}$};
+    % Delicate straight dashed collapse arrows to 0_W and 0_V
+    \draw[->,black!60,dashed,line width=0.45pt] (2.26,0.72) -- (4.84,1.56);
+    \node[font=\scriptsize,text=black!70] at (4.06,1.52) {$T$};
+    \draw[->,black!60,dashed,line width=0.45pt] (4.84,0.44) -- (2.26,1.52);
+    \node[font=\scriptsize,text=black!70] at (4.06,0.52) {$T^*$};
+
+    \node[font=\footnotesize] at (3.55,-0.55) {(a)};
   \end{scope}
 
-  % Right example: two side-by-side planes V and W cleanly separated from left schematic
-  \begin{scope}[xshift=10.15cm,yshift=1.82cm]
-    \node[font=\scriptsize,align=center,anchor=south] at (0,1.94) {$V=\RR^2$\\[-1pt]$\nul T \perp \range T^*$};
+  % Panel (b): Concrete R^2 -> R^2 example
+  \begin{scope}[xshift=9.65cm,yshift=1.68cm]
+    \node[font=\footnotesize,anchor=south] at (0,1.74) {$V=\RR^2$};
     \draw[figaxis,draw=black!35] (-1.22,0) -- (1.25,0);
     \draw[figaxis,draw=black!35] (0,-1.22) -- (0,1.28);
-    \draw[very thick,figred,dashed,<->] (-1.12,0.56) -- (1.12,-0.56) node[below=2pt,font=\scriptsize,text=figred!90!black] {$\nul T$};
-    \draw[very thick,figblue,<->] (-0.56,-1.12) -- (0.56,1.12) node[above right=1pt,font=\scriptsize,text=figblue!90!black] {$\range T^*$};
-    % Right-angle mark in Q1/Q4 completely clear of axes
-    \draw[black!70,thin] (0.11,0.22) -- (0.33,0.11) -- (0.22,-0.11);
+    \draw[black!65,dashed,line width=0.72pt] (-1.10,0.55) -- (1.10,-0.55);
+    \node[font=\scriptsize,text=black!80,below=2pt] at (0.85,-0.46) {$\nul T$};
+    \draw[black,line width=0.95pt] (-0.56,-1.12) -- (0.56,1.12);
+    \node[font=\scriptsize,above right=1pt] at (0.52,1.04) {$\range T^*$};
+    \draw[black!60,line width=0.38pt] (0.10,0.20) -- (0.30,0.10) -- (0.20,-0.10);
   \end{scope}
 
-  \begin{scope}[xshift=13.55cm,yshift=1.82cm]
-    \node[font=\scriptsize,align=center,anchor=south] at (0,1.94) {$W=\RR^2$\\[-1pt]$\range T \perp \nul T^*$};
-    \draw[very thick,figblue,<->] (-1.22,0) -- (1.25,0);
-    \node[above=3pt,font=\scriptsize,text=figblue!90!black] at (0.76,0) {$\range T$};
-    \draw[very thick,figred,dashed,<->] (0,-1.20) -- (0,1.25);
-    \node[right=3pt,font=\scriptsize,text=figred!90!black] at (0,1.02) {$\nul T^*$};
-    \draw[black!70,thin] (0.22,0) -- (0.22,0.22) -- (0,0.22);
+  \begin{scope}[xshift=13.05cm,yshift=1.68cm]
+    \node[font=\footnotesize,anchor=south] at (0,1.74) {$W=\RR^2$};
+    \draw[black,line width=0.95pt] (-1.20,0) -- (1.22,0);
+    \node[above=3pt,font=\scriptsize] at (0.76,0) {$\range T$};
+    \draw[black!65,dashed,line width=0.72pt] (0,-1.18) -- (0,1.22);
+    \node[right=3pt,font=\scriptsize,text=black!80] at (0,0.98) {$\nul T^*$};
+    \draw[black!60,line width=0.38pt] (0.20,0) -- (0.20,0.20) -- (0,0.20);
   \end{scope}
+  \node[font=\footnotesize] at (11.35,-0.55) {(b)};
 \end{tikzpicture}
-\figcap{\textbf{Left:} The four fundamental spaces of $T$ and $T^*$ (\hyperref[prop-94]{Prop.~94}): $V=\range T^*\oplus\nul T$ and $W=\range T\oplus\nul T^*$, where $T$ and $T^*$ restrict to bijections between $\range T^*$ and $\range T$ (blue) while collapsing $\nul T\to\{0_W\}$ and $\nul T^*\to\{0_V\}$ (red). \textbf{Right:} For $T(x,y)=(x+2y,0)$ on $\RR^2$ ($T^*(x,y)=(x,2x)$), $\range T$ (the $x$-axis) $\perp\nul T^*$ (the $y$-axis), and $\nul T=\spn(-2,1)\perp\range T^*=\spn(1,2)$.}
+\figcap{(a) The four fundamental spaces of $T$ and $T^*$ (\hyperref[prop-94]{Prop.~94}): $V=\range T^*\oplus\nul T$ and $W=\range T\oplus\nul T^*$, where $T$ and $T^*$ restrict to bijections between $\range T^*=(\nul T)^\perp$ and $\range T=(\nul T^*)^\perp$ (shaded) while collapsing $\nul T\to\{0_W\}$ and $\nul T^*\to\{0_V\}$ (dashed). (b) For $T(x,y)=(x+2y,0)$ on $\RR^2$ ($T^*(x,y)=(x,2x)$), $\nul T=\spn(-2,1)\perp\range T^*=\spn(1,2)$ in $V$ and $\range T$ ($x$-axis) $\perp\nul T^*$ ($y$-axis) in $W$.}
 \end{fig}
 
 \begin{proposition*}[LADR 7.7: Injectivity/surjectivity duality and ranks]\target{name-ladr-7-7}
@@ -443,79 +448,70 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
-  % Left panel title aligned with right panel title
-  \node[font=\footnotesize\bfseries] at (2.35,5.88) {(a) Directional stretch $r(\theta)$};
-
+\begin{tikzpicture}[scale=1.0]
+  % Panel (a): Restrained monochrome + 1-accent polar stretch plot
   \begin{axis}[
-    at={(0.15cm,0.80cm)},
+    at={(0.20cm,0.85cm)},
     anchor=south west,
-    width=5.8cm,height=5.3cm,
+    width=5.4cm,height=5.0cm,
     axis lines=middle,
-    axis line style={-{Stealth[length=4pt,width=2.6pt]},black!75},
-    xmin=-2.15,xmax=2.25,ymin=-2.05,ymax=2.25,
+    axis line style={-{Stealth[length=3.6pt,width=2.1pt]},black!70,line width=0.4pt},
+    xmin=-2.10,xmax=2.20,ymin=-2.05,ymax=2.20,
     xtick=\empty,ytick=\empty,
     xlabel={$x$},ylabel={$y$},
     label style={font=\scriptsize},
     axis equal image,
     clip=false
   ]
-    \addplot[domain=0:360,samples=160,smooth,figslate,thick,densely dotted]
+    % Normal circle: subtle dotted gray
+    \addplot[domain=0:360,samples=160,smooth,black!45,line width=0.6pt,densely dotted]
       ({sqrt(2)*cos(x)},{sqrt(2)*sin(x)});
-    \addplot[domain=0:360,samples=200,smooth,figblue,very thick]
+    % ||Bv||: solid crisp black
+    \addplot[domain=0:360,samples=200,smooth,black,line width=1.0pt]
       ({sqrt((cos(x)+sin(x))^2 + sin(x)^2)*cos(x)},{sqrt((cos(x)+sin(x))^2 + sin(x)^2)*sin(x)});
-    \addplot[domain=0:360,samples=200,smooth,figred,very thick,dashed]
+    % ||B*v||: dashed single accent (figblue)
+    \addplot[domain=0:360,samples=200,smooth,figblue,line width=0.85pt,dashed]
       ({sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*cos(x)},{sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*sin(x)});
 
-    % Direct curve callouts pointing cleanly to each curve's outermost lobe
-    \node[font=\scriptsize,text=figslate] at (axis cs:0,-2.35) {$\|Av\|=\|A^*v\|=\sqrt{2}$ (dotted)};
-    \node[font=\scriptsize,text=figblue!90!black] (bvlbl) at (axis cs:1.58,1.96) {$\|Bv\|$ (solid)};
-    \draw[->,figblue!85!black,thin] (bvlbl.south) -- (axis cs:0.86,1.46);
-    \node[font=\scriptsize,text=figred!90!black,anchor=east] (bslbl) at (axis cs:-1.18,-1.64) {$\|B^*v\|$ (dashed)};
-    \draw[->,figred!85!black,thin] ([xshift=-12pt]bslbl.north east) -- (axis cs:-1.49,-0.78);
+    % Atomic curve labels
+    \node[font=\scriptsize,text=black!65] at (axis cs:0,-2.35) {$\|Av\|=\|A^*v\|=\sqrt{2}$};
+    \node[font=\scriptsize,text=black] (bvlbl) at (axis cs:1.50,1.92) {$\|Bv\|$};
+    \draw[black!55,line width=0.35pt] (bvlbl.south west) -- (axis cs:0.86,1.44);
+    \node[font=\scriptsize,text=figblue!90!black,anchor=east] (bslbl) at (axis cs:-1.30,-1.60) {$\|B^*v\|$};
+    \draw[figblue!70,line width=0.35pt] (bslbl.north east) -- (axis cs:-1.44,-0.80);
   \end{axis}
+  \node[font=\footnotesize] at (2.25,-0.55) {(a)};
 
-  % Right: Hierarchy of operator classes
-  \begin{scope}[xshift=6.55cm,yshift=0.0cm]
-    \node[font=\footnotesize\bfseries] at (4.00,5.88) {(b) Hierarchy of operator classes};
+  % Panel (b): Spivak-clean white hairline operator hierarchy (zero pastel cards)
+  \begin{scope}[xshift=6.65cm,yshift=0.25cm]
     \tikzset{
-      opbox/.style={draw=black,line width=0.55pt,inner sep=4.2pt,align=center,font=\scriptsize},
-      inc/.style={->,line width=0.7pt,shorten <=2pt,shorten >=2pt}
+      opnode/.style={draw=black!80,fill=white,line width=0.45pt,inner sep=4.2pt,align=center,font=\scriptsize},
+      inc/.style={->,draw=black!75,line width=0.5pt,shorten <=2pt,shorten >=2pt}
     }
-    % Top: All operators L(V)
-    \node[opbox,fill=black!3] (all) at (4.00,5.08)
-      {\textbf{All operators $\LL(V)$}\\[1pt]e.g.\ shear $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ ($BB^*\ne B^*B$)};
+    \node[opnode] (all) at (3.65,4.75) {All operators $\LL(V)$};
 
-    % Level 2: Normal operators
-    \node[opbox,draw=figblue!85!black,fill=figblue!5,text=figblue!90!black] (norm) at (4.00,3.50)
-      {\textbf{Normal} ($TT^*=T^*T \iff \|Tv\|=\|T^*v\|$)\\[1pt]e.g.\ $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$};
+    \node[opnode] (norm) at (3.65,3.45) {Normal\\[-1pt]$TT^*=T^*T$};
 
-    % Level 3 Left: Self-adjoint
-    \node[opbox,draw=figgreen!85!black,fill=figgreen!5,text=figgreen!90!black] (sa) at (1.80,1.95)
-      {\textbf{Self-adjoint} ($T^*=T$)\\[1pt]real spectrum; $D=\begin{psmallmatrix}2&0\\0&-1\end{psmallmatrix}$};
+    \node[opnode] (sa) at (1.55,1.95) {Self-adjoint\\[-1pt]$T^*=T$};
 
-    % Level 3 Right: Unitary / Isometries
-    \node[opbox,draw=figamber!90!black,fill=figamber!5,text=figamber!90!black] (unit) at (6.20,1.95)
-      {\textbf{Unitary / Isometry} ($T^*T=I$)\\[1pt]$\|Tv\|=\|v\|$; rotation $R_{\pi/2}$};
+    \node[opnode] (unit) at (5.75,1.95) {Unitary / Isometry\\[-1pt]$T^*T=I$};
 
-    % Level 4 Left: Positive (centered directly below Self-adjoint)
-    \node[opbox,draw=figred!85!black,fill=figred!6,text=figred!90!black] (pos) at (1.55,0.38)
-      {\textbf{Positive} ($\langle Tv,v\rangle\ge 0$)\\[1pt]$\lambda_j\ge 0$; $P=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$};
+    \node[opnode] (pos) at (1.55,0.45) {Positive\\[-1pt]$\langle Tv,v\rangle\ge 0$};
 
-    % Level 4 Right: Intersection Self-adjoint \cap Unitary
-    \node[opbox,draw=figslate,dashed,fill=black!3] (inter) at (5.85,0.38)
-      {\textbf{Self-adjoint $\cap$ Unitary}\\[1pt]$T^*=T=T^{-1}$: reflections $H_{\text{refl}},\,\pm I$};
+    \node[opnode,dashed,draw=black!70] (inter) at (5.55,0.45) {Self-adjoint $\cap$ Unitary\\[-1pt]$T^*=T=T^{-1}$};
 
-    % Clean inclusion arrows connecting node borders directly (zero floating gaps!)
+    % Delicate inclusion arrows
     \draw[inc] (norm.north) -- (all.south);
-    \draw[inc,figgreen!85!black] (sa.north) -- ($(norm.south)+(-1.05,0)$);
-    \draw[inc,figamber!90!black] (unit.north) -- ($(norm.south)+(1.05,0)$);
-    \draw[inc,figred!85!black] (pos.north) -- ($(sa.south)+(-0.25,0)$);
-    \draw[inc,figslate,dashed] ($(inter.north)+(-1.10,0)$) -- ($(sa.south)+(0.80,0)$);
-    \draw[inc,figslate,dashed] ($(inter.north)+(0.35,0)$) -- (unit.south);
+    \draw[inc] (sa.north) -- ($(norm.south)+(-0.65,0)$);
+    \draw[inc] (unit.north) -- ($(norm.south)+(0.65,0)$);
+    \draw[inc] (pos.north) -- (sa.south);
+    \draw[inc,dashed,draw=black!60] ($(inter.north)+(-0.85,0)$) -- ($(sa.south)+(0.55,0)$);
+    \draw[inc,dashed,draw=black!60] ($(inter.north)+(0.20,0)$) -- (unit.south);
+
+    \node[font=\footnotesize] at (3.65,-0.80) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{\textbf{Left:} Polar plot of directional stretch $r(\theta)=\|Tv\|$ and $\|T^*v\|$ on unit vectors $v=(\cos\theta,\sin\theta)$ (\hyperref[prop-98]{Prop.~98}). Normal $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ produces identical circles of radius $\sqrt{2}$ (dotted); non-normal $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ gives distinct curves for $\|Bv\|$ (blue solid) and $\|B^*v\|$ (red dashed). \textbf{Right:} Hierarchy of operator classes inside $\LL(V)$ with $2\times2$ examples.}
+\figcap{(a) Polar plot of directional stretch $r(\theta)=\|Tv\|$ and $\|T^*v\|$ on unit vectors $v=(\cos\theta,\sin\theta)$ (\hyperref[prop-98]{Prop.~98}). Normal $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ gives identical circles of radius $\sqrt{2}$ (dotted); non-normal shear $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ gives distinct curves for $\|Bv\|$ (solid) and $\|B^*v\|$ (dashed). (b) Inclusion hierarchy of operator classes inside $\LL(V)$ (arrows denote $\subseteq$), from positive operators (e.g.\ $\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$) and reflections ($T^*=T=T^{-1}$) up to $\LL(V)$.}
 \end{fig}
 
 \noindent\textbf{The question answered.} $\|Ae_1\|=\|(1,1)\|=\sqrt{2}=\|A^*e_1\|$, whereas $\|Be_1\|=1\neq \sqrt{2}=\|B^*e_1\|$. By Prop.~98, $\|Tv\|=\|T^*v\|$ holds for all $v$ precisely when $T$ is normal.
@@ -687,74 +683,75 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 \end{example*}
 
 \begin{fig}
-\begin{tikzpicture}[scale=1.0,>=Stealth]
-  \begin{scope}[xshift=0cm,yshift=0cm,scale=0.55]
-    % Proper axes with arrowheads and legible labels
-    \draw[figaxis,draw=black!50] (-3.8,0) -- (4.2,0) node[right=2pt,font=\scriptsize,text=black] {$x$};
-    \draw[figaxis,draw=black!50] (0,-3.6) -- (0,3.8) node[above=1pt,font=\scriptsize,text=black] {$y$};
+\begin{tikzpicture}[scale=1.0]
+  \begin{scope}[xshift=0cm,yshift=0cm,scale=0.54]
+    % Hair-thin axes
+    \draw[figaxis,draw=black!50] (-3.7,0) -- (4.1,0) node[right=2pt,font=\scriptsize,text=black] {$x$};
+    \draw[figaxis,draw=black!50] (0,-3.5) -- (0,3.7) node[above=1pt,font=\scriptsize,text=black] {$y$};
 
-    % Image ellipse with light tint
-    \fill[figblue,fill opacity=0.05] (0,0) [rotate=45] ellipse (4 and 2);
-    \draw[figblue,very thick,rotate=45] (0,0) ellipse (4 and 2);
+    % Image ellipse: soft neutral gray wash + crisp pure black boundary
+    \fill[black!7] (0,0) [rotate=45] ellipse (4 and 2);
+    \draw[black,line width=1.0pt,rotate=45] (0,0) ellipse (4 and 2);
 
-    % Unit circle (dashed) with label cleanly inside open Q3 interior (clear of ellipse!)
-    \draw[black!65,thin,dashed] (0,0) circle (1);
-    \node[font=\scriptsize,text=black!75,anchor=north east] at (-0.82,-0.82) {$\|v\|=1$};
+    % Reference unit circle (dashed)
+    \draw[black!55,line width=0.45pt,dashed] (0,0) circle (1);
+    \node[font=\scriptsize,text=black!70,anchor=north east] at (-0.82,-0.82) {$\|v\|=1$};
 
     % Right-angle mark between u1 and u2
-    \draw[black!65,thin,rotate=45] (0.42,0) -- (0.42,-0.42) -- (0,-0.42);
+    \draw[black!55,line width=0.38pt,rotate=45] (0.42,0) -- (0.42,-0.42) -- (0,-0.42);
 
-    % Stretched eigenvectors 4u1 and 2u2
-    \draw[->,very thick,figblue,shorten >=1pt] (0,0) -- ({4/sqrt(2)},{4/sqrt(2)})
+    % Stretched eigenvectors 4u1 and 2u2 (single restrained accent)
+    \draw[->,line width=0.92pt,figblue,shorten >=0.8pt] (0,0) -- ({4/sqrt(2)},{4/sqrt(2)})
       node[above right=1pt,font=\scriptsize,text=figblue!90!black] {$4u_1$};
-    \draw[->,very thick,figred,shorten >=1pt] (0,0) -- ({2/sqrt(2)},{-2/sqrt(2)})
-      node[below right=1pt,font=\scriptsize,text=figred!90!black] {$2u_2$};
+    \draw[->,line width=0.92pt,figblue,shorten >=0.8pt] (0,0) -- ({2/sqrt(2)},{-2/sqrt(2)})
+      node[below right=1pt,font=\scriptsize,text=figblue!90!black] {$2u_2$};
 
-    % Unit eigenvectors u1 and u2 cleanly labeled in open Q1/Q4 space (clear of y-axis & unit circle!)
-    \draw[->,thick,black] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)});
-    \node[font=\scriptsize,anchor=west] (u1lbl) at (1.28,0.52) {$u_1$};
-    \draw[->,black!60,thin] (u1lbl.west) -- (0.78,0.68);
-    \draw[->,thick,black] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)});
-    \node[font=\scriptsize,anchor=west] (u2lbl) at (1.28,-0.52) {$u_2$};
-    \draw[->,black!60,thin] (u2lbl.west) -- (0.78,-0.68);
+    % Unit eigenvectors u1 and u2 with whisper leaders clear of unit circle
+    \draw[->,line width=0.8pt,black] (0,0) -- ({1/sqrt(2)},{1/sqrt(2)});
+    \node[font=\scriptsize,anchor=west] (u1lbl) at (1.30,0.56) {$u_1$};
+    \draw[black!45,line width=0.32pt] (u1lbl.west) -- (0.78,0.68);
+    \draw[->,line width=0.8pt,black] (0,0) -- ({1/sqrt(2)},{-1/sqrt(2)});
+    \node[font=\scriptsize,anchor=west] (u2lbl) at (1.30,-0.56) {$u_2$};
+    \draw[black!45,line width=0.32pt] (u2lbl.west) -- (0.78,-0.68);
 
-    \node[font=\footnotesize,anchor=north] at (0,-3.95) {(a) Unit circle $\mapsto$ ellipse ($u_1\perp u_2$)};
+    \node[font=\footnotesize,anchor=north] at (0,-3.95) {(a)};
   \end{scope}
 \end{tikzpicture}
-\hspace{0.9cm}
+\hspace{1.2cm}
 \tdplotsetmaincoords{68}{118}
-\begin{tikzpicture}[tdplot_main_coords,scale=1.10,>=Stealth]
-  % Exact orthonormal frame for E(1,A) = span(e2,e3) (z=0) and E(4,A) = span(e1) (z-axis)
-  \draw[figred,thick,dashed] (0,0,-1.05) -- (0,0,0);
+\begin{tikzpicture}[tdplot_main_coords,scale=1.08]
+  % Continuation of normal line below the plane
+  \draw[figblue!65,line width=0.55pt,dashed] (0,0,-1.22) -- (0,0,0);
 
-  \fill[figplane] (-1.55,-1.55,0) -- (2.05,-1.55,0) -- (2.05,2.05,0) -- (-1.55,2.05,0) -- cycle;
-  \draw[figblue!70!black,thin] (-1.55,-1.55,0) -- (2.05,-1.55,0) -- (2.05,2.05,0) -- (-1.55,2.05,0) -- cycle;
+  % Plane eigenspace E(1,A): soft gray wash + whisper edge
+  \fill[figplane] (-1.50,-1.50,0) -- (2.00,-1.50,0) -- (2.00,2.00,0) -- (-1.50,2.00,0) -- cycle;
+  \draw[black!28,line width=0.32pt] (-1.50,-1.50,0) -- (2.00,-1.50,0) -- (2.00,2.00,0) -- (-1.50,2.00,0) -- cycle;
 
-  % Crisp right-angle marks showing e2 \perp e3 and e1 \perp E(1,A)
-  \draw[figblue!70!black,thin] (0.28,0,0) -- (0.28,0.28,0) -- (0,0.28,0);
-  \draw[black!70,thin] (0.28,0,0) -- (0.28,0,0.28) -- (0,0,0.28);
-  \draw[black!70,thin] (0,0.28,0) -- (0,0.28,0.28) -- (0,0,0.28);
+  % Delicate right-angle marks
+  \draw[black!55,line width=0.38pt] (0.26,0,0) -- (0.26,0.26,0) -- (0,0.26,0);
+  \draw[black!55,line width=0.38pt] (0.26,0,0) -- (0.26,0,0.26) -- (0,0,0.26);
+  \draw[black!55,line width=0.38pt] (0,0.26,0) -- (0,0.26,0.26) -- (0,0,0.26);
 
-  % Orthonormal basis e2, e3 of E(1,A)
-  \draw[->,very thick,figblue] (0,0,0) -- (1.45,0,0);
-  \node[font=\scriptsize,text=figblue!90!black,above left=2pt] at (1.25,0,0) {$e_2$};
-  \draw[->,very thick,figblue] (0,0,0) -- (0,1.45,0);
-  \node[font=\scriptsize,text=figblue!90!black,above right=2pt] at (0,1.25,0) {$e_3$};
+  % Orthonormal basis e2, e3 of E(1,A) (crisp black)
+  \draw[->,line width=0.9pt,black] (0,0,0) -- (1.42,0,0);
+  \node[font=\scriptsize,above left=2pt] at (1.22,0,0) {$e_2$};
+  \draw[->,line width=0.9pt,black] (0,0,0) -- (0,1.42,0);
+  \node[font=\scriptsize,above right=2pt] at (0,1.22,0) {$e_3$};
 
-  % Plane label cleanly inside open front interior (no halo!)
-  \node[font=\scriptsize,text=figblue!90!black] at (1.35,1.35,0) {$E(1,A)$};
+  % Plane label tucked cleanly in front corner
+  \node[font=\scriptsize,text=black!75] at (1.35,1.35,0) {$E(1,A)$};
 
-  % Normal eigenvector e1 in E(4,A)
-  \draw[->,very thick,figred] (0,0,0) -- (0,0,1.85);
-  \node[font=\scriptsize,text=figred!90!black,right=5pt] at (0,0,1.58) {$e_1\in E(4,A)$};
+  % Normal eigenvector e1 in E(4,A) (single restrained accent)
+  \draw[->,line width=0.98pt,figblue] (0,0,0) -- (0,0,1.82);
+  \node[font=\scriptsize,text=figblue!90!black,right=4pt] at (0,0,1.55) {$e_1\in E(4,A)$};
 
-  \fill[black] (0,0,0) circle (1.4pt);
+  \fill[black] (0,0,0) circle (1.3pt);
 
   \begin{scope}[tdplot_screen_coords]
-    \node[font=\footnotesize,anchor=north] at (0,-1.55) {(b) Orthogonal eigenspaces $E(4,A)\perp E(1,A)$};
+    \node[font=\footnotesize,anchor=north] at (0,-1.55) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{\textbf{Left:} For $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, the unit circle maps to an ellipse whose perpendicular semi-axes lie along $u_1=\frac{1}{\sqrt{2}}(1,1)$ (stretch $4$, blue) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ (stretch $2$, red). \textbf{Right:} For the $3\times3$ worked example, the plane eigenspace $E(1,A)=\spn(e_2,e_3)$ ($x+y+z=0$, blue) and the line eigenspace $E(4,A)=\spn(e_1)$ (red) are orthogonal complements in $\RR^3$.}
+\figcap{(a) For $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, the unit circle maps to an ellipse whose perpendicular semi-axes lie along the orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ (stretch $4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ (stretch $2$). (b) For the $3\times3$ worked example, the plane eigenspace $E(1,A)=\spn(e_2,e_3)$ ($x+y+z=0$) and the line eigenspace $E(4,A)=\spn(e_1)$ are orthogonal complements in $\RR^3$.}
 \end{fig}
 
 \noindent\textbf{The question answered.} Yes: $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ is symmetric, with orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ ($\lambda=4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ ($\lambda=2$). Writing $v=au_1+bu_2$ on the unit circle ($a^2+b^2=1$) gives $Av=4au_1+2bu_2$, which traces the ellipse with perpendicular semi-axes $4$ and $2$.
