@@ -38,13 +38,42 @@
 </p>
 
 <nav class="toc-bar" aria-label="Case studies">
+  <a href="#code-guide">R Code Breakdown</a>
   <a href="#case-1">1. Salary Audit (Simpson&rsquo;s Paradox)</a>
   <a href="#case-2">2. Note-Taking Experiment (Permutation)</a>
   <a href="#case-3">3. Campus Gym Policy (DID)</a>
 </nav>
 
+<section class="code-guide first-case" id="code-guide">
+  <h2>Piece-by-Piece Breakdown: R Pipelines for Causal Inference &amp; Permutation Tests</h2>
+  <p>Every experiment workflow combines three tools: <code>group_by()</code> + <code>summarize()</code> for group means and covariate balance, <code>lm()</code> for confounding adjustment, and <code>infer</code> (or shuffled vectors) for randomization tests.</p>
+  <pre><code class="language-r"># 1. Group summary + observed difference in means (ATE / balance check)
+obs_diff &lt;- study_df |&gt;
+  group_by(group) |&gt;
+  summarize(n = n(), mean_score = mean(score)) |&gt;
+  summarize(ate_hat = diff(mean_score))
 
-<section class="case-study first-case" id="case-1">
+# 2. Permutation null distribution &amp; two-sided p-value (infer workflow)
+obs_stat  &lt;- study_df |&gt; specify(score ~ group) |&gt; calculate(stat = "diff in means", order = c("pdf", "website"))
+null_dist &lt;- study_df |&gt; specify(score ~ group) |&gt; hypothesize(null = "independence") |&gt;
+  generate(reps = 500, type = "permute") |&gt; calculate(stat = "diff in means", order = c("pdf", "website"))
+null_dist |&gt; get_p_value(obs_stat = obs_stat, direction = "both")</code></pre>
+  <table class="code-anatomy">
+    <thead><tr><th>R expression / argument</th><th>Input &rarr; Output shape</th><th>Exact role and key rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>group_by(dept, group)</code></td><td>Raw data frame &rarr; grouped tibble</td><td>Splits rows by every distinct combination of stratification variables (essential for uncovering Simpson&rsquo;s paradox).</td></tr>
+      <tr><td><code>summarize(n = n(), mean_score = mean(score))</code></td><td>Grouped tibble &rarr; 1 row per group</td><td>Computes counts and group averages inside each bucket; removes one grouping level on output.</td></tr>
+      <tr><td><code>diff(mean_score)</code></td><td>Length-2 vector &rarr; scalar difference</td><td>Computes <code>x[2] - x[1]</code> in row order; check group order or filter/sort before calling <code>diff()</code> so the sign is known.</td></tr>
+      <tr><td><code>lm(salary_k ~ group + dept)</code></td><td>Formula + data &rarr; linear model</td><td>Adding pre-treatment <code>dept</code> holds department fixed, separating within-department pay gaps from composition confounding.</td></tr>
+      <tr><td><code>specify(score ~ group)</code></td><td>Outcome left, treatment right</td><td>Declares response and explanatory variables; drops rows with <code>NA</code> in either column before resampling.</td></tr>
+      <tr><td><code>hypothesize(null = "independence")</code></td><td>Null model specification</td><td>Fixes the sharp chance hypothesis that each unit&rsquo;s outcome would stay identical regardless of treatment label.</td></tr>
+      <tr><td><code>generate(reps = 500, type = "permute")</code></td><td>$n$ rows &rarr; $500 \times n$ rows</td><td>Shuffles the treatment column $500$ times without replacement across rows, preserving group sizes $m$ and $n-m$.</td></tr>
+      <tr><td><code>calculate(..., order = c("pdf", "website"))</code></td><td>$500 \times n$ &rarr; $500$ statistics</td><td>Evaluates $\bar y_{\text{pdf}} - \bar y_{\text{website}}$ per replicate; omitting <code>order</code> defaults to alphabetical order and can flip the sign.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="case-study" id="case-1">
   <h2>Case Study 1: Tech Company Salary Audit (Confounding &amp; Simpson&rsquo;s Paradox)</h2>
   <div class="case-body">
     <div class="case-meta">Dataset: <code>salaries</code> (40 employees across Engineering &amp; Operations)</div>

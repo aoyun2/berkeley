@@ -1,0 +1,665 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\title{STAT 20 --- Review: Weeks 9--12}
+\subtitle{Bootstrapping, hypothesis tests, study error, least squares, overfitting, and logistic regression}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--8}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Counting and probability (Weeks 5--6).} With $N$ equally likely outcomes, $\mathbb P(A) = (\text{outcomes in }A)/N$, and $\mathbb P(A^c) = 1 - \mathbb P(A)$. The binomial coefficient $\binom{n}{k}$ counts subsets of size $k$ from $n$ objects; for independent events, $\mathbb P(A\text{ and }B) = \mathbb P(A)\mathbb P(B)$.
+  \ii \textbf{Binomial distribution (Week 6).} The count $X$ of successes in $n$ independent trials, each succeeding with probability $p$, satisfies $\mathbb P(X = k) = \binom{n}{k}p^k(1-p)^{n-k}$ for $k=0,1,\dots,n$.
+  \ii \textbf{Expected value, variance, and standard error (Week 7).} For one uniform draw $X$ from tickets $x_1,\dots,x_N$:
+  \[
+    E(X) = \mu = \frac{1}{N}\sum_{i=1}^N x_i, \qquad \operatorname{Var}(X) = \sigma^2 = \frac{1}{N}\sum_{i=1}^N (x_i - \mu)^2 = E(X^2) - E(X)^2.
+  \]
+  Expectation is always linear: $E(aX+bY+c) = aE(X)+bE(Y)+c$. For independent $X,Y$: $\operatorname{Var}(X+Y) = \operatorname{Var}(X)+\operatorname{Var}(Y)$, $E(XY) = E(X)E(Y)$, and $\operatorname{Var}(aX) = a^2\operatorname{Var}(X)$. The mean $\bar X$ of $n$ independent draws has $E(\bar X)=\mu$, $\operatorname{Var}(\bar X)=\sigma^2/n$, and standard error $\mathrm{SE}(\bar X) = \sigma/\sqrt{n}$.
+  \ii \textbf{Normal approximation (Week 7).} For large $n$, a sample mean or proportion is approximately normal with mean $\mu$ and SD equal to its SE. A proportion of $1$s in $n$ draws has $\mathrm{SE} = \sqrt{p(1-p)/n}$. Roughly $95\%$ of a normal curve lies within $1.96$ SDs of its mean, and R's \cd{pnorm(z)} returns $\mathbb P(Z \le z)$ for standard normal $Z$.
+  \ii \textbf{Samples and confidence intervals (Week 8).} A parameter describes the population; a statistic summarizes the sample to estimate it. A simple random sample (SRS) is unbiased, whereas convenience sampling can introduce bias that no formula repairs. A $95\%$ confidence interval method covers the fixed parameter in roughly $95\%$ of repeated samples.
+  \ii \textbf{Linear models in R (Weeks 3--4).} Calling \cd{lm(y \textasciitilde{} x1 + x2, data = df)} fits $\hat y = b_0 + b_1x_1 + b_2x_2$, and \cd{coef()}, \cd{fitted()}, and \cd{residuals()} extract coefficients, $\hat y_i$, and $y_i - \hat y_i$. A categorical variable enters via $0/1$ indicators against its alphabetically first reference level. Correlation is $r = S_{xy}/\sqrt{S_{xx}S_{yy}}$ with $S_{xy} = \sum (x_i - \bar x)(y_i - \bar y)$, $S_{xx} = \sum (x_i - \bar x)^2$, and $S_{yy} = \sum (y_i - \bar y)^2$.
+\end{enumerate}
+
+\section{Bootstrapping (Notes: Bootstrapping)}
+
+\begin{qbox}
+  A simple random sample of $5$ penguins contains $2$ Chinstraps, giving $\hat p = 0.4$. Running $500$ bootstrap resamples yields a $95\%$ percentile interval of $[0, 0.8]$. Is a lower endpoint of $0$ a coding error, and would increasing the simulation to $10{,}000$ resamples produce a narrower interval?
+\end{qbox}
+
+Building a confidence interval requires the sampling distribution of the statistic across repeated samples from the population. With only one dataset in hand, we cannot draw additional population samples. Formulas cover sample means and proportions (W3--W4), yet no closed-form SE formula is available for a sample median or a multiple-regression slope.
+
+\medskip\noindent\textbf{The bootstrap principle.} When a sample is representative of the population, its empirical distribution approximates the unknown population distribution. Imagine cloning the sample infinitely many times to create a bootstrap population and drawing random samples of size $n$ from it. Drawing uniformly from infinitely many copies is identical to drawing $n$ elements \emph{with replacement} directly from the original sample.
+
+\begin{definition*}[Bootstrap sample, distribution, and percentile interval]
+  A \vocab{bootstrap resample} consists of $n$ draws made uniformly with replacement from an original sample of size $n$. Computing the target statistic on each of $B$ independent resamples forms the \vocab{bootstrap distribution}. The $C\%$ \vocab{percentile interval} runs from the $\frac{1-C/100}{2}$ quantile to the $\frac{1+C/100}{2}$ quantile of the bootstrap distribution (for $95\%$, the $0.025$ and $0.975$ quantiles).
+\end{definition*}
+
+Resampling requires size $n$ \emph{with} replacement for two reasons. First, spread depends on $n$ (W3: $\mathrm{SE} = \sigma/\sqrt{n}$), so each resample must match the original sample size. Second, drawing $n$ items without replacement merely permutes the data, leaving every mean, proportion, and median unchanged across resamples.
+
+\begin{theorem*}[Center and spread of the bootstrap mean]\target{thm-boot-mean}
+  Let $x_1,\dots,x_n$ be a sample with mean $\bar x$ and plug-in variance $\hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar x)^2$. The mean $\bar X^*$ of a size-$n$ bootstrap resample satisfies
+  \[
+    E(\bar X^*) = \bar x \qquad \text{and} \qquad \mathrm{SD}(\bar X^*) = \frac{\hat\sigma}{\sqrt{n}}.
+  \]
+\end{theorem*}
+
+\begin{ideabox}
+  Each bootstrap resample represents $n$ independent draws from a box holding the $n$ sample tickets. Applying the box mean and SE formulas from (W3) directly to that sample box yields center $\bar x$ and spread $\hat\sigma/\sqrt{n}$.
+\end{ideabox}
+
+\begin{proof}
+  \begin{steps}
+    \ii One draw $X^*$ picks each ticket $x_i$ with probability $1/n$, so by (W3) its expectation is $\frac{1}{n}\sum x_i = \bar x$ and its variance is $\frac{1}{n}\sum (x_i - \bar x)^2 = \hat\sigma^2$.
+    \ii Because draws are made with replacement, all $n$ draws in a resample are independent.
+    \ii Applying (W3) to the average $\bar X^*$ of $n$ independent draws from this box gives $E(\bar X^*) = \bar x$, $\operatorname{Var}(\bar X^*) = \hat\sigma^2/n$, and $\mathrm{SD}(\bar X^*) = \hat\sigma/\sqrt{n}$.
+  \end{steps}
+\end{proof}
+
+\noindent\textbf{Three consequences.}
+\begin{itemize}
+  \ii \textbf{Centered at the sample, not the population.} In the food-safety notes example, $500$ bootstrap means average $86.23$ around the sample mean $86.27$, rather than the population mean $87.6$. Bootstrapping cannot correct sampling bias or unlucky samples (W5).
+  \ii \textbf{Copies the sample SE formula.} Plugging sample SD into $\hat\sigma/\sqrt{n}$ matches normal-theory intervals closely on means ($84.4$ to $88.0$, SE $0.99$ vs.\ true SE $0.89$).
+  \ii \textbf{Width is controlled by $n$, not $B$.} Only sample size $n$ shrinks $\hat\sigma/\sqrt{n}$; raising $B$ merely reduces Monte Carlo simulation noise in estimating the fixed bootstrap distribution.
+\end{itemize}
+
+\begin{example*}[Exact bootstrap distribution for five penguins (Notes)]
+  In $5$ penguins with $2$ Chinstraps, each draw with replacement selects a Chinstrap independently with probability $p = 2/5 = 0.4$. The count $K$ of Chinstraps follows $\mathrm{Binomial}(5, 0.4)$ (W2), and $\hat p^* = K/5$:
+
+  \medskip
+  \noindent\begin{tabular}{@{}lcccccc@{}}
+  \toprule
+  $\hat p^*$ & $0$ & $0.2$ & $0.4$ & $0.6$ & $0.8$ & $1.0$ \\
+  \midrule
+  Probability & $0.0778$ & $0.2592$ & $0.3456$ & $0.2304$ & $0.0768$ & $0.0102$ \\
+  Cumulative probability & $0.0778$ & $0.3370$ & $0.6826$ & $0.9130$ & $0.9898$ & $1.0000$ \\
+  \bottomrule
+  \end{tabular}
+
+  \medskip
+  Because $\mathbb P(\hat p^* = 0) = 0.6^5 = 0.0778 > 0.025$, the $2.5\%$ quantile is $0$. Cumulative probability first crosses $0.975$ at $0.8$ ($0.9898$), giving the exact $95\%$ percentile interval $[0, 0.8]$.
+\end{example*}
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=8.6cm,height=4.0cm,
+    axis lines*=left,
+    ybar,bar width=16pt,
+    xmin=-0.12,xmax=1.12,ymin=0,ymax=0.40,
+    xtick={0,0.2,0.4,0.6,0.8,1.0},
+    ytick={0,0.1,0.2,0.3,0.4},
+    xlabel={Bootstrap proportion $\hat p^*$},
+    ylabel={Probability},
+    clip=false
+  ]
+    \addplot[fill=figblue!25,draw=figblue,thick] coordinates {
+      (0,0.0778) (0.2,0.2592) (0.4,0.3456) (0.6,0.2304) (0.8,0.0768) (1.0,0.0102)
+    };
+    \node[font=\scriptsize,text=figred,above=2pt] at (axis cs:0,0.082) {$q_{0.025}=0$};
+    \node[font=\scriptsize,text=figred,above=2pt] at (axis cs:0.8,0.082) {$q_{0.975}=0.8$};
+  \end{axis}
+\end{tikzpicture}
+\figcap{Exact bootstrap distribution of $\hat p^*$ for $2$ Chinstraps in $5$ penguins. Discrete jumps place the $2.5\%$ cut inside the bar at $0$ and the $97.5\%$ cut at $0.8$.}
+\end{fig}
+
+\noindent\textbf{Edge cases and properties of bootstrap intervals.}
+\begin{itemize}
+  \ii \textbf{All observations equal ($\hat p = 0$, $\hat p = 1$, or $n = 1$):} Every resample is identical, collapsing the interval to a single point (e.g.\ $[0,0]$).
+  \ii \textbf{Sample maxima or minima:} No resample can exceed the sample maximum. If the maximum is unique, a resample misses it with probability $(1 - 1/n)^n \approx e^{-1}$, so $\mathbb P(\max^* = \text{sample max}) = 1 - (1 - 1/n)^n$ ($0.672$ for $n=5$, $0.634$ for $n=100$). The bootstrap percentile interval fails for extreme order statistics.
+  \ii \textbf{Missing values (\cd{NA}):} \cd{infer::specify()} automatically drops rows containing \cd{NA} in specified columns with a warning ($333$ complete sex rows out of $344$ penguins). Base R \cd{mean(x)} returns \cd{NA} unless missing entries are removed first via \cd{x[!is.na(x)]}.
+  \ii \textbf{Confidence level and interval width:} Raising confidence from $90\%$ to $95\%$ to $99\%$ pushes quantiles outward ($0.05\to 0.025\to 0.005$ and $0.95\to 0.975\to 0.995$), widening the interval without requiring symmetry around the point estimate.
+  \ii \textbf{Testing via confidence interval:} A candidate null parameter outside the $95\%$ bootstrap interval (such as $0$ outside $[8.04, 26.8]$ for the Adelie penguin flipper slope in \cd{lm(body\_mass\_g \textasciitilde{} sex + flipper\_length\_mm)}) is inconsistent with the data at about the $5\%$ level.
+\end{itemize}
+
+\medskip\noindent\textbf{Piece-by-piece R code breakdown (infer and base R bootstrapping).} Notice how each verb in the \cd{infer} pipeline adds one stage to the resampling workflow, and how the same logic translates into two lines of base R:
+
+\Needspace{15\baselineskip}
+\begin{rcode}
+# Workflow A: Bootstrap percentile interval for a proportion (infer)
+boot_props <- penguins |>
+  specify(response = species, success = "Chinstrap") |>
+  generate(reps = 500, type = "bootstrap") |>
+  calculate(stat = "prop")
+
+boot_props |> get_ci(level = 0.95)
+
+# Workflow B: Bootstrap regression coefficients across whole-row resamples (infer)
+adelie |>
+  specify(body_mass_g ~ sex + flipper_length_mm) |>
+  generate(reps = 500, type = "bootstrap") |>
+  fit() |>
+  filter(term == "flipper_length_mm") |>
+  get_ci(level = 0.99)
+
+# Workflow C: Base R vector bootstrap (seed-reproducible)
+set.seed(1)
+boot_means <- replicate(500, mean(sample(x, size = length(x), replace = TRUE)))
+quantile(boot_means, probs = c(0.025, 0.975))
+\end{rcode}
+
+\Needspace{16\baselineskip}
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.3cm}X@{}}
+\toprule
+\textbf{R Function / Argument} & \textbf{What it takes} & \textbf{Output structure and exact role} \\
+\midrule
+\cd{specify(response, success)} & Column name + target level & Drops \cd{NA} rows and tags metadata; for logical columns set \cd{success = "TRUE"}. \\
+\cd{generate(reps, type = "bootstrap")} & \cd{reps = 500}, replacement flag & Draws $500$ size-$n$ row resamples with replacement and stacks them with a \cd{replicate} ID column. \\
+\cd{calculate(stat = "prop")} & Statistic name (\cd{"mean"}, \cd{"median"}, \cd{"prop"}, \cd{"diff in means"}) & Collapses each replicate into one number, returning a $500 \times 2$ data frame (\cd{replicate}, \cd{stat}). \\
+\cd{fit()} & Replaces \cd{calculate()} after a formula in \cd{specify()} & Fits the linear model inside every replicate, returning one row per coefficient per replicate (\cd{replicate}, \cd{term}, \cd{estimate}). \\
+\cd{get\_ci(level = 0.95)} & Confidence level in $(0,1)$ & Computes percentile endpoints via R's \cd{quantile()} and outputs \cd{lower\_ci}, \cd{upper\_ci}. \\
+\cd{sample(x, size = length(x), replace = TRUE)} & Numeric vector \cd{x}, \cd{replace = TRUE} & Safe for $\text{length}(x) > 1$; if length can be $1$, use \cd{x[sample.int(length(x), replace = TRUE)]} so R does not draw from \cd{1:x}. \\
+\bottomrule
+\end{tabularx}
+
+\medskip\noindent\textbf{The question answered.} The lower endpoint $0$ is completely valid: $7.8\%$ of all size-$5$ resamples contain zero Chinstraps, which exceeds $2.5\%$. Using $10{,}000$ resamples keeps the $95\%$ interval near $[0, 0.8]$ rather than narrowing it, because interval width shrinks only as $n$ increases.
+
+\begin{shortcuts}
+  \ii \textbf{Exact bootstrap distribution of a proportion:} Count $K$ follows $\mathrm{Binomial}(n, \hat p)$ (W2), avoiding simulation when $n$ is tiny.
+  \ii \textbf{Bootstrap SE of a mean directly:} Compute $\hat\sigma/\sqrt{n}$ with plug-in variance divisor $n$ (\ref{thm-boot-mean}). For $2, 4, 6, 8$: $\hat\sigma^2 = (9+1+1+9)/4 = 5$, so $\mathrm{SE} = \sqrt{5}/2 \approx 1.12$.
+  \ii \textbf{Valid bootstrap resample check:} Must contain exactly $n$ values drawn purely from the original sample with repeats permitted.
+  \ii \textbf{Confidence nesting:} On the same bootstrap replicates, a $99\%$ interval always contains the $95\%$ interval, which contains the $90\%$ interval.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{``Bootstrap distributions center on the true parameter.'':} They center on the sample statistic ($86.23$ near sample $86.27$ vs.\ population $87.6$).
+  \ii \textbf{``More replicates narrow the interval.'':} Increasing $B$ stabilizes simulation precision; only larger $n$ narrows the interval.
+  \ii \textbf{``A $95\%$ CI has $95\%$ probability of covering the true parameter once computed.'':} Both endpoints and the true parameter are fixed; $95\%$ is the long-run coverage rate of the procedure across samples (W5).
+\end{trapbox}
+
+\section{Hypothesis tests (Notes: Hypothesis Testing, Hypothesis Tests II)}
+
+\begin{qbox}
+  In a MythBusters study, $50$ participants were randomly assigned: $34$ received a yawn seed ($10$ yawned, $\hat p_s = 10/34$) and $16$ received no seed ($4$ yawned, $\hat p_n = 4/16$). Does this difference ($\hat p_s - \hat p_n = 0.044$) provide convincing evidence that yawning is contagious? Compute the exact $p$-value.
+\end{qbox}
+
+Four formal steps structure every hypothesis test (illustrated by the Kristen Gilbert hospital shifts example: $40/257 - 34/1384 = 0.131$):
+\begin{enumerate}[(1)]
+  \ii \textbf{Null and alternative hypotheses ($H_0, H_A$):} State $H_0$ as a concrete chance model carrying equality about parameters (e.g.\ $p_{\text{s}} - p_{\text{n}} = 0$ or $p = 0.5$, never sample statistics $\hat p$). State $H_A$ as what holds if $H_0$ fails.
+  \ii \textbf{Test statistic:} Choose a sample summary measuring departure from $H_0$ (a proportion, mean, difference, or $\chi^2$).
+  \ii \textbf{Null distribution:} Determine the sampling distribution of the test statistic assuming $H_0$ is true, by permutation (independence null), box draws (point null for proportions/categories), or shifted bootstrap (point null for a mean).
+  \ii \textbf{The $p$-value:} Probability, under $H_0$, of a statistic at least as extreme as the observed value in the direction(s) specified by $H_A$.
+\end{enumerate}
+
+\subsection{Null of independence: shuffling and exact permutation}
+
+Under $H_0$ of independence (exchangeability), each person would yawn or not regardless of group assignment. All $\binom{50}{34}$ subsets of size $34$ for the stimulus group are equally likely. Let $K$ be the number of the $14$ yawners who land in the stimulus group:
+\[
+  \mathbb P(K = k) = \frac{\binom{14}{k}\binom{36}{34-k}}{\binom{50}{34}}, \qquad \hat p_s - \hat p_n = \frac{k}{34} - \frac{14-k}{16}.
+\]
+At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right tail $\mathbb P(K \ge 10) = 0.513$. For $H_A\colon p_s > p_n$, $p = 0.513$; doubling for a two-sided test gives $2 \times 0.513 = 1.026$, capped at $1$.
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=8.6cm,height=4.0cm,
+    axis lines*=left,
+    ybar,bar width=11pt,
+    xmin=-0.38,xmax=0.42,ymin=0,ymax=0.28,
+    xtick={-0.3,-0.15,0,0.15,0.3},
+    ytick={0,0.1,0.2},
+    xlabel={Simulated difference $\hat p_s - \hat p_n$},
+    ylabel={Exact probability},
+    clip=false
+  ]
+    \draw[black!60,thick,dashed] (axis cs:0.044,0) -- (axis cs:0.044,0.295);
+    \node[font=\scriptsize,text=black!75,above] at (axis cs:0.044,0.298) {obs.\ $0.044$};
+    % Non-extreme bars (K < 10)
+    \addplot[fill=figblue!25,draw=figblue,thick] coordinates {
+      (-0.324,0.005) (-0.232,0.029) (-0.140,0.105) (-0.048,0.223)
+    };
+    % Extreme bars (K >= 10)
+    \addplot[fill=figred!35,draw=figred,thick] coordinates {
+      (0.044,0.268) (0.136,0.179) (0.228,0.056) (0.320,0.009)
+    };
+    \node[font=\scriptsize,text=figred,anchor=west] at (axis cs:0.17,0.225) {Right tail $p = 0.513$};
+  \end{axis}
+\end{tikzpicture}
+\figcap{Exact permutation null distribution of $\hat p_s - \hat p_n$ in the $50$-person yawning experiment. Over half of the total probability mass ($0.513$, red bars) lies at or above the observed $0.044$.}
+\end{fig}
+
+\subsection{Point nulls: box draws and the chi-squared statistic}
+
+\begin{itemize}
+  \ii \textbf{One proportion (drawing from a box):} In $n = 1000$ coin tosses with $450$ heads ($\hat p = 0.45$) under $H_0\colon p = 0.5$, simulate by drawing $n$ times \emph{with replacement} from $\{H, T\}$ (drawing without replacement from $n/2$ heads and $n/2$ tails would yield $\hat p = 0.5$ every time). By (W4), $\mathrm{SE}_0 = \sqrt{0.5 \cdot 0.5 / 1000} = 0.0158$, $z = (0.45 - 0.5)/0.0158 = -3.16$, and two-sided $p \approx 2\,\cd{pnorm(-3.16)} = 0.0016$.
+  \ii \textbf{One mean (shifted bootstrap):} Under $H_0\colon \mu = \mu_0$ ($500\text{ ppm}$ for $7$ beer barrels with mean $610\text{ ppm}$), \cd{infer} shifts all sample values to center on $\mu_0$ and resamples with replacement.
+  \ii \textbf{More than two categories ($\chi^2$ test):} For observed counts $O_j$ and null expected counts $E_j = np_j$ across $k$ categories,
+  \[
+    \chi^2 = \sum_{j=1}^k \frac{(O_j - E_j)^2}{E_j}.
+  \]
+  For $60$ rolls of a die ($E_j = 10$) yielding counts $5, 8, 9, 8, 10, 20$, $\chi^2 = (25+4+1+4+0+100)/10 = 13.4$. An observed $0$ count still contributes $(0 - E_j)^2/E_j = E_j$; drop any category with $p_j = 0$ (any observation there immediately refutes $H_0$). With $k = 2$ categories, $\chi^2 = z^2$ (for the coin above, $z^2 = (-3.162)^2 = 10$), and only large values are extreme (right tail always).
+\end{itemize}
+
+\Needspace{15\baselineskip}
+\medskip\noindent\textbf{Piece-by-piece R code breakdown (permutation, point-null, and $\chi^2$ tests in \cd{infer}).}
+
+\begin{rcode}
+# 1. Permutation test for two-group difference in proportions
+obs <- yawn |>
+  specify(response = outcome, explanatory = group, success = "yawn") |>
+  calculate(stat = "diff in props", order = c("stimulus", "no stimulus"))
+
+null <- yawn |>
+  specify(response = outcome, explanatory = group, success = "yawn") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 500, type = "permute") |>
+  calculate(stat = "diff in props", order = c("stimulus", "no stimulus"))
+
+null |> get_p_value(obs_stat = obs, direction = "greater")
+
+# 2. Point-null box draw for one proportion & chi-squared for 6-sided die
+coin |> specify(response = side, success = "H") |>
+  hypothesize(null = "point", p = 0.5) |>
+  generate(reps = 500, type = "draw") |>
+  calculate(stat = "prop")
+
+rolls |> mutate(face = as.character(face)) |>
+  specify(response = face) |>
+  hypothesize(null = "point", p = c("1"=1/6,"2"=1/6,"3"=1/6,"4"=1/6,"5"=1/6,"6"=1/6)) |>
+  generate(reps = 500, type = "draw") |>
+  calculate(stat = "Chisq")
+\end{rcode}
+
+\Needspace{14\baselineskip}
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.3cm}X@{}}
+\toprule
+\textbf{Piece} & \textbf{Valid values} & \textbf{How \cd{infer} processes it} \\
+\midrule
+\cd{hypothesize(null = ...)} & \cd{"independence"} or \cd{"point"} & Declares $H_0$; pass \cd{p = ...} for discrete probabilities or \cd{mu = ...} for a continuous mean. \\
+\cd{generate(type = ...)} & \cd{"permute"}, \cd{"draw"}, \cd{"bootstrap"} & \cd{"permute"} shuffles \cd{response} against \cd{explanatory}; \cd{"draw"} samples from the \cd{p} box; \cd{"bootstrap"} resamples shifted data for \cd{mu}. Stop right after \cd{generate(reps = 4)} and pipe into \cd{ggplot() + facet\_wrap(vars(replicate))} to inspect shuffled datasets visually. \\
+\cd{order = c(g1, g2)} & Two category names & Fixes subtraction direction $\hat p_{g1} - \hat p_{g2}$; omitting it triggers alphabetical order and can flip the sign needed by \cd{direction = "greater"}. \\
+\cd{as.character(face)} & Numeric categories & Forces \cd{face} to behave categorically, because \cd{calculate(stat = "Chisq")} requires $k \ge 3$ categories (use \cd{stat = "prop"} for $k = 2$). \\
+\cd{get\_p\_value(direction = ...)} & \cd{"greater"}, \cd{"less"}, \cd{"both"} & Includes equality ($\ge$ or $\le$). With \cd{"both"}, \cd{infer} doubles the smaller tail and caps at $1$ (if asymmetric, this differs from mirroring $|x - \mu_0|$). \\
+\bottomrule
+\end{tabularx}
+
+\medskip\noindent\textbf{What the $p$-value does \emph{not} mean.} (1) It is \emph{not} $\mathbb P(H_0\text{ is true})$ (it is calculated assuming $H_0$). (2) A large $p$-value does not prove $H_0$ is true. (3) It is not ``the probability of the observed data'', but the chance of a statistic at least this extreme if $H_0$ holds.
+
+\section{Wrong by design: Type I errors, Type II errors, and power}
+
+\begin{qbox}
+  A two-sided test of a fair coin ($H_0\colon p = 0.5$) at significance level $\alpha = 0.05$ uses only $n = 5$ tosses. What is the probability of a Type I error, and what is the power when the true coin has $p = 0.9$?
+\end{qbox}
+
+When a test converts a $p$-value into a binary reject/fail-to-reject decision (reject $H_0$ when $p\text{-value} < \alpha$), two distinct errors can occur:
+\begin{itemize}
+  \ii \textbf{Type I error (false positive):} Rejecting $H_0$ when $H_0$ is actually true. For continuous null distributions, $\mathbb P(\text{Type I error}) = \alpha$; for discrete statistics, it is at most $\alpha$.
+  \ii \textbf{Type II error (false negative):} Failing to reject $H_0$ when $H_A$ is true (rate written $\beta$).
+  \ii \textbf{Power:} $\mathbb P(\text{reject }H_0 \mid H_A\text{ true}) = 1 - \beta$ (W1). Power depends on true effect size, sample size $n$, and $\alpha$.
+\end{itemize}
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=10.2cm,height=4.3cm,
+    axis lines*=left,
+    xmin=-3.2,xmax=6.0,ymin=0,ymax=0.45,
+    xtick={0,1.645,2.56},
+    xticklabels={$0$,$c$,$2.56$},
+    ytick={0,0.2,0.4},
+    xlabel={Test statistic},
+    ylabel={Density},
+    legend style={at={(0.5,1.03)},anchor=south,legend columns=2,draw=none,fill=none,font=\scriptsize},
+    clip=false
+  ]
+    % Shaded Type I tail under H0 (right of c = 1.645)
+    \addplot[forget plot,domain=1.645:4.2,samples=40,fill=figred!30,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
+    % Shaded Type II area under HA (left of c = 1.645, mean 2.56, sd 1)
+    \addplot[forget plot,domain=-1.2:1.645,samples=40,fill=figamber!35,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    % H0 curve
+    \addplot[domain=-3.1:4.0,samples=90,figblue,very thick] {exp(-0.5*x^2)/sqrt(2*pi)};
+    \addlegendentry{Under $H_0$ (null)}
+    % HA curve (mean = 2.56 -> Phi(1.645 - 2.56) = Phi(-0.915) = 0.18)
+    \addplot[domain=-1.2:5.8,samples=90,figgreen!80!black,very thick] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
+    \addlegendentry{Under $H_A$ (alternative)}
+    % Critical line & clear region annotations
+    \draw[black!65,thick,dashed] (axis cs:1.645,0) -- (axis cs:1.645,0.40);
+    \node[font=\scriptsize,text=figred,anchor=west] (albl) at (axis cs:2.10,0.12) {$\alpha=0.05$};
+    \draw[->,figred,thin] (axis cs:2.18,0.105) -- (axis cs:1.95,0.025);
+    \node[font=\scriptsize,text=figamber!85!black] at (axis cs:1.05,0.048) {$\beta=0.18$};
+    \node[font=\scriptsize,text=figgreen!80!black] at (axis cs:2.82,0.16) {Power $= 0.82$};
+  \end{axis}
+\end{tikzpicture}
+\figcap{Rejection region $x > c$ for a one-sided test. Red area under $H_0$ gives Type I error rate $\alpha = 0.05$; amber area under $H_A$ left of $c$ gives Type II error rate $\beta = 0.18$, leaving power $1 - \beta = 0.82$ to the right.}
+\end{fig}
+
+\noindent\textbf{Design edge cases and trade-offs.}
+\begin{itemize}
+  \ii \textbf{Underpowered discrete test ($n=5$ tosses):} Even the most extreme outcome ($0$ or $5$ heads) has one-sided probability $0.5^5 = 1/32$, so the two-sided $p$-value is $2/32 = 0.0625 > 0.05$. Because \emph{no} outcome can reject $H_0$, $\mathbb P(\text{Type I error}) = 0$ and power against $p = 0.9$ is also $0$. With $n = 6$ tosses, $2/64 = 0.031 < 0.05$ allows $0$ or $6$ heads to reject.
+  \ii \textbf{Boundary equality:} The strict rule ``reject when $p\text{-value} < \alpha$'' does \emph{not} reject if $p\text{-value} = \alpha$.
+  \ii \textbf{Multiple testing:} Testing $20$ independent true nulls at $\alpha = 0.05$ yields false-rejection probability $1 - 0.95^{20} = 0.64$ (W1).
+  \ii \textbf{Post-hoc one-sided switching:} Picking a one-sided alternative toward whichever direction the data point rejects in both $5\%$ tails, silently doubling $\alpha$ to $10\%$.
+  \ii \textbf{Choosing $\alpha$:} Lowering $\alpha$ reduces false positives while raising $\beta$ (Type II errors). Use smaller $\alpha$ when false alarms are costly, larger $\alpha$ when missing a real hazard (such as lead in drinking water) is worse.
+\end{itemize}
+
+\begin{trapbox}
+  \ii \textbf{``Power equals $1 - \alpha$.'':} Power equals $1 - \beta$, integrated under $H_A$, whereas $1 - \alpha$ is integrated under $H_0$.
+  \ii \textbf{``$\alpha = 0.05$ guarantees $5\%$ false positives on every test.'':} With discrete counts, size can be strictly smaller ($0\%$ for $n=5$ coin tosses).
+  \ii \textbf{``Failing to reject proves $H_0$ true.'':} Low power (small $n$ or small effect) routinely fails to reject a false null.
+\end{trapbox}
+
+\section{Prediction and least squares (Notes: Intro to Prediction)}
+
+\begin{qbox}
+  For $(x,y)$ pairs $(1,2), (2,3), (3,5), (4,6)$, find the least-squares regression line, its sample MSE, and the baseline MSE. What breaks if instead $x = (3, 3, 3, 3)$?
+\end{qbox}
+
+A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \vocab{target} $Y$ (numerical $Y$: \vocab{regression}; categorical $Y$: \vocab{classification}). Prediction checks accuracy on observable future units, generalization estimates unobservable population parameters ($\mu, p$), and causal inference asks counterfactual intervention questions (Slides Scenario A).
+
+\medskip\noindent\textbf{The baseline model and irreducible error.} Ignoring features, the best constant prediction for $Y$ minimizes squared error at $\hat Y_{\text{baseline}} = \bar Y$ (since average raw error $E(Y - \bar Y)=0$ cancels positive and negative errors).
+
+\begin{theorem*}[Prediction error of the baseline]\target{thm-baseline-err}
+  If $Y_1,\dots,Y_n$ and a new $Y$ are independent draws from a distribution with mean $\mu$ and variance $\sigma^2$, then $E\bigl[(Y - \bar Y)^2\bigr] = \left(1 + \frac{1}{n}\right)\sigma^2$.
+\end{theorem*}
+
+\begin{proof}
+  Expanding the square gives $E(Y^2) - 2E(Y\bar Y) + E(\bar Y^2)$. By independence (W3), $E(Y\bar Y) = \mu^2$, $E(Y^2) = \sigma^2 + \mu^2$, and $E(\bar Y^2) = \sigma^2/n + \mu^2$. Adding yields $(1 + 1/n)\sigma^2$. Even as $n \to \infty$, irreducible error $\sigma^2$ remains unless informative features are added.
+\end{proof}
+
+\medskip\noindent\textbf{Ordinary least squares (OLS).} Fitting $\hat Y = b_0 + b_1 X_1 + \dots + b_q X_q$ minimizes the mean squared error across residuals $\hat e_i = Y_i - \hat Y_i$:
+\[
+  \mathrm{MSE} = \frac{1}{n}\sum_{i=1}^n (Y_i - \hat Y_i)^2 = \frac{1}{n}\mathrm{RSS}.
+\]
+
+\begin{theorem*}[Least-squares line formulas]\target{thm-ols-line}
+  When $S_{xx} = \sum (x_i - \bar x)^2 > 0$, MSE is uniquely minimized at $\hat b_1 = S_{xy}/S_{xx}$ and $\hat b_0 = \bar y - \hat b_1\bar x$, and the OLS residuals always satisfy $\sum_{i=1}^n \hat e_i = 0$.
+\end{theorem*}
+
+\begin{ideabox}
+  Hold $b_1$ fixed first: minimizing $\frac{1}{n}\sum [(y_i - b_1 x_i) - b_0]^2$ picks $b_0 = \bar y - b_1\bar x$ (the best constant is the sample mean). Substituting that intercept turns $n \cdot \mathrm{MSE}$ into the upward parabola $S_{yy} - 2b_1 S_{xy} + b_1^2 S_{xx}$, minimized at $S_{xy}/S_{xx}$.
+\end{ideabox}
+
+\noindent\textbf{Worked calculation.} For $x = (1,2,3,4)$, $y = (2,3,5,6)$, $\bar x = 2.5$, $\bar y = 4$, deviations $(-1.5,-0.5,0.5,1.5)$ and $(-2,-1,1,2)$ give $S_{xy} = 7$, $S_{xx} = 5$, $S_{yy} = 10$, so $\hat b_1 = 7/5 = 1.4$ and $\hat b_0 = 4 - 1.4(2.5) = 0.5$. Residuals are $(0.1, -0.3, 0.3, -0.1)$, giving OLS $\mathrm{MSE} = 0.05$ against baseline $\mathrm{MSE} = 10/4 = 2.5$. If $x = (3,3,3,3)$, $S_{xx} = 0$, every slope gives $\mathrm{MSE} = 2.5$, and R outputs slope \cd{NA} while predicting $\bar y$.
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=8.0cm,height=4.0cm,
+    axis lines*=left,
+    xmin=0.5,xmax=4.5,ymin=1.2,ymax=6.8,
+    xtick={1,2,3,4},ytick={2,4,6},
+    xlabel={$x$},ylabel={$y$},
+    legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize},
+    clip=false
+  ]
+    \addplot[domain=0.6:4.4,samples=10,figblue,very thick] {0.5 + 1.4*x};
+    \addlegendentry{OLS line $\hat y = 0.5 + 1.4x$}
+    \addplot[domain=0.6:4.4,samples=10,black!50,dashed,thick] {4};
+    \addlegendentry{Baseline $\bar y = 4$}
+    % Residuals
+    \draw[figred,very thick] (axis cs:1,1.9) -- (axis cs:1,2);
+    \draw[figred,very thick] (axis cs:2,3.3) -- (axis cs:2,3);
+    \draw[figred,very thick] (axis cs:3,4.7) -- (axis cs:3,5);
+    \draw[figred,very thick] (axis cs:4,6.1) -- (axis cs:4,6);
+    \addplot[only marks,mark=*,mark size=2.3pt,black] coordinates {(1,2) (2,3) (3,5) (4,6)};
+  \end{axis}
+\end{tikzpicture}
+\figcap{Least-squares line $\hat y = 0.5 + 1.4x$ (solid blue, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). Red vertical segments show the four residuals $+0.1, -0.3, +0.3, -0.1$.}
+\end{fig}
+
+\noindent\textbf{Iterative optimization in R (\cd{optim}).} Instead of closed-form formulas, \cd{optim()} numerically searches for coefficients minimizing MSE (Nelder--Mead for $\ge 2$ parameters; use \cd{optimize()} for $1$ parameter, since Nelder--Mead warns in 1D and only returns an approximation such as $-0.4$ for $(x+0.5)^2$):
+\begin{rcode}
+mse_lm <- function(b0, b1, x, y) {
+  mean((y - (b0 + b1 * x))^2)
+}
+optim(par = c(0, 0), fn = function(b) mse_lm(b[1], b[2], x, y))$par
+\end{rcode}
+Here \cd{par = c(0, 0)} sets initial guesses, \cd{fn} wraps our loss into a single vector argument \cd{b}, and \cd{\$par} extracts the best vector found while \cd{\$value} reports its MSE.
+
+\section{Improving predictions and overfitting}
+
+\begin{qbox}
+  A degree-$9$ polynomial fit to $12$ training points achieves training $R^2 = 0.987$, beating a straight line's $0.835$. Evaluated on $200$ new test points, the line scores $R^2 = 0.813$ while the degree-$9$ polynomial scores $-4.1$. How can $R^2$ be negative, and which model should be selected?
+\end{qbox}
+
+$\mathrm{RMSE} = \sqrt{\mathrm{MSE}}$ restores the units of $Y$, whereas $R^2$ is unitless and compares a model against the sample baseline MSE:
+\[
+  R^2 = 1 - \frac{\mathrm{MSE}_{\text{model}}}{\mathrm{MSE}_{\text{baseline}}} = 1 - \frac{\sum_{i=1}^n (Y_i - \hat Y_i)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}.
+\]
+On the training set, an OLS model with an intercept can set all slopes to $0$, forcing $0 \le R^2_{\text{train}} \le 1$, and for single-feature OLS, $R^2 = r^2$ (losing the sign of $\hat b_1$; recover sign of $r$ from $\hat b_1$). Adding features, nonlinear transforms like $\log x$, or polynomial terms $\sum_{k=0}^d c_k x^k$ can \emph{never} lower $R^2_{\text{train}}$.
+
+\medskip\noindent\textbf{Overfitting and train/validation/test splits.} A model \vocab{overfits} when it memorizes training noise, giving $\mathrm{MSE}_{\text{train}} \ll \mathrm{MSE}_{\text{test}}$. Split data randomly into non-overlapping training and test sets (commonly $80\% / 20\%$), or training/validation/test sets when tuning complexity (never report validation $R^2$ of the winning model as an unbiased test score). Because test predictions $\hat Y_i$ come from training data rather than $\bar Y_{\text{test}}$, a wild polynomial can underperform the constant test mean $\bar Y_{\text{test}}$, making $\mathrm{MSE}_{\text{test}} > \mathrm{MSE}_{\text{baseline}}$ and yielding $R^2_{\text{test}} < 0$ (e.g.\ test values $1,2,3$ predicted as $3,3,3$ give $R^2 = 1 - \frac{5/3}{2/3} = -1.5$).
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=8.6cm,height=4.0cm,
+    axis lines*=left,
+    xmin=0.8,xmax=6.2,ymin=-0.4,ymax=1.08,
+    xtick={1,2,3,4,5,6},ytick={-0.3,0,0.5,1},
+    xlabel={Polynomial degree},
+    ylabel={$R^2$},
+    legend style={at={(0.05,0.52)},anchor=west,draw=none,fill=none,font=\scriptsize},
+    clip=false
+  ]
+    \draw[black!35,dashed] (axis cs:0.8,0) -- (axis cs:6.2,0);
+    \addplot[figblue,very thick,mark=*,mark size=2pt] coordinates {
+      (1,0.835) (2,0.855) (3,0.865) (4,0.880) (5,0.910) (6,0.935)
+    };
+    \addlegendentry{Training $R^2$ ($12$ points)}
+    \addplot[figred,very thick,mark=square*,mark size=2pt] coordinates {
+      (1,0.813) (2,0.790) (3,0.750) (4,0.620) (5,0.280) (6,-0.250)
+    };
+    \addlegendentry{Test $R^2$ ($200$ points)}
+  \end{axis}
+\end{tikzpicture}
+\figcap{Training $R^2$ rises monotonically with polynomial degree, whereas held-out test $R^2$ peaks at the true degree~$1$ linear relationship and turns negative under severe overfitting (degree~$6$ onward).}
+\end{fig}
+
+\Needspace{16\baselineskip}
+\medskip\noindent\textbf{Piece-by-piece R code breakdown (\cd{lm}, polynomials, train/test splitting, and evaluation).}
+\begin{rcode}
+# 1. Fit & inspect training R^2 (broom)
+m2 <- lm(price ~ food + geo, data = zagat)
+glance(m2) |> select(r.squared)
+predict(object = m2, newdata = data.frame(food = c(25, 17), geo = c("east", "west")))
+
+# 2. Polynomial features vs single squared term
+lm(target ~ poly(feature, degree = 3, raw = TRUE), data = df)
+lm(target ~ I(feature^2), data = df)
+
+# 3. 80/20 random split & held-out RMSE / R^2 (dplyr)
+set.seed(20)
+shuffled   <- slice_sample(biology, n = nrow(biology), replace = FALSE)
+train_rows <- seq(from = 1, to = nrow(shuffled) * 0.8, by = 1)
+bio_train  <- slice(shuffled, train_rows)
+bio_test   <- slice(shuffled, -train_rows)
+
+lm_slr <- lm(score ~ hours, data = bio_train)
+bio_test |>
+  mutate(score_hat = predict(lm_slr, newdata = bio_test), e_hat = score - score_hat) |>
+  summarize(MSE_baseline = mean((score - mean(score))^2), MSE = mean(e_hat^2)) |>
+  mutate(Rsq = 1 - MSE / MSE_baseline, RMSE = sqrt(MSE))
+\end{rcode}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.4cm}X@{}}
+\toprule
+\textbf{Piece} & \textbf{Purpose} & \textbf{Critical behavior and pitfalls} \\
+\midrule
+\cd{poly(x, 3, raw = TRUE)} & Adds $x, x^2, x^3$ features & \cd{raw = TRUE} prints standard monomial coefficients $c_1, c_2, c_3$; \cd{I(x\^{}2)} adds $x^2$ alone (without \cd{I()}, R collapses \cd{x\^{}2} back to \cd{x}). \\
+\cd{slice\_sample(..., replace = FALSE)} & Randomly reorders rows & Sampling \cd{n = nrow} without replacement shuffles rows before \cd{slice(train\_rows)} vs.\ \cd{slice(-train\_rows)} split cleanly with zero overlap. \\
+\cd{predict(model, newdata)} & Evaluates model on new rows & \cd{newdata} must carry exact feature names; unseen categorical factor levels or missing covariates throw errors. \\
+\cd{mean(e\_hat\^{}2)} vs.\ \cd{sum()} & Test MSE calculation & Dividing by $n_{\text{test}}$ (\cd{mean()}) matches $\mathrm{MSE}_{\text{baseline}}$; accidentally using \cd{sum()} scales test MSE up by $n_{\text{test}}$ and produces absurd negative $R^2$. \\
+\bottomrule
+\end{tabularx}
+
+\section{Logistic regression and classification workflow}
+
+\begin{qbox}
+  Fitting \cd{glm(spam \textasciitilde{} log(num\_char), family = "binomial")} on $3{,}921$ emails yields coefficients $-1.72$ and $-0.544$. Using threshold $0.5$, it flags only $18$ emails ($5$ truly spam) with misclassification rate $\mathrm{MCR} = 0.0956$. Which emails get flagged, and is $0.0956$ good performance?
+\end{qbox}
+
+For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,1]$ and suffer from outliers. Logistic regression passes the linear score $h = b_0 + b_1 X_1 + \dots + b_q X_q$ through the sigmoid $f(t) = 1/(1 + e^{-t})$ to estimate $\hat p(X) = \mathbb P(Y = 1 \mid X) = f(h)$, fitting coefficients numerically by minimizing cross-entropy $H = -\frac{1}{n}\sum [Y_i \log p(X_i) + (1-Y_i)\log(1-p(X_i))]$ and classifying $\hat Y = 1$ when $\hat p(X) \ge 0.5$ ($\iff h \ge 0$).
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  \begin{axis}[
+    width=8.4cm,height=3.8cm,
+    axis lines*=left,
+    xmin=-4.4,xmax=4.4,ymin=0,ymax=1.08,
+    xtick={-4,-1,0,1,4},ytick={0,0.5,1},
+    xlabel={Linear combination $h = b_0 + b_1 X_1 + \dots$},
+    ylabel={$\hat p = f(h)$},
+    clip=false
+  ]
+    \draw[black!35,dashed] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
+    \draw[black!35,dashed] (axis cs:0,0) -- (axis cs:0,1.02);
+    \addplot[domain=-4.2:4.2,samples=90,figblue,very thick] {1/(1+exp(-x))};
+    \addplot[only marks,mark=*,mark size=2.3pt,figred] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
+    \node[font=\scriptsize,text=figred,above left=1pt]  at (axis cs:-1,0.27) {$(-1, 0.27)$};
+    \node[font=\scriptsize,text=figred,above left=1pt]  at (axis cs:0,0.51)  {$(0, 0.50)$};
+    \node[font=\scriptsize,text=figred,below right=1pt] at (axis cs:1,0.73)  {$(1, 0.73)$};
+    \node[font=\scriptsize,text=figgreen!80!black] at (axis cs:2.5,0.18) {Predict $\hat Y=1$ for $h \ge 0$};
+  \end{axis}
+\end{tikzpicture}
+\figcap{Standard logistic curve $f(h) = (1+e^{-h})^{-1}$. Because $f(0) = 0.5$ and $f$ is strictly increasing, classifying $\hat p \ge 0.5$ is equivalent to checking whether the linear predictor $h \ge 0$.}
+\end{fig}
+
+\noindent\textbf{Confusion matrix and classifier metrics.} From true negatives (TN), false positives (FP), false negatives (FN), and true positives (TP) across $n = \mathrm{TN}+\mathrm{FP}+\mathrm{FN}+\mathrm{TP}$ cases:
+\[
+  \mathrm{MCR} = \frac{\mathrm{FP}+\mathrm{FN}}{n}, \qquad \text{Precision} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}, \qquad \text{Recall} = \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}.
+\]
+Always compare $\mathrm{MCR}$ against the trivial majority-class baseline. In the spam dataset ($367/3921$ spam emails), flagging \emph{nothing} scores $\mathrm{MCR} = 0.094$, beating the fitted model's $\mathrm{MCR} = 0.0956$ ($\mathrm{TP}=5, \mathrm{FP}=13, \mathrm{FN}=362, \mathrm{TN}=3541$, precision $5/18 = 0.28$, recall $5/367 = 0.014$). Its boundary $h = -1.72 - 0.544\log(\text{num\_char}) \ge 0$ flags only ultra-short emails ($\text{num\_char} \le e^{-3.16} \approx 42$ characters).
+
+\Needspace{16\baselineskip}
+\medskip\noindent\textbf{Piece-by-piece R code breakdown (complete classification pipeline in \cd{glm} + \cd{dplyr}).}
+\begin{rcode}
+# Step 4-5: Encode 0/1 target cleanly and fit logistic regression
+email <- email |> mutate(is_spam = ifelse(spam == "yes", 1, 0))
+m1 <- glm(is_spam ~ log(num_char), data = email, family = "binomial")
+m1 |> tidy() |> select(term, estimate, std.error)
+
+# Step 6-7: Predict probabilities (not links), threshold, and compute metrics
+email_scored <- email |>
+  mutate(p_hat = predict(object = m1, newdata = email, type = "response"),
+         y_hat = ifelse(test = p_hat > 0.5, yes = 1, no = 0))
+
+email_scored |> summarize(MCR = mean(is_spam != y_hat))
+email_scored |> filter(y_hat == 1)   |> summarize(Precision = mean(is_spam == 1))
+email_scored |> filter(is_spam == 1) |> summarize(Recall    = mean(y_hat == 1))
+\end{rcode}
+
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.4cm}X@{}}
+\toprule
+\textbf{Piece} & \textbf{Argument / Role} & \textbf{What happens and critical pitfalls} \\
+\midrule
+\cd{glm(..., family = "binomial")} & Fits logistic regression & Target must be $0/1$, logical, or two-level factor (for factors, \cd{glm} models the \emph{second} alphabetical level); character columns fail. \\
+\cd{predict(m1, ..., type = "response")} & Returns probability $\hat p$ in $(0,1)$ & Omitting \cd{type = "response"} defaults to \cd{type = "link"}, returning unbounded log-odds $h$ instead of probabilities. \\
+\cd{ifelse(p\_hat > 0.5, 1, 0)} & Classification rule & Thresholds probabilities to $0/1$ labels (notes write $\ge 0.5$; exact $h = 0$ is rare on real data). \\
+\cd{mean(is\_spam != y\_hat)} & Misclassification rate & Averages logical values ($1$ for error, $0$ for match) cleanly into $\mathrm{MCR}$. \\
+\cd{filter(y\_hat == 1) |> summarize(mean(...))} & Positive predictions subset & Computes Precision directly from definition; returns \cd{NaN} if zero rows have \cd{y\_hat == 1}. \\
+\bottomrule
+\end{tabularx}
+
+\medskip\noindent\textbf{Edge cases.} Perfectly separable classes drive coefficients toward $\pm\infty$ (R warns of fitted probabilities numerically $0$ or $1$); $\log(0) = -\infty$ crashes \cd{glm}; negative coefficients lower $h$ (and thus $\hat p$), never turning $\hat p$ negative.
+
+\section{Problem set}
+
+\subsection{Worksheet questions (Packets 9--11)}
+
+\begin{prob}
+\textbf{W1 (Packet 9, Bootstrapping).} Penguins: is the proportion of Chinstraps estimated well? (a) Write \cd{dplyr} code adding \cd{is\_chinstrap} and computing the point estimate. (b) Write \cd{infer} code for $500$ bootstrap proportions and a $95\%$ percentile interval. (c) Between population distribution, sample distribution, and bootstrap distribution, which are observed in practice? (d) How do center and endpoints shift from $90\%$ to $95\%$ to $99\%$?
+\hint{Use \cd{specify(..., success = "Chinstrap") |> generate(..., type = "bootstrap") |> calculate(stat = "prop")}.}
+\end{prob}
+
+\begin{prob}
+\textbf{W2 (Packet 9, Hypothesis Testing).} In the MythBusters yawning study ($10/34$ stimulus vs.\ $4/16$ control): (a) Name explanatory and response variables. (b) Find $\hat p_s$, $\hat p_n$, and their difference. (c) Expected difference under no association. (d) Possible values of $\hat p_s - \hat p_n$. (e) Describe the card simulation and shape of the null distribution. (f) Does the study support contagion?
+\hint{Count extreme permutations with $K \ge 10$ out of $\binom{50}{34}$.}
+\end{prob}
+
+\begin{prob}
+\textbf{W3 (Packet 10, Hypothesis Tests II).} Forty-eight identical resumes ($24$ female, $24$ male names) went randomly to $48$ managers; $21$ men's and $14$ women's resumes were selected. (a) State $H_0$ and $H_A$. (b) Write \cd{infer} code for the observed statistic and permutation null. (c) Compute the exact $p$-value and interpret it.
+\hint{Exact hypergeometric tail $\sum_{k \ge 21} \binom{24}{k}\binom{24}{35-k}/\binom{48}{35}$.}
+\end{prob}
+
+\begin{prob}
+\textbf{W4 (Packet 10, Hypothesis Tests II).} Stephen Curry made $13$ of $27$ shots beyond $30$ feet ($48.1\%$); the league baseline is $7.5\%$. (a) State $H_0$ and $H_A$. (b) Write \cd{infer} code for $500$ simulated trials under $H_0$, plus \cd{dplyr}/\cd{ggplot2} code replacing \cd{calculate}, \cd{visualize}, and \cd{get\_p\_value}. (c) Find the exact binomial $p$-value.
+\hint{Use \cd{generate(type = "draw")} and \cd{pbinom}.}
+\end{prob}
+
+\begin{prob}
+\textbf{W5 (Packet 10, Wrong by Design).} For each $H_0$, describe a Type~I error and Type~II error and state which is worse: (a) a new arthritis drug equals placebo; (b) lead levels in water are safe; (c) a restaurant passes sanitation rules (rejecting revokes its license). For (c), which error harms the owner, which harms diners, and what $\alpha$ would a diner prefer?
+\hint{Relate false alarms vs.\ missed hazards to lowering or raising $\alpha$.}
+\end{prob}
+
+\begin{prob}
+\textbf{W6 (Packet 11, Least Squares).} (a) Complete \cd{mse\_lm <- function(b0, b1, x, y) \{ mean(...) \}}. (b) Write a \cd{dplyr} pipeline computing MSE from \cd{m1 <- lm(air\_time \textasciitilde{} distance, data = flights)} using \cd{residuals()}. (c) Which distance predictions are trustworthy: $10$, $500$, or $5000$ miles?
+\hint{Drop missing rows before calling \cd{residuals()}, and watch extrapolation.}
+\end{prob}
+
+\begin{prob}
+\textbf{W7 (Packet 11, Improving Predictions).} (a) What are the units of $R^2$ and $\mathrm{RMSE}$? (b) Which metric and dataset select among \cd{price \textasciitilde{} sqft}, \cd{log(sqft)}, and polynomials of degrees $2$--$10$? (c) How do training and test $R^2$ tables reveal overfitting?
+\hint{Compare held-out validation/test error rather than training $R^2$.}
+\end{prob}
+
+\subsection{Prediction case studies (Extras, $60$ rows each)}
+
+For each study, identify: (a) regression vs.\ classification, (b) model formula, (c) requested hand prediction, (d) complete R pipeline (fit, predict, evaluate), and (e) reported accuracy metric.
+
+\begin{prob}
+\textbf{C1 (Ice cream).} \cd{lm(sales \textasciitilde{} temperature, data = icecream)} yields coefficients $-121.330$ and $5.646$ ($\mathrm{MSE} = 506$). Predict sales at $80^\circ\text{F}$ and write code predicting for \cd{new\_icecream} with temperatures $62, 78, 91$.
+\end{prob}
+
+\begin{prob}
+\textbf{C2 (Driving test).} Target \cd{result} is \cd{"pass"}/\cd{"fail"}; \cd{glm(result \textasciitilde{} practice\_hours, family = "binomial")} yields $-3.1743$ and $0.1456$ with $\mathrm{TP}=27, \mathrm{FP}=9, \mathrm{TN}=19, \mathrm{FN}=5$ at threshold $0.5$. Compute $\hat p$ at $20$ hours, the hours threshold separating predictions, and MCR, precision, and recall.
+\end{prob}
+
+\begin{prob}
+\textbf{C3 (Used cars).} Price is in thousands of dollars; \cd{lm(price \textasciitilde{} age + mileage)} has coefficients $29.39027$, $-0.96763$ (age, years), $-0.04592$ (mileage, thousands of miles), $\mathrm{MSE} = 3.66$. Predict price for a $4$-year-old car with $50{,}000$ miles and interpret $-0.96763$.
+\end{prob}
+
+\begin{prob}
+\textbf{C4 (Gym).} Target \cd{canceled} is \cd{"yes"}/\cd{"no"}; \cd{glm(canceled \textasciitilde{} visits\_per\_month + months\_member, family = "binomial")} has coefficients $3.57249$, $-0.50440$, $-0.06157$, with $\mathrm{TP}=10, \mathrm{FP}=3, \mathrm{TN}=42, \mathrm{FN}=5$. Find $\hat p$ for $3$ visits and $10$ months, compute MCR/precision/recall, and compare with the trivial ``no'' classifier.
+\end{prob}
+
+\begin{prob}
+\textbf{C5 (Apartments).} \cd{lm(rent \textasciitilde{} sqft + bedrooms + miles\_to\_campus)} has coefficients $961.609$, $1.368$, $162.353$, $-118.592$, $\mathrm{MSE} = 10{,}931$. Predict rent for $700$ sq ft, $2$ bedrooms, $1.5$ miles, and report RMSE in dollars.
+\end{prob}
+
+\subsection{Additional exam-style problems and timed practice}
+
+\begin{prob}
+\textbf{P1--P5 (Core probability and testing).}
+\textbf{P1.} Sample $1, 1, 4$: find exact bootstrap distribution of $\bar X^*$, its SD two ways, and $95\%$ percentile interval.
+\textbf{P2.} Sample of $10$ distinct values with maximum $31$: what fraction of bootstrap resamples contain $31$, and can a percentile CI include $32$?
+\textbf{P3.} Treated $7, 9$; control $3, 5, 6$: find exact one-sided permutation $p$-value for $H_A\colon$ treatment raises mean.
+\textbf{P4.} Minimum tosses $n$ for a two-sided $H_0\colon p = 0.5$ test at $\alpha = 0.05$ to reject; for $n=10$ rejecting at $X \ge 9$, find size and power at $p = 0.8$.
+\textbf{P5.} Die counts $5, 8, 9, 8, 10, 20$: compute $\chi^2$ and state which tail gives the $p$-value.
+\end{prob}
+
+\begin{prob}
+\textbf{P6--P11 (Prediction and classification).}
+\textbf{P6.} For $(0,1), (1,1), (2,4)$: find OLS line, MSE, $R^2$, check $R^2 = r^2$, and critique predicting at $x=10$.
+\textbf{P7.} Test values $2, 4, 6, 8$ predicted as $4, 4, 4, 4$: find test MSE, RMSE, and $R^2$.
+\textbf{P8.} $Y_1,\dots,Y_4, Y$ independent with $\sigma = 2$: find $E[(Y - \bar Y)^2]$ for $n=4$ and $n=10{,}000$.
+\textbf{P9.} Model $h = -3 + 0.5x$: find $\hat p$ at $x=6, 10$, decision boundary, and what \cd{ifelse(predict(m) > 0.5, 1, 0)} without \cd{type = "response"} predicts.
+\textbf{P10.} $100$ emails ($10$ spam); filter flags $8$ ($6$ spam): fill confusion matrix, find MCR/precision/recall, and compare to flagging none.
+\textbf{P11.} Classify as regression, classification, generalization, or causal claim: eBay auction price; manatee length; Amazon sales if price were $\$30$; self-driving object detection.
+\end{prob}
+
+\begin{prob}
+\textbf{T1--T12 (Timed $60$-minute set; T11 in R, T1--T10 and T12 by hand).}
+\textbf{T1.} Write base R code for $500$ bootstrap medians and a $90\%$ percentile interval.
+\textbf{T2.} Write \cd{infer} code for a two-sided permutation test comparing group \cd{"a"} minus \cd{"b"} means on data frame \cd{d(group, y)}.
+\textbf{T3.} In $500$ null values with $12$ values $\ge 2.1$ and $40$ values $\le -2.1$, find two-sided \cd{infer} $p$-values for observed $2.1$ and $-2.1$.
+\textbf{T4.} With $n=8$ coin tosses ($H_0\colon p = 0.5, \alpha = 0.05$, two-sided), which outcomes reject and what is the exact Type~I error rate?
+\textbf{T5.} Write \cd{r2(y, y\_hat)} and apply it with \cd{predict()} on data frame \cd{test}.
+\textbf{T6.} \cd{coef(lm(y \textasciitilde{} x))} prints \cd{(Intercept) 3} and \cd{x NA}: explain the data and prediction at $x=100$.
+\textbf{T7.} Logistic model with intercept $2$ and slope $-0.5$ on \cd{hours}: find hours predicting $\hat Y=1$ and $\hat p$ at $\text{hours}=6$.
+\textbf{T8.} Confusion counts $\mathrm{TP}=4, \mathrm{FP}=1, \mathrm{FN}=6, \mathrm{TN}=39$: compute MCR, precision, recall, and baseline MCR.
+\textbf{T9.} $1000$ tosses give $540$ heads: verify $\chi^2 = z^2$ under $H_0\colon p=0.5$.
+\textbf{T10.} $n=12$ tosses, reject if $X \ge 10$: compute size and power at $p = 0.75$.
+\textbf{T11 (in R).} With \cd{set.seed(1)}, split $50$-row \cd{d} $80/20$, fit \cd{lm(y \textasciitilde{} x)}, and report test RMSE and $R^2$.
+\textbf{T12.} Label generalization vs.\ prediction: mean commute of all Berkeley students vs.\ tomorrow's commute of one student.
+\end{prob}
+
+\end{document}

@@ -38,6 +38,7 @@
 </p>
 
 <nav class="toc-bar" aria-label="Case studies">
+  <a href="#code-guide">R Code Breakdown</a>
   <a href="#case-1">1. Ice Cream (OLS)</a>
   <a href="#case-2">2. Stopping Distance</a>
   <a href="#case-3">3. Used Cars (Overfitting)</a>
@@ -45,8 +46,37 @@
   <a href="#case-5">5. Resumes (Logistic)</a>
 </nav>
 
+<section class="code-guide first-case" id="code-guide">
+  <h2>Piece-by-Piece Breakdown: Prediction, Bootstrap, and Classification in R</h2>
+  <p>Weeks 9&ndash;12 rely on three recurring R templates: fitting and evaluating OLS models (<code>lm</code> + <code>predict</code>), drawing size-$n$ resamples with replacement (<code>sample(..., replace = TRUE)</code> / <code>infer</code>), and scoring binary classifiers (<code>glm(..., family = "binomial")</code> + <code>type = "response"</code>).</p>
+  <pre><code class="language-r"># A. Train OLS &amp; score held-out RMSE / R^2
+m_fit &lt;- lm(y ~ poly(x, 2, raw = TRUE), data = train_df)
+test_scored &lt;- test_df |&gt; mutate(y_hat = predict(m_fit, newdata = test_df), err = y - y_hat)
 
-<section class="case-study first-case" id="case-1">
+# B. Bootstrap percentile interval in base R (size n, WITH replacement)
+boot_stats &lt;- replicate(500, mean(sample(x_vec, size = length(x_vec), replace = TRUE)))
+quantile(boot_stats, probs = c(0.025, 0.975))
+
+# C. Fit logistic regression &amp; convert predicted probabilities to 0/1 classes
+m_cls &lt;- glm(y_01 ~ x1 + x2, data = train_df, family = "binomial")
+cls_scored &lt;- test_df |&gt; mutate(p_hat = predict(m_cls, newdata = test_df, type = "response"),
+                                y_hat = ifelse(p_hat &gt; 0.5, 1, 0))</code></pre>
+  <table class="code-anatomy">
+    <thead><tr><th>R expression / argument</th><th>Input &rarr; Output</th><th>Exact role and critical pitfall</th></tr></thead>
+    <tbody>
+      <tr><td><code>lm(y ~ x1 + x2, data = train_df)</code></td><td>Numeric target + formula &rarr; model</td><td>Fits OLS coefficients minimizing training MSE; fit only on training rows, never on test rows.</td></tr>
+      <tr><td><code>poly(x, 2, raw = TRUE)</code></td><td>Numeric column &rarr; $x, x^2$ matrix</td><td>Expands polynomial terms cleanly with standard monomial coefficients (use <code>I(x^2)</code> for $x^2$ alone).</td></tr>
+      <tr><td><code>predict(model, newdata = test_df)</code></td><td>Model + test frame &rarr; vector $\hat y$</td><td>Test frame must contain exact column names; any factor level absent during training throws an error.</td></tr>
+      <tr><td><code>sample(v, size = length(v), replace = TRUE)</code></td><td>Vector of length $n$ &rarr; resample</td><td>Size must stay $n$ and <code>replace = TRUE</code>; resampling without replacement leaves means/proportions identical.</td></tr>
+      <tr><td><code>quantile(stats, probs = c(0.025, 0.975))</code></td><td>Bootstrap vector &rarr; 95% bounds</td><td>Widening confidence ($90\% \to 95\% \to 99\%$) pushes probabilities outward; more replicates $B$ do not narrow width.</td></tr>
+      <tr><td><code>glm(y_01 ~ ..., family = "binomial")</code></td><td>0/1 or logical target &rarr; logit model</td><td><code>family = "binomial"</code> fits sigmoid $\hat p = (1+e^{-h})^{-1}$; character targets fail.</td></tr>
+      <tr><td><code>predict(m_cls, ..., type = "response")</code></td><td>Model &rarr; probabilities $\hat p \in (0,1)$</td><td>Omitting <code>type = "response"</code> silently returns log-odds $h \in (-\infty,\infty)$ instead of probabilities.</td></tr>
+      <tr><td><code>ifelse(p_hat &gt; 0.5, 1, 0)</code></td><td>Vector $\hat p$ &rarr; $0/1$ decisions</td><td>Vectorized threshold comparison; feed into <code>mean(y_01 != y_hat)</code> for MCR.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="case-study" id="case-1">
   <h2>Case Study 1: Ice Cream Sales &amp; Temperature (Simple Linear Regression)</h2>
   <div class="case-body">
     <div class="case-meta">Datasets: <code>icecream</code> (12 training days), <code>new_icecream</code> (4 held-out days)</div>

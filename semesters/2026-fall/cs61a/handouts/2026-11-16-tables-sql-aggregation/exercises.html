@@ -34,7 +34,36 @@
   </div>
 </div>
 
-<section class="schema-panel">
+<nav class="toc-bar" aria-label="Sections">
+  <a href="#code-guide">SQL Clause Breakdown</a>
+  <a href="#schema">Database Schema</a>
+  <a href="#exercises-start">E1&ndash;E7 Exercises</a>
+</nav>
+
+<section class="code-guide" id="code-guide">
+  <h2>Piece-by-Piece Breakdown: How SQLite Evaluates a Query</h2>
+  <p>Before solving E1&ndash;E7, trace how every clause in a grouped SQL query transforms rows and groups from top to bottom (matching the logical execution stages: <code>FROM/JOIN</code> &rarr; <code>WHERE</code> &rarr; <code>GROUP BY</code> &rarr; <code>HAVING</code> &rarr; <code>SELECT</code> &rarr; <code>ORDER BY</code> &rarr; <code>LIMIT</code>).</p>
+  <pre><code class="language-sql">SELECT   b.author, COUNT(*) AS loan_count, SUM(l.days) AS total_days
+FROM     books AS b JOIN loans AS l ON b.title = l.title
+WHERE    b.pages &gt;= 250
+GROUP BY b.author
+HAVING   COUNT(*) &gt;= 2
+ORDER BY total_days DESC, b.author ASC;</code></pre>
+  <table class="code-anatomy">
+    <thead><tr><th>SQL piece</th><th>Input &rarr; Output</th><th>Exact role and key rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>FROM books AS b JOIN loans AS l ON b.title = l.title</code></td><td>7 &times; 7 = 49 raw pairs &rarr; matched rows</td><td>Stage 1: Pairs rows across both tables where titles match. Qualify any shared column name (<code>b.title</code>) using table aliases.</td></tr>
+      <tr><td><code>FROM books AS a, books AS b WHERE a.title &lt; b.title</code></td><td><i>n</i><sup>2</sup> pairs &rarr; unique unordered pairs</td><td>Self-join pattern: <code>a.title &lt; b.title</code> prevents self-matches and avoids listing <code>(X, Y)</code> and <code>(Y, X)</code> twice.</td></tr>
+      <tr><td><code>WHERE b.pages &gt;= 250</code></td><td>Matched rows &rarr; qualifying rows</td><td>Stage 2: Filters individual rows <em>before</em> grouping. Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>MAX</code>) are illegal here.</td></tr>
+      <tr><td><code>GROUP BY b.author</code></td><td>Filtered rows &rarr; 1 bucket per author</td><td>Stage 3: Splits surviving rows into buckets sharing the same grouping key(s).</td></tr>
+      <tr><td><code>HAVING COUNT(*) &gt;= 2</code></td><td>All buckets &rarr; surviving buckets</td><td>Stage 4: Filters whole groups using aggregates computed inside each bucket.</td></tr>
+      <tr><td><code>SELECT b.author, ... AS total_days</code></td><td>1 row per bucket &rarr; named output columns</td><td>Stage 5: Evaluates aggregates per group and binds column aliases (<code>AS</code>). Never mix ungrouped columns with <code>SUM</code>/<code>COUNT</code>.</td></tr>
+      <tr><td><code>ORDER BY total_days DESC, b.author ASC</code></td><td>Output rows &rarr; sorted rows</td><td>Stage 6: Sorts final rows (ties in <code>total_days</code> break alphabetically by <code>b.author</code>).</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="schema-panel" id="schema">
   <h2>Database tables (<code>books</code>, <code>loans</code>)</h2>
   <div class="schema-grid">
     <div class="tablewrap">
@@ -69,7 +98,7 @@
 </section>
 
 <!-- E1 -->
-<div class="exercise-block">
+<div class="exercise-block" id="exercises-start">
   <h2>E1</h2>
   <p>Titles of books with more than 260 pages, longest first.</p>
   <textarea class="code-editor" id="code-e1" rows="3" spellcheck="false"></textarea>

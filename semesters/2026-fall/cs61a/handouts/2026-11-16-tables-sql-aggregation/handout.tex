@@ -1,0 +1,508 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[mdthm,colorsec,noauthor,noasy]{evan}
+\usepackage{handout}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\lstnewenvironment{sql}[1][]{\endgraf\smallskip\Needspace{7\baselineskip}\noindent\minipage{\linewidth}\lstset{style=hcode,language=SQL,#1}}{\endminipage\endgraf\smallskip}
+\title{CS 61A --- Week 13}
+\subtitle{Tables, SQL, and aggregation (Lectures 34--36, Composing Programs 4.3)}
+\author{}\date{}\ihead{}
+\begin{document}
+\maketitle
+
+\section{Facts used from Weeks 1--12}
+\begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
+  \ii \textbf{Comparisons and boolean operators (Week 2).} Operators \cd{<}, \cd{>}, \cd{<=}, \cd{>=}, equality, and inequality return truth values, and \cd{and}, \cd{or}, and \cd{not} combine them. Strings compare character by character using character codes, so every uppercase ASCII letter precedes every lowercase ASCII letter: \cd{"Berkeley" < "Chicago"} and \cd{"Zebra" < "apple"} are both true.
+  \ii \textbf{Nested iteration (Week 5).} A nested comprehension \cd{[(a, b) for a in s for b in t]} forms one pair for every combination of an element of \cd{s} and an element of \cd{t}, producing \cd{len(s) * len(t)} pairs in total.
+  \ii \textbf{Integer division (Week 1).} Floor division \cd{7 // 2} evaluates to \cd{3}, rounding the quotient downward toward negative infinity (so \cd{-7 // 2} is \cd{-4}).
+\end{enumerate}
+
+\section{This week}
+
+\subsection{Tables (Lecture 34)}
+
+\begin{qbox}
+  Without an external data file or a loop in Python, how can you construct a three-row table of cities with their latitudes and longitudes, bind a table name to it, and inspect every row?
+\end{qbox}
+
+Python is a procedural language: a program specifies the exact sequence of steps to compute a value. SQL (Structured Query Language) is a declarative language: a statement describes the properties of the desired result table, and the database query engine chooses how to construct it. A relational database stores \vocab{tables} (also called \vocab{relations}). Every table has a fixed sequence of named \vocab{columns}, and each \vocab{row} (record) holds one value per column. CS~61A uses SQLite, in which every statement terminates with a semicolon (\cd{;}) and keywords such as \cd{SELECT} and \cd{FROM} are case-insensitive.
+
+\medskip\noindent\textbf{Building a table inline.} A \cd{SELECT} clause with constant expressions produces a single-row table, where \cd{AS} assigns each column name. Combining two compatible \cd{SELECT} statements with \cd{UNION} stacks their rows vertically, keeping the column names supplied by the first \cd{SELECT}. Wrapping the query inside \cd{CREATE TABLE name AS ...} saves the resulting table under \cd{name}, and \cd{SELECT * FROM name} displays all columns.
+
+\Needspace{12\baselineskip}
+\begin{sql}
+CREATE TABLE cities AS
+  SELECT 38 AS latitude, 122 AS longitude, "Berkeley" AS name UNION
+  SELECT 42,             71,               "Cambridge"        UNION
+  SELECT 45,             93,               "Minneapolis";
+SELECT * FROM cities;
+\end{sql}
+SQLite prints one row per line using vertical bars (\cd{|}) between column values:
+\begin{plain}
+38|122|Berkeley
+42|71|Cambridge
+45|93|Minneapolis
+\end{plain}
+
+\Needspace{14\baselineskip}
+\medskip\noindent\textbf{Piece-by-piece breakdown of table creation.} Every clause in the query above performs one specific structural operation:
+
+\medskip
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.3cm}X@{}}
+\toprule
+\textbf{Piece} & \textbf{What it names or accepts} & \textbf{What SQLite produces} \\
+\midrule
+\cd{CREATE TABLE cities AS} & New permanent table identifier & Binds \cd{cities} in the database to the table returned by the query below. \\
+\cd{SELECT 38 AS latitude, ...} & Three literal expressions + column aliases & A 1-row, 3-column table whose column headers are \cd{latitude}, \cd{longitude}, and \cd{name}. \\
+\cd{UNION} & Another \cd{SELECT} with 3 columns & Stacks rows vertically and removes exact duplicate rows (\cd{UNION ALL} keeps duplicates). \\
+\cd{SELECT 42, 71, "Cambridge"} & Positional column values & Second row appended under the first query's headers; any \cd{AS} aliases here would be ignored. \\
+\cd{SELECT * FROM cities;} & Table name; \cd{*} selects all columns & Returns all 3 rows and 3 columns; row order is arbitrary unless \cd{ORDER BY} is given. \\
+\bottomrule
+\end{tabularx}
+
+\medskip\noindent\textbf{Mutating an existing table.} When a schema is known in advance, you can declare an empty table with \cd{CREATE TABLE name(col1, col2)}, append rows with \cd{INSERT INTO}, modify matching rows with \cd{UPDATE ... SET ... WHERE}, remove matching rows with \cd{DELETE FROM ... WHERE}, or discard the entire table with \cd{DROP TABLE}.
+
+\Needspace{12\baselineskip}
+\begin{sql}
+CREATE TABLE p(name, age);
+INSERT INTO p VALUES ("Ana", 20), ("Ben", 22);
+UPDATE p SET age = age + 1 WHERE name = "Ana";
+DELETE FROM p WHERE age > 21;
+SELECT * FROM p;   -- prints Ana|21
+\end{sql}
+After these four statements run, \cd{Ana}'s age increases from \cd{20} to \cd{21}, and \cd{Ben} (\cd{age = 22}) satisfies \cd{age > 21} so that row is deleted.
+
+\medskip\noindent\textbf{The question answered.} The \cd{CREATE TABLE cities AS SELECT ... UNION ...;} statement creates the three-row table with named columns, and \cd{SELECT * FROM cities;} prints all three records.
+
+\begin{shortcuts}
+  \ii \textbf{Building a small table by hand:} Specify \cd{AS} column names only on the first \cd{SELECT}, then connect subsequent rows with \cd{UNION SELECT} value lists. Because \cd{UNION} takes headers from the first query, omitting repeated \cd{AS} labels keeps the code clean. Example: \cd{cities} above.
+  \ii \textbf{Counting columns in output:} The number of columns is one plus the number of \cd{|} separators on a line, because \cd{|} appears only between adjacent fields. Example: \cd{38|122|Berkeley} has two bars, so it has three columns.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Aliases after the first \cd{SELECT} in a \cd{UNION} are ignored:} Writing \cd{SELECT 1 AS a UNION SELECT 2 AS b;} produces a single column named \cd{a}, never \cd{b}.
+  \ii \textbf{Mismatched column counts in \cd{UNION}:} Every branch of a \cd{UNION} must have the same number of columns; \cd{SELECT 1, 2 UNION SELECT 3;} raises a syntax error.
+  \ii \textbf{Double quotes on a column name:} In SQLite, if a double-quoted token matches a column name, SQLite treats it as the column identifier rather than a string literal. Thus \cd{SELECT "name" FROM cities;} prints \cd{Berkeley}, \cd{Cambridge}, and \cd{Minneapolis}. Always use single quotes (\cd{'name'}) for literal text strings.
+  \ii \textbf{Missing semicolons:} Without a trailing \cd{;}, SQLite keeps reading the next line as part of the same statement, turning two queries into one invalid query.
+\end{trapbox}
+
+\subsection{Select, where, order by, and joins (Lecture 35)}
+
+\begin{qbox}
+  Given the \cd{cities} table and a second table \cd{temps(city, temp)} with rows \cd{("Berkeley", 68)}, \cd{("Chicago", 59)}, and \cd{("Minneapolis", 55)}, how do you list each city together with both its latitude and its temperature, and how do you list every unordered pair of distinct cities from \cd{temps} with their temperature difference?
+\end{qbox}
+
+The general single-block \cd{SELECT} syntax combines table sources, filtering, computed output expressions, sorting, and row limits:
+\begin{sql}
+SELECT [columns]
+FROM   [tables]
+WHERE  [row condition]
+ORDER BY [sort keys]
+LIMIT  [n];
+\end{sql}
+Each expression in the \cd{SELECT} list is evaluated once per surviving row using arithmetic (\cd{+}, \cd{-}, \cd{*}, \cd{/}, \cd{\%}), comparisons (\cd{=}, \cd{<>}, \cd{!=}, \cd{<}, \cd{<=}, \cd{>}, \cd{>=}), logical connectives (\cd{AND}, \cd{OR}, \cd{NOT}), or scalar functions such as \cd{ABS} and \cd{ROUND}. Adding \cd{DISTINCT} right after \cd{SELECT} eliminates duplicate output rows.
+
+\Needspace{12\baselineskip}
+\begin{sql}
+SELECT name, 60 * ABS(latitude - 38) AS distance FROM cities;
+-- Output:
+-- Berkeley|0
+-- Cambridge|240
+-- Minneapolis|420
+\end{sql}
+
+\medskip\noindent\textbf{Division and string helpers.} In SQLite, equality uses a single \cd{=} (though \cd{==} is also accepted), and inequality uses \cd{!=} or \cd{<>}. Dividing two integers truncates toward zero: \cd{7 / 2} is \cd{3}, whereas \cd{-7 / 2} is \cd{-3} (unlike Python's floor division in W3, which gives \cd{-4}). Writing \cd{7 / 2.0} or \cd{7 * 1.0 / 2} triggers floating-point division (\cd{3.5}), and \cd{45 \% 7} gives the remainder \cd{3}. For strings, \cd{||} concatenates two strings, \cd{SUBSTR(s, start, len)} extracts a 1-indexed slice, \cd{INSTR(s, sub)} returns the 1-indexed position of \cd{sub} in \cd{s} (\cd{INSTR("Berkeley", "ke")} is \cd{4}), and \cd{LIKE} matches case-insensitive ASCII patterns where \cd{\%} matches any sequence of zero or more characters and \cd{\_} matches any single character:
+\begin{sql}
+SELECT "Hi, " || name FROM cities WHERE SUBSTR(name, 1, 3) = 'Ber';  -- prints Hi, Berkeley
+\end{sql}
+
+\medskip\noindent\textbf{Joining two tables and breaking down every piece.} Listing \cd{FROM cities, temps} (or equivalently \cd{FROM cities JOIN temps ON ...}) forms the Cartesian product of the two tables (W2): every row of \cd{cities} pairs with every row of \cd{temps}, creating $3 \times 3 = 9$ combined rows before \cd{WHERE} filters out mismatched pairs.
+\begin{sql}
+SELECT name, latitude, temp
+FROM   cities JOIN temps ON name = city;
+-- Output: Berkeley|38|68  and  Minneapolis|45|55
+\end{sql}
+Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row in \cd{cities}, so neither city satisfies \cd{name = city} in an inner join.
+
+\Needspace{16\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,font=\small]
+  % Left table: cities
+  \node[font=\footnotesize\bfseries,text=figslate] at (1.3,2.35) {\cd{cities} (3 rows)};
+  \draw[figblue!70,fill=figblue!6,rounded corners=3pt] (0,0) rectangle (2.6,2.0);
+  \node[font=\ttfamily\footnotesize] (c1) at (1.3,1.55) {Berkeley};
+  \node[font=\ttfamily\footnotesize] (c2) at (1.3,1.00) {Cambridge};
+  \node[font=\ttfamily\footnotesize] (c3) at (1.3,0.45) {Minneapolis};
+
+  % Right table: temps
+  \node[font=\footnotesize\bfseries,text=figslate] at (6.9,2.35) {\cd{temps} (3 rows)};
+  \draw[figred!70,fill=figred!6,rounded corners=3pt] (5.6,0) rectangle (8.2,2.0);
+  \node[font=\ttfamily\footnotesize] (t1) at (6.9,1.55) {Berkeley};
+  \node[font=\ttfamily\footnotesize] (t2) at (6.9,1.00) {Chicago};
+  \node[font=\ttfamily\footnotesize] (t3) at (6.9,0.45) {Minneapolis};
+
+  % Cartesian arrows (light) vs kept matches (thick green)
+  \draw[black!18,thin] (c1.east) -- (t2.west);
+  \draw[black!18,thin] (c1.east) -- (t3.west);
+  \draw[black!18,thin] (c2.east) -- (t1.west);
+  \draw[black!18,thin] (c2.east) -- (t2.west);
+  \draw[black!18,thin] (c2.east) -- (t3.west);
+  \draw[black!18,thin] (c3.east) -- (t1.west);
+  \draw[black!18,thin] (c3.east) -- (t2.west);
+
+  \draw[figgreen!80!black,very thick,->] (c1.east) -- (t1.west) node[midway,above=1pt,font=\scriptsize] {kept};
+  \draw[figgreen!80!black,very thick,->] (c3.east) -- (t3.west) node[midway,below=1pt,font=\scriptsize] {kept};
+
+  % Result summary on right
+  \node[anchor=west,align=left,font=\footnotesize,text=figslate] at (8.7,1.25) {%
+    Cartesian product: $3 \times 3 = 9$ pairs\\[4pt]
+    Filter \cd{name = city}: keeps $2$ rows\\[4pt]
+    (\cd{Berkeley|38|68}, \cd{Minneapolis|45|55})
+  };
+\end{tikzpicture}
+\figcap{Inner join of \cd{cities} and \cd{temps}: the \cd{FROM} stage pairs all $3\times 3 = 9$ combinations, and the \cd{ON}/\cd{WHERE} condition \cd{name = city} keeps only the $2$ matching pairs.}
+\end{fig}
+
+\medskip\noindent\textbf{Self-joins and table aliases.} To compare two rows within the same table, join the table to itself using distinct aliases (\cd{AS a} and \cd{AS b}). Whenever two joined tables share a column name, every reference to that column must be qualified with \cd{alias.column}. Using \cd{a.city < b.city} breaks symmetry so each unordered pair appears exactly once in lexicographic order (W1), and pairs of a city with itself are excluded:
+\Needspace{12\baselineskip}
+\begin{sql}
+SELECT a.city, b.city, a.temp - b.temp AS diff
+FROM   temps AS a, temps AS b
+WHERE  a.city < b.city;
+-- Output: Berkeley|Chicago|9,  Berkeley|Minneapolis|13,  Chicago|Minneapolis|4
+\end{sql}
+
+\medskip\noindent\textbf{Piece-by-piece breakdown of the self-join query.} Notice how each piece narrows or transforms the working table:
+
+\medskip
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.1cm}X@{}}
+\toprule
+\textbf{SQL Piece} & \textbf{Input $\to$ Output shape} & \textbf{Mechanism} \\
+\midrule
+\cd{FROM temps AS a, temps AS b} & Two 3-row tables $\to$ 9 pairs & Binds aliases \cd{a} and \cd{b} so both copies have distinct column prefixes \cd{a.city}, \cd{a.temp}, \cd{b.city}, \cd{b.temp}. \\
+\cd{WHERE a.city < b.city} & 9 pairs $\to$ 3 unordered pairs & Drops self-pairs (\cd{"Berkeley" < "Berkeley"} is false) and reverses (\cd{"Chicago" < "Berkeley"} is false). \\
+\cd{SELECT a.city, b.city, ...} & 3 rows $\to$ 3 formatted rows & Evaluates \cd{a.temp - b.temp} for each surviving pair and names the third column \cd{diff}. \\
+\bottomrule
+\end{tabularx}
+
+\medskip
+Three copies multiply to $3 \times 3 \times 3 = 27$ triples, and \cd{WHERE a.city < b.city AND b.city < c.city} selects the single strictly increasing triple \cd{Berkeley|Chicago|Minneapolis}.
+
+\Needspace{10\baselineskip}
+\begin{proposition*}[Rule: logical order of evaluation of a single \cd{SELECT}]
+The result of \cd{SELECT cols FROM tables WHERE cond ORDER BY key LIMIT n} matches executing five stages in sequence:
+\begin{enumerate}[(1)]
+  \ii Form every combination of rows from the tables listed in \cd{FROM} (applying any \cd{JOIN ... ON} criteria).
+  \ii Keep only combined rows for which the \cd{WHERE} condition evaluates to true.
+  \ii Evaluate each column expression in the \cd{SELECT} list for every remaining row.
+  \ii Sort those rows according to the \cd{ORDER BY} expressions (\cd{ASC} by default, or \cd{DESC}).
+  \ii Keep at most the first \cd{LIMIT} rows.
+\end{enumerate}
+\end{proposition*}
+
+\noindent\textbf{Consequences.} First, \cd{WHERE} may test columns that never appear in \cd{SELECT}. Second, \cd{ORDER BY} may sort by either an unprinted table column or an \cd{AS} alias defined in \cd{SELECT}. Third, SQLite permits \cd{WHERE} to reference a \cd{SELECT} alias by inline substitution, though standard SQL dialects forbid using output aliases inside \cd{WHERE}.
+
+\medskip\noindent\textbf{The question answered.} Each city with its latitude and temperature is returned by \cd{SELECT name, latitude, temp FROM cities JOIN temps ON name = city;}, and every unordered pair with its temperature gap is returned by the self-join with \cd{a.city < b.city}.
+
+\begin{shortcuts}
+  \ii \textbf{Size of an unfiltered join:} Joining $m$ rows with $n$ rows produces $mn$ pairs before \cd{WHERE} runs (W2). Example: \cd{cities, temps} forms $3 \times 3 = 9$ rows.
+  \ii \textbf{Unordered vs.\ ordered pairs in a self-join:} Write \cd{a.x < b.x} when each pair must appear once, or \cd{a.x != b.x} when both orders are wanted. Because one of two distinct values is smaller, \cd{a.x < b.x} halves the count cleanly.
+  \ii \textbf{Top-$k$ rows:} Write \cd{ORDER BY expr DESC LIMIT k}, or \cd{ORDER BY -expr LIMIT k} for numeric columns. Example: \cd{SELECT name FROM cities ORDER BY latitude DESC LIMIT 1;} returns \cd{Minneapolis}.
+  \ii \textbf{Substring filter:} Write \cd{WHERE col LIKE '\%sub\%'} to match any row containing \cd{sub} case-insensitively.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Omitting a join condition:} Writing \cd{SELECT * FROM cities, temps;} without \cd{WHERE} or \cd{ON} outputs all $9$ unfiltered combinations, pairing unrelated cities together.
+  \ii \textbf{Using \cd{!=} for unique pairs:} Writing \cd{a.city != b.city} outputs both \cd{Berkeley|Chicago} and \cd{Chicago|Berkeley}, doubling every unordered pair.
+  \ii \textbf{Truncating integer division:} \cd{SELECT 7 / 2;} outputs \cd{3}. Multiply by \cd{1.0} or write \cd{2.0} to obtain \cd{3.5}.
+  \ii \textbf{Unqualified shared column names:} Writing \cd{SELECT city FROM temps AS a, temps AS b WHERE a.temp > b.temp;} raises an ambiguous column error. Qualify as \cd{a.city} or \cd{b.city}.
+\end{trapbox}
+
+\subsection{Aggregation and grouping (Lecture 36)}
+
+\begin{qbox}
+  Using a table \cd{animals(name, legs, weight)}, how do you find the maximum weight among animals for each distinct leg count, and how do you list every weight shared by at least two animals?
+\end{qbox}
+
+\begin{sql}
+CREATE TABLE animals AS
+  SELECT "dog" AS name, 4 AS legs, 20 AS weight UNION
+  SELECT "cat",         4,         10           UNION
+  SELECT "ferret",      4,         10           UNION
+  SELECT "t-rex",       2,         12000        UNION
+  SELECT "penguin",     2,         10           UNION
+  SELECT "bird",        2,         6;
+\end{sql}
+An \vocab{aggregate function} combines values from multiple rows into a single summary value: \cd{MAX}, \cd{MIN}, \cd{SUM}, \cd{AVG}, and \cd{COUNT}. When a query uses aggregates with no \cd{GROUP BY} clause, the entire filtered table collapses into one summary row:
+\begin{sql}
+SELECT MAX(legs), SUM(weight), COUNT(*), COUNT(DISTINCT legs) FROM animals;  -- 4|12056|6|2
+SELECT MIN(legs), MAX(weight) FROM animals WHERE name <> 't-rex';            -- 2|20
+\end{sql}
+Notice that \cd{COUNT(*)} counts all surviving rows (\cd{6}), whereas \cd{COUNT(DISTINCT legs)} counts unique non-null leg counts (\cd{2}).
+
+\medskip\noindent\textbf{Splitting into groups and filtering groups.} Adding \cd{GROUP BY expr} partitions the rows that passed \cd{WHERE} into separate buckets, one per distinct value of \cd{expr}. Aggregate functions then run independently inside each bucket, outputting one row per group. Adding \cd{HAVING condition} discards entire groups whose aggregate summary fails the test.
+\begin{sql}
+SELECT legs, MAX(weight) FROM animals GROUP BY legs;
+-- Output: 2|12000  and  4|20
+
+SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
+-- Output: 10
+\end{sql}
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,font=\small]
+  % Group 1: legs = 2
+  \node[font=\footnotesize\bfseries,text=figblue] at (1.9,2.2) {Group 1: \cd{legs = 2}};
+  \draw[figblue!70,fill=figblue!6,rounded corners=3pt] (0,0.4) rectangle (3.8,1.9);
+  \node[font=\ttfamily\footnotesize,align=left] at (1.9,1.15) {t-rex   | 2 | 12000\\penguin | 2 | 10\\bird    | 2 | 6};
+
+  % Group 2: legs = 4
+  \node[font=\footnotesize\bfseries,text=figred] at (6.7,2.2) {Group 2: \cd{legs = 4}};
+  \draw[figred!70,fill=figred!6,rounded corners=3pt] (4.8,0.4) rectangle (8.6,1.9);
+  \node[font=\ttfamily\footnotesize,align=left] at (6.7,1.15) {dog    | 4 | 20\\cat    | 4 | 10\\ferret | 4 | 10};
+
+  % Arrows to collapsed output
+  \draw[->,figblue,thick] (1.9,0.35) -- (1.9,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
+  \draw[->,figred,thick]  (6.7,0.35) -- (6.7,-0.45) node[midway,right=3pt,font=\scriptsize] {\cd{MAX(weight)}};
+
+  \draw[figslate!70,fill=figslate!5,rounded corners=3pt] (0.5,-1.2) rectangle (3.3,-0.5);
+  \node[font=\ttfamily\footnotesize] at (1.9,-0.85) {2 | 12000};
+  \draw[figslate!70,fill=figslate!5,rounded corners=3pt] (5.3,-1.2) rectangle (8.1,-0.5);
+  \node[font=\ttfamily\footnotesize] at (6.7,-0.85) {4 | 20};
+\end{tikzpicture}
+\figcap{\cd{GROUP BY legs}: SQLite partitions the six rows of \cd{animals} into two buckets (\cd{legs = 2} and \cd{legs = 4}), computes \cd{MAX(weight)} separately in each bucket, and outputs one row per group.}
+\end{fig}
+
+\medskip\noindent\textbf{Multi-key and computed grouping.} Writing \cd{GROUP BY legs, weight} creates one group for every distinct \cd{(legs, weight)} pair present in the data, and computed keys such as \cd{GROUP BY weight / legs} group rows by integer quotient (\cd{2, 3, 5, 6000}).
+
+\Needspace{15\baselineskip}
+\begin{fig}
+\begin{tikzpicture}[>=Stealth,font=\small]
+  \tikzset{st/.style={draw=figslate!75,rounded corners=3pt,minimum width=1.62cm,minimum height=0.88cm,align=center,font=\scriptsize}}
+  \node[st,draw=figblue,fill=figblue!8]     (s1) at (0,0)    {\textbf{1. \cd{FROM / JOIN}}\\[1pt]all pairs};
+  \node[st,draw=figred,fill=figred!8]       (s2) at (2.15,0) {\textbf{2. \cd{WHERE}}\\[1pt]filter rows};
+  \node[st,draw=figamber!90!black,fill=figamber!10] (s3) at (4.30,0) {\textbf{3. \cd{GROUP BY}}\\[1pt]form buckets};
+  \node[st,draw=figpurple,fill=figpurple!8] (s4) at (6.45,0) {\textbf{4. \cd{HAVING}}\\[1pt]filter groups};
+  \node[st,draw=figgreen,fill=figgreen!8]   (s5) at (8.60,0) {\textbf{5. \cd{SELECT}}\\[1pt]aggregates / \cd{AS}};
+  \node[st,fill=figslate!6]                 (s6) at (10.75,0){\textbf{6. \cd{ORDER BY}}\\[1pt]sort rows};
+  \node[st,fill=figslate!6]                 (s7) at (12.80,0){\textbf{7. \cd{LIMIT}}\\[1pt]first $n$};
+
+  \draw[->,thick,black!65] (s1) -- (s2);
+  \draw[->,thick,black!65] (s2) -- (s3);
+  \draw[->,thick,black!65] (s3) -- (s4);
+  \draw[->,thick,black!65] (s4) -- (s5);
+  \draw[->,thick,black!65] (s5) -- (s6);
+  \draw[->,thick,black!65] (s6) -- (s7);
+
+  \node[font=\scriptsize,text=figred] at (2.15,-0.88) {single-row predicates only};
+  \node[font=\scriptsize,text=figpurple] at (6.45,-0.88) {group predicates (aggregates allowed)};
+\end{tikzpicture}
+\figcap{Logical execution pipeline of a grouped SQL query. Because \cd{WHERE} runs in Stage 2 before \cd{GROUP BY} creates buckets in Stage 3, aggregate calls such as \cd{SUM(weight)} or \cd{COUNT(*)} are illegal in \cd{WHERE} and belong in \cd{HAVING} (Stage 4).}
+\end{fig}
+
+\Needspace{14\baselineskip}
+\medskip\noindent\textbf{Piece-by-piece breakdown of a full grouped query.} Trace the order in which SQLite evaluates:
+\begin{sql}
+SELECT   legs, SUM(weight) AS total_w
+FROM     animals
+WHERE    weight >= 10
+GROUP BY legs
+HAVING   COUNT(*) >= 2
+ORDER BY total_w DESC;
+\end{sql}
+
+\medskip
+\noindent\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{4.0cm}X@{}}
+\toprule
+\textbf{Stage / Clause} & \textbf{Working set after clause} & \textbf{Role and legality rule} \\
+\midrule
+\cd{FROM animals} & 6 rows & Loads the base table \cd{animals}. \\
+\cd{WHERE weight >= 10} & 5 rows (\cd{bird} removed) & Filters individual rows \emph{before} grouping; aggregate calls are forbidden here. \\
+\cd{GROUP BY legs} & 2 buckets (\cd{2} has 2 rows; \cd{4} has 3 rows) & Collapses rows sharing the same \cd{legs} key into separate buckets. \\
+\cd{HAVING COUNT(*) >= 2} & Both buckets remain & Filters whole groups; aggregate calls are legal here because groups already exist. \\
+\cd{SELECT legs, SUM(weight) ...} & \cd{(2, 12010)}, \cd{(4, 40)} & Evaluates one output row per surviving group and binds alias \cd{total\_w}. \\
+\cd{ORDER BY total\_w DESC} & \cd{2|12010} then \cd{4|40} & Sorts the final grouped output using the computed column alias. \\
+\bottomrule
+\end{tabularx}
+
+\medskip\noindent\textbf{Bare columns alongside aggregates.} In SQLite, selecting a column that is neither grouped nor wrapped in an aggregate function follows two distinct rules:
+\begin{itemize}
+  \ii If the \cd{SELECT} list contains \emph{exactly one} \cd{MAX} or \cd{MIN} (and no other aggregate), SQLite picks the bare column from the row that attained that extreme value: \cd{SELECT name, MAX(weight) FROM animals;} returns \cd{t-rex|12000}.
+  \ii If the query calls two extreme aggregates (\cd{MAX(weight), MIN(weight)}) or uses \cd{SUM}, \cd{AVG}, or \cd{COUNT}, SQLite picks an arbitrary row from the group for the bare column (with no guarantee of which row it chooses). Always include only grouped keys and aggregate expressions unless you specifically intend a single \cd{MAX}/\cd{MIN} tiebreaker.
+\end{itemize}
+
+\begin{shortcuts}
+  \ii \textbf{Most frequent value:} Run \cd{SELECT x, COUNT(*) FROM t GROUP BY x ORDER BY COUNT(*) DESC LIMIT 1;}. Sorting groups by size descending places the mode first.
+  \ii \textbf{\cd{WHERE} vs.\ \cd{HAVING}:} Any condition on a single row goes in \cd{WHERE}; any condition on a group summary (\cd{COUNT(*)}, \cd{SUM}, \cd{AVG}, \cd{MAX}) goes in \cd{HAVING}.
+  \ii \textbf{Counting partners per row after a self-join:} Join on the match criterion, then \cd{GROUP BY a.id}. Each joined row represents one matching partner, so \cd{COUNT(*)} counts partners per group.
+  \ii \textbf{Grouping by unique ID, not by name:} Two students or customers may share a name, so grouping by \cd{id} prevents merging distinct individuals into one bucket.
+\end{shortcuts}
+
+\begin{trapbox}
+  \ii \textbf{Putting a single-row filter in \cd{HAVING}:} \cd{SELECT legs, SUM(weight) FROM animals GROUP BY legs HAVING weight >= 10;} tests \cd{weight >= 10} on one arbitrary representative row per group rather than filtering individual animals first, dropping the entire \cd{legs = 2} group if \cd{bird} is picked.
+  \ii \textbf{Nesting aggregates:} \cd{MAX(COUNT(*))} is illegal in SQLite. To find the largest group size, write \cd{GROUP BY ... ORDER BY COUNT(*) DESC LIMIT 1}.
+  \ii \textbf{\cd{COUNT(col)} vs.\ \cd{COUNT(DISTINCT col)}:} \cd{COUNT(legs)} counts all non-null rows (\cd{6}), not distinct values (\cd{2}).
+\end{trapbox}
+
+\subsection{Local and recursive tables (Composing Programs 4.3.5)}
+
+\begin{qbox}
+  How do you create a temporary helper table that exists only for one query, and how can a table definition refer to itself to generate sequences such as odd squares or Fibonacci numbers?
+\end{qbox}
+
+A \vocab{common table expression} (CTE) introduced by \cd{WITH name(cols) AS (select)} creates a local table visible only within that statement. A recursive CTE unions a base \cd{SELECT} (the starting rows) with a recursive \cd{SELECT} that generates new rows from existing rows until no new rows satisfy its \cd{WHERE} termination bound.
+
+\Needspace{14\baselineskip}
+\begin{sql}
+WITH ints(n) AS (
+  SELECT 5 UNION
+  SELECT n + 1 FROM ints WHERE n < 15
+)
+SELECT n, n * n FROM ints WHERE n % 2 = 1;
+-- Output: 5|25, 7|49, 9|81, 11|121, 13|169, 15|225
+
+WITH fib(previous, current) AS (
+  SELECT 0, 1 UNION
+  SELECT current, previous + current FROM fib WHERE current <= 100
+)
+SELECT previous FROM fib;
+-- Output: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89
+\end{sql}
+
+Because each step only reads rows already stored in the recursive table, every row must store all state needed to build the next row: \cd{fib} carries both \cd{previous} and \cd{current} so each new row advances to \cd{(current, previous + current)}.
+
+\section{Exam practice: real final exam questions}
+
+Academic-integrity note: following CS~61A policy, this section contains authentic past final exam problems and original practice problems rather than solutions to graded homework or lab assignments.
+
+\begin{prob}
+\textbf{R1 (Sp26 Final Q3, music festival).} Consider the tables \cd{artists(aconst, name, genres, rec\_labels)} and \cd{performances(pconst, aconst, stage, start\_time, duration)}:
+
+\medskip
+\noindent\begin{tabular}{@{}clll@{}}
+\toprule
+\cd{aconst} & \cd{name} & \cd{genres} & \cd{rec\_labels} \\
+\midrule
+1 & Sudan Archives & Electro, R\&B & Stones Throw \\
+2 & Hozier & Blues, Folk, Soul & Rubyworks, Island, Columbia \\
+3 & SZA & Hip-Hop, Pop, R\&B & TDE, RCA \\
+4 & Shakey Graves & Blues, Country, Folk, Rock & Dualtone \\
+5 & Bad Bunny & Hip-Hop, Latin Trap, Reggaeton & Hear This Music, Rimas \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\begin{tabular}{@{}ccclc@{}}
+\toprule
+\cd{pconst} & \cd{aconst} & \cd{stage} & \cd{start\_time} & \cd{duration} \\
+\midrule
+1 & 3 & Main & 17:00 & 60 \\
+2 & 1 & Meadow & 15:00 & 45 \\
+3 & 1 & Main & 21:00 & 90 \\
+4 & 5 & Main & 18:00 & 60 \\
+5 & 2 & Meadow & 17:00 & 60 \\
+6 & 4 & Meadow & 18:00 & 45 \\
+7 & 2 & Main & 20:00 & 60 \\
+\bottomrule
+\end{tabular}
+
+\begin{enumerate}[(a)]
+  \ii Write a query giving the names and record labels of all artists in the \cd{Folk} genre.
+  \ii Write a query giving each artist's name together with the stage and duration of each of their performances, ordered longest first.
+  \ii Write a query giving the names of performers on stage for more than 120 minutes in total, along with the duration of their longest performance as \cd{longest\_show}.
+  \ii Give the exact table returned by:
+\begin{sql}
+SELECT first.start_time, first.stage AS stage1, second.stage AS stage2
+FROM   performances AS first JOIN performances AS second
+ON     first.pconst != second.pconst
+WHERE  first.start_time = second.start_time;
+\end{sql}
+  \ii Fill in \cd{\_\_\_(a)\_\_\_} and \cd{\_\_\_(b)\_\_\_} so \cd{SELECT stage, \_\_\_(a)\_\_\_ FROM performances \_\_\_(b)\_\_\_;} returns total minutes per stage as \cd{total\_mins}, counting only performances of at least 60 minutes, highest total first.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{R2 (Fa25 Final Q8, students in SQL).} Table \cd{students(name, discussion\_id, keyword)} has one row per student, and \cd{discussions(id, ta, room)} has one row per discussion section.
+\begin{enumerate}[(a)]
+  \ii Choose the expressions for \cd{(a)} and \cd{(b)} so \cd{SELECT keyword, \_\_\_(a)\_\_\_ AS total FROM students \_\_\_(b)\_\_\_;} returns the single most frequent keyword and its student count (no ties):
+  Options for \cd{(a)}: \cd{1}, \cd{name}, \cd{COUNT(*)}, \cd{MAX(keyword)}, \cd{MAX(COUNT(*))}.
+  Options for \cd{(b)}: \cd{GROUP BY keyword}, \cd{GROUP BY keyword HAVING COUNT(*) = MAX(COUNT(*))}, \cd{GROUP BY keyword ORDER BY COUNT(*) DESC LIMIT 1}, \cd{ORDER BY COUNT(*) DESC}.
+  \ii Complete \cd{CREATE TABLE big AS SELECT ta, id FROM students JOIN discussions \_\_\_(c)\_\_\_;} to list the TA and id of every discussion with more than 20 students.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{R3 (Su26 Final Q9, Formula 1).} Table \cd{drivers(id, nationality, team, points)} has two drivers per team (\cd{ANT/RUS} Mercedes \cd{204/154}; \cd{HAM/LEC} Ferrari \cd{159/126}; \cd{NOR/PIA} McLaren \cd{103/92}; \cd{VER/HAD} Red Bull Racing \cd{91/60}; \cd{LAW/LIN} Racing Bulls \cd{39/22}; \cd{GAS/COL} Alpine \cd{42/19}; \cd{BEA/OCO} Haas \cd{18/3}; \cd{BOR/HUL} Audi \cd{10/0}; \cd{SAI/ALB} Williams \cd{6/5}; \cd{ALO/STR} Aston Martin \cd{1/0}; \cd{BOT/PER} Cadillac \cd{0/0}), and \cd{races(date, winner, laps)} lists ten race winners (\cd{RUS, ANT, ANT, ANT, ANT, ANT, HAM, RUS, LEC, ANT}).
+\begin{enumerate}[(a)]
+  \ii Predict the exact output of \cd{SELECT team, COUNT(*) AS count FROM drivers AS d, races AS r WHERE d.id = r.winner GROUP BY team ORDER BY COUNT(*) DESC;}.
+  \ii Complete the teammate point-difference query (showing only the higher-scoring teammate, or alphabetically first on a tie, sorted by difference descending then \cd{id}):
+\begin{sql}
+SELECT   ___(a)___ AS id, ___(b)___ AS differences
+FROM     ___(c)___ AS a JOIN ___(d)___ AS b
+ON       ___(e)___ AND (a.points > b.points OR (___(f)___))
+ORDER BY ___(g)___;
+\end{sql}
+  \ii Complete \cd{SELECT team, \_\_\_(a)\_\_\_ AS total\_points FROM drivers \_\_\_(b)\_\_\_ ORDER BY total\_points DESC;} to list teams with strictly more than 100 total points.
+\end{enumerate}
+\end{prob}
+
+\begin{prob}
+\textbf{R4 (Fa19 Final Q10, Big Game).} Table \cd{scoring(player, points, quarter)} holds \cd{(Donald Stewart, 7, 1)}, \cd{(Christopher Brown Jr., 7, 1)}, \cd{(Ryan Sanborn, 3, 2)}, \cd{(Greg Thomas, 3, 2)}, \cd{(Cameron Scarlett, 7, 3)}, \cd{(Nikko Remigio, 7, 4)}, \cd{(Ryan Sanborn, 3, 4)}, \cd{(Chase Garbers, 7, 4)}. Table \cd{players(name, team)} assigns Stewart, Sanborn, and Scarlett to \cd{Stanford} and Brown, Thomas, Remigio, and Garbers to \cd{Cal}.
+\begin{enumerate}[(a)]
+  \ii Complete \cd{SELECT quarter FROM scoring \_\_\_\_\_\_\_\_;} to return all quarters with more than 10 total points scored.
+  \ii Complete \cd{SELECT team, SUM(points) FROM scoring, players \_\_\_\_\_\_\_\_;} to compute total points scored by each team.
+\end{enumerate}
+\end{prob}
+
+\section{Original exercises (\cd{books} and \cd{loans})}
+
+The folder \cd{exercises/} (and the interactive web page) provides \cd{data.sql} with tables \cd{books(title, author, year, pages)} and \cd{loans(title, member, days)}, starter blanks in \cd{week13.sql}, and tests in \cd{tests.py}.
+
+\medskip
+\noindent\begin{tabular}{@{}llcc@{}}
+\toprule
+\cd{title} & \cd{author} & \cd{year} & \cd{pages} \\
+\midrule
+Dune & Herbert & 1965 & 412 \\
+Emma & Austen & 1815 & 474 \\
+Persuasion & Austen & 1817 & 249 \\
+Ubik & Dick & 1969 & 202 \\
+Valis & Dick & 1981 & 271 \\
+Kindred & Butler & 1979 & 264 \\
+Dawn & Butler & 1987 & 248 \\
+\bottomrule
+\end{tabular}
+\qquad
+\noindent\begin{tabular}{@{}llc@{}}
+\toprule
+\cd{title} & \cd{member} & \cd{days} \\
+\midrule
+Dune & Ana & 14 \\
+Emma & Ben & 21 \\
+Dune & Chen & 7 \\
+Ubik & Ana & 10 \\
+Kindred & Ben & 14 \\
+Kindred & Dev & 30 \\
+Dawn & Ana & 5 \\
+\bottomrule
+\end{tabular}
+
+\begin{enumerate}[label=\textbf{E\arabic*.},leftmargin=2.4em,itemsep=4pt]
+  \ii Titles of books with more than 260 pages, longest first.
+  \ii Each author with their number of books and total pages (only authors with at least two books), ordered by author.
+  \ii For each loan: \cd{member}, \cd{title}, and the book's \cd{author}.
+  \ii Every pair of distinct books by the same author, each pair once (earlier title first alphabetically).
+  \ii The member with the most total loan days, and that total.
+  \ii Authors whose books were borrowed by at least two distinct members.
+  \ii Each decade present in \cd{books} (e.g.\ 1965 maps to 1960) with its book count, oldest decade first.
+  \ii \textbf{Predict the output without running SQL:}
+  \begin{enumerate}[(a)]
+    \ii \cd{SELECT COUNT(*) FROM books, loans;}
+    \ii \cd{SELECT author, MAX(pages) FROM books GROUP BY author HAVING COUNT(*) > 1;}
+    \ii \cd{SELECT title, SUM(days) FROM loans GROUP BY title HAVING SUM(days) > 20;}
+  \end{enumerate}
+\end{enumerate}
+
+\end{document}
