@@ -97,11 +97,11 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
     ylabel={Probability},
     clip=false
   ]
-    \addplot[fill=figblue!25,draw=figblue,thick] coordinates {
+    \addplot[fill=black!14,draw=black,line width=0.6pt] coordinates {
       (0,0.0778) (0.2,0.2592) (0.4,0.3456) (0.6,0.2304) (0.8,0.0768) (1.0,0.0102)
     };
-    \node[font=\scriptsize,text=figred,above=2pt] at (axis cs:0,0.082) {$q_{0.025}=0$};
-    \node[font=\scriptsize,text=figred,above=2pt] at (axis cs:0.8,0.082) {$q_{0.975}=0.8$};
+    \node[font=\scriptsize,above=2pt] at (axis cs:0,0.082) {$q_{0.025}=0$};
+    \node[font=\scriptsize,above=2pt] at (axis cs:0.8,0.082) {$q_{0.975}=0.8$};
   \end{axis}
 \end{tikzpicture}
 \figcap{Exact bootstrap distribution of $\hat p^*$ for $2$ Chinstraps in $5$ penguins. Discrete jumps place the $2.5\%$ cut inside the bar at $0$ and the $97.5\%$ cut at $0.8$.}
@@ -208,19 +208,19 @@ At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right ta
     clip=false
   ]
     \draw[black!60,thick,dashed] (axis cs:0.044,0) -- (axis cs:0.044,0.295);
-    \node[font=\scriptsize,text=black!75,above] at (axis cs:0.044,0.298) {obs.\ $0.044$};
+    \node[font=\scriptsize,above] at (axis cs:0.044,0.298) {obs.\ $0.044$};
     % Non-extreme bars (K < 10)
-    \addplot[fill=figblue!25,draw=figblue,thick] coordinates {
+    \addplot[fill=black!8,draw=black!75,line width=0.55pt] coordinates {
       (-0.324,0.005) (-0.232,0.029) (-0.140,0.105) (-0.048,0.223)
     };
     % Extreme bars (K >= 10)
-    \addplot[fill=figred!35,draw=figred,thick] coordinates {
+    \addplot[fill=black!42,draw=black,line width=0.6pt] coordinates {
       (0.044,0.268) (0.136,0.179) (0.228,0.056) (0.320,0.009)
     };
-    \node[font=\scriptsize,text=figred,anchor=west] at (axis cs:0.17,0.225) {Right tail $p = 0.513$};
+    \node[font=\scriptsize,anchor=west] at (axis cs:0.17,0.225) {Right tail $p = 0.513$};
   \end{axis}
 \end{tikzpicture}
-\figcap{Exact permutation null distribution of $\hat p_s - \hat p_n$ in the $50$-person yawning experiment. Over half of the total probability mass ($0.513$, red bars) lies at or above the observed $0.044$.}
+\figcap{Exact permutation null distribution of $\hat p_s - \hat p_n$ in the $50$-person yawning experiment. Over half of the total probability mass ($0.513$, dark bars) lies at or above the observed $0.044$.}
 \end{fig}
 
 \subsection{Point nulls: box draws and the chi-squared statistic}
@@ -309,24 +309,24 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
     clip=false
   ]
     % Shaded Type I tail under H0 (right of c = 1.645)
-    \addplot[forget plot,domain=1.645:4.2,samples=40,fill=figred!30,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
-    % Shaded Type II area under HA (left of c = 1.645, mean 2.56, sd 1)
-    \addplot[forget plot,domain=-1.2:1.645,samples=40,fill=figamber!35,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
+    \addplot[forget plot,domain=1.645:4.2,samples=40,fill=black!35,draw=none] {exp(-0.5*x^2)/sqrt(2*pi)} \closedcycle;
+    % Hatched Type II area under HA (left of c = 1.645, mean 2.56, sd 1)
+    \addplot[forget plot,domain=-1.2:1.645,samples=40,pattern=north east lines,pattern color=black!55,draw=none] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)} \closedcycle;
     % H0 curve
-    \addplot[domain=-3.1:4.0,samples=90,figblue,very thick] {exp(-0.5*x^2)/sqrt(2*pi)};
+    \addplot[domain=-3.1:4.0,samples=90,black,very thick] {exp(-0.5*x^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_0$ (null)}
     % HA curve (mean = 2.56 -> Phi(1.645 - 2.56) = Phi(-0.915) = 0.18)
-    \addplot[domain=-1.2:5.8,samples=90,figgreen!80!black,very thick] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
+    \addplot[domain=-1.2:5.8,samples=90,black,very thick,dashed] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_A$ (alternative)}
     % Critical line & clear region annotations
     \draw[black!65,thick,dashed] (axis cs:1.645,0) -- (axis cs:1.645,0.40);
-    \node[font=\scriptsize,text=figred,anchor=west] (albl) at (axis cs:2.10,0.12) {$\alpha=0.05$};
-    \draw[->,figred,thin] (axis cs:2.18,0.105) -- (axis cs:1.95,0.025);
-    \node[font=\scriptsize,text=figamber!85!black] at (axis cs:1.05,0.048) {$\beta=0.18$};
-    \node[font=\scriptsize,text=figgreen!80!black] at (axis cs:2.82,0.16) {Power $= 0.82$};
+    \node[font=\scriptsize,anchor=west] (albl) at (axis cs:2.20,0.085) {$\alpha=0.05$};
+    \draw[->,black,thin] (axis cs:2.22,0.072) -- (axis cs:1.92,0.024);
+    \node[font=\scriptsize] at (axis cs:1.05,0.048) {$\beta=0.18$};
+    \node[font=\scriptsize] at (axis cs:2.95,0.22) {Power $= 0.82$};
   \end{axis}
 \end{tikzpicture}
-\figcap{Rejection region $x > c$ for a one-sided test. Red area under $H_0$ gives Type I error rate $\alpha = 0.05$; amber area under $H_A$ left of $c$ gives Type II error rate $\beta = 0.18$, leaving power $1 - \beta = 0.82$ to the right.}
+\figcap{Rejection region $x > c$ for a one-sided test. Dark shaded area under $H_0$ gives Type I error rate $\alpha = 0.05$; hatched area under $H_A$ left of $c$ gives Type II error rate $\beta = 0.18$, leaving power $1 - \beta = 0.82$ to the right.}
 \end{fig}
 
 \noindent\textbf{Design edge cases and trade-offs.}
@@ -389,19 +389,19 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
     legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize},
     clip=false
   ]
-    \addplot[domain=0.6:4.4,samples=10,figblue,very thick] {0.5 + 1.4*x};
+    \addplot[domain=0.6:4.4,samples=10,black,very thick] {0.5 + 1.4*x};
     \addlegendentry{OLS line $\hat y = 0.5 + 1.4x$}
-    \addplot[domain=0.6:4.4,samples=10,black!50,dashed,thick] {4};
+    \addplot[domain=0.6:4.4,samples=10,black!55,dashed,thick] {4};
     \addlegendentry{Baseline $\bar y = 4$}
     % Residuals
-    \draw[figred,very thick] (axis cs:1,1.9) -- (axis cs:1,2);
-    \draw[figred,very thick] (axis cs:2,3.3) -- (axis cs:2,3);
-    \draw[figred,very thick] (axis cs:3,4.7) -- (axis cs:3,5);
-    \draw[figred,very thick] (axis cs:4,6.1) -- (axis cs:4,6);
+    \draw[black,thick,densely dotted] (axis cs:1,1.9) -- (axis cs:1,2);
+    \draw[black,thick,densely dotted] (axis cs:2,3.3) -- (axis cs:2,3);
+    \draw[black,thick,densely dotted] (axis cs:3,4.7) -- (axis cs:3,5);
+    \draw[black,thick,densely dotted] (axis cs:4,6.1) -- (axis cs:4,6);
     \addplot[only marks,mark=*,mark size=2.3pt,black] coordinates {(1,2) (2,3) (3,5) (4,6)};
   \end{axis}
 \end{tikzpicture}
-\figcap{Least-squares line $\hat y = 0.5 + 1.4x$ (solid blue, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). Red vertical segments show the four residuals $+0.1, -0.3, +0.3, -0.1$.}
+\figcap{Least-squares line $\hat y = 0.5 + 1.4x$ (solid, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed, $\mathrm{MSE} = 2.5$). Dotted vertical segments show the four residuals $+0.1, -0.3, +0.3, -0.1$.}
 \end{fig}
 
 \noindent\textbf{Iterative optimization in R (\cd{optim}).} Instead of closed-form formulas, \cd{optim()} numerically searches for coefficients minimizing MSE (Nelder--Mead for $\ge 2$ parameters; use \cd{optimize()} for $1$ parameter, since Nelder--Mead warns in 1D and only returns an approximation such as $-0.4$ for $(x+0.5)^2$):
@@ -441,11 +441,11 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
     clip=false
   ]
     \draw[black!35,dashed] (axis cs:0.8,0) -- (axis cs:6.2,0);
-    \addplot[figblue,very thick,mark=*,mark size=2pt] coordinates {
+    \addplot[black,very thick,mark=*,mark size=2pt] coordinates {
       (1,0.835) (2,0.855) (3,0.865) (4,0.880) (5,0.910) (6,0.935)
     };
     \addlegendentry{Training $R^2$ ($12$ points)}
-    \addplot[figred,very thick,mark=square*,mark size=2pt] coordinates {
+    \addplot[black,thick,dashed,mark=o,mark options={solid,draw=black,line width=0.7pt},mark size=2.2pt] coordinates {
       (1,0.813) (2,0.790) (3,0.750) (4,0.620) (5,0.280) (6,-0.250)
     };
     \addlegendentry{Test $R^2$ ($200$ points)}
@@ -513,12 +513,12 @@ For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,
   ]
     \draw[black!35,dashed] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
     \draw[black!35,dashed] (axis cs:0,0) -- (axis cs:0,1.02);
-    \addplot[domain=-4.2:4.2,samples=90,figblue,very thick] {1/(1+exp(-x))};
-    \addplot[only marks,mark=*,mark size=2.3pt,figred] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
-    \node[font=\scriptsize,text=figred,above left=1pt]  at (axis cs:-1,0.27) {$(-1, 0.27)$};
-    \node[font=\scriptsize,text=figred,above left=1pt]  at (axis cs:0,0.51)  {$(0, 0.50)$};
-    \node[font=\scriptsize,text=figred,below right=1pt] at (axis cs:1,0.73)  {$(1, 0.73)$};
-    \node[font=\scriptsize,text=figgreen!80!black] at (axis cs:2.5,0.18) {Predict $\hat Y=1$ for $h \ge 0$};
+    \addplot[domain=-4.2:4.2,samples=90,black,very thick] {1/(1+exp(-x))};
+    \addplot[only marks,mark=*,mark size=2.3pt,black] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
+    \node[font=\scriptsize,above left=1pt]  at (axis cs:-1,0.27) {$(-1, 0.27)$};
+    \node[font=\scriptsize,above left=1pt]  at (axis cs:0,0.51)  {$(0, 0.50)$};
+    \node[font=\scriptsize,below right=1pt] at (axis cs:1,0.73)  {$(1, 0.73)$};
+    \node[font=\scriptsize] at (axis cs:2.5,0.18) {Predict $\hat Y=1$ for $h \ge 0$};
   \end{axis}
 \end{tikzpicture}
 \figcap{Standard logistic curve $f(h) = (1+e^{-h})^{-1}$. Because $f(0) = 0.5$ and $f$ is strictly increasing, classifying $\hat p \ge 0.5$ is equivalent to checking whether the linear predictor $h \ge 0$.}
