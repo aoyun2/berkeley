@@ -10,16 +10,21 @@ Python package, or external raster texture is needed to compile them.
    sums, dot products, ranks, or intersections as appropriate. Do not infer
    geometry from an illustration.
 2. Copy the relevant example from `samples.tex`. Use `\InkRegion[color]{closed
-   TikZ path}` for grain and `\InkStroke[options]{TikZ path}` for outlines.
-   Use `ink arrow` for vectors and `ink guide` for construction lines.
+   TikZ path}` for grain and `\InkStroke[options]{TikZ path}` for solid outlines.
+   Use `ink arrow` for solid vectors, and draw dotted reference/guide lines with
+   plain `\draw[ink guide, draw=...]` or `\draw[ink guide arrow, draw=...]` (actual
+   circular dots without `\InkStroke` fringe or dashed strokes). Keep `ylabel`
+   horizontal (`ylabel style={rotate=-90}`, or placed flush above the y-axis at
+   `at={(axis description cs:0,1.03)}, anchor=south west}` for multi-word labels).
    For very small circles and sampled plot paths, use exact `ink line` styles
    without random-step decoration (PGF arithmetic can overflow). Draw labels
    separately from `\InkStroke`, which draws its path twice.
-3. Draw all regions first, then strokes, then labels. Use native LaTeX labels
-   in empty space, wrapped with `\InkLabel{$...$}` for a 0.65pt white glyph
-   outline. For colored entries use `\InkLabel[inkblue]{$...$}` individually;
-   do not put nested `\textcolor` inside the halo. State what a finite patch
-   represents in the caption.
+3. Draw all regions first, then strokes, then labels. Place native `\InkLabel{$...$}`
+   directly beside curves or arrowheads rather than using leader/pointer lines; its
+   0.65pt white glyph outline keeps overlaps clean. For colored entries use
+   `\InkLabel[inkblue]{$...$}` individually; do not put nested `\textcolor` inside the
+   halo. Keep `\figcap` to 1--2 direct sentences stating what the figure shows, without
+   mannered `"X, not Y"` disclaimers.
 4. For the sample, run `build.ps1` in this directory. For a course packet,
    compile twice from that packet directory using the commands below.
    Inspect the compiled figure at 240 DPI.

@@ -104,6 +104,7 @@ Resampling requires size $n$ \emph{with} replacement for two reasons. First, spr
     label style={font=\footnotesize,text=black},
     xlabel={Bootstrap proportion $\hat p^*$},
     ylabel={Probability},
+    ylabel style={rotate=-90,at={(axis description cs:0,1.03)},anchor=south west},
     clip=false
   ]
     % Bars inside 95% percentile interval [0, 0.8] (single muted figblue accent)
@@ -229,7 +230,8 @@ At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right ta
  xmin=-.94,xmax=.47,ymin=0,ymax=.34,
  xtick={-.8,-.6,-.4,-.2,0,.2,.4},ytick={0,.1,.2,.3},
  tick label style={font=\scriptsize},label style={font=\footnotesize},
- xlabel={Difference $\hat p_s-\hat p_n=k/34-(14-k)/16$},ylabel={Probability},clip=false]
+ xlabel={Difference $\hat p_s-\hat p_n=k/34-(14-k)/16$},ylabel={Probability},
+ ylabel style={rotate=-90,at={(axis description cs:0,1.03)},anchor=south west},clip=false]
 \addplot[fill=white,pattern=inkgrain,pattern color=inkslate,draw=inkslate,line width=.42pt] coordinates {
 (-0.875000000,0.000000000128) (-0.783088235,0.000000020302) (-0.691176471,0.000001088687) (-0.599264706,0.000027870377) (-0.507352941,0.000395991606) (-0.415441176,0.003394213769) (-0.323529412,0.018456037370) (-0.231617647,0.065621466205) (-0.139705882,0.155030713908) (-0.047794118,0.244290821916) };
 \addplot[fill=white,pattern=inkgrain,pattern color=inkred,draw=inkred,line width=.42pt] coordinates {
@@ -240,7 +242,7 @@ At observed $k_{\text{obs}} = 10$, summing the formula yields one-sided right ta
 \node[font=\scriptsize,align=center,text=inkred] at (axis cs:.30,.22) {\InkLabel{\shortstack{$K\ge10$\\$p=0.513$}}};
 \end{axis}
 \end{tikzpicture}
-\figcap{Exact permutation null distribution for the yawning experiment, with all possible counts $k=0,\dots,14$ included. The red bars have total probability $\mathbb P(K\ge10)=0.5128$; the observed difference is $10/34-4/16\approx0.044$. Bar heights are computed from the hypergeometric formula above, not from simulated frequencies.}
+\figcap{Exact hypergeometric permutation distribution for the yawning experiment ($k=0,\dots,14$). Red bars mark $K\ge 10$ ($\mathbb P(K\ge10)=0.5128$) at the observed difference $10/34-4/16\approx0.044$.}
 \end{fig}
 
 \subsection{Point nulls: box draws and the chi-squared statistic}
@@ -337,6 +339,7 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
     label style={font=\footnotesize,text=black},
     xlabel={Test statistic},
     ylabel={Density},
+    ylabel style={rotate=-90,at={(axis description cs:0,1.03)},anchor=south west},
     legend style={at={(0.5,1.04)},anchor=south,legend columns=2,draw=none,fill=none,font=\scriptsize,legend cell align=left,/tikz/every even column/.append style={column sep=18pt}},
     clip=false
   ]
@@ -349,11 +352,11 @@ When a test converts a $p$-value into a binary reject/fail-to-reject decision (r
     % H0 curve (crisp black)
     \addplot[domain=-3.2:4.1,samples=100,black,line width=0.65pt] {exp(-0.5*x^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_0$ (null)}
-    % HA curve (muted figblue dashed)
+    % HA curve (solid muted figblue)
     \addplot[domain=-1.2:5.9,samples=100,figblue,line width=0.65pt] {exp(-0.5*(x-2.56)^2)/sqrt(2*pi)};
     \addlegendentry{Under $H_A$ (alternative)}
-    % Hairline critical value vertical rule
-    \InkStroke[black!70,line width=0.45pt,dashed]{(axis cs:1.645,0) -- (axis cs:1.645,0.425)}
+    % Dotted critical value vertical rule
+    \draw[ink guide,draw=black!70] (axis cs:1.645,0) -- (axis cs:1.645,0.425);
     % Calm restrained labels with short non-crossing pointers
     \node[font=\scriptsize,text=figblue!90!black,align=center] at (axis cs:2.64,0.238) {\InkLabel{\shortstack[c]{Power\\$1-\beta=0.82$}}};
     \node[font=\scriptsize,text=black!80,anchor=east,align=right] at (axis cs:0.32,0.135) {\InkLabel{\shortstack[c]{$\beta=0.18$\\[-1pt]{\scriptsize(Type II)}}}};
@@ -428,12 +431,13 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
     tick label style={font=\scriptsize,text=black},
     label style={font=\footnotesize,text=black},
     xlabel={$x$},ylabel={$y$},
+    ylabel style={rotate=-90},
     legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none,font=\scriptsize,legend cell align=left},
     clip=false
   ]
     \addplot[domain=0.6:4.4,samples=10,black,line width=0.65pt] {0.5 + 1.4*x};
     \addlegendentry{OLS $\hat y = 0.5 + 1.4x$}
-    \addplot[domain=0.6:4.4,samples=10,black!45,dashed,line width=0.55pt] {4};
+    \addplot[domain=0.6:4.4,samples=10,ink guide,draw=black!50] {4};
     \addlegendentry{Baseline $\bar y = 4$}
     % Residuals (single muted figred accent)
     \InkStroke[figred,line width=0.65pt]{(axis cs:1,1.9) -- (axis cs:1,2)}
@@ -456,9 +460,10 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
     tick label style={font=\scriptsize,text=black},
     label style={font=\footnotesize,text=black},
     xlabel={$x$},ylabel={Residual $\hat e_i = y_i - \hat y_i$},
+    ylabel style={rotate=-90,at={(axis description cs:0,1.03)},anchor=south west},
     clip=false
   ]
-    \InkStroke[black!45,line width=0.45pt,dashed]{(axis cs:0.5,0) -- (axis cs:4.5,0)}
+    \draw[ink guide,draw=black!45] (axis cs:0.5,0) -- (axis cs:4.5,0);
     \InkStroke[figred,line width=0.8pt]{(axis cs:1,0) -- (axis cs:1,0.1)}
     \InkStroke[figred,line width=0.8pt]{(axis cs:2,0) -- (axis cs:2,-0.3)}
     \InkStroke[figred,line width=0.8pt]{(axis cs:3,0) -- (axis cs:3,0.3)}
@@ -471,7 +476,7 @@ A predictive task maps known \vocab{features} $X_1,\dots,X_q$ to an unknown \voc
   \end{axis}
   \node[font=\footnotesize,text=black] at (10.75cm,-1.32cm) {\InkLabel{(b)}};
 \end{tikzpicture}
-\figcap{\textbf{(a)} Least-squares line $\hat y = 0.5 + 1.4x$ (solid black, $\mathrm{MSE} = 0.05$) versus the constant baseline $\bar y = 4$ (dashed gray, $\mathrm{MSE} = 2.5$). \textbf{(b)} Magnified residual plot showing all four vertical residuals $\hat e_i = y_i - \hat y_i \in \{+0.1, -0.3, +0.3, -0.1\}$ (red), which balance to $\sum \hat e_i = 0$.}
+\figcap{\textbf{(a)} Least-squares line $\hat y = 0.5 + 1.4x$ (solid black, $\mathrm{MSE} = 0.05$) versus constant baseline $\bar y = 4$ (dotted gray, $\mathrm{MSE} = 2.5$). \textbf{(b)} Vertical residuals $\hat e_i = y_i - \hat y_i \in \{+0.1, -0.3, +0.3, -0.1\}$ (red), summing to $0$.}
 \end{fig}
 
 \noindent\textbf{Iterative optimization in R (\cd{optim}).} Instead of closed-form formulas, \cd{optim()} numerically searches for coefficients minimizing MSE (Nelder--Mead for $\ge 2$ parameters; use \cd{optimize()} for $1$ parameter, since Nelder--Mead warns in 1D and only returns an approximation such as $-0.4$ for $(x+0.5)^2$):
@@ -512,12 +517,13 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
     label style={font=\footnotesize,text=black},
     xlabel={Polynomial degree},
     ylabel={$R^2$},
+    ylabel style={rotate=-90},
     legend style={at={(0.05,0.50)},anchor=west,draw=none,fill=none,font=\scriptsize,legend cell align=left},
     clip=false
   ]
-    % Quiet neutral gray wash where R^2 < 0 (worse than constant test mean)
+    % Quiet neutral blue wash where R^2 < 0 (worse than constant test mean)
     \InkRegion[inkblue]{(axis cs:0.75,-0.52) rectangle (axis cs:6.25,0)}
-    \InkStroke[black!35,line width=0.4pt,dashed]{(axis cs:0.75,0) -- (axis cs:6.25,0)}
+    \draw[ink guide,draw=black!40] (axis cs:0.75,0) -- (axis cs:6.25,0);
     \node[font=\scriptsize\itshape,text=black!55,anchor=west] at (axis cs:0.95,-0.28) {\InkLabel{worse than baseline ($R^2<0$)}};
     \addplot[black,line width=0.65pt,mark=*,mark size=1.8pt] coordinates {
       (1,0.835) (2,0.855) (3,0.865) (4,0.880) (5,0.910) (6,0.935)
@@ -529,7 +535,7 @@ On the training set, an OLS model with an intercept can set all slopes to $0$, f
     \addlegendentry{Test $R^2$}
   \end{axis}
 \end{tikzpicture}
-\figcap{Illustrative training and test curves for nested polynomial models. Training $R^2$ (black) cannot decrease as degree increases. Test $R^2$ (red) can decrease and become negative; its best degree depends on the data. These plotted values illustrate that behavior rather than report a fitted dataset.}
+\figcap{Illustrative training and test $R^2$ curves for nested polynomial models: training $R^2$ (black) rises monotonically with degree, whereas test $R^2$ (red) turns downward and even negative when overfitting.}
 \end{fig}
 
 \Needspace{16\baselineskip}
@@ -596,12 +602,13 @@ For binary targets $Y \in \{0,1\}$, linear probability models can overshoot $[0,
     label style={font=\footnotesize,text=black},
     xlabel={Linear combination $h = b_0 + b_1 X_1 + \dots$},
     ylabel={$\hat p = f(h)$},
+    ylabel style={rotate=-90,at={(axis description cs:0,1.03)},anchor=south west},
     clip=false
   ]
-    % Quiet neutral Spivak gray wash for decision half-plane h >= 0
+    % Quiet neutral blue wash for decision half-plane h >= 0
     \InkRegion[inkblue]{(axis cs:0,0) rectangle (axis cs:4.4,1.04)}
-    \InkStroke[black!30,line width=0.38pt,dashed]{(axis cs:-4.4,0.5) -- (axis cs:4.4,0.5)}
-    \InkStroke[black!40,line width=0.42pt,dashed]{(axis cs:0,0) -- (axis cs:0,1.04)}
+    \draw[ink guide,draw=black!35] (axis cs:-4.4,0.5) -- (axis cs:4.4,0.5);
+    \draw[ink guide,draw=black!45] (axis cs:0,0) -- (axis cs:0,1.04);
     \addplot[domain=-4.2:4.2,samples=100,black,line width=0.65pt] {1/(1+exp(-x))};
     \addplot[only marks,mark=*,mark size=1.8pt,black] coordinates {(-1,0.269) (0,0.5) (1,0.731)};
     \node[font=\scriptsize,text=black,anchor=east] at (axis cs:-1.18,0.29) {\InkLabel{$(-1,\,0.27)$}};

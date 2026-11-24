@@ -159,16 +159,16 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \coordinate (E3) at (0,0,1);
 
   % Coordinate drop guides in the plane
-  \PacketInkPath[figguide]{(Px) -- (P)}
-  \PacketInkPath[figguide]{(Py) -- (P)}
+  \draw[ink guide,draw=inkslate] (Px) -- (P);
+  \draw[ink guide,draw=inkslate] (Py) -- (P);
 
   % Projection vector p in the plane
   \PacketInkPath[->,draw=black!65,line width=0.55pt,shorten >=1.5pt]{(O) -- (P)}
   \node[font=\footnotesize,text=black!75] at (1.58,0.92,0) {\InkLabel{$p$}};
 
   % Vertical drop and parallelogram top guide
-  \PacketInkPath[figguide]{(P) -- (V3)}
-  \PacketInkPath[figguide]{(W3) -- (V3)}
+  \draw[ink guide,draw=inkslate] (P) -- (V3);
+  \draw[ink guide,draw=inkslate] (W3) -- (V3);
 
   % Geometrically exact right-angle mark between O--P and P--V3
   \PacketInkPath[black!55,line width=0.38pt]{(2.056,2.102,0) -- (2.056,2.102,0.26) -- (2.25,2.30,0.26)}
@@ -194,7 +194,7 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \fill[black] (O) circle (1.3pt);
   \fill[black!75] (P) circle (1.3pt);
 \end{tikzpicture}
-\figcap{Three-dimensional geometry of Step $j=3$ of the Gram--Schmidt procedure (\ilink{prop-87}{Prop.~87}). Having built the orthonormal basis $(e_1,e_2)$ for $\spn(v_1,v_2)$, we subtract from $v_3$ its projection $p=\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$ in the plane $\spn(e_1,e_2)$. The residual $w_3=v_3-p$ is orthogonal to $\spn(e_1,e_2)$, and normalizing gives the third orthonormal vector $e_3=w_3/\|w_3\|$.}
+\figcap{Step $j=3$ of Gram--Schmidt (\ilink{prop-87}{Prop.~87}): subtracting $p=\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$ leaves $w_3\perp\spn(e_1,e_2)$, giving $e_3=w_3/\|w_3\|$.}
 \end{fig}
 
 \begin{itemize}
@@ -438,20 +438,20 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   % Component P_{U^\perp} v on U^\perp axis
   \PacketInkPath[->,draw=black!65,line width=0.55pt]{(O) -- (W)}
   \node[font=\footnotesize,text=black!80,left=5pt] at (0,0,1.50) {\InkLabel{$P_{U^\perp}v$}};
-  \PacketInkPath[figguide]{(W) -- (V)}
+  \draw[ink guide,draw=inkslate] (W) -- (V);
 
   % Competitor point u in U and right-triangle legs
   \fill[black] (Upt) circle (1.35pt) node[right=3pt,font=\small] {\InkLabel{$u$}};
   \PacketInkPath[->,draw=black!55,line width=0.55pt,shorten <=1.4pt,shorten >=1.8pt]{(Upt) -- (PU)}
   \node[font=\scriptsize,text=black!70,below=3pt] at (0.48,2.45,0) {\InkLabel{$P_U v - u$}};
 
-  \PacketInkPath[->,draw=black!75,line width=0.55pt,dashed,shorten <=1.4pt,shorten >=2.2pt]{(Upt) -- (V)}
+  \draw[ink guide arrow,draw=black!75,shorten <=1.4pt,shorten >=2.2pt] (Upt) -- (V);
   \node[font=\scriptsize,text=black!80,above right=1pt] at (0.35,2.42,1.22) {\InkLabel{$v - u$}};
 
   \fill[black] (O) circle (1.3pt);
   \fill[figblue] (PU) circle (1.4pt);
 \end{tikzpicture}
-\figcap{Orthogonal decomposition $v=P_U v+P_{U^\perp}v$ and Best Approximation (LADR 6.61). For any $u\in U$, the vector $v-u$ (dashed) is the hypotenuse of a right triangle with vertical leg $v-P_U v\in U^\perp$ and horizontal leg $P_U v-u\in U$. By Pythagoras, $\|v-u\|^2=\|v-P_U v\|^2+\|P_U v-u\|^2$, minimized uniquely when $u=P_U v$.}
+\figcap{Best Approximation (LADR 6.61): for any $u\in U$, $v-u$ (dotted) is the hypotenuse of a right triangle with legs $v-P_U v\in U^\perp$ and $P_U v-u\in U$, minimized uniquely at $u=P_U v$.}
 \end{fig}
 
 \begin{example*}[Ex.~71: Best linear approximation of $x^3$ on ${[0,1]}$]\target{ex-71}
@@ -487,6 +487,7 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
     ymin=-1.30, ymax=1.30,
     xlabel={\InkLabel{$x$}},
     ylabel={\InkLabel{$y$}},
+    ylabel style={rotate=-90},
     xtick={-3.14159,-1.5708,0,1.5708,3.14159},
     xticklabels={\InkLabel{$-\pi$},\InkLabel{$-\pi/2$},\InkLabel{$0$},\InkLabel{$\pi/2$},\InkLabel{$\pi$}},
     ytick={-1,0,1},
@@ -500,8 +501,8 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
     \addplot[ink plot,black,line width=0.55pt,samples=150,domain=-3.14159:3.14159] {sin(deg(x))};
     \addplot[ink plot,black,line width=0.45pt,samples=150,domain=-3.14159:3.14159] {0.987862*x - 0.155271*x^3 + 0.005643*x^5};
 
-    % Degree-5 Taylor polynomial (single restrained accent, dashed)
-    \addplot[ink plot,figred,line width=0.55pt,dashed,samples=150,domain=-3.14159:3.14159] {x - x^3/6 + x^5/120};
+    % Degree-5 Taylor polynomial (single restrained accent, dotted)
+    \addplot[ink guide,draw=figred,line width=0.9pt,samples=150,domain=-3.14159:3.14159] {x - x^3/6 + x^5/120};
 
     % Direct atomic curve labels (no boxed legend)
     \node[font=\scriptsize,text=black,anchor=south] at (axis cs:1.57,1.06) {\InkLabel{$\sin x,\; P_{\PP_5}(\sin x)$}};
@@ -512,7 +513,7 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
       node[midway,right=2pt,font=\scriptsize,text=figred!90!black] {\InkLabel{$0.524$}}}
   \end{axis}
 \end{tikzpicture}
-\figcap{Comparison of $\sin x$ on $[-\pi,\pi]$ with its degree-$5$ Taylor polynomial $T_5(x)=x-x^3/6+x^5/120$ (dashed) and its $L^2([-\pi,\pi])$ orthogonal projection $P_{\PP_5}(\sin x)\approx 0.987862x-0.155271x^3+0.005643x^5$ onto $\PP_5(\RR)$ (solid, LADR 6.63). Orthogonal projection minimizes $\int_{-\pi}^\pi|\sin x-p(x)|^2\,dx$, with endpoint error about $0.016$. The curves nearly coincide at this scale, but this is an $L^2$ optimum, not a pointwise or maximum-error optimum.}
+\figcap{Approximation of $\sin x$ on $[-\pi,\pi]$ by its Taylor polynomial $T_5(x)$ (dotted red, error $0.524$ at $\pi$) and its $L^2$ projection $P_{\PP_5}(\sin x)$ (solid black, endpoint error $0.016$; LADR 6.63).}
 \end{fig}
 
 \needspace{10\baselineskip}\textbf{The pseudoinverse $T^\dagger$ and linear equations $Tx=b$ (LADR 6.67--6.70).} Suppose $V,W$ are inner product spaces with $\dim V<\infty$ and $T\in\LL(V,W)$. When $T$ is not invertible, $Tx=b$ may have no solution (if $b\notin\range T$) or infinitely many solutions (if $\nul T\ne\{0\}$). Orthogonal projections resolve both obstacles simultaneously:

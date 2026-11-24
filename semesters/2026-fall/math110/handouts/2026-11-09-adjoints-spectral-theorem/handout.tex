@@ -95,7 +95,7 @@ In an inner product space we measure geometric alignment via $\langle Tv,w\rangl
   & \InkLabel{$V'$}
 \end{tikzcd}
 \]
-\figcap{Commutative diagram defining the adjoint: both paths from $W$ to $V'$ agree, $\Gamma_V(T^*w)=T'(\Gamma_W(w))$, where $\Gamma_W(w)=\langle\cdot,w\rangle$, $\Gamma_V(v)=\langle\cdot,v\rangle$, and $T'(\varphi)=\varphi\circ T$. The two conjugate-linear Riesz maps cancel their conjugations, so $T^*\colon W\to V$ is linear. Scaling the operator instead gives $(\lambda T)^*=\overline{\lambda}T^*$.}
+\figcap{Commutative diagram defining the adjoint $T^*$: both paths from $W$ to $V'$ agree ($\Gamma_V\circ T^*=T'\circ\Gamma_W$), so $T^*=\Gamma_V^{-1}\circ T'\circ\Gamma_W$ is linear and scaling gives $(\lambda T)^*=\overline{\lambda}T^*$.}
 \end{fig}
 
 \begin{example*}[Ex.~72: Adjoint of differentiation by solving equations]\target{ex-72}
@@ -223,7 +223,7 @@ By linearity of $D^*$ in Example~72, $D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1)$.
   \InkStroke[ink arrow]{(5.5,.1)--(2.5,.1)}
   \node[below] at (4,.1) {\InkLabel{$T^*(x,y)=(x,2x)$}};
 \end{tikzpicture}
-\figcap{The four fundamental subspaces for $T(x,y)=(x+2y,0)$. Each red null space and blue range meet at the zero vector and are perpendicular. The restriction of $T$ maps the blue line in $V$ bijectively onto the blue line in $W$; $T^*$ maps back bijectively, but these restrictions need not be inverses. The red lines map to zero as shown below. In general, $V=\range T^*\oplus\nul T$ and $W=\range T\oplus\nul T^*$ (\hyperref[prop-94]{Prop.~94}); the subspaces need not be one-dimensional.}
+\figcap{The four fundamental subspaces for $T(x,y)=(x+2y,0)$: $\range T^*\perp\nul T$ in $V$ and $\range T\perp\nul T^*$ in $W$ (\hyperref[prop-94]{Prop.~94}). The blue lines map bijectively back and forth under $T$ and $T^*$, while the red null spaces collapse to zero.}
 \end{fig}
 
 \begin{proposition*}[LADR 7.7: Injectivity/surjectivity duality and ranks]\target{name-ladr-7-7}
@@ -446,27 +446,33 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
     \addplot[domain=0:360,samples=200,smooth,figred,line width=0.55pt]
       ({sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*cos(x)},{sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*sin(x)});
 
-    % Atomic curve labels
+    % Curve labels placed directly with white InkLabel halo
     \node[font=\scriptsize,text=black!65] at (axis cs:0,-2.35) {\InkLabel{$\|Av\|=\|A^*v\|=\sqrt{2}$}};
-    \node[font=\scriptsize,text=figblue] (bvlbl) at (axis cs:1.50,1.92) {\InkLabel{$\|Bv\|$}};
-    \InkStroke[black!55,line width=0.35pt]{(bvlbl.south west) -- (axis cs:0.86,1.44)}
-    \node[font=\scriptsize,text=figred,anchor=east] (bslbl) at (axis cs:-1.30,-1.60) {\InkLabel{$\|B^*v\|$}};
-    \InkStroke[figred!70,line width=0.35pt]{(bslbl.north east) -- (axis cs:-1.44,-0.80)}
+    \node[font=\scriptsize,text=inkblue,anchor=south west] at (axis cs:0.84,1.34) {\InkLabel{$\|Bv\|$}};
+    \node[font=\scriptsize,text=inkred,anchor=north east] at (axis cs:-1.30,-0.88) {\InkLabel{$\|B^*v\|$}};
   \end{axis}
   \node[font=\footnotesize] at (2.25,-0.55) {(a)};
 
-  % Only classes already defined in this section appear here.
-  \begin{scope}[xshift=6.15cm,yshift=.25cm]
-    \tikzset{opnode/.style={draw=black!70,line width=.4pt,inner sep=5pt,align=center,font=\scriptsize}}
-    \node[opnode] (all) at (3.2,4.2) {All operators $\LL(V)$};
-    \node[opnode] (normal) at (3.2,2.7) {Normal\\$TT^*=T^*T$};
-    \node[opnode] (selfadjoint) at (3.2,1.2) {Self-adjoint\\$T^*=T$};
-    \InkStroke[ink arrow,shorten <=2pt,shorten >=2pt]{(selfadjoint.north)--(normal.south)}
-    \InkStroke[ink arrow,shorten <=2pt,shorten >=2pt]{(normal.north)--(all.south)}
-    \node[font=\footnotesize] at (3.2,-.80) {(b)};
+  % Panel (b): Nested Euler containment diagram for operator classes
+  \begin{scope}[xshift=6.55cm,yshift=-0.15cm]
+    \draw[ink line,fill=white,draw=black!75,rounded corners=10pt] (0,0) rectangle (4.8,4.6);
+    \node[anchor=north,font=\scriptsize] at (2.4,4.45) {\textbf{All operators} $\LL(V)$};
+    \node[anchor=north,font=\scriptsize,text=inkred] at (2.4,4.02) {$B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$};
+
+    \path[ink grain=inkslate,rounded corners=8pt] (0.35,0.28) rectangle (4.45,3.25);
+    \draw[ink line,draw=inkslate,rounded corners=8pt] (0.35,0.28) rectangle (4.45,3.25);
+    \node[anchor=north,font=\scriptsize] at (2.4,3.12) {\InkLabel{\textbf{Normal} ($TT^*=T^*T$)}};
+    \node[anchor=north,font=\scriptsize,text=black!85] at (2.4,2.68) {\InkLabel{$A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$}};
+
+    \InkRegion[inkblue]{[rounded corners=6pt] (0.75,0.52) rectangle (4.05,1.88)}
+    \draw[ink line,draw=inkblue,rounded corners=6pt] (0.75,0.52) rectangle (4.05,1.88);
+    \node[align=center,font=\scriptsize,text=inkblue!90!black] at (2.4,1.20)
+      {\InkLabel{\textbf{Self-adjoint} ($T^*=T$)}\\[4pt]\InkLabel{$\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$}};
+
+    \node[font=\footnotesize] at (2.4,-0.40) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Polar plot of directional stretch $r(\theta)=\|Tv\|$ and $\|T^*v\|$ on unit vectors $v=(\cos\theta,\sin\theta)$ (\hyperref[prop-98]{Prop.~98}). Normal $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ gives identical circles of radius $\sqrt{2}$ (slate); non-normal shear $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ gives distinct curves for $\|Bv\|$ (blue) and $\|B^*v\|$ (red). (b) Every self-adjoint operator is normal, since $TT^*=T^2=T^*T$. The arrows denote inclusion of classes. The reverse implication fails: the normal matrix $A$ in (a) is not self-adjoint.}
+\figcap{(a) Directional stretch $\|Tv\|$ and $\|T^*v\|$ on unit vectors (\hyperref[prop-98]{Prop.~98}): normal $A$ traces radius $\sqrt{2}$, while non-normal $B$ splits $\|Bv\|$ (blue) from $\|B^*v\|$ (red). (b) Nested hierarchy of operator classes on $\RR^2$.}
 \end{fig}
 
 \noindent\textbf{The question answered.} $\|Ae_1\|=\|(1,1)\|=\sqrt{2}=\|A^*e_1\|$, whereas $\|Be_1\|=1\neq \sqrt{2}=\|B^*e_1\|$. By Prop.~98, $\|Tv\|=\|T^*v\|$ holds for all $v$ precisely when $T$ is normal.
@@ -649,8 +655,8 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 
     \InkStroke[black,line width=.65pt,rotate=45]{(0,0) ellipse (4 and 2)}
 
-    % Reference unit circle (dashed)
-    \InkStroke[black!55,line width=0.45pt,dashed]{(0,0) circle (1)}
+    % Reference unit circle (dotted)
+    \draw[ink guide,draw=black!50] (0,0) circle (1);
     \node[font=\scriptsize,text=black!70,anchor=north east] at (-0.82,-0.82) {\InkLabel{$\|v\|=1$}};
 
     % Right-angle mark between u1 and u2
@@ -662,13 +668,11 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
     \draw[->,line width=.65pt,figblue,shorten >=0.8pt] (0,0) -- ({2/sqrt(2)},{-2/sqrt(2)})
       node[below right=1pt,font=\scriptsize,text=figblue!90!black] {\InkLabel{$2u_2$}};
 
-    % Unit eigenvectors u1 and u2 with whisper leaders clear of unit circle
+    % Unit eigenvectors u1 and u2 placed directly with white InkLabel halo
     \InkStroke[->,line width=0.8pt,black]{(0,0) -- ({1/sqrt(2)},{1/sqrt(2)})}
-    \node[font=\scriptsize,anchor=west] (u1lbl) at (1.30,0.56) {\InkLabel{$u_1$}};
-    \InkStroke[black!45,line width=0.32pt]{(u1lbl.west) -- (0.78,0.68)}
+    \node[font=\scriptsize,above left=0pt and 1pt] at (0.68,0.68) {\InkLabel{$u_1$}};
     \InkStroke[->,line width=0.8pt,black]{(0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})}
-    \node[font=\scriptsize,anchor=west] (u2lbl) at (1.30,-0.56) {\InkLabel{$u_2$}};
-    \InkStroke[black!45,line width=0.32pt]{(u2lbl.west) -- (0.78,-0.68)}
+    \node[font=\scriptsize,below left=0pt and 1pt] at (0.68,-0.68) {\InkLabel{$u_2$}};
 
     \node[font=\footnotesize,anchor=north] at (0,-3.95) {(a)};
   \end{scope}
@@ -677,7 +681,7 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 \tdplotsetmaincoords{68}{118}
 \begin{tikzpicture}[tdplot_main_coords,scale=1.08]
   % Continuation of normal line below the plane
-  \InkStroke[figblue!65,line width=0.55pt,dashed]{(0,0,-1.22) -- (0,0,0)}
+  \draw[ink guide,draw=inkblue!70] (0,0,-1.22) -- (0,0,0);
 
   % Plane eigenspace E(1,A): soft gray wash + whisper edge
   \InkRegion[figblue]{(-1.50,-1.50,0) -- (2.00,-1.50,0) -- (2.00,2.00,0) -- (-1.50,2.00,0) -- cycle}
@@ -707,7 +711,7 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
     \node[font=\footnotesize,anchor=north] at (0,-1.55) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) For $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, the unit circle maps to an ellipse whose perpendicular semi-axes lie along the orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ (stretch $4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ (stretch $2$). (b) For the $3\times3$ worked example, the plane eigenspace $E(1,A)=\spn(e_2,e_3)$ ($x+y+z=0$) and the line eigenspace $E(4,A)=\spn(e_1)$ are orthogonal complements in $\RR^3$. The perspective coordinates in (b) are along $e_2,e_3,e_1$, not the standard coordinate axes.}
+\figcap{(a) $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ maps the unit circle to an ellipse with orthogonal semi-axes $4u_1$ and $2u_2$. (b) In $\RR^3$, the $3\times 3$ eigenspaces $E(1,A)=\spn(e_2,e_3)$ and $E(4,A)=\spn(e_1)$ are orthogonal complements (axes shown along $e_2,e_3,e_1$).}
 \end{fig}
 
 \noindent\textbf{The question answered.} Yes: $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ is symmetric, with orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ ($\lambda=4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ ($\lambda=2$). Writing $v=au_1+bu_2$ on the unit circle ($a^2+b^2=1$) gives $Av=4au_1+2bu_2$, which traces the ellipse with perpendicular semi-axes $4$ and $2$.

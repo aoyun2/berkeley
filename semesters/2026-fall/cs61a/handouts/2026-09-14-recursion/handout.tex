@@ -57,7 +57,7 @@ Nothing new happens in the environment: each call gets its own frame with its ow
 \Needspace{14\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
-  caller/.style={draw=black!50,fill=white,densely dashed,line width=0.4pt,minimum width=1.5cm,minimum height=1.34cm,align=center,font=\rmfamily\footnotesize,text=black!65},
+  caller/.style={ink guide,draw=black!50,fill=white,minimum width=1.5cm,minimum height=1.34cm,align=center,font=\rmfamily\footnotesize,text=black!65},
   rframe/.style={draw=black!85,fill=white,line width=0.45pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize},
   bframe/.style={draw=black,fill=white,line width=0.85pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize}]
   % Frames left-to-right
@@ -71,12 +71,12 @@ Nothing new happens in the environment: each call gets its own frame with its ow
   \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f3.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(2)}} ([xshift=-0.42cm]f2.north);
   \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f2.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(1)}} (f1.north);
 
-  % Bottom return rails (dashed figblue)
-  \draw[->,figblue,line width=0.6pt,densely dashed] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$1$}} ([xshift=0.42cm]f2.south);
-  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$1 \times 2 = 2$}} ([xshift=0.42cm]f3.south);
-  \draw[->,figblue,line width=0.6pt,densely dashed] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=figblue]{\InkLabel{$2 \times 3 = 6$}} (c.south);
+  % Bottom return rails (dotted inkblue)
+  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$1$}} ([xshift=0.42cm]f2.south);
+  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$1 \times 2 = 2$}} ([xshift=0.42cm]f3.south);
+  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$2 \times 3 = 6$}} (c.south);
 \end{tikzpicture}
-\figcap{Three frames for one call to \cd{fact(3)}. Recursive calls move right (solid black) until the base case \cd{fact(1)} (heavy outline); return values unwind back left (dashed blue) to complete each waiting multiplication.}
+\figcap{Call frames for \cd{fact(3)}: calls step right (solid black) to the base case \cd{fact(1)} (heavy box), and return values pass back left (dotted blue) to finish each product.}
 \end{fig}
 
 \method{How to know the recursive case is right (Lecture 10).}
@@ -229,7 +229,7 @@ def count_park(n):
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   rcall/.style={draw=black!85,fill=white,line width=0.45pt,inner xsep=5.5pt,inner ysep=3.2pt,align=center,font=\ttfamily\footnotesize},
   bpos/.style={draw=black,fill=white,line width=0.8pt,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black},
-  bneg/.style={draw=black!50,fill=white,line width=0.45pt,densely dashed,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black!60},
+  bneg/.style={ink guide,draw=black!50,fill=white,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black!60},
   edge/.style={draw=black!65,line width=0.45pt}]
   % Level 0
   \node[rcall] (n3)   at (7.6, 0.00)  {\InkLabel{\shortstack[c]{cp(3)\\[1pt]\rmfamily\scriptsize$2\cdot 5 + 2 = 12$}}};
@@ -261,7 +261,7 @@ def count_park(n):
   \draw[edge] ([xshift=-0.38cm]n1l.south) -- (n0l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
   \draw[edge] ([xshift= 0.38cm]n1l.south) -- (nm1l.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
 \end{tikzpicture}
-\figcap{The tree of calls for \cd{count\_park(3)} (written \cd{cp}). Every left branch recurses on $n-1$ (counted twice: empty spot or motorcycle) and every right branch on $n-2$ (a two-spot car); solid heavy leaves reach $n=0$ ($1$ way) and dashed leaves overshoot to $n<0$ ($0$ ways).}
+\figcap{Call tree for \cd{count\_park(3)} (\cd{cp}). Left branches recurse on $n-1$ twice (empty spot or motorcycle) and right branches on $n-2$ (car); heavy leaves reach $n=0$ ($1$) and dotted leaves reach $n<0$ ($0$).}
 \end{fig}
 
 \textbf{Lecture example: counting partitions.} \cd{count\_partitions(n, m)} is the number of ways to write \cd{n} as a sum of positive integers, each at most \cd{m}, in non-decreasing order. \cd{count\_partitions(6, 4)} is 9: $2+4$, $1+1+4$, $3+3$, $1+2+3$, $1+1+1+3$, $2+2+2$, $1+1+2+2$, $1+1+1+1+2$, $1+1+1+1+1+1$.
