@@ -426,25 +426,15 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \figcap{(a) Parallelogram equality (\ilink{prop-83}{Prop.~83}). (b) Unit spheres $\|x\|=1$ for $\ell_\infty$ (square), $\ell_2$ (circle), and $\ell_1$ (diamond); evaluating $\|e_1\pm e_2\|^2$ shows $\ell_\infty$ and $\ell_1$ violate it.}
 \end{fig}
 
+\Needspace{8\baselineskip}\noindent\textbf{Worked examples of Cauchy--Schwarz.}
 \begin{itemize}
-  \ii \textbf{Worked examples of Cauchy--Schwarz:}
-  \begin{itemize}
-    \ii \emph{Sum vs.\ sum of squares:} On $\RR^n$ with the dot product, taking $u=(a_1,\dots,a_n)$ and $v=(1,\dots,1)$ gives $(a_1+\dots+a_n)^2=\ip uv^2\le\|u\|^2\|v\|^2=n(a_1^2+\dots+a_n^2)$, with equality iff $u$ is a multiple of $(1,\dots,1)$, i.e.\ $a_1=\dots=a_n$.
-    \ii \emph{Integral Cauchy--Schwarz (Ex.~67):} On $C([0,\pi])$ with $\ip fg=\int_0^\pi f(x)g(x)\,dx$, taking $f(x)=\sqrt{\sin x}$ and $g(x)=1$ gives
-    \[
-      \left(\int_0^\pi \sqrt{\sin x}\,dx\right)^2 = \ip fg^2 \le \|f\|^2\|g\|^2 = \left(\int_0^\pi \sin x\,dx\right)\left(\int_0^\pi 1^2\,dx\right) = 2\pi,
-    \]
-    so $\int_0^\pi\sqrt{\sin x}\,dx \le \sqrt{2\pi}$ (strict inequality because $\sqrt{\sin x}$ is not a constant multiple of $1$).
-    \ii \emph{Angle computation (Ex.~68):} In $\RR^2$ with the dot product, $u=(1,0)$ and $v=(1,1)$ have $\cos\theta=\frac{\ip uv}{\|u\|\,\|v\|}=\frac{1}{1\cdot\sqrt{2}}=\frac{1}{\sqrt 2}$, so $\theta=\pi/4$.
-  \end{itemize}
-\end{itemize}
-
-\needspace{7\baselineskip}\textbf{Scaled dot-product attention (Notes Section 17.3, optional application).} Stored items have keys $k_j\in\RR^{d_k}$ and values $\nu_j\in\RR^{d_v}$; a query $q\in\RR^{d_k}$ is compared against each key via the inner product:
-\begin{itemize}
-  \ii \textbf{Scores, softmax weights, and output:} The score of key $j$ is $s_j=\ip q{k_j}/\sqrt{d_k}$. Softmax turns the scores into positive weights $a_j=e^{s_j}/\sum_\ell e^{s_\ell}$ satisfying $\sum_j a_j=1$, and the output is the convex combination $y=\sum_j a_j\nu_j\in\RR^{d_v}$. Keys determine how much each item contributes; values are what is returned ($d_k$ and $d_v$ may differ).
-  \ii \textbf{Numerical example (Ex.~69):} With $d_k=2$, $k_1=(2,0)$, $k_2=(0,1)$, $k_3=(-1,0)$, values $\nu_j=e_j\in\RR^3$, and query $q=(1,0)$, the scores are $s_1=\sqrt{2}$, $s_2=0$, $s_3=-1/\sqrt{2}$, giving softmax weights $a\approx(0.734,0.178,0.088)$ and output $y\approx 0.734e_1+0.178e_2+0.088e_3$.
-  \ii \textbf{Why divide by $\sqrt{d_k}$:} Because $\ip qk=\|q\|\,\|k\|\cos\theta$, inner-product similarity scales with dimension: if the coordinates $q_r,k_r$ have mean $0$ and variance $1$ independently, then $\ip qk=\sum_{r=1}^{d_k}q_rk_r$ has mean $0$ and variance $d_k$. Dividing by $\sqrt{d_k}$ keeps the variance equal to $1$ so softmax does not saturate as $d_k$ grows.
-  \ii \textbf{Matrix form of self-attention:} Given input vectors $x_i$, learned linear maps produce $q_i=W_Qx_i$, $k_j=W_Kx_j$, and $\nu_j=W_Vx_j$. Stacking these as columns of $Q,K,V_{\mathrm{val}}$, the score matrix is $S=Q^{\mathsf T}K/\sqrt{d_k}$, row-wise softmax produces a row-stochastic attention matrix $A=(a_{ij})$, and $Y=V_{\mathrm{val}}A^{\mathsf T}$ has columns $y_i=\sum_j a_{ij}\nu_j$. (Because $A$ depends nonlinearly on the inputs, self-attention is not a linear map.)
+  \ii \emph{Sum vs.\ sum of squares:} On $\RR^n$ with the dot product, taking $u=(a_1,\dots,a_n)$ and $v=(1,\dots,1)$ gives $(a_1+\dots+a_n)^2=\ip uv^2\le\|u\|^2\|v\|^2=n(a_1^2+\dots+a_n^2)$, with equality iff $u$ is a multiple of $(1,\dots,1)$, i.e.\ $a_1=\dots=a_n$.
+  \ii \emph{Integral Cauchy--Schwarz (Ex.~67):} On $C([0,\pi])$ with $\ip fg=\int_0^\pi f(x)g(x)\,dx$, taking $f(x)=\sqrt{\sin x}$ and $g(x)=1$ gives
+  \[
+    \left(\int_0^\pi \sqrt{\sin x}\,dx\right)^2 = \ip fg^2 \le \|f\|^2\|g\|^2 = \left(\int_0^\pi \sin x\,dx\right)\left(\int_0^\pi 1^2\,dx\right) = 2\pi,
+  \]
+  so $\int_0^\pi\sqrt{\sin x}\,dx \le \sqrt{2\pi}$ (strict inequality because $\sqrt{\sin x}$ is not a constant multiple of $1$).
+  \ii \emph{Angle computation (Ex.~68):} In $\RR^2$ with the dot product, $u=(1,0)$ and $v=(1,1)$ have $\cos\theta=\frac{\ip uv}{\|u\|\,\|v\|}=\frac{1}{1\cdot\sqrt{2}}=\frac{1}{\sqrt 2}$, so $\theta=\pi/4$.
 \end{itemize}
 
 \begin{shortcuts}
