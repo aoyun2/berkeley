@@ -51,7 +51,7 @@ at 240 DPI after checking the equations and data. Clean the packet's `.aux`,
 ## Fixed rendering parameters
 
 The grain is a 12pt vector tile with 196 stratified, jittered dots, radii
-0.137–0.208pt (approx. 12.5% dot coverage) over a 14% translucent spot-color
+0.137–0.208pt (approx. 12.5% dot coverage) over a 5% translucent spot-color
 preaction wash. Coordinates are stored directly in `templates/figure-ink.sty`.
 Builds never regenerate it.
 
