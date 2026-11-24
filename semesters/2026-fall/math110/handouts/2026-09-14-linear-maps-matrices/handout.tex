@@ -252,32 +252,45 @@
   % Proportional matrix factorization A (m x n) = C (m x c) * R (c x n)
   % Dimensions: m = 1.85, n = 2.55, c = 0.96 (width(C) == height(R))
 
-  % Matrix A (white)
+  % Matrix A (white) with row i highlighted in amber
+  \InkRegion[inkamber]{(0.0,0.865) rectangle (2.55,1.185)}
+  \PacketInkPath[inkamber!85!black,line width=0.45pt]{(0.0,0.865) -- (2.55,0.865)}
+  \PacketInkPath[inkamber!85!black,line width=0.45pt]{(0.0,1.185) -- (2.55,1.185)}
   \PacketInkPath[black!85,line width=0.5pt]{(0.0,0.10) rectangle (2.55,1.95)}
-  \node[font=\small] at (1.275,1.025) {\InkLabel{$A$}};
+  \node[font=\small] at (1.275,1.56) {\InkLabel{$A$}};
+  \node[font=\scriptsize] at (1.275,1.025) {\InkLabel[inkamber]{row $i$}};
   \node[font=\scriptsize,above=2.5pt] at (1.275,1.95) {\InkLabel{$n$}};
   \node[font=\scriptsize,left=3pt] at (0.0,1.025) {\InkLabel{$m$}};
 
   \node[font=\normalsize] at (3.20,1.025) {\InkLabel{$=$}};
 
-  % Matrix C (m x c) with soft gray wash and hair-thin column divisions
+  % Matrix C (m x c) with blue column wash and amber row i weights
   \InkRegion[inkblue]{(3.85,0.10) rectangle (4.81,1.95)}
+  \InkRegion[inkamber]{(3.85,0.865) rectangle (4.81,1.185)}
   \PacketInkPath[black!22,line width=0.32pt]{(4.17,0.10) -- (4.17,1.95)}
   \PacketInkPath[black!22,line width=0.32pt]{(4.49,0.10) -- (4.49,1.95)}
+  \PacketInkPath[inkamber!85!black,line width=0.45pt]{(3.85,0.865) -- (4.81,0.865)}
+  \PacketInkPath[inkamber!85!black,line width=0.45pt]{(3.85,1.185) -- (4.81,1.185)}
   \PacketInkPath[black!85,line width=0.5pt]{(3.85,0.10) rectangle (4.81,1.95)}
-  \node[font=\small,inner sep=1.8pt] at (4.33,1.025) {\InkLabel{$C$}};
+  \node[font=\small,inner sep=1.8pt] at (4.33,1.56) {\InkLabel{$C$}};
   \node[font=\scriptsize,above=2.5pt] at (4.33,1.95) {\InkLabel{$c$}};
 
-  % Matrix R (c x n) centered vertically with soft gray wash and hair-thin row divisions
+  % Matrix R (c x n) with c rows r_1..r_c labeled on the right
   \InkRegion[inkblue]{(5.35,0.545) rectangle (7.90,1.505)}
-  \PacketInkPath[black!22,line width=0.32pt]{(5.35,0.865) -- (7.90,0.865)}
-  \PacketInkPath[black!22,line width=0.32pt]{(5.35,1.185) -- (7.90,1.185)}
+  \PacketInkPath[black!28,line width=0.35pt]{(5.35,0.865) -- (7.90,0.865)}
+  \PacketInkPath[black!28,line width=0.35pt]{(5.35,1.185) -- (7.90,1.185)}
   \PacketInkPath[black!85,line width=0.5pt]{(5.35,0.545) rectangle (7.90,1.505)}
   \node[font=\small,inner sep=1.8pt] at (6.625,1.025) {\InkLabel{$R$}};
   \node[font=\scriptsize,above=2.5pt] at (6.625,1.505) {\InkLabel{$n$}};
-  \node[font=\scriptsize,right=3pt] at (7.90,1.025) {\InkLabel{$c$}};
+  \node[font=\scriptsize,right=3pt] at (7.90,1.345) {\InkLabel[inkblue]{$r_1$}};
+  \node[font=\scriptsize,right=3pt] at (7.90,1.025) {\InkLabel[inkblue]{$r_2$}};
+  \node[font=\scriptsize,right=3pt] at (7.90,0.705) {\InkLabel[inkblue]{$r_c$}};
+  \InkStroke[inkslate!85]{(8.42,0.545)--(8.50,0.545)--(8.50,1.505)--(8.42,1.505)}
+  \node[font=\scriptsize,right=3pt] at (8.52,1.025) {\InkLabel{$c$ rows}};
+
+  \node[font=\scriptsize] at (4.20,-0.38) {\InkLabel[inkamber]{row $i$ of $A$} $= c_{i1}$\,\InkLabel[inkblue]{$r_1$} $+\dots+c_{ic}$\,\InkLabel[inkblue]{$r_c$} $\in\spn(\text{rows of }R)$};
 \end{tikzpicture}
-\figcap{Column--row factorization $A=CR$ (LADR 3.56--3.57): the $c$ rows of $R$ generate every row of $A$, proving $\operatorname{row\ rank}(A)=\operatorname{col\ rank}(A)=c$.}
+\figcap{Column--row factorization $A=CR$ (LADR 3.56--3.57): row~$i$ of $A$ combines the $c$ rows $r_1,\dots,r_c$ of $R$ with weights from row~$i$ of $C$, so $\operatorname{row\ rank}(A)\le c=\operatorname{col\ rank}(A)$.}
 \end{fig}
 
 \begin{example*}[Ex.~33: Stochastic matrices and Markov chains (Notes Ch.~6.3)]\target{ex-33}
