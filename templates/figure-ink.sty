@@ -206,13 +206,14 @@
 \pgfpathcircle{\pgfpoint{10.9007pt}{11.4358pt}}{0.1516pt}
 \pgfpathcircle{\pgfpoint{11.6279pt}{11.5578pt}}{0.2074pt}
 \pgfusepath{fill}}
-% V3 letterpress rag-paper ink: smooth nib swell + merged rim tooth + cotton-paper rim bite (100% opaque, zero blur).
+% V3 letterpress rag-paper ink scaled proportionally to current \pgflinewidth (100% opaque, zero blur).
 \pgfdeclaredecoration{ink v3}{step}{%
  \state{step}[width=0.90pt]{%
   \pgfscope
    \pgfsetarrowsstart{}\pgfsetarrowsend{}\pgfsetroundcap
    \pgf@xa=\pgfdecoratedcompleteddistance\edef\ink@d{\strip@pt\pgf@xa}%
-   \pgfmathparse{0.62+0.11*sin(mod(\ink@d,10)*36)+0.05*cos(mod(\ink@d,4.5)*80)+0.06*(rnd-0.5)}%
+   \pgf@xb=\pgflinewidth\edef\ink@base{\strip@pt\pgf@xb}%
+   \pgfmathparse{\ink@base*(1.03+0.09*sin(mod(\ink@d,10)*36)+0.04*cos(mod(\ink@d,4.5)*80)+0.05*(rnd-0.5))}%
    \let\ink@w\pgfmathresult
    \pgfsetlinewidth{\ink@w pt}%
    \pgfpathmoveto{\pgfpointorigin}%
@@ -221,10 +222,10 @@
    \pgfmathparse{rnd}%
    \ifdim\pgfmathresult pt<0.74pt
     \pgfmathparse{rnd<0.5?-1:1}\let\ink@s\pgfmathresult
-    \pgfmathparse{\ink@s*(0.5*\ink@w-0.01+0.03*rnd)}\let\ink@yy\pgfmathresult
+    \pgfmathparse{\ink@s*(0.5*\ink@w-0.02*\ink@base+0.04*\ink@base*rnd)}\let\ink@yy\pgfmathresult
     \pgfmathparse{0.90*rnd}\let\ink@xx\pgfmathresult
     \pgfmathparse{\ink@xx+0.01}\let\ink@xxe\pgfmathresult
-    \pgfmathparse{0.20+0.14*rnd}\let\ink@bw\pgfmathresult
+    \pgfmathparse{\ink@base*(0.30+0.20*rnd)}\let\ink@bw\pgfmathresult
     \pgfsetlinewidth{\ink@bw pt}%
     \pgfpathmoveto{\pgfpoint{\ink@xx pt}{\ink@yy pt}}%
     \pgfpathlineto{\pgfpoint{\ink@xxe pt}{\ink@yy pt}}%
@@ -233,9 +234,9 @@
    \pgfmathparse{rnd}%
    \ifdim\pgfmathresult pt<0.32pt
     \pgfmathparse{rnd<0.5?-1:1}\let\ink@sB\pgfmathresult
-    \pgfmathparse{\ink@sB*(0.5*\ink@w+0.02)}\let\ink@yyB\pgfmathresult
+    \pgfmathparse{\ink@sB*(0.5*\ink@w+0.03*\ink@base)}\let\ink@yyB\pgfmathresult
     \pgfmathparse{0.90*rnd}\let\ink@xxB\pgfmathresult
-    \pgfmathparse{0.085+0.04*rnd}\let\ink@rB\pgfmathresult
+    \pgfmathparse{\ink@base*(0.14+0.06*rnd)}\let\ink@rB\pgfmathresult
     \pgfsetfillcolor{white}%
     \pgfpathcircle{\pgfpoint{\ink@xxB pt}{\ink@yyB pt}}{\ink@rB pt}%
     \pgfusepath{fill}%
@@ -304,14 +305,13 @@
  ink grain/.style={preaction={fill=#1,fill opacity=.05},pattern=inkgrain,pattern color=#1},
  ink grain/.default=inkblue,
  ink v3 stroke/.style={ink line,postaction={decorate,decoration={ink v3}}},
- ink v3 arrow/.style={ink line,postaction={decorate,decoration={ink v3,pre=moveto,pre length=3.2pt,post=moveto,post length=5.2pt}}},
  ink plot/.style={ink v3 stroke}
 }
-% Deterministic seed per stroke; shortened/arrowed paths trim decoration away from endpoints.
+% Deterministic seed per stroke; arrows/axes stay crisp single-pass vector strokes.
 \newcommand{\InkStroke}[2][]{%
  \begingroup\pgfmathsetseed{1965}%
  \ifnum\pdfmatch{(->|<-|arrow|Stealth|figvec|figaxis|dagarr|shorten)}{\detokenize{#1}}=1
-  \draw[ink v3 arrow,#1] #2;
+  \draw[ink line,#1] #2;
  \else
   \draw[ink v3 stroke,#1] #2;
  \fi
