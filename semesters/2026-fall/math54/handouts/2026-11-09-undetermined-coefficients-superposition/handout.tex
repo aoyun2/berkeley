@@ -188,8 +188,18 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
+  % Centered legend above both panels
+  \node[font=\scriptsize,anchor=south] at (7.20,3.78) {%
+    \rule[0.45ex]{0.55cm}{1.0pt}\hspace{4pt}\InkLabel{$y''+y=\cos t$}: \InkLabel{$y_p=\tfrac{t}{2}\sin t$} (\InkLabel{$s=1$})%
+    \hspace{18pt}%
+    {\color{inkred}\rule[0.45ex]{0.55cm}{0.95pt}}\hspace{4pt}\InkLabel{$y''+y=\cos 2t$}: \InkLabel{$y_p=-\tfrac{1}{3}\cos 2t$} (\InkLabel{$s=0$})%
+  };
+
+  % (a) Same scale comparison
   \begin{axis}[
-    width=11.0cm,height=4.7cm,
+    at={(0,0)},
+    scale only axis,
+    width=7.2cm,height=3.35cm,
     axis lines*=left,
     axis on top,
     axis line style={draw=black!75,line width=0.42pt},
@@ -202,23 +212,49 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     label style={font=\footnotesize,text=black},
     xlabel={\InkLabel{$t$}},ylabel={\InkLabel{$y$}},
     ylabel style={rotate=-90},
-    legend style={at={(0.5,1.05)},anchor=south,legend columns=2,font=\scriptsize,draw=none,fill=none,legend cell align=left,/tikz/every even column/.append style={column sep=18pt}},
     clip=false
   ]
     % Quiet neutral wash inside the linear growth envelope |y| <= t/2
     \path[pattern=inkgrain,pattern color=inkblue] (axis cs:0,0) -- (axis cs:13.5,6.75) -- (axis cs:13.5,-6.75) -- cycle;
-    \draw[ink guide,draw=black!35] (axis cs:0,0) -- (axis cs:13.6,0);
-    \addplot[ink line,domain=0:13.5,samples=180,black,line width=1.05pt] {0.5*x*sin(deg(x))};
-    \addlegendentry{\InkLabel{$y''+y=\cos t$}: \InkLabel{$y_p=\tfrac{t}{2}\sin t$} (\InkLabel{$s=1$})}
-    \addplot[ink guide,domain=0:13.5,samples=160,draw=figblue,line width=0.9pt] {-cos(deg(2*x))/3};
-    \addlegendentry{\InkLabel{$y''+y=\cos 2t$}: \InkLabel{$y_p=-\tfrac{1}{3}\cos 2t$} (\InkLabel{$s=0$})}
-    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50,forget plot] {0.5*x};
-    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50,forget plot] {-0.5*x};
-    \node[font=\scriptsize,text=black!75,above=2pt] at (axis cs:10.3,5.25) {\InkLabel{$y = +\tfrac{t}{2}$}};
-    \node[font=\scriptsize,text=black!75,below=2pt] at (axis cs:8.2,-4.20) {\InkLabel{$y = -\tfrac{t}{2}$}};
+    \draw[ink guide,draw=black!30] (axis cs:0,0) -- (axis cs:13.6,0);
+    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50] {0.5*x};
+    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50] {-0.5*x};
+    \addplot[ink line,domain=0:13.5,samples=180,inkred,line width=0.85pt] {-cos(deg(2*x))/3};
+    \addplot[ink plot,domain=0:13.5,samples=180,black,line width=1.0pt] {0.5*x*sin(deg(x))};
+    \node[font=\scriptsize,text=black!75,above=2pt] at (axis cs:10.0,5.15) {\InkLabel{$y = +\tfrac{t}{2}$}};
+    \node[font=\scriptsize,text=black!75,below=2pt] at (axis cs:7.6,-4.05) {\InkLabel{$y = -\tfrac{t}{2}$}};
   \end{axis}
+  \node[font=\footnotesize] at (3.60,-1.05) {\InkLabel{(a) Same scale}};
+
+  % (b) Zoomed view of the bounded non-resonant response
+  \begin{axis}[
+    at={(8.85cm,0)},
+    scale only axis,
+    width=5.55cm,height=3.35cm,
+    axis lines*=left,
+    axis on top,
+    axis line style={draw=black!75,line width=0.42pt},
+    tick style={draw=black!50,line width=0.35pt},
+    xmin=0,xmax=13.6,ymin=-0.62,ymax=0.62,
+    xtick={0,3.1416,6.2832,9.4248,12.5664},
+    xticklabels={\InkLabel{$0$},\InkLabel{$\pi$},\InkLabel{$2\pi$},\InkLabel{$3\pi$},\InkLabel{$4\pi$}},
+    ytick={-0.33333,0,0.33333},
+    yticklabels={\InkLabel{$-\tfrac{1}{3}$},\InkLabel{$0$},\InkLabel{$+\tfrac{1}{3}$}},
+    tick label style={font=\scriptsize,text=black},
+    label style={font=\footnotesize,text=black},
+    xlabel={\InkLabel{$t$}},
+    clip=false
+  ]
+    \path[pattern=inkgrain,pattern color=inkred] (axis cs:0,-0.33333) rectangle (axis cs:13.5,0.33333);
+    \draw[ink guide,draw=black!30] (axis cs:0,0) -- (axis cs:13.6,0);
+    \draw[ink guide,draw=inkred!80] (axis cs:0,0.33333) -- (axis cs:13.5,0.33333);
+    \draw[ink guide,draw=inkred!80] (axis cs:0,-0.33333) -- (axis cs:13.5,-0.33333);
+    \addplot[ink plot,domain=0:13.5,samples=180,inkred,line width=0.95pt] {-cos(deg(2*x))/3};
+    \node[font=\scriptsize,text=inkred,anchor=south] at (axis cs:9.6,0.35) {\InkLabel{$|y_p|\le\tfrac{1}{3}$}};
+  \end{axis}
+  \node[font=\footnotesize] at (11.62,-1.05) {\InkLabel{(b) Bounded response (zoomed)}};
 \end{tikzpicture}
-\figcap{Resonance vs.\ bounded response for $y''+y=f(t)$: when $f=\cos t$ matches a characteristic root ($s=1$), amplitude grows linearly inside $\pm t/2$ (black); for $f=\cos 2t$ ($s=0$), the response stays bounded (dotted blue).}
+\figcap{Resonance vs.\ bounded response for $y''+y=f(t)$: (a) on the same scale, resonant forcing $f=\cos t$ ($s=1$, black) grows linearly inside $\pm t/2$, while non-resonant forcing $f=\cos 2t$ ($s=0$, red) stays close to zero; (b) zooming in vertically shows $y_p=-\tfrac{1}{3}\cos 2t$ oscillating inside the constant band $|y_p|\le\tfrac{1}{3}$.}
 \end{fig}
 
 \noindent\textbf{Limits of the method.} Undetermined coefficients requires constant coefficients (not $ty''-y'+2y=\sin 3t$) and right-hand sides whose derivatives stay finite-dimensional (not $\tan t,\sec t, 1/t, t^{-1}e^t$, handled in Nagle 4.6 by variation of parameters).

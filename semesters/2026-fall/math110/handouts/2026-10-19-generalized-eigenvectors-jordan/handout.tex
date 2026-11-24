@@ -521,85 +521,59 @@ In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(
 \end{ideabox}
 \begin{fig}
 \begin{tikzpicture}[font=\scriptsize,x=1cm,y=1cm]
-  \def\cw{0.56}
-  \def\cpitch{0.80}
-  % Panel (a): Cumulative counts d_k = dim null N^k
+  \def\cw{0.68}
+  \def\cpitch{0.96}
+
+  % Panel (a): Row 2 counts blocks of size >= 2 (d_2 - d_1 = 3)
   \begin{scope}[xshift=0cm]
     \foreach \col/\h in {0/3,1/2,2/2,3/1} {
       \pgfmathsetmacro{\xpos}{\col*\cpitch}
       \foreach \row in {1,...,\h} {
         \pgfmathsetmacro{\bottom}{(\row-1)*\cw}
-        \def\cellcolor{inkslate}
-        \ifnum\row=2 \def\cellcolor{inkblue}\fi
-        \ifnum\row=3 \def\cellcolor{inkred}\fi
-        \InkRegion[\cellcolor]{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-        \InkStroke{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-      }
-      \node[below=3pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
-    }
-    % Left N action arrow and row indices
-    \InkStroke[ink arrow]{(-0.36,1.68)--(-0.36,0)}
-    \node[above] at (-0.36,1.68) {\InkLabel{$N$}};
-    \foreach \row in {1,2,3}
-      \node[left] at (-0.48,\row*\cw-0.5*\cw) {\InkLabel{$\row$}};
-    % Staggered cumulative d_k brackets on the right
-    \draw[ink guide,draw=inkslate] (2.96,0.56)--(3.10,0.56);
-    \InkStroke[inkslate!85]{(3.02,0)--(3.10,0)--(3.10,0.56)--(3.02,0.56)}
-    \node[right=2pt] at (3.10,0.28) {\InkLabel{$d_1=4$}};
-    \draw[ink guide,draw=inkslate] (2.16,1.12)--(4.35,1.12);
-    \InkStroke[inkslate!85]{(4.27,0)--(4.35,0)--(4.35,1.12)--(4.27,1.12)}
-    \node[right=2pt] at (4.35,0.84) {\InkLabel{$d_2=7$}};
-    \draw[ink guide,draw=inkslate] (0.56,1.68)--(5.60,1.68);
-    \InkStroke[inkslate!85]{(5.52,0)--(5.60,0)--(5.60,1.68)--(5.52,1.68)}
-    \node[right=2pt] at (5.60,1.40) {\InkLabel{$d_3=8$}};
-    \node[above] at (1.48,1.88) {\InkLabel{Cumulative $d_k=\dim\nul N^k$}};
-    \node at (1.48,-0.72) {\InkLabel{(a)}};
-  \end{scope}
-
-  % Panel (b): Size >= 2 blocks = d_2 - d_1 = 7 - 4 = 3
-  \begin{scope}[xshift=7.30cm]
-    \foreach \col/\h in {0/3,1/2,2/2,3/1} {
-      \pgfmathsetmacro{\xpos}{\col*\cpitch}
-      \foreach \row in {1,...,\h} {
-        \pgfmathsetmacro{\bottom}{(\row-1)*\cw}
-        \def\cellcolor{inkslate}
-        \ifnum\row=2 \def\cellcolor{inkblue}\fi
         \ifnum\row=3
           \path[fill=white] (\xpos,\bottom) rectangle ++(\cw,\cw);
         \else
+          \def\cellcolor{inkslate}
+          \ifnum\row=2 \def\cellcolor{inkblue}\fi
           \InkRegion[\cellcolor]{(\xpos,\bottom) rectangle ++(\cw,\cw)}
         \fi
         \InkStroke{(\xpos,\bottom) rectangle ++(\cw,\cw)}
       }
-      \node[below=3pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
+      \node[below=4pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
     }
-    \node[above] at (1.48,1.88) {\InkLabel[inkblue]{Size $\ge 2$: $d_2-d_1=7-4=3$}};
-    \node at (1.48,-0.72) {\InkLabel{(b)}};
+    % Left row indices and downward N arrow flush with stack height
+    \foreach \row in {1,2,3}
+      \node[anchor=east] at (-0.18,\row*\cw-0.5*\cw) {\InkLabel{$\row$}};
+    \InkStroke[ink arrow]{(-0.58,2.00)--(-0.58,0.04)}
+    \node[anchor=east] at (-0.68,1.02) {\InkLabel{$N$}};
+
+    \node[anchor=south] at (1.78,2.34) {\InkLabel[inkblue]{Size $\ge 2$: $d_2-d_1=3$}};
+    \node at (1.78,-0.78) {\InkLabel{(a)}};
   \end{scope}
 
-  % Panel (c): Exact size 2 blocks = (d_2 - d_1) - (d_3 - d_2) = 3 - 1 = 2
-  \begin{scope}[xshift=11.20cm]
+  % Panel (b): Exact size 2 = (row 2) - (row 3) = (d_2 - d_1) - (d_3 - d_2) = 2
+  \begin{scope}[xshift=5.80cm]
     \foreach \col/\h in {0/3,1/2,2/2,3/1} {
       \pgfmathsetmacro{\xpos}{\col*\cpitch}
       \foreach \row in {1,...,\h} {
         \pgfmathsetmacro{\bottom}{(\row-1)*\cw}
         \def\cellcolor{inkslate}
-        \ifnum\row>1
-          \ifnum\col=0 \def\cellcolor{inkred}\else\def\cellcolor{inkgreen}\fi
+        \ifnum\row=3 \def\cellcolor{inkred}\fi
+        \ifnum\row=2
+          \ifnum\col>0 \def\cellcolor{inkgreen}\fi
         \fi
         \InkRegion[\cellcolor]{(\xpos,\bottom) rectangle ++(\cw,\cw)}
         \InkStroke{(\xpos,\bottom) rectangle ++(\cw,\cw)}
       }
-      \node[below=3pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
+      \node[below=4pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
     }
-    % Visual link from row-3 cell down to excluded row-2 cell in J_3(0)
-    \draw[->,inkred,line width=0.6pt] (0.28,1.26)--(0.28,0.96);
-    \node[right=4pt] at (0.60,1.40) {\InkLabel[inkred]{$d_3-d_2=1$}};
-    \node[above] at (1.48,1.88) {\InkLabel[inkgreen]{Exact size $2$: $3-1=2$}};
-    \node at (1.48,-0.72) {\InkLabel{(c)}};
+    \node[anchor=west] at (0.86,1.70) {\InkLabel[inkred]{$d_3-d_2=1$}};
+
+    \node[anchor=south] at (1.78,2.34) {\InkLabel[inkgreen]{Exact size $2$: $(d_2-d_1)-(d_3-d_2)=2$}};
+    \node at (1.78,-0.78) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{Counting Jordan blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ ($N$ steps down one row): \textbf{(a)}~$d_k=\dim\nul N^k$ counts all cells in the bottom $k$ rows ($d_1=4$, $d_2=7$, $d_3=8$); \textbf{(b)}~row~$2$ ($d_2-d_1=3$, blue) counts blocks of size $\ge 2$; \textbf{(c)}~subtracting the $d_3-d_2=1$ column continuing into row~$3$ (red) leaves $2$ green cells of exact size~$2$.}
+\figcap{Counting Jordan blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ ($N$ shifts down one row; $d_k=\dim\nul N^k$ counts the bottom $k$ rows, so $d_1=4, d_2=7, d_3=8$): \textbf{(a)}~subtracting row~$1$ (gray, $d_1=4$) from the bottom two rows ($\nul N^2$, $d_2=7$) leaves $d_2-d_1=3$ blue cells in row~$2$ (blocks of size $\ge 2$); \textbf{(b)}~subtracting the $d_3-d_2=1$ cell in row~$3$ (red) leaves $2$ green cells of exact size~$2$.}
 \end{fig}
 \begin{proof}
   \begin{steps}
