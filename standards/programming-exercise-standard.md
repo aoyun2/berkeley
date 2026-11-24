@@ -48,7 +48,7 @@ Require a short contextual interpretation and at least one limitation or assumpt
 
 ## 5. Browser behavior
 
-Keep prompts, schemas, and tasks in a flat readable flow with a top index. Use the shared stylesheet, syntax highlighting, readable prose measure, and light/dark theme support. Preserve keyboard access, visible focus, labeled controls, and usable narrow-screen layouts.
+Keep prompts, schemas, and tasks in a flat readable flow with a top index—omit boilerplate meta-paragraphs about WebR preloading, datasets, or session persistence so the page goes directly from the header to the exercises. Use the shared stylesheet, syntax highlighting, readable prose measure, and light/dark theme support. Preserve keyboard access, visible focus, labeled controls, and usable narrow-screen layouts.
 
 Use distinct states: not run, running, executed without checking, checked correct, checked incorrect, and runtime error. Editing a previously checked answer invalidates its prior result and score. Runtime warnings are not automatically incorrect answers. Escape user-controlled output as text.
 

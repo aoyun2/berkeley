@@ -10,15 +10,17 @@ Python package, or external raster texture is needed to compile them.
    sums, dot products, ranks, or intersections as appropriate. Do not infer
    geometry from an illustration.
 2. Copy the relevant example from `samples.tex`. Use `\InkRegion[color]{closed
-   TikZ path}` for grain and `\InkStroke[options]{TikZ path}` for solid outlines.
-   Use `ink arrow` for solid vectors, and draw dotted reference/guide lines with
-   plain `\draw[ink guide, draw=...]` or `\draw[ink guide arrow, draw=...]` (actual
-   circular dots without `\InkStroke` fringe or dashed strokes). Keep `ylabel`
-   horizontal (`ylabel style={rotate=-90}`, or placed flush above the y-axis at
+   TikZ path}` for grain (use neutral `inkslate` whenever blue or multi-color
+   curves cross a shaded window) and `\InkStroke[options]{TikZ path}` for solid
+   outlines. Use `ink arrow` for solid vectors, `ink plot` for solid plotted curves,
+   `inkdot`/`inkring` for circular plot markers, and true circular dots for all
+   dotted strokes (`ink guide` / `ink guide arrow` for subtle guides/envelopes, or
+   `ink dotted` for bold dotted comparison curves drawn on top of solid curves—never
+   use dashes). Keep `ylabel` horizontal (`ylabel style={rotate=-90}`, or
    `at={(axis description cs:0,1.03)}, anchor=south west}` for multi-word labels).
-   For very small circles and sampled plot paths, use exact `ink line` styles
-   without random-step decoration (PGF arithmetic can overflow). Draw labels
-   separately from `\InkStroke`, which draws its path twice.
+   `\InkStroke` automatically routes arrow/axis paths (`->`, `<-`, `arrow`,
+   `Stealth`, `figvec`, `figaxis`, `dagarr`, `shorten`) to single-pass `ink line`
+   while decorating non-arrow paths with `ink v3`.
 3. Draw all regions first, then strokes, then labels. Place native `\InkLabel{$...$}`
    directly beside curves or arrowheads rather than using leader/pointer lines; its
    0.65pt white glyph outline keeps overlaps clean. For colored entries use
@@ -55,11 +57,15 @@ The grain is a 12pt vector tile with 196 stratified, jittered dots, radii
 preaction wash. Coordinates are stored directly in `templates/figure-ink.sty`.
 Builds never regenerate it.
 
-Each ink stroke has a precise 0.42pt core. Its 0.54pt fringe has 28% opacity,
-0.045pt displacement and 0.65pt segments, with the seed reset per stroke.
-Arrowheads remain exact, solid Stealth shapes, 4.6pt long and 2pt wide.
-This is a subtle print texture, not a simulated hand sketch. Keep the same
-TeX/PGF versions for identical rendering; PDF metadata may vary between builds.
+Each non-arrow `\InkStroke` uses the 100%-opaque `ink v3` rag-paper ink decoration
+(`width=0.90pt`) scaled proportionally to the active `\pgflinewidth`: slight
+sine/cosine + random width modulation (`~1.03x`), connected rag-paper edge tooth
+marks, and white rim bites (zero alpha blur halos, zero detached specks), with the
+random seed reset to `1965` per stroke. Arrow and axis paths stay crisp single-pass
+`ink line` strokes with solid Stealth arrowheads (`4.6pt` long, `2.0pt` wide). Dot
+styles come in two weights: `ink guide` (`0.70pt` round dots spaced `2.7pt`) and
+`ink dotted` (`1.35pt` bold round dots spaced `2.8pt`). Keep the same TeX/PGF
+versions for identical rendering; PDF metadata may vary between builds.
 
 ## Mathematical checks for these samples
 
