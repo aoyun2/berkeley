@@ -46,9 +46,9 @@ at 240 DPI after checking the equations and data. Clean the packet's `.aux`,
 ## Fixed rendering parameters
 
 The grain is a 12pt vector tile with 196 stratified, jittered dots, radii
-0.105–0.160pt. Coordinates are stored directly in the package. The initial
-construction used Python `random.Random(1965)`; builds never regenerate it.
-Coverage is approximately 7.5%. The tile can repeat visibly at high magnification.
+0.137–0.208pt (approx. 12.5% dot coverage) over a 14% translucent spot-color
+preaction wash. Coordinates are stored directly in `templates/figure-ink.sty`.
+Builds never regenerate it.
 
 Each ink stroke has a precise 0.42pt core. Its 0.54pt fringe has 28% opacity,
 0.045pt displacement and 0.65pt segments, with the seed reset per stroke.
