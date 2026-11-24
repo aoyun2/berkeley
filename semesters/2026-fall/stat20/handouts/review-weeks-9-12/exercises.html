@@ -26,15 +26,14 @@
     <button id="btn-restart-r" class="btn-secondary" disabled>Restart R session</button>
     <button id="btn-reset-all" class="btn-secondary">Reset all</button>
     <a class="download" href="exercises.zip" download>.zip</a>
+    <span id="score" class="sub" style="margin-left: 10px;">0 / 11 checked</span>
     <span id="engine-status" class="sub" style="margin-left: 8px;">loading R...</span>
   </div>
 </div>
 
 <h1>Weeks 9&ndash;12 Case Studies: Prediction, Bootstrap &amp; Classification</h1>
 <p class="sub" style="margin-bottom: 14px;">
-  Scroll through each case study below for conceptual questions and live tidy-R coding exercises
-  (datasets and verbs <code>filter</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>select</code>, <code>count</code>, and <code>|&gt;</code> are preloaded).
-  Variables stay live across editors until you click <strong>Restart R session</strong>. Press <code>Ctrl+Enter</code> (or <code>Cmd+Enter</code>) inside an editor to run.
+  All 8 datasets are simulated teaching tables matching the packet; browser WebR preloads a documented custom tidy subset (<code>filter</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>select</code>, <code>count</code>, <code>pull</code>, <code>|&gt;</code>), whereas local scripts use <code>library(tidyverse)</code>. Edits clear prior check status until re-run.
 </p>
 
 <nav class="toc-bar" aria-label="Case studies">
@@ -44,6 +43,7 @@
   <a href="#case-3">3. Used Cars (Overfitting)</a>
   <a href="#case-4">4. Penguins (Bootstrap)</a>
   <a href="#case-5">5. Resumes (Logistic)</a>
+  <a href="#case-6">6. Independent Transfer</a>
 </nav>
 
 <section class="code-guide first-case" id="code-guide">
@@ -125,12 +125,13 @@ Intercept: -221.04   Slope (temp_f): 5.08   R-squared: 0.9973</pre>
       <div class="test-output" id="output-c1a" style="display: none;"></div>
       <details>
         <summary>Show solution</summary>
-        <pre><code class="language-r">icecream |&gt;
+        <pre><code class="language-r">ice_summary &lt;- icecream |&gt;
   summarize(
     mean_temp = mean(temp_f),
     mean_cones = mean(cones),
     r = cor(temp_f, cones)
   )
+ice_summary
 
 m_ice &lt;- lm(cones ~ temp_f, data = icecream)
 coef(m_ice)</code></pre>
@@ -156,7 +157,8 @@ coef(m_ice)</code></pre>
     resid = cones - pred
   )
 new_eval
-sqrt(mean(new_eval$resid^2))</code></pre>
+ice_test_rmse &lt;- sqrt(mean(new_eval$resid^2))
+ice_test_rmse</code></pre>
       </details>
     </div>
   </div>
@@ -223,10 +225,11 @@ coef(m_quad)</code></pre>
       <details>
         <summary>Show solution</summary>
         <pre><code class="language-r">rmse &lt;- function(y, yhat) sqrt(mean((y - yhat)^2))
-c(
+stop_rmse &lt;- c(
   lin_test_rmse = rmse(new_driving$dist_ft, predict(m_lin, newdata = new_driving)),
   quad_test_rmse = rmse(new_driving$dist_ft, predict(m_quad, newdata = new_driving))
-)</code></pre>
+)
+stop_rmse</code></pre>
       </details>
     </div>
   </div>
@@ -237,8 +240,9 @@ c(
     <div class="case-meta">Datasets: <code>cars_train</code> (24 cars), <code>cars_test</code> (12 cars)</div>
     <p>Listings report <code>age_yr</code>, <code>mileage_k</code> (thousands of miles), <code>hybrid</code> (<code>0</code> = gas, <code>1</code> = hybrid), and asking price <code>price_k</code> (&#36;1000s).</p>
     <div class="tablewrap"><table><thead><tr><th>age_yr</th><th>mileage_k</th><th>hybrid</th><th>price_k</th></tr></thead><tbody><tr><td>1</td><td>12</td><td>0</td><td>29.33</td></tr><tr><td>2</td><td>24</td><td>0</td><td>26.46</td></tr><tr><td>3</td><td>35</td><td>0</td><td>21.62</td></tr><tr><td>4</td><td>48</td><td>0</td><td>20.11</td></tr><tr><td>5</td><td>62</td><td>0</td><td>17.71</td></tr><tr><td>6</td><td>74</td><td>0</td><td>14.78</td></tr></tbody></table></div>
-    <pre class="console-output">Additive R^2 = 0.9750    | Test RMSE = 1.455
-Interaction R^2 = 0.9898 | Test RMSE = 0.913
+    <pre class="console-output">Additive R^2 = 0.9750     | Test RMSE = 1.455
+Interaction R^2 = 0.9898  | Test RMSE = 0.913
+Poly(6)xHybrid R^2 = 0.9963 | Train RMSE = 0.415 | Test RMSE = 0.953
 Interaction term (age_yr:hybrid) = +0.776</pre>
     
     <div class="q-block">
@@ -252,10 +256,10 @@ Interaction term (age_yr:hybrid) = +0.776</pre>
     
     <div class="q-block">
       <div class="q-label">Question 3.2</div>
-      <p>A student fits degree-6 polynomials in age interacted with <code>hybrid</code> plus degree-3 polynomials in mileage. Training $R^2$ approaches $1$, yet test RMSE spikes. Diagnose why.</p>
+      <p>A student fits degree-6 polynomials in age interacted with <code>hybrid</code> plus degree-3 polynomials in mileage. Training $R^2$ reaches $0.996$ (training RMSE $0.415$), yet held-out test RMSE ($0.953$) widens compared to the training fit and slightly trails the interaction model ($0.913$). Diagnose why.</p>
       <details>
         <summary>Show answer</summary>
-        <div class="ans-box">With only 24 training cars, a high-degree model has nearly as many parameters as data points: it memorizes random listing noise in <code>cars_train</code> (low bias, very high variance). Those wild polynomial wiggles fail to generalize to <code>cars_test</code> (<strong>overfitting</strong>).</div>
+        <div class="ans-box">On $n = 24$ training cars, a rank-17 design matrix has almost as many parameters as observations, driving training RMSE down to $0.415$ while test RMSE on these 12 cars is $0.953$ (vs. $0.913$ for the much simpler 5-parameter interaction model). That train&ndash;test gap reflects <strong>overfitting</strong> to training noise, even though on this small split test error only modestly exceeds the interaction model rather than exploding.</div>
       </details>
     </div>
     
@@ -294,11 +298,13 @@ c(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)<
         <summary>Show solution</summary>
         <pre><code class="language-r">m_car_over &lt;- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)
 rmse &lt;- function(y, yhat) sqrt(mean((y - yhat)^2))
-c(
+car_rmse &lt;- c(
+  train_over = rmse(cars_train$price_k, predict(m_car_over)),
   add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),
   int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),
   over_test = rmse(cars_test$price_k, predict(m_car_over, newdata = cars_test))
-)</code></pre>
+)
+car_rmse</code></pre>
       </details>
     </div>
   </div>
@@ -344,13 +350,14 @@ Sample Gentoo (n=12):    mean = 46.56 mm, sd = 4.12 mm</pre>
       <div class="test-output" id="output-c4a" style="display: none;"></div>
       <details>
         <summary>Show solution</summary>
-        <pre><code class="language-r">penguins_sample |&gt;
+        <pre><code class="language-r">peng_summary &lt;- penguins_sample |&gt;
   group_by(species) |&gt;
   summarize(
     count = n(),
     mean_bill = mean(bill_length_mm),
     sd_bill = sd(bill_length_mm)
-  )</code></pre>
+  )
+peng_summary</code></pre>
       </details>
     </div>
     
@@ -370,7 +377,8 @@ Sample Gentoo (n=12):    mean = 46.56 mm, sd = 4.12 mm</pre>
         <pre><code class="language-r">adelie &lt;- penguins_sample |&gt; filter(species == &quot;Adelie&quot;) |&gt; pull(bill_length_mm)
 set.seed(20)
 boot_means &lt;- replicate(1000, mean(sample(adelie, length(adelie), replace = TRUE)))
-quantile(boot_means, c(0.025, 0.975))</code></pre>
+ci_adelie &lt;- quantile(boot_means, c(0.025, 0.975))
+ci_adelie</code></pre>
       </details>
     </div>
   </div>
@@ -419,7 +427,8 @@ Threshold 0.5: MCR=0.275, Precision=0.727, Recall=0.762</pre>
         <summary>Show solution</summary>
         <pre><code class="language-r">m_log &lt;- glm(callback ~ exp_years + honors, data = resumes, family = binomial)
 coef(m_log)
-exp(coef(m_log))</code></pre>
+odds_ratios &lt;- exp(coef(m_log))
+odds_ratios</code></pre>
       </details>
     </div>
     
@@ -442,7 +451,41 @@ y &lt;- resumes$callback
 tp &lt;- sum(y == 1 &amp; y_hat == 1)
 fp &lt;- sum(y == 0 &amp; y_hat == 1)
 fn &lt;- sum(y == 1 &amp; y_hat == 0)
-c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))</code></pre>
+cls_metrics &lt;- c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))
+cls_metrics</code></pre>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="case-study" id="case-6">
+  <h2>Case Study 6: Independent Transfer &mdash; Hiring Screening Tradeoff</h2>
+  <div class="case-body">
+    <div class="case-meta">Simulated Dataset: <code>resumes</code> (40 candidate files; uses fitted <code>m_log</code>)</div>
+    <p>An applicant screening policy must flag at least 85% of eventual callback candidates (<code>recall >= 0.85</code>) while avoiding unnecessary false positives. Evaluate candidate cutoffs from <code>{0.3, 0.5, 0.7}</code> and select the threshold balancing this goal.</p>
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>6. Choose screening cutoff and report performance</h3>
+      <p>Assign your chosen cutoff from <code>{0.3, 0.5, 0.7}</code> to <code>th_c6</code> and evaluate <code>c6_metrics = c(mcr = ..., precision = ..., recall = ...)</code>. Then write one short explanation of the precision&ndash;recall tradeoff involved.</p>
+      <textarea class="code-editor" id="code-c6" rows="9" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="c6" disabled>Run &amp; Check</button>
+        <button class="btn-reset" data-target="c6">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="c6">Load solution</button>
+        <span class="exercise-status" id="status-c6"></span>
+      </div>
+      <div class="test-output" id="output-c6" style="display: none;"></div>
+      <details>
+        <summary>Show solution &amp; self-review criteria</summary>
+        <pre><code class="language-r">th_c6 &lt;- 0.3
+p_hat &lt;- predict(m_log, type = &quot;response&quot;)
+y_hat &lt;- as.integer(p_hat &gt;= th_c6)
+y &lt;- resumes$callback
+tp &lt;- sum(y == 1 &amp; y_hat == 1)
+fp &lt;- sum(y == 0 &amp; y_hat == 1)
+fn &lt;- sum(y == 1 &amp; y_hat == 0)
+c6_metrics &lt;- c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))
+c6_metrics</code></pre>
+        <div class="ans-box" style="margin-top:8px;"><strong>Self-review interpretation:</strong> Cutoffs 0.5 (recall 0.762) and 0.7 (recall 0.619) miss the 0.85 recall target; cutoff 0.3 achieves recall 0.905 at the cost of lowering precision from 0.727 to 0.655 (MCR rises from 0.275 to 0.300).</div>
       </details>
     </div>
   </div>
@@ -453,51 +496,72 @@ import { WebR, ChannelType } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 const EDITORS = {
   "c1a": {
-    "starter": "# Explore icecream and fit a simple linear model\nicecream |>\n  summarize(\n    mean_temp = ___,\n    mean_cones = ___,\n    r = ___\n  )\n\nm_ice <- lm(___, data = icecream)\ncoef(m_ice)\n",
-    "solution": "icecream |>\n  summarize(\n    mean_temp = mean(temp_f),\n    mean_cones = mean(cones),\n    r = cor(temp_f, cones)\n  )\n\nm_ice <- lm(cones ~ temp_f, data = icecream)\ncoef(m_ice)"
+    "starter": "# Assign summary to ice_summary and OLS model to m_ice\nice_summary <- icecream |>\n  summarize(\n    mean_temp = ___,\n    mean_cones = ___,\n    r = ___\n  )\nice_summary\n\nm_ice <- lm(___, data = icecream)\ncoef(m_ice)\n",
+    "solution": "ice_summary <- icecream |>\n  summarize(\n    mean_temp = mean(temp_f),\n    mean_cones = mean(cones),\n    r = cor(temp_f, cones)\n  )\nice_summary\n\nm_ice <- lm(cones ~ temp_f, data = icecream)\ncoef(m_ice)"
   },
   "c1b": {
-    "starter": "# Uses m_ice from above: predict on new_icecream and compute test RMSE\nnew_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = ___\n  )\nnew_eval\nsqrt(mean(new_eval$resid^2))\n",
-    "solution": "new_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = cones - pred\n  )\nnew_eval\nsqrt(mean(new_eval$resid^2))"
+    "starter": "# Predict on new_icecream in new_eval and assign ice_test_rmse\nnew_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = ___\n  )\nnew_eval\nice_test_rmse <- ___\nice_test_rmse\n",
+    "solution": "new_eval <- new_icecream |>\n  mutate(\n    pred = predict(m_ice, newdata = new_icecream),\n    resid = cones - pred\n  )\nnew_eval\nice_test_rmse <- sqrt(mean(new_eval$resid^2))\nice_test_rmse"
   },
   "c2a": {
-    "starter": "# Fit linear vs quadratic stopping-distance models on driving\nm_lin <- lm(dist_ft ~ speed_mph + wet_road, data = driving)\nm_quad <- lm(___, data = driving)\nc(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)\ncoef(m_quad)\n",
+    "starter": "# Fit m_lin and m_quad on driving\nm_lin <- lm(dist_ft ~ speed_mph + wet_road, data = driving)\nm_quad <- lm(___, data = driving)\nc(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)\ncoef(m_quad)\n",
     "solution": "m_lin <- lm(dist_ft ~ speed_mph + wet_road, data = driving)\nm_quad <- lm(dist_ft ~ speed_mph + I(speed_mph^2) + wet_road, data = driving)\nc(lin_r2 = summary(m_lin)$r.squared, quad_r2 = summary(m_quad)$r.squared)\ncoef(m_quad)"
   },
   "c2b": {
-    "starter": "# Evaluate linear vs quadratic test RMSE on new_driving\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  lin_test_rmse = rmse(new_driving$dist_ft, ___),\n  quad_test_rmse = rmse(new_driving$dist_ft, ___)\n)\n",
-    "solution": "rmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  lin_test_rmse = rmse(new_driving$dist_ft, predict(m_lin, newdata = new_driving)),\n  quad_test_rmse = rmse(new_driving$dist_ft, predict(m_quad, newdata = new_driving))\n)"
+    "starter": "# Assign named vector stop_rmse on new_driving\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nstop_rmse <- c(\n  lin_test_rmse = rmse(new_driving$dist_ft, ___),\n  quad_test_rmse = rmse(new_driving$dist_ft, ___)\n)\nstop_rmse\n",
+    "solution": "rmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nstop_rmse <- c(\n  lin_test_rmse = rmse(new_driving$dist_ft, predict(m_lin, newdata = new_driving)),\n  quad_test_rmse = rmse(new_driving$dist_ft, predict(m_quad, newdata = new_driving))\n)\nstop_rmse"
   },
   "c3a": {
-    "starter": "# Compare additive vs interaction used-car price models\nm_car_add <- lm(price_k ~ age_yr + mileage_k + hybrid, data = cars_train)\nm_car_int <- lm(price_k ~ age_yr * hybrid + mileage_k, data = cars_train)\ncoef(m_car_int)\nc(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)\n",
+    "starter": "# Fit additive model m_car_add and interaction model m_car_int on cars_train\nm_car_add <- lm(___, data = cars_train)\nm_car_int <- lm(___, data = cars_train)\ncoef(m_car_int)\nc(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)\n",
     "solution": "m_car_add <- lm(price_k ~ age_yr + mileage_k + hybrid, data = cars_train)\nm_car_int <- lm(price_k ~ age_yr * hybrid + mileage_k, data = cars_train)\ncoef(m_car_int)\nc(add_r2 = summary(m_car_add)$r.squared, int_r2 = summary(m_car_int)$r.squared)"
   },
   "c3b": {
-    "starter": "# Fit an overly flexible polynomial and compare test RMSE on cars_test\nm_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = ___\n)\n",
-    "solution": "m_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\nc(\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = rmse(cars_test$price_k, predict(m_car_over, newdata = cars_test))\n)"
+    "starter": "# Fit high-degree polynomial m_car_over and compare test RMSEs in car_rmse\nm_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\ncar_rmse <- c(\n  train_over = rmse(cars_train$price_k, predict(m_car_over)),\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = ___\n)\ncar_rmse\n",
+    "solution": "m_car_over <- lm(price_k ~ poly(age_yr, 6, raw = TRUE) * hybrid + poly(mileage_k, 3, raw = TRUE), data = cars_train)\nrmse <- function(y, yhat) sqrt(mean((y - yhat)^2))\ncar_rmse <- c(\n  train_over = rmse(cars_train$price_k, predict(m_car_over)),\n  add_test = rmse(cars_test$price_k, predict(m_car_add, newdata = cars_test)),\n  int_test = rmse(cars_test$price_k, predict(m_car_int, newdata = cars_test)),\n  over_test = rmse(cars_test$price_k, predict(m_car_over, newdata = cars_test))\n)\ncar_rmse"
   },
   "c4a": {
-    "starter": "# Group-wise summary of bill length by species\npenguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = ___,\n    sd_bill = ___\n  )\n",
-    "solution": "penguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = mean(bill_length_mm),\n    sd_bill = sd(bill_length_mm)\n  )"
+    "starter": "# Assign group-wise summary to peng_summary\npeng_summary <- penguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = ___,\n    sd_bill = ___\n  )\npeng_summary\n",
+    "solution": "peng_summary <- penguins_sample |>\n  group_by(species) |>\n  summarize(\n    count = n(),\n    mean_bill = mean(bill_length_mm),\n    sd_bill = sd(bill_length_mm)\n  )\npeng_summary"
   },
   "c4b": {
-    "starter": "# 1000-replicate bootstrap 95% percentile CI for Adelie mean bill length\nadelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, ___)\nquantile(boot_means, c(0.025, 0.975))\n",
-    "solution": "adelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, mean(sample(adelie, length(adelie), replace = TRUE)))\nquantile(boot_means, c(0.025, 0.975))"
+    "starter": "# 1000-rep bootstrap 95% CI in ci_adelie (WITH replacement, set.seed(20))\nadelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, ___)\nci_adelie <- quantile(boot_means, c(0.025, 0.975))\nci_adelie\n",
+    "solution": "adelie <- penguins_sample |> filter(species == \"Adelie\") |> pull(bill_length_mm)\nset.seed(20)\nboot_means <- replicate(1000, mean(sample(adelie, length(adelie), replace = TRUE)))\nci_adelie <- quantile(boot_means, c(0.025, 0.975))\nci_adelie"
   },
   "c5a": {
-    "starter": "# Logistic regression for callback probability\nm_log <- glm(callback ~ exp_years + honors, data = resumes, family = binomial)\ncoef(m_log)\nexp(coef(m_log))  # odds ratios\n",
-    "solution": "m_log <- glm(callback ~ exp_years + honors, data = resumes, family = binomial)\ncoef(m_log)\nexp(coef(m_log))"
+    "starter": "# Fit logistic regression m_log and compute odds_ratios\nm_log <- glm(___, data = resumes, family = ___)\ncoef(m_log)\nodds_ratios <- exp(___)\nodds_ratios\n",
+    "solution": "m_log <- glm(callback ~ exp_years + honors, data = resumes, family = binomial)\ncoef(m_log)\nodds_ratios <- exp(coef(m_log))\nodds_ratios"
   },
   "c5b": {
-    "starter": "# Classify at threshold 0.5 and compute MCR, precision, recall\np_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc(mcr = ___, precision = ___, recall = ___)\n",
-    "solution": "p_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))"
+    "starter": "# Classify at threshold 0.5 and assign named vector cls_metrics\np_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\ncls_metrics <- c(mcr = ___, precision = ___, recall = ___)\ncls_metrics\n",
+    "solution": "p_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= 0.5)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\ncls_metrics <- c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))\ncls_metrics"
+  },
+  "c6": {
+    "starter": "# Independent transfer: recruiting team wants recall >= 0.85 among cutoffs {0.3, 0.5, 0.7}\n# while keeping precision as high as possible. Choose th_c6 and compute c6_metrics.\nth_c6 <- ___\np_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= th_c6)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc6_metrics <- c(mcr = ___, precision = ___, recall = ___)\nc6_metrics\n",
+    "solution": "th_c6 <- 0.3\np_hat <- predict(m_log, type = \"response\")\ny_hat <- as.integer(p_hat >= th_c6)\ny <- resumes$callback\ntp <- sum(y == 1 & y_hat == 1)\nfp <- sum(y == 0 & y_hat == 1)\nfn <- sum(y == 1 & y_hat == 0)\nc6_metrics <- c(mcr = mean(y != y_hat), precision = tp / (tp + fp), recall = tp / (tp + fn))\nc6_metrics"
   }
 };
 const PRELUDE = "`%>%` <- function(lhs, rhs) {\n  call <- substitute(rhs)\n  if (is.name(call)) call <- as.call(list(call))\n  if (is.call(call)) {\n    call <- as.call(c(list(call[[1]], lhs), as.list(call[-1])))\n  }\n  eval(call, parent.frame())\n}\n\n.tidy_state <- new.env(parent = emptyenv())\n.tidy_state$n <- 0L\nn <- function() .tidy_state$n\n\nas_tibble <- function(x) {\n  df <- as.data.frame(x, stringsAsFactors = FALSE)\n  class(df) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  attr(df, \"row.names\") <- .set_row_names(nrow(df))\n  df\n}\n\ntibble <- function(...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  env <- new.env(parent = parent.frame())\n  cols <- list()\n  for (i in seq_along(dots)) {\n    nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n    val <- eval(dots[[i]], envir = env)\n    assign(nm, val, envir = env)\n    cols[[nm]] <- val\n  }\n  df <- as.data.frame(cols, stringsAsFactors = FALSE)\n  class(df) <- c(\"tbl_df\", \"tbl\", \"data.frame\")\n  df\n}\n\ngroup_by <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- vapply(dots, function(d) as.character(d)[1L], character(1))\n  attr(.data, \"groups\") <- gcols\n  .data\n}\n\nungroup <- function(.data) {\n  attr(.data, \"groups\") <- NULL\n  .data\n}\n\ndesc <- function(x) {\n  structure(-xtfrm(x), desc_order = TRUE)\n}\n\narrange <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) == 0) return(.data)\n  keys <- lapply(dots, function(expr) eval(expr, envir = .data, enclos = parent.frame()))\n  ord <- do.call(order, unname(keys))\n  out <- .data[ord, , drop = FALSE]\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- attr(.data, \"groups\")\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nselect <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  cols <- names(.data)\n  keep <- character(0)\n  drop <- character(0)\n  for (d in dots) {\n    if (is.call(d) && identical(d[[1L]], as.name(\"-\"))) {\n      drop <- c(drop, as.character(d[[2L]]))\n    } else if (is.call(d) && identical(d[[1L]], as.name(\":\"))) {\n      a <- match(as.character(d[[2L]]), cols)\n      b <- match(as.character(d[[3L]]), cols)\n      keep <- c(keep, cols[a:b])\n    } else {\n      keep <- c(keep, as.character(d))\n    }\n  }\n  if (length(keep) == 0 && length(drop) > 0) {\n    keep <- setdiff(cols, drop)\n  } else if (length(drop) > 0) {\n    keep <- setdiff(keep, drop)\n  }\n  out <- .data[, keep, drop = FALSE]\n  attr(out, \"groups\") <- intersect(attr(.data, \"groups\"), keep)\n  if (length(attr(out, \"groups\")) == 0) attr(out, \"groups\") <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\npull <- function(.data, var = -1) {\n  v <- substitute(var)\n  if (is.name(v)) {\n    .data[[as.character(v)]]\n  } else {\n    idx <- eval(v, parent.frame())\n    if (idx < 0) idx <- ncol(.data) + idx + 1L\n    .data[[idx]]\n  }\n}\n\nfilter <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- as.environment(as.list(sub_df))\n    parent.env(env) <- pf\n    mask <- rep(TRUE, nrow(sub_df))\n    for (expr in dots) {\n      res <- eval(expr, envir = env)\n      res[is.na(res)] <- FALSE\n      mask <- mask & res\n    }\n    sub_df[mask, , drop = FALSE]\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    sp <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    parts <- lapply(sp, function(idx) eval_sub(.data[idx, , drop = FALSE]))\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nmutate <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    for (i in seq_along(dots)) {\n      nm <- nms[i]\n      val <- eval(dots[[i]], envir = env)\n      if (is.null(val)) {\n        sub_df[[nm]] <- NULL\n        if (exists(nm, envir = env, inherits = FALSE)) rm(list = nm, envir = env)\n      } else {\n        if (length(val) == 1L && nrow(sub_df) > 1L) val <- rep(val, nrow(sub_df))\n        assign(nm, val, envir = env)\n        sub_df[[nm]] <- val\n      }\n    }\n    sub_df\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    idx_groups <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    out <- .data\n    for (idx in idx_groups) {\n      sub_out <- eval_sub(.data[idx, , drop = FALSE])\n      for (cn in names(sub_out)) out[[cn]][idx] <- sub_out[[cn]]\n    }\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nsummarize <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_grp <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    res <- list()\n    for (i in seq_along(dots)) {\n      nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n      val <- eval(dots[[i]], envir = env)\n      assign(nm, val, envir = env)\n      res[[nm]] <- val\n    }\n    as.data.frame(res, stringsAsFactors = FALSE)\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_grp(.data)\n  } else {\n    key_df <- unique(.data[, gcols, drop = FALSE])\n    ord <- do.call(order, unname(as.list(key_df)))\n    key_df <- key_df[ord, , drop = FALSE]\n    parts <- vector(\"list\", nrow(key_df))\n    for (r in seq_len(nrow(key_df))) {\n      mask <- rep(TRUE, nrow(.data))\n      for (gc in gcols) mask <- mask & (.data[[gc]] == key_df[[gc]][r])\n      sub_df <- .data[mask, , drop = FALSE]\n      s_df <- eval_grp(sub_df)\n      parts[[r]] <- cbind(key_df[rep(r, nrow(s_df)), , drop = FALSE], s_df)\n    }\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  if (!is.null(gcols) && length(gcols) > 1L) {\n    attr(out, \"groups\") <- gcols[-length(gcols)]\n  } else {\n    attr(out, \"groups\") <- NULL\n  }\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\nsummarise <- summarize\n\ncount <- function(.data, ..., sort = FALSE) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) > 0L) {\n    g <- do.call(group_by, c(list(.data), dots))\n  } else {\n    g <- .data\n  }\n  out <- summarize(g, n = n())\n  out <- ungroup(out)\n  if (sort) out <- arrange(out, desc(n))\n  out\n}\n\nslice_head <- function(.data, n = 6L) {\n  k <- min(n, nrow(.data))\n  out <- .data[seq_len(k), , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nslice_sample <- function(.data, n = 1L, replace = FALSE) {\n  idx <- sample.int(nrow(.data), size = n, replace = replace)\n  out <- .data[idx, , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nprint.tbl_df <- function(x, ...) {\n  print.data.frame(x, row.names = FALSE, ...)\n  invisible(x)\n}\n\nicecream <- tibble(\n  temp_f = c(66, 69, 72, 74, 77, 79, 81, 83, 85, 87, 89, 91),\n  cones = c(118, 129, 145, 152, 171, 178, 188, 203, 211, 224, 232, 241)\n)\n\nnew_icecream <- tibble(\n  temp_f = c(68, 76, 82, 88),\n  cones = c(126, 165, 198, 229)\n)\n\ndriving <- tibble(\n  speed_mph = c(25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 30, 40, 45, 50, 55, 60, 65, 75),\n  wet_road = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1),\n  dist_ft = c(56, 74, 92, 118, 142, 166, 199, 229, 260, 299, 102, 144, 170, 196, 227, 255, 289, 366)\n)\n\nnew_driving <- tibble(\n  speed_mph = c(28, 42, 58, 35, 52, 68),\n  wet_road = c(0, 0, 0, 1, 1, 1),\n  dist_ft = c(67, 126, 215, 122, 208, 314)\n)\n\ncars_train <- tibble(\n  age_yr = c(1, 2, 3, 4, 5, 6, 7, 8, 2, 4, 6, 8, 1, 2, 3, 4, 5, 6, 7, 8, 2, 3, 5, 7),\n  mileage_k = c(12, 24, 35, 48, 62, 74, 85, 96, 19, 52, 68, 102, 10, 21, 34, 44, 58, 70, 80, 92, 28, 39, 61, 88),\n  hybrid = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\n  price_k = c(29.33, 26.46, 21.62, 20.11, 17.71, 14.78, 10.93, 8.37, 26.36, 19.06, 14.66, 7.31, 32.56, 29.34, 28.08, 26.89, 24.53, 22.09, 17.74, 17.21, 29.47, 26.67, 23.43, 19.12)\n)\n\ncars_test <- tibble(\n  age_yr = c(1, 3, 5, 7, 4, 6, 1, 3, 5, 7, 4, 6),\n  mileage_k = c(15, 38, 60, 82, 45, 77, 14, 31, 55, 84, 49, 66),\n  hybrid = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1),\n  price_k = c(29.98, 22.73, 18.28, 9.44, 20.14, 14.26, 31.86, 28.89, 23.46, 19.5, 26.28, 20.73)\n)\n\npenguins_sample <- tibble(\n  species = c(\"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Adelie\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Chinstrap\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\", \"Gentoo\"),\n  bill_length_mm = c(38.3, 38.2, 36.6, 36.3, 41.0, 38.8, 33.2, 38.7, 41.4, 38.2, 39.0, 42.5, 49.9, 46.3, 46.6, 52.1, 45.4, 57.1, 45.0, 47.5, 49.9, 42.4, 46.4, 48.7, 45.4, 44.2, 41.2, 47.3, 42.3, 48.8, 51.9, 45.0, 51.0, 48.2, 40.6, 52.8),\n  body_mass_g = c(3660, 3390, 3860, 3500, 3970, 3240, 3740, 4050, 3530, 3690, 3880, 3860, 3630, 3460, 3760, 3420, 3830, 3300, 3610, 3470, 3350, 3820, 3850, 3820, 4690, 5180, 5120, 5460, 5030, 4660, 4720, 5760, 5370, 4670, 5330, 4940)\n)\n\nresumes <- tibble(\n  exp_years = c(0.5, 1.6, 2.7, 3.8, 4.9, 6.0, 7.1, 8.2, 9.3, 10.4, 0.5, 1.6, 2.7, 3.8, 4.9, 6.0, 7.1, 8.2, 9.3, 10.4, 0.9, 2.0, 3.1, 4.2, 5.3, 6.4, 7.5, 8.6, 9.7, 10.8, 0.9, 2.0, 3.1, 4.2, 5.3, 6.4, 7.5, 8.6, 9.7, 10.8),\n  honors = c(1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0),\n  callback = c(0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1)\n)";
-const STORAGE_PREFIX = "stat20_rev_cs_";
+const CHECKS = {
+  "c1a": "assert_true(exists('ice_summary', envir = env) && exists('m_ice', envir = env), 'Assign ice_summary and m_ice')\nisum <- get('ice_summary', envir = env)\nassert_true(all(c('mean_temp','mean_cones','r') %in% names(isum)) && abs(isum$r[1] - 0.99864) < 0.002, 'ice_summary correlation wrong')\nmi <- get('m_ice', envir = env)\nassert_true(abs(unname(coef(mi)['temp_f']) - 5.07648) < 0.05, 'm_ice slope wrong')",
+  "c1b": "assert_true(exists('new_eval', envir = env) && exists('ice_test_rmse', envir = env), 'Assign new_eval and ice_test_rmse')\nrmse_val <- get('ice_test_rmse', envir = env)\nassert_true(is.numeric(rmse_val) && abs(rmse_val - 1.87777) < 0.02, 'ice_test_rmse should be ~1.878')",
+  "c2a": "assert_true(exists('m_lin', envir = env) && exists('m_quad', envir = env), 'Assign m_lin and m_quad')\nmq <- get('m_quad', envir = env)\nassert_true(summary(mq)$r.squared > 0.999 && length(coef(mq)) == 4, 'm_quad must include quadratic speed term and wet_road')",
+  "c2b": "assert_true(exists('stop_rmse', envir = env), 'Assign stop_rmse')\nsr <- get('stop_rmse', envir = env)\nassert_true(abs(sr['lin_test_rmse'] - 8.031609) < 0.05 && abs(sr['quad_test_rmse'] - 0.994606) < 0.05, 'stop_rmse mismatch')",
+  "c3a": "assert_true(exists('m_car_add', envir = env) && exists('m_car_int', envir = env), 'Assign m_car_add and m_car_int')\nma <- get('m_car_add', envir = env); mi <- get('m_car_int', envir = env)\nassert_true(abs(summary(ma)$r.squared - 0.9750) < 0.002 && 'age_yr:hybrid' %in% names(coef(mi)), 'Check additive/interaction formulas')",
+  "c3b": "assert_true(exists('car_rmse', envir = env), 'Assign car_rmse')\ncr <- get('car_rmse', envir = env)\nassert_true(abs(cr['train_over'] - 0.41459) < 0.02 && abs(cr['over_test'] - 0.95313) < 0.02 && abs(cr['int_test'] - 0.91269) < 0.02, 'car_rmse values mismatch')",
+  "c4a": "assert_true(exists('peng_summary', envir = env), 'Assign peng_summary')\nps <- get('peng_summary', envir = env)\nassert_true(nrow(ps) == 3 && all(c('mean_bill','sd_bill') %in% names(ps)), 'peng_summary missing columns')\nassert_true(abs(ps$mean_bill[ps$species == 'Adelie'] - 38.51667) < 0.02, 'Adelie mean_bill mismatch')",
+  "c4b": "assert_true(exists('boot_means', envir = env) && exists('ci_adelie', envir = env), 'Assign boot_means and ci_adelie')\nbm <- get('boot_means', envir = env); ci <- unname(get('ci_adelie', envir = env))\nassert_true(length(bm) == 1000, 'Need 1000 bootstrap replicates')\nassert_true(sd(bm) > 0.25 && (ci[2] - ci[1]) > 0.5, 'Bootstrap variance is ~0 -- make sure replace = TRUE!')\nassert_true(abs(ci[1] - 37.05792) < 0.05 && abs(ci[2] - 39.81708) < 0.05, 'With set.seed(20), CI should match ~[37.058, 39.817]')",
+  "c5a": "assert_true(exists('m_log', envir = env) && exists('odds_ratios', envir = env), 'Assign m_log and odds_ratios')\nml <- get('m_log', envir = env); or <- get('odds_ratios', envir = env)\nassert_true(ml$family$family == 'binomial' && abs(unname(or['honors']) - 6.558) < 0.05, 'm_log/odds_ratios mismatch')",
+  "c5b": "assert_true(exists('cls_metrics', envir = env), 'Assign cls_metrics')\ncm <- get('cls_metrics', envir = env)\nassert_true(abs(cm['mcr'] - 0.275) < 1e-4 && abs(cm['precision'] - 0.7272727) < 1e-4 && abs(cm['recall'] - 0.7619048) < 1e-4, 'cls_metrics values wrong')",
+  "c6": "assert_true(exists('th_c6', envir = env) && exists('c6_metrics', envir = env), 'Assign th_c6 and c6_metrics')\nth <- get('th_c6', envir = env); cm <- get('c6_metrics', envir = env)\nassert_true(th %in% c(0.3, 0.5, 0.7), 'Choose th_c6 from {0.3, 0.5, 0.7}')\nassert_true(abs(th - 0.3) < 1e-9 && abs(cm['recall'] - 0.9047619) < 1e-4 && abs(cm['precision'] - 0.6551724) < 1e-4, 'Only th_c6=0.3 achieves recall >= 0.85 (~0.905) with precision ~0.655')"
+};
+const STORAGE_PREFIX = "stat20_rev_v2_";
+const TOTAL_TASKS = 11;
 
 let webR = null;
+let isRunning = false;
 const cmInstances = {};
+const passState = {};
+for (const k of Object.keys(EDITORS)) passState[k] = false;
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -513,6 +577,30 @@ function setEditorValue(key, val) {
   } else {
     document.getElementById('code-' + key).value = val;
   }
+}
+
+function updateScore() {
+  const n = Object.values(passState).filter(Boolean).length;
+  const el = document.getElementById('score');
+  if (el) el.textContent = `${n} / ${TOTAL_TASKS} checked`;
+}
+
+function invalidateEditor(key) {
+  if (passState[key]) {
+    passState[key] = false;
+    updateScore();
+  }
+  const st = document.getElementById('status-' + key);
+  if (st) {
+    st.className = 'exercise-status';
+    st.textContent = '';
+  }
+}
+
+function setButtonsEnabled(enabled) {
+  document.querySelectorAll('.btn-run').forEach(b => b.disabled = !enabled);
+  const rst = document.getElementById('btn-restart-r');
+  if (rst) rst.disabled = !enabled;
 }
 
 function loadEditors() {
@@ -535,23 +623,30 @@ function loadEditors() {
         }
       });
       cm.on('change', () => {
+        invalidateEditor(key);
         localStorage.setItem(STORAGE_PREFIX + key, cm.getValue());
       });
       cmInstances[key] = cm;
     } else {
       ta.addEventListener('input', () => {
+        invalidateEditor(key);
         localStorage.setItem(STORAGE_PREFIX + key, ta.value);
       });
     }
   }
+  updateScore();
 }
 
 async function initSession() {
   const statusEl = document.getElementById('engine-status');
-  const restartBtn = document.getElementById('btn-restart-r');
   statusEl.textContent = 'loading R...';
-  restartBtn.disabled = true;
-  document.querySelectorAll('.btn-run').forEach(b => b.disabled = true);
+  setButtonsEnabled(false);
+  for (const k of Object.keys(EDITORS)) {
+    passState[k] = false;
+    const st = document.getElementById('status-' + k);
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
+  }
+  updateScore();
 
   try {
     webR = new WebR({ channelType: ChannelType.PostMessage });
@@ -563,8 +658,7 @@ async function initSession() {
       await shelter.purge();
     }
     statusEl.textContent = 'ready';
-    restartBtn.disabled = false;
-    document.querySelectorAll('.btn-run').forEach(b => b.disabled = false);
+    setButtonsEnabled(true);
   } catch (e) {
     statusEl.textContent = 'WebR failed to load';
     console.error(e);
@@ -572,9 +666,9 @@ async function initSession() {
 }
 
 async function runEditor(key) {
-  if (!webR) return;
-  const btn = document.querySelector(`.btn-run[data-target="${key}"]`);
-  if (btn) btn.disabled = true;
+  if (!webR || isRunning) return;
+  isRunning = true;
+  setButtonsEnabled(false);
 
   const statusEl = document.getElementById('status-' + key);
   const outEl = document.getElementById('output-' + key);
@@ -587,12 +681,28 @@ async function runEditor(key) {
   try {
     const shelter = await new webR.Shelter();
     let capture;
+    let checkRes = null;
     try {
       capture = await shelter.captureR(code, {
         withAutoprint: true,
         captureStreams: true,
         captureConditions: true
       });
+      const hasUserError = capture.output.some(o => o.type === 'stderr' || o.type === 'error');
+      if (!hasUserError && CHECKS[key]) {
+        const checkWrapper = `
+          assert_true <- function(cond, msg) { if (!isTRUE(cond)) stop(msg, call. = FALSE) }
+          tryCatch({
+            (function(env) {
+              ${CHECKS[key]}
+            })(globalenv())
+            cat("__CHECK_PASS__\n")
+          }, error = function(e) {
+            cat("__CHECK_FAIL__:", conditionMessage(e), "\n")
+          })
+        `;
+        checkRes = await shelter.captureR(checkWrapper, { withAutoprint: false, captureStreams: true, captureConditions: true });
+      }
     } finally {
       await shelter.purge();
     }
@@ -600,9 +710,7 @@ async function runEditor(key) {
     const lines = [];
     let hasError = false;
     for (const o of capture.output) {
-      if (o.type === 'stderr' || o.type === 'error') {
-        hasError = true;
-      }
+      if (o.type === 'stderr' || o.type === 'error') hasError = true;
       if (o.data !== undefined && o.data !== null) {
         const s = String(o.data);
         if (s.trim().length > 0) lines.push(s);
@@ -611,20 +719,39 @@ async function runEditor(key) {
 
     const text = lines.join('\n').trim();
     if (hasError) {
+      passState[key] = false;
       statusEl.className = 'exercise-status fail';
       statusEl.textContent = 'error';
       outEl.innerHTML = `<span class="fail-text">${escapeHtml(text || 'R error')}</span>`;
+    } else if (checkRes) {
+      const cLines = checkRes.output.filter(o => o.data).map(o => String(o.data).trim()).join('\n');
+      if (cLines.includes('__CHECK_PASS__')) {
+        passState[key] = true;
+        statusEl.className = 'exercise-status pass';
+        statusEl.textContent = 'checked: ok';
+        outEl.textContent = text || '(checked; no printed output)';
+      } else {
+        passState[key] = false;
+        const failMsg = cLines.replace(/^__CHECK_FAIL__:\s*/, '') || 'Check failed.';
+        statusEl.className = 'exercise-status fail';
+        statusEl.textContent = 'checked: FAIL';
+        outEl.innerHTML = `<span class="fail-text">Check failed: ${escapeHtml(failMsg)}</span>` + (text ? '\n' + escapeHtml(text) : '');
+      }
     } else {
-      statusEl.className = 'exercise-status pass';
-      statusEl.textContent = 'ran';
+      passState[key] = false;
+      statusEl.className = 'exercise-status';
+      statusEl.textContent = 'ran (unverified)';
       outEl.textContent = text || '(executed; no printed output)';
     }
   } catch (e) {
+    passState[key] = false;
     statusEl.className = 'exercise-status fail';
     statusEl.textContent = 'error';
     outEl.innerHTML = `<span class="fail-text">error: ${escapeHtml(e.message || String(e))}</span>`;
   } finally {
-    if (btn) btn.disabled = false;
+    isRunning = false;
+    setButtonsEnabled(true);
+    updateScore();
   }
 }
 
@@ -637,8 +764,11 @@ document.querySelectorAll('.btn-reset').forEach(b => {
     const k = b.dataset.target;
     localStorage.removeItem(STORAGE_PREFIX + k);
     setEditorValue(k, EDITORS[k].starter);
-    document.getElementById('status-' + k).textContent = '';
+    passState[k] = false;
+    const st = document.getElementById('status-' + k);
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
     document.getElementById('output-' + k).style.display = 'none';
+    updateScore();
   });
 });
 
@@ -647,26 +777,25 @@ document.querySelectorAll('.btn-copy-sol').forEach(b => {
     const k = b.dataset.target;
     setEditorValue(k, EDITORS[k].solution);
     localStorage.setItem(STORAGE_PREFIX + k, EDITORS[k].solution);
+    invalidateEditor(k);
   });
 });
 
 document.getElementById('btn-restart-r').addEventListener('click', async () => {
   await initSession();
-  for (const k of Object.keys(EDITORS)) {
-    const st = document.getElementById('status-' + k);
-    if (st) st.textContent = '';
-  }
 });
 
 document.getElementById('btn-reset-all').addEventListener('click', () => {
   for (const k of Object.keys(EDITORS)) {
     localStorage.removeItem(STORAGE_PREFIX + k);
     setEditorValue(k, EDITORS[k].starter);
+    passState[k] = false;
     const st = document.getElementById('status-' + k);
-    if (st) st.textContent = '';
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
     const out = document.getElementById('output-' + k);
     if (out) out.style.display = 'none';
   }
+  updateScore();
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -686,6 +815,3 @@ window.addEventListener('DOMContentLoaded', async () => {
   await initSession();
 });
 </script>
-
-</body>
-</html>

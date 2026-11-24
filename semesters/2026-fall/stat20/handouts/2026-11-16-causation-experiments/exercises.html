@@ -26,15 +26,14 @@
     <button id="btn-restart-r" class="btn-secondary" disabled>Restart R session</button>
     <button id="btn-reset-all" class="btn-secondary">Reset all</button>
     <a class="download" href="exercises.zip" download>.zip</a>
+    <span id="score" class="sub" style="margin-left: 10px;">0 / 7 checked</span>
     <span id="engine-status" class="sub" style="margin-left: 8px;">loading R...</span>
   </div>
 </div>
 
 <h1>Week 13 Case Studies: Causation, Experiments &amp; DID</h1>
 <p class="sub" style="margin-bottom: 14px;">
-  Scroll through each case study below for conceptual questions and live tidy-R coding exercises
-  (datasets and verbs <code>filter</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>select</code>, <code>count</code>, and <code>|&gt;</code> are preloaded).
-  Variables stay live across editors until you click <strong>Restart R session</strong>. Press <code>Ctrl+Enter</code> (or <code>Cmd+Enter</code>) inside an editor to run.
+  Simulated teaching datasets (<code>salaries</code>, <code>notes_study</code>, <code>gym_warmup</code>, <code>outreach_sim</code>) and a documented tidy-verb subset (<code>filter</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, <code>select</code>, <code>count</code>, <code>pull</code>, <code>|&gt;</code>) are preloaded in browser WebR; local R scripts use <code>library(tidyverse)</code>. Variables persist across editors until <strong>Restart R session</strong>; editing a checked block clears its check badge until you re-run.
 </p>
 
 <nav class="toc-bar" aria-label="Case studies">
@@ -42,6 +41,7 @@
   <a href="#case-1">1. Salary Audit (Simpson&rsquo;s Paradox)</a>
   <a href="#case-2">2. Note-Taking Experiment (Permutation)</a>
   <a href="#case-3">3. Campus Gym Policy (DID)</a>
+  <a href="#case-4">4. Independent Transfer</a>
 </nav>
 
 <section class="code-guide first-case" id="code-guide">
@@ -98,7 +98,7 @@ lm(salary_k ~ group + dept) coefficient on groupGroup_B: +4.30k</pre>
       <p>Explain the causal role of <code>dept</code> when auditing pay disparities: why does conditioning on <code>dept</code> answer a different question than the unadjusted difference?</p>
       <details>
         <summary>Show answer</summary>
-        <div class="ans-box"><code>dept</code> is a <strong>confounder</strong> for within-department pay equality (affecting both salary level and the share in each group). Conditioning on <code>dept</code> (via stratification or <code>lm(salary_k ~ group + dept)</code>) isolates equal pay for equal department work (+4.30k for Group_B), whereas any gap in department access itself is a separate hiring/promotion pipeline question.</div>
+        <div class="ans-box">Conditioning on <code>dept</code> gives a <strong>within-department conditional association</strong> (+4.30k for Group_B holding <code>dept</code> fixed). Treating that regression as causal proof requires an explicit causal model: if department choice precedes group or reflects separate sorting, <code>dept</code> acts as a confounder, whereas if group status affects department placement/promotion, <code>dept</code> is a mediator on the causal pathway for total disparity. Moreover, unobserved determinants such as job level and tenure are absent here.</div>
       </details>
     </div>
     
@@ -115,11 +115,13 @@ lm(salary_k ~ group + dept) coefficient on groupGroup_B: +4.30k</pre>
       <div class="test-output" id="output-w1a" style="display: none;"></div>
       <details>
         <summary>Show solution</summary>
-        <pre><code class="language-r">salaries |&gt; group_by(group) |&gt; summarize(n = n(), mean_sal = mean(salary_k))
+        <pre><code class="language-r">sal_by_group &lt;- salaries |&gt; group_by(group) |&gt; summarize(n = n(), mean_sal = mean(salary_k))
+sal_by_group
 
-salaries |&gt;
+sal_by_dept &lt;- salaries |&gt;
   group_by(dept, group) |&gt;
-  summarize(n = n(), mean_sal = mean(salary_k))</code></pre>
+  summarize(n = n(), mean_sal = mean(salary_k))
+sal_by_dept</code></pre>
       </details>
     </div>
     
@@ -136,8 +138,10 @@ salaries |&gt;
       <div class="test-output" id="output-w1b" style="display: none;"></div>
       <details>
         <summary>Show solution</summary>
-        <pre><code class="language-r">coef(lm(salary_k ~ group, data = salaries))
-coef(lm(salary_k ~ group + dept, data = salaries))</code></pre>
+        <pre><code class="language-r">m_sal_raw &lt;- lm(salary_k ~ group, data = salaries)
+m_sal_adj &lt;- lm(salary_k ~ group + dept, data = salaries)
+coef(m_sal_raw)
+coef(m_sal_adj)</code></pre>
       </details>
     </div>
   </div>
@@ -156,7 +160,7 @@ Observed ATE (Longhand - Laptop): +5.45 quiz points</pre>
       <p>Define potential outcomes $(Y_i(\text{Longhand}), Y_i(\text{Laptop}))$ for student $i$. Why can we estimate the Average Treatment Effect ($\text{ATE}$) even though we never observe both outcomes for any student?</p>
       <details>
         <summary>Show answer</summary>
-        <div class="ans-box">Each student has two potential quiz scores, one if assigned Longhand and one if assigned Laptop, only one of which is realized. Under random assignment, the treated and control groups are comparable in expectation across all observed and unobserved traits (verified on <code>prior_gpa</code>), so $\bar{Y}_{\text{Longhand}} - \bar{Y}_{\text{Laptop}}$ is an unbiased estimator of $\text{ATE} = \frac{1}{n}\sum_i (Y_i(\text{Longhand}) - Y_i(\text{Laptop}))$.</div>
+        <div class="ans-box">Each student has two potential quiz scores, one if assigned Longhand and one if assigned Laptop, only one of which is realized. Random assignment guarantees comparability <em>in expectation</em> across both observed and unobserved baseline traits <strong>by design</strong>, so $\bar{Y}_{\text{Longhand}} - \bar{Y}_{\text{Laptop}}$ is an unbiased estimator of $\text{ATE} = \frac{1}{n}\sum_i (Y_i(\text{Longhand}) - Y_i(\text{Laptop}))$. Comparing <code>prior_gpa</code> (3.158 vs. 3.353) is only a realized balance check on one observed variable and cannot verify balance on unobserved traits.</div>
       </details>
     </div>
     
@@ -182,9 +186,10 @@ Observed ATE (Longhand - Laptop): +5.45 quiz points</pre>
       <div class="test-output" id="output-w2a" style="display: none;"></div>
       <details>
         <summary>Show solution</summary>
-        <pre><code class="language-r">notes_study |&gt;
+        <pre><code class="language-r">notes_bal &lt;- notes_study |&gt;
   group_by(method) |&gt;
   summarize(n = n(), mean_gpa = mean(prior_gpa), mean_score = mean(quiz_score))
+notes_bal
 
 obs_ate &lt;- with(notes_study, mean(quiz_score[method == &quot;Longhand&quot;]) - mean(quiz_score[method == &quot;Laptop&quot;]))
 obs_ate</code></pre>
@@ -192,8 +197,8 @@ obs_ate</code></pre>
     </div>
     
     <div class="exercise-block" style="margin-top: 14px;">
-      <h3>2b. Run a 1,000-replicate permutation test</h3>
-      <p>Set <code>set.seed(20)</code>, permute <code>method</code> 1,000 times, and compute the two-sided $p$-value.</p>
+      <h3>2b. Run a 1,000-replicate permutation test (Monte Carlo vs. exact null)</h3>
+      <p>Set <code>set.seed(20)</code> and permute <code>method</code> 1,000 times. Compute both the raw Monte Carlo proportion <code>p_mc = exceed / 1000</code> and the add-one estimate <code>p_add1 = (exceed + 1) / (1000 + 1)</code>; note that seeing <code>0</code> exceedances reflects finite $B = 1000$ sampling resolution (~0.001), whereas exact dynamic-programming enumeration across all $\binom{30}{15} = 155{,}117{,}520$ splits yields $79{,}434$ extreme assignments ($p_{\text{exact}} \approx 0.000512$).</p>
       <textarea class="code-editor" id="code-w2b" rows="7" spellcheck="false"></textarea>
       <div class="exercise-actions">
         <button class="btn-run" data-target="w2b" disabled>Run</button>
@@ -209,7 +214,10 @@ perm_ates &lt;- replicate(1000, {
   shuffled &lt;- sample(notes_study$method)
   mean(notes_study$quiz_score[shuffled == &quot;Longhand&quot;]) - mean(notes_study$quiz_score[shuffled == &quot;Laptop&quot;])
 })
-mean(abs(perm_ates) &gt;= abs(obs_ate))</code></pre>
+exceed &lt;- sum(abs(perm_ates) &gt;= abs(obs_ate))
+p_mc &lt;- exceed / 1000
+p_add1 &lt;- (exceed + 1) / (1000 + 1)
+c(exceed = exceed, p_mc = p_mc, p_add1 = p_add1)</code></pre>
       </details>
     </div>
   </div>
@@ -286,40 +294,87 @@ coef(m_did)[&quot;treated:post&quot;]</code></pre>
   </div>
 </section>
 
+<section class="case-study" id="case-4">
+  <h2>Case Study 4: Independent Transfer &mdash; Clinic Outreach Dataset</h2>
+  <div class="case-body">
+    <div class="case-meta">Simulated Dataset: <code>outreach_sim</code> (40 clinic-month observations across Clinic_A and Clinic_B, pre and post)</div>
+    <p><code>Clinic_A</code> (<code>treated = 1</code>) begins extended weekend outreach starting at <code>post = 1</code>, while <code>Clinic_B</code> (<code>treated = 0</code>) keeps baseline hours. Both clinics also experience a seasonal winter drop in <code>checkups</code> from pre to post, and started at different baseline volumes (<code>Clinic_B</code> pre = 40.65, post = 34.81; <code>Clinic_A</code> pre = 29.80, post = 26.95).</p>
+    <div class="exercise-block" style="margin-top: 14px;">
+      <h3>4. Choose an estimator and interpret the result</h3>
+      <p>Choose an appropriate estimator for the effect of extended hours on weekly checkups and assign your scalar result to <code>outreach_est</code>. Explain in your own words why comparing post-period clinics directly or taking only Clinic_A's before-and-after change gives the wrong sign.</p>
+      <textarea class="code-editor" id="code-w4" rows="6" spellcheck="false"></textarea>
+      <div class="exercise-actions">
+        <button class="btn-run" data-target="w4" disabled>Run &amp; Check</button>
+        <button class="btn-reset" data-target="w4">Reset</button>
+        <button class="btn-secondary btn-copy-sol" data-target="w4">Load solution</button>
+        <span class="exercise-status" id="status-w4"></span>
+      </div>
+      <div class="test-output" id="output-w4" style="display: none;"></div>
+      <details>
+        <summary>Show solution &amp; self-review criteria</summary>
+        <pre><code class="language-r">outreach_cells &lt;- outreach_sim |&gt;
+  group_by(treated, post) |&gt;
+  summarize(n = n(), mean_chk = mean(checkups))
+outreach_est &lt;- (outreach_cells$mean_chk[4] - outreach_cells$mean_chk[3]) -
+  (outreach_cells$mean_chk[2] - outreach_cells$mean_chk[1])
+outreach_est</code></pre>
+        <div class="ans-box" style="margin-top:8px;"><strong>Self-review interpretation:</strong> Comparing post means alone yields -7.86 (confounded by Clinic_A's lower baseline), and before-and-after at Clinic_A alone yields -2.85 (confounded by the seasonal dip). Subtracting Clinic_B's change (-5.84) estimates +2.99 checkups, assuming parallel trends in the absence of outreach.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
 <script type="module">
 import { WebR, ChannelType } from 'https://webr.r-wasm.org/latest/webr.mjs';
 
 const EDITORS = {
   "w1a": {
-    "starter": "# Pooled mean vs stratified mean by dept and group\nsalaries |> group_by(group) |> summarize(n = n(), mean_sal = mean(salary_k))\n\nsalaries |>\n  group_by(___, ___) |>\n  summarize(n = n(), mean_sal = ___)\n",
-    "solution": "salaries |> group_by(group) |> summarize(n = n(), mean_sal = mean(salary_k))\n\nsalaries |>\n  group_by(dept, group) |>\n  summarize(n = n(), mean_sal = mean(salary_k))"
+    "starter": "# Save pooled summary as sal_by_group and stratified summary as sal_by_dept\nsal_by_group <- salaries |> group_by(group) |> summarize(n = n(), mean_sal = mean(salary_k))\nsal_by_group\n\nsal_by_dept <- salaries |>\n  group_by(___, ___) |>\n  summarize(n = n(), mean_sal = ___)\nsal_by_dept\n",
+    "solution": "sal_by_group <- salaries |> group_by(group) |> summarize(n = n(), mean_sal = mean(salary_k))\nsal_by_group\n\nsal_by_dept <- salaries |>\n  group_by(dept, group) |>\n  summarize(n = n(), mean_sal = mean(salary_k))\nsal_by_dept"
   },
   "w1b": {
-    "starter": "# Compare unadjusted vs dept-adjusted regression\ncoef(lm(salary_k ~ group, data = salaries))\ncoef(lm(___, data = salaries))\n",
-    "solution": "coef(lm(salary_k ~ group, data = salaries))\ncoef(lm(salary_k ~ group + dept, data = salaries))"
+    "starter": "# Fit unadjusted m_sal_raw and department-adjusted m_sal_adj\nm_sal_raw <- lm(salary_k ~ group, data = salaries)\nm_sal_adj <- lm(___, data = salaries)\ncoef(m_sal_raw)\ncoef(m_sal_adj)\n",
+    "solution": "m_sal_raw <- lm(salary_k ~ group, data = salaries)\nm_sal_adj <- lm(salary_k ~ group + dept, data = salaries)\ncoef(m_sal_raw)\ncoef(m_sal_adj)"
   },
   "w2a": {
-    "starter": "# Balance check on prior_gpa and observed ATE on quiz_score\nnotes_study |>\n  group_by(method) |>\n  summarize(n = n(), mean_gpa = ___, mean_score = ___)\n\nobs_ate <- with(notes_study, mean(quiz_score[method == \"Longhand\"]) - mean(quiz_score[method == \"Laptop\"]))\nobs_ate\n",
-    "solution": "notes_study |>\n  group_by(method) |>\n  summarize(n = n(), mean_gpa = mean(prior_gpa), mean_score = mean(quiz_score))\n\nobs_ate <- with(notes_study, mean(quiz_score[method == \"Longhand\"]) - mean(quiz_score[method == \"Laptop\"]))\nobs_ate"
+    "starter": "# Balance diagnostic on prior_gpa and observed ATE on quiz_score\nnotes_bal <- notes_study |>\n  group_by(method) |>\n  summarize(n = n(), mean_gpa = ___, mean_score = ___)\nnotes_bal\n\nobs_ate <- with(notes_study, mean(quiz_score[method == \"Longhand\"]) - mean(quiz_score[method == \"Laptop\"]))\nobs_ate\n",
+    "solution": "notes_bal <- notes_study |>\n  group_by(method) |>\n  summarize(n = n(), mean_gpa = mean(prior_gpa), mean_score = mean(quiz_score))\nnotes_bal\n\nobs_ate <- with(notes_study, mean(quiz_score[method == \"Longhand\"]) - mean(quiz_score[method == \"Laptop\"]))\nobs_ate"
   },
   "w2b": {
-    "starter": "# 1000-rep permutation test under the sharp null\nset.seed(20)\nperm_ates <- replicate(1000, {\n  shuffled <- sample(notes_study$method)\n  mean(notes_study$quiz_score[shuffled == \"Longhand\"]) - ___\n})\nmean(abs(perm_ates) >= abs(obs_ate))\n",
-    "solution": "set.seed(20)\nperm_ates <- replicate(1000, {\n  shuffled <- sample(notes_study$method)\n  mean(notes_study$quiz_score[shuffled == \"Longhand\"]) - mean(notes_study$quiz_score[shuffled == \"Laptop\"])\n})\nmean(abs(perm_ates) >= abs(obs_ate))"
+    "starter": "# 1000-rep permutation test under sharp null (set.seed(20))\n# Compute exceed count, Monte Carlo proportion p_mc, and add-one p_add1\nset.seed(20)\nperm_ates <- replicate(1000, {\n  shuffled <- sample(notes_study$method)\n  mean(notes_study$quiz_score[shuffled == \"Longhand\"]) - ___\n})\nexceed <- sum(abs(perm_ates) >= abs(obs_ate))\np_mc <- exceed / 1000\np_add1 <- (exceed + 1) / (1000 + 1)\nc(exceed = exceed, p_mc = p_mc, p_add1 = p_add1)\n",
+    "solution": "set.seed(20)\nperm_ates <- replicate(1000, {\n  shuffled <- sample(notes_study$method)\n  mean(notes_study$quiz_score[shuffled == \"Longhand\"]) - mean(notes_study$quiz_score[shuffled == \"Laptop\"])\n})\nexceed <- sum(abs(perm_ates) >= abs(obs_ate))\np_mc <- exceed / 1000\np_add1 <- (exceed + 1) / (1000 + 1)\nc(exceed = exceed, p_mc = p_mc, p_add1 = p_add1)"
   },
   "w3a": {
-    "starter": "# 2x2 cell means table and hand calculation of DID\ncells <- gym_warmup |>\n  group_by(treated, post) |>\n  summarize(n = n(), mean_visits = mean(visits_wk))\ncells\n\n# Extract (T,Post - T,Pre) - (C,Post - C,Pre)\n",
+    "starter": "# 2x2 cell means table and hand calculation of did_est\ncells <- gym_warmup |>\n  group_by(treated, post) |>\n  summarize(n = n(), mean_visits = mean(visits_wk))\ncells\n\n# Compute (T,Post - T,Pre) - (C,Post - C,Pre) from cells\ndid_est <- ___\ndid_est\n",
     "solution": "cells <- gym_warmup |>\n  group_by(treated, post) |>\n  summarize(n = n(), mean_visits = mean(visits_wk))\ncells\ndid_est <- (cells$mean_visits[4] - cells$mean_visits[3]) - (cells$mean_visits[2] - cells$mean_visits[1])\ndid_est"
   },
   "w3b": {
-    "starter": "# Verify lm(visits_wk ~ treated * post) interaction equals DID\nm_did <- lm(___, data = gym_warmup)\ncoef(m_did)\ncoef(m_did)[\"treated:post\"]\n",
+    "starter": "# Fit interaction model m_did on gym_warmup\nm_did <- lm(___, data = gym_warmup)\ncoef(m_did)\ncoef(m_did)[\"treated:post\"]\n",
     "solution": "m_did <- lm(visits_wk ~ treated * post, data = gym_warmup)\ncoef(m_did)\ncoef(m_did)[\"treated:post\"]"
+  },
+  "w4": {
+    "starter": "# Independent transfer (outreach_sim: 40 simulated clinic records)\n# Estimate the outreach program effect outreach_est accounting for clinic differences and time trend.\noutreach_est <- ___\noutreach_est\n",
+    "solution": "outreach_cells <- outreach_sim |>\n  group_by(treated, post) |>\n  summarize(n = n(), mean_chk = mean(checkups))\noutreach_est <- (outreach_cells$mean_chk[4] - outreach_cells$mean_chk[3]) -\n  (outreach_cells$mean_chk[2] - outreach_cells$mean_chk[1])\noutreach_est"
   }
 };
-const PRELUDE = "`%>%` <- function(lhs, rhs) {\n  call <- substitute(rhs)\n  if (is.name(call)) call <- as.call(list(call))\n  if (is.call(call)) {\n    call <- as.call(c(list(call[[1]], lhs), as.list(call[-1])))\n  }\n  eval(call, parent.frame())\n}\n\n.tidy_state <- new.env(parent = emptyenv())\n.tidy_state$n <- 0L\nn <- function() .tidy_state$n\n\nas_tibble <- function(x) {\n  df <- as.data.frame(x, stringsAsFactors = FALSE)\n  class(df) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  attr(df, \"row.names\") <- .set_row_names(nrow(df))\n  df\n}\n\ntibble <- function(...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  env <- new.env(parent = parent.frame())\n  cols <- list()\n  for (i in seq_along(dots)) {\n    nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n    val <- eval(dots[[i]], envir = env)\n    assign(nm, val, envir = env)\n    cols[[nm]] <- val\n  }\n  df <- as.data.frame(cols, stringsAsFactors = FALSE)\n  class(df) <- c(\"tbl_df\", \"tbl\", \"data.frame\")\n  df\n}\n\ngroup_by <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- vapply(dots, function(d) as.character(d)[1L], character(1))\n  attr(.data, \"groups\") <- gcols\n  .data\n}\n\nungroup <- function(.data) {\n  attr(.data, \"groups\") <- NULL\n  .data\n}\n\ndesc <- function(x) {\n  structure(-xtfrm(x), desc_order = TRUE)\n}\n\narrange <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) == 0) return(.data)\n  keys <- lapply(dots, function(expr) eval(expr, envir = .data, enclos = parent.frame()))\n  ord <- do.call(order, unname(keys))\n  out <- .data[ord, , drop = FALSE]\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- attr(.data, \"groups\")\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nselect <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  cols <- names(.data)\n  keep <- character(0)\n  drop <- character(0)\n  for (d in dots) {\n    if (is.call(d) && identical(d[[1L]], as.name(\"-\"))) {\n      drop <- c(drop, as.character(d[[2L]]))\n    } else if (is.call(d) && identical(d[[1L]], as.name(\":\"))) {\n      a <- match(as.character(d[[2L]]), cols)\n      b <- match(as.character(d[[3L]]), cols)\n      keep <- c(keep, cols[a:b])\n    } else {\n      keep <- c(keep, as.character(d))\n    }\n  }\n  if (length(keep) == 0 && length(drop) > 0) {\n    keep <- setdiff(cols, drop)\n  } else if (length(drop) > 0) {\n    keep <- setdiff(keep, drop)\n  }\n  out <- .data[, keep, drop = FALSE]\n  attr(out, \"groups\") <- intersect(attr(.data, \"groups\"), keep)\n  if (length(attr(out, \"groups\")) == 0) attr(out, \"groups\") <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\npull <- function(.data, var = -1) {\n  v <- substitute(var)\n  if (is.name(v)) {\n    .data[[as.character(v)]]\n  } else {\n    idx <- eval(v, parent.frame())\n    if (idx < 0) idx <- ncol(.data) + idx + 1L\n    .data[[idx]]\n  }\n}\n\nfilter <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- as.environment(as.list(sub_df))\n    parent.env(env) <- pf\n    mask <- rep(TRUE, nrow(sub_df))\n    for (expr in dots) {\n      res <- eval(expr, envir = env)\n      res[is.na(res)] <- FALSE\n      mask <- mask & res\n    }\n    sub_df[mask, , drop = FALSE]\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    sp <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    parts <- lapply(sp, function(idx) eval_sub(.data[idx, , drop = FALSE]))\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nmutate <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    for (i in seq_along(dots)) {\n      nm <- nms[i]\n      val <- eval(dots[[i]], envir = env)\n      if (is.null(val)) {\n        sub_df[[nm]] <- NULL\n        if (exists(nm, envir = env, inherits = FALSE)) rm(list = nm, envir = env)\n      } else {\n        if (length(val) == 1L && nrow(sub_df) > 1L) val <- rep(val, nrow(sub_df))\n        assign(nm, val, envir = env)\n        sub_df[[nm]] <- val\n      }\n    }\n    sub_df\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    idx_groups <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    out <- .data\n    for (idx in idx_groups) {\n      sub_out <- eval_sub(.data[idx, , drop = FALSE])\n      for (cn in names(sub_out)) out[[cn]][idx] <- sub_out[[cn]]\n    }\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nsummarize <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_grp <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    res <- list()\n    for (i in seq_along(dots)) {\n      nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n      val <- eval(dots[[i]], envir = env)\n      assign(nm, val, envir = env)\n      res[[nm]] <- val\n    }\n    as.data.frame(res, stringsAsFactors = FALSE)\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_grp(.data)\n  } else {\n    key_df <- unique(.data[, gcols, drop = FALSE])\n    ord <- do.call(order, unname(as.list(key_df)))\n    key_df <- key_df[ord, , drop = FALSE]\n    parts <- vector(\"list\", nrow(key_df))\n    for (r in seq_len(nrow(key_df))) {\n      mask <- rep(TRUE, nrow(.data))\n      for (gc in gcols) mask <- mask & (.data[[gc]] == key_df[[gc]][r])\n      sub_df <- .data[mask, , drop = FALSE]\n      s_df <- eval_grp(sub_df)\n      parts[[r]] <- cbind(key_df[rep(r, nrow(s_df)), , drop = FALSE], s_df)\n    }\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  if (!is.null(gcols) && length(gcols) > 1L) {\n    attr(out, \"groups\") <- gcols[-length(gcols)]\n  } else {\n    attr(out, \"groups\") <- NULL\n  }\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\nsummarise <- summarize\n\ncount <- function(.data, ..., sort = FALSE) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) > 0L) {\n    g <- do.call(group_by, c(list(.data), dots))\n  } else {\n    g <- .data\n  }\n  out <- summarize(g, n = n())\n  out <- ungroup(out)\n  if (sort) out <- arrange(out, desc(n))\n  out\n}\n\nslice_head <- function(.data, n = 6L) {\n  k <- min(n, nrow(.data))\n  out <- .data[seq_len(k), , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nslice_sample <- function(.data, n = 1L, replace = FALSE) {\n  idx <- sample.int(nrow(.data), size = n, replace = replace)\n  out <- .data[idx, , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nprint.tbl_df <- function(x, ...) {\n  print.data.frame(x, row.names = FALSE, ...)\n  invisible(x)\n}\n\nsalaries <- tibble(\n  dept = c(\"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\"),\n  group = c(\"Group_A\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\"),\n  salary_k = c(144.4, 87.5, 100.6, 93.5, 142.7, 156.3, 147.6, 85.6, 89.0, 101.4, 93.1, 142.3, 91.5, 84.6, 87.9, 146.8, 84.0, 84.6, 154.9, 93.9, 155.0, 147.7, 162.5, 153.4, 149.5, 144.4, 148.6, 153.6, 150.0, 152.6, 161.3, 97.0, 95.7, 104.2, 101.2, 133.6, 141.8, 145.1, 157.6, 88.5)\n)\n\nnotes_study <- tibble(\n  method = c(\"Laptop\", \"Laptop\", \"Laptop\", \"Laptop\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Laptop\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Laptop\", \"Laptop\"),\n  prior_gpa = c(3.21, 3.63, 3.25, 3.42, 2.66, 2.82, 3.41, 3.38, 3.83, 3.51, 3.3, 3.13, 3.5, 2.59, 3.88, 3.26, 3.83, 2.66, 3.24, 3.05, 3.25, 3.31, 2.88, 2.71, 3.09, 3.45, 3.4, 3.1, 3.45, 3.47),\n  quiz_score = c(70.8, 60.6, 68.2, 65.2, 69.6, 79.3, 74.1, 76.3, 75.0, 70.8, 80.7, 73.1, 77.1, 72.8, 72.4, 79.3, 70.9, 69.5, 73.4, 62.3, 72.2, 67.7, 70.4, 72.0, 71.8, 75.5, 65.9, 70.8, 66.5, 72.6)\n)\n\ngym_warmup <- tibble(\n  campus = c(\"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\"),\n  treated = c(0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1),\n  post = c(0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0),\n  visits_wk = c(3.45, 4.31, 2.68, 2.42, 1.95, 3.89, 4.98, 3.88, 3.98, 3.03, 4.87, 3.82, 3.13, 2.93, 4.32, 4.62, 4.61, 4.87, 2.66, 3.47, 4.25, 4.38, 3.51, 2.15, 2.62, 2.22, 2.8, 4.26, 4.04, 3.79, 4.09, 2.87, 2.64, 2.1, 2.4, 3.3, 2.55, 5.17, 4.95, 2.13, 2.32, 5.03, 2.45, 2.28, 4.83, 2.87, 5.4, 4.78, 3.94, 3.27, 5.51, 4.11, 3.79, 2.27, 3.59, 4.54, 2.22, 4.71, 3.76, 3.15, 4.52, 1.85, 3.96, 4.69, 2.19, 3.98, 3.95, 4.28, 3.93, 2.64, 2.48, 3.19, 3.09, 4.38, 5.09, 2.72, 4.15, 4.33, 4.29, 4.91)\n)";
-const STORAGE_PREFIX = "stat20_w13_cs_";
+const PRELUDE = "`%>%` <- function(lhs, rhs) {\n  call <- substitute(rhs)\n  if (is.name(call)) call <- as.call(list(call))\n  if (is.call(call)) {\n    call <- as.call(c(list(call[[1]], lhs), as.list(call[-1])))\n  }\n  eval(call, parent.frame())\n}\n\n.tidy_state <- new.env(parent = emptyenv())\n.tidy_state$n <- 0L\nn <- function() .tidy_state$n\n\nas_tibble <- function(x) {\n  df <- as.data.frame(x, stringsAsFactors = FALSE)\n  class(df) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  attr(df, \"row.names\") <- .set_row_names(nrow(df))\n  df\n}\n\ntibble <- function(...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  env <- new.env(parent = parent.frame())\n  cols <- list()\n  for (i in seq_along(dots)) {\n    nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n    val <- eval(dots[[i]], envir = env)\n    assign(nm, val, envir = env)\n    cols[[nm]] <- val\n  }\n  df <- as.data.frame(cols, stringsAsFactors = FALSE)\n  class(df) <- c(\"tbl_df\", \"tbl\", \"data.frame\")\n  df\n}\n\ngroup_by <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- vapply(dots, function(d) as.character(d)[1L], character(1))\n  attr(.data, \"groups\") <- gcols\n  .data\n}\n\nungroup <- function(.data) {\n  attr(.data, \"groups\") <- NULL\n  .data\n}\n\ndesc <- function(x) {\n  structure(-xtfrm(x), desc_order = TRUE)\n}\n\narrange <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) == 0) return(.data)\n  keys <- lapply(dots, function(expr) eval(expr, envir = .data, enclos = parent.frame()))\n  ord <- do.call(order, unname(keys))\n  out <- .data[ord, , drop = FALSE]\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- attr(.data, \"groups\")\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nselect <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  cols <- names(.data)\n  keep <- character(0)\n  drop <- character(0)\n  for (d in dots) {\n    if (is.call(d) && identical(d[[1L]], as.name(\"-\"))) {\n      drop <- c(drop, as.character(d[[2L]]))\n    } else if (is.call(d) && identical(d[[1L]], as.name(\":\"))) {\n      a <- match(as.character(d[[2L]]), cols)\n      b <- match(as.character(d[[3L]]), cols)\n      keep <- c(keep, cols[a:b])\n    } else {\n      keep <- c(keep, as.character(d))\n    }\n  }\n  if (length(keep) == 0 && length(drop) > 0) {\n    keep <- setdiff(cols, drop)\n  } else if (length(drop) > 0) {\n    keep <- setdiff(keep, drop)\n  }\n  out <- .data[, keep, drop = FALSE]\n  attr(out, \"groups\") <- intersect(attr(.data, \"groups\"), keep)\n  if (length(attr(out, \"groups\")) == 0) attr(out, \"groups\") <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\npull <- function(.data, var = -1) {\n  v <- substitute(var)\n  if (is.name(v)) {\n    .data[[as.character(v)]]\n  } else {\n    idx <- eval(v, parent.frame())\n    if (idx < 0) idx <- ncol(.data) + idx + 1L\n    .data[[idx]]\n  }\n}\n\nfilter <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- as.environment(as.list(sub_df))\n    parent.env(env) <- pf\n    mask <- rep(TRUE, nrow(sub_df))\n    for (expr in dots) {\n      res <- eval(expr, envir = env)\n      res[is.na(res)] <- FALSE\n      mask <- mask & res\n    }\n    sub_df[mask, , drop = FALSE]\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    sp <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    parts <- lapply(sp, function(idx) eval_sub(.data[idx, , drop = FALSE]))\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nmutate <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_sub <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    for (i in seq_along(dots)) {\n      nm <- nms[i]\n      val <- eval(dots[[i]], envir = env)\n      if (is.null(val)) {\n        sub_df[[nm]] <- NULL\n        if (exists(nm, envir = env, inherits = FALSE)) rm(list = nm, envir = env)\n      } else {\n        if (length(val) == 1L && nrow(sub_df) > 1L) val <- rep(val, nrow(sub_df))\n        assign(nm, val, envir = env)\n        sub_df[[nm]] <- val\n      }\n    }\n    sub_df\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_sub(.data)\n  } else {\n    idx_groups <- split(seq_len(nrow(.data)), .data[, gcols, drop = FALSE], drop = TRUE)\n    out <- .data\n    for (idx in idx_groups) {\n      sub_out <- eval_sub(.data[idx, , drop = FALSE])\n      for (cn in names(sub_out)) out[[cn]][idx] <- sub_out[[cn]]\n    }\n  }\n  rownames(out) <- NULL\n  attr(out, \"groups\") <- gcols\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nsummarize <- function(.data, ...) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  nms <- names(dots)\n  if (is.null(nms)) nms <- rep(\"\", length(dots))\n  gcols <- attr(.data, \"groups\")\n  pf <- parent.frame()\n  eval_grp <- function(sub_df) {\n    old_n <- .tidy_state$n\n    on.exit(.tidy_state$n <- old_n, add = TRUE)\n    .tidy_state$n <- nrow(sub_df)\n    env <- new.env(parent = pf)\n    for (cn in names(sub_df)) assign(cn, sub_df[[cn]], envir = env)\n    res <- list()\n    for (i in seq_along(dots)) {\n      nm <- if (nzchar(nms[i])) nms[i] else deparse(dots[[i]])[1L]\n      val <- eval(dots[[i]], envir = env)\n      assign(nm, val, envir = env)\n      res[[nm]] <- val\n    }\n    as.data.frame(res, stringsAsFactors = FALSE)\n  }\n  if (is.null(gcols) || length(gcols) == 0L) {\n    out <- eval_grp(.data)\n  } else {\n    key_df <- unique(.data[, gcols, drop = FALSE])\n    ord <- do.call(order, unname(as.list(key_df)))\n    key_df <- key_df[ord, , drop = FALSE]\n    parts <- vector(\"list\", nrow(key_df))\n    for (r in seq_len(nrow(key_df))) {\n      mask <- rep(TRUE, nrow(.data))\n      for (gc in gcols) mask <- mask & (.data[[gc]] == key_df[[gc]][r])\n      sub_df <- .data[mask, , drop = FALSE]\n      s_df <- eval_grp(sub_df)\n      parts[[r]] <- cbind(key_df[rep(r, nrow(s_df)), , drop = FALSE], s_df)\n    }\n    out <- do.call(rbind, parts)\n  }\n  rownames(out) <- NULL\n  if (!is.null(gcols) && length(gcols) > 1L) {\n    attr(out, \"groups\") <- gcols[-length(gcols)]\n  } else {\n    attr(out, \"groups\") <- NULL\n  }\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\nsummarise <- summarize\n\ncount <- function(.data, ..., sort = FALSE) {\n  dots <- as.list(substitute(list(...)))[-1L]\n  if (length(dots) > 0L) {\n    g <- do.call(group_by, c(list(.data), dots))\n  } else {\n    g <- .data\n  }\n  out <- summarize(g, n = n())\n  out <- ungroup(out)\n  if (sort) out <- arrange(out, desc(n))\n  out\n}\n\nslice_head <- function(.data, n = 6L) {\n  k <- min(n, nrow(.data))\n  out <- .data[seq_len(k), , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nslice_sample <- function(.data, n = 1L, replace = FALSE) {\n  idx <- sample.int(nrow(.data), size = n, replace = replace)\n  out <- .data[idx, , drop = FALSE]\n  rownames(out) <- NULL\n  class(out) <- unique(c(\"tbl_df\", \"tbl\", \"data.frame\"))\n  out\n}\n\nprint.tbl_df <- function(x, ...) {\n  print.data.frame(x, row.names = FALSE, ...)\n  invisible(x)\n}\n\nsalaries <- tibble(\n  dept = c(\"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Operations\", \"Engineering\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\", \"Operations\", \"Operations\", \"Operations\", \"Engineering\", \"Engineering\", \"Engineering\", \"Engineering\", \"Operations\"),\n  group = c(\"Group_A\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_B\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_A\", \"Group_B\"),\n  salary_k = c(144.4, 87.5, 100.6, 93.5, 142.7, 156.3, 147.6, 85.6, 89.0, 101.4, 93.1, 142.3, 91.5, 84.6, 87.9, 146.8, 84.0, 84.6, 154.9, 93.9, 155.0, 147.7, 162.5, 153.4, 149.5, 144.4, 148.6, 153.6, 150.0, 152.6, 161.3, 97.0, 95.7, 104.2, 101.2, 133.6, 141.8, 145.1, 157.6, 88.5)\n)\n\nnotes_study <- tibble(\n  method = c(\"Laptop\", \"Laptop\", \"Laptop\", \"Laptop\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Laptop\", \"Laptop\", \"Longhand\", \"Laptop\", \"Longhand\", \"Longhand\", \"Longhand\", \"Laptop\", \"Longhand\", \"Laptop\", \"Laptop\"),\n  prior_gpa = c(3.21, 3.63, 3.25, 3.42, 2.66, 2.82, 3.41, 3.38, 3.83, 3.51, 3.3, 3.13, 3.5, 2.59, 3.88, 3.26, 3.83, 2.66, 3.24, 3.05, 3.25, 3.31, 2.88, 2.71, 3.09, 3.45, 3.4, 3.1, 3.45, 3.47),\n  quiz_score = c(70.8, 60.6, 68.2, 65.2, 69.6, 79.3, 74.1, 76.3, 75.0, 70.8, 80.7, 73.1, 77.1, 72.8, 72.4, 79.3, 70.9, 69.5, 73.4, 62.3, 72.2, 67.7, 70.4, 72.0, 71.8, 75.5, 65.9, 70.8, 66.5, 72.6)\n)\n\ngym_warmup <- tibble(\n  campus = c(\"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"South_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\", \"North_Campus\"),\n  treated = c(0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1),\n  post = c(0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0),\n  visits_wk = c(3.45, 4.31, 2.68, 2.42, 1.95, 3.89, 4.98, 3.88, 3.98, 3.03, 4.87, 3.82, 3.13, 2.93, 4.32, 4.62, 4.61, 4.87, 2.66, 3.47, 4.25, 4.38, 3.51, 2.15, 2.62, 2.22, 2.8, 4.26, 4.04, 3.79, 4.09, 2.87, 2.64, 2.1, 2.4, 3.3, 2.55, 5.17, 4.95, 2.13, 2.32, 5.03, 2.45, 2.28, 4.83, 2.87, 5.4, 4.78, 3.94, 3.27, 5.51, 4.11, 3.79, 2.27, 3.59, 4.54, 2.22, 4.71, 3.76, 3.15, 4.52, 1.85, 3.96, 4.69, 2.19, 3.98, 3.95, 4.28, 3.93, 2.64, 2.48, 3.19, 3.09, 4.38, 5.09, 2.72, 4.15, 4.33, 4.29, 4.91)\n)\n\noutreach_sim <- tibble(\n  clinic = c(\"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_B\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\", \"Clinic_A\"),\n  treated = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\n  post = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),\n  checkups = c(40.6, 40.7, 39.2, 42.1, 40.5, 41.3, 39.8, 40.9, 41.0, 40.4, 35.2, 34.1, 36.0, 33.8, 34.7, 35.4, 34.9, 33.9, 35.5, 34.6, 29.5, 30.2, 28.9, 30.8, 29.7, 30.1, 29.3, 29.6, 30.4, 29.5, 27.2, 26.5, 27.8, 26.1, 27.0, 27.4, 26.8, 27.1, 26.9, 26.7)\n)";
+const CHECKS = {
+  "w1a": "assert_true(exists('sal_by_group', envir = env), 'Assign sal_by_group')\nassert_true(exists('sal_by_dept', envir = env), 'Assign sal_by_dept')\nsg <- get('sal_by_group', envir = env)\nsd_df <- get('sal_by_dept', envir = env)\nassert_true(nrow(sg) == 2 && 'mean_sal' %in% names(sg), 'sal_by_group must have 2 rows and mean_sal column')\ngb <- sg$mean_sal[sg$group == 'Group_B']\nassert_true(length(gb) == 1 && abs(gb - 106.66667) < 0.05, 'Group_B pooled mean mismatch')\nassert_true(nrow(sd_df) == 4 && all(c('dept','group','mean_sal') %in% names(sd_df)), 'sal_by_dept must stratify by dept and group (4 rows)')\nop_b <- sd_df$mean_sal[sd_df$dept == 'Operations' & sd_df$group == 'Group_B']\nassert_true(length(op_b) == 1 && abs(op_b - 93.78571) < 0.05, 'Operations Group_B mean mismatch')",
+  "w1b": "assert_true(exists('m_sal_raw', envir = env) && exists('m_sal_adj', envir = env), 'Fit m_sal_raw and m_sal_adj')\nr <- get('m_sal_raw', envir = env); a <- get('m_sal_adj', envir = env)\nassert_true(abs(unname(coef(r)['groupGroup_B']) - (-31.31061)) < 0.05, 'm_sal_raw Group_B slope wrong')\nassert_true(abs(unname(coef(a)['groupGroup_B']) - 4.298734) < 0.05, 'm_sal_adj Group_B slope wrong')",
+  "w2a": "assert_true(exists('notes_bal', envir = env) && exists('obs_ate', envir = env), 'Assign notes_bal and obs_ate')\nnb <- get('notes_bal', envir = env)\nassert_true(nrow(nb) == 2 && all(c('mean_gpa','mean_score') %in% names(nb)), 'notes_bal missing columns')\nassert_true(abs(nb$mean_gpa[nb$method == 'Longhand'] - 3.158) < 0.01, 'Longhand mean_gpa mismatch')\noa <- get('obs_ate', envir = env)\nassert_true(is.numeric(oa) && length(oa) == 1 && abs(oa - 5.453333) < 0.02, 'obs_ate must equal Longhand - Laptop mean score (~5.453)')",
+  "w2b": "assert_true(exists('obs_ate', envir = env) && abs(get('obs_ate', envir = env) - 5.453333) < 0.02, 'Run or fix w2a so obs_ate ~ 5.453 first')\nassert_true(exists('perm_ates', envir = env) && exists('p_add1', envir = env), 'Assign perm_ates, exceed, p_mc, p_add1')\npa <- get('perm_ates', envir = env)\nassert_true(length(pa) == 1000 && sd(pa) > 1.0, 'perm_ates must have 1000 non-degenerate shuffles')\nex <- get('exceed', envir = env); pmc <- get('p_mc', envir = env); padd <- get('p_add1', envir = env)\nassert_true(ex == sum(abs(pa) >= abs(get('obs_ate', envir = env))), 'exceed count mismatch')\nassert_true(ex == 0 && pmc == 0 && abs(padd - 1/1001) < 1e-6, 'With seed 20, expect exceed=0, p_mc=0, p_add1=1/1001')",
+  "w3a": "assert_true(exists('cells', envir = env) && exists('did_est', envir = env), 'Assign cells and did_est')\ncl <- get('cells', envir = env); de <- get('did_est', envir = env)\nassert_true(nrow(cl) == 4 && 'mean_visits' %in% names(cl), 'cells must have 4 rows')\nassert_true(is.numeric(de) && length(de) == 1 && abs(de - 0.5775) < 0.02, 'did_est should be ~0.5775')",
+  "w3b": "assert_true(exists('m_did', envir = env), 'Assign m_did')\nmd <- get('m_did', envir = env)\nassert_true('treated:post' %in% names(coef(md)), 'Model must include treated:post interaction')\nassert_true(abs(unname(coef(md)['treated:post']) - 0.5775) < 0.02, 'Interaction coefficient should equal ~0.5775')",
+  "w4": "assert_true(exists('outreach_est', envir = env), 'Assign numeric scalar outreach_est')\noe <- unname(get('outreach_est', envir = env))\nassert_true(is.numeric(oe) && length(oe) == 1 && abs(oe - 2.99) < 0.05, 'outreach_est does not match valid two-group pre/post estimate (~ +2.99)')"
+};
+const STORAGE_PREFIX = "stat20_w13_v2_";
+const TOTAL_TASKS = 7;
 
 let webR = null;
+let isRunning = false;
 const cmInstances = {};
+const passState = {};
+for (const k of Object.keys(EDITORS)) passState[k] = false;
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -335,6 +390,30 @@ function setEditorValue(key, val) {
   } else {
     document.getElementById('code-' + key).value = val;
   }
+}
+
+function updateScore() {
+  const n = Object.values(passState).filter(Boolean).length;
+  const el = document.getElementById('score');
+  if (el) el.textContent = `${n} / ${TOTAL_TASKS} checked`;
+}
+
+function invalidateEditor(key) {
+  if (passState[key]) {
+    passState[key] = false;
+    updateScore();
+  }
+  const st = document.getElementById('status-' + key);
+  if (st) {
+    st.className = 'exercise-status';
+    st.textContent = '';
+  }
+}
+
+function setButtonsEnabled(enabled) {
+  document.querySelectorAll('.btn-run').forEach(b => b.disabled = !enabled);
+  const rst = document.getElementById('btn-restart-r');
+  if (rst) rst.disabled = !enabled;
 }
 
 function loadEditors() {
@@ -357,23 +436,30 @@ function loadEditors() {
         }
       });
       cm.on('change', () => {
+        invalidateEditor(key);
         localStorage.setItem(STORAGE_PREFIX + key, cm.getValue());
       });
       cmInstances[key] = cm;
     } else {
       ta.addEventListener('input', () => {
+        invalidateEditor(key);
         localStorage.setItem(STORAGE_PREFIX + key, ta.value);
       });
     }
   }
+  updateScore();
 }
 
 async function initSession() {
   const statusEl = document.getElementById('engine-status');
-  const restartBtn = document.getElementById('btn-restart-r');
   statusEl.textContent = 'loading R...';
-  restartBtn.disabled = true;
-  document.querySelectorAll('.btn-run').forEach(b => b.disabled = true);
+  setButtonsEnabled(false);
+  for (const k of Object.keys(EDITORS)) {
+    passState[k] = false;
+    const st = document.getElementById('status-' + k);
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
+  }
+  updateScore();
 
   try {
     webR = new WebR({ channelType: ChannelType.PostMessage });
@@ -385,8 +471,7 @@ async function initSession() {
       await shelter.purge();
     }
     statusEl.textContent = 'ready';
-    restartBtn.disabled = false;
-    document.querySelectorAll('.btn-run').forEach(b => b.disabled = false);
+    setButtonsEnabled(true);
   } catch (e) {
     statusEl.textContent = 'WebR failed to load';
     console.error(e);
@@ -394,9 +479,9 @@ async function initSession() {
 }
 
 async function runEditor(key) {
-  if (!webR) return;
-  const btn = document.querySelector(`.btn-run[data-target="${key}"]`);
-  if (btn) btn.disabled = true;
+  if (!webR || isRunning) return;
+  isRunning = true;
+  setButtonsEnabled(false);
 
   const statusEl = document.getElementById('status-' + key);
   const outEl = document.getElementById('output-' + key);
@@ -409,12 +494,28 @@ async function runEditor(key) {
   try {
     const shelter = await new webR.Shelter();
     let capture;
+    let checkRes = null;
     try {
       capture = await shelter.captureR(code, {
         withAutoprint: true,
         captureStreams: true,
         captureConditions: true
       });
+      const hasUserError = capture.output.some(o => o.type === 'stderr' || o.type === 'error');
+      if (!hasUserError && CHECKS[key]) {
+        const checkWrapper = `
+          assert_true <- function(cond, msg) { if (!isTRUE(cond)) stop(msg, call. = FALSE) }
+          tryCatch({
+            (function(env) {
+              ${CHECKS[key]}
+            })(globalenv())
+            cat("__CHECK_PASS__\n")
+          }, error = function(e) {
+            cat("__CHECK_FAIL__:", conditionMessage(e), "\n")
+          })
+        `;
+        checkRes = await shelter.captureR(checkWrapper, { withAutoprint: false, captureStreams: true, captureConditions: true });
+      }
     } finally {
       await shelter.purge();
     }
@@ -422,9 +523,7 @@ async function runEditor(key) {
     const lines = [];
     let hasError = false;
     for (const o of capture.output) {
-      if (o.type === 'stderr' || o.type === 'error') {
-        hasError = true;
-      }
+      if (o.type === 'stderr' || o.type === 'error') hasError = true;
       if (o.data !== undefined && o.data !== null) {
         const s = String(o.data);
         if (s.trim().length > 0) lines.push(s);
@@ -433,20 +532,39 @@ async function runEditor(key) {
 
     const text = lines.join('\n').trim();
     if (hasError) {
+      passState[key] = false;
       statusEl.className = 'exercise-status fail';
       statusEl.textContent = 'error';
       outEl.innerHTML = `<span class="fail-text">${escapeHtml(text || 'R error')}</span>`;
+    } else if (checkRes) {
+      const cLines = checkRes.output.filter(o => o.data).map(o => String(o.data).trim()).join('\n');
+      if (cLines.includes('__CHECK_PASS__')) {
+        passState[key] = true;
+        statusEl.className = 'exercise-status pass';
+        statusEl.textContent = 'checked: ok';
+        outEl.textContent = text || '(checked; no printed output)';
+      } else {
+        passState[key] = false;
+        const failMsg = cLines.replace(/^__CHECK_FAIL__:\s*/, '') || 'Check failed.';
+        statusEl.className = 'exercise-status fail';
+        statusEl.textContent = 'checked: FAIL';
+        outEl.innerHTML = `<span class="fail-text">Check failed: ${escapeHtml(failMsg)}</span>` + (text ? '\n' + escapeHtml(text) : '');
+      }
     } else {
-      statusEl.className = 'exercise-status pass';
-      statusEl.textContent = 'ran';
+      passState[key] = false;
+      statusEl.className = 'exercise-status';
+      statusEl.textContent = 'ran (unverified)';
       outEl.textContent = text || '(executed; no printed output)';
     }
   } catch (e) {
+    passState[key] = false;
     statusEl.className = 'exercise-status fail';
     statusEl.textContent = 'error';
     outEl.innerHTML = `<span class="fail-text">error: ${escapeHtml(e.message || String(e))}</span>`;
   } finally {
-    if (btn) btn.disabled = false;
+    isRunning = false;
+    setButtonsEnabled(true);
+    updateScore();
   }
 }
 
@@ -459,8 +577,11 @@ document.querySelectorAll('.btn-reset').forEach(b => {
     const k = b.dataset.target;
     localStorage.removeItem(STORAGE_PREFIX + k);
     setEditorValue(k, EDITORS[k].starter);
-    document.getElementById('status-' + k).textContent = '';
+    passState[k] = false;
+    const st = document.getElementById('status-' + k);
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
     document.getElementById('output-' + k).style.display = 'none';
+    updateScore();
   });
 });
 
@@ -469,26 +590,25 @@ document.querySelectorAll('.btn-copy-sol').forEach(b => {
     const k = b.dataset.target;
     setEditorValue(k, EDITORS[k].solution);
     localStorage.setItem(STORAGE_PREFIX + k, EDITORS[k].solution);
+    invalidateEditor(k);
   });
 });
 
 document.getElementById('btn-restart-r').addEventListener('click', async () => {
   await initSession();
-  for (const k of Object.keys(EDITORS)) {
-    const st = document.getElementById('status-' + k);
-    if (st) st.textContent = '';
-  }
 });
 
 document.getElementById('btn-reset-all').addEventListener('click', () => {
   for (const k of Object.keys(EDITORS)) {
     localStorage.removeItem(STORAGE_PREFIX + k);
     setEditorValue(k, EDITORS[k].starter);
+    passState[k] = false;
     const st = document.getElementById('status-' + k);
-    if (st) st.textContent = '';
+    if (st) { st.className = 'exercise-status'; st.textContent = ''; }
     const out = document.getElementById('output-' + k);
     if (out) out.style.display = 'none';
   }
+  updateScore();
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -508,6 +628,3 @@ window.addEventListener('DOMContentLoaded', async () => {
   await initSession();
 });
 </script>
-
-</body>
-</html>

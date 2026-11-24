@@ -1,0 +1,409 @@
+[
+  {
+    "name": "example",
+    "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\n",
+    "expected": {
+      "e1": {
+        "columns": [
+          "title"
+        ],
+        "rows": [
+          [
+            "Emma"
+          ],
+          [
+            "Dune"
+          ],
+          [
+            "Valis"
+          ],
+          [
+            "Kindred"
+          ]
+        ],
+        "ordered": true
+      },
+      "e2": {
+        "columns": [
+          "author",
+          "n",
+          "total"
+        ],
+        "rows": [
+          [
+            "Austen",
+            2,
+            723
+          ],
+          [
+            "Butler",
+            2,
+            512
+          ],
+          [
+            "Dick",
+            2,
+            473
+          ]
+        ],
+        "ordered": true
+      },
+      "e3": {
+        "columns": [
+          "member",
+          "title",
+          "author"
+        ],
+        "rows": [
+          [
+            "Ana",
+            "Dune",
+            "Herbert"
+          ],
+          [
+            "Ben",
+            "Emma",
+            "Austen"
+          ],
+          [
+            "Chen",
+            "Dune",
+            "Herbert"
+          ],
+          [
+            "Ana",
+            "Ubik",
+            "Dick"
+          ],
+          [
+            "Ben",
+            "Kindred",
+            "Butler"
+          ],
+          [
+            "Dev",
+            "Kindred",
+            "Butler"
+          ],
+          [
+            "Ana",
+            "Dawn",
+            "Butler"
+          ]
+        ],
+        "ordered": false
+      },
+      "e4": {
+        "columns": [
+          "first",
+          "second"
+        ],
+        "rows": [
+          [
+            "Dawn",
+            "Kindred"
+          ],
+          [
+            "Emma",
+            "Persuasion"
+          ],
+          [
+            "Ubik",
+            "Valis"
+          ]
+        ],
+        "ordered": false
+      },
+      "e5": {
+        "columns": [
+          "member",
+          "total"
+        ],
+        "rows": [
+          [
+            "Ben",
+            35
+          ]
+        ],
+        "ordered": true
+      },
+      "e6": {
+        "columns": [
+          "author"
+        ],
+        "rows": [
+          [
+            "Butler"
+          ],
+          [
+            "Herbert"
+          ]
+        ],
+        "ordered": false
+      },
+      "e7": {
+        "columns": [
+          "decade",
+          "n"
+        ],
+        "rows": [
+          [
+            1810,
+            2
+          ],
+          [
+            1960,
+            2
+          ],
+          [
+            1970,
+            1
+          ],
+          [
+            1980,
+            2
+          ]
+        ],
+        "ordered": true
+      },
+      "e8": {
+        "columns": [
+          "title"
+        ],
+        "rows": [
+          [
+            "Persuasion"
+          ],
+          [
+            "Valis"
+          ]
+        ],
+        "ordered": true
+      }
+    }
+  },
+  {
+    "name": "boundary-and-repeated-members",
+    "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\ndelete from books; delete from loans;\ninsert into books values ('Boundary','Solo',2000,260),('Above','Solo',2009,261),('LongA','Pair',1999,500),('LongB','Pair',2010,500),('Never','Unborrowed',2020,100);\ninsert into loans values ('Boundary','Repeat',10),('Above','Repeat',10),('LongA','Zoe',30),('LongA','Amy',15),('LongB','Amy',15),(NULL,'Ghost',1);\n",
+    "expected": {
+      "e1": {
+        "columns": [
+          "title"
+        ],
+        "rows": [
+          [
+            "LongA"
+          ],
+          [
+            "LongB"
+          ],
+          [
+            "Above"
+          ]
+        ],
+        "ordered": true
+      },
+      "e2": {
+        "columns": [
+          "author",
+          "n",
+          "total"
+        ],
+        "rows": [
+          [
+            "Pair",
+            2,
+            1000
+          ],
+          [
+            "Solo",
+            2,
+            521
+          ]
+        ],
+        "ordered": true
+      },
+      "e3": {
+        "columns": [
+          "member",
+          "title",
+          "author"
+        ],
+        "rows": [
+          [
+            "Repeat",
+            "Boundary",
+            "Solo"
+          ],
+          [
+            "Repeat",
+            "Above",
+            "Solo"
+          ],
+          [
+            "Zoe",
+            "LongA",
+            "Pair"
+          ],
+          [
+            "Amy",
+            "LongA",
+            "Pair"
+          ],
+          [
+            "Amy",
+            "LongB",
+            "Pair"
+          ]
+        ],
+        "ordered": false
+      },
+      "e4": {
+        "columns": [
+          "first",
+          "second"
+        ],
+        "rows": [
+          [
+            "Above",
+            "Boundary"
+          ],
+          [
+            "LongA",
+            "LongB"
+          ]
+        ],
+        "ordered": false
+      },
+      "e5": {
+        "columns": [
+          "member",
+          "total"
+        ],
+        "rows": [
+          [
+            "Amy",
+            30
+          ]
+        ],
+        "ordered": true
+      },
+      "e6": {
+        "columns": [
+          "author"
+        ],
+        "rows": [
+          [
+            "Pair"
+          ]
+        ],
+        "ordered": false
+      },
+      "e7": {
+        "columns": [
+          "decade",
+          "n"
+        ],
+        "rows": [
+          [
+            1990,
+            1
+          ],
+          [
+            2000,
+            2
+          ],
+          [
+            2010,
+            1
+          ],
+          [
+            2020,
+            1
+          ]
+        ],
+        "ordered": true
+      },
+      "e8": {
+        "columns": [
+          "title"
+        ],
+        "rows": [
+          [
+            "Never"
+          ]
+        ],
+        "ordered": true
+      }
+    }
+  },
+  {
+    "name": "empty",
+    "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\ndelete from loans; delete from books;",
+    "expected": {
+      "e1": {
+        "columns": [
+          "title"
+        ],
+        "rows": [],
+        "ordered": true
+      },
+      "e2": {
+        "columns": [
+          "author",
+          "n",
+          "total"
+        ],
+        "rows": [],
+        "ordered": true
+      },
+      "e3": {
+        "columns": [
+          "member",
+          "title",
+          "author"
+        ],
+        "rows": [],
+        "ordered": false
+      },
+      "e4": {
+        "columns": [
+          "first",
+          "second"
+        ],
+        "rows": [],
+        "ordered": false
+      },
+      "e5": {
+        "columns": [
+          "member",
+          "total"
+        ],
+        "rows": [],
+        "ordered": true
+      },
+      "e6": {
+        "columns": [
+          "author"
+        ],
+        "rows": [],
+        "ordered": false
+      },
+      "e7": {
+        "columns": [
+          "decade",
+          "n"
+        ],
+        "rows": [],
+        "ordered": true
+      },
+      "e8": {
+        "columns": [
+          "title"
+        ],
+        "rows": [],
+        "ordered": true
+      }
+    }
+  }
+]

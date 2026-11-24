@@ -1,276 +1,250 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Week 13 exercises &mdash; COMPSCI 61A</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/styles/github.min.css">
-<link rel="stylesheet" href="../../../../../assets/exercises.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/sql/sql.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/highlight.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/languages/sql.min.js"></script>
-</head>
-<body>
-
-<p class="sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">COMPSCI 61A</a></p>
-
-<h1>Week 13 exercises: tables, SQL, aggregation</h1>
-<p class="sub">Fall 2026</p>
-
-<p class="sub"><a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/handout.pdf" target="_blank" rel="noopener">Handout</a>, <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/solutions.pdf" target="_blank" rel="noopener">Solutions</a>, <a href="exercises.zip">exercises.zip</a></p>
-
-<div class="top-bar">
-  <div class="top-bar-left">
-    <button id="btn-run-all" disabled>Run all</button>
-    <button id="btn-reset-all">Reset all</button>
-    <button id="btn-download-sql">Download week13.sql</button>
-  </div>
-  <div class="top-bar-right">
-    <span id="score" class="sub">0 / 7 ok</span>
-    <span id="engine-status" class="sub" style="margin-left: 8px;">loading SQLite...</span>
-  </div>
-</div>
-
-<nav class="toc-bar" aria-label="Sections">
-  <a href="#code-guide">SQL Clause Breakdown</a>
-  <a href="#schema">Database Schema</a>
-  <a href="#exercises-start">E1&ndash;E7 Exercises</a>
-</nav>
-
-<section class="code-guide" id="code-guide">
-  <h2>Piece-by-Piece Breakdown: How SQLite Evaluates a Query</h2>
-  <p>Before solving E1&ndash;E7, trace how every clause in a grouped SQL query transforms rows and groups from top to bottom (matching the logical execution stages: <code>FROM/JOIN</code> &rarr; <code>WHERE</code> &rarr; <code>GROUP BY</code> &rarr; <code>HAVING</code> &rarr; <code>SELECT</code> &rarr; <code>ORDER BY</code> &rarr; <code>LIMIT</code>).</p>
-  <pre><code class="language-sql">SELECT   b.author, COUNT(*) AS loan_count, SUM(l.days) AS total_days
-FROM     books AS b JOIN loans AS l ON b.title = l.title
-WHERE    b.pages &gt;= 250
-GROUP BY b.author
-HAVING   COUNT(*) &gt;= 2
-ORDER BY total_days DESC, b.author ASC;</code></pre>
-  <table class="code-anatomy">
-    <thead><tr><th>SQL piece</th><th>Input &rarr; Output</th><th>Exact role and key rule</th></tr></thead>
-    <tbody>
-      <tr><td><code>FROM books AS b JOIN loans AS l ON b.title = l.title</code></td><td>7 &times; 7 = 49 raw pairs &rarr; matched rows</td><td>Stage 1: Pairs rows across both tables where titles match. Qualify any shared column name (<code>b.title</code>) using table aliases.</td></tr>
-      <tr><td><code>FROM books AS a, books AS b WHERE a.title &lt; b.title</code></td><td><i>n</i><sup>2</sup> pairs &rarr; unique unordered pairs</td><td>Self-join pattern: <code>a.title &lt; b.title</code> prevents self-matches and avoids listing <code>(X, Y)</code> and <code>(Y, X)</code> twice.</td></tr>
-      <tr><td><code>WHERE b.pages &gt;= 250</code></td><td>Matched rows &rarr; qualifying rows</td><td>Stage 2: Filters individual rows <em>before</em> grouping. Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>MAX</code>) are illegal here.</td></tr>
-      <tr><td><code>GROUP BY b.author</code></td><td>Filtered rows &rarr; 1 bucket per author</td><td>Stage 3: Splits surviving rows into buckets sharing the same grouping key(s).</td></tr>
-      <tr><td><code>HAVING COUNT(*) &gt;= 2</code></td><td>All buckets &rarr; surviving buckets</td><td>Stage 4: Filters whole groups using aggregates computed inside each bucket.</td></tr>
-      <tr><td><code>SELECT b.author, ... AS total_days</code></td><td>1 row per bucket &rarr; named output columns</td><td>Stage 5: Evaluates aggregates per group and binds column aliases (<code>AS</code>). Never mix ungrouped columns with <code>SUM</code>/<code>COUNT</code>.</td></tr>
-      <tr><td><code>ORDER BY total_days DESC, b.author ASC</code></td><td>Output rows &rarr; sorted rows</td><td>Stage 6: Sorts final rows (ties in <code>total_days</code> break alphabetically by <code>b.author</code>).</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<section class="schema-panel" id="schema">
-  <h2>Database tables (<code>books</code>, <code>loans</code>)</h2>
-  <div class="schema-grid">
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>books: title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
-        <tbody>
-          <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
-          <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
-          <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
-          <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
-          <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
-          <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
-          <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>loans: title</th><th>member</th><th>days</th></tr></thead>
-        <tbody>
-          <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
-          <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
-          <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
-          <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
-          <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
-          <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
-          <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- E1 -->
-<div class="exercise-block" id="exercises-start">
-  <h2>E1</h2>
-  <p>Titles of books with more than 260 pages, longest first.</p>
-  <textarea class="code-editor" id="code-e1" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e1">Run</button>
-    <button class="btn-reset" data-target="e1">Reset</button>
-    <span class="exercise-status" id="status-e1"></span>
-  </div>
-  <div class="test-output" id="output-e1" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e1 as
-  select title from books where pages &gt; 260 order by pages desc;</code></pre>
-  </details>
-</div>
-
-<!-- E2 -->
-<div class="exercise-block">
-  <h2>E2</h2>
-  <p>Each author with number of books and total pages (authors with at least two books), by author.</p>
-  <textarea class="code-editor" id="code-e2" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e2">Run</button>
-    <button class="btn-reset" data-target="e2">Reset</button>
-    <span class="exercise-status" id="status-e2"></span>
-  </div>
-  <div class="test-output" id="output-e2" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e2 as
-  select author, count(*) as n, sum(pages) as total from books
-    group by author having count(*) &gt;= 2 order by author;</code></pre>
-  </details>
-</div>
-
-<!-- E3 -->
-<div class="exercise-block">
-  <h2>E3</h2>
-  <p>For each loan: member, title, author.</p>
-  <textarea class="code-editor" id="code-e3" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e3">Run</button>
-    <button class="btn-reset" data-target="e3">Reset</button>
-    <span class="exercise-status" id="status-e3"></span>
-  </div>
-  <div class="test-output" id="output-e3" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e3 as
-  select member, l.title, author from loans as l join books as b on l.title = b.title;</code></pre>
-  </details>
-</div>
-
-<!-- E4 -->
-<div class="exercise-block">
-  <h2>E4</h2>
-  <p>Pairs of different books by the same author, each pair once.</p>
-  <textarea class="code-editor" id="code-e4" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e4">Run</button>
-    <button class="btn-reset" data-target="e4">Reset</button>
-    <span class="exercise-status" id="status-e4"></span>
-  </div>
-  <div class="test-output" id="output-e4" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e4 as
-  select a.title as first, b.title as second from books as a, books as b
-    where a.author = b.author and a.title &lt; b.title;</code></pre>
-  </details>
-</div>
-
-<!-- E5 -->
-<div class="exercise-block">
-  <h2>E5</h2>
-  <p>The member with the most total loan days, and the total.</p>
-  <textarea class="code-editor" id="code-e5" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e5">Run</button>
-    <button class="btn-reset" data-target="e5">Reset</button>
-    <span class="exercise-status" id="status-e5"></span>
-  </div>
-  <div class="test-output" id="output-e5" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e5 as
-  select member, sum(days) as total from loans group by member order by total desc limit 1;</code></pre>
-  </details>
-</div>
-
-<!-- E6 -->
-<div class="exercise-block">
-  <h2>E6</h2>
-  <p>Authors whose books were borrowed by at least two different members.</p>
-  <textarea class="code-editor" id="code-e6" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e6">Run</button>
-    <button class="btn-reset" data-target="e6">Reset</button>
-    <span class="exercise-status" id="status-e6"></span>
-  </div>
-  <div class="test-output" id="output-e6" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e6 as
-  select author from books as b join loans as l on b.title = l.title
-    group by author having count(distinct member) &gt;= 2;</code></pre>
-  </details>
-</div>
-
-<!-- E7 -->
-<div class="exercise-block">
-  <h2>E7</h2>
-  <p>Decade of each book with the number of books from it, oldest first.</p>
-  <textarea class="code-editor" id="code-e7" rows="3" spellcheck="false"></textarea>
-  <div class="exercise-actions">
-    <button class="btn-run" data-target="e7">Run</button>
-    <button class="btn-reset" data-target="e7">Reset</button>
-    <span class="exercise-status" id="status-e7"></span>
-  </div>
-  <div class="test-output" id="output-e7" style="display: none;"></div>
-  <details>
-    <summary>Solution</summary>
-    <pre><code class="language-sql">create table e7 as
-  select year/10*10 as decade, count(*) as n from books group by decade order by decade;</code></pre>
-  </details>
-</div>
-
-<script>
-const STARTER = {
-  e1: 'create table e1 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e2: 'create table e2 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e3: 'create table e3 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e4: 'create table e4 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e5: 'create table e5 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e6: 'create table e6 as\n  select "YOUR QUERY HERE" as unfinished;',
-  e7: 'create table e7 as\n  select "YOUR QUERY HERE" as unfinished;'
-};
-
-const DATA_SQL = `
-create table books as
-  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union
-  select 'Emma', 'Austen', 1815, 474 union
-  select 'Persuasion', 'Austen', 1817, 249 union
-  select 'Ubik', 'Dick', 1969, 202 union
-  select 'Valis', 'Dick', 1981, 271 union
-  select 'Kindred', 'Butler', 1979, 264 union
-  select 'Dawn', 'Butler', 1987, 248;
-create table loans as
-  select 'Dune' as title, 'Ana' as member, 14 as days union all
-  select 'Emma', 'Ben', 21 union all
-  select 'Dune', 'Chen', 7 union all
-  select 'Ubik', 'Ana', 10 union all
-  select 'Kindred', 'Ben', 14 union all
-  select 'Kindred', 'Dev', 30 union all
-  select 'Dawn', 'Ana', 5;
-`;
-
-const EXPECTED = {
-  e1: { rows: [["Emma"], ["Dune"], ["Valis"], ["Kindred"]], ordered: true },
-  e2: { rows: [["Austen", 2, 723], ["Butler", 2, 512], ["Dick", 2, 473]], ordered: true },
-  e3: { rows: [["Ana", "Dune", "Herbert"], ["Ben", "Emma", "Austen"], ["Chen", "Dune", "Herbert"],
-               ["Ana", "Ubik", "Dick"], ["Ben", "Kindred", "Butler"], ["Dev", "Kindred", "Butler"],
-               ["Ana", "Dawn", "Butler"]], ordered: false },
-  e4: { rows: [["Dawn", "Kindred"], ["Emma", "Persuasion"], ["Ubik", "Valis"]], ordered: false },
-  e5: { rows: [["Ben", 35]], ordered: true },
-  e6: { rows: [["Butler"], ["Herbert"]], ordered: false },
-  e7: { rows: [[1810, 2], [1960, 2], [1970, 1], [1980, 2]], ordered: true }
-};
-
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 13 exercises &mdash; COMPSCI 61A</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/styles/github.min.css">
+<link rel="stylesheet" href="../../../../../assets/exercises.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/sql/sql.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/languages/sql.min.js"></script>
+</head>
+<body>
+
+<p class="sub"><a href="../../../../../index.html">All courses</a> &rsaquo; <a href="../../index.html">COMPSCI 61A</a></p>
+
+<h1>Week 13 exercises: tables, SQL, aggregation</h1>
+<p class="sub">Fall 2026</p>
+
+<p class="sub"><a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/handout.pdf" target="_blank" rel="noopener">Handout</a>, <a href="../../../../../pdfjs/web/viewer.html?file=../../semesters/2026-fall/cs61a/handouts/2026-11-16-tables-sql-aggregation/solutions.pdf" target="_blank" rel="noopener">Solutions</a>, <a href="exercises.zip">exercises.zip</a></p>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <button id="btn-run-all" disabled>Run all</button>
+    <button id="btn-reset-all">Reset all</button>
+    <button id="btn-download-sql">Download week13.sql</button>
+  </div>
+  <div class="top-bar-right">
+    <span id="score" class="sub">0 / 8 ok</span>
+    <span id="engine-status" class="sub" style="margin-left: 8px;">loading SQLite...</span>
+  </div>
+</div>
+
+<nav class="toc-bar" aria-label="Sections">
+  <a href="#code-guide">SQL Clause Breakdown</a>
+  <a href="#schema">Database Schema</a>
+  <a href="#exercises-start">E1&ndash;E8 Exercises</a>
+</nav>
+
+<section class="code-guide" id="code-guide">
+  <h2>Piece-by-Piece Breakdown: How SQLite Evaluates a Query</h2>
+  <p>Before solving E1&ndash;E8, trace how every clause in a grouped SQL query transforms rows and groups from top to bottom (matching the logical execution stages: <code>FROM/JOIN</code> &rarr; <code>WHERE</code> &rarr; <code>GROUP BY</code> &rarr; <code>HAVING</code> &rarr; <code>SELECT</code> &rarr; <code>ORDER BY</code> &rarr; <code>LIMIT</code>).</p>
+  <pre><code class="language-sql">SELECT   b.author, COUNT(*) AS loan_count, SUM(l.days) AS total_days
+FROM     books AS b JOIN loans AS l ON b.title = l.title
+WHERE    b.pages &gt;= 250
+GROUP BY b.author
+HAVING   COUNT(*) &gt;= 2
+ORDER BY total_days DESC, b.author ASC;</code></pre>
+  <table class="code-anatomy">
+    <thead><tr><th>SQL piece</th><th>Input &rarr; Output</th><th>Exact role and key rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>FROM books AS b JOIN loans AS l ON b.title = l.title</code></td><td>7 &times; 7 = 49 raw pairs &rarr; matched rows</td><td>Stage 1: Pairs rows across both tables where titles match. Qualify any shared column name (<code>b.title</code>) using table aliases.</td></tr>
+      <tr><td><code>FROM books AS a, books AS b WHERE a.title &lt; b.title</code></td><td><i>n</i><sup>2</sup> pairs &rarr; unique unordered pairs</td><td>Self-join pattern: <code>a.title &lt; b.title</code> prevents self-matches and avoids listing <code>(X, Y)</code> and <code>(Y, X)</code> twice.</td></tr>
+      <tr><td><code>WHERE b.pages &gt;= 250</code></td><td>Matched rows &rarr; qualifying rows</td><td>Stage 2: Filters individual rows <em>before</em> grouping. Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>MAX</code>) are illegal here.</td></tr>
+      <tr><td><code>GROUP BY b.author</code></td><td>Filtered rows &rarr; 1 bucket per author</td><td>Stage 3: Splits surviving rows into buckets sharing the same grouping key(s).</td></tr>
+      <tr><td><code>HAVING COUNT(*) &gt;= 2</code></td><td>All buckets &rarr; surviving buckets</td><td>Stage 4: Filters whole groups using aggregates computed inside each bucket.</td></tr>
+      <tr><td><code>SELECT b.author, ... AS total_days</code></td><td>1 row per bucket &rarr; named output columns</td><td>Stage 5: Evaluates aggregates per group and binds column aliases (<code>AS</code>). Never mix ungrouped columns with <code>SUM</code>/<code>COUNT</code>.</td></tr>
+      <tr><td><code>ORDER BY total_days DESC, b.author ASC</code></td><td>Output rows &rarr; sorted rows</td><td>Stage 6: Sorts final rows (ties in <code>total_days</code> break alphabetically by <code>b.author</code>).</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="schema-panel" id="schema">
+  <h2>Database tables (<code>books</code>, <code>loans</code>)</h2>
+  <div class="schema-grid">
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>books: title</th><th>author</th><th>year</th><th>pages</th></tr></thead>
+        <tbody>
+          <tr><td>Dune</td><td>Herbert</td><td>1965</td><td>412</td></tr>
+          <tr><td>Emma</td><td>Austen</td><td>1815</td><td>474</td></tr>
+          <tr><td>Persuasion</td><td>Austen</td><td>1817</td><td>249</td></tr>
+          <tr><td>Ubik</td><td>Dick</td><td>1969</td><td>202</td></tr>
+          <tr><td>Valis</td><td>Dick</td><td>1981</td><td>271</td></tr>
+          <tr><td>Kindred</td><td>Butler</td><td>1979</td><td>264</td></tr>
+          <tr><td>Dawn</td><td>Butler</td><td>1987</td><td>248</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>loans: title</th><th>member</th><th>days</th></tr></thead>
+        <tbody>
+          <tr><td>Dune</td><td>Ana</td><td>14</td></tr>
+          <tr><td>Emma</td><td>Ben</td><td>21</td></tr>
+          <tr><td>Dune</td><td>Chen</td><td>7</td></tr>
+          <tr><td>Ubik</td><td>Ana</td><td>10</td></tr>
+          <tr><td>Kindred</td><td>Ben</td><td>14</td></tr>
+          <tr><td>Kindred</td><td>Dev</td><td>30</td></tr>
+          <tr><td>Dawn</td><td>Ana</td><td>5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="code-guide"><h2>Submission and checks</h2><p>Use one SELECT (or WITH query) per editor, optionally preceded by <code>CREATE TABLE eN AS</code>. Do not modify source tables. Downloads use the same format as the offline checker. Every exercise runs independently on three datasets: the displayed example, boundary/tie/repeated-member cases, and empty tables. Passing means these checks passed, not a proof for every database.</p><p>Output columns, in order: E1 title; E2 author, n, total; E3 member, title, author; E4 first, second; E5 member, total; E6 author; E7 decade, n; E8 title. Row order matters for E1, E2, E5, E7 and E8; E3, E4 and E6 may use any row order. Preserve duplicate rows unless the task asks otherwise. For E5 return one alphabetically first member when totals tie; return no rows for empty loans.</p></section>
+<!-- E1 -->
+<div class="exercise-block" id="exercises-start">
+  <h2>E1</h2>
+  <p>Titles of books with more than 260 pages, longest first; break equal-page ties by title.</p>
+  <textarea class="code-editor" id="code-e1" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e1">Run</button>
+    <button class="btn-reset" data-target="e1">Reset</button>
+    <span class="exercise-status" id="status-e1"></span>
+  </div>
+  <div class="test-output" id="output-e1" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e1 as
+  select title from books where pages &gt; 260 order by pages desc, title;</code></pre>
+  </details>
+</div>
+
+<!-- E2 -->
+<div class="exercise-block">
+  <h2>E2</h2>
+  <p>Each author with number of books and total pages (authors with at least two books), by author.</p>
+  <textarea class="code-editor" id="code-e2" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e2">Run</button>
+    <button class="btn-reset" data-target="e2">Reset</button>
+    <span class="exercise-status" id="status-e2"></span>
+  </div>
+  <div class="test-output" id="output-e2" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e2 as
+  select author, count(*) as n, sum(pages) as total from books
+    group by author having count(*) &gt;= 2 order by author;</code></pre>
+  </details>
+</div>
+
+<!-- E3 -->
+<div class="exercise-block">
+  <h2>E3</h2>
+  <p>For each loan: member, title, author.</p>
+  <textarea class="code-editor" id="code-e3" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e3">Run</button>
+    <button class="btn-reset" data-target="e3">Reset</button>
+    <span class="exercise-status" id="status-e3"></span>
+  </div>
+  <div class="test-output" id="output-e3" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e3 as
+  select member, l.title, author from loans as l join books as b on l.title = b.title;</code></pre>
+  </details>
+</div>
+
+<!-- E4 -->
+<div class="exercise-block">
+  <h2>E4</h2>
+  <p>Pairs of different books by the same author, each pair once.</p>
+  <textarea class="code-editor" id="code-e4" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e4">Run</button>
+    <button class="btn-reset" data-target="e4">Reset</button>
+    <span class="exercise-status" id="status-e4"></span>
+  </div>
+  <div class="test-output" id="output-e4" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e4 as
+  select a.title as first, b.title as second from books as a, books as b
+    where a.author = b.author and a.title &lt; b.title;</code></pre>
+  </details>
+</div>
+
+<!-- E5 -->
+<div class="exercise-block">
+  <h2>E5</h2>
+  <p>The member with the most total loan days, and the total; break ties alphabetically by member.</p>
+  <textarea class="code-editor" id="code-e5" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e5">Run</button>
+    <button class="btn-reset" data-target="e5">Reset</button>
+    <span class="exercise-status" id="status-e5"></span>
+  </div>
+  <div class="test-output" id="output-e5" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e5 as
+  select member, sum(days) as total from loans group by member order by total desc, member limit 1;</code></pre>
+  </details>
+</div>
+
+<!-- E6 -->
+<div class="exercise-block">
+  <h2>E6</h2>
+  <p>Authors whose books were borrowed by at least two different members.</p>
+  <textarea class="code-editor" id="code-e6" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e6">Run</button>
+    <button class="btn-reset" data-target="e6">Reset</button>
+    <span class="exercise-status" id="status-e6"></span>
+  </div>
+  <div class="test-output" id="output-e6" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e6 as
+  select author from books as b join loans as l on b.title = l.title
+    group by author having count(distinct member) &gt;= 2;</code></pre>
+  </details>
+</div>
+
+<!-- E7 -->
+<div class="exercise-block">
+  <h2>E7</h2>
+  <p>Decade of each book with the number of books from it, oldest first.</p>
+  <textarea class="code-editor" id="code-e7" rows="3" spellcheck="false"></textarea>
+  <div class="exercise-actions">
+    <button class="btn-run" data-target="e7">Run</button>
+    <button class="btn-reset" data-target="e7">Reset</button>
+    <span class="exercise-status" id="status-e7"></span>
+  </div>
+  <div class="test-output" id="output-e7" style="display: none;"></div>
+  <details>
+    <summary>Solution</summary>
+    <pre><code class="language-sql">create table e7 as
+  select year/10*10 as decade, count(*) as n from books group by decade order by decade;</code></pre>
+  </details>
+</div>
+
+<div class="exercise-block"><h2>E8 &mdash; independent transfer</h2>
+<p>Return titles of books that have never been borrowed, alphabetically. Build this query without copying E3. It must still work if a loan has a NULL title. Columns: <code>title</code>.</p>
+<textarea class="code-editor" id="code-e8" rows="3" spellcheck="false"></textarea>
+<div class="exercise-actions"><button class="btn-run" data-target="e8">Run</button><button class="btn-reset" data-target="e8">Reset</button><span class="exercise-status" id="status-e8"></span></div>
+<div class="test-output" id="output-e8" style="display: none;"></div>
+<details><summary>Solution &mdash; after an independent attempt</summary><pre><code class="language-sql">create table e8 as
+  select b.title from books as b where not exists (select 1 from loans as l where l.title = b.title) order by b.title;</code></pre></details></div>
+
+<script>
+const STARTER = {"e1": "create table e1 as\n  select 'YOUR QUERY HERE' as unfinished;", "e2": "create table e2 as\n  select 'YOUR QUERY HERE' as unfinished;", "e3": "create table e3 as\n  select 'YOUR QUERY HERE' as unfinished;", "e4": "create table e4 as\n  select 'YOUR QUERY HERE' as unfinished;", "e5": "create table e5 as\n  select 'YOUR QUERY HERE' as unfinished;", "e6": "create table e6 as\n  select 'YOUR QUERY HERE' as unfinished;", "e7": "create table e7 as\n  select 'YOUR QUERY HERE' as unfinished;", "e8": "create table e8 as\n  select 'YOUR QUERY HERE' as unfinished;"};
+
+// Generated from exercises/fixtures.json by build_package.py.
+const FIXTURES = [{"name": "example", "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\n", "expected": {"e1": {"columns": ["title"], "rows": [["Emma"], ["Dune"], ["Valis"], ["Kindred"]], "ordered": true}, "e2": {"columns": ["author", "n", "total"], "rows": [["Austen", 2, 723], ["Butler", 2, 512], ["Dick", 2, 473]], "ordered": true}, "e3": {"columns": ["member", "title", "author"], "rows": [["Ana", "Dune", "Herbert"], ["Ben", "Emma", "Austen"], ["Chen", "Dune", "Herbert"], ["Ana", "Ubik", "Dick"], ["Ben", "Kindred", "Butler"], ["Dev", "Kindred", "Butler"], ["Ana", "Dawn", "Butler"]], "ordered": false}, "e4": {"columns": ["first", "second"], "rows": [["Dawn", "Kindred"], ["Emma", "Persuasion"], ["Ubik", "Valis"]], "ordered": false}, "e5": {"columns": ["member", "total"], "rows": [["Ben", 35]], "ordered": true}, "e6": {"columns": ["author"], "rows": [["Butler"], ["Herbert"]], "ordered": false}, "e7": {"columns": ["decade", "n"], "rows": [[1810, 2], [1960, 2], [1970, 1], [1980, 2]], "ordered": true}, "e8": {"columns": ["title"], "rows": [["Persuasion"], ["Valis"]], "ordered": true}}}, {"name": "boundary-and-repeated-members", "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\ndelete from books; delete from loans;\ninsert into books values ('Boundary','Solo',2000,260),('Above','Solo',2009,261),('LongA','Pair',1999,500),('LongB','Pair',2010,500),('Never','Unborrowed',2020,100);\ninsert into loans values ('Boundary','Repeat',10),('Above','Repeat',10),('LongA','Zoe',30),('LongA','Amy',15),('LongB','Amy',15),(NULL,'Ghost',1);\n", "expected": {"e1": {"columns": ["title"], "rows": [["LongA"], ["LongB"], ["Above"]], "ordered": true}, "e2": {"columns": ["author", "n", "total"], "rows": [["Pair", 2, 1000], ["Solo", 2, 521]], "ordered": true}, "e3": {"columns": ["member", "title", "author"], "rows": [["Repeat", "Boundary", "Solo"], ["Repeat", "Above", "Solo"], ["Zoe", "LongA", "Pair"], ["Amy", "LongA", "Pair"], ["Amy", "LongB", "Pair"]], "ordered": false}, "e4": {"columns": ["first", "second"], "rows": [["Above", "Boundary"], ["LongA", "LongB"]], "ordered": false}, "e5": {"columns": ["member", "total"], "rows": [["Amy", 30]], "ordered": true}, "e6": {"columns": ["author"], "rows": [["Pair"]], "ordered": false}, "e7": {"columns": ["decade", "n"], "rows": [[1990, 1], [2000, 2], [2010, 1], [2020, 1]], "ordered": true}, "e8": {"columns": ["title"], "rows": [["Never"]], "ordered": true}}}, {"name": "empty", "sql": "create table books as\n  select 'Dune' as title, 'Herbert' as author, 1965 as year, 412 as pages union\n  select 'Emma', 'Austen', 1815, 474 union\n  select 'Persuasion', 'Austen', 1817, 249 union\n  select 'Ubik', 'Dick', 1969, 202 union\n  select 'Valis', 'Dick', 1981, 271 union\n  select 'Kindred', 'Butler', 1979, 264 union\n  select 'Dawn', 'Butler', 1987, 248;\ncreate table loans as\n  select 'Dune' as title, 'Ana' as member, 14 as days union all\n  select 'Emma', 'Ben', 21 union all\n  select 'Dune', 'Chen', 7 union all\n  select 'Ubik', 'Ana', 10 union all\n  select 'Kindred', 'Ben', 14 union all\n  select 'Kindred', 'Dev', 30 union all\n  select 'Dawn', 'Ana', 5;\ndelete from loans; delete from books;", "expected": {"e1": {"columns": ["title"], "rows": [], "ordered": true}, "e2": {"columns": ["author", "n", "total"], "rows": [], "ordered": true}, "e3": {"columns": ["member", "title", "author"], "rows": [], "ordered": false}, "e4": {"columns": ["first", "second"], "rows": [], "ordered": false}, "e5": {"columns": ["member", "total"], "rows": [], "ordered": true}, "e6": {"columns": ["author"], "rows": [], "ordered": false}, "e7": {"columns": ["decade", "n"], "rows": [], "ordered": true}, "e8": {"columns": ["title"], "rows": [], "ordered": true}}}];
+
 let SQL_ENGINE = null;
-let passState = { e1: false, e2: false, e3: false, e4: false, e5: false, e6: false, e7: false };
+let passState = { e1: false, e2: false, e3: false, e4: false, e5: false, e6: false, e7: false, e8: false };
 const cmInstances = {};
+const STORAGE_PREFIX = 'cs61a_w13_v2_';
 
 function getSqlValue(k) {
   return cmInstances[k] ? cmInstances[k].getValue() : document.getElementById('code-' + k).value;
@@ -284,20 +258,32 @@ function setSqlValue(k, val) {
   }
 }
 
+function invalidateExercise(k) {
+  if (passState[k]) {
+    passState[k] = false;
+    updateScore();
+  }
+  const st = document.getElementById('status-' + k);
+  if (st) {
+    st.className = 'exercise-status';
+    st.textContent = '';
+  }
+}
+
 let saveTimer = null;
 function triggerSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     Object.keys(STARTER).forEach(k => {
-      localStorage.setItem('cs61a_sql_' + k, getSqlValue(k));
+      localStorage.setItem(STORAGE_PREFIX + k, getSqlValue(k));
     });
-  }, 400);
+  }, 300);
 }
 
 function loadSaved() {
   Object.keys(STARTER).forEach(k => {
     const el = document.getElementById('code-' + k);
-    const saved = localStorage.getItem('cs61a_sql_' + k);
+    const saved = localStorage.getItem(STORAGE_PREFIX + k);
     el.value = saved !== null ? saved : STARTER[k];
     if (window.CodeMirror) {
       const cm = CodeMirror.fromTextArea(el, {
@@ -312,33 +298,45 @@ function loadSaved() {
           'Cmd-Enter': () => runExercise(k)
         }
       });
-      cm.on('change', triggerSave);
+      cm.on('change', () => {
+        invalidateExercise(k);
+        triggerSave();
+      });
       cmInstances[k] = cm;
     } else {
-      el.addEventListener('input', triggerSave);
+      el.addEventListener('input', () => {
+        invalidateExercise(k);
+        triggerSave();
+      });
     }
   });
 }
 
-function assembleFullScript() {
-  return `-- CS 61A Week 13 exercises: fill in each query. Tables are in data.sql.\n\n` +
-    `-- E1. Titles of books with more than 260 pages, longest first.\n${getSqlValue('e1').trim()}\n\n` +
-    `-- E2. Each author with number of books and total pages (authors with at least two books), by author.\n${getSqlValue('e2').trim()}\n\n` +
-    `-- E3. For each loan: member, title, author.\n${getSqlValue('e3').trim()}\n\n` +
-    `-- E4. Pairs of different books by the same author, each pair once.\n${getSqlValue('e4').trim()}\n\n` +
-    `-- E5. The member with the most total loan days, and the total.\n${getSqlValue('e5').trim()}\n\n` +
-    `-- E6. Authors whose books were borrowed by at least two different members.\n${getSqlValue('e6').trim()}\n\n` +
-    `-- E7. Decade of each book with the number of books from it, oldest first.\n${getSqlValue('e7').trim()}\n`;
-}
-
 function normalizeCode(key, raw) {
   let s = raw.trim();
-  if (s.endsWith(';')) s = s.slice(0, -1).trim();
-  if (!s.toLowerCase().startsWith('create table')) {
-    return { execSql: `create table ${key} as ${s};`, querySql: s };
-  } else {
-    return { execSql: s + ';', querySql: `select * from ${key}` };
+  while (s.endsWith(';')) s = s.slice(0, -1).trim();
+  if (!/^create\s+table\b/i.test(s)) {
+    return { execSql: `create table ${key} as\n  ${s};`, querySql: s };
   }
+  return { execSql: `${s};`, querySql: `select * from ${key}` };
+}
+
+function assembleFullScript() {
+  const comments = {
+    e1: 'E1. Titles of books with more than 260 pages, longest first; break equal-page ties by title.',
+    e2: 'E2. Each author with number of books and total pages (authors with at least two books), by author.',
+    e3: 'E3. For each loan: member, title, author.',
+    e4: 'E4. Pairs of different books by the same author, each pair once.',
+    e5: 'E5. The member with the most total loan days, and the total; break ties alphabetically by member.',
+    e6: 'E6. Authors whose books were borrowed by at least two different members.',
+    e7: 'E7. Decade of each book with the number of books from it, oldest first.',
+    e8: 'E8. Transfer: titles never borrowed, alphabetically (must handle NULL loan titles).'
+  };
+  const blocks = Object.keys(STARTER).map(k => {
+    const norm = normalizeCode(k, getSqlValue(k));
+    return `-- ${comments[k]}\n${norm.execSql}`;
+  });
+  return `-- CS 61A Week 13 exercises: fill in each query. Tables are in data.sql.\n\n` + blocks.join('\n\n') + '\n';
 }
 
 function renderTable(cols, rows) {
@@ -359,20 +357,29 @@ function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function rowKey(row) {
+  return JSON.stringify(row.map(v => [v === null ? 'null' : typeof v, v === null ? '' : String(v)]));
+}
+
 function compareRows(got, expected, ordered) {
   if (got.length !== expected.length) return false;
   if (ordered) {
     return got.every((r, i) => JSON.stringify(r) === JSON.stringify(expected[i]));
-  } else {
-    const sGot = [...got].map(r => JSON.stringify(r)).sort();
-    const sExp = [...expected].map(r => JSON.stringify(r)).sort();
-    return sGot.every((r, i) => r === sExp[i]);
   }
+  const sGot = got.map(rowKey).sort();
+  const sExp = expected.map(rowKey).sort();
+  return sGot.every((r, i) => r === sExp[i]);
+}
+
+function readSortedTable(db, table) {
+  const res = db.exec(`select * from ${table};`);
+  const vals = res.length > 0 ? res[0].values : [];
+  return vals.map(rowKey).sort();
 }
 
 function updateScore() {
   const n = Object.values(passState).filter(Boolean).length;
-  document.getElementById('score').textContent = `${n} / 7 ok`;
+  document.getElementById('score').textContent = `${n} / 8 ok`;
 }
 
 function runExercise(key) {
@@ -382,39 +389,93 @@ function runExercise(key) {
   const outEl = document.getElementById('output-' + key);
   outEl.style.display = 'block';
 
-  let db;
+  let norm;
   try {
-    db = new SQL_ENGINE.Database();
-    db.run(DATA_SQL);
-    const norm = normalizeCode(key, raw);
-    db.run(norm.execSql);
-
-    const res = db.exec(`select * from ${key};`);
-    const cols = res.length > 0 ? res[0].columns : [];
-    const vals = res.length > 0 ? res[0].values : [];
-
-    const exp = EXPECTED[key];
-    const ok = compareRows(vals, exp.rows, exp.ordered);
-    passState[key] = ok;
-
-    if (ok) {
-      statusEl.className = 'exercise-status pass';
-      statusEl.textContent = 'ok';
-      outEl.innerHTML = renderTable(cols, vals);
-    } else {
-      statusEl.className = 'exercise-status fail';
-      statusEl.textContent = 'FAIL';
-      outEl.innerHTML = `<span class="fail-text">FAIL</span>\n   expected: ${JSON.stringify(exp.rows)}${exp.ordered ? ' (in order)' : ''}\n   got:      ${JSON.stringify(vals)}` + renderTable(cols, vals);
-    }
+    norm = normalizeCode(key, raw);
   } catch (e) {
     passState[key] = false;
     statusEl.className = 'exercise-status fail';
     statusEl.textContent = 'FAIL';
     outEl.innerHTML = `<span class="fail-text">error:</span> ${escapeHtml(e.message || String(e))}`;
-  } finally {
-    if (db) db.close();
     updateScore();
+    return;
   }
+
+  let allOk = true;
+  let exampleCols = [];
+  let exampleVals = [];
+  let failureHtml = '';
+
+  for (const fx of FIXTURES) {
+    let db = null;
+    let refDb = null;
+    try {
+      db = new SQL_ENGINE.Database();
+      refDb = new SQL_ENGINE.Database();
+      db.run(fx.sql);
+      refDb.run(fx.sql);
+      db.run(norm.execSql);
+
+      for (const tbl of ['books', 'loans']) {
+        const refRows = readSortedTable(refDb, tbl);
+        const gotRows = readSortedTable(db, tbl);
+        if (JSON.stringify(refRows) !== JSON.stringify(gotRows)) {
+          allOk = false;
+          failureHtml = `<span class="fail-text">FAIL (${escapeHtml(fx.name)})</span>\n   Source table ${escapeHtml(tbl)} was modified.`;
+          break;
+        }
+      }
+      if (!allOk) break;
+
+      const res = db.exec(`select * from ${key};`);
+      const cols = res.length > 0 ? res[0].columns.map(c => c.toLowerCase()) : [];
+      const vals = res.length > 0 ? res[0].values : [];
+
+      if (fx.name === 'example') {
+        exampleCols = res.length > 0 ? res[0].columns : [];
+        exampleVals = vals;
+      }
+
+      const exp = fx.expected[key];
+      const expCols = exp.columns.map(c => c.toLowerCase());
+      let actualCols = cols;
+      if (actualCols.length === 0 && exp.rows.length === 0) {
+        const info = db.exec(`pragma table_info(${key});`);
+        actualCols = info.length > 0 ? info[0].values.map(r => String(r[1]).toLowerCase()) : [];
+      }
+      const colsMatch = JSON.stringify(actualCols) === JSON.stringify(expCols);
+      const rowsMatch = colsMatch && compareRows(vals, exp.rows, exp.ordered);
+
+      if (!colsMatch || !rowsMatch) {
+        allOk = false;
+        if (!colsMatch) {
+          failureHtml = `<span class="fail-text">FAIL (${escapeHtml(fx.name)})</span>\n   expected columns: ${escapeHtml(JSON.stringify(exp.columns))}\n   got columns:      ${escapeHtml(JSON.stringify(actualCols))}` + renderTable(actualCols, vals);
+        } else {
+          failureHtml = `<span class="fail-text">FAIL (${escapeHtml(fx.name)})</span>\n   expected: ${escapeHtml(JSON.stringify(exp.rows))}${exp.ordered ? ' (in order)' : ''}\n   got:      ${escapeHtml(JSON.stringify(vals))}` + renderTable(actualCols, vals);
+        }
+        break;
+      }
+    } catch (e) {
+      allOk = false;
+      failureHtml = `<span class="fail-text">error (${escapeHtml(fx.name)}):</span> ${escapeHtml(e.message || String(e))}`;
+      break;
+    } finally {
+      if (db) db.close();
+      if (refDb) refDb.close();
+    }
+  }
+
+  passState[key] = allOk;
+  if (allOk) {
+    statusEl.className = 'exercise-status pass';
+    statusEl.textContent = 'ok';
+    outEl.innerHTML = `<span class="sub">Passed all ${FIXTURES.length} datasets (example output below):</span>` + renderTable(exampleCols, exampleVals);
+  } else {
+    statusEl.className = 'exercise-status fail';
+    statusEl.textContent = 'FAIL';
+    outEl.innerHTML = failureHtml;
+  }
+  updateScore();
 }
 
 function runAll() {
@@ -428,8 +489,9 @@ document.querySelectorAll('.btn-run').forEach(b => {
 document.querySelectorAll('.btn-reset').forEach(b => {
   b.addEventListener('click', () => {
     const k = b.dataset.target;
-    localStorage.removeItem('cs61a_sql_' + k);
+    localStorage.removeItem(STORAGE_PREFIX + k);
     setSqlValue(k, STARTER[k]);
+    document.getElementById('status-' + k).className = 'exercise-status';
     document.getElementById('status-' + k).textContent = '';
     document.getElementById('output-' + k).style.display = 'none';
     passState[k] = false;
@@ -442,8 +504,9 @@ document.getElementById('btn-run-all').addEventListener('click', runAll);
 document.getElementById('btn-reset-all').addEventListener('click', () => {
   if (!confirm('Reset all exercises?')) return;
   Object.keys(STARTER).forEach(k => {
-    localStorage.removeItem('cs61a_sql_' + k);
+    localStorage.removeItem(STORAGE_PREFIX + k);
     setSqlValue(k, STARTER[k]);
+    document.getElementById('status-' + k).className = 'exercise-status';
     document.getElementById('status-' + k).textContent = '';
     document.getElementById('output-' + k).style.display = 'none';
     passState[k] = false;
