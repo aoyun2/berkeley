@@ -9,20 +9,14 @@
 \subtitle{Diagonalizability and the minimal polynomial (Notes Ch.~12--13, LADR 5C, 5D, 5B, HW7)}
 \author{}\date{}\ihead{}
 
-% Deterministic ink rendering; preaction textures the path without redrawing labels.
-\newcommand{\PacketInkPath}[2][]{%
-  \begingroup\pgfmathsetseed{1965}%
-  \draw[ink line,#1,preaction={draw,arrows=-,line width=.54pt,opacity=.28,
-    decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}] #2;
-  \endgroup}
+% Delegate to figure-ink V3 stroke.
+\newcommand{\PacketInkPath}[2][]{\InkStroke[#1]{#2}}
 \tikzset{
   >={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   figaxis/.style={ink arrow,draw=inkslate,line width=.35pt},
   figvec/.style={ink arrow,draw=inkblue},
   figvecsub/.style={ink arrow,draw=inkslate},
-  figguide/.style={ink guide,draw=inkslate},
-  ink plot/.style={line width=.45pt,preaction={draw,arrows=-,line width=.54pt,
-    opacity=.28,decorate,decoration={random steps,segment length=.65pt,amplitude=.045pt}}}
+  figguide/.style={ink guide,draw=inkslate}
 }
 
 \begin{document}
@@ -541,11 +535,11 @@ Conversely, when $m_T=(x-\lambda_1)\cdots(x-\lambda_m)$ has distinct roots, $(T-
   \node[font=\scriptsize, text=figgreen, anchor=south east] at (axis cs:3.32,1.42) {\InkLabel{$g_3$}};
 
   % Zero values (hollow dots) and unit values (solid dots)
-  \addplot[only marks, mark=*, mark size=1.55pt, mark options={fill=white, draw=black!80, line width=0.5pt}]
+  \addplot[only marks, mark=inkring, mark size=1.55pt, mark options={fill=white, draw=black!80, line width=0.5pt}]
     coordinates {(1,0) (2,0) (3,0)};
-  \addplot[only marks, mark=*, mark size=1.7pt, figblue] coordinates {(1,1)};
-  \addplot[only marks, mark=*, mark size=1.7pt, figred] coordinates {(2,1)};
-  \addplot[only marks, mark=*, mark size=1.7pt, figgreen] coordinates {(3,1)};
+  \addplot[only marks, mark=inkdot, mark size=1.7pt, figblue] coordinates {(1,1)};
+  \addplot[only marks, mark=inkdot, mark size=1.7pt, figred] coordinates {(2,1)};
+  \addplot[only marks, mark=inkdot, mark size=1.7pt, figgreen] coordinates {(3,1)};
 \end{axis}
 \end{tikzpicture}
 \figcap{Lagrange basis polynomials $g_j$ at $\lambda_1=1$, $\lambda_2=2$, $\lambda_3=3$, satisfying $g_j(\lambda_i)=\delta_{ij}$ and $\sum g_j=1$. Evaluating at $T$ produces the eigenprojections $g_j(T)$ onto $E(\lambda_j,T)$ (\hyperref[prop-68]{Prop.~68}).}
