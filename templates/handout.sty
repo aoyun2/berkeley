@@ -65,7 +65,20 @@
 \mdfdefinestyle{mdredbox}{linewidth=0.5pt,skipabove=7pt,skipbelow=2pt,innertopmargin=3pt,innerbottommargin=5pt,nobreak=true,backgroundcolor=Salmon!5,linecolor=RawSienna}
 % "The question." box at the start of a section: what problem the section solves.
 \mdfdefinestyle{qboxstyle}{nobreak=true,linewidth=0pt,backgroundcolor=black!5,innertopmargin=6pt,innerbottommargin=6pt,skipabove=4pt,skipbelow=8pt}
-\newenvironment{qbox}{\begin{mdframed}[style=qboxstyle]\textbf{The question.}\ }{\end{mdframed}}
+\newcounter{qboxnum}
+\newenvironment{qbox}{\refstepcounter{qboxnum}\begin{mdframed}[style=qboxstyle]\hypertarget{qbox-\arabic{qboxnum}}{}\textbf{The question.}\ }{\end{mdframed}}
+% Return to the most recent question box: \revisit or \revisit[ (part 1)].
+% Starts a new paragraph whose bold lead-in links back to the question (standard, Revisiting the question).
+\newcommand{\revisit}[1][]{\par\medskip\noindent\textbf{\hyperlink{qbox-\arabic{qboxnum}}{Let us revisit the question above}#1.}\ }
+% A list never starts on the line of a theorem, example, definition or proof heading:
+% if a list begins while a heading label is still pending, end that line first.
+\makeatletter
+\newcommand{\hb@listbreak}{\if@inlabel\leavevmode\par\vspace{-\partopsep}\vspace{-\parskip}\fi}
+\AtBeginEnvironment{steps}{\hb@listbreak}
+\AtBeginEnvironment{enumerate}{\hb@listbreak}
+\AtBeginEnvironment{itemize}{\hb@listbreak}
+\AtBeginEnvironment{description}{\hb@listbreak}
+\makeatother
 % "The idea" box: free text explaining how to find the argument (standard, Section 3).
 %   \begin{ideabox} sentences, a small worked case, or a picture \end{ideabox}
 % (motive is the old labelled version, kept only so older files still compile; do not use it.)
