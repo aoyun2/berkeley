@@ -5,6 +5,8 @@
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+% "How to ..." method box: numbered steps for a procedure (standard, Teach every procedure).
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=mdbluebox,linecolor=NavyBlue,backgroundcolor=NavyBlue!3]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
 \title{Math 110 --- Week 11}
 \subtitle{Adjoints, self-adjoint and normal operators, the spectral theorem (Notes Ch.~19--20, LADR 7A--7B, HW11)}
 \author{}\date{}\ihead{}
@@ -30,15 +32,15 @@ Throughout, $V$ and $W$ are finite-dimensional inner product spaces over $\FF=\R
 
   \ii \target{T7}\tool{Eigenvalues (\xlink{math110}{2026-10-05-eigenvalues-pagerank}{prop-53}{Week~6, Props.~53--54}).} On a nonzero finite-dimensional complex space every operator has an eigenvalue. Eigenvectors corresponding to distinct eigenvalues are linearly independent.
 
-  \ii \target{T8}\tool{Minimal polynomial and diagonalizability (\xweek{math110}{2026-10-12-diagonalization-minimal-polynomial}{Week~7}).} $m_T$ is the monic polynomial of smallest degree with $m_T(T)=0$; $q(T)=0 \iff m_T\mid q$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-65}{Prop.~65}); the eigenvalues of $T$ are the roots of $m_T$ in $\FF$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-66}{Prop.~66}); $T$ is diagonalizable $\iff$ $V$ has an eigenbasis $\iff V=E(\lambda_1,T)\oplus\dots\oplus E(\lambda_m,T)\iff\sum_i\dim E(\lambda_i,T)=n$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-62}{Prop.~62}) $\iff$ $m_T$ is a product of distinct linear factors (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-68}{Prop.~68}). If $T$ is diagonalizable and $U$ is $T$-invariant, then $T|_U$ is diagonalizable (Week~7, F3).
+  \ii \target{T8}\tool{Minimal polynomial and diagonalizability (\xweek{math110}{2026-10-12-diagonalization-minimal-polynomial}{Week~7}).} $m_T$ is the monic polynomial of smallest degree with $m_T(T)=0$; $q(T)=0 \iff m_T\mid q$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-65}{Prop.~65}); the eigenvalues of $T$ are the roots of $m_T$ in $\FF$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-66}{Prop.~66}); $T$ is diagonalizable $\iff$ $V$ has an eigenbasis $\iff$ $V$ is the direct sum of the eigenspaces $\iff$ their dimensions add up to $n$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-62}{Prop.~62}) $\iff$ $m_T$ is a product of distinct linear factors (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-68}{Prop.~68}). If $T$ is diagonalizable and $U$ is $T$-invariant, then $T|_U$ is diagonalizable (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{name-f3-restrictions-and-quotients-ex-60}{Week~7, F3}).
 
-  \ii \target{T9}\tool{Real polynomials (\xlink{math110}{2026-10-05-eigenvalues-pagerank}{name-fundamental-theorem-of-algebra}{Week~6}; cited in Week~7, F11).} Every nonconstant polynomial in $\PP(\RR)$ factors into real linear factors and real irreducible quadratics $x^2+bx+c$ with $b^2<4c$.
+  \ii \target{T9}\tool{Real polynomials (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{name-f11-odd-dimension-ladr-5b}{Week~7, F11, Step A}, using the fundamental theorem of algebra, \xlink{math110}{2026-10-05-eigenvalues-pagerank}{prop-52}{Week~6, Prop.~52}).} Every nonconstant polynomial in $\PP(\RR)$ factors into real linear factors and real irreducible quadratics $x^2+bx+c$ with $b^2<4c$.
 
   \ii \target{T10}\tool{Upper-triangular matrices (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-59}{Week~7, Props.~59, 61}).} In a basis $v_1,\dots,v_n$, $\MM(T)$ is upper-triangular $\iff$ $\spn(v_1,\dots,v_k)$ is $T$-invariant for each $k$. Over $\CC$, such a basis always exists.
 
   \ii \target{T11}\tool{Jordan chains (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-76}{Week~8, Prop.~76}).} Over $\CC$, $V$ has a basis of Jordan chains: lists $v_1,\dots,v_k$ with $Tv_1=\lambda v_1$ and $Tv_j=\lambda v_j+v_{j-1}$ ($j\ge2$). $T$ is diagonalizable $\iff$ every Jordan chain has length $1$.
 
-  \ii \target{T12}\tool{$2\times2$ matrices (\xweek{math110}{2026-10-05-eigenvalues-pagerank}{Week~6}).} The characteristic polynomial of a $2\times2$ matrix $A$ is $x^2-(\tr A)x+\det A$, whose roots are its eigenvalues.
+  \ii \target{T12}\tool{$2\times2$ matrices (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-74}{Week~8, after Prop.~74}).} The characteristic polynomial of a $2\times2$ matrix $A$ is $x^2-(\tr A)x+\det A$, whose roots are its eigenvalues.
 
   \ii \target{T13}\tool{Rank--nullity (\xweek{math110}{2026-09-14-linear-maps-matrices}{Week~3}).} For $T\in\LL(V,W)$, $\dim\nul T+\dim\range T=\dim V$; an injective operator on a finite-dimensional space is invertible.
 
@@ -47,7 +49,7 @@ Throughout, $V$ and $W$ are finite-dimensional inner product spaces over $\FF=\R
   \ii \target{T15}\tool{Bases of a direct sum (\xweek{math110}{2026-10-19-generalized-eigenvectors-jordan}{Week~8}).} If $V=U_1\oplus\dots\oplus U_m$, concatenating bases of $U_1,\dots,U_m$ produces a basis of $V$.
 \end{enumerate}
 
-\section{This week}
+\section{Adjoints and the spectral theorem}
 
 \subsection{The adjoint (Ch.~19)}
 
@@ -66,18 +68,19 @@ In an inner product space we measure geometric alignment via $\langle Tv,w\rangl
   \[
     \langle Tv,w\rangle = \langle v,T^*w\rangle \qquad \text{for all } v\in V,\; w\in W.
   \]
-  (Many physics and engineering texts write $T^\dagger$.)
+  ($T^*$ is also written $T^\dagger$ in physics; below, $T^\dagger$ always means the pseudoinverse of Week~10.)
 \end{definition*}
 
 \begin{ideabox}
   \textbf{Why $T^*$ exists and is unique, and how it relates to the dual map $T'$.} Fix $w\in W$. Because the inner product is linear in the first slot \ilink{T1}{(T1)}, the scalar function $\varphi_w(v)=\langle Tv,w\rangle$ is a linear functional in $V'$. By the Riesz representation theorem \ilink{T4}{(T4)}, there is a \emph{unique} vector $u\in V$ with $\langle Tv,w\rangle=\langle v,u\rangle$ for every $v\in V$; we set $T^*w=u$.
+\end{ideabox}
 
-  Writing $\Gamma_V(v)=\langle\cdot,v\rangle\in V'$ and $\Gamma_W(w)=\langle\cdot,w\rangle\in W'$ for the Riesz identifications from Week~10, the defining identity reads
+\textbf{Relation to the dual map.} Writing $\Gamma_V(v)=\langle\cdot,v\rangle\in V'$ and $\Gamma_W(w)=\langle\cdot,w\rangle\in W'$ for the Riesz identifications from Week~10, the identity $\langle Tv,w\rangle=\langle v,T^*w\rangle$ of \ilink{def-49}{Def.~49} reads
   \[
     \langle \cdot,T^*w\rangle = \langle T(\cdot),w\rangle = \langle\cdot,w\rangle\circ T = T'(\Gamma_W(w)),
   \]
   i.e.\ $\Gamma_V(T^*w)=T'(\Gamma_W(w))$. Thus $T^*=\Gamma_V^{-1}\circ T'\circ \Gamma_W$: \emph{the adjoint is the dual map $T'$ transported back from $W'\to V'$ to $W\to V$ via the Riesz inner product}. Because $\Gamma_V$ depends on the chosen inner product and satisfies $\Gamma_V(\lambda v)=\overline{\lambda}\,\Gamma_V(v)$ over $\CC$, the adjoint depends on the inner product. The operator $T^*\colon W\to V$ is linear; it is the operation of taking adjoints that conjugates scalars: $(\lambda T)^*=\overline{\lambda}T^*$.
-\end{ideabox}
+
 
 \begin{fig}
 \[
@@ -97,6 +100,15 @@ In an inner product space we measure geometric alignment via $\langle Tv,w\rangl
 \]
 \figcap{Commutative diagram defining the adjoint $T^*$: both paths from $W$ to $V'$ agree ($\Gamma_V\circ T^*=T'\circ\Gamma_W$), so $T^*=\Gamma_V^{-1}\circ T'\circ\Gamma_W$ is linear and scaling gives $(\lambda T)^*=\overline{\lambda}T^*$.}
 \end{fig}
+
+\begin{methodbox}{How to compute an adjoint}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii \emph{Orthonormal bases available} (e.g.\ $\FF^n$ with the dot product): $\MM(T^*)$ is the conjugate transpose of $\MM(T)$ (\ilink{prop-93}{Prop.~93}).
+  \ii \emph{Otherwise}, for each basis vector $w$ of $W$ write $T^*w$ with unknown coordinates, impose $\langle v,T^*w\rangle=\langle Tv,w\rangle$ for each basis vector $v$ of $V$, and solve the linear system (\ilink{ex-72}{Ex.~72}). Alternatively, orthonormalize first and use step 1 (\ilink{ex-73}{Ex.~73}).
+  \ii Check one value of $\langle Tv,w\rangle=\langle v,T^*w\rangle$.
+\end{enumerate}
+\textbf{Edge cases.} In a basis that is not orthonormal (including the standard basis for a weighted inner product) the conjugate transpose is wrong. Over $\CC$, do not forget the conjugation; over $\RR$ it is the plain transpose.
+\end{methodbox}
 
 \begin{example*}[Ex.~72: Adjoint of differentiation by solving equations]\target{ex-72}
   In the question, write $D^*(1)=ax+b$. Applying $\langle f,D^*(1)\rangle = \langle Df,1\rangle$ to the basis functions $f=1$ and $f=x$ gives two equations:
@@ -138,7 +150,8 @@ In an inner product space we measure geometric alignment via $\langle Tv,w\rangl
   \end{steps}
 \end{proof}
 
-By linearity of $D^*$ in Example~72, $D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1)$.
+By linearity of $D^*$ in Example~72,
+\[ D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1). \]
 
 \begin{example*}[Ex.~73: Example~72 via an orthonormal basis]\target{ex-73}
   Orthonormalizing $\{1,x\}$ on $\PP_1(\RR)$ gives $e_1=1$ and $e_2=\sqrt{3}(2x-1)$ (check $\int_0^1 3(2x-1)^2\,dx=1$ and $\int_0^1 (2x-1)\,dx=0$). Since $D(e_1)=0$ and $D(e_2)=2\sqrt{3}=2\sqrt{3}\,e_1$, Prop.~93 yields
@@ -149,7 +162,15 @@ By linearity of $D^*$ in Example~72, $D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1)$.
   Hence $D^*(e_1)=2\sqrt{3}\,e_2=12x-6$ and $D^*(e_2)=0$. Writing $x=\frac{1}{2\sqrt{3}}e_2+\frac12 e_1$ recovers $D^*(x)=\frac12 D^*(1)=6x-3$.
 \end{example*}
 
-\noindent\textbf{The question answered.} $D^*$ exists and $D^*(1)=12x-6$. Taking the transpose of $\MM(D)$ in $\{1,x\}$ falsely gives $D^*(1)=x$: Prop.~93 requires an \emph{orthonormal} basis, whereas $\langle 1,x\rangle=\frac12\neq 0$.
+\begin{example*}[An adjoint for a weighted inner product]
+  On $\RR^2$ with $\langle x,y\rangle=x_1y_1+2x_2y_2$, let $T(x_1,x_2)=(x_1+x_2,\,x_2)$. Then
+  \[ \langle Tx,y\rangle=(x_1+x_2)y_1+2x_2y_2=x_1y_1+x_2(y_1+2y_2). \]
+  Writing $T^*y=(a,b)$, we need $\langle x,T^*y\rangle=x_1a+2x_2b$ to equal this for all $x$, so $a=y_1$ and $b=\frac12y_1+y_2$:
+  \[ T^*(y_1,y_2)=\bigl(y_1,\ \tfrac12y_1+y_2\bigr),\qquad \MM(T^*)=\begin{pmatrix}1&0\\ \frac12&1\end{pmatrix}\ne\MM(T)^{\mathsf T}=\begin{pmatrix}1&0\\1&1\end{pmatrix}. \]
+  The standard basis is not orthonormal here ($\|e_2\|^2=2$), so Prop.~93 does not apply to it.
+\end{example*}
+
+\revisit $D^*$ exists and $D^*(1)=12x-6$. Taking the transpose of $\MM(D)$ in $\{1,x\}$ falsely gives $D^*(1)=x$: Prop.~93 requires an \emph{orthonormal} basis, whereas $\langle 1,x\rangle=\frac12\neq 0$.
 
 \begin{proposition*}[LADR 7.5: Algebraic rules for adjoints]\target{name-ladr-7-5}
   For $S,T\in\LL(V,W)$, $\lambda\in\FF$, and $R\in\LL(U,V)$ ($U$ an inner product space):
@@ -161,7 +182,8 @@ By linearity of $D^*$ in Example~72, $D^*(ax+b)=a(6x-3)+b(12x-6)=(3a+6b)(2x-1)$.
 \begin{proof}
   Each identity follows by computing $\langle\text{(map)}v,w\rangle$ for arbitrary vectors and using uniqueness in \ilink{T4}{(T4)}:
   \begin{steps}
-    \ii $(S+T)^*$: $\langle(S+T)v,w\rangle = \langle Sv,w\rangle+\langle Tv,w\rangle = \langle v,S^*w\rangle+\langle v,T^*w\rangle = \langle v,(S^*+T^*)w\rangle$.
+    \ii $(S+T)^*$:
+    \[ \langle(S+T)v,w\rangle = \langle Sv,w\rangle+\langle Tv,w\rangle = \langle v,S^*w\rangle+\langle v,T^*w\rangle = \langle v,(S^*+T^*)w\rangle. \]
     \ii $(\lambda T)^*$: $\langle\lambda Tv,w\rangle = \lambda\langle v,T^*w\rangle = \langle v,\overline{\lambda}\,T^*w\rangle$ (conjugate-linear second slot, T1).
     \ii $(T^*)^*$: $\langle T^*w,v\rangle = \overline{\langle v,T^*w\rangle} = \overline{\langle Tv,w\rangle} = \langle w,Tv\rangle$ for all $w\in W,v\in V$.
     \ii $I^*$: $\langle Iv,w\rangle = \langle v,w\rangle = \langle v,Iw\rangle$.
@@ -303,7 +325,7 @@ Among complex operators, those satisfying $T=T^*$ behave like the real numbers $
 
 Notice the converse fails: $B=\begin{psmallmatrix}1&1\\0&1\end{psmallmatrix}$ has only the real eigenvalue $1$ yet is not self-adjoint.
 
-\noindent\textbf{The question answered.} Yes: $A=A^*$ is Hermitian, so its eigenvalues are guaranteed to be real. Indeed by \ilink{T12}{(T12)}, $\tr A=5$ and $\det A=6-(1+i)(1-i)=4$, so $\lambda^2-5\lambda+4=(\lambda-1)(\lambda-4)$ gives eigenvalues $1$ and $4$.
+\revisit Yes: $A=A^*$ is Hermitian, so its eigenvalues are guaranteed to be real. Indeed by \ilink{T12}{(T12)}, $\tr A=5$ and $\det A=6-(1+i)(1-i)=4$, so $\lambda^2-5\lambda+4=(\lambda-1)(\lambda-4)$ gives eigenvalues $1$ and $4$.
 
 \medskip\noindent\textbf{Polarization identity for operators.}\target{name-polarization} The ``diagonal'' quadratic values $Q(x)=\langle Tx,x\rangle$ determine the full sesquilinear form $\langle Tv,w\rangle$. Over $\CC$, for \emph{any} operator $T\in\LL(V)$ and all $v,w\in V$:
 \[
@@ -447,7 +469,7 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
       ({sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*cos(x)},{sqrt(cos(x)^2 + (cos(x)+sin(x))^2)*sin(x)});
 
     % Curve labels placed directly with white InkLabel halo
-    \node[font=\scriptsize,text=black!65] at (axis cs:0,-2.35) {\InkLabel{$\|Av\|=\|A^*v\|=\sqrt{2}$}};
+    \node[font=\scriptsize] at (axis cs:0,-2.35) {\InkLabel{$\|Av\|=\|A^*v\|=\sqrt{2}$}};
     \node[font=\scriptsize,text=inkblue,anchor=south west] at (axis cs:0.84,1.34) {\InkLabel{$\|Bv\|$}};
     \node[font=\scriptsize,text=inkred,anchor=north east] at (axis cs:-1.30,-0.88) {\InkLabel{$\|B^*v\|$}};
   \end{axis}
@@ -463,7 +485,7 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
     \path[ink grain=inkslate,rounded corners=8pt] (0.35,0.28) rectangle (4.45,3.25);
     \InkStroke[inkslate,rounded corners=8pt]{(0.35,0.28) rectangle (4.45,3.25)}
     \node[anchor=north,font=\scriptsize] at (2.4,3.12) {\InkLabel{\textbf{Normal} ($TT^*=T^*T$)}};
-    \node[anchor=north,font=\scriptsize,text=black!85] at (2.4,2.68) {\InkLabel{$A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$}};
+    \node[anchor=north,font=\scriptsize] at (2.4,2.68) {\InkLabel{$A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$}};
 
     \InkRegion[inkblue]{[rounded corners=6pt] (0.75,0.52) rectangle (4.05,1.88)}
     \InkStroke[inkblue,rounded corners=6pt]{(0.75,0.52) rectangle (4.05,1.88)}
@@ -476,7 +498,7 @@ Warning: $R$ and $S$ are \emph{not} obtained by taking the entrywise real and im
 \figcap{(a) Directional stretch $\|Tv\|$ and $\|T^*v\|$ on unit vectors (\hyperref[prop-98]{Prop.~98}): normal $A$ traces radius $\sqrt{2}$, while non-normal $B$ splits $\|Bv\|$ (blue) from $\|B^*v\|$ (red). (b) Nested hierarchy of operator classes on $\RR^2$.}
 \end{fig}
 
-\noindent\textbf{The question answered.} $\|Ae_1\|=\|(1,1)\|=\sqrt{2}=\|A^*e_1\|$, whereas $\|Be_1\|=1\neq \sqrt{2}=\|B^*e_1\|$. By Prop.~98, $\|Tv\|=\|T^*v\|$ holds for all $v$ precisely when $T$ is normal.
+\revisit $\|Ae_1\|=\|(1,1)\|=\sqrt{2}=\|A^*e_1\|$, whereas $\|Be_1\|=1\neq \sqrt{2}=\|B^*e_1\|$. By Prop.~98, $\|Tv\|=\|T^*v\|$ holds for all $v$ precisely when $T$ is normal.
 
 \begin{theorem*}[Prop.~99 / LADR 7.21: Null spaces, ranges, and eigenvectors of normal operators]\target{prop-99}
   Let $T\in\LL(V)$ be normal. Then:
@@ -578,7 +600,8 @@ Over $\CC$, every operator has an eigenvalue by the Fundamental Theorem of Algeb
 \begin{proof}
   \begin{steps}
     \ii $U^\perp$ is $T$-invariant: if $v\in U^\perp$ and $u\in U$, then $Tu\in U$ (invariance of $U$), so $\langle Tv,u\rangle=\langle v,Tu\rangle=0$. Because $u\in U$ is arbitrary, $Tv\in U^\perp$.
-    \ii $T|_U$ is self-adjoint: for $u,u'\in U$, $\langle T|_U u,u'\rangle=\langle Tu,u'\rangle=\langle u,Tu'\rangle=\langle u,T|_U u'\rangle$.
+    \ii $T|_U$ is self-adjoint: for $u,u'\in U$,
+    \[ \langle T|_U u,u'\rangle=\langle Tu,u'\rangle=\langle u,Tu'\rangle=\langle u,T|_U u'\rangle. \]
     \ii $T|_{U^\perp}$ is self-adjoint: by Step~1, $T|_{U^\perp}$ maps $U^\perp$ into $U^\perp$, and the same inner product identity holds for all $x,x'\in U^\perp$.
   \end{steps}
 \end{proof}
@@ -619,14 +642,17 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
   A = QDQ^{\mathsf T}, \qquad A^m = QD^m Q^{\mathsf T}\quad (m\ge1).
 \]
 
-\noindent\textbf{Recipe for orthogonal diagonalization of a real symmetric matrix $A$.}
-\begin{steps}
-  \ii Find all eigenvalues (guaranteed real) and a basis for each eigenspace.
-  \ii Apply Gram--Schmidt \ilink{T3}{(T3)} \emph{inside each eigenspace} of dimension $\ge2$ (vectors from distinct eigenspaces are automatically orthogonal by LADR~7.22).
-  \ii Place the resulting unit vectors as columns of $Q$ and matching eigenvalues on $D$; then $A=QDQ^{\mathsf T}$.
-\end{steps}
+\begin{methodbox}{How to orthogonally diagonalize a real symmetric (or complex normal) matrix $A$}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Check the hypothesis: $A^{\mathsf T}=A$ (real case), or $AA^*=A^*A$ (complex case, \ilink{prop-104}{Prop.~104}).
+  \ii Find all eigenvalues (real in the symmetric case, \ilink{prop-95}{Prop.~95}) and a basis of each eigenspace by solving $(A-\lambda I)x=0$.
+  \ii Apply Gram--Schmidt \ilink{T3}{(T3)} \emph{inside each eigenspace} of dimension $\ge2$; normalize the others. Vectors from distinct eigenspaces are automatically orthogonal (\ilink{name-ladr-7-22}{LADR~7.22}).
+  \ii Place the unit vectors as columns of $Q$ (or $U$) and the matching eigenvalues on the diagonal of $D$. Then $A=QDQ^{\mathsf T}$ (or $A=UDU^*$). Check $Aq_j=\lambda_jq_j$.
+\end{enumerate}
+\textbf{Edge cases.} A repeated eigenvalue gives an eigenspace of dimension $\ge2$ whose basis from step 2 is usually not orthogonal (next example). If $A=\lambda I$, every orthonormal basis works. In $\CC^n$ the inner product conjugates the second vector, both in Gram--Schmidt and in checking orthogonality. A real matrix that is normal but not symmetric (a rotation) has no real orthonormal eigenbasis; it is unitarily diagonalizable over $\CC$ only.
+\end{methodbox}
 
-\begin{example*}[Worked example: repeated eigenvalue in $3\times3$]
+\begin{example*}[Orthogonal diagonalization with a repeated eigenvalue]
   Consider the symmetric matrix
   \[
     A = \begin{bmatrix}2&1&1\\1&2&1\\1&1&2\end{bmatrix}.
@@ -658,7 +684,7 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 
     % Reference unit circle (dotted)
     \draw[ink guide,draw=black!50] (0,0) circle (1);
-    \node[font=\scriptsize,text=black!70,anchor=north east] at (-0.82,-0.82) {\InkLabel{$\|v\|=1$}};
+    \node[font=\scriptsize,anchor=north east] at (-0.82,-0.82) {\InkLabel{$\|v\|=1$}};
 
     % Right-angle mark between u1 and u2
     \InkStroke[black!55,line width=0.38pt,rotate=45]{(0.42,0) -- (0.42,-0.42) -- (0,-0.42)}
@@ -671,9 +697,9 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
 
     % Unit eigenvectors u1 and u2 placed directly with white InkLabel halo
     \InkStroke[->,line width=0.8pt,black]{(0,0) -- ({1/sqrt(2)},{1/sqrt(2)})}
-    \node[font=\scriptsize,above left=0pt and 1pt] at (0.68,0.68) {\InkLabel{$u_1$}};
+    \node[font=\scriptsize] at (0.46,1.30) {\InkLabel{$u_1$}};
     \InkStroke[->,line width=0.8pt,black]{(0,0) -- ({1/sqrt(2)},{-1/sqrt(2)})}
-    \node[font=\scriptsize,below left=0pt and 1pt] at (0.68,-0.68) {\InkLabel{$u_2$}};
+    \node[font=\scriptsize] at (0.46,-1.30) {\InkLabel{$u_2$}};
 
     \node[font=\footnotesize,anchor=north] at (0,-3.95) {(a)};
   \end{scope}
@@ -700,7 +726,7 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
   \node[font=\scriptsize,above right=2pt] at (0,1.22,0) {\InkLabel{$e_3$}};
 
   % Plane label tucked cleanly in front corner
-  \node[font=\scriptsize,text=black!75] at (1.35,1.35,0) {\InkLabel{$E(1,A)$}};
+  \node[font=\scriptsize] at (1.35,1.35,0) {\InkLabel{$E(1,A)$}};
 
   % Normal eigenvector e1 in E(4,A) (single restrained accent)
   \InkStroke[->,line width=.65pt,figblue]{(0,0,0) -- (0,0,1.42)}
@@ -712,12 +738,16 @@ Because $T$ is self-adjoint, \emph{every} $T$-invariant subspace has an orthogon
     \node[font=\footnotesize,anchor=north] at (0,-1.55) {(b)};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ maps the unit circle to an ellipse with orthogonal semi-axes $4u_1$ and $2u_2$. (b) In $\RR^3$, the $3\times 3$ eigenspaces $E(1,A)=\spn(e_2,e_3)$ and $E(4,A)=\spn(e_1)$ are orthogonal complements (axes shown along $e_2,e_3,e_1$).}
+\figcap{(a) $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ maps the unit circle to an ellipse with orthogonal semi-axes $4u_1$ and $2u_2$. (b) For the $3\times3$ matrix of the example above, the eigenspaces $E(1,A)=\spn(e_2,e_3)$ (the plane) and $E(4,A)=\spn(e_1)$ (the normal line) are orthogonal complements.}
 \end{fig}
 
-\noindent\textbf{The question answered.} Yes: $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ is symmetric, with orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ ($\lambda=4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ ($\lambda=2$). Writing $v=au_1+bu_2$ on the unit circle ($a^2+b^2=1$) gives $Av=4au_1+2bu_2$, which traces the ellipse with perpendicular semi-axes $4$ and $2$.
+\revisit Yes: $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ is symmetric, with orthonormal eigenvectors $u_1=\frac{1}{\sqrt{2}}(1,1)$ ($\lambda=4$) and $u_2=\frac{1}{\sqrt{2}}(1,-1)$ ($\lambda=2$). Writing $v=au_1+bu_2$ on the unit circle ($a^2+b^2=1$) gives $Av=4au_1+2bu_2$, which traces the ellipse with perpendicular semi-axes $4$ and $2$.
 
-\noindent\textbf{Where this is used (Notes Ch.~20).} For a reversible finite Markov chain with a positive stationary distribution, the transition operator acting on functions is self-adjoint in the stationary-weighted inner product. Its eigenvalues are real. When the chain is irreducible and aperiodic, the nonconstant eigenmodes decay at rates determined by $|\lambda_j|$; the absolute spectral gap is $1-\max_{j\ge2}|\lambda_j|$. Adjacency matrices of undirected graphs and Hessian matrices of smooth functions are symmetric, explaining why their principal directions are mutually orthogonal.
+\begin{example*}[A reversible Markov chain is self-adjoint in a weighted inner product]
+  Let $P=(P_{ij})$ be the transition matrix of a Markov chain on states $1,\dots,n$ with stationary weights $\pi_i>0$ satisfying $\pi_iP_{ij}=\pi_jP_{ji}$ for all $i,j$ (reversibility). On $\RR^n$ use $\langle f,g\rangle_\pi=\sum_i\pi_if_ig_i$, an inner product since all $\pi_i>0$. Then
+  \[ \langle Pf,g\rangle_\pi=\sum_{i,j}\pi_iP_{ij}f_jg_i=\sum_{i,j}\pi_jP_{ji}f_jg_i=\langle f,Pg\rangle_\pi, \]
+  so $P$ is self-adjoint for $\langle\cdot,\cdot\rangle_\pi$. By \ilink{prop-102}{Prop.~102}, its eigenvalues are real and $\RR^n$ has a $\pi$-orthonormal basis of eigenvectors of $P$, so powers $P^k$ act on each eigenvector as multiplication by $\lambda_j^k$.
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{$2\times2$ symmetric:} Once one eigenvector $(a,b)$ is found for distinct eigenvalues, the second is automatically $(-b,a)$ before normalizing (LADR~7.22). (If eigenvalues coincide, $A=\lambda I$.)
@@ -758,7 +788,7 @@ Throughout this subsection $V\neq\{0\}$ is a \textbf{complex} inner product spac
 \begin{ideabox}
   In an orthonormal basis, column $k$ of a matrix gives $Te_k$, while row $k$ gives the coordinates of $T^*e_k$ after conjugation. Schur's theorem makes the first column especially simple. Comparing its norm with the first row uses normality to eliminate the entries above the diagonal, one row at a time.
 \end{ideabox}
-\begin{proof}[Principal proof (Schur; Proof 5 in the notes)]
+\begin{proof}[Principal proof (Schur)]
   \begin{steps}
     \ii Choose an orthonormal basis $e_1,\dots,e_n$ where $\MM(T)=(a_{ij})$ is upper-triangular (Schur's theorem). By \ilink{T3}{(T3)} and Prop.~93, $\|Te_k\|^2=\sum_{i=1}^n |a_{ik}|^2$ (column $k$) and $\|T^*e_k\|^2=\sum_{j=1}^n |a_{kj}|^2$ (row $k$).
     \ii For $k=1$, $a_{i1}=0$ for $i>1$, so Prop.~98 ($\|Te_1\|^2=\|T^*e_1\|^2$) forces $|a_{11}|^2 = \sum_{j=1}^n |a_{1j}|^2$, hence $a_{12}=\dots=a_{1n}=0$.
@@ -781,18 +811,18 @@ Throughout this subsection $V\neq\{0\}$ is a \textbf{complex} inner product spac
 
 \noindent\textbf{Matrix form ($A=UDU^*$).} A complex square matrix $U$ with orthonormal columns satisfies $U^*U=I$ and $U^{-1}=U^*$; such a matrix is called \textbf{unitary}. By Prop.~104, a complex matrix $A$ is normal $\iff A=UDU^*$ with $U$ unitary and $D$ diagonal.
 
-\begin{example*}[Worked example: the matrix of the question]
+\begin{example*}[Unitary diagonalization of a normal matrix]
   We saw $A=\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ satisfies $AA^*=2I=A^*A$. By \ilink{T12}{(T12)}, $\lambda^2-2\lambda+2=0$ gives eigenvalues $1\pm i$.
   For $\lambda=1+i$, $A-(1+i)I=\begin{psmallmatrix}-i&-1\\1&-i\end{psmallmatrix}$ yields eigenvector $(1,-i)$.
   For $\lambda=1-i$, $A-(1-i)I=\begin{psmallmatrix}i&-1\\1&i\end{psmallmatrix}$ yields eigenvector $(1,i)$.
-  Notice $\langle(1,-i),(1,i)\rangle = 1\cdot 1 + (-i)\cdot\overline{i} = 1+(-i)(-i) = 0$ (orthogonal by LADR~7.22). Normalizing by $\sqrt{2}$ gives $A=UDU^*$:
+  Notice $\langle(1,-i),(1,i)\rangle = 1+(-i)\overline{i}$, and $(-i)(-i)=-1$, so the inner product is $0$ (orthogonal by \ilink{name-ladr-7-22}{LADR~7.22}). Normalizing by $\sqrt{2}$ gives $A=UDU^*$:
   \[
     U = \frac{1}{\sqrt{2}}\begin{bmatrix}1&1\\-i&i\end{bmatrix}, \qquad
     D = \begin{bmatrix}1+i&0\\0&1-i\end{bmatrix}.
   \]
 \end{example*}
 
-\noindent\textbf{The question answered.} Yes: $A$ is normal, so Prop.~104 guarantees the orthonormal eigenbasis $\frac{1}{\sqrt{2}}(1,-i)$, $\frac{1}{\sqrt{2}}(1,i)$ of $\CC^2$. (Over $\RR$, $A$ has no real eigenvalue and hence no real eigenbasis.)
+\revisit Yes: $A$ is normal, so Prop.~104 guarantees the orthonormal eigenbasis $\frac{1}{\sqrt{2}}(1,-i)$, $\frac{1}{\sqrt{2}}(1,i)$ of $\CC^2$. (Over $\RR$, $A$ has no real eigenvalue and hence no real eigenbasis.)
 
 \begin{shortcuts}
   \ii \textbf{Unitary diagonalizability test over $\CC$:} Check $AA^*=A^*A$; no characteristic polynomial is needed (Prop.~104).
@@ -808,10 +838,10 @@ Throughout this subsection $V\neq\{0\}$ is a \textbf{complex} inner product spac
 \end{trapbox}
 
 \subsection*{Alternative proofs of Proposition 103}
-The principal proof uses Schur's theorem. The following four arguments retain the other proofs from the notes: they connect normality to minimal polynomials, commuting self-adjoint operators, invariant orthogonal complements, and Jordan chains.
+The principal proof uses Schur's theorem. Each of the following four proofs shows a different connection: normality and minimal polynomials, commuting self-adjoint operators, invariant orthogonal complements, and Jordan chains.
 
 \begin{ideabox}
-  This argument uses the minimal-polynomial criterion for diagonalizability. To apply the norm identity, seek a nonzero polynomial $S=q(T)$ with $S^2=0$. Removing one factor from a repeated root of $m_T$ produces the candidate.
+  This argument uses the criterion of \ilink{T8}{(T8)}: $T$ is diagonalizable iff $m_T$ has no repeated root. To use $\|Sv\|=\|S^*v\|$ for normal $S$ (\ilink{prop-98}{Prop.~98}), seek a nonzero polynomial $S=q(T)$ with $S^2=0$. Removing one factor from a repeated root of $m_T$ produces the candidate.
 \end{ideabox}
 \begin{proof}[Proof 1 (Minimal polynomial)]
   \begin{steps}
@@ -891,7 +921,7 @@ The principal proof uses Schur's theorem. The following four arguments retain th
 \end{prob}
 
 \begin{prob}\target{prob-HW11-P6}
-  \textbf{HW11 P6.}\ For the matrix $A=\begin{bmatrix}2&1\\1&2\end{bmatrix}$:
+  \textbf{HW11 P6.}\ For the matrix $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$:
   \begin{enumerate}[(a)]
     \ii Find an orthonormal basis of $\RR^2$ of eigenvectors of $A$.
     \ii Find an orthogonal $Q$ and a diagonal $D$ with $A=QDQ^{\mathsf T}$.
@@ -912,7 +942,7 @@ The principal proof uses Schur's theorem. The following four arguments retain th
 \end{prob}
 
 \begin{prob}\target{prob-O3}
-  \textbf{O3 (a complex symmetric matrix).}\ For $M=\begin{bmatrix}1&i\\i&1\end{bmatrix}$ on $\CC^2$: is $M$ self-adjoint? normal? Find an orthonormal basis of eigenvectors, if there is one.
+  \textbf{O3 (a complex symmetric matrix).}\ For $M=\begin{psmallmatrix}1&i\\i&1\end{psmallmatrix}$ on $\CC^2$: is $M$ self-adjoint? normal? Find an orthonormal basis of eigenvectors, if there is one.
 \end{prob}
 
 \begin{prob}\target{prob-O4}
@@ -930,7 +960,7 @@ The principal proof uses Schur's theorem. The following four arguments retain th
 \subsection*{Independent check}
 For each problem, choose a method and state why it applies before calculating.
 \begin{prob}\target{prob-check-1}
-  \textbf{Check 1.}\   On $\RR^2$ with $\langle x,y\rangle=x_1y_1+3x_2y_2$, let $T(x_1,x_2)=(0,x_1)$. Find $T^*$ and decide whether $T$ is normal for this inner product. Verify your adjoint using the defining identity.
+  \textbf{Check 1.}\   On $\RR^2$ with $\langle x,y\rangle=x_1y_1+3x_2y_2$, let $T(x_1,x_2)=(0,x_1)$. Find $T^*$ and decide whether $T$ is normal for this inner product. Verify your adjoint using the identity $\langle Tv,w\rangle=\langle v,T^*w\rangle$.
 \end{prob}
 \begin{prob}\target{prob-check-2}
   \textbf{Check 2.}\   A student argues that $A=\begin{psmallmatrix}1&2\\0&3\end{psmallmatrix}$ has two distinct eigenvalues, so it has an orthonormal eigenbasis. Identify the unsupported step and decide whether the conclusion holds for this matrix.

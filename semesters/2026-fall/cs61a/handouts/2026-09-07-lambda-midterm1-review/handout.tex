@@ -1,6 +1,9 @@
 \documentclass[10pt]{scrartcl}
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \title{CS 61A --- Week 3}
 \subtitle{Lambda expressions, currying, functional abstraction; Midterm 1 review (Lectures 6--8, Composing Programs 1.6)}
 \author{}\date{}\ihead{}
@@ -9,11 +12,11 @@
 
 \section{Facts used from Weeks 1--2}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii Call expression: evaluate operator, then operands left to right, then apply. \cd{print} returns \cd{None}.
-  \ii \cd{and}/\cd{or}: the value is the last operand evaluated; \cd{and} stops at the first false value, \cd{or} at the first true value. False values: \cd{False}, \cd{0}, \cd{None}, \cd{''}.
-  \ii A function's parent is the frame in which it was defined. A new frame's parent is the parent of the function called. Lookup: local frame, then parent, \dots, then global.
-  \ii A name in a function body is looked up when the body runs, not when the function is defined.
-  \ii \cd{summation(n, term)} adds \cd{term(1)}, \dots, \cd{term(n)}. Digit loop: \cd{while n > 0}, \cd{n \% 10}, \cd{n // 10}.
+  \ii \target{W1}Call expression: evaluate operator, then operands left to right, then apply. \cd{print} returns \cd{None}. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W2}\cd{and}/\cd{or}: the value is the last operand evaluated; \cd{and} stops at the first false value, \cd{or} at the first true value. False values: \cd{False}, \cd{0}, \cd{None}, \cd{''}. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W3}A function's parent is the frame in which it was defined. A new frame's parent is the parent of the function called. Lookup: local frame, then parent, \dots, then global. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W4}A name in a function body is looked up when the body runs, not when the function is defined. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W5}\cd{summation(n, term)} adds \cd{term(1)}, \dots, \cd{term(n)}. Digit loop: \cd{while n > 0}, \cd{n \% 10}, \cd{n // 10}. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
 \end{enumerate}
 
 \section{This week}
@@ -33,13 +36,33 @@ summation(5, lambda x: pow(1/2, x))
   \ii The body is not evaluated when the lambda expression is evaluated; only when the resulting function is called. (Same as \cd{def}.)
   \ii Several parameters: \cd{lambda x, y: x + y}. None: \cd{lambda: 42}.
 \end{itemize}
+\Needspace{6\baselineskip}
 \textbf{Two differences from \cd{def}:}
 \begin{enumerate}[(1)]
   \ii A \cd{def} binds a name; a lambda expression binds nothing by itself.
   \ii A function made by \cd{def} knows its name; a lambda function is shown as \cd{func $\lambda$(x) <line N> [parent=...]} in diagrams, and its frames are labelled \cd{$\lambda$ <line N>}.
 \end{enumerate}
+\revisit No. The lambda expression \cd{lambda x: pow(1/2, x)} creates the term function in place, as an operand of \cd{summation}, without a \cd{def} and without a name. \cd{summation(5, lambda x: pow(1/2, x))} is $\frac12+\frac14+\frac18+\frac1{16}+\frac1{32} = 0.96875$.
 
-\Needspace{8\baselineskip}\textbf{Reading nested lambdas.} \cd{lambda f: lambda x: f(f(x))} is a function of \cd{f} whose body is another lambda expression: it \emph{returns a function} of \cd{x}. The lecture's example:
+\begin{howto}{How to rewrite between \cd{lambda} and \cd{def}}
+\begin{steps}
+  \ii \cd{name = lambda} \emph{params}\cd{:} \emph{expr} becomes \cd{def name(}\emph{params}\cd{):} followed by the body \cd{return} \emph{expr}. Pick any name if the lambda had none.
+  \ii A lambda whose body is another lambda becomes a \cd{def} whose body is a nested \cd{def} followed by \cd{return} of the nested function's name. Work from the outermost lambda inwards.
+  \ii In the other direction, a \cd{def} can become a lambda only if its body is a single \cd{return} \emph{expr} (or a nested \cd{def} returned at once, which becomes a nested lambda).
+  \ii Check by calling both versions on the same arguments.
+\end{steps}
+\end{howto}
+
+\begin{howto}{How to evaluate a chain of calls \cd{f(a)(b)(c)}}
+\begin{steps}
+  \ii Evaluate the leftmost call \cd{f(a)} completely. Its value must be a function; write it down as a lambda or a named function with the values it remembers.
+  \ii Apply that function to \cd{b}. Its value is again a function (or the final value).
+  \ii Continue with each pair of parentheses, left to right. Each pair is one call.
+\end{steps}
+\end{howto}
+
+\begin{example*}[A nested lambda called twice (from lecture)]
+\cd{lambda f: lambda x: f(f(x))} is a function of \cd{f} whose body is another lambda expression, so it \emph{returns a function} of \cd{x}.
 \begin{py}
 >>> (lambda f: lambda x: f(f(x)))(lambda y: y * y)(3)
 81
@@ -49,12 +72,27 @@ summation(5, lambda x: pow(1/2, x))
   \ii Calling the first lambda with \cd{square} returns the function \cd{lambda x: square(square(x))}.
   \ii Calling that with \cd{3} gives \cd{square(9)}, which is \cd{81}.
 \end{steps}
+\end{example*}
+
+\begin{example*}[Rewriting a nested lambda with \cd{def}]
+\cd{make\_scaler = lambda k: lambda x: k * x} has two lambdas, so it becomes two \cd{def} statements:
+\begin{py}
+def make_scaler(k):
+    def scale(x):
+        return k * x
+    return scale
+\end{py}
+Both versions give \cd{make\_scaler(3)(5) = 15}. The inner function finds \cd{k} in its parent frame, the frame of the call \cd{make\_scaler(3)}.
+\end{example*}
 
 \subsection{Environments with lambda (Lecture 6)}
 \begin{qbox}
   A lambda function, like any function, may use names that are not its parameters. Which frame supplies them?
 \end{qbox}
-The same rule as before (W3): the parent of a lambda function is the frame in which the lambda expression was \emph{evaluated}. The lecture's demonstration uses one name, \cd{common\_ratio}, bound in four places:
+The same rule as before (\ilink{W3}{W3}): the parent of a lambda function is the frame in which the lambda expression was \emph{evaluated}.
+
+\begin{example*}[One name, \cd{common\_ratio}, bound in four places (from lecture)]
+The lecture's demonstration binds \cd{common\_ratio} in the global frame (three times), as a parameter, and as a local name of \cd{summation}.
 \begin{py}
 common_ratio = 1/2
 def get_term(common_ratio):
@@ -79,11 +117,16 @@ print(summation(5, term))
   \ii When \cd{term(k)} runs, its frame's parent is \cd{f1}. Lookup of \cd{common\_ratio} goes: \cd{term}'s frame (absent), then \cd{f1}: \cd{1/3}. The frame of \cd{summation}, where the call happens, is not in this environment at all.
   \ii Result: $\frac13+\frac19+\frac1{27}+\frac1{81}+\frac1{243}\approx0.4979$.
 \end{steps}
+\end{example*}
 \begin{ideabox}
 The caller's frame is never consulted. An environment is the chain \emph{local frame $\to$ parent $\to$ parent's parent $\to\dots\to$ global}, and parents are fixed where functions are defined. If you find yourself looking in the frame of the function that made the call, you have left the chain.
 \end{ideabox}
+\revisit The frame in which the lambda expression (or \cd{def}) was evaluated, which becomes the parent of every frame of that function. Names not found in the function's own frame are looked up there, then in that frame's parent, and so on to the global frame. The frame of the caller is not searched: in the example, \cd{term} uses the \cd{1/3} of \cd{f1}, not the \cd{1/4} of \cd{summation} that called it.
 
 \subsection{Currying (Lecture 6)}
+\begin{qbox}
+  \cd{summation} needs a one-argument function, but \cd{pow} takes two. How do we get the function $k\mapsto 3^k$ from \cd{pow} without writing a new function body?
+\end{qbox}
 \vocab{Currying} converts a function of several arguments into a chain of functions that each take one argument: \cd{pow(1/2, 5)} becomes \cd{curry(pow)(1/2)(5)}.
 \begin{py}
 def curry(f):
@@ -95,36 +138,81 @@ def curry(f):
 \end{py}
 Equivalently \cd{curry = lambda f: lambda x: lambda y: f(x, y)}.
 \begin{ideabox}
-\cd{summation} needs a \emph{one}-argument function, and \cd{pow} takes two. Supplying the first argument now and the second later bridges the gap: \cd{curry(pow)(3)} is the one-argument function $k\mapsto3^k$, so \cd{summation(5, curry(pow)(3))} is $3+9+27+81+243=363$.
+Supplying the first argument now and the second later turns a two-argument function into a one-argument function: \cd{curry(pow)(3)} is the one-argument function $k\mapsto3^k$.
 
 How to read \cd{curry(pow)(3)(k)}: three calls, left to right. \cd{curry(pow)} returns \cd{g} (remembering \cd{f = pow}). \cd{g(3)} returns \cd{h} (remembering \cd{x = 3}). \cd{h(k)} returns \cd{pow(3, k)}.
 \end{ideabox}
-\textbf{Lecture 8's exercise: \cd{reverse}.} \cd{reverse = lambda f: lambda x, y: f(y, x)} swaps the argument order, so \cd{reverse(pow)(2, 3)} is \cd{pow(3, 2)}. Define \cd{square} and \cd{cube} in one line each without \cd{lambda} or \cd{**}:
+\begin{howto}{How to fix one argument of a two-argument function}
+\begin{steps}
+  \ii To fix the \emph{first} argument to \cd{a}: \cd{curry(f)(a)}, or \cd{lambda y: f(a, y)}.
+  \ii To fix the \emph{second} argument to \cd{b}: swap the argument order first, \cd{curry(reverse(f))(b)} with \cd{reverse} below, or write \cd{lambda x: f(x, b)}.
+  \ii After currying, supply the arguments one call at a time: \cd{curry(f)(a)(b)}, never \cd{curry(f)(a, b)}.
+\end{steps}
+\end{howto}
+\revisit \cd{curry(pow)(3)} is the function $k\mapsto$ \cd{pow(3, k)}, built from \cd{pow} by fixing its first argument. So \cd{summation(5, curry(pow)(3))} is $3+9+27+81+243=363$.
+
+\begin{example*}[Lecture 8's exercise: \cd{reverse}, and fixing the second argument]
+\cd{reverse = lambda f: lambda x, y: f(y, x)} swaps the argument order, so \cd{reverse(pow)(2, 3)} is \cd{pow(3, 2)}. Define \cd{square} and \cd{cube} in one line each without \cd{lambda} or \cd{**}.
 \begin{steps}
   \ii We want a one-argument function $x\mapsto$ \cd{pow(x, 2)}. The argument we want to fix is the \emph{second} one of \cd{pow}.
   \ii \cd{curry} fixes the \emph{first} argument. So first swap the order: \cd{reverse(pow)} takes (exponent, base).
   \ii \cd{square = curry(reverse(pow))(2)} and \cd{cube = curry(reverse(pow))(3)}. Check: \cd{square(3)} is \cd{reverse(pow)(2, 3)}, which is \cd{pow(3, 2) = 9}.
 \end{steps}
+\end{example*}
 
 \subsection{Zero-argument functions (Lecture 6)}
+\begin{qbox}
+  In the Hog project a die must give a possibly different number each time it is used. What kind of value can do that, and what is the difference between passing \cd{dice} and passing \cd{dice()}?
+\end{qbox}
 \begin{itemize}
   \ii A function may take no arguments: \cd{def f(): ...} or \cd{lambda: ...}; it is called with \cd{f()}.
   \ii Use: to \emph{delay} a computation, or to represent something that gives a possibly different result at every call. In the Hog project a die is a zero-argument function; calling it rolls it.
   \ii \cd{f} and \cd{f()} are different things: the first passes the function along, the second runs it now. Passing \cd{dice} lets the receiver roll as many times as it wants; passing \cd{dice()} passes one number.
 \end{itemize}
+\begin{example*}[A die as a zero-argument function]
+\begin{py}
+from random import randint
+six_sided = lambda: randint(1, 6)    # each call returns a number from 1 to 6
+
+def roll_twice(dice):
+    return dice() + dice()
+\end{py}
+\cd{roll\_twice(six\_sided)} rolls the die twice and returns a sum from \cd{2} to \cd{12}. \cd{roll\_twice(six\_sided())} first rolls once (say \cd{4}) and passes the number \cd{4}; then \cd{dice()} tries to call \cd{4}, which is an error (\cd{'int' object is not callable}).
+\end{example*}
+\revisit A zero-argument function: each call \cd{dice()} runs its body again and can return a new number. Passing \cd{dice} hands over the function, so the receiver decides how many times to roll; passing \cd{dice()} rolls once and hands over only the resulting number.
 
 \subsection{Conditional expressions and \cd{bool} (Lecture 7)}
+\begin{qbox}
+  A lambda body must be a single expression, so it cannot contain an \cd{if} statement. How can a lambda return \cd{x} for $x\ge0$ and \cd{-x} otherwise?
+\end{qbox}
+\begin{howto}{How to evaluate \cd{<a> if <condition> else <b>}}
+\begin{steps}
+  \ii Evaluate \cd{<condition>} first (it is written in the middle).
+  \ii If it is a true value, evaluate \cd{<a>}; its value is the value of the whole expression.
+  \ii Otherwise evaluate \cd{<b>}; its value is the value of the whole expression. Only one of \cd{<a>}, \cd{<b>} is evaluated.
+\end{steps}
+\end{howto}
 \begin{itemize}
-  \ii \cd{<a> if <condition> else <b>}: evaluate the condition; if true the value is that of \cd{<a>}, otherwise that of \cd{<b>}. Only one of \cd{<a>}, \cd{<b>} is evaluated. It is an expression, so it can appear inside a lambda body.
+  \ii A conditional expression is an expression, so it can appear inside a lambda body or as an operand.
+  \ii Only the chosen branch is evaluated: \cd{1 if True else 1 / 0} is \cd{1}, with no error.
   \ii \cd{and}/\cd{or} always give the value of the left or the right expression: \cd{(3 and 4) - 5} is \cd{4 - 5 = -1} (Fall 2022 Midterm 1, Q1(a)).
   \ii \cd{bool(x)} is \cd{True} for a true value and \cd{False} for a false value: \cd{bool(0)}, \cd{bool(0.0)}, \cd{bool('')}, \cd{bool(False)} are \cd{False}; \cd{bool(-1)}, \cd{bool(' ')} (a space is a nonempty string) are \cd{True}; \cd{bool(print('fool'))} displays \cd{fool} and is \cd{False}.
 \end{itemize}
+\begin{example*}[Turning an \cd{if} statement into a conditional expression inside a lambda]
+\begin{py}
+def label(x):                      label = lambda x: 'nonneg' if x >= 0 else 'neg'
+    if x >= 0:
+        return 'nonneg'
+    return 'neg'
+\end{py}
+The value returned when the test is true goes first, the test goes in the middle, and the value returned otherwise goes after \cd{else}. Both versions give \cd{label(0) = 'nonneg'} and \cd{label(-2) = 'neg'}.
+\end{example*}
+\revisit \cd{lambda x: x if x >= 0 else -x}. The conditional expression evaluates \cd{x >= 0} and then only the chosen branch, so the lambda returns \cd{3} for \cd{3}, \cd{0} for \cd{0}, and \cd{5} for \cd{-5}.
 
 \subsection{Environment diagram review (Lecture 7)}
-\textbf{There are exactly three ways a name gets bound:} an assignment statement (current frame); a \cd{def} statement (current frame); a call, which binds the parameters in the new local frame. (An \cd{import} also binds names in the current frame.)
-
-\Needspace{20\baselineskip}
-\textbf{Worked exam question (Fall 2022 Midterm 1, Q2, from Lecture 7).}
+\begin{qbox}
+  In the Fall 2022 Midterm 1 program below, a loop calls a function that calls \cd{max} on every pass, and the second pass fails with \cd{'int' object is not callable}. Which binding causes this, and how does an environment diagram show it?
+\end{qbox}
 \begin{py}
 def f(x):
     y = max(x * x, 3 * x)
@@ -140,7 +228,24 @@ while y < 10:
         max = y
     y = y + 1
 \end{py}
-This ends with the error \cd{'int' object is not callable}, for the following reason.
+\Needspace{6\baselineskip}
+\textbf{There are exactly three ways a name gets bound:}
+\begin{itemize}
+  \ii an assignment statement binds in the current frame;
+  \ii a \cd{def} statement binds in the current frame (an \cd{import} also binds names in the current frame);
+  \ii a call binds the parameters in the new local frame.
+\end{itemize}
+\begin{howto}{How to draw lambda functions and rebound names in an environment diagram}
+\begin{steps}
+  \ii When a lambda expression is evaluated, draw a function value \cd{func $\lambda$(}\emph{params}\cd{) <line N> [parent=}\emph{current frame}\cd{]}. Its parent is the frame in which the lambda expression is evaluated, not the frame where it is later called.
+  \ii A call of a lambda function opens a frame labelled \cd{$\lambda$ <line N>} with that parent.
+  \ii An assignment to a built-in name (\cd{max = y}) is an ordinary binding in the current frame. From then on, lookup of that name from any frame whose environment reaches this frame finds the new value before the built-in one.
+  \ii For every name in a body, follow the parents from the current frame and stop at the first frame that binds it.
+\end{steps}
+\end{howto}
+
+\begin{example*}[Fall 2022 Midterm 1, Q2, from Lecture 7: a rebound built-in name]
+Trace the program in the question until it fails.
 \begin{steps}
   \ii First pass, global \cd{y} is \cd{1}. \cd{f(1)}: frame \cd{f1}, \cd{x} is \cd{1}; \cd{y} in \cd{f1} is \cd{max(1, 3) = 3}; \cd{zero} has parent \cd{f1}; returns \cd{zero}.
   \ii The lambda expression is evaluated in the global frame, so its parent is global.
@@ -148,10 +253,15 @@ This ends with the error \cd{'int' object is not callable}, for the following re
   \ii \cd{3} is a true value, so \cd{max = y} runs in the global frame: \textbf{the global name \cd{max} is now the integer \cd{1}}.
   \ii Second pass, \cd{y} is \cd{2}: \cd{f(2)} evaluates \cd{max(x * x, 3 * x)}. \cd{max} is not in the local frame; it is found in the global frame, where it is \cd{1}. Calling \cd{1} is the error.
 \end{steps}
-The built-in \cd{max} still exists, but the global binding is found first. Three different \cd{y}'s and a rebinding of a built-in name: the diagram keeps them apart.
+The built-in \cd{max} still exists, but the global binding is found first. The diagram keeps apart the two bindings of \cd{y} (global and \cd{f1}), shows that the lambda reads the global one, and records the rebinding of the built-in name.
+\end{example*}
+\revisit The binding \cd{max = y} in the global frame, made on the first pass, causes the error. In the diagram it appears as \cd{max} bound to \cd{1} in the global frame. On the second pass, the body of \cd{f} looks up \cd{max}: it is not in \cd{f}'s local frame, so lookup continues to the global frame, finds the integer \cd{1}, and calling \cd{1} fails.
 
 \subsection{Writing functions on an exam (Lectures 7--8)}
-\method{The lectures' procedure for a fill-in-the-blank implementation question.}
+\begin{qbox}
+  An exam question gives a function template with blanks, a description and a few doctests. How do we fill in the blanks reliably under time pressure?
+\end{qbox}
+\begin{howto}{How to answer a fill-in-the-blank implementation question (the lectures' procedure)}
 \begin{steps}
   \ii Read the description. Verify the doctest examples by hand and pick one simple example to work with.
   \ii Describe in plain English a process that computes the output from the input in simple steps.
@@ -159,8 +269,10 @@ The built-in \cd{max} still exists, but the global binding is found first. Three
   \ii Write the code, checking whether the loop can return early and what type of value must be returned.
   \ii Verify that the code returns the expected value by tracing the remaining examples.
 \end{steps}
-\Needspace{20\baselineskip}
-\textbf{Worked: \cd{nearest\_prime} (variant of Fall 2022 Midterm 1 Q3(b), Lecture 7).} Return the prime nearest to \cd{n} (\cd{n > 5}); in a tie the larger one. \cd{is\_prime} is given.
+\end{howto}
+
+\Needspace{16\baselineskip}
+\textbf{A template to fill in: \cd{nearest\_prime} (variant of Fall 2022 Midterm 1 Q3(b), Lecture 7).} Return the prime nearest to \cd{n} (\cd{n > 5}); in a tie the larger one. \cd{is\_prime} is given.
 \begin{py}
 def nearest_prime(n):
     k = 0
@@ -172,6 +284,8 @@ def nearest_prime(n):
         else:
             ______
 \end{py}
+\begin{example*}[Filling in \cd{nearest\_prime}: an offset that alternates sides]
+Apply the procedure to the template above.
 \begin{steps}
   \ii Example \cd{n = 21}: candidates in order of distance, larger first on ties: 21, 22, 20, 23. \cd{23} is prime.
   \ii So \cd{k} is an offset taking the values \cd{0, 1, -1, 2, -2, 3, \dots}, and the candidate is \cd{n + k}. First blanks: \cd{if is\_prime(n + k): return n + k}.
@@ -185,7 +299,10 @@ def nearest_prime(n):
         else:
             k = -k + 1
 \end{py}
-\textbf{Worked: \cd{all\_digits} and \cd{prefix\_digits} (Spring 2025 Midterm 1 Q3(a,b), Lecture 8).} \cd{all\_digits(n, cond)} returns whether \cd{cond(d)} is true for every digit \cd{d} of \cd{n}.
+\end{example*}
+
+\begin{example*}[\cd{all\_digits} (Spring 2025 Midterm 1 Q3(a), Lecture 8): returning early from a ``for every'' loop]
+\cd{all\_digits(n, cond)} returns whether \cd{cond(d)} is true for every digit \cd{d} of \cd{n}.
 \begin{py}
 def all_digits(n, cond):
     while n:
@@ -194,10 +311,11 @@ def all_digits(n, cond):
         n = n // 10
     return True
 \end{py}
-\begin{itemize}
-  \ii Early return: one failing digit settles the answer immediately, so \cd{return False} goes inside the loop, while \cd{True} can only be returned after the loop.
-\end{itemize}
-A \emph{prefix} of \cd{n} is \cd{n // pow(10, p)}: 3456 has prefixes 3456, 345, 34, 3, 0. \cd{prefix\_digits(n, cond)} returns the largest prefix all of whose digits satisfy \cd{cond}. Given the helper
+One failing digit settles the answer immediately, so \cd{return False} goes inside the loop, while \cd{True} can only be returned after the loop. Edge input: for \cd{n = 0} the loop runs zero times and the result is \cd{True}, so this version treats \cd{0} as having no digits.
+\end{example*}
+
+\begin{example*}[\cd{prefix\_digits} (Spring 2025 Midterm 1 Q3(b), Lecture 8): a lambda that adapts a function to a required shape]
+A \emph{prefix} of \cd{n} is \cd{n // pow(10, p)}: 3456 has prefixes 3456, 345, 34, 3, 0. \cd{prefix\_digits(n, cond)} returns the largest prefix all of whose digits satisfy \cd{cond}. The helper \cd{process} is given:
 \begin{py}
 def process(n, check):
     while n:
@@ -209,30 +327,33 @@ def process(n, check):
 \begin{steps}
   \ii \cd{process} tries \cd{n}, then \cd{n // 10}, \dots\ (the prefixes, largest first) and returns the first one for which \cd{check} is true.
   \ii So \cd{check} must take a whole prefix \cd{k} and say whether all of its digits satisfy \cd{cond}. That is \cd{all\_digits(k, cond)}.
-  \ii \cd{return process(n, lambda k: all\_digits(k, cond))}. The lambda adapts a two-argument function to the one-argument shape \cd{process} expects, and it finds \cd{cond} in its parent frame.
+  \ii \cd{return process(n, lambda k: all\_digits(k, cond))}. The lambda turns the two-argument function \cd{all\_digits} into the one-argument function that \cd{process} expects, and it finds \cd{cond} in its parent frame.
 \end{steps}
+If no nonzero prefix qualifies, \cd{process} returns \cd{0}.
+\end{example*}
+\revisit Follow the lectures' procedure in order: check the doctests by hand, describe a process in words, annotate the template's names with their values for one example, write the code (deciding where an early \cd{return} goes and what type is returned), and trace the remaining doctests. In \cd{nearest\_prime}, annotating \cd{k} as ``the offset of the current candidate'' for \cd{n = 21} is what determines all four blanks.
 
 \begin{shortcuts}
   \ii \textbf{Lambda}: no name, no \cd{return}, one expression. Rewrite it as a \cd{def} in the margin if the nesting is confusing.
-  \ii \textbf{Count the arrows of calls}: in \cd{f(a)(b)(c)} each pair of parentheses is one call, applied left to right to the result of the previous one.
+  \ii \textbf{Count the calls}: in \cd{f(a)(b)(c)} each pair of parentheses is one call, applied left to right to the result of the previous one.
   \ii \textbf{Adapting a function to a required shape} is the commonest blank: \cd{lambda k: g(k, extra)} or \cd{lambda k: term(2 * k - 1)}.
   \ii \textbf{Frame lookup order}: for any name in a body, check the local frame, then the frame where the function was defined, and so on. Never the caller's frame.
   \ii \textbf{Early return}: ``for every'' questions return \cd{False} inside the loop and \cd{True} after it; ``find the first'' questions return the value inside the loop.
   \ii \textbf{\cd{while True}} with a \cd{return} inside: use it when the stopping point is discovered in the middle of the body.
-  \ii \textbf{Rebinding a built-in} (\cd{max = y}, \cd{print = ...}) is a classic exam device: track it like any other name.
+  \ii \textbf{Rebinding a built-in} (\cd{max = y}, \cd{print = ...}) is a common exam device: track it like any other name.
   \ii \textbf{Running maximum without \cd{if}}: \cd{largest = max(largest, value)}.
 \end{shortcuts}
 \begin{trapbox}
   \ii \cd{lambda x: return x} is a syntax error.
   \ii \cd{f = lambda: 5} then \cd{f} is a function; \cd{f()} is \cd{5}.
-  \ii A lambda's body sees the \emph{current} value of outside names when it is called (W4), not their value when the lambda was created.
+  \ii A lambda's body sees the \emph{current} value of outside names when it is called (\ilink{W4}{W4}), not their value when the lambda was created.
   \ii \cd{curry(pow)(2, 3)} is an error: after currying, arguments are supplied one call at a time.
   \ii \cd{bool(' ')} is \cd{True}; \cd{bool('')} is \cd{False}; \cd{bool(0.0)} is \cd{False}.
   \ii In \cd{a if c else b}, the condition is in the middle.
 \end{trapbox}
 
 \section{Problem set}
-P1--P5 are original. E1--E2 are from the Fall 2026 Midterm 1 (your exam), with the published answers in the solutions. For a timed practice exam before a midterm, see \cd{exercises/README.md}.
+The programming exercises in \cd{exercises/} form a timed practice set; \cd{exercises/README.md} gives the time limit.
 
 \begin{prob}\textbf{P1 (lambda values).}\ What is displayed?
 \begin{py}

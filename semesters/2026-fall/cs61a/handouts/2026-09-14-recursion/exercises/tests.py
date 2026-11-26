@@ -8,12 +8,13 @@ sys.path.insert(0, TARGET_DIR)
 import week04  # noqa: E402
 
 
-def check_sum_digits():
-    assert week04.sum_digits(0) == 0
-    assert week04.sum_digits(7) == 7
-    assert week04.sum_digits(12) == 3
-    assert week04.sum_digits(123) == 6
-    assert week04.sum_digits(9081) == 18
+def check_digit_product():
+    assert week04.digit_product(0) == 0, "0 is a single digit: its product is 0"
+    assert week04.digit_product(7) == 7, "a single digit is its own product"
+    assert week04.digit_product(23) == 6
+    assert week04.digit_product(234) == 24
+    assert week04.digit_product(105) == 0, "a 0 digit inside the number makes the product 0"
+    assert week04.digit_product(1111) == 1, "the base case must not return 0 or skip the leading digit"
 
 
 def check_adjacent():
@@ -33,20 +34,20 @@ def check_stairs():
     assert week04.count_stairs(5, 2, 4) == 0
 
 
-def check_digital_root():
-    assert week04.digital_root_steps(0) == (0, 0)
-    assert week04.digital_root_steps(9) == (9, 0)
-    assert week04.digital_root_steps(19) == (1, 2)
-    assert week04.digital_root_steps(999) == (9, 2)
-    assert week04.digital_root_steps(199) == (1, 3)
+def check_persistence():
+    assert week04.persistence(0) == (0, 0), "a single digit needs zero replacements"
+    assert week04.persistence(9) == (9, 0)
+    assert week04.persistence(39) == (4, 3), "39 -> 27 -> 14 -> 4"
+    assert week04.persistence(77) == (8, 4), "77 -> 49 -> 36 -> 18 -> 8"
+    assert week04.persistence(105) == (0, 1), "105 -> 0"
 
 
 def main():
     checks = [
-        ("sum_digits", check_sum_digits),
+        ("digit_product", check_digit_product),
         ("has_adjacent_equal_digits", check_adjacent),
         ("count_stairs", check_stairs),
-        ("digital_root_steps", check_digital_root),
+        ("persistence", check_persistence),
     ]
     failed = 0
     for name, fn in checks:

@@ -29,11 +29,14 @@ def check_trace():
     assert val2 == -2
 
 
-def check_middle():
-    assert week01.middle_number(3, 9, 5) == 5
-    assert week01.middle_number(-10, -2, -5) == -5
-    assert week01.middle_number(4, 4, 9) == 4
-    assert week01.middle_number(7, 2, 2) == 2
+def check_clamp_value():
+    # inside, below, above, at both ends, a one-point interval, negative bounds
+    assert week01.clamp_value(5, 1, 10) == 5, "x inside [low, high] must be returned unchanged"
+    assert week01.clamp_value(-3, 1, 10) == 1, "x below low must give low"
+    assert week01.clamp_value(14, 1, 10) == 10, "x above high must give high"
+    assert week01.clamp_value(1, 1, 10) == 1 and week01.clamp_value(10, 1, 10) == 10, "endpoints are inside"
+    assert week01.clamp_value(8, 4, 4) == 4, "a one-point interval [4, 4] always gives 4"
+    assert week01.clamp_value(-9, -5, -2) == -5 and week01.clamp_value(0, -5, -2) == -2, "negative bounds"
 
 
 def check_clamp():
@@ -49,7 +52,7 @@ def main():
     checks = [
         ("ring_area_units", check_ring),
         ("trace_step", check_trace),
-        ("middle_number", check_middle),
+        ("clamp_value", check_clamp_value),
         ("clamp_distance", check_clamp),
     ]
     failed = 0

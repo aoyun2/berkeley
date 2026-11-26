@@ -5,6 +5,8 @@
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+% "How to ..." method box: numbered steps for a procedure (standard, Teach every procedure).
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=mdbluebox,linecolor=NavyBlue,backgroundcolor=NavyBlue!3]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
 \title{Math 110 --- Week 10}
 \subtitle{Orthogonality, projections, and best approximation (Notes Ch.~18, LADR 6B--6C, HW10)}
 \author{}\date{}\ihead{}
@@ -23,7 +25,7 @@
 \maketitle
 
 \section{Facts used from earlier weeks}
-Throughout this handout, $V$ is an inner product space over $\FF$ ($\RR$ or $\CC$); whenever finite dimensionality is needed, we write $n=\dim V<\infty$. From \xweek{math110}{2026-10-26-trace-inner-products}{Week~9}: an inner product $\ip--\colon V\times V\to\FF$ is linear in the first slot, conjugate-linear in the second slot ($\ip u{\lambda v+\mu w}=\bar\lambda\ip uv+\bar\mu\ip uw$), conjugate-symmetric ($\ip uv=\overline{\ip vu}$), and positive definite ($\ip vv\ge 0$ with $\ip vv=0\iff v=0$, \xlink{math110}{2026-10-26-trace-inner-products}{def-43}{Def.~43}); the induced norm $\|v\|=\sqrt{\ip vv}$ (\xlink{math110}{2026-10-26-trace-inner-products}{def-44}{Def.~44}) satisfies the Pythagorean theorem ($\|u+v\|^2=\|u\|^2+\|v\|^2$ whenever $u\perp v$), the single-vector orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (\xlink{math110}{2026-10-26-trace-inner-products}{name-ladr-6-13-orthogonal-decomposition}{LADR 6.13}), and the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$ (\xlink{math110}{2026-10-26-trace-inner-products}{prop-82}{Prop.~82}).
+Throughout, $V$ is an inner product space over $\FF$ ($\RR$ or $\CC$); whenever finite dimensionality is needed, we write $n=\dim V<\infty$. From \xweek{math110}{2026-10-26-trace-inner-products}{Week~9}: an inner product $\ip--\colon V\times V\to\FF$ is linear in the first slot, conjugate-linear in the second slot ($\ip u{\lambda v+\mu w}=\bar\lambda\ip uv+\bar\mu\ip uw$), conjugate-symmetric ($\ip uv=\overline{\ip vu}$), and positive definite ($\ip vv\ge 0$ with $\ip vv=0\iff v=0$, \xlink{math110}{2026-10-26-trace-inner-products}{def-43}{Def.~43}); the induced norm $\|v\|=\sqrt{\ip vv}$ (\xlink{math110}{2026-10-26-trace-inner-products}{def-44}{Def.~44}) satisfies the Pythagorean theorem ($\|u+v\|^2=\|u\|^2+\|v\|^2$ whenever $u\perp v$), the single-vector orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (\xlink{math110}{2026-10-26-trace-inner-products}{name-ladr-6-13-orthogonal-decomposition}{LADR 6.13}), and the Cauchy--Schwarz inequality $|\ip uv|\le\|u\|\,\|v\|$ (\xlink{math110}{2026-10-26-trace-inner-products}{prop-82}{Prop.~82}).
 
 \begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
   \ii \target{T1}\tool{Rank--nullity (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-20}{Prop.~20}).} For any linear map $T\colon V\to W$ with $\dim V<\infty$: $\dim V=\dim\nul T+\dim\range T$.
@@ -41,7 +43,7 @@ Throughout this handout, $V$ is an inner product space over $\FF$ ($\RR$ or $\CC
   \why{Column $j$ of $\MM(T)$ gives the coordinates of $Tv_j$, so all entries below the diagonal vanish iff $Tv_j\in\spn(v_1,\dots,v_j)$ for each $j$, which holds iff $\spn(v_1,\dots,v_j)$ is $T$-invariant for each $j$.}
 \end{enumerate}
 
-\section{This week}
+\section{Orthogonality, Gram--Schmidt and projections}
 \subsection{Orthonormal bases, Gram--Schmidt, and Riesz representation (Ch.~18, LADR 6B)}
 
 \begin{qbox}
@@ -81,11 +83,13 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  Because the vectors $a_1e_1,\dots,a_me_m$ are pairwise orthogonal ($\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\ip{e_i}{e_j}=0$ for $i\ne j$), applying the Pythagorean theorem repeatedly adds their squared norms $\|a_ke_k\|^2=|a_k|^2\|e_k\|^2=|a_k|^2$. Linear independence follows immediately: if $\sum a_ke_k=0$, then $\sum |a_k|^2=\|0\|^2=0$, forcing every $a_k=0$. For an arbitrary vector $v\in V$, subtracting all $m$ components $u=\sum_{k=1}^m\ip v{e_k}e_k$ leaves a remainder $w=v-u$ that is orthogonal to each $e_k$ and hence orthogonal to $u$; applying Pythagoras to $v=u+w$ gives $\|v\|^2=\|u\|^2+\|w\|^2=\sum_{k=1}^m|\ip v{e_k}|^2+\|w\|^2$, which yields Bessel's inequality by dropping $\|w\|^2\ge 0$, and becomes Parseval's equality when $e_1,\dots,e_n$ spans $V$ (so $w=0$).
+  Because the vectors $a_1e_1,\dots,a_me_m$ are pairwise orthogonal ($\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\ip{e_i}{e_j}=0$ for $i\ne j$), applying the Pythagorean theorem repeatedly adds their squared norms $\|a_ke_k\|^2=|a_k|^2\|e_k\|^2=|a_k|^2$. Linear independence follows immediately: if $\sum a_ke_k=0$, then $\sum |a_k|^2=\|0\|^2=0$, forcing every $a_k=0$. For an arbitrary vector $v\in V$, subtracting all $m$ components $u=\sum_{k=1}^m\ip v{e_k}e_k$ leaves a remainder $w=v-u$ that is orthogonal to each $e_k$ and hence orthogonal to $u$; applying Pythagoras to $v=u+w$ gives $\|v\|^2=\|u\|^2+\|w\|^2$ with $\|u\|^2=\sum_{k=1}^m|\ip v{e_k}|^2$, which yields Bessel's inequality by dropping $\|w\|^2\ge 0$, and becomes Parseval's equality when $e_1,\dots,e_n$ spans $V$ (so $w=0$).
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Since $\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\delta_{ij}=0$ for $i\ne j$, induction on $m$ using the Pythagorean theorem gives $\|a_1e_1+\dots+a_me_m\|^2=\|a_1e_1\|^2+\dots+\|a_me_m\|^2=|a_1|^2+\dots+|a_m|^2$, proving (a). (Conversely, by LADR 6.28, if $\|\sum a_ke_k\|^2=\sum|a_k|^2$ holds for all $a_k\in\FF$, testing $a_k=\delta_{ki}$ gives $\|e_i\|=1$ and testing $e_i+e_j$ and $e_i+ie_j$ gives $\ip{e_i}{e_j}=0$.)
+    \ii Since $\ip{a_ie_i}{a_je_j}=a_i\overline{a_j}\delta_{ij}=0$ for $i\ne j$, induction on $m$ using the Pythagorean theorem gives
+    \[ \|a_1e_1+\dots+a_me_m\|^2=\|a_1e_1\|^2+\dots+\|a_me_m\|^2=|a_1|^2+\dots+|a_m|^2, \]
+    proving (a). (Conversely, by LADR 6.28, if $\|\sum a_ke_k\|^2=\sum|a_k|^2$ holds for all $a_k\in\FF$, testing $a_k=\delta_{ki}$ gives $\|e_i\|=1$ and testing $e_i+e_j$ and $e_i+ie_j$ gives $\ip{e_i}{e_j}=0$.)
     \ii If $a_1e_1+\dots+a_me_m=0$, then Step~1 gives $|a_1|^2+\dots+|a_m|^2=\|0\|^2=0$, so $a_1=\dots=a_m=0$. When $\dim V=n$, any linearly independent list of length $n$ is a basis by (T2a), proving (b).
     \ii For any $v\in V$, define $u=\sum_{k=1}^m\ip v{e_k}e_k$ and $w=v-u$. For each $j\in\{1,\dots,m\}$,
     \[
@@ -101,11 +105,14 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
 \end{proof}
 
 \begin{itemize}
-  \ii \textbf{Infinite-dimensional Parseval identity and Euler's Basel sum:} On $C([0,1])$ with $\ip fg=\int_0^1 f(x)\overline{g(x)}\,dx$, the complex exponentials $e_n(x)=e^{2\pi i nx}$ ($n\in\ZZ$) form an orthonormal system. By Fourier analysis, expanding $f(x)=x=\frac{1}{2}-\frac{1}{2\pi i}\sum_{n\ne 0}\frac{1}{n}e^{2\pi i nx}$ satisfies Parseval's identity $\sum_{n\in\ZZ}|\ip f{e_n}|^2=\|f\|^2=\int_0^1 x^2\,dx=\frac{1}{3}$. Since $|\ip f{e_0}|^2=\frac{1}{4}$ and $|\ip f{e_n}|^2=\frac{1}{4\pi^2 n^2}$ for $n\ne 0$, this gives $\frac{1}{4}+\frac{2}{4\pi^2}\sum_{n=1}^\infty\frac{1}{n^2}=\frac{1}{3}$, yielding $\sum_{n=1}^\infty\frac{1}{n^2}=\frac{\pi^2}{6}$.
+  \ii \textbf{Bessel's inequality for complex exponentials:} On the complex-valued continuous functions on $[0,1]$ with $\ip fg=\int_0^1 f(x)\overline{g(x)}\,dx$, the functions $e_n(x)=e^{2\pi i nx}$ ($n\in\ZZ$) are orthonormal: $\ip{e_n}{e_m}=\int_0^1e^{2\pi i(n-m)x}\,dx$ is $1$ for $n=m$, and for $n\ne m$ it is $\bigl[e^{2\pi i(n-m)x}/(2\pi i(n-m))\bigr]_0^1=0$. For $f(x)=x$, $\ip f{e_0}=\int_0^1x\,dx=\frac12$, and for $n\ne0$ integration by parts gives
+  \[ \ip f{e_n}=\int_0^1xe^{-2\pi inx}\,dx=\Bigl[\frac{xe^{-2\pi inx}}{-2\pi in}\Bigr]_0^1+\int_0^1\frac{e^{-2\pi inx}}{2\pi in}\,dx=\frac{1}{-2\pi in}, \]
+  so $|\ip f{e_n}|^2=\frac1{4\pi^2n^2}$. Bessel's inequality for the orthonormal list $e_{-N},\dots,e_N$ and $\|f\|^2=\int_0^1x^2\,dx=\frac13$ give
+  \[ \frac14+\frac{2}{4\pi^2}\sum_{n=1}^N\frac1{n^2}\le\frac13,\qquad\text{so}\qquad\sum_{n=1}^N\frac1{n^2}\le\frac{\pi^2}6\quad\text{for every }N. \]
 \end{itemize}
 
 \begin{theorem*}[Prop.~87 / LADR 6.32: Gram--Schmidt procedure]\target{prop-87}\target{name-gram-schmidt}
-  Suppose $v_1,\dots,v_m$ is a linearly independent list of vectors in $V$. Define $w_1=v_1$, $e_1=\dfrac{w_1}{\|w_1\|}$, and inductively for $j=2,\dots,m$:
+  Suppose $v_1,\dots,v_m$ is a linearly independent list of vectors in $V$. Define $w_1=v_1$, $e_1=w_1/\|w_1\|$, and inductively for $j=2,\dots,m$:
   \[
     w_j = v_j - \ip{v_j}{e_1}e_1 - \dots - \ip{v_j}{e_{j-1}}e_{j-1} = v_j - \sum_{k=1}^{j-1}\ip{v_j}{e_k}e_k, \qquad e_j = \frac{w_j}{\|w_j\|}.
   \]
@@ -138,8 +145,6 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \PacketInkPath[black!28,line width=0.32pt]{(-1.0,-1.0,0) -- (3.15,-1.0,0) -- (3.15,3.05,0) -- (-1.0,3.05,0) -- cycle}
 
   % Subtle reference lines in xy-plane
-  \PacketInkPath[black!35,line width=0.35pt]{(-0.85,0,0) -- (3.05,0,0)}
-  \PacketInkPath[black!35,line width=0.35pt]{(0,-0.85,0) -- (0,2.95,0)}
 
   % Right-angle mark between e1 and e2
   \PacketInkPath[black!55,line width=0.38pt]{(0.26,0,0) -- (0.26,0.26,0) -- (0,0.26,0)}
@@ -157,8 +162,8 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \draw[ink guide,draw=inkslate] (Py) -- (P);
 
   % Projection vector p in the plane
-  \PacketInkPath[->,draw=black!65,line width=0.55pt,shorten >=1.5pt]{(O) -- (P)}
-  \node[font=\footnotesize,text=black!75] at (1.58,0.92,0) {\InkLabel{$p$}};
+  \PacketInkPath[->,draw=black,line width=0.55pt,shorten >=1.5pt]{(O) -- (P)}
+  \node[font=\footnotesize] at (1.58,0.92,0) {\InkLabel{$p$}};
 
   % Vertical drop and parallelogram top guide
   \draw[ink guide,draw=inkslate] (P) -- (V3);
@@ -168,25 +173,25 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \PacketInkPath[black!55,line width=0.38pt]{(2.056,2.102,0) -- (2.056,2.102,0.26) -- (2.25,2.30,0.26)}
 
   % Residual w3 along normal axis
-  \PacketInkPath[->,draw=black!65,line width=0.55pt]{(O) -- (W3)}
-  \node[font=\small,text=black!80,left=4pt] at (0,0,2.38) {\InkLabel{$w_3$}};
+  \PacketInkPath[->,draw=black,line width=0.55pt]{(O) -- (W3)}
+  \node[font=\small,left=4pt] at (0,0,2.38) {\InkLabel{$w_3$}};
 
   % Orthonormal basis triple e1, e2, e3 (single restrained accent)
   \PacketInkPath[->,draw=figblue,line width=0.55pt]{(O) -- (1,0,0)}
-  \node[font=\small,text=figblue!90!black,above left=2pt] at (.85,0,0) {\InkLabel{$e_1$}};
+  \node[font=\small,text=inkblue,below=3pt] at (1,0,0) {\InkLabel{$e_1$}};
   \PacketInkPath[->,draw=figblue,line width=0.55pt]{(O) -- (0,1,0)}
-  \node[font=\small,text=figblue!90!black,above right=2pt] at (0,.85,0) {\InkLabel{$e_2$}};
+  \node[font=\small,text=inkblue,below=3pt] at (0,0.8,0) {\InkLabel{$e_2$}};
   \PacketInkPath[->,draw=figblue,line width=0.55pt]{(O) -- (E3)}
-  \node[font=\small,text=figblue!90!black,left=4pt] at (0,0,.85) {\InkLabel{$e_3$}};
+  \node[font=\small,text=inkblue,left=4pt] at (0,0,.85) {\InkLabel{$e_3$}};
 
   % Input vector v3 (bold crisp black)
   \PacketInkPath[->,draw=black,line width=0.55pt,shorten >=1.0pt]{(O) -- (V3) node[above right=2pt,font=\small] {\InkLabel{$v_3$}}}
 
   % Plane label placed cleanly in open space beside the right corner
-  \node[font=\scriptsize,text=black!75,anchor=west] at (-0.75,3.20,0) {\InkLabel{$\spn(e_1,e_2)$}};
+  \node[font=\scriptsize,anchor=west] at (-0.75,3.20,0) {\InkLabel{$\spn(e_1,e_2)$}};
 
   \fill[black] (O) circle (1.3pt);
-  \fill[black!75] (P) circle (1.3pt);
+  \fill[black] (P) circle (1.3pt);
 \end{tikzpicture}
 \figcap{Step $j=3$ of Gram--Schmidt (\ilink{prop-87}{Prop.~87}): subtracting $p=\ip{v_3}{e_1}e_1+\ip{v_3}{e_2}e_2$ leaves $w_3\perp\spn(e_1,e_2)$, giving $e_3=w_3/\|w_3\|$.}
 \end{fig}
@@ -195,6 +200,27 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \ii \textbf{Existence and extension of orthonormal bases (LADR 6.35, 6.36):} Every finite-dimensional inner product space $V$ has an orthonormal basis (apply Gram--Schmidt to any basis of $V$). Furthermore, every orthonormal list $e_1,\dots,e_m$ in $V$ extends to an orthonormal basis $e_1,\dots,e_m,e_{m+1},\dots,e_n$ of $V$: extend $e_1,\dots,e_m$ to a basis $e_1,\dots,e_m,v_{m+1},\dots,v_n$ of $V$ and apply Gram--Schmidt; because $e_1,\dots,e_m$ are already orthonormal, the first $m$ vectors of the Gram--Schmidt output are unchanged.
   \ii \textbf{Upper-triangular matrices and Schur's theorem (LADR 6.37, 6.38):} By \ilink{T3}{(T3)}, $\MM(T,(v_1,\dots,v_n))$ is upper-triangular iff $\spn(v_1,\dots,v_j)$ is $T$-invariant for every $j=1,\dots,n$. Because Gram--Schmidt preserves each span $\spn(e_1,\dots,e_j)=\spn(v_1,\dots,v_j)$, applying Gram--Schmidt to an upper-triangular basis produces an \emph{orthonormal} basis in which $\MM(T)$ is still upper-triangular. In particular, over $\CC$, every operator on a finite-dimensional nonzero inner product space has an upper-triangular matrix with respect to some \emph{orthonormal} basis (\vocab{Schur's theorem}, which we revisit in \xweek{math110}{2026-11-09-adjoints-spectral-theorem}{Week~11}).
 \end{itemize}
+
+\begin{methodbox}{How to run Gram--Schmidt}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Fix the order $v_1,\dots,v_m$. Set $e_1=v_1/\|v_1\|$.
+  \ii For $j=2,\dots,m$: compute the numbers $\ip{v_j}{e_k}$ for $k<j$ and subtract: $w_j=v_j-\sum_{k<j}\ip{v_j}{e_k}e_k$.
+  \ii Check $\ip{w_j}{e_k}=0$ for $k<j$ before going on.
+  \ii Normalize: $e_j=w_j/\|w_j\|$. A positive multiple of $w_j$ (for instance with fractions cleared) gives the same $e_j$.
+\end{enumerate}
+\textbf{Edge cases.} If some $w_j=0$, then $v_j\in\spn(v_1,\dots,v_{j-1})$: the input list was dependent; drop $v_j$ and continue (the output is then an orthonormal basis of the span). If $v_j$ is already orthogonal to $e_1,\dots,e_{j-1}$, then $w_j=v_j$. Changing the order of the $v_j$ changes the output.
+\end{methodbox}
+
+\begin{example*}[Gram--Schmidt in $\RR^3$]
+  Take $v_1=(1,1,0)$, $v_2=(1,0,1)$, $v_3=(0,1,1)$ with the dot product.
+  \begin{steps}
+    \ii $e_1=\frac1{\sqrt2}(1,1,0)$.
+    \ii $\ip{v_2}{e_1}=\frac1{\sqrt2}$, so $w_2=(1,0,1)-\frac12(1,1,0)=\frac12(1,-1,2)$. Clearing the factor $\frac12$, $e_2=\frac1{\sqrt6}(1,-1,2)$.
+    \ii $\ip{v_3}{e_1}=\frac1{\sqrt2}$ and $\ip{v_3}{e_2}=\frac{1}{\sqrt6}$, so
+    \[ w_3=(0,1,1)-\tfrac12(1,1,0)-\tfrac16(1,-1,2)=\tfrac23(-1,1,1),\qquad e_3=\tfrac1{\sqrt3}(-1,1,1). \]
+    \ii Check: $(-1,1,1)\cdot(1,1,0)=0$ and $(-1,1,1)\cdot(1,-1,2)=0$.
+  \end{steps}
+\end{example*}
 
 \begin{example*}[Ex.~70 / LADR 6.33: Gram--Schmidt on $\PP_2(\RR)$ with $\ip pq=\int_0^1 p(x)q(x)\,dx$]\target{ex-70}
   Apply Gram--Schmidt to the ordered basis $v_1=1$, $v_2=x$, $v_3=x^2$ of $\PP_2(\RR)$ under $\ip pq=\int_0^1 p(x)q(x)\,dx$:
@@ -217,6 +243,9 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
   \end{steps}
   (These are the normalized shifted Legendre polynomials on $[0,1]$; on $[-1,1]$, see HW10~P1.)
 \end{example*}
+
+\revisit Choose an orthonormal basis. Then the coordinates are $a_k=\ip v{e_k}$, one inner product each, and $\|v\|^2=\sum_k|a_k|^2$ with no cross terms (\ilink{prop-86}{Prop.~86}). Such a basis is built from any independent list by Gram--Schmidt (\ilink{prop-87}{Prop.~87}): for example, $(1,1,0),(1,0,1),(0,1,1)$ becomes $\frac1{\sqrt2}(1,1,0)$, $\frac1{\sqrt6}(1,-1,2)$, $\frac1{\sqrt3}(-1,1,1)$, and then $v=(1,2,3)$ has coordinates $3/\sqrt2$, $5/\sqrt6$, $4/\sqrt3$, whose squares add up to
+\[ \tfrac92+\tfrac{25}6+\tfrac{16}3=14=\|v\|^2. \]
 
 \begin{theorem*}[Prop.~88 / LADR 6.42: Riesz representation theorem]\target{prop-88}\target{name-riesz}
   Suppose $V$ is a finite-dimensional inner product space and $\psi\in V'$ is a linear functional on $V$ (i.e.\ $\psi\in\LL(V,\FF)$). Then there exists a unique vector $v\in V$ such that
@@ -241,6 +270,22 @@ Thus each coordinate $a_k=\ip v{e_k}$ is isolated in one step without solving a 
     \ii To prove uniqueness, suppose $v,v'\in V$ both satisfy $\psi(u)=\ip uv=\ip u{v'}$ for all $u\in V$. Then $\ip u{v-v'}=0$ for all $u\in V$. Setting $u=v-v'$ gives $\|v-v'\|^2=\ip{v-v'}{v-v'}=0$, so definiteness forces $v-v'=0$, i.e.\ $v=v'$.
   \end{steps}
 \end{proof}
+
+\begin{methodbox}{How to find the vector that represents a linear functional}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Find an orthonormal basis $e_1,\dots,e_n$ (Gram--Schmidt if needed).
+  \ii Evaluate $\psi(e_k)$ for each $k$.
+  \ii $v=\sum_k\overline{\psi(e_k)}e_k$; check $\psi(u)=\ip uv$ on a basis.
+\end{enumerate}
+\textbf{Alternative without an orthonormal basis.} Write $v=\sum_jc_jb_j$ in any basis $b_1,\dots,b_n$ and solve the $n$ equations $\ip{b_i}{v}=\psi(b_i)$ for the $c_j$. \textbf{Edge case.} $\psi=0$ gives $v=0$.
+\end{methodbox}
+
+\begin{example*}[Evaluation at $1$ on $\PP_1(\RR)$]
+  Let $\ip fg=\int_{-1}^1fg\,dx$ and $\psi(p)=p(1)$. An orthonormal basis is $e_1=\frac1{\sqrt2}$, $e_2=\sqrt{\frac32}\,x$ (since $\int_{-1}^1\frac12dx=1$, $\int_{-1}^1\frac32x^2dx=1$ and $\int_{-1}^1x\,dx=0$). Then $\psi(e_1)=\frac1{\sqrt2}$, $\psi(e_2)=\sqrt{\frac32}$, so
+  \[ v=\tfrac1{\sqrt2}e_1+\sqrt{\tfrac32}\,e_2=\tfrac12+\tfrac32x. \]
+  Check:
+  \[ \ip1v=\int_{-1}^1\Bigl(\frac12+\frac32x\Bigr)dx=1=\psi(1),\qquad\ip xv=\int_{-1}^1\Bigl(\frac x2+\frac32x^2\Bigr)dx=1=\psi(x). \]
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{Clear fractions before normalizing in Gram--Schmidt:} Because any positive scalar multiple of $w_j$ has the same direction, if $w_j$ has fractional coefficients (such as $w_3=x^2-x+\frac{1}{6}=\frac{1}{6}(6x^2-6x+1)$ in \ilink{ex-70}{Ex.~70}), factor out $\frac{1}{6}$ and normalize $\widetilde w_3=6x^2-6x+1$ instead: $e_3=\widetilde w_3/\|\widetilde w_3\|$.
@@ -305,6 +350,24 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   \end{steps}
 \end{proof}
 
+\begin{methodbox}{How to find a basis of $U^\perp$}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Take a spanning list $u_1,\dots,u_m$ of $U$. Then $v\in U^\perp$ iff $\ip v{u_j}=0$ for each $j$ (orthogonality to a spanning list implies orthogonality to all combinations, by conjugate linearity in the second slot).
+  \ii Write $v$ in coordinates (in $\FF^n$) or as $v=\sum c_ib_i$ in a basis of $V$, and write out the $m$ linear equations $\ip v{u_j}=0$.
+  \ii Solve the homogeneous system; a basis of its solutions is a basis of $U^\perp$.
+  \ii Check the count: $\dim U^\perp=\dim V-\dim U$ (\ilink{prop-89}{Prop.~89}).
+\end{enumerate}
+\textbf{Edge cases.} A dependent spanning list gives redundant equations; the count in step 4 uses $\dim U$, not $m$. For a function space the equations come from integrals, so compute each $\ip{b_i}{u_j}$ first.
+\end{methodbox}
+
+\begin{example*}[$U^\perp$ in $\RR^3$]
+  $U=\spn((1,1,1))$. The single equation $x+y+z=0$ has solutions $\spn((1,-1,0),(1,0,-1))$, of dimension $2=3-1$.
+\end{example*}
+
+\begin{example*}[$U^\perp$ in a function space]
+  On $\PP_2(\RR)$ with $\ip pq=\int_0^1pq\,dx$, let $U=\spn(1)$. For $p=a+bx+cx^2$, the equation $\ip p1=0$ reads $a+b/2+c/3=0$, which gives $U^\perp=\spn\bigl(x-\frac12,\ x^2-\frac13\bigr)$, of dimension $2=3-1$.
+\end{example*}
+
 \begin{proposition*}[Prop.~90 / LADR 6.52: Double orthogonal complement $(U^\perp)^\perp=U$]\target{prop-90}
   Suppose $U$ is a finite-dimensional subspace of $V$. Then
   \[
@@ -352,15 +415,18 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  Every property of $P_U$ follows directly from the unique orthogonal decomposition $v=u+w$ ($u\in U$, $w\in U^\perp$): $P_U$ retains the $U$-component $u$ and discards the $U^\perp$-component $w$, while $I-P_U$ retains $w=v-P_U v\in U^\perp$. Applying Pythagoras to the orthogonal components $u=P_U v$ and $w=v-P_U v$ gives $\|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2\ge\|P_U v\|^2$. Furthermore, the formula $P_U v=\sum_{k=1}^m\ip v{e_k}e_k$ in an orthonormal basis $e_1,\dots,e_m$ of $U$ uses $\ip v{e_k}$ in place of $\ip{P_U v}{e_k}$ because $v-P_U v\in U^\perp$ is orthogonal to $e_k$, so $\ip v{e_k}=\ip{P_U v}{e_k}+\ip{v-P_U v}{e_k}=\ip{P_U v}{e_k}$.
+  Every property of $P_U$ follows directly from the unique orthogonal decomposition $v=u+w$ ($u\in U$, $w\in U^\perp$): $P_U$ retains the $U$-component $u$ and discards the $U^\perp$-component $w$, while $I-P_U$ retains $w=v-P_U v\in U^\perp$. Applying Pythagoras to the orthogonal components $u=P_U v$ and $w=v-P_U v$ gives $\|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2$, which is at least $\|P_Uv\|^2$. Furthermore, the formula $P_U v=\sum_{k=1}^m\ip v{e_k}e_k$ in an orthonormal basis $e_1,\dots,e_m$ of $U$ uses $\ip v{e_k}$ in place of $\ip{P_U v}{e_k}$ because $v-P_U v\in U^\perp$ is orthogonal to $e_k$, so $\ip v{e_k}=\ip{P_U v}{e_k}+\ip{v-P_U v}{e_k}=\ip{P_U v}{e_k}$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (A), if $P^2=P$, then $v=(v-Pv)+Pv$ with $P(v-Pv)=0$ and $Pv\in\range P$, and if $x\in\nul P\cap\range P$ then $x=Py\implies x=P^2y=Px=0$, so $V=\nul P\oplus\range P$. Thus $P=P_{\range P}$ iff $\nul P=(\range P)^\perp$ (and see HW10~P7 for why this is equivalent to $\|Pv\|\le\|v\|$ for all $v$).
+    \ii For (A), if $P^2=P$, then $v=(v-Pv)+Pv$ with $P(v-Pv)=0$ and $Pv\in\range P$, and if $x\in\nul P\cap\range P$ then $x=Py\implies x=P^2y=Px=0$, so $V=\nul P\oplus\range P$.
     \ii In (B), if $v_1=u_1+w_1$ and $v_2=u_2+w_2$ ($u_i\in U$, $w_i\in U^\perp$), then $v_1+v_2=(u_1+u_2)+(w_1+w_2)$ and $\lambda v_1=\lambda u_1+\lambda w_1$ are the unique $U\oplus U^\perp$ decompositions, proving (a).
     \ii For $u\in U$, $u=u+0$ gives $P_U u=u$ (b); for $w\in U^\perp$, $w=0+w$ gives $P_U w=0$ (c). Hence $\range P_U=U$ (d), $\nul P_U=U^\perp$ (e), $v-P_U v=w\in U^\perp$ (f), and $P_U(P_U v)=P_U u=u=P_U v$ (g).
-    \ii Since $P_U v=u\in U$ and $v-P_U v=w\in U^\perp$ are orthogonal, Pythagoras gives $\|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2\ge\|P_U v\|^2$, with equality iff $v-P_U v=0$, i.e.\ $v\in U$, proving (h).
-    \ii Finally, in any orthonormal basis $e_1,\dots,e_m$ of $U$, the proof of \ilink{prop-89}{Prop.~89} showed that $u=\sum_{k=1}^m\ip v{e_k}e_k\in U$ satisfies $v-u\in U^\perp$, so by uniqueness of the decomposition $v=u+w$, $P_U v=u=\sum_{k=1}^m\ip v{e_k}e_k$, proving (i).
+    \ii Since $P_U v=u\in U$ and $v-P_U v=w\in U^\perp$ are orthogonal, Pythagoras gives
+    \[ \|v\|^2=\|P_U v\|^2+\|v-P_U v\|^2\ge\|P_U v\|^2, \]
+    with equality iff $v-P_U v=0$, i.e.\ $v\in U$, proving (h).
+    \ii In any orthonormal basis $e_1,\dots,e_m$ of $U$, the proof of \ilink{prop-89}{Prop.~89} showed that $u=\sum_{k=1}^m\ip v{e_k}e_k\in U$ satisfies $v-u\in U^\perp$, so by uniqueness of the decomposition $v=u+w$, $P_U v=u=\sum_{k=1}^m\ip v{e_k}e_k$, proving (i).
+    \ii Back to (A), with $U=\range P$ finite-dimensional. \textbf{If $\nul P=U^\perp$}, then $v=Pv+(v-Pv)$ with $Pv\in U$ and $v-Pv\in\nul P=U^\perp$, so $Pv=P_Uv$. \textbf{If $P=P_U$}, then $\nul P=U^\perp$ by (e) and $\|Pv\|\le\|v\|$ by (h). The remaining implication, from $\|Pv\|\le\|v\|$ to $P=P_U$, is \ilink{name-norm-reducing-idempotents}{Norm-reducing idempotents are orthogonal projections}, proved in the last section.
   \end{steps}
 \end{proof}
 
@@ -403,7 +469,7 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   % Subspace plane U: soft neutral gray wash with whisper edge
   \InkRegion[inkblue]{(-1.1,-0.85,0) -- (2.8,-0.85,0) -- (2.8,4.35,0) -- (-1.1,4.35,0) -- cycle}
   \PacketInkPath[black!28,line width=0.32pt]{(-1.1,-0.85,0) -- (2.8,-0.85,0) -- (2.8,4.35,0) -- (-1.1,4.35,0) -- cycle}
-  \node[font=\small,text=black!75] at (2.15,-0.25,0) {\InkLabel{$U$}};
+  \node[font=\small] at (2.15,-0.25,0) {\InkLabel{$U$}};
 
   \coordinate (O) at (0,0,0);
   \coordinate (PU) at (1.1,1.8,0);
@@ -419,34 +485,52 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
 
   % Orthogonal projection P_U v (single restrained accent)
   \PacketInkPath[->,draw=figblue,line width=0.55pt,shorten >=1.4pt]{(O) -- (PU)}
-  \node[font=\small,text=figblue!90!black,below left=2pt] at (0.65,1.02,0) {\InkLabel{$P_U v$}};
+  \node[font=\small,text=inkblue,below left=2pt] at (0.65,1.02,0) {\InkLabel{$P_U v$}};
 
   % Vector v (bold crisp black)
   \PacketInkPath[->,draw=black,line width=0.55pt,shorten >=1.2pt]{(O) -- (V)}
   \node[font=\small,above=2pt] at (V) {\InkLabel{$v$}};
 
   % Vertical residual v - P_U v
-  \PacketInkPath[->,draw=black!80,line width=0.55pt,shorten <=1.4pt,shorten >=2.2pt]{(PU) -- (V)}
-  \node[font=\scriptsize,text=black!85,right=4pt] at (1.1,1.8,0.62) {\InkLabel{$v - P_U v$}};
+  \PacketInkPath[->,draw=black,line width=0.55pt,shorten <=1.4pt,shorten >=2.2pt]{(PU) -- (V)}
+  \node[font=\scriptsize,right=4pt] at (1.1,1.8,0.62) {\InkLabel{$v - P_U v$}};
 
   % Component P_{U^\perp} v on U^\perp axis
-  \PacketInkPath[->,draw=black!65,line width=0.55pt]{(O) -- (W)}
-  \node[font=\footnotesize,text=black!80,left=5pt] at (0,0,1.50) {\InkLabel{$P_{U^\perp}v$}};
+  \PacketInkPath[->,draw=black,line width=0.55pt]{(O) -- (W)}
+  \node[font=\footnotesize,left=5pt] at (0,0,1.50) {\InkLabel{$P_{U^\perp}v$}};
   \draw[ink guide,draw=inkslate] (W) -- (V);
 
   % Competitor point u in U and right-triangle legs
   \fill[black] (Upt) circle (1.35pt) node[right=3pt,font=\small] {\InkLabel{$u$}};
-  \PacketInkPath[->,draw=black!55,line width=0.55pt,shorten <=1.4pt,shorten >=1.8pt]{(Upt) -- (PU)}
-  \node[font=\scriptsize,text=black!70,below=3pt] at (0.48,2.45,0) {\InkLabel{$P_U v - u$}};
+  \PacketInkPath[->,draw=black,line width=0.55pt,shorten <=1.4pt,shorten >=1.8pt]{(Upt) -- (PU)}
+  \node[font=\scriptsize,below=3pt] at (0.48,2.45,0) {\InkLabel{$P_U v - u$}};
 
-  \draw[ink guide arrow,draw=black!75,shorten <=1.4pt,shorten >=2.2pt] (Upt) -- (V);
-  \node[font=\scriptsize,text=black!80,above right=1pt] at (0.35,2.42,1.22) {\InkLabel{$v - u$}};
+  \draw[ink guide arrow,draw=black,shorten <=1.4pt,shorten >=2.2pt] (Upt) -- (V);
+  \node[font=\scriptsize,above right=1pt] at (0.35,2.42,1.22) {\InkLabel{$v - u$}};
 
   \fill[black] (O) circle (1.3pt);
   \fill[figblue] (PU) circle (1.4pt);
 \end{tikzpicture}
 \figcap{Best Approximation (LADR 6.61): for any $u\in U$, $v-u$ (dotted) is the hypotenuse of a right triangle with legs $v-P_U v\in U^\perp$ and $P_U v-u\in U$, minimized uniquely at $u=P_U v$.}
 \end{fig}
+
+\begin{methodbox}{How to compute $P_Uv$ and the distance from $v$ to $U$}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii \emph{Orthonormal basis method.} Find an orthonormal basis $e_1,\dots,e_m$ of $U$ (Gram--Schmidt) and compute $P_Uv=\sum_k\ip v{e_k}e_k$ (\ilink{prop-92}{Prop.~92}).
+  \ii \emph{Normal equations method.} With any basis $u_1,\dots,u_m$ of $U$, write $P_Uv=\sum_ic_iu_i$ and impose $v-P_Uv\perp u_j$: solve the $m\times m$ system $\sum_ic_i\ip{u_i}{u_j}=\ip v{u_j}$, $j=1,\dots,m$.
+  \ii The distance is $\|v-P_Uv\|$ (\ilink{name-best-approximation}{best approximation}); equivalently $\|v-P_Uv\|^2=\|v\|^2-\|P_Uv\|^2$.
+  \ii Check: $v-P_Uv$ is orthogonal to each basis vector of $U$.
+\end{enumerate}
+\textbf{Edge cases.} If $\dim U^\perp$ is smaller than $\dim U$, compute $P_{U^\perp}v$ instead and use $P_Uv=v-P_{U^\perp}v$. If $v\in U$, then $P_Uv=v$ and the distance is $0$; if $v\in U^\perp$, then $P_Uv=0$. Projecting onto the vectors of a non-orthogonal basis one at a time and adding gives the wrong answer (Traps).
+\end{methodbox}
+
+\begin{example*}[Normal equations in $\RR^3$]
+  $U=\spn(u_1,u_2)$ with $u_1=(1,1,0)$, $u_2=(1,0,1)$, and $v=(1,2,3)$. Here $\ip{u_1}{u_1}=\ip{u_2}{u_2}=2$, $\ip{u_1}{u_2}=1$, $\ip v{u_1}=3$, $\ip v{u_2}=4$, so
+  \[ 2c_1+c_2=3,\quad c_1+2c_2=4\qquad\Longrightarrow\qquad c_1=\tfrac23,\ c_2=\tfrac53. \]
+  So
+  \[ P_Uv=\tfrac23(1,1,0)+\tfrac53(1,0,1)=\tfrac13(7,2,5), \]
+  the residual is $v-P_Uv=\frac43(-1,1,1)$ (orthogonal to $u_1$ and $u_2$), and the distance is $\frac43\sqrt3=\frac4{\sqrt3}$.
+\end{example*}
 
 \begin{example*}[Ex.~71: Best linear approximation of $x^3$ on ${[0,1]}$]\target{ex-71}
   In $C([0,1])$ with $\ip pq=\int_0^1 p(x)q(x)\,dx$, let $U=\PP_1(\RR)=\spn(1,x)$ and $v(x)=x^3$. Using the orthonormal basis $e_1=1$, $e_2=\sqrt{3}(2x-1)$ of $U$ from \ilink{ex-70}{Ex.~70}, we compute
@@ -457,11 +541,13 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   \[
     P_U(x^3) = \ip{x^3}{e_1}e_1 + \ip{x^3}{e_2}e_2 = \frac{1}{4}\cdot 1 + \frac{3\sqrt 3}{20}\cdot\sqrt{3}(2x-1) = \frac{1}{4} + \frac{9}{20}(2x-1) = \frac{9}{10}x - \frac{1}{5}.
   \]
-  \emph{Check:} The residual $x^3-P_U(x^3)=x^3-\frac{9}{10}x+\frac{1}{5}$ satisfies $\int_0^1(x^3-\frac{9}{10}x+\frac{1}{5})\,dx=\frac{1}{4}-\frac{9}{20}+\frac{1}{5}=0$ and $\int_0^1 x(x^3-\frac{9}{10}x+\frac{1}{5})\,dx=\frac{1}{5}-\frac{3}{10}+\frac{1}{10}=0$, confirming $v-P_U v\in U^\perp$.
+  \emph{Check:} the residual $r=x^3-\frac{9}{10}x+\frac{1}{5}$ satisfies
+  \[ \int_0^1r\,dx=\frac14-\frac9{20}+\frac15=0,\qquad\int_0^1xr\,dx=\frac15-\frac3{10}+\frac1{10}=0, \]
+  confirming $v-P_U v\in U^\perp$.
 \end{example*}
 
 \begin{itemize}
-  \ii \textbf{Polynomial approximation of $\sin x$ on $[-\pi,\pi]$ vs.\ Taylor polynomials (LADR 6.63):} On $C([-\pi,\pi])$ with $\ip fg=\int_{-\pi}^\pi f(x)g(x)\,dx$, suppose we want a degree-$5$ polynomial $u\in U=\PP_5(\RR)$ approximating $v(x)=\sin x$ on the entire interval $[-\pi,\pi]$. The degree-$5$ Taylor polynomial $T_5(x)=x-\frac{x^3}{6}+\frac{x^5}{120}$ is constructed to match derivatives at $x=0$ only, so near the endpoints $x=\pm\pi$ its error grows to $|T_5(\pi)-\sin\pi|\approx 0.524$. By contrast, applying Gram--Schmidt to $1,x,x^2,x^3,x^4,x^5$ on $[-\pi,\pi]$ and computing the orthogonal projection $P_U(\sin x)$ (since $\sin x$ is odd, its inner products with the even basis polynomials vanish) yields
+  \ii \textbf{Polynomial approximation of $\sin x$ on $[-\pi,\pi]$ vs.\ Taylor polynomials (LADR 6.63):} On $C([-\pi,\pi])$ with $\ip fg=\int_{-\pi}^\pi f(x)g(x)\,dx$, suppose we want a degree-$5$ polynomial $u\in U=\PP_5(\RR)$ approximating $v(x)=\sin x$ on the entire interval $[-\pi,\pi]$. The degree-$5$ Taylor polynomial $T_5(x)=x-x^3/6+x^5/120$ is constructed to match derivatives at $x=0$ only, so near the endpoints $x=\pm\pi$ its error grows to $|T_5(\pi)-\sin\pi|\approx 0.524$. By contrast, applying Gram--Schmidt to $1,x,x^2,x^3,x^4,x^5$ on $[-\pi,\pi]$ and computing the orthogonal projection $P_U(\sin x)$ (since $\sin x$ is odd, its inner products with the even basis polynomials vanish) yields
   \[
     P_{\PP_5}(\sin x) \approx 0.987862\,x - 0.155271\,x^3 + 0.005643\,x^5,
   \]
@@ -520,14 +606,24 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
   \needspace{5\baselineskip}\ii \textbf{Algebraic properties of $T^\dagger$ (LADR 6.69):}
   \begin{enumerate}[(a)]
     \ii If $T$ is invertible, then $T^\dagger = T^{-1}$ (since $(\nul T)^\perp=V$ and $P_{\range T}=I_W$).
-    \ii $TT^\dagger = P_{\range T}$ is the orthogonal projection of $W$ onto $\range T$, and $T^\dagger T = P_{(\nul T)^\perp}$ is the orthogonal projection of $V$ onto $(\nul T)^\perp$.
+    \ii $TT^\dagger = P_{\range T}$ is the orthogonal projection of $W$ onto $\range T$, and $T^\dagger T = P_{(\nul T)^\perp}$ is the orthogonal projection of $V$ onto $(\nul T)^\perp$. Proof: $T^\dagger w$ is the vector of $(\nul T)^\perp$ that $T$ sends to $P_{\range T}w$, so $TT^\dagger w=P_{\range T}w$. For $v=u+x$ with $u\in\nul T$, $x\in(\nul T)^\perp$: $Tv=Tx\in\range T$, so $P_{\range T}Tv=Tx$ and $T^\dagger Tv=x=P_{(\nul T)^\perp}v$.
   \end{enumerate}
   \ii \textbf{Best approximate and minimum-norm solution of $Tx=b$ (LADR 6.70):} For any $b\in W$ and $x\in V$:
   \begin{enumerate}[(a)]
-    \ii $\|T(T^\dagger b)-b\| = \|P_{\range T}b-b\| \le \|Tx-b\|$, with equality if and only if $Tx=P_{\range T}b$, which holds if and only if $x\in T^\dagger b+\nul T$. Thus $x_*=T^\dagger b$ makes $Tx$ as close to $b$ as possible (a \emph{least-squares solution}).
+    \ii $\|T(T^\dagger b)-b\| = \|P_{\range T}b-b\| \le \|Tx-b\|$, by \ilink{name-best-approximation}{best approximation} applied to $U=\range T$ and the point $Tx\in U$, with equality if and only if $Tx=P_{\range T}b=TT^\dagger b$, that is, $T(x-T^\dagger b)=0$, that is, $x\in T^\dagger b+\nul T$. Thus $x_*=T^\dagger b$ makes $Tx$ as close to $b$ as possible (a \emph{least-squares solution}).
     \ii For every $x\in T^\dagger b+\nul T$ (say $x=T^\dagger b+u$ with $u\in\nul T$), since $T^\dagger b\in(\nul T)^\perp$ is orthogonal to $u\in\nul T$, Pythagoras gives $\|x\|^2=\|T^\dagger b\|^2+\|u\|^2\ge\|T^\dagger b\|^2$, with equality iff $u=0$ ($x=T^\dagger b$). Thus among all vectors $x\in V$ that minimize $\|Tx-b\|$, $x_*=T^\dagger b$ is the unique vector of smallest norm.
   \end{enumerate}
 \end{itemize}
+
+\begin{example*}[A least-squares solution]
+  Let $T\colon\RR^2\to\RR^3$ have the matrix
+  \[ A=\begin{pmatrix}1&0\\1&1\\1&2\end{pmatrix} \]
+  and let $b=(1,0,2)$. Then $Tx=b$ has no solution, and $\nul T=\{0\}$, so $T^\dagger b$ is the unique $x$ with $Ax=P_{\range T}b$. By the normal equations for the columns $a_1=(1,1,1)$, $a_2=(0,1,2)$ of $A$:
+  \[ 3x_1+3x_2=\ip b{a_1}=3,\qquad 3x_1+5x_2=\ip b{a_2}=4\qquad\Longrightarrow\qquad x=(\tfrac12,\tfrac12). \]
+  Then $Ax=(\frac12,1,\frac32)$, and the residual $b-Ax=(\frac12,-1,\frac12)$ is orthogonal to $a_1$ and $a_2$; its norm $\frac{\sqrt6}2$ is the least possible value of $\|Tx-b\|$.
+\end{example*}
+
+\revisit The closest vector is the orthogonal projection $P_Uv$, and the minimum distance is $\|v-P_Uv\|$ (\ilink{name-best-approximation}{best approximation}). It is computed with an orthonormal basis of $U$, $P_Uv=\sum_k\ip v{e_k}e_k$, or by the normal equations. For the plane $U=\spn((1,1,0),(1,0,1))$ in $\RR^3$ and $v=(1,2,3)$, the closest point is $\frac13(7,2,5)$ at distance $\frac4{\sqrt3}$; for $x^3$ and $U=\PP_1(\RR)$ on $[0,1]$ it is $\frac9{10}x-\frac15$ (\ilink{ex-71}{Ex.~71}).
 
 \begin{shortcuts}
   \ii \textbf{Two ways to compute $P_U v$:}
@@ -540,9 +636,9 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{Not every idempotent operator ($P^2=P$) is an orthogonal projection:} On $\RR^2$, $P(x,y)=(x+y,0)$ satisfies $P^2=P$, $\range P=\spn(e_1)$, and $\nul P=\spn((1,-1))$. Since $\nul P$ is \emph{not} orthogonal to $\range P$, $P$ is an oblique projection, not an orthogonal projection---and indeed $\|P(1,1)\|=\|(2,0)\|=2>\sqrt{2}=\|(1,1)\|$, violating $\|P_U v\|\le\|v\|$.
-  \ii \textbf{Finite dimensionality of $U$ is essential for $V=U\oplus U^\perp$ and $(U^\perp)^\perp=U$:} In the infinite-dimensional space $V=C([0,1])$ with $\ip fg=\int_0^1 f(x)g(x)\,dx$ (or $\PP(\RR)$), the infinite-dimensional subspace $U=\{f\in C([0,1]):f(0)=0\}$ has $U^\perp=\{0\}$, so $U\oplus U^\perp=U\ne V$ and $(U^\perp)^\perp=V\ne U$.
-  \ii \textbf{Projecting onto $u_1,\dots,u_m$ separately works \emph{only} if $u_1,\dots,u_m$ are mutually orthogonal:} If $u_1,u_2$ is a non-orthogonal basis of $U$, $P_U v$ is \emph{not} $\frac{\ip v{u_1}}{\|u_1\|^2}u_1+\frac{\ip v{u_2}}{\|u_2\|^2}u_2$. Orthogonalize the basis of $U$ first (or solve the normal equations).
+  \ii \textbf{Not every idempotent operator ($P^2=P$) is an orthogonal projection:} On $\RR^2$, $P(x,y)=(x+y,0)$ satisfies $P^2=P$, $\range P=\spn(e_1)$, and $\nul P=\spn((1,-1))$. Since $\nul P$ is \emph{not} orthogonal to $\range P$, $P$ is an oblique projection, not an orthogonal projection---and indeed $P(1,1)=(2,0)$ has norm $2$, larger than $\|(1,1)\|=\sqrt2$, violating $\|P_U v\|\le\|v\|$, which holds for every orthogonal projection (\ilink{prop-91}{LADR 6.57(h)}).
+  \ii \textbf{Finite dimensionality of $U$ is essential for $V=U\oplus U^\perp$ and $(U^\perp)^\perp=U$:} In the infinite-dimensional space $V=C([0,1])$ with $\ip fg=\int_0^1 f(x)g(x)\,dx$ (or $\PP(\RR)$), the infinite-dimensional subspace $U=\{f\in C([0,1]):f(0)=0\}$ has $U^\perp=\{0\}$, so $U\oplus U^\perp=U\ne V$ and $(U^\perp)^\perp=V\ne U$. Reason: if $g\in U^\perp$, then $f(x)=xg(x)$ lies in $U$, so $0=\ip fg=\int_0^1x\,g(x)^2dx$; the integrand is continuous and $\ge0$, so it is $0$ everywhere (a positive value would persist on an interval), so $g=0$ on $(0,1]$ and, by continuity, at $0$.
+  \ii \textbf{Projecting onto $u_1,\dots,u_m$ separately works \emph{only} if $u_1,\dots,u_m$ are mutually orthogonal:} If $u_1,u_2$ is a non-orthogonal basis of $U$, $P_U v$ is \emph{not} the sum of the two one-vector projections $\ip v{u_i}u_i/\|u_i\|^2$. With $u_1=(1,1,0)$, $u_2=(1,0,1)$, $v=(1,2,3)$, that sum is $\frac32(1,1,0)+2(1,0,1)=(\frac72,\frac32,2)$, not $\frac13(7,2,5)$. Orthogonalize the basis of $U$ first (or solve the normal equations).
 \end{trapbox}
 
 \section{Problem set}
@@ -590,5 +686,24 @@ When $U=\spn(e_1)$ was a $1$-dimensional line, \xlink{math110}{2026-10-26-trace-
 \begin{prob}
 \textbf{O3. Reflections.}\ Let $U$ be a subspace of a finite-dimensional inner product space and $R=I-2P_U$. Prove that $\|Rv\|=\|v\|$ for all $v$ and that $R^2=I$.
 \end{prob}
+
+
+\section{Proofs of the facts used}
+
+\begin{proposition*}[Norm-reducing idempotents are orthogonal projections]\target{name-norm-reducing-idempotents}
+  Let $P\in\LL(V)$ with $P^2=P$, $\range P$ finite-dimensional, and $\|Pv\|\le\|v\|$ for all $v$. Then $\nul P=(\range P)^\perp$, so $P=P_{\range P}$.
+\end{proposition*}
+\begin{ideabox}
+If some $w\in\nul P$ had a component along a vector $u\in\range P$, then moving from $u$ slightly in the direction of $-w$ would give a vector shorter than $u$ that $P$ still sends to $u$, contradicting $\|Pv\|\le\|v\|$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Let $u\in\range P$, $w\in\nul P$ and $t\in\RR$. Then $Pu=u$ (since $u=Py$ gives $Pu=P^2y=Py$) and $Pw=0$, so $P(u+tw)=u$, and the hypothesis gives
+    \[ \|u\|^2\le\|u+tw\|^2=\|u\|^2+2t\operatorname{Re}\ip uw+t^2\|w\|^2. \]
+    \ii So $0\le2t\operatorname{Re}\ip uw+t^2\|w\|^2$ for all real $t$. If $\operatorname{Re}\ip uw\ne0$, a small $t$ of the opposite sign makes the right side negative. So $\operatorname{Re}\ip uw=0$. Over $\CC$, apply this to $iw\in\nul P$: $\operatorname{Re}\ip u{iw}=\operatorname{Re}(-i\ip uw)=\operatorname{Im}\ip uw=0$. So $\nul P\subseteq(\range P)^\perp$.
+    \ii Conversely let $x\in(\range P)^\perp$. Then $x-Px\in\nul P\subseteq(\range P)^\perp$, so $Px=x-(x-Px)\in(\range P)^\perp\cap\range P=\{0\}$, and $x\in\nul P$.
+    \ii With $\nul P=(\range P)^\perp$, \ilink{prop-91}{Prop.~91(A)} gives $P=P_{\range P}$.
+  \end{steps}
+\end{proof}
 
 \end{document}

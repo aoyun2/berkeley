@@ -6,16 +6,13 @@ def curry_binary(f):
     return lambda x: lambda y: f(x, y)
 
 
-def compose_n(f, n):
-    """Compose f with itself n times (n >= 0)."""
-    def repeated(x):
-        val = x
-        k = 0
-        while k < n:
-            val = f(val)
-            k += 1
-        return val
-    return repeated
+def repeat_until(f, stop):
+    """Apply f to x until the current value satisfies stop; x itself is checked first."""
+    def h(x):
+        while not stop(x):
+            x = f(x)
+        return x
+    return h
 
 
 def make_alternator(f, g):

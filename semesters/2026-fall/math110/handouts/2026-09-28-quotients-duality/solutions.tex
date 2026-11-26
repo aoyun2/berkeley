@@ -11,7 +11,7 @@
 
 \begin{prob}\textbf{HW5 P1.}\par\idea{The null space is given by two zeros, so factor. Surjectivity: find polynomials sent to $e_1$ and $e_2$. Those same polynomials give the basis of the quotient.}
 \begin{steps}
-  \ii (a) $p\in\nul T$ means $p(0)=p(1)=0$, i.e.\ $x(x-1)$ divides $p$. With $\deg p\le3$: $p=x(x-1)(ax+b)$. So $\nul T=\spn\bigl(x(x-1),\ x^2(x-1)\bigr)$, of dimension $2$.
+  \ii (a) $p\in\nul T$ means $p(0)=p(1)=0$. Splitting off the root $0$ (\xlink{math110}{2026-09-07-bases-dimension}{fact-G1}{Week~2, G1}, Step~1) gives $p=xq$ with $\deg q\le2$; then $0=p(1)=q(1)$, and splitting off the root $1$ gives $q=(x-1)(ax+b)$. So $p=x(x-1)(ax+b)$, and conversely every such $p$ vanishes at $0$ and $1$. So $\nul T=\spn\bigl(x(x-1),\ x^2(x-1)\bigr)$, of dimension $2$.
   \ii $T(1-x)=(1,0)$ and $T(x)=(0,1)$. These span $\RR^2$, so $T$ is surjective. (Check: $4=2+2$.)
   \ii (b) $\Tt\colon\PP_3(\RR)/\nul T\to\RR^2$, $\Tt(p+\nul T)=(p(0),p(1))$. It is well-defined because two names of the same set differ by a polynomial vanishing at $0$ and $1$.
   \ii (c) $\Tt$ is an isomorphism, and $\Tt\bigl((1-x)+\nul T\bigr)=e_1$, $\Tt\bigl(x+\nul T\bigr)=e_2$. The inverse of an isomorphism sends a basis to a basis, so $(1-x)+\nul T,\ x+\nul T$ is a basis of the quotient.
@@ -22,7 +22,10 @@
 \begin{steps}
   \ii \emph{Uniqueness.} Every element of $V/U$ is $v+U$ for some $v$, and the condition prescribes the value $Tv$ there. So at most one such map exists.
   \ii \emph{Well-defined.} If $v+U=w+U$, then $v-w\in U\subseteq\nul T$, so $Tv-Tw=T(v-w)=0$.
-  \ii \emph{Linear.} $\Tt(\lambda(v+U)+(w+U))=\Tt((\lambda v+w)+U)=T(\lambda v+w)=\lambda\Tt(v+U)+\Tt(w+U)$.
+  \ii \emph{Linear.} By the operations on $V/U$ and linearity of $T$,
+  \[
+    \Tt(\lambda(v+U)+(w+U))=\Tt((\lambda v+w)+U)=T(\lambda v+w)=\lambda\Tt(v+U)+\Tt(w+U).
+  \]
   \ii \emph{Null space.} $\Tt(v+U)=0\iff Tv=0\iff v\in\nul T$. So $\nul\Tt=\{v+U:v\in\nul T\}=(\nul T)/U$.
 \end{steps}
 \end{prob}
@@ -30,22 +33,28 @@
 \begin{prob}\textbf{HW5 P3.}\par\idea{If $\varphi$ takes one nonzero value, scaling the input produces every value.}
 \begin{steps}
   \ii Suppose $\varphi\ne0$. Choose $v$ with $\varphi(v)=c\ne0$.
-  \ii For any $a\in\FF$: $\varphi\bigl(\frac acv\bigr)=\frac ac\varphi(v)=a$. So $\varphi$ is surjective.
+  \ii For any $a\in\FF$, the vector $(a/c)v$ satisfies $\varphi((a/c)v)=(a/c)\,c=a$. So $\varphi$ is surjective.
 \end{steps}
 \end{prob}
 
 \begin{prob}\textbf{HW5 P4.}\par\idea{$\varphi_j$ reads off the $j$-th coordinate. Functionals are compared by evaluating on the basis.}
 \begin{steps}
   \ii (a) Write $v=\sum_ka_kv_k$. Then $\varphi_j(v)=\sum_ka_k\varphi_j(v_k)=a_j$. Substituting $a_j=\varphi_j(v)$ gives the formula.
-  \ii (b) Evaluate the right side at $v_k$: $\sum_j\psi(v_j)\varphi_j(v_k)=\psi(v_k)$. So the two functionals $\psi$ and $\sum_j\psi(v_j)\varphi_j$ agree on a basis of $V$, hence are equal.
+  \ii (b) Evaluate the right side at $v_k$: $\sum_j\psi(v_j)\varphi_j(v_k)=\psi(v_k)$. So the two functionals $\psi$ and $\sum_j\psi(v_j)\varphi_j$ agree on a basis of $V$, hence are equal by the uniqueness in the linear map lemma (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-21}{Week~3, Prop.~21}).
 \end{steps}
 \end{prob}
 
 \begin{prob}\textbf{HW5 P5.}\par\idea{Column $j$ of $\MM(T')$ is the coordinate vector of $T'(w_j')$, and coordinates of a functional are its values on $v_1,\dots,v_n$.}
 \begin{steps}
   \ii Let $B=(v_1,\dots,v_n)$, $C=(w_1,\dots,w_m)$, $A=(a_{lk})$, so $Tv_k=\sum_la_{lk}w_l$.
-  \ii $T'(w_j')(v_k)=w_j'(Tv_k)=w_j'\bigl(\sum_la_{lk}w_l\bigr)=a_{jk}$.
-  \ii By P4(b), $T'(w_j')=\sum_kT'(w_j')(v_k)\,v_k'=\sum_ka_{jk}v_k'$.
+  \ii By the definition of $T'$ and of the dual basis,
+  \[
+    T'(w_j')(v_k)=w_j'(Tv_k)=w_j'\Bigl(\sum_la_{lk}w_l\Bigr)=a_{jk}.
+  \]
+  \ii By P4(b), applied to the functional $T'(w_j')$,
+  \[
+    T'(w_j')=\sum_kT'(w_j')(v_k)\,v_k'=\sum_ka_{jk}v_k'.
+  \]
   \ii So the $(k,j)$ entry of $\MM(T')$ is $a_{jk}$: $\MM(T')=A^\T$.
 \end{steps}
 \end{prob}
@@ -61,15 +70,18 @@
 \begin{prob}\textbf{HW5 P7.}\par\idea{Injective: for $v\ne0$ build a functional with $\varphi(v)=1$ by making $v$ a basis vector.}
 \begin{steps}
   \ii $j_V$ is linear: $j_V(\lambda v+w)(\varphi)=\varphi(\lambda v+w)=\lambda\varphi(v)+\varphi(w)$.
-  \ii Let $v\ne0$. Extend $v$ to a basis of $V$ and let $\varphi$ be $1$ on $v$ and $0$ on the other basis vectors. Then $j_V(v)(\varphi)=1$, so $j_V(v)\ne0$. Hence $\nul j_V=\{0\}$.
-  \ii If $\dim V=n<\infty$: $\dim V''=\dim V'=n$. An injective map between spaces of the same finite dimension is an isomorphism.
+  \ii Let $v\ne0$. Extend $v$ to a basis of $V$ (\xlink{math110}{2026-09-07-bases-dimension}{prop-11}{Week~2, Prop.~11} if $V$ is finite-dimensional; for an infinite basis, exchange $v$ for one basis vector as in \xlink{math110}{2026-09-28-quotients-duality}{prop-46}{Prop.~46} of the handout) and let $\varphi$ be $1$ on $v$ and $0$ on the other basis vectors. Then $j_V(v)(\varphi)=1$, so $j_V(v)\ne0$. Hence $\nul j_V=\{0\}$.
+  \ii If $\dim V=n<\infty$: $\dim V''=\dim V'=n$. An injective map between spaces of the same finite dimension is an isomorphism (\xlink{math110}{2026-09-21-isomorphisms-products-quotients}{prop-31}{Week~4, Prop.~31}).
 \end{steps}
 \end{prob}
 
 \begin{prob}\textbf{R1.}\par\idea{Same map as HW5 P1.}
 \begin{steps}
-  \ii (a) $E(\lambda p+q)=(\lambda p(0)+q(0),\lambda p(1)+q(1))=\lambda E(p)+E(q)$. $E(1-x)=(1,0)$, $E(x)=(0,1)$: surjective.
-  \ii (b) $U=\{x(x-1)(ax+b)\}$, basis $x(x-1),\ x^2(x-1)$ (different degrees, and $\dim U=4-2=2$).
+  \ii (a) $E$ is linear:
+  \[
+    E(\lambda p+q)=(\lambda p(0)+q(0),\lambda p(1)+q(1))=\lambda E(p)+E(q).
+  \] $E(1-x)=(1,0)$, $E(x)=(0,1)$: surjective.
+  \ii (b) $U=\{x(x-1)(ax+b)\}$, basis $x(x-1),\ x^2(x-1)$ (different degrees, \xlink{math110}{2026-09-07-bases-dimension}{fact-G2}{Week~2, G2}; and $\dim U=4-2=2$ by rank--nullity).
   \ii (c) Well-defined: if $p+U=q+U$ then $p-q\in U=\nul E$, so $E(p)=E(q)$. Linear because $E$ is. Injective: $\widetilde E(p+U)=0\Rightarrow p\in U\Rightarrow p+U=0+U$. Surjective because $E$ is.
   \ii (d) $(1-x)+U\mapsto(1,0)$ and $x+U\mapsto(0,1)$. These two elements form a basis of $V/U$ because their images form a basis and $\widetilde E$ is an isomorphism.
 \end{steps}
@@ -86,7 +98,10 @@
 
 \begin{prob}\textbf{E1.}\par\idea{Rows of the inverse of the matrix whose columns are the basis.}
 \begin{steps}
-  \ii $M=\begin{psmallmatrix}1&1\\1&-1\end{psmallmatrix}$, $\det M=-2$, $M^{-1}=\frac1{-2}\begin{psmallmatrix}-1&-1\\-1&1\end{psmallmatrix}=\begin{psmallmatrix}1/2&1/2\\1/2&-1/2\end{psmallmatrix}$.
+  \ii $M=\begin{psmallmatrix}1&1\\1&-1\end{psmallmatrix}$ and $\det M=-2$, so by the $2\times2$ inverse formula (Week~4)
+  \[
+    M^{-1}=\frac1{-2}\begin{pmatrix}-1&-1\\-1&1\end{pmatrix}=\begin{pmatrix}1/2&1/2\\1/2&-1/2\end{pmatrix}.
+  \]
   \ii $\varphi_1=(\tfrac12\ \ \tfrac12)$, $\varphi_2=(\tfrac12\ \ {-\tfrac12})$. Check: $\varphi_1(v_1)=1$, $\varphi_1(v_2)=0$, $\varphi_2(v_1)=0$, $\varphi_2(v_2)=1$.
   \ii $\psi=\psi(v_1)\varphi_1+\psi(v_2)\varphi_2=4\varphi_1+2\varphi_2$. Check: $4(\frac12\ \frac12)+2(\frac12\ {-\frac12})=(3\ \ 1)$.
 \end{steps}

@@ -12,9 +12,9 @@ def trace_step(n):
     return n + 1
 
 
-def middle_number(a, b, c):
-    """Return the middle value using sum minus min and max."""
-    return a + b + c - min(a, b, c) - max(a, b, c)
+def clamp_value(x, low, high):
+    """Move x into [low, high]: raise it to at least low, then lower it to at most high."""
+    return min(max(x, low), high)
 
 
 def clamp_distance(x, low, high):

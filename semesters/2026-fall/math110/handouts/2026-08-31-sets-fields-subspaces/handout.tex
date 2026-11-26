@@ -16,6 +16,10 @@
   figvecsub/.style={ink arrow,draw=inkslate},
   figguide/.style={ink guide,draw=inkslate}
 }
+% Method boxes: "How to ..." with numbered steps.
+\mdfdefinestyle{methodstyle}{nobreak=true,linewidth=0.6pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=methodstyle]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
+\BeforeBeginEnvironment{proof}{\Needspace{6\baselineskip}}
 
 \begin{document}
 \maketitle
@@ -25,70 +29,185 @@
 \subsection{How proofs are written; sets and functions (Notes Ch.~1)}
 
 \begin{qbox}
-  A mathematical proof is a sequence of statements in which every step is a hypothesis, an unfolded definition, or a logical consequence of earlier steps. What are the core templates---direct proof, contrapositive, contradiction, double inclusion, and induction---that turn abstract definitions into concrete calculations?
+  Let $m$ be an integer. Prove that if $m^2$ is even, then $m$ is even. Then prove that for any three sets, $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$. What does a complete proof of each statement look like, line by line?
 \end{qbox}
 
-\begin{itemize}
-  \ii \textbf{Direct proof ($P\Rightarrow Q$): unfold the definition of $P$, calculate, and recognize the definition of $Q$.}
-  \emph{Claim:} The product of two odd integers is odd (and in particular, if $m$ is odd, then $m^2$ is odd).
+A proof is a list of statements. Each statement is a hypothesis, an unfolded definition, or a consequence of earlier statements. A few templates cover almost every proof in this course; each one is a procedure, so each gets its steps and an example.
+
+\begin{methodbox}{How to write a direct proof of $P\Rightarrow Q$}
   \begin{steps}
-    \ii Unfold the hypothesis: an integer is odd iff it has the form $2k+1$ for some $k\in\ZZ$. Write $m=2a+1$ and $n=2b+1$ with $a,b\in\ZZ$.
-    \ii Compute: $mn=(2a+1)(2b+1)=4ab+2a+2b+1=2(2ab+a+b)+1$.
-    \ii Recognize the target definition: since $k=2ab+a+b\in\ZZ$, $mn=2k+1$ is odd.
+    \ii Assume $P$ and write it out as an equation, using the definition of every term in $P$.
+    \ii Write out what $Q$ means by its definition, so you know the form you are aiming for.
+    \ii Calculate from the equation in Step~1 until the expression has the form found in Step~2.
   \end{steps}
-  \ii \textbf{Proof by contrapositive ($P\Rightarrow Q \iff \lnot Q\Rightarrow\lnot P$):} An implication $P\Rightarrow Q$ is logically equivalent to its contrapositive $\lnot Q\Rightarrow\lnot P$. Taking the contrapositive of ``$m$ odd $\Rightarrow m^2$ odd'' immediately proves ``$m^2$ even $\Rightarrow m$ even'' without further calculation.
-  \ii \textbf{If and only if ($P\iff Q$):} Prove both $P\Rightarrow Q$ and $Q\Rightarrow P$ separately (e.g.\ $m$ is even $\iff m^2$ is even).
-  \ii \textbf{Equality of sets ($A=B$) by double inclusion:} Prove $A\subseteq B$ (take an arbitrary $x\in A$ and show $x\in B$) and $B\subseteq A$ (take an arbitrary $x\in B$ and show $x\in A$), for instance to verify $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$.
-\end{itemize}
+\end{methodbox}
+
+\begin{example*}[A direct proof: the product of two odd integers is odd]
+  An integer is odd when it has the form $2k+1$ with $k\in\ZZ$.
+  \begin{steps}
+    \ii Let $m$ and $n$ be odd. By the definition, $m=2a+1$ and $n=2b+1$ for some $a,b\in\ZZ$.
+    \ii The goal is to write $mn$ as $2k+1$ with $k$ an integer.
+    \ii Expanding,
+    \[
+      mn=(2a+1)(2b+1)=4ab+2a+2b+1=2(2ab+a+b)+1.
+    \]
+    The number $k=2ab+a+b$ is an integer, so $mn$ is odd. Taking $n=m$ shows that if $m$ is odd, then $m^2$ is odd.
+  \end{steps}
+\end{example*}
+
+\begin{methodbox}{How to prove $P\Rightarrow Q$ by contrapositive}
+  \begin{steps}
+    \ii Write the contrapositive $\lnot Q\Rightarrow\lnot P$. It is true exactly when $P\Rightarrow Q$ is true: both fail in exactly one situation, namely $P$ true and $Q$ false.
+    \ii Prove $\lnot Q\Rightarrow\lnot P$ directly. Use this when $\lnot Q$ gives an equation to work with and $P$ does not.
+  \end{steps}
+  The converse $Q\Rightarrow P$ is a different statement and is not equivalent to $P\Rightarrow Q$.
+\end{methodbox}
+
+\begin{example*}[A contrapositive proof: if $m^2$ is even, then $m$ is even]
+  The hypothesis ``$m^2$ is even'' gives $m^2=2k$, and taking a square root of $2k$ leads nowhere. The contrapositive is ``if $m$ is not even, then $m^2$ is not even'', that is, ``if $m$ is odd, then $m^2$ is odd''. The direct proof in the previous example (with $n=m$) proves exactly this, so the original statement is proved.
+\end{example*}
+
+\begin{methodbox}{How to prove $P\iff Q$}
+  \begin{steps}
+    \ii Prove $P\Rightarrow Q$, with any template.
+    \ii Prove $Q\Rightarrow P$ as a separate argument. The two directions usually need different arguments.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[An if-and-only-if proof: $m$ is even exactly when $m^2$ is even]
+  \textbf{Assume $m$ is even.} Then $m=2a$, so $m^2=4a^2=2(2a^2)$ is even.
+
+  \textbf{Assume $m^2$ is even.} Then $m$ is even by the contrapositive example above.
+\end{example*}
+
+Proof by contradiction assumes the negation of the claim and derives a false statement. It is the natural choice when the claim says that something does \emph{not} exist, because then the claim itself gives no equation, while its negation does.
 
 \begin{proposition*}[Prop.~1: Irrationality of $\sqrt{2}$]\target{prop-1}
   There do not exist integers $m,n\in\ZZ$ with $n\ne 0$ such that $(m/n)^2=2$; that is, $\sqrt{2}$ is irrational.
 \end{proposition*}
 \begin{ideabox}
-  ``Irrational'' is a negative assertion (no fraction $m/n$ equals $\sqrt{2}$), which gives no equation to manipulate directly. Proof by contradiction assumes the negation: suppose $\sqrt{2}=m/n$, where the fraction $m/n$ is reduced to lowest terms so that $m$ and $n$ are not both even. Squaring gives $m^2=2n^2$, which makes $m^2$ even and forces $m=2r$ to be even; substituting $m=2r$ back into $4r^2=2n^2$ reveals $n^2=2r^2$, forcing $n$ to be even as well and contradicting lowest terms.
+  ``Irrational'' says that no fraction equals $\sqrt2$, which gives no equation to manipulate. The negation does: $m^2=2n^2$. The choice to reduce $m/n$ to lowest terms first is what makes a contradiction possible, because the equation $m^2=2n^2$ will force both $m$ and $n$ to be even, and that can only contradict something if we have arranged in advance that they are not both even.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Suppose for contradiction that $\sqrt{2}=m/n$ for integers $m,n$ with $n\ne 0$. By cancelling common factors of $2$, we may assume $m/n$ is in lowest terms, so $m$ and $n$ are not both even.
-    \ii Squaring both sides gives $m^2=2n^2$, so $m^2$ is even and therefore $m$ is even. Write $m=2r$ for some $r\in\ZZ$.
-    \ii Substituting $m=2r$ into $m^2=2n^2$ gives $4r^2=2n^2$, so $n^2=2r^2$ is even, which implies $n$ is even.
-    \ii Thus both $m$ and $n$ are even, contradicting Step~1.
+    \ii Suppose, for contradiction, that $\sqrt{2}=m/n$ for integers $m,n$ with $n\ne 0$. By cancelling common factors of $2$, we may assume that $m$ and $n$ are not both even.
+    \ii Squaring both sides gives $m^2=2n^2$, so $m^2$ is even. By the contrapositive example above, $m$ is even. Write $m=2r$ for some $r\in\ZZ$.
+    \ii Substituting $m=2r$ into $m^2=2n^2$ gives $4r^2=2n^2$, so $n^2=2r^2$ is even, and therefore $n$ is even by the same example applied to $n$.
+    \ii Steps~2 and~3 show that both $m$ and $n$ are even, which contradicts the assumption made in Step~1.
   \end{steps}
 \end{proof}
 
 \begin{proposition*}[Prop.~2: Principle of mathematical induction]\target{prop-2}
-  Let $P(n)$ be a statement for each integer $n\ge 1$. If (i)~$P(1)$ holds (base case), and (ii)~for every $n\ge 1$, $P(n)\Rightarrow P(n+1)$ (inductive step), then $P(n)$ holds for all integers $n\ge 1$.
+  Let $P(n)$ be a statement for each integer $n\ge 1$. Suppose that
+  \begin{enumerate}[(i)]
+    \ii $P(1)$ holds (the base case), and
+    \ii for every $n\ge 1$, $P(n)$ implies $P(n+1)$ (the inductive step).
+  \end{enumerate}
+  Then $P(n)$ holds for every integer $n\ge 1$.
 \end{proposition*}
+\begin{proof}
+  The positive integers have the \vocab{well-ordering property}: every nonempty set of positive integers has a smallest element. This is one of the defining properties of $\NN$, in the same way that the field axioms define a field.
+  \begin{steps}
+    \ii Suppose, for contradiction, that $P(n)$ fails for some $n\ge1$. Then the set $F=\{n\ge1: P(n)\text{ is false}\}$ is nonempty, so it has a smallest element $k$.
+    \ii $k\ne1$, because $P(1)$ holds by (i). So $k\ge2$ and $k-1\ge1$.
+    \ii Since $k-1<k$ and $k$ is the smallest element of $F$, $k-1\notin F$, that is, $P(k-1)$ holds. By (ii) with $n=k-1$, $P(k)$ holds, which contradicts $k\in F$.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to prove a statement for all $n\ge 1$ by induction}
+  \begin{steps}
+    \ii Write the statement $P(n)$ as a sentence about one fixed $n$.
+    \ii Check $P(1)$ by direct computation.
+    \ii Fix $n\ge 1$, assume $P(n)$, and write the statement $P(n+1)$ you must reach.
+    \ii Rewrite the $(n+1)$ case so that the $n$ case appears inside it, substitute $P(n)$, and simplify to $P(n+1)$.
+  \end{steps}
+  Edge cases: if the statement starts at $n=0$ or $n=2$, the base case is that first value. An inductive step that never uses $P(n)$ is a sign that the proof is wrong or that induction was not needed.
+\end{methodbox}
+
+\begin{example*}[An induction proof: $1+3+\dots+(2n-1)=n^2$]
+  \begin{steps}
+    \ii $P(n)$ is the statement $1+3+\dots+(2n-1)=n^2$.
+    \ii For $n=1$ the left side is $1$ and the right side is $1^2=1$, so $P(1)$ holds.
+    \ii Assume $P(n)$. The goal is $1+3+\dots+(2n-1)+(2n+1)=(n+1)^2$.
+    \ii The sum of the first $n$ terms is $n^2$ by $P(n)$, so the left side equals $n^2+2n+1=(n+1)^2$. This is $P(n+1)$.
+  \end{steps}
+\end{example*}
 
 \begin{definition*}[Def.~1, 2: Sets, subsets, functions, injectivity, and surjectivity]\target{def-1}\target{def-2}
   \begin{itemize}
     \ii A \vocab{set} is a collection of distinguishable objects, called its \vocab{elements} ($x\in M$). We write $N\subseteq M$ ($N$ is a \vocab{subset} of $M$) if every element of $N$ belongs to $M$. For subsets $M,N\subseteq A$, we define the complement $M^c=\{x\in A:x\notin M\}$, union $M\cup N=\{x:x\in M\text{ or }x\in N\}$, intersection $M\cap N=\{x:x\in M\text{ and }x\in N\}$, difference $M\setminus N=M\cap N^c$, and Cartesian product $M\times N=\{(x,y):x\in M,\,y\in N\}$.
-    \ii A \vocab{function} (or \vocab{map}) $f\colon M\to N$ assigns to each $x\in M$ a unique element $f(x)\in N$. The map $f$ is \vocab{injective} (one-to-one) if $f(x)=f(y)\implies x=y$; \vocab{surjective} (onto) if for every $z\in N$ there exists $x\in M$ with $f(x)=z$; and \vocab{bijective} if it is both injective and surjective.
+    \ii A \vocab{function} (or \vocab{map}) $f\colon M\to N$ assigns to each $x\in M$ a unique element $f(x)\in N$. The map $f$ is \vocab{injective} (one-to-one) if $f(x)=f(y)$ implies $x=y$; \vocab{surjective} (onto) if for every $z\in N$ there exists $x\in M$ with $f(x)=z$; and \vocab{bijective} if it is both injective and surjective.
   \end{itemize}
 \end{definition*}
+
+Sets are written either by listing elements, $\{2,4,6\}$, or by a property after a colon. For example (Notes Ex.~1),
+\[
+  \{x : x\in\{1,2,3,4,5,6\},\ x\text{ is even}\}=\{2,4,6\}.
+\]
+In a Cartesian product the order matters: $(1,2)$ and $(2,1)$ are different elements of $\NN\times\NN$.
+
+\begin{methodbox}{How to prove $A\subseteq B$ and $A=B$ for sets}
+  \begin{steps}
+    \ii To prove $A\subseteq B$: write ``Let $x\in A$.'' Unfold the definition of $A$ into a statement about $x$.
+    \ii Use that statement to show that $x$ satisfies the definition of $B$. End with ``so $x\in B$''.
+    \ii To prove $A=B$ (double inclusion): prove $A\subseteq B$ and then $B\subseteq A$, each by Steps~1--2.
+    \ii To show $A\not\subseteq B$: give one specific element of $A$ that is not in $B$.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Double inclusion: $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$]
+  \textbf{The left side is contained in the right side.} Let $x\in A\cap(B\cup C)$. Then $x\in A$, and $x\in B$ or $x\in C$. If $x\in B$, then $x\in A\cap B$; if $x\in C$, then $x\in A\cap C$. In both cases $x\in(A\cap B)\cup(A\cap C)$.
+
+  \textbf{The right side is contained in the left side.} Let $x\in(A\cap B)\cup(A\cap C)$. If $x\in A\cap B$, then $x\in A$ and $x\in B\subseteq B\cup C$. If $x\in A\cap C$, then $x\in A$ and $x\in C\subseteq B\cup C$. In both cases $x\in A\cap(B\cup C)$.
+\end{example*}
+
+\textbf{Images and preimages.} For $f\colon X\to Y$, $U\subseteq X$ and $V\subseteq Y$, the \vocab{image} is $f(U)=\{f(x):x\in U\}$ and the \vocab{preimage} is $f^{-1}(V)=\{x\in X:f(x)\in V\}$. The preimage is defined for every function; it does not require $f$ to have an inverse.
+
+\begin{methodbox}{How to compute an image and a preimage, and how to test injectivity and surjectivity}
+  \begin{steps}
+    \ii Image $f(U)$: let $x$ run over $U$ and record every value $f(x)$.
+    \ii Preimage $f^{-1}(V)$: solve the condition $f(x)\in V$ for $x$. Every solution belongs, including solutions you may not have expected (negative square roots, for example).
+    \ii Injective: assume $f(x)=f(y)$ and deduce $x=y$. To disprove, give two different inputs with the same value.
+    \ii Surjective: take an arbitrary $z$ in the target and solve $f(x)=z$ for $x$. To disprove, give one $z$ that no input reaches.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Image and preimage under $f(x)=x^2$ on $\RR$]
+  Let $f\colon\RR\to\RR$, $f(x)=x^2$.
+  \begin{itemize}
+    \ii $f([-1,2])=[0,4]$: as $x$ runs over $[-1,2]$, $x^2$ takes every value from $0$ to $4$.
+    \ii $f^{-1}([1,4])=[-2,-1]\cup[1,2]$: the condition $1\le x^2\le 4$ means $1\le|x|\le2$.
+    \ii $f(f^{-1}([-1,4]))=f([-2,2])=[0,4]$, which is strictly smaller than $[-1,4]$: negative numbers are not values of $f$, so they are lost.
+    \ii $f^{-1}(f([0,1]))=f^{-1}([0,1])=[-1,1]$, which is strictly larger than $[0,1]$: the inputs $-x$ have the same values as $x$, so they are gained.
+    \ii $f$ is not injective, since $f(-1)=f(1)$, and not surjective, since $-1$ is not a value.
+  \end{itemize}
+\end{example*}
 
 \begin{proposition*}[Ex.~2: Pigeonhole principle for finite sets of equal size]\target{name-pigeonhole-principle}
   If $A$ and $B$ are finite sets with the same number of elements ($|A|=|B|=n$) and $f\colon A\to B$ is a function, then $f$ is injective if and only if $f$ is surjective (if and only if $f$ is bijective).
 \end{proposition*}
 \begin{ideabox}
-  As $a$ varies over the $n$ elements of $A$, let $k=|f(A)|\le n$ be the number of distinct values in $B$ hit by $f$. No two inputs collide ($f$ is injective) if and only if $f$ produces $n$ distinct outputs ($k=n$); and since $|B|=n$, $k=n$ holds if and only if every element of $B$ is hit ($f$ is surjective). Note that this fails for infinite sets: $f\colon\NN\to\NN$ given by $f(n)=n+1$ is injective but not surjective.
+  Both properties can be read off from one number: $k$, the number of distinct values that $f$ takes. Injective means no two inputs share a value, so $k=n$. Surjective means every element of $B$ is a value, and since $|B|=n$ this also means $k=n$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii Let $n=|A|=|B|$ and let $k=|f(A)|$ be the number of distinct elements in the image $f(A)\subseteq B$, so $k\le n$.
-    \ii By definition, $f$ is injective if and only if distinct inputs produce distinct outputs, which means $k=|A|=n$.
-    \ii Since $f(A)$ is a subset of the $n$-element finite set $B$, $f(A)=B$ ($f$ is surjective) if and only if $k=|B|=n$. Thus $f$ is injective iff $k=n$ iff $f$ is surjective.
+    \ii The map $f$ is injective exactly when distinct inputs have distinct values, which means that the $n$ inputs produce $n$ distinct values, that is, $k=n$.
+    \ii Since $f(A)$ is a subset of the $n$-element set $B$, $f(A)=B$ (that is, $f$ is surjective) exactly when $k=n$. So $f$ is injective exactly when $k=n$, which happens exactly when $f$ is surjective.
   \end{steps}
 \end{proof}
+The statement fails for infinite sets: $f\colon\NN\to\NN$, $f(n)=n+1$, is injective but not surjective, because $1$ is not a value. For linear maps, dimension will later play the role of the number of elements.
+
+\revisit The statement ``$m^2$ even implies $m$ even'' is proved by contrapositive: its contrapositive ``$m$ odd implies $m^2$ odd'' is the direct computation $(2a+1)^2=2(2a^2+2a)+1$. The set identity is proved by double inclusion, as in the example above: each side is shown to be contained in the other by taking an arbitrary element and splitting into the cases $x\in B$ and $x\in C$.
 
 \subsection{Fields, complex numbers $\CC$, and $\FF^n$ (Notes Ch.~1, LADR 1A)}
 
 \begin{qbox}
-  To solve linear equations and isolate unknowns by dividing by nonzero coefficients, what exact algebraic laws must our scalar number system $\FF$ obey, and why do we work over both the real field $\RR$ and the complex field $\CC$?
+  Solve $2x=1$ in $\ZZ$, in $\QQ$ and in $\FF_2=\{0,1\}$ (where $1+1=0$), and solve $(3+4i)z=5$ in $\CC$. Which algebraic laws make it possible to divide by a nonzero coefficient, and in which of these number systems do they hold?
 \end{qbox}
 
-\begin{definition*}[Def.~3 / LADR 1.1: Field $\FF$ and complex numbers $\CC$]\target{def-3}
-  A \vocab{field} is a set $\FF$ containing at least two distinct elements $0$ and $1$, together with operations of addition $+$ and multiplication $\cdot$ such that for all $x,y,z\in\FF$:
+\begin{definition*}[Def.~3 / LADR 1.1: Field $\FF$]\target{def-3}
+  A \vocab{field} is a set $\FF$ containing two distinct elements $0$ and $1$, together with operations of addition $+$ and multiplication $\cdot$ such that for all $x,y,z\in\FF$:
   \begin{enumerate}[(i)]
     \ii \textbf{commutativity:} $x+y=y+x$ and $xy=yx$;
     \ii \textbf{associativity:} $x+(y+z)=(x+y)+z$ and $x(yz)=(xy)z$;
@@ -100,11 +219,23 @@
   \end{enumerate}
 \end{definition*}
 
-\begin{itemize}
-  \ii \textbf{Examples and non-examples of fields:} $\QQ$, $\RR$, and $\CC$ are fields; $\ZZ$ is \emph{not} a field because $2\in\ZZ$ has no multiplicative inverse in $\ZZ$. The two-element set $\FF_2=\{0,1\}$ with $1+1=0$ is a finite field (see \ilink{prob-HW1-P7}{HW1~P7}). Throughout LADR, $\FF$ denotes either $\RR$ or $\CC$ unless stated otherwise.
-\end{itemize}
+Axiom (vii) is the axiom that allows dividing by a nonzero coefficient, since $ax=b$ with $a\ne0$ gives $x=a^{-1}b$.
 
-\begin{proposition*}[LADR 1.3 and HW1 P3: Uniqueness of identities/inverses and absence of zero divisors]\target{name-uniqueness-of-identities-and-inverses}\target{name-hw1-p3-no-zero-divisors}
+\begin{example*}[Fields and a non-field (Notes Ex.~3)]
+  $\QQ$, $\RR$ and $\CC$ are fields. $\ZZ$ is \emph{not} a field: $2\in\ZZ$ has no multiplicative inverse in $\ZZ$, because $2x=1$ has no integer solution. In this course $\FF$ denotes $\RR$ or $\CC$ unless stated otherwise.
+\end{example*}
+
+\begin{example*}[The two-element field $\FF_2$]\target{ex-F2}
+  $\FF_2=\{0,1\}$ with the tables
+  \[
+    \begin{array}{c|cc} + & 0 & 1\\\hline 0&0&1\\ 1&1&0\end{array}
+    \qquad\qquad
+    \begin{array}{c|cc} \cdot & 0 & 1\\\hline 0&0&0\\ 1&0&1\end{array}
+  \]
+  is a field (proved in \ilink{fact-F2}{F1} at the end). The additive inverse of $1$ is $1$ (since $1+1=0$), and the multiplicative inverse of $1$ is $1$. Since $2=1+1=0$ in $\FF_2$, every term with an even coefficient is $0$ there (\ilink{prob-HW1-P7}{HW1~P7}).
+\end{example*}
+
+\begin{proposition*}[LADR 1.3 and HW1 P3: Uniqueness of identities and inverses; no zero divisors]\target{name-uniqueness-of-identities-and-inverses}\target{name-hw1-p3-no-zero-divisors}
   In any field $\FF$:
   \begin{enumerate}[(a)]
     \ii The additive identity $0$, the multiplicative identity $1$, the additive inverse $-x$ of each $x\in\FF$, and the multiplicative inverse $x^{-1}$ of each $x\ne 0$ are unique.
@@ -112,90 +243,171 @@
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  To prove uniqueness of an identity or inverse, pit two candidates against each other: if $0$ and $0'$ are both additive identities, evaluate $0+0'$ in two ways ($0+0'=0$ because $0'$ is an identity, and $0+0'=0'$ because $0$ is an identity). If $-x$ and $(-x)'$ are both additive inverses of $x$, simplify $(-x)+x+(-x)'$ by grouping the first two terms vs.\ the last two terms. For $0\cdot a=0$, expand $(0+0)a=0\cdot a+0\cdot a$ by distributivity and add $-(0\cdot a)$; then if $ab=0$ with $a\ne 0$, multiplying by $a^{-1}$ isolates $b=a^{-1}(ab)=a^{-1}\cdot 0=0$.
+  To show that something with a defining property is unique, take two objects with that property and compute one expression that each property simplifies differently. For two additive identities $0$ and $0'$ that expression is $0+0'$. For $0\cdot a=0$ there is no axiom about multiplying by $0$; the only axiom connecting $0$ to multiplication is distributivity, applied to $0=0+0$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii If $0'$ also satisfies $x+0'=x$ for all $x$, then $0=0+0'=0'+0=0'$; the same calculation for multiplication gives $1=1\cdot 1'=1'$. If $(-x)'$ also satisfies $x+(-x)'=0$, then $-x=-x+0=-x+(x+(-x)')=(-x+x)+(-x)'=0+(-x)'=(-x)'$; the same proof for $x\ne 0$ shows uniqueness of $x^{-1}$.
-    \ii By distributivity, $0\cdot a=(0+0)a=0\cdot a+0\cdot a$; adding $-(0\cdot a)$ to both sides gives $0=0\cdot a$. If $ab=0$ and $a\ne 0$, multiplying on the left by $a^{-1}$ gives $b=1\cdot b=(a^{-1}a)b=a^{-1}(ab)=a^{-1}\cdot 0=0$.
+    \ii \textbf{The identity $0$ is unique.} Suppose $0'$ also satisfies $x+0'=x$ for all $x$. Then $0=0+0'$ because $0'$ is an additive identity, and $0+0'=0'+0=0'$ by commutativity and because $0$ is an additive identity. So $0=0'$. The same computation with multiplication, $1=1\cdot1'=1'$, shows that $1$ is unique.
+    \ii \textbf{Inverses are unique.} Suppose $(-x)'$ also satisfies $x+(-x)'=0$. Then
+    \[
+      -x=-x+0=-x+\bigl(x+(-x)'\bigr)=(-x+x)+(-x)'=0+(-x)'=(-x)'.
+    \]
+    The same chain of equalities with multiplication, for $x\ne 0$, shows that $x^{-1}$ is unique.
+    \ii \textbf{$0\cdot a=0$.} By distributivity, $0\cdot a=(0+0)a=0\cdot a+0\cdot a$. Adding $-(0\cdot a)$ to both sides gives $0=0\cdot a$.
+    \ii \textbf{No zero divisors.} Suppose $ab=0$. If $a=0$ we are done. If $a\ne 0$, then $a^{-1}$ exists, and
+    \[
+      b=1\cdot b=(a^{-1}a)b=a^{-1}(ab)=a^{-1}\cdot 0=0
+    \]
+    by associativity and Step~3.
   \end{steps}
 \end{proof}
 
+\textbf{Complex numbers.} $\CC=\{a+bi:a,b\in\RR\}$, where $i^2=-1$. Numbers are added and multiplied with the usual algebra, replacing $i^2$ by $-1$:
+\[
+  (a+bi)+(c+di)=(a+c)+(b+d)i,\qquad (a+bi)(c+di)=(ac-bd)+(ad+bc)i.
+\]
+A real number $x$ is the complex number $x+0i$, so $\RR\subseteq\CC$. The \vocab{complex conjugate} is $\overline{a+bi}=a-bi$ and the \vocab{modulus} is $|a+bi|=\sqrt{a^2+b^2}$.
+
+\begin{example*}[Multiplying complex numbers (Notes Ex.~4)]
+  \[
+    (1+i)^3=1+3i+3i^2+i^3=1+3i-3-i=-2+2i,\qquad (5+i)(4+3i)=20+19i+3i^2=17+19i.
+  \]
+\end{example*}
+
 \begin{proposition*}[Prop.~3 / LADR 1.1--1.5: Complex arithmetic, conjugation, and reciprocals]\target{prop-3}
-  In the complex field $\CC=\{a+bi:a,b\in\RR\}$ (where $i^2=-1$, $(a+bi)+(c+di)=(a+c)+(b+d)i$, and $(a+bi)(c+di)=(ac-bd)+(ad+bc)i$), define the \vocab{complex conjugate} $\overline{a+bi}=a-bi$ and \vocab{modulus} $|a+bi|=\sqrt{a^2+b^2}$. For all $w,z\in\CC$:
+  For all $w,z\in\CC$:
+  \begin{enumerate}[(i)]
+    \ii $\overline{w+z}=\bar w+\bar z$;
+    \ii $\overline{wz}=\bar w\,\bar z$;
+    \ii $\bar z=z$ if and only if $z\in\RR$;
+    \ii $z\bar z=|z|^2$, which is real and $\ge 0$.
+  \end{enumerate}
+  Every nonzero complex number $z=a+bi$ has the multiplicative inverse
   \[
-    \text{(i) }\overline{w+z}=\bar w+\bar z, \qquad
-    \text{(ii) }\overline{wz}=\bar w\,\bar z, \qquad
-    \text{(iii) }\bar z=z\iff z\in\RR, \qquad
-    \text{(iv) }z\bar z=|z|^2\ge 0,
+    z^{-1} = \frac{1}{a+bi} = \frac{\bar z}{|z|^2} = \frac{a}{a^2+b^2} - \frac{b}{a^2+b^2}i,
   \]
-  and every nonzero complex number $z=a+bi\ne 0$ has multiplicative inverse
-  \[
-    z^{-1} = \frac{1}{a+bi} = \frac{\bar z}{|z|^2} = \frac{a}{a^2+b^2} - \frac{b}{a^2+b^2}i.
-  \]
+  so $\CC$ is a field.
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii Writing $w=a+bi$ and $z=c+di$ ($a,b,c,d\in\RR$), direct expansion gives $\overline{w+z}=(a+c)-(b+d)i=\bar w+\bar z$ and $\overline{wz}=(ac-bd)-(ad+bc)i=(a-bi)(c-di)=\bar w\,\bar z$.
-    \ii Also $z-\bar z=2di=0\iff d=0\iff z\in\RR$, and $z\bar z=(c+di)(c-di)=c^2+d^2=|z|^2\ge 0$.
-    \ii If $z=a+bi\ne 0$, then $|z|^2=a^2+b^2>0$, and $z\cdot\frac{\bar z}{|z|^2}=\frac{z\bar z}{|z|^2}=\frac{a^2+b^2}{a^2+b^2}=1$.
+    \ii Write $w=a+bi$ and $z=c+di$ with $a,b,c,d\in\RR$. Expanding, $\overline{w+z}=(a+c)-(b+d)i=\bar w+\bar z$, and
+    \[
+      \overline{wz}=(ac-bd)-(ad+bc)i=(a-bi)(c-di)=\bar w\,\bar z.
+    \]
+    \ii $z-\bar z=2di$, which is $0$ exactly when $d=0$, that is, when $z$ is real. Also $z\bar z=(c+di)(c-di)=c^2+d^2=|z|^2\ge 0$.
+    \ii If $z=a+bi\ne 0$, then $a$ or $b$ is nonzero, so $|z|^2=a^2+b^2>0$ and we may divide by it. By (iv),
+    \[
+      z\cdot\frac{\bar z}{|z|^2}=\frac{z\bar z}{|z|^2}=\frac{a^2+b^2}{a^2+b^2}=1.
+    \]
+    The remaining field axioms (commutativity, associativity and distributivity) are checked from the formulas for $+$ and $\cdot$ in \ilink{fact-C}{F2} at the end.
   \end{steps}
 \end{proof}
 
 \begin{fig}
-\begin{tikzpicture}[scale=0.92]
-  % Delicate axes
-  \PacketInkPath[figaxis]{(-3.15,0) -- (3.85,0) node[right=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Re}$}}}
-  \PacketInkPath[figaxis]{(0,-2.05) -- (0,2.15) node[above=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Im}$}}}
+\begin{tikzpicture}[scale=0.88]
+  \PacketInkPath[figaxis]{(-3.5,0) -- (3.9,0) node[right=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Re}$}}}
+  \PacketInkPath[figaxis]{(0,-2.3) -- (0,2.4) node[above=2pt,font=\footnotesize] {\InkLabel{$\operatorname{Im}$}}}
 
   \coordinate (O) at (0,0);
-  \coordinate (Z) at (2.65,1.65);
-  \coordinate (Zbar) at (2.65,-1.65);
-  \coordinate (mZ) at (-2.65,-1.65);
+  \coordinate (Z) at (3,2);
+  \coordinate (Zbar) at (3,-2);
+  \coordinate (mZ) at (-3,-2);
 
-  % Dotted projections
-  \draw[ink guide,draw=inkslate] (2.65,-1.65) -- (2.65,1.65);
-  \draw[ink guide,draw=inkslate] (0,1.65) -- (2.65,1.65);
-  \draw[ink guide,draw=inkslate] (0,-1.65) -- (2.65,-1.65);
+  \draw[ink guide,draw=inkslate] (3,-2) -- (3,2);
+  \draw[ink guide,draw=inkslate] (0,2) -- (3,2);
+  \draw[ink guide,draw=inkslate] (0,-2) -- (3,-2);
 
-  % Right-angle mark
-  \PacketInkPath[black!55,line width=0.38pt]{(2.47,0) -- (2.47,0.18) -- (2.65,0.18)}
+  \PacketInkPath[black!75,line width=0.45pt]{(2.8,0) -- (2.8,0.2) -- (3,0.2)}
 
-  % Delicate angle arcs
-  \PacketInkPath[black!55,line width=0.38pt]{(0.64,0) arc (0:31.9:0.64)}
-  \node[font=\scriptsize] at (0.88,0.22) {\InkLabel{$\theta$}};
-  \PacketInkPath[black!55,line width=0.38pt]{(0.64,0) arc (0:-31.9:0.64)}
-  \node[font=\scriptsize] at (0.96,-0.23) {\InkLabel{$-\theta$}};
+  \PacketInkPath[black!75,line width=0.45pt]{(0.7,0) arc (0:33.69:0.7)}
+  \node[font=\scriptsize] at (0.98,0.26) {\InkLabel{$\theta$}};
+  \PacketInkPath[black!75,line width=0.45pt]{(0.7,0) arc (0:-33.69:0.7)}
+  \node[font=\scriptsize] at (1.04,-0.27) {\InkLabel{$-\theta$}};
 
-  % Vectors: pure black for z and \bar z, muted gray dotted arrow for -z
-  \PacketInkPath[figvec,line width=0.55pt]{(O) -- node[pos=0.48,sloped,above=2pt,font=\scriptsize] {\InkLabel{$|z|$}} (Z)}
-  \node[above right=2pt,font=\footnotesize] at (Z) {\InkLabel{$z = a+bi$}};
+  \PacketInkPath[figvec,line width=0.6pt]{(O) -- node[pos=0.5,sloped,above=2pt,font=\scriptsize] {\InkLabel{$|z|=\sqrt{13}$}} (Z)}
+  \node[above right=2pt,font=\footnotesize] at (Z) {\InkLabel{$z = 3+2i$}};
 
-  \PacketInkPath[figvec,line width=0.55pt]{(O) -- (Zbar)}
-  \node[below right=2pt,font=\footnotesize] at (Zbar) {\InkLabel{$\bar z = a-bi$}};
+  \PacketInkPath[figvec,line width=0.6pt]{(O) -- (Zbar)}
+  \node[below right=2pt,font=\footnotesize] at (Zbar) {\InkLabel{$\bar z = 3-2i$}};
 
-  \draw[ink guide arrow,draw=inkslate] (O) -- (mZ);
-  \node[below=3pt,font=\footnotesize,text=black!70] at (mZ) {\InkLabel{$-z$}};
+  \PacketInkPath[figvecsub,line width=0.6pt]{(O) -- (mZ)}
+  \node[below=3pt,font=\footnotesize] at (mZ) {\InkLabel{$-z=-3-2i$}};
 
-  % Atomic coordinate labels
-  \node[font=\scriptsize,below right=2pt] at (2.65,0) {\InkLabel{$a$}};
-  \node[font=\scriptsize,left=3pt] at (0,1.65) {\InkLabel{$b$}};
-  \node[font=\scriptsize,left=3pt] at (0,-1.65) {\InkLabel{$-b$}};
+  \node[font=\scriptsize,below right=2pt] at (3,0) {\InkLabel{$3$}};
+  \node[font=\scriptsize,left=3pt] at (0,2) {\InkLabel{$2$}};
+  \node[font=\scriptsize,left=3pt] at (0,-2) {\InkLabel{$-2$}};
   \node[font=\scriptsize,above left=2pt] at (O) {\InkLabel{$0$}};
 
   \node[figdot] at (O) {};
 \end{tikzpicture}
-\figcap{Geometry of the complex plane $\CC$: conjugation $z\mapsto\bar z=a-bi$ reflects across the real axis, so $z\bar z=a^2+b^2=|z|^2>0$ for all $z\ne 0$, giving the reciprocal $z^{-1}=\bar z/|z|^2$.}
+\figcap{Conjugation reflects $z=3+2i$ across the real axis to $\bar z=3-2i$; both have length $\sqrt{13}$, so $z\bar z=9+4=13$ and $1/z=\bar z/13$. The point $-z$ is opposite $z$ through $0$.}
 \end{fig}
 
-\begin{itemize}
-  \ii \textbf{Lists vs.\ sets and the coordinate space $\FF^n$ (LADR 1.8--1.18):} A \vocab{list} (or \vocab{$n$-tuple}) of length $n$ is an ordered collection $(x_1,\dots,x_n)$; two lists are equal iff they have the same length and the same entries in the same order, so $(3,5)\ne(5,3)$ and $(4,4)\ne(4)$ (whereas for sets $\{3,5\}=\{5,3\}$ and $\{4,4\}=\{4\}$). The set $\FF^n=\{(x_1,\dots,x_n):x_j\in\FF\}$ equipped with coordinatewise addition $(x_1,\dots,x_n)+(y_1,\dots,y_n)=(x_1+y_1,\dots,x_n+y_n)$, zero list $0=(0,\dots,0)$, additive inverse $-x=(-x_1,\dots,-x_n)$, and scalar multiplication $\lambda(x_1,\dots,x_n)=(\lambda x_1,\dots,\lambda x_n)$ is the prototype for all vector spaces.
-\end{itemize}
+\begin{methodbox}{How to divide by a complex number and how to compute powers}
+  \begin{steps}
+    \ii To compute $w/z$: multiply numerator and denominator by $\bar z$. The denominator becomes the real number $z\bar z=|z|^2$ (\ilink{prop-3}{Prop.~3(iv)}); then divide the real and imaginary parts by it.
+    \ii To compute $z^n$: square repeatedly ($z^2$, $z^4=(z^2)^2$, \dots) or use the binomial expansion, replacing $i^2=-1$, $i^3=-i$, $i^4=1$ as they appear.
+    \ii To check that $z$ is an $n$th root of a number $c$: compute $z^n$ and compare with $c$. Clear common denominators first; for example compute the numerator of $\bigl(\frac{p}{q}\bigr)^n$ as $p^n$ and divide by $q^n$ at the end.
+  \end{steps}
+  Edge cases: $z=0$ has no inverse; $\overline{\bar z}=z$; $|z|^2$ is $a^2+b^2$, not $a^2-b^2$ and not $(a+bi)^2$.
+\end{methodbox}
+
+\begin{example*}[Dividing: $1/(3+4i)$ and $5/(3+4i)$ (Notes, after Prop.~3)]
+  \[
+    \frac{1}{3+4i}=\frac{3-4i}{(3+4i)(3-4i)}=\frac{3-4i}{9+16}=\frac{3-4i}{25},\qquad
+    \frac{5}{3+4i}=\frac{5(3-4i)}{25}=\frac{3}{5}-\frac{4}{5}i.
+  \]
+  Check:
+  \[
+    (3+4i)\Bigl(\frac35-\frac45i\Bigr)=\frac95-\frac{12}5i+\frac{12}5i+\frac{16}5=5.
+  \]
+\end{example*}
+
+\begin{example*}[Powers by repeated squaring: $z=(1+i)/\sqrt2$ satisfies $z^8=1$]
+  First square:
+  \[
+    z^2=\frac{(1+i)^2}{2}=\frac{1+2i+i^2}{2}=\frac{2i}{2}=i.
+  \]
+  Then $z^4=(z^2)^2=i^2=-1$ and $z^8=(z^4)^2=(-1)^2=1$.
+\end{example*}
+
+\begin{example*}[Complex numbers inside a real calculation (Bombelli)]
+  The cubic $x^3-15x-4=0$ has the real root $x=4$. Cardano's cubic formula, applied to this equation, produces the expression $x=\sqrt[3]{2+11i}+\sqrt[3]{2-11i}$, which passes through complex numbers. We can check directly, without the formula, that the complex numbers give the right answer. Expanding,
+  \[
+    (2+i)^3=8+12i+6i^2+i^3=8+12i-6-i=2+11i,
+  \]
+  and conjugating with \ilink{prop-3}{Prop.~3(ii)} gives $(2-i)^3=2-11i$. Let $a=2+i$, $b=2-i$ and $x=a+b$. Then $a^3+b^3=4$ and $ab=4-i^2=5$, so
+  \[
+    x^3=(a+b)^3=a^3+b^3+3ab(a+b)=4+15x .
+  \]
+  So $x=a+b$ is a root of $x^3-15x-4$, and $x=(2+i)+(2-i)=4$. The imaginary parts appear during the calculation and cancel in the answer.
+\end{example*}
+
+\begin{methodbox}{How to compute in $\FF_2$}
+  \begin{steps}
+    \ii Compute with ordinary integer arithmetic.
+    \ii Replace every coefficient by its remainder mod $2$: even numbers become $0$ and odd numbers become $1$.
+    \ii In particular $2=0$, so $-1=1$ and $(a+b)^2=a^2+2ab+b^2=a^2+b^2$: squaring a sum squares each term.
+  \end{steps}
+  Edge case: $2$ has no inverse in $\FF_2$ because it is $0$; this does not contradict axiom (vii), which only asks for inverses of nonzero elements.
+\end{methodbox}
+
+\begin{example*}[Repeated squaring in $\FF_2$: $(x+1)^4=x^4+1$]
+  $(x+1)^2=x^2+2x+1=x^2+1$ in $\FF_2$. Squaring again, $(x+1)^4=(x^2+1)^2=x^4+2x^2+1=x^4+1$. Over $\RR$ the same power is $x^4+4x^3+6x^2+4x+1$; every middle coefficient is even, so all of them become $0$ in $\FF_2$.
+\end{example*}
+
+\textbf{Lists and the coordinate space $\FF^n$ (LADR 1.8--1.18).} A \vocab{list} (or \vocab{$n$-tuple}) of length $n$ is an ordered collection $(x_1,\dots,x_n)$. Two lists are equal when they have the same length and the same entries in the same order, so $(3,5)\ne(5,3)$ and $(4,4)\ne(4)$, whereas for sets $\{3,5\}=\{5,3\}$ and $\{4,4\}=\{4\}$. The set $\FF^n=\{(x_1,\dots,x_n):x_j\in\FF\}$ has coordinatewise addition and scalar multiplication,
+\[
+  (x_1,\dots,x_n)+(y_1,\dots,y_n)=(x_1+y_1,\dots,x_n+y_n),\qquad \lambda(x_1,\dots,x_n)=(\lambda x_1,\dots,\lambda x_n),
+\]
+zero list $0=(0,\dots,0)$ and additive inverse $-x=(-x_1,\dots,-x_n)$. It is the basic example of a vector space in the next subsection.
+
+\revisit In $\ZZ$, $2x=1$ has no solution, because $2$ has no multiplicative inverse in $\ZZ$; this is the failure of axiom (vii). In $\QQ$, $x=2^{-1}\cdot1=\tfrac12$. In $\FF_2$, $2=1+1=0$, so the equation reads $0\cdot x=1$, and $0\cdot x=0$ for every $x$, so there is no solution; this is not a failure of (vii), because the coefficient is $0$. In $\CC$, $z=5/(3+4i)=\tfrac35-\tfrac45i$, found with the inverse $\bar z/|z|^2$. Dividing by a nonzero coefficient $a$ uses axiom (vii) (the inverse $a^{-1}$) together with associativity and $1\cdot x=x$: $ax=b$ gives $x=1\cdot x=(a^{-1}a)x=a^{-1}b$.
 
 \subsection{Vector spaces over $\FF$ (Notes Ch.~2, LADR 1B)}
 
 \begin{qbox}
-  Coordinate tuples in $\FF^n$, infinite sequences in $\FF^\infty$, polynomials, and real- or complex-valued functions on any domain $S$ all support addition and scalar multiplication. Which seven axioms capture all of their shared linear structure at once?
+  Functions $f\colon\RR\to\RR$ can be added and multiplied by real numbers, just as vectors in $\RR^3$ can. In this set of functions, what is the zero vector and what is $-f$ for $f(x)=x^2$? Is $\CC$ a vector space over $\RR$? And if $\lambda v=0$ for a scalar $\lambda$ and a vector $v$, must $\lambda=0$ or $v=0$?
 \end{qbox}
 
 \begin{definition*}[Def.~4 / LADR 1.20: $\FF$-vector space]\target{def-4}
@@ -211,91 +423,169 @@
   \end{enumerate}
 \end{definition*}
 
-\begin{itemize}
-  \ii \textbf{Uniqueness and examples (LADR 1.23--1.27):} A vector space has a unique additive identity $0\in V$ (LADR 1.26) and every $v\in V$ has a unique additive inverse $-v\in V$ (LADR 1.27), by the exact same proof as in a field. Key examples include $\FF^n$, the sequence space $\FF^\infty=\{(x_1,x_2,\dots):x_j\in\FF\}$ (LADR 1.23), and for any set $S$, the function space $\FF^S=\{f\colon S\to\FF\}$ with pointwise operations $(f+g)(x)=f(x)+g(x)$ and $(\lambda f)(x)=\lambda f(x)$ and zero vector the constant function $0$ (LADR 1.24--1.25).
-\end{itemize}
+Axiom (vii) cannot be left out. On $V=\RR$, the operation $\lambda\cdot v=0$ for every $\lambda$ and $v$ satisfies (i)--(vi) with the usual addition, but it is not a vector space structure; (vii) fails because $1\cdot 5=0\ne5$.
+
+\textbf{Uniqueness (LADR 1.26, 1.27).} A vector space has a unique additive identity $0\in V$, and every $v\in V$ has a unique additive inverse $-v\in V$. The proofs are the computations in Steps~1 and~2 of the proof of the \ilink{name-uniqueness-of-identities-and-inverses}{uniqueness proposition for fields}, with vectors in place of field elements; they use only axioms (i)--(iv).
+
+\begin{methodbox}{How to verify that a set with two operations is a vector space}
+  \begin{steps}
+    \ii Check that the operations stay in the set: the sum of two elements and a scalar multiple of an element are again elements.
+    \ii Name the zero vector and the additive inverse of each element explicitly.
+    \ii Check axioms (i), (ii), (v), (vi), (vii). When the operations are defined entry by entry or point by point, each axiom reduces to the same law in $\FF$, applied in each entry or at each point.
+    \ii If the set sits inside a known vector space with the same operations, it is quicker to check that it is a subspace (next subsection).
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[The coordinate space $\FF^n$ (Notes Ex.~5)]
+  $\FF^n$ with coordinatewise operations is a vector space: each axiom holds in each coordinate because it holds in $\FF$. The field $\FF$ itself is the case $\FF^1$. The zero vector is $(0,\dots,0)$; do not confuse the vector $0\in\FF^n$ with the number $0\in\FF$.
+\end{example*}
+
+\begin{example*}[Functions on a set $S$ and sequences (Notes Ex.~6, LADR 1.23--1.25)]
+  For any set $S$, $\FF^S=\{f\colon S\to\FF\}$ is a vector space with the pointwise operations
+  \[
+    (f+g)(x)=f(x)+g(x),\qquad (\lambda f)(x)=\lambda f(x).
+  \]
+  Its zero vector is the constant function $0(x)=0$, and $-f$ is the function $x\mapsto -f(x)$. Each axiom holds because it holds in $\FF$ at every point $x$; for example, commutativity of $+$ in $\FF$ gives $f(x)+g(x)=g(x)+f(x)$ at each $x$, so $f+g=g+f$. For $S=\{1,\dots,n\}$, a function $f$ is the same information as the list $(f(1),\dots,f(n))$, so $\FF^S$ is $\FF^n$. For $S=\NN=\{1,2,3,\dots\}$, a function $f$ is the sequence $(f(1),f(2),\dots)$; this space is written $\FF^\infty$.
+\end{example*}
+
+\begin{example*}[$\CC$ as a real vector space (Notes Ex.~7)]
+  $\CC$ is a vector space over $\RR$: the addition is the usual one, and scalar multiplication is the usual multiplication with only real scalars allowed. In the same way, $\CC$ and $\RR$ are vector spaces over $\QQ$. The same set can be a vector space over different fields, and statements about subspaces depend on which field is used (see the Traps box at the end of the section).
+\end{example*}
 
 \begin{proposition*}[Prop.~4 and HW1 P4 / LADR 1.30--1.32, 1B.2: Multiplicative properties of $0$ and $-1$]\target{prop-4}\target{name-hw1-p4-ladr-1b-2}
   In any $\FF$-vector space $V$, for all $v\in V$ and $\lambda\in\FF$:
-  \[
-    \text{(i) } 0\cdot v = 0, \qquad
-    \text{(ii) } \lambda\cdot 0 = 0, \qquad
-    \text{(iii) } (-1)v = -v, \qquad
-    \text{(iv) } \lambda v = 0 \implies \lambda = 0 \text{ or } v = 0.
-  \]
+  \begin{enumerate}[(i)]
+    \ii $0\cdot v = 0$;
+    \ii $\lambda\cdot 0 = 0$;
+    \ii $(-1)v = -v$;
+    \ii if $\lambda v = 0$, then $\lambda = 0$ or $v = 0$.
+  \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  Because $0\cdot v=0$ and $(-1)v=-v$ are not listed among the seven axioms of \ilink{def-4}{Def.~4}, they must be deduced from distributivity and $1\cdot v=v$. Writing the scalar $0=0+0$ gives $0\cdot v=(0+0)v=0\cdot v+0\cdot v$, and adding $-(0\cdot v)$ yields $0\cdot v=0$; writing the vector $0=0+0$ similarly gives $\lambda\cdot 0=0$. Then $v+(-1)v=1\cdot v+(-1)v=(1+(-1))v=0\cdot v=0$ proves that $(-1)v$ is the unique additive inverse $-v$. Finally, if $\lambda v=0$ and $\lambda\ne 0$, multiplying by $\lambda^{-1}$ gives $v=1\cdot v=(\lambda^{-1}\lambda)v=\lambda^{-1}(\lambda v)=\lambda^{-1}\cdot 0=0$.
+  None of these is an axiom of \ilink{def-4}{Def.~4}, so each must come from the two axioms that connect scalars with vectors: distributivity and $1\cdot v=v$. As in a field, the way to produce $0\cdot v$ from distributivity is to write the scalar $0$ as $0+0$; for $\lambda\cdot 0$ write the vector $0$ as $0+0$. Part (iv) is the vector version of ``no zero divisors'': multiply by $\lambda^{-1}$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii By distributivity, $0\cdot v=(0+0)v=0\cdot v+0\cdot v$; adding $-(0\cdot v)$ to both sides gives $0=0\cdot v$, proving (i).
-    \ii Similarly, $\lambda\cdot 0=\lambda(0+0)=\lambda\cdot 0+\lambda\cdot 0$; adding $-(\lambda\cdot 0)$ to both sides gives $0=\lambda\cdot 0$, proving (ii).
-    \ii By unitality, distributivity, and (i), $v+(-1)v=1\cdot v+(-1)v=(1+(-1))v=0\cdot v=0$, so by uniqueness of the additive inverse, $(-1)v=-v$, proving (iii).
-    \ii For (iv), suppose $\lambda v=0$. If $\lambda=0$ we are done; if $\lambda\ne 0$, then $v=1\cdot v=(\lambda^{-1}\lambda)v=\lambda^{-1}(\lambda v)=\lambda^{-1}\cdot 0=0$ by (ii).
+    \ii By distributivity, $0\cdot v=(0+0)v=0\cdot v+0\cdot v$. Adding $-(0\cdot v)$ to both sides gives $0=0\cdot v$, which proves (i).
+    \ii By distributivity, $\lambda\cdot 0=\lambda(0+0)=\lambda\cdot 0+\lambda\cdot 0$. Adding $-(\lambda\cdot 0)$ to both sides gives $0=\lambda\cdot 0$, which proves (ii).
+    \ii By unitality, distributivity and (i),
+    \[
+      v+(-1)v=1\cdot v+(-1)v=(1+(-1))v=0\cdot v=0.
+    \]
+    So $(-1)v$ is an additive inverse of $v$, and since the additive inverse is unique, $(-1)v=-v$. This proves (iii).
+    \ii For (iv), suppose $\lambda v=0$. If $\lambda=0$ we are done. If $\lambda\ne 0$, then $\lambda^{-1}$ exists in $\FF$, and by axioms (vii) and (v) and part (ii),
+    \[
+      v=1\cdot v=(\lambda^{-1}\lambda)v=\lambda^{-1}(\lambda v)=\lambda^{-1}\cdot 0=0.
+    \]
   \end{steps}
 \end{proof}
+
+\revisit The set of functions $\RR\to\RR$ is the space $\RR^S$ with $S=\RR$. Its zero vector is the constant function $0$, and for $f(x)=x^2$ the inverse $-f$ is the function $x\mapsto -x^2$. $\CC$ is a vector space over $\RR$ (Notes Ex.~7). If $\lambda v=0$, then $\lambda=0$ or $v=0$: this is \ilink{prop-4}{Prop.~4(iv)}, proved by multiplying by $\lambda^{-1}$ when $\lambda\ne0$.
 
 \subsection{Subspaces, sums of subspaces, and direct sums (Notes Ch.~2, LADR 1C)}
 
 \begin{qbox}
-  Which subsets $U$ of a vector space $V$ are vector spaces in their own right under the operations inherited from $V$, and how do we combine subspaces $U_1,\dots,U_m$ so that every vector in their sum decomposes uniquely as $u_1+\dots+u_m$?
+  Which of these subsets of $\RR^2$ are vector spaces with the operations of $\RR^2$: the line $x_2=\tfrac12x_1$, the line $x_2=\tfrac12x_1+\tfrac12$, the union of the two coordinate axes? In $\RR^3$, the plane $U=\{(x,y,0)\}$ and the line $L=\spn((1,2,3))$ together produce every vector as a sum $u+\ell$. Is that decomposition unique?
 \end{qbox}
 
-\begin{definition*}[Def.~5 / LADR 1.33, 1.34: Subspace and subspace conditions]\target{def-5}
-  A subset $U$ of $V$ is a \vocab{subspace} of $V$ if $U$ is itself a vector space (using the same addition and scalar multiplication as on $V$). By LADR 1.34, a subset $U\subseteq V$ is a subspace of $V$ if and only if $U$ satisfies:
+\begin{definition*}[Def.~5 / LADR 1.33, 1.34: Subspace]\target{def-5}
+  A subset $U$ of an $\FF$-vector space $V$ is a \vocab{subspace} of $V$ if
   \begin{enumerate}[(i)]
-    \ii \textbf{additive identity:} $0\in U$;
-    \ii \textbf{closed under addition and scalar multiplication:} $v+w\in U$ and $\lambda v\in U$ for all $v,w\in U$ and $\lambda\in\FF$ (equivalently, $\lambda v+w\in U$ for all $v,w\in U$ and $\lambda\in\FF$).
+    \ii $0\in U$, and
+    \ii $\lambda v+w\in U$ for all $v,w\in U$ and $\lambda\in\FF$.
   \end{enumerate}
+  Condition (ii) is equivalent to: $v+w\in U$ and $\lambda v\in U$ for all $v,w\in U$ and $\lambda\in\FF$ (take $\lambda=1$ for the first, and $w=0$, which is allowed by (i), for the second). A subspace is a vector space in its own right with the operations of $V$ (LADR 1.33): the axioms hold in $U$ because they hold in $V$, and (i), (ii) and \ilink{prop-4}{Prop.~4(iii)} put $0$, sums, scalar multiples and $-v=(-1)v$ inside $U$.
 \end{definition*}
 
-\begin{fig}
-\begin{tikzpicture}
-  % Panel (a): Subspace line through 0
-  \begin{scope}[shift={(0,0)},scale=0.92]
-    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
-    \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
+\begin{methodbox}{How to check whether a subset is a subspace}
+  \begin{steps}
+    \ii Write the condition that defines $U$ as an equation or a property of a general element.
+    \ii Check that $0$ satisfies the condition. If it does not, stop: $U$ is not a subspace.
+    \ii Take arbitrary $v,w\in U$ and $\lambda\in\FF$. Write the condition for $\lambda v+w$, and use the conditions for $v$ and $w$ to verify it.
+    \ii To show that $U$ is \emph{not} a subspace, give specific vectors: $0\notin U$, or $v,w\in U$ with $v+w\notin U$, or $v\in U$ and a scalar $\lambda$ with $\lambda v\notin U$.
+  \end{steps}
+  Edge cases:
+  \begin{itemize}
+    \ii A condition with a nonzero constant ($\int f=b$ with $b\ne0$, $x_2=\tfrac12x_1+\tfrac12$) fails at $0$.
+    \ii A condition that is not linear ($x_1x_2=0$, $x_1\ge0$) often contains $0$ but fails for sums or for scalar multiples; find the failing vector.
+    \ii The scalars are those of $V$'s field: $\RR^2$ is closed under real multiples but is not a subspace of the complex vector space $\CC^2$.
+    \ii The empty set is never a subspace, and $\{0\}$ and $V$ always are.
+  \end{itemize}
+\end{methodbox}
 
-    \PacketInkPath[black,line width=0.55pt]{(-1.25,-0.75) -- node[pos=0.76,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$x_2=mx_1$}} (1.65,0.99)}
+\begin{example*}[A line through $0$ is a subspace; a shifted line is not]
+  \textbf{$U=\{(x_1,x_2):x_2=\tfrac12x_1\}$ is a subspace.} The point $(0,0)$ satisfies $0=\tfrac12\cdot0$. If $v=(a,\tfrac12a)$ and $w=(b,\tfrac12b)$, then $\lambda v+w=(\lambda a+b,\tfrac12(\lambda a+b))$, whose second coordinate is half of the first.
+
+  \textbf{$U'=\{(x_1,x_2):x_2=\tfrac12x_1+\tfrac12\}$ is not.} The point $(0,0)$ does not satisfy $0=0+\tfrac12$.
+\end{example*}
+
+\begin{example*}[The union of the axes is closed under scalar multiples but not under sums]
+  Let $U=\{(x_1,x_2):x_1x_2=0\}$, the union of the two axes. It contains $0$, and if $x_1x_2=0$, then $(\lambda x_1)(\lambda x_2)=\lambda^2x_1x_2=0$. But $(1,0)$ and $(0,1)$ lie in $U$ while their sum $(1,1)$ does not, since $1\cdot1\ne0$. So $U$ is not a subspace.
+\end{example*}
+
+\begin{example*}[The first quadrant is closed under sums but not under scalar multiples]
+  Let $Q=\{(x_1,x_2):x_1\ge0,\ x_2\ge0\}$. It contains $0$ and sums of its elements, but $(1,0)\in Q$ and $(-1)(1,0)=(-1,0)\notin Q$. So $Q$ is not a subspace.
+\end{example*}
+
+\begin{example*}[Continuous and differentiable functions (Notes Ex.~8)]
+  In $V=\RR^{(0,1)}$, the set of continuous functions is a subspace: the zero function is continuous, and if $f,g$ are continuous then so is $\lambda f+g$. The set of differentiable functions is a subspace for the same reason, using $(\lambda f+g)'=\lambda f'+g'$. Both facts come from the rule that a limit of $\lambda F+G$ is $\lambda$ times the limit of $F$ plus the limit of $G$, proved in \ilink{fact-limits}{F3} at the end.
+\end{example*}
+
+\begin{example*}[A recurrence subspace (Notes Ex.~9)]
+  In the space of sequences $(a_0,a_1,a_2,\dots)$ of real numbers, let
+  \[
+    R=\{(a_0,a_1,a_2,\dots): a_{n+2}=a_{n+1}+a_n \text{ for every } n\ge0\}.
+  \]
+  The zero sequence satisfies $0=0+0$. If $(a_n)$ and $(b_n)$ satisfy the recurrence, then
+  \[
+    \lambda a_{n+2}+b_{n+2}=\lambda(a_{n+1}+a_n)+(b_{n+1}+b_n)=(\lambda a_{n+1}+b_{n+1})+(\lambda a_n+b_n),
+  \]
+  so $\lambda(a_n)+(b_n)$ does too. The Fibonacci sequence $(0,1,1,2,3,5,8,\dots)$ lies in $R$, and every element of $R$ is determined by its first two entries $a_0,a_1$.
+\end{example*}
+
+\begin{fig}\target{fig-subspaces}
+\begin{tikzpicture}
+  \begin{scope}[shift={(0,0)},scale=0.92]
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.95,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+    \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
+    \PacketInkPath[inkblue,line width=0.7pt]{(-1.3,-0.65) -- (1.75,0.875)}
+    \node[font=\scriptsize] at (1.05,1.05) {\InkLabel{$x_2=\tfrac12x_1$}};
     \node[figdot] at (0,0) {};
     \node[below right=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
-    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(a)}};
+    \node[font=\footnotesize,align=center] at (0.3,-1.65) {(a) subspace};
   \end{scope}
 
-  % Panel (b): Shifted line missing 0
-  \begin{scope}[shift={(4.95,0)},scale=0.92]
-    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+  \begin{scope}[shift={(5.1,0)},scale=0.92]
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.95,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
     \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
-
-    \PacketInkPath[black,line width=0.55pt]{(-1.25,-0.04) -- node[pos=0.82,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$x_2=mx_1+b$}} (1.75,1.22)}
+    \PacketInkPath[inkred,line width=0.7pt]{(-1.3,-0.15) -- (1.75,1.375)}
+    \node[font=\scriptsize] at (1.55,1.68) {\InkLabel{$x_2=\tfrac12x_1+\tfrac12$}};
     \draw[ink line,fill=white,draw=black,line width=0.55pt] (0,0) circle (1.7pt);
-    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0\notin U$}};
-    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(b)}};
+    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$ not on the line}};
+    \node[font=\footnotesize,align=center] at (0.3,-1.65) {(b) not a subspace: misses $0$};
   \end{scope}
 
-  % Panel (c): Union of axes
-  \begin{scope}[shift={(9.90,0)},scale=0.92]
-    \PacketInkPath[figaxis]{(-1.35,0) -- (1.85,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
+  \begin{scope}[shift={(10.2,0)},scale=0.92]
+    \PacketInkPath[figaxis]{(-1.35,0) -- (1.95,0) node[right=1pt,font=\scriptsize] {\InkLabel{$x_1$}}}
     \PacketInkPath[figaxis]{(0,-1.05) -- (0,1.55) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
-    \PacketInkPath[black,line width=0.55pt]{(-1.28,0) -- (1.65,0)}
-    \PacketInkPath[black,line width=0.55pt]{(0,-0.98) -- (0,1.38)}
-
+    \PacketInkPath[inkred,line width=0.7pt]{(-1.28,0) -- (1.65,0)}
+    \PacketInkPath[inkred,line width=0.7pt]{(0,-0.98) -- (0,1.38)}
     \draw[ink guide,draw=inkslate] (1.05,0) -- (1.05,1.05) -- (0,1.05);
-
     \node[figdot] at (1.05,0) {};
-    \node[below=2.5pt,font=\scriptsize] at (1.05,0) {\InkLabel{$e_1$}};
+    \node[below=2.5pt,font=\scriptsize] at (1.05,0) {\InkLabel{$(1,0)$}};
     \node[figdot] at (0,1.05) {};
-    \node[left=2.5pt,font=\scriptsize] at (0,1.05) {\InkLabel{$e_2$}};
+    \node[left=2.5pt,font=\scriptsize] at (0,1.05) {\InkLabel{$(0,1)$}};
     \node[figdot] at (0,0) {};
     \node[below left=1.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
     \draw[ink line,fill=white,draw=black,line width=0.55pt] (1.05,1.05) circle (1.7pt);
-    \node[above right=2pt,font=\scriptsize] at (1.05,1.05) {\InkLabel{$e_1+e_2\notin U$}};
-    \node[font=\footnotesize] at (0.25,-1.48) {\InkLabel{(c)}};
+    \node[above right=2pt,font=\scriptsize] at (1.05,1.05) {\InkLabel{$(1,1)$, not in the union}};
+    \node[font=\footnotesize,align=center] at (0.3,-1.65) {(c) not a subspace: sum leaves the set};
   \end{scope}
 \end{tikzpicture}
-\figcap{Subspaces vs.\ non-subspaces in $\RR^2$: (a) lines through $0$ (plus $\{0\}$ and $\RR^2$) are subspaces; (b) shifted lines miss $0$; (c) the union $\{x_1x_2=0\}$ holds $0$ and scalar multiples, yet fails under addition.}
+\figcap{The three subsets of $\RR^2$ from the question: only the line through $0$ (blue) is a subspace. The shifted line misses $0$, and the union of the axes contains $(1,0)$ and $(0,1)$ but not their sum.}
 \end{fig}
+
+\textbf{Intersections and sums.} Two subspaces can be combined in two natural ways. Their intersection is again a subspace. Their union usually is not (panel (c) of the \ilink{fig-subspaces}{figure of subspaces}); the subspace that plays the role of the union is the sum.
 
 \begin{proposition*}[Prop.~5, 6 / LADR 1C.10, 1.36, 1.40: Intersections and sums of subspaces]\target{prop-5}\target{prop-6}
   \begin{enumerate}[(a)]
@@ -304,55 +594,110 @@
     \[
       U_1 + \dots + U_m = \{u_1 + \dots + u_m : u_1\in U_1,\dots,u_m\in U_m\}
     \]
-    is a subspace of $V$, and it is the \textbf{smallest subspace of $V$ containing $U_1,\dots,U_m$} (analogous to the union of subsets).
+    is a subspace of $V$, and it is the \textbf{smallest subspace of $V$ containing $U_1,\dots,U_m$}: it contains each $U_k$, and every subspace containing all the $U_k$ contains it.
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  While the intersection $U\cap W$ of two subspaces is always a subspace, the union $U\cup W$ almost never is (as seen in Fig.~1.2(c), adding $u\in U$ and $w\in W$ jumps outside $U\cup W$). Any subspace $X$ that contains $U_1,\dots,U_m$ must by closure under addition contain every sum $u_1+\dots+u_m$; and the set of all such sums $U_1+\dots+U_m$ is already closed under addition and scalar multiplication, so it is the smallest subspace containing $U_1,\dots,U_m$.
+  Any subspace $X$ that contains $U_1,\dots,U_m$ must contain every sum $u_1+\dots+u_m$, because $X$ is closed under addition. So the set of all such sums is the least that a subspace containing the $U_k$ could be. The proof checks that this set is already a subspace, so nothing more needs to be added.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (a), $0\in U$ and $0\in W$, so $0\in U\cap W$; if $v,w\in U\cap W$ and $\lambda\in\FF$, then $\lambda v+w\in U$ and $\lambda v+w\in W$, so $\lambda v+w\in U\cap W$.
-    \ii For (b), $0=0+\dots+0\in U_1+\dots+U_m$, and for $u=u_1+\dots+u_m$ and $v=v_1+\dots+v_m$ ($u_k,v_k\in U_k$), $\lambda u+v=(\lambda u_1+v_1)+\dots+(\lambda u_m+v_m)\in U_1+\dots+U_m$. Each $U_k$ is contained in $U_1+\dots+U_m$ (take $u_j=0$ for $j\ne k$), and any subspace $X$ containing $U_1,\dots,U_m$ is closed under addition and therefore contains $U_1+\dots+U_m$.
+    \ii \textbf{The intersection is a subspace.} Since $0\in U$ and $0\in W$, $0\in U\cap W$. If $v,w\in U\cap W$ and $\lambda\in\FF$, then $\lambda v+w\in U$ because $U$ is a subspace and $\lambda v+w\in W$ because $W$ is, so $\lambda v+w\in U\cap W$. The same argument works for any collection: $0$ and $\lambda v+w$ lie in every $U_\alpha$.
+    \ii \textbf{The sum is a subspace.} $0=0+\dots+0\in U_1+\dots+U_m$. For $u=u_1+\dots+u_m$ and $v=v_1+\dots+v_m$ with $u_k,v_k\in U_k$,
+    \[
+      \lambda u+v=(\lambda u_1+v_1)+\dots+(\lambda u_m+v_m),
+    \]
+    and each $\lambda u_k+v_k$ lies in $U_k$, so $\lambda u+v\in U_1+\dots+U_m$.
+    \ii \textbf{The sum is the smallest such subspace.} Each $U_k$ is contained in the sum: write $u\in U_k$ as $u$ plus $0$ from every other $U_j$. If $X$ is a subspace containing every $U_k$, then each $u_k\in X$, so $u_1+\dots+u_m\in X$ because $X$ is closed under addition. Thus $U_1+\dots+U_m\subseteq X$.
   \end{steps}
 \end{proof}
 
+\begin{example*}[The distributive law fails for sums of subspaces]
+  For sets, $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$. The analogue with sums is false. In $\RR^2$, let $U_1=\spn((1,1))$, let $U_2$ be the $x_1$-axis and $U_3$ the $x_2$-axis. Then $U_2+U_3=\RR^2$, so
+  \[
+    U_1\cap(U_2+U_3)=U_1,\qquad\text{but}\qquad (U_1\cap U_2)+(U_1\cap U_3)=\{0\}+\{0\}=\{0\},
+  \]
+  because a nonzero multiple $(t,t)$ of $(1,1)$ lies on neither axis.
+\end{example*}
+
 \begin{definition*}[Def.~6 / LADR 1.41: Direct sum $U_1\oplus\dots\oplus U_m$]\target{def-6}
-  Suppose $U_1,\dots,U_m$ are subspaces of $V$. The sum $U_1+\dots+U_m$ is called a \vocab{direct sum}, written $U_1\oplus\dots\oplus U_m$, if each element of $U_1+\dots+U_m$ can be written in only one way as $u_1+\dots+u_m$ with $u_k\in U_k$ (equivalently, in the notes' recursive formulation, $U_k\cap(U_1+\dots+U_{k-1})=\{0\}$ for each $k=2,\dots,m$). In particular, for two subspaces $U,W$, the sum $U+W$ is direct ($U\oplus W$) if and only if $U\cap W=\{0\}$.
+  Let $U,W$ be subspaces of $V$. The sum $U+W$ is \vocab{direct}, written $U\oplus W$, if $U\cap W=\{0\}$. For subspaces $U_1,\dots,U_m$, the sum is direct, written $U_1\oplus\dots\oplus U_m$, if each subspace meets the sum of the earlier ones only in $0$:
+  \[
+    U_2\cap U_1=\{0\},\quad U_3\cap(U_1+U_2)=\{0\},\quad\dots,\quad U_m\cap(U_1+\dots+U_{m-1})=\{0\}.
+  \]
 \end{definition*}
+
+Two subspaces always share $0$, so ``meet only in $0$'' is the vector-space version of ``disjoint''. LADR defines a direct sum differently, by uniqueness of the decomposition; \ilink{prop-7}{Prop.~7} shows that the two definitions agree.
 
 \begin{theorem*}[Prop.~7 / LADR 1.45, 1.46: Characterizations of a direct sum]\target{prop-7}
   Suppose $U_1,\dots,U_m$ are subspaces of $V$. Then the following are equivalent:
   \begin{enumerate}[(i)]
-    \ii $U_1+\dots+U_m$ is a direct sum ($U_1\oplus\dots\oplus U_m$, i.e.\ $U_k\cap(U_1+\dots+U_{k-1})=\{0\}$ for every $k=2,\dots,m$);
+    \ii the sum is direct in the sense of \ilink{def-6}{Def.~6}: $U_k\cap(U_1+\dots+U_{k-1})=\{0\}$ for every $k=2,\dots,m$;
     \ii every vector $v\in U_1+\dots+U_m$ can be written uniquely in the form $v=u_1+\dots+u_m$ with each $u_k\in U_k$;
-    \ii the only way to write $0$ as a sum $u_1+\dots+u_m$ with each $u_k\in U_k$ is by taking $u_1=u_2=\dots=u_m=0$.
+    \ii the only way to write $0$ as a sum $u_1+\dots+u_m$ with each $u_k\in U_k$ is to take $u_1=u_2=\dots=u_m=0$.
   \end{enumerate}
-  For two subspaces $U$ and $W$, $U+W$ is a direct sum ($U\oplus W$) if and only if $U\cap W=\{0\}$ (LADR 1.46).
+  In particular, for two subspaces $U$ and $W$, every vector of $U+W$ has a unique decomposition $u+w$ if and only if $U\cap W=\{0\}$ (LADR 1.46).
 \end{theorem*}
 \begin{ideabox}
-  Uniqueness of every vector's decomposition $v=u_1+\dots+u_m$ reduces to uniqueness of $0=0+\dots+0$ because if $v$ had two decompositions $u_1+\dots+u_m=\tilde u_1+\dots+\tilde u_m$, subtracting them gives $(u_1-\tilde u_1)+\dots+(u_m-\tilde u_m)=0$ with $u_k-\tilde u_k\in U_k$; condition~(iii) then forces $u_k-\tilde u_k=0$, i.e.\ $u_k=\tilde u_k$ for every $k$. For two subspaces $U,W$, if $u+w=0$ ($u\in U,w\in W$), then $u=-w$ lies in both $U$ and $W$, so $U\cap W=\{0\}$ is the exact condition forcing $u=w=0$.
+  Uniqueness for every vector reduces to uniqueness for the single vector $0$: two decompositions $u_1+\dots+u_m=\tilde u_1+\dots+\tilde u_m$ subtract to the decomposition $(u_1-\tilde u_1)+\dots+(u_m-\tilde u_m)=0$, with each difference in $U_k$. And a nonzero vector $v$ in $U_k\cap(U_1+\dots+U_{k-1})$ gives a nonzero decomposition of $0$ directly: $v$ written from the earlier subspaces, minus $v$ taken from $U_k$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii ((i)$\Rightarrow$(ii)): Suppose $u_1+\dots+u_m=\tilde u_1+\dots+\tilde u_m$ with $u_k,\tilde u_k\in U_k$. Then $u_m-\tilde u_m=(\tilde u_1-u_1)+\dots+(\tilde u_{m-1}-u_{m-1})\in U_m\cap(U_1+\dots+U_{m-1})=\{0\}$, so $u_m=\tilde u_m$. Repeating down to $k=2$ gives $u_k=\tilde u_k$ for all $k=1,\dots,m$.
-    \ii ((ii)$\Rightarrow$(iii)): Since $0=0+\dots+0$ with $0\in U_k$, uniqueness in (ii) forces any representation $0=u_1+\dots+u_m$ ($u_k\in U_k$) to have $u_1=\dots=u_m=0$.
-    \ii ((iii)$\Rightarrow$(i)): For any $k\in\{2,\dots,m\}$ and $v\in U_k\cap(U_1+\dots+U_{k-1})$, we can write $v=u_1+\dots+u_{k-1}$ with $u_j\in U_j$. Then $u_1+\dots+u_{k-1}+(-v)+0+\dots+0=0$ is a sum of elements from $U_1,\dots,U_m$, so (iii) forces $-v=0$, i.e.\ $v=0$.
+    \ii \textbf{Assume (i); we prove (ii).} Every $v$ in the sum has at least one decomposition, by the definition of the sum. Suppose $u_1+\dots+u_m=\tilde u_1+\dots+\tilde u_m$ with $u_k,\tilde u_k\in U_k$. Rearranging,
+    \[
+      u_m-\tilde u_m=(\tilde u_1-u_1)+\dots+(\tilde u_{m-1}-u_{m-1}).
+    \]
+    The left side lies in $U_m$ and the right side in $U_1+\dots+U_{m-1}$, so both lie in $U_m\cap(U_1+\dots+U_{m-1})=\{0\}$. Hence $u_m=\tilde u_m$, and the equation becomes $u_1+\dots+u_{m-1}=\tilde u_1+\dots+\tilde u_{m-1}$. The same argument with $U_{m-1}\cap(U_1+\dots+U_{m-2})=\{0\}$ gives $u_{m-1}=\tilde u_{m-1}$, and continuing down to $k=2$ gives $u_k=\tilde u_k$ for $k\ge2$; then also $u_1=\tilde u_1$.
+    \ii \textbf{Assume (ii); we prove (iii).} One decomposition of $0$ is $0=0+\dots+0$, with $0\in U_k$. By the uniqueness in (ii), every decomposition $0=u_1+\dots+u_m$ is this one, so $u_1=\dots=u_m=0$.
+    \ii \textbf{Assume (iii); we prove (i).} Let $k\in\{2,\dots,m\}$ and $v\in U_k\cap(U_1+\dots+U_{k-1})$. Write $v=u_1+\dots+u_{k-1}$ with $u_j\in U_j$. Then
+    \[
+      u_1+\dots+u_{k-1}+(-v)+0+\dots+0=0
+    \]
+    is a decomposition of $0$ with $-v\in U_k$ in the $k$th place. By (iii), every term is $0$; in particular $-v=0$, so $v=0$.
+    \ii \textbf{Two subspaces.} For $m=2$, condition (i) says exactly $U_2\cap U_1=\{0\}$, so the equivalence of (i) and (ii) is the last statement.
   \end{steps}
 \end{proof}
 
-\begin{fig}
+\begin{methodbox}{How to decide whether a sum of subspaces is direct}
+  \begin{steps}
+    \ii \textbf{Two subspaces $U,W$.} Write a general element of each with parameters, set them equal, and solve. If the only common vector is $0$, the sum is direct; otherwise any nonzero common vector shows it is not.
+    \ii \textbf{Three or more subspaces.} Write $u_1+\dots+u_m=0$ with a general element of each $U_k$, and solve for the parameters (\ilink{prop-7}{Prop.~7(iii)}). If every $u_k$ is forced to be $0$, the sum is direct. Alternatively check the intersections $U_k\cap(U_1+\dots+U_{k-1})$ in order.
+    \ii \textbf{To show $V=U\oplus W$.} Check directness as above, and also show $U+W=V$ by writing an arbitrary vector of $V$ as $u+w$ explicitly.
+  \end{steps}
+  Edge cases: pairwise intersections $U_i\cap U_j=\{0\}$ are not enough when $m\ge3$ (panel (b) of the \ilink{fig-direct-sums}{figure of direct sums}); $U\oplus\{0\}=U$ is always direct; a sum can be direct without being all of $V$.
+\end{methodbox}
+
+\begin{example*}[A plane and a line in $\RR^3$: $\RR^3=U\oplus L$]
+  Let $U=\{(x,y,0)\}$ and $L=\spn((1,2,3))$.
+  \begin{steps}
+    \ii A common vector has the form $t(1,2,3)=(t,2t,3t)$ with third coordinate $0$, so $3t=0$, $t=0$. Hence $U\cap L=\{0\}$ and the sum is direct.
+    \ii For $(a,b,c)\in\RR^3$, choose $t=c/3$ to match the third coordinate:
+    \[
+      (a,b,c)=\Bigl(a-\tfrac c3,\ b-\tfrac{2c}3,\ 0\Bigr)+\tfrac c3(1,2,3).
+    \]
+    So $U+L=\RR^3$, and $\RR^3=U\oplus L$.
+  \end{steps}
+\end{example*}
+
+\begin{example*}[Three lines in $\RR^2$: pairwise direct, but the sum is not direct]
+  Let $U_1=\spn((1,1))$, $U_2=\spn((1,0))$, $U_3=\spn((0,1))$. Any two of these lines meet only in $0$. But
+  \[
+    (1,1)+(-1,0)+(0,-1)=(0,0)
+  \]
+  writes $0$ with nonzero terms from $U_1,U_2,U_3$, so by \ilink{prop-7}{Prop.~7(iii)} the sum $U_1+U_2+U_3$ is not direct. Equivalently, $U_3\cap(U_1+U_2)=U_3\cap\RR^2=U_3\ne\{0\}$.
+\end{example*}
+
+\begin{fig}\target{fig-direct-sums}
 \begin{tikzpicture}
-  % Left panel: Direct sum of 2 lines in R^2
   \begin{scope}[shift={(0,0)},scale=0.94]
     \coordinate (V) at (1.55,1.05);
     \InkRegion[inkblue]{(0,0) -- (1.55,0) -- (V) -- (0,1.05) -- cycle}
 
-    \PacketInkPath[black!70,line width=0.55pt]{(-1.65,0) -- (2.25,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
-    \PacketInkPath[black!70,line width=0.55pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
+    \PacketInkPath[black!85,line width=0.6pt]{(-1.65,0) -- (2.25,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
+    \PacketInkPath[black!85,line width=0.6pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
 
     \draw[ink guide,draw=inkslate] (1.55,0) -- (V) -- (0,1.05);
-    \PacketInkPath[figvec,line width=0.55pt]{(0,0) -- (V)}
+    \PacketInkPath[figvec,line width=0.6pt]{(0,0) -- (V)}
 
     \node[figdot] at (1.55,0) {};
     \node[below=3pt,font=\scriptsize] at (1.55,0) {\InkLabel{$u_2$}};
@@ -362,39 +707,41 @@
     \node[figdot] at (0,0) {};
     \node[below left=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
 
-    \node[font=\footnotesize] at (0.30,-1.48) {\InkLabel{(a)}};
+    \node[font=\footnotesize] at (0.30,-1.55) {(a) $\RR^2=U_2\oplus U_3$};
   \end{scope}
 
-  % Right panel: Three peer lines in R^2 with closed vector loop summing to 0
   \begin{scope}[shift={(6.50,0)},scale=0.94]
-    \InkRegion[inkblue]{(0,0) -- (1.50,1.50) -- (1.50,0) -- cycle}
+    \PacketInkPath[black!85,line width=0.6pt]{(-1.25,0) -- (2.45,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
+    \PacketInkPath[black!85,line width=0.6pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
+    \PacketInkPath[black!85,line width=0.6pt]{(-0.90,-0.90) -- (1.78,1.78) node[above right=1pt,font=\footnotesize,text=black] {\InkLabel{$U_1$}}}
 
-    % All three peer lines drawn consistently solid and delicate
-    \PacketInkPath[black!40,line width=0.45pt]{(-1.25,0) -- (2.45,0) node[right=2pt,font=\footnotesize,text=black] {\InkLabel{$U_2$}}}
-    \PacketInkPath[black!40,line width=0.45pt]{(0,-1.05) -- (0,1.65) node[above=2pt,font=\footnotesize,text=black] {\InkLabel{$U_3$}}}
-    \PacketInkPath[black!40,line width=0.45pt]{(-0.90,-0.90) -- (1.78,1.78) node[above right=1pt,font=\footnotesize,text=black] {\InkLabel{$U_1$}}}
-
-    % Nontrivial closed loop in crisp black ink
-    \PacketInkPath[figvec,line width=0.55pt,shorten >=1.2pt]{(0,0) -- node[pos=0.56,sloped,above=2.5pt,font=\scriptsize] {\InkLabel{$(1,1)$}} (1.50,1.50)}
-    \PacketInkPath[figvec,line width=0.55pt,shorten >=1.2pt]{(1.50,1.50) -- node[midway,right=3pt,font=\scriptsize] {\InkLabel{$(0,-1)$}} (1.50,0)}
-    \PacketInkPath[figvec,line width=0.55pt,shorten >=2.2pt]{(1.50,0) -- node[midway,below=3pt,font=\scriptsize] {\InkLabel{$(-1,0)$}} (0,0)}
+    \PacketInkPath[figvec,draw=inkred,line width=0.7pt,shorten >=1.2pt]{(0,0) -- (1.50,1.50)}
+    \node[font=\scriptsize] at (0.50,1.05) {\InkLabel[inkred]{$(1,1)$}};
+    \PacketInkPath[figvec,draw=inkred,line width=0.7pt,shorten >=1.2pt]{(1.50,1.50) -- (1.50,0)}
+    \node[font=\scriptsize] at (1.98,0.75) {\InkLabel[inkred]{$(0,-1)$}};
+    \PacketInkPath[figvec,draw=inkred,line width=0.7pt,shorten >=2.2pt]{(1.50,0) -- (0,0)}
+    \node[font=\scriptsize] at (0.75,-0.30) {\InkLabel[inkred]{$(-1,0)$}};
 
     \node[figdot] at (0,0) {};
     \node[above left=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
-    \node[font=\footnotesize] at (0.55,-1.48) {\InkLabel{(b)}};
+    \node[font=\footnotesize] at (0.55,-1.55) {(b) $U_1+U_2+U_3$ is not direct};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Distinct lines give $\RR^2=U_2\oplus U_3$ since $U_2\cap U_3=\{0\}$. (b) Three lines meet only at $\{0\}$ pairwise, yet $(1,1)+(-1,0)+(0,-1)=0$ shows $U_1+U_2+U_3$ is \emph{not} direct.}
+\figcap{(a) Every $v\in\RR^2$ splits in exactly one way along the two axes. (b) The red vectors, one from each line, add up to $0$ although none of them is $0$.}
 \end{fig}
 
+\revisit Of the three subsets of $\RR^2$, only the line $x_2=\tfrac12x_1$ is a subspace: the shifted line does not contain $0$, and the union of the axes contains $(1,0)$ and $(0,1)$ but not $(1,1)$. For the plane $U$ and the line $L=\spn((1,2,3))$, the decomposition of each vector of $\RR^3$ as $u+\ell$ is unique, because $U\cap L=\{0\}$ (\ilink{prop-7}{Prop.~7} for two subspaces); the example above gives it explicitly as $\ell=\tfrac c3(1,2,3)$.
+
 \begin{shortcuts}
-  \ii \textbf{One-step subspace check:} Verify $0\in U$, then take arbitrary $v,w\in U$ and $\lambda\in\FF$ and verify $\lambda v+w\in U$.
-  \ii \textbf{Two subspaces vs.\ three or more subspaces for direct sums:} For \emph{two} subspaces $U,W$, simply check $U\cap W=\{0\}$. For \emph{three or more} subspaces $U_1,\dots,U_m$, set $u_1+\dots+u_m=0$ ($u_k\in U_k$) and prove $u_1=\dots=u_m=0$ (\ilink{prop-7}{Prop.~7(iii)}).
+  \ii \textbf{One-step subspace check:} Verify $0\in U$, then take arbitrary $v,w\in U$ and $\lambda\in\FF$ and verify $\lambda v+w\in U$. This replaces the two separate checks for sums and scalar multiples.
+  \ii \textbf{Two subspaces versus three or more:} For \emph{two} subspaces $U,W$, check $U\cap W=\{0\}$. For \emph{three or more} subspaces $U_1,\dots,U_m$, set $u_1+\dots+u_m=0$ ($u_k\in U_k$) and prove $u_1=\dots=u_m=0$ (\ilink{prop-7}{Prop.~7(iii)}).
+  \ii \textbf{Quick rejection:} a set defined by an equation with a nonzero constant term, or by an inequality, is almost never a subspace; test $0$ and $-v$ first.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{Pairwise trivial intersections $U_i\cap U_j=\{0\}$ do not imply $U_1+U_2+U_3$ is a direct sum:} Always use \ilink{prop-7}{Prop.~7(iii)} ($u_1+u_2+u_3=0\implies u_1=u_2=u_3=0$) when $m\ge 3$.
+  \ii \textbf{Pairwise trivial intersections $U_i\cap U_j=\{0\}$ do not imply that $U_1+U_2+U_3$ is direct:} the three lines above are a counterexample. Use \ilink{prop-7}{Prop.~7(iii)} when $m\ge 3$.
   \ii \textbf{Whether a subset is a subspace depends on the scalar field $\FF$:} $\RR^2$ is a subset of $\CC^2$ closed under addition and \emph{real} scalar multiples, but $\RR^2$ is \emph{not} a subspace of the $\CC$-vector space $\CC^2$ because $i(1,0)=(i,0)\notin\RR^2$ (\ilink{prob-HW1-P6}{HW1~P6}).
+  \ii \textbf{The union of two subspaces is not their sum:} $U\cup W$ is a subspace only when one contains the other (\ilink{prob-E1}{E1}).
 \end{trapbox}
 
 \section{Problem set}
@@ -406,7 +753,7 @@
 \end{enumerate}
 
 \end{prob}
-\begin{prob}\textbf{HW1 P2 (LADR 1A.7).}\ Show that $\dfrac{-1+\sqrt3\,i}{2}$ is a cube root of $1$.\target{prob-HW1-P2}
+\begin{prob}\textbf{HW1 P2 (LADR 1A.7).}\ Show that $(-1+\sqrt3\,i)/2$ is a cube root of $1$.\target{prob-HW1-P2}
 
 
 \end{prob}
@@ -432,12 +779,11 @@
 \end{prob}
 \begin{prob}\textbf{R1 (Midterm 1 review, Exercise 7).}\ Prove that the intersection of subspaces is a subspace. What about the union?
 \end{prob}
-\begin{prob}\textbf{E1 (LADR 1C.12).}\ Prove that the union of two subspaces of $V$ is a subspace if and only if one of them contains the other.
+\begin{prob}\textbf{E1 (LADR 1C.12).}\target{prob-E1}\ Prove that the union of two subspaces of $V$ is a subspace if and only if one of them contains the other.
 \end{prob}
 \begin{prob}\textbf{E2.}\ In $\RR^3$ let $U=\{(x,y,0)\}$, $W=\{(0,y,z)\}$, $X=\{(t,t,t)\}$. Which of the sums $U+W$, $U+X$, $W+X$ are direct? Is $\RR^3=U\oplus X$?
 \end{prob}
 
-\clearpage
 \section*{Hints}
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW1-P1}{HW1 P1.}} \emph{Hint:} take an arbitrary element and unfold both definitions; for (c) think about surjective and injective.
@@ -446,12 +792,71 @@
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW1-P3}{HW1 P3.}} \emph{Hint:} multiplicative inverse (field axiom (vii)).
 
-\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P4}{HW1 P4 (LADR 1B.2).}} \emph{Hint:} same idea as P3, with \ilink{prop-4}{Prop.~4(ii)}.
+\par\medskip\noindent\textbf{\hyperlink{prob-HW1-P4}{HW1 P4 (LADR 1B.2).}} \emph{Hint:} the argument of P3, with a vector in place of $b$ and \ilink{prop-4}{Prop.~4(ii)} in place of $a^{-1}\cdot0=0$.
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW1-P5}{HW1 P5 (LADR 1C.4).}} \emph{Hint:} the zero function for one direction, linearity of the integral for the other.
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW1-P6}{HW1 P6 (LADR 1C.5).}} \emph{Hint:} which scalars are allowed in $\CC^2$?
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW1-P7}{HW1 P7.}} \emph{Hint:} $2=0$ in $\FF_2$.
+
+
+\section{Proofs of the facts used}
+
+\begin{proposition*}[F1: $\FF_2$ is a field]\target{fact-F2}
+  The set $\{0,1\}$ with the tables of the \ilink{ex-F2}{example of $\FF_2$} satisfies the field axioms.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Read $0$ as ``even'' and $1$ as ``odd''. The tables say exactly: even$+$even $=$ even, even$+$odd $=$ odd, odd$+$odd $=$ even, and a product is odd only when both factors are odd. These are true statements about integers, so adding or multiplying two integers and then recording only whether the result is even or odd gives the same answer as recording first and then using the tables.
+    \ii Each of the axioms (i)--(v) is an equation between two expressions built from $+$ and $\cdot$. It holds for integers, so by Step~1 it holds after recording even/odd, that is, in $\FF_2$.
+    \ii Axiom (vi): $-0=0$ and $-1=1$, since $0+0=0$ and $1+1=0$. Axiom (vii): the only nonzero element is $1$, and $1\cdot1=1$. Also $0\ne1$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F2: $\CC$ satisfies the field axioms]\target{fact-C}
+  With $(a+bi)+(c+di)=(a+c)+(b+d)i$ and $(a+bi)(c+di)=(ac-bd)+(ad+bc)i$, the set $\CC$ is a field.
+\end{proposition*}
+\begin{proof}
+  Write $z_k=a_k+b_ki$ with real $a_k,b_k$. Every axiom becomes an identity among real numbers.
+  \begin{steps}
+    \ii \textbf{Addition.} It is coordinatewise, so commutativity, associativity, the identity $0=0+0i$ and the inverse $-a-bi$ come from the same laws in $\RR$, applied to the real and imaginary parts separately.
+    \ii \textbf{Commutativity of multiplication.} $z_2z_1=(a_2a_1-b_2b_1)+(a_2b_1+b_2a_1)i$, which equals $z_1z_2$ because real multiplication and addition are commutative.
+    \ii \textbf{Associativity of multiplication.} Expanding both sides,
+    \[
+      (z_1z_2)z_3=z_1(z_2z_3)=(a_1a_2a_3-a_1b_2b_3-b_1a_2b_3-b_1b_2a_3)+(a_1a_2b_3+a_1b_2a_3+b_1a_2a_3-b_1b_2b_3)i .
+    \]
+    Each side is obtained by multiplying out and using $i^2=-1$; every term of the real part has an even number of $b$'s and every term of the imaginary part has an odd number.
+    \ii \textbf{Distributivity.} $z_1(z_2+z_3)=\bigl(a_1(a_2+a_3)-b_1(b_2+b_3)\bigr)+\bigl(a_1(b_2+b_3)+b_1(a_2+a_3)\bigr)i$, which is $z_1z_2+z_1z_3$ by distributivity in $\RR$.
+    \ii \textbf{Identities and inverses.} $1=1+0i$ satisfies $1\cdot z=z$ by the formula, and $1\ne 0$. Inverses of nonzero elements are given in \ilink{prop-3}{Prop.~3}.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[F3: Limits of $\lambda F+G$; continuity, derivatives and integrals of $\lambda f+g$]\target{fact-limits}
+  Let $F,G$ be real functions defined near a point $a$ (except possibly at $a$) with $\lim_{x\to a}F(x)=L$ and $\lim_{x\to a}G(x)=M$, and let $\lambda\in\RR$. Then $\lim_{x\to a}(\lambda F+G)(x)=\lambda L+M$. Consequently:
+  \begin{enumerate}[(a)]
+    \ii if $f,g$ are continuous at $a$, so is $\lambda f+g$;
+    \ii if $f,g$ are differentiable at $a$, so is $\lambda f+g$, and $(\lambda f+g)'(a)=\lambda f'(a)+g'(a)$;
+    \ii if $\int_0^1f$ and $\int_0^1g$ exist, then so does $\int_0^1(\lambda f+g)$, and
+    \[
+      \int_0^1(\lambda f+g)=\lambda\int_0^1f+\int_0^1g .
+    \]
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Let $\varepsilon>0$. Choose $\delta>0$ so that $0<|x-a|<\delta$ implies $|F(x)-L|<\varepsilon/(2|\lambda|+2)$ and $|G(x)-M|<\varepsilon/2$; this is possible because each limit gives its own $\delta$, and we take the smaller one. Then
+    \[
+      |(\lambda F+G)(x)-(\lambda L+M)|\le|\lambda|\,|F(x)-L|+|G(x)-M|<\frac{|\lambda|\varepsilon}{2|\lambda|+2}+\frac\varepsilon2<\varepsilon .
+    \]
+    \ii (a) Continuity at $a$ means $\lim_{x\to a}f(x)=f(a)$; apply Step~1 with $F=f$, $G=g$.
+    \ii (b) The difference quotient of $\lambda f+g$ is $\lambda$ times that of $f$ plus that of $g$:
+    \[
+      \frac{(\lambda f+g)(a+h)-(\lambda f+g)(a)}{h}=\lambda\,\frac{f(a+h)-f(a)}{h}+\frac{g(a+h)-g(a)}{h}.
+    \]
+    Apply Step~1 as $h\to0$.
+    \ii (c) A Riemann sum of $\lambda f+g$ for a partition with sample points is $\lambda$ times the Riemann sum of $f$ plus the Riemann sum of $g$ for the same partition and points. The integral is the limit of Riemann sums as the mesh tends to $0$, and the argument of Step~1 applies to this limit word for word.
+  \end{steps}
+\end{proof}
 
 \end{document}

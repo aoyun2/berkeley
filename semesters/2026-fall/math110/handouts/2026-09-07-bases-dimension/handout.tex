@@ -17,6 +17,10 @@
   figvecsub/.style={ink arrow,draw=inkslate},
   figguide/.style={ink guide,draw=inkslate}
 }
+% Method boxes: "How to ..." with numbered steps.
+\mdfdefinestyle{methodstyle}{nobreak=true,linewidth=0.6pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=methodstyle]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
+\BeforeBeginEnvironment{proof}{\Needspace{6\baselineskip}}
 
 \begin{document}
 \setlength{\parskip}{3pt}
@@ -34,7 +38,7 @@
 \subsection{Span, linear independence, and bases (Notes Ch.~3, LADR 2A--2B)}
 
 \begin{qbox}
-  When does a finite list of vectors $v_1,\dots,v_m$ provide a complete coordinate system for a vector space $V$? Two properties are required: every vector $v\in V$ must be expressible as a linear combination $\lambda_1v_1+\dots+\lambda_mv_m$ (\emph{spanning}), and the coefficients $\lambda_1,\dots,\lambda_m$ must be uniquely determined by $v$ (\emph{linear independence}). How do these two properties interact, and why can no linearly independent list in $V$ ever be longer than a spanning list of $V$?
+  In $\RR^3$ let $v_1=(1,2,0)$, $v_2=(0,1,1)$, $v_3=(1,0,-2)$. Is $(5,1,-3)$ a linear combination of $v_1,v_2,v_3$? Is $(2,5,1)$, and if so, in how many ways? Do $v_1,v_2,v_3$ give coordinates on $\RR^3$, and could any list of four vectors in $\RR^3$ be linearly independent?
 \end{qbox}
 
 \begin{definition*}[Def.~7, 8 / LADR 2.2, 2.4, 2.7, 2.8, 2.15, 2.17, 2.26: Span, linear independence, and basis]\target{def-7}\target{def-8}
@@ -47,14 +51,18 @@
     \]
     The span of the empty list $()$ is defined to be $\{0\}$. By LADR 2.6, $\spn(v_1,\dots,v_m)=\FF v_1+\dots+\FF v_m$ is the \textbf{smallest subspace of $V$ containing $v_1,\dots,v_m$}.
     \ii If $\spn(v_1,\dots,v_m)=V$, we say that $v_1,\dots,v_m$ \vocab{spans} $V$. A vector space is called \vocab{finite-dimensional} if some (finite) list of vectors in it spans the space, and \vocab{infinite-dimensional} otherwise (LADR 2.13).
-    \ii The list $v_1,\dots,v_m$ is called \vocab{linearly independent} if the only choice of $\lambda_1,\dots,\lambda_m\in\FF$ that makes $\lambda_1v_1+\dots+\lambda_mv_m=0$ is $\lambda_1=\dots=\lambda_m=0$ (the empty list $()$ is declared linearly independent). A list is called \vocab{linearly dependent} if it is not linearly independent.
+    \ii The list $v_1,\dots,v_m$ is called \vocab{linearly independent} if the only choice of $\lambda_1,\dots,\lambda_m\in\FF$ that makes $\lambda_1v_1+\dots+\lambda_mv_m=0$ is $\lambda_1=\dots=\lambda_m=0$ (the empty list $()$ is linearly independent, since there is no nonzero coefficient to choose). A list is called \vocab{linearly dependent} if it is not linearly independent. The number of entries of a list is its \vocab{length}.
     \ii A list of vectors in $V$ is a \vocab{basis} of $V$ if it is linearly independent and spans $V$ (LADR 2.26).
   \end{itemize}
 \end{definition*}
 
-\begin{itemize}
-  \ii \textbf{Polynomial spaces $\PP(\FF)$ and $\PP_m(\FF)$ (LADR 2.10--2.14):} A function $p\colon\FF\to\FF$ is a \vocab{polynomial} with coefficients in $\FF$ if there exist $a_0,\dots,a_m\in\FF$ such that $p(z)=a_0+a_1z+\dots+a_mz^m$ for all $z\in\FF$. The set of all such polynomials is the vector space $\PP(\FF)$. A polynomial $p=a_0+a_1z+\dots+a_mz^m$ with $a_m\ne 0$ has \vocab{degree} $m$, written $\deg p=m$; the zero polynomial $0$ is defined to have degree $\deg 0=-\infty$. For each integer $m\ge 0$, $\PP_m(\FF)$ denotes the subspace of all polynomials in $\PP(\FF)$ of degree at most $m$, which is finite-dimensional because it is spanned by $1,z,\dots,z^m$. By contrast, $\PP(\FF)$ is \textbf{infinite-dimensional} (LADR 2.14): any finite list $p_1,\dots,p_k\in\PP(\FF)$ has some maximum degree $m=\max_j\deg p_j$, so $z^{m+1}\notin\spn(p_1,\dots,p_k)$.
-\end{itemize}
+Two quick consequences of the definition: a list that contains $0$ is dependent ($1\cdot 0=0$ is a relation with a nonzero coefficient), and a list that contains the same vector twice is dependent ($v-v=0$).
+
+\textbf{The linear-combination map.} For a list $v_1,\dots,v_m$ in $V$ define
+\[
+  \Phi\colon\FF^m\to V,\qquad \Phi(\lambda_1,\dots,\lambda_m)=\lambda_1v_1+\dots+\lambda_mv_m .
+\]
+The set of values of $\Phi$ is $\spn(v_1,\dots,v_m)$, so $\Phi$ is surjective exactly when the list spans $V$. Also $\Phi(\lambda)=\Phi(\mu)$ exactly when $(\lambda_1-\mu_1)v_1+\dots+(\lambda_m-\mu_m)v_m=0$, so $\Phi$ is injective exactly when the list is linearly independent. Thus spanning is \emph{existence} of coefficients for every $v$, independence is \emph{uniqueness} of the coefficients, and a basis is a list for which $\Phi$ is a bijection. In the language of last week, $\spn(v_1,\dots,v_m)=\FF v_1+\dots+\FF v_m$, and when every $v_k\ne0$ this sum is direct exactly when the list is linearly independent (\xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Week~1, Prop.~7(iii)}).
 
 \begin{proposition*}[LADR 2.28: Criterion for basis (unique representation)]\target{name-basis-unique-representation-ladr-2-28}
   A list $v_1,\dots,v_m$ of vectors in $V$ is a basis of $V$ if and only if every $v\in V$ can be written uniquely in the form
@@ -63,86 +71,209 @@
   \]
   where $\lambda_1,\dots,\lambda_m\in\FF$. (The unique scalars $\lambda_1,\dots,\lambda_m$ are called the \vocab{coordinates} of $v$ with respect to the basis.)
 \end{proposition*}
-\begin{ideabox}
-  Existence of at least one representation $v=\sum\lambda_kv_k$ for every $v\in V$ is the definition of spanning. Uniqueness of the representation is equivalent to linear independence: if $v=\sum\lambda_kv_k=\sum\mu_kv_k$, subtracting gives $\sum(\lambda_k-\mu_k)v_k=0$, which by linear independence forces $\lambda_k=\mu_k$ for all $k$. Equivalently, if all $v_k\ne 0$, the list $v_1,\dots,v_m$ is linearly independent iff the sum of lines $\FF v_1+\dots+\FF v_m$ is a direct sum $\FF v_1\oplus\dots\oplus\FF v_m$.
-\end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii ($\Rightarrow$) Suppose $v_1,\dots,v_m$ is a basis of $V$. Since the list spans $V$, every $v\in V$ has at least one representation $v=\sum_{k=1}^m\lambda_kv_k$. If $v=\sum_{k=1}^m\mu_kv_k$ as well, subtracting gives $0=\sum_{k=1}^m(\lambda_k-\mu_k)v_k$, and linear independence forces $\lambda_k-\mu_k=0$, so $\lambda_k=\mu_k$ for all $k$.
-    \ii ($\Leftarrow$) Suppose every $v\in V$ has a unique representation $v=\sum_{k=1}^m\lambda_kv_k$. Then the list spans $V$. Moreover, if $\sum_{k=1}^m\lambda_kv_k=0$, then since $0=\sum_{k=1}^m 0v_k$ is also a representation of $0$, uniqueness forces $\lambda_1=\dots=\lambda_m=0$, so the list is linearly independent.
+    \ii \textbf{Assume $v_1,\dots,v_m$ is a basis.} Since the list spans $V$, every $v\in V$ has at least one representation $v=\sum_{k=1}^m\lambda_kv_k$. If $v=\sum_{k=1}^m\mu_kv_k$ as well, subtracting gives $0=\sum_{k=1}^m(\lambda_k-\mu_k)v_k$, and linear independence forces $\lambda_k-\mu_k=0$, so $\lambda_k=\mu_k$ for all $k$.
+    \ii \textbf{Assume every $v$ has a unique representation.} Then in particular every $v$ has a representation, so the list spans $V$. If $\sum_{k=1}^m\lambda_kv_k=0$, then this and $0=\sum_{k=1}^m 0\,v_k$ are two representations of $0$, so uniqueness forces $\lambda_1=\dots=\lambda_m=0$. The list is linearly independent.
   \end{steps}
 \end{proof}
 
+\begin{example*}[Standard bases and spans (Notes Ex.~10)]
+  \begin{itemize}
+    \ii In $\FF^n$, the list $e_1=(1,0,\dots,0)$, $e_2=(0,1,0,\dots,0)$, \dots, $e_n=(0,\dots,0,1)$ is a basis: $(x_1,\dots,x_n)=x_1e_1+\dots+x_ne_n$, and these coefficients are the only ones possible.
+    \ii In the sequence space $\RR^\infty$, the span of $(1,1,1,\dots)$ and $(0,1,2,3,\dots)$ is the set of arithmetic sequences
+    \[
+      a_0(1,1,1,\dots)+d(0,1,2,\dots)=(a_0,\ a_0+d,\ a_0+2d,\ \dots),\qquad a_0,d\in\RR.
+    \]
+    \ii The empty list is the only basis of the zero space $\{0\}$.
+  \end{itemize}
+\end{example*}
+
+\textbf{Polynomial spaces $\PP(\FF)$ and $\PP_m(\FF)$ (LADR 2.10--2.14).} A function $p\colon\FF\to\FF$ is a \vocab{polynomial} with coefficients in $\FF$ if there exist $a_0,\dots,a_m\in\FF$ such that $p(z)=a_0+a_1z+\dots+a_mz^m$ for all $z\in\FF$. The set of all such polynomials is the vector space $\PP(\FF)$. A polynomial $p=a_0+a_1z+\dots+a_mz^m$ with $a_m\ne 0$ has \vocab{degree} $m$, written $\deg p=m$; the zero polynomial has degree $\deg 0=-\infty$. For each integer $m\ge 0$, $\PP_m(\FF)$ denotes the subspace of polynomials of degree at most $m$. It is finite-dimensional because it is spanned by $1,z,\dots,z^m$. For $\FF=\RR$ or $\CC$, a polynomial is the zero function only if all its coefficients are $0$ (\ilink{fact-G1}{G1} at the end). So the coefficients of a polynomial are determined by the function (subtract two expressions for it), which makes the degree well defined, and $1,z,\dots,z^m$ is linearly independent: it is the \vocab{standard basis} of $\PP_m(\FF)$.
+
+\begin{methodbox}{How to test whether a list is linearly independent}
+  \begin{steps}
+    \ii Write $\lambda_1v_1+\dots+\lambda_mv_m=0$ with unknown scalars.
+    \ii Turn it into equations for the $\lambda_k$: compare coordinates in $\FF^n$, compare coefficients of $1,z,z^2,\dots$ for polynomials, or evaluate both sides at chosen points for functions.
+    \ii Solve the homogeneous system. If $\lambda_1=\dots=\lambda_m=0$ is the only solution, the list is independent. If there is a nonzero solution, write it out: it is an explicit dependence relation.
+  \end{steps}
+  Shortcuts and edge cases:
+  \begin{itemize}
+    \ii A list of one vector is independent exactly when the vector is nonzero; a list of two vectors is independent exactly when neither is a scalar multiple of the other.
+    \ii A list containing $0$, or containing a repeated vector, is dependent. The empty list is independent.
+    \ii In a space spanned by $n$ vectors, a list of more than $n$ vectors is dependent (\ilink{prop-10}{Prop.~10} below).
+    \ii Nonzero polynomials of distinct degrees are independent (\ilink{fact-G2}{G2} at the end).
+    \ii The answer can depend on the field: compute with the field you are given.
+  \end{itemize}
+\end{methodbox}
+
+\begin{example*}[A dependent list in $\RR^3$ and its relation]
+  For $v_1=(1,2,0)$, $v_2=(0,1,1)$, $v_3=(1,0,-2)$, the equation $\lambda_1v_1+\lambda_2v_2+\lambda_3v_3=0$ says, coordinate by coordinate,
+  \[
+    \lambda_1+\lambda_3=0,\qquad 2\lambda_1+\lambda_2=0,\qquad \lambda_2-2\lambda_3=0.
+  \]
+  The first two equations give $\lambda_3=-\lambda_1$ and $\lambda_2=-2\lambda_1$; then the third reads $-2\lambda_1+2\lambda_1=0$, which holds for every $\lambda_1$. Taking $\lambda_1=1$ gives the relation $v_1-2v_2-v_3=0$, so the list is dependent.
+\end{example*}
+
+\begin{example*}[The same list can be independent over $\RR$ and dependent over $\FF_2$]
+  Let $v_1=(1,1,0)$, $v_2=(0,1,1)$, $v_3=(1,0,1)$. The equations are $\lambda_1+\lambda_3=0$, $\lambda_1+\lambda_2=0$, $\lambda_2+\lambda_3=0$. Over $\RR$: $\lambda_3=-\lambda_1$ and $\lambda_2=-\lambda_1$, so the third equation gives $-2\lambda_1=0$, hence $\lambda_1=0$ and all coefficients are $0$: independent. Over $\FF_2$, $-2\lambda_1=0$ holds for every $\lambda_1$, and indeed $v_1+v_2+v_3=(2,2,2)=(0,0,0)$: dependent.
+\end{example*}
+
+\begin{example*}[Polynomials: $1+x$, $1-x$, $x^2$ in $\PP_2(\RR)$]
+  Comparing coefficients in $a(1+x)+b(1-x)+cx^2=0$ gives $a+b=0$ (constant term), $a-b=0$ ($x$), $c=0$ ($x^2$). So $a=b=c=0$, and the list is independent.
+\end{example*}
+
+\begin{methodbox}{How to decide whether a vector lies in a span, and whether a list spans $V$}
+  \begin{steps}
+    \ii To decide whether $v\in\spn(v_1,\dots,v_m)$: write $v=\lambda_1v_1+\dots+\lambda_mv_m$, convert to equations as above, and solve. A solution gives the combination; an inconsistent system shows $v$ is not in the span.
+    \ii To decide whether the list spans $V$: take a general vector of $V$ (with letters for its coordinates) and solve for the $\lambda_k$ in terms of those letters. The list spans exactly when a solution exists for every choice of the letters.
+    \ii If $\dim V$ is known and the list has length $\dim V$, check independence instead (\ilink{prop-13}{Prop.~13} below).
+  \end{steps}
+\end{methodbox}
+
 \begin{proposition*}[Prop.~8 / LADR 2.19: Linear Dependence Lemma]\target{prop-8}
-  Suppose $v_1,\dots,v_m$ is a linearly dependent list in $V$. Then there exists $j\in\{1,2,\dots,m\}$ such that the following hold:
+  Suppose $v_1,\dots,v_m$ is a linearly dependent list in $V$. Then:
   \begin{enumerate}[(a)]
-    \ii $v_j \in \spn(v_1,\dots,v_{j-1})$ (where for $j=1$ this means $v_1\in\spn()=\{0\}$, i.e.\ $v_1=0$);
-    \ii if the $j$-th term is removed from $v_1,\dots,v_m$, the span of the remaining list equals $\spn(v_1,\dots,v_m)$.
+    \ii there exists $j\in\{1,2,\dots,m\}$ such that $v_j \in \spn(v_1,\dots,v_{j-1})$ (for $j=1$ this means $v_1\in\spn()=\{0\}$, that is, $v_1=0$);
+    \ii for any such $j$, removing the $j$-th term from $v_1,\dots,v_m$ does not change the span: the span of the remaining list equals $\spn(v_1,\dots,v_m)$.
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  Linear dependence gives an equation $\lambda_1v_1+\dots+\lambda_mv_m=0$ with not all $\lambda_k=0$. Choosing $j$ to be the \emph{largest} index with $\lambda_j\ne 0$ ensures that every term after $\lambda_jv_j$ has coefficient $0$, so dividing by $\lambda_j$ expresses $v_j$ as a linear combination of the vectors \emph{preceding} it: $v_1,\dots,v_{j-1}$. Once $v_j$ is known to be a combination of $v_1,\dots,v_{j-1}$, any appearance of $v_j$ in a linear combination of $v_1,\dots,v_m$ can be replaced by that combination of $v_1,\dots,v_{j-1}$, so deleting $v_j$ does not shrink the span.
+  A dependence relation $\lambda_1v_1+\dots+\lambda_mv_m=0$ can be solved for any vector whose coefficient is nonzero. Choosing the \emph{largest} index $j$ with $\lambda_j\ne 0$ is what puts the solved vector after all the others that appear: every term after $\lambda_jv_j$ has coefficient $0$, so $v_j$ is expressed using only $v_1,\dots,v_{j-1}$. This ordering is what later lets us keep the vectors at the front of a list and delete only vectors further back.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Because $v_1,\dots,v_m$ is linearly dependent, there exist $\lambda_1,\dots,\lambda_m\in\FF$, not all $0$, such that $\lambda_1v_1+\dots+\lambda_mv_m=0$. Let $j$ be the largest element of $\{1,\dots,m\}$ such that $\lambda_j\ne 0$.
-    \ii Then $\lambda_1v_1+\dots+\lambda_jv_j=0$, so solving for $v_j$ gives
+    \ii Because $v_1,\dots,v_m$ is linearly dependent, there exist $\lambda_1,\dots,\lambda_m\in\FF$, not all $0$, such that $\lambda_1v_1+\dots+\lambda_mv_m=0$. Let $j$ be the largest index such that $\lambda_j\ne 0$.
+    \ii Then $\lambda_1v_1+\dots+\lambda_jv_j=0$, and dividing by $\lambda_j$ gives
     \[
       v_j = -\frac{\lambda_1}{\lambda_j}v_1 - \dots - \frac{\lambda_{j-1}}{\lambda_j}v_{j-1} \in \spn(v_1,\dots,v_{j-1}),
     \]
-    proving (a).
-    \ii For (b), suppose $u\in\spn(v_1,\dots,v_m)$, so $u=c_1v_1+\dots+c_mv_m$. Replacing $v_j$ in this sum by the expression in Step~2 writes $u$ as a linear combination of $v_1,\dots,v_{j-1},v_{j+1},\dots,v_m$, proving (b).
+    which proves (a).
+    \ii For (b), let $j$ be any index with $v_j=c_1v_1+\dots+c_{j-1}v_{j-1}$. Let $u=\mu_1v_1+\dots+\mu_mv_m$ be any element of $\spn(v_1,\dots,v_m)$. Replacing $v_j$ by $c_1v_1+\dots+c_{j-1}v_{j-1}$ writes $u$ as a combination of the list without $v_j$. So the span of the shorter list contains $\spn(v_1,\dots,v_m)$; the reverse inclusion holds because the shorter list is part of the longer one.
   \end{steps}
 \end{proof}
+
+\begin{proposition*}[Prop.~9 / LADR 2.30, 2.31: A spanning list contains a basis]\target{prop-9}
+  Every spanning list $f_1,\dots,f_n$ of a finite-dimensional space $V$ can be reduced to a basis of $V$ by deleting some (possibly none) of its vectors. In particular, every finite-dimensional vector space has a basis.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii If the list is linearly independent, it is already a basis.
+    \ii If it is dependent, \ilink{prop-8}{Prop.~8} gives a vector in the span of the earlier ones whose removal does not change the span. Delete it; the shorter list still spans $V$.
+    \ii Each deletion shortens the list by one, so the process stops after at most $n$ steps. It stops exactly when the list is independent, and the list still spans $V$, so it is a basis.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to reduce a spanning list to a basis}
+  \begin{steps}
+    \ii Go through the list from left to right, keeping a list of accepted vectors (initially empty).
+    \ii For each vector, decide whether it lies in the span of the vectors already accepted. If not, accept it; if so, discard it.
+    \ii The accepted vectors form a basis of the span of the original list.
+  \end{steps}
+  This is \ilink{prop-9}{Prop.~9} done in one pass: a discarded vector is a combination of earlier vectors, so discarding it does not change the span (\ilink{prop-8}{Prop.~8}(b)), and each accepted vector is outside the span of the earlier accepted ones, which keeps the accepted list independent (the contrapositive of \ilink{prop-8}{Prop.~8}(a)). Edge cases: the zero vector is always discarded; a repeated vector is discarded at its second appearance.
+\end{methodbox}
+
+\begin{example*}[Reducing a spanning list of $\RR^3$ to a basis]
+  Start from $(1,0,1)$, $(2,0,2)$, $(0,1,1)$, $(1,1,2)$, $(0,0,1)$, which spans $\RR^3$.
+  \begin{steps}
+    \ii Accept $(1,0,1)$, since it is nonzero.
+    \ii Discard $(2,0,2)=2(1,0,1)$.
+    \ii Accept $(0,1,1)$, which is not a multiple of $(1,0,1)$.
+    \ii Discard $(1,1,2)=(1,0,1)+(0,1,1)$.
+    \ii For $(0,0,1)$: a combination $a(1,0,1)+b(0,1,1)=(a,b,a+b)$ equals $(0,0,1)$ only if $a=b=0$ and $a+b=1$, which is impossible. Accept it.
+  \end{steps}
+  The basis is $(1,0,1),(0,1,1),(0,0,1)$.
+\end{example*}
 
 \begin{theorem*}[Prop.~10 / LADR 2.22: Length of linearly independent list $\le$ length of spanning list]\target{prop-10}
   In a finite-dimensional vector space $V$, the length of every linearly independent list of vectors is less than or equal to the length of every spanning list of vectors. That is, if $e_1,\dots,e_m$ is linearly independent in $V$ and $f_1,\dots,f_n$ spans $V$, then $m\le n$.
 \end{theorem*}
 \begin{ideabox}
-  We trade vectors from the independent list $e_1,\dots,e_m$ into the spanning list $f_1,\dots,f_n$ one at a time (\emph{Steinitz exchange}). In Step~1, adjoin $e_1$ to the front of $f_1,\dots,f_n$: because $f_1,\dots,f_n$ spans $V$, the list $e_1,f_1,\dots,f_n$ of length $n+1$ is linearly dependent. By the Linear Dependence Lemma (\ilink{prop-8}{Prop.~8}), some vector in $e_1,f_1,\dots,f_n$ lies in the span of the earlier vectors, and it cannot be $e_1$ because $e_1\ne 0$. Removing that redundant $f_j$ leaves a list of length $n$ ($e_1$ and $n-1$ of the $f_j$) that still spans $V$. At Step~$k$, adjoin $e_k$ right after $e_{k-1}$; by \ilink{prop-8}{Prop.~8}, some vector in the resulting dependent list lies in the span of the preceding vectors, and it cannot be any of $e_1,\dots,e_k$ because $e_1,\dots,e_k$ is linearly independent. Thus we always discard one of the remaining $f_j$. If $m$ were greater than $n$, we would exhaust all $n$ vectors $f_1,\dots,f_n$ after $n$ steps, making $e_1,\dots,e_n$ span $V$ and forcing $e_{n+1}\in\spn(e_1,\dots,e_n)$, a contradiction.
+  The proof exchanges vectors: it puts the $e$'s into the spanning list one at a time, each time taking out one $f$, and keeps the list spanning. The question at each step is whether there is always an $f$ left to take out. Spanning lets us write the new $e_k$ in terms of the current list $e_1,\dots,e_{k-1}$ and the unused $f$'s. Independence of the $e$'s says that this expression must use some unused $f$ with a nonzero coefficient (otherwise $e_k$ would be a combination of $e_1,\dots,e_{k-1}$), and we can solve for that $f$ and replace it by $e_k$. So each $e$ uses up a different $f$, and there must be at least as many $f$'s as $e$'s.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Suppose for contradiction that $m>n$. In Step~1, since $f_1,\dots,f_n$ spans $V$, adding $e_1$ produces a linearly dependent list $e_1,f_1,\dots,f_n$ that spans $V$. By \ilink{prop-8}{Prop.~8} (and $e_1\ne 0$), one of the $f$'s is in the span of the preceding vectors and can be deleted to yield a list $B_1$ of length $n$ (consisting of $e_1$ and $n-1$ of the $f$'s) that spans $V$.
-    \ii For $k=2,\dots,n$, insert $e_k$ immediately after $e_{k-1}$ in $B_{k-1}$. Because $B_{k-1}$ spans $V$, the resulting list of length $n+1$ is linearly dependent. By \ilink{prop-8}{Prop.~8}, some vector in this list is in the span of the preceding ones, and since $e_1,\dots,e_k$ is linearly independent, that vector cannot be any of $e_1,\dots,e_k$ and must be one of the remaining $f$'s. Deleting it produces a spanning list $B_k$ of length $n$ consisting of $e_1,\dots,e_k$ and $n-k$ of the $f$'s.
-    \ii After Step~$n$, all $n$ of the $f$'s have been deleted and $B_n=(e_1,\dots,e_n)$ spans $V$. Since $m>n$, $e_{n+1}\in V=\spn(e_1,\dots,e_n)$, contradicting linear independence of $e_1,\dots,e_m$. Thus $m\le n$.
+    \ii If $m=0$ there is nothing to prove, so let $m\ge1$. For $k\ge0$ let $L_k=(e_1,\dots,e_k,f_{k+1},\dots,f_n)$, after relabelling the $f$'s that have not been used. We show, for $k=1,\dots,\min(m,n)$ in turn, that $L_k$ can be formed so that it spans $V$. The list $L_0=(f_1,\dots,f_n)$ spans $V$.
+    \ii Suppose $L_{k-1}$ spans $V$. Then
+    \[
+      e_k=\lambda_1e_1+\dots+\lambda_{k-1}e_{k-1}+\mu_kf_k+\dots+\mu_nf_n
+    \]
+    for some scalars. If all $\mu$'s were $0$, $e_k$ would lie in $\spn(e_1,\dots,e_{k-1})$, contradicting independence of the $e$'s (for $k=1$ this would say $e_1=0$). So some $\mu$ is nonzero; relabel so that $\mu_k\ne0$.
+    \ii Solving the display for $f_k$ writes $f_k$ as a combination of $e_1,\dots,e_k,f_{k+1},\dots,f_n$. So every combination of $L_{k-1}$ is also a combination of $L_k$, and $L_k$ spans $V$.
+    \ii Suppose, for contradiction, that $m>n$. Applying Steps~2--3 for $k=1,\dots,n$ gives that $L_n=(e_1,\dots,e_n)$ spans $V$. Then $e_{n+1}\in\spn(e_1,\dots,e_n)$, contradicting the independence of $e_1,\dots,e_m$. So $m\le n$.
   \end{steps}
+  The construction shows a little more: if $m\le n$, then after $m$ exchanges the list $e_1,\dots,e_m,f_{m+1},\dots,f_n$ still spans $V$.
 \end{proof}
 
-\begin{proposition*}[Prop.~9, 11 / LADR 2.30--2.33: Thinning a spanning list, extending to a basis, and complements]\target{prop-9}\target{prop-11}
-  Suppose $V$ is finite-dimensional.
-  \begin{enumerate}[(a)]
-    \ii \textbf{Spanning list contains a basis (Prop.~9 / LADR 2.30):} Every spanning list in $V$ can be reduced to a basis of $V$ by deleting some (possibly none) of its vectors. In particular, every finite-dimensional vector space has a basis (LADR 2.31).
-    \ii \textbf{Linearly independent list extends to a basis (Prop.~11 / LADR 2.32):} Every linearly independent list $e_1,\dots,e_m$ in $V$ can be extended to a basis $e_1,\dots,e_m,w_1,\dots,w_l$ of $V$ (where the added vectors can be chosen from any given spanning list $f_1,\dots,f_n$ of $V$).
-    \ii \textbf{Every subspace is part of a direct sum (LADR 2.33):} If $U$ is any subspace of $V$, then there exists a subspace $W\subseteq V$ such that $V=U\oplus W$.
-  \end{enumerate}
+\begin{example*}[No three vectors in $\FF^2$ are independent (Notes Ex.~11)]
+  $\FF^2$ is spanned by $e_1,e_2$, a list of length $2$, so by \ilink{prop-10}{Prop.~10} every independent list in $\FF^2$ has length at most $2$. In particular three lines through $0$ in $\RR^2$, spanned by $u_1,u_2,u_3$, never form a direct sum: their spanning vectors are dependent, so $0$ is a sum of nonzero vectors from the three lines.
+\end{example*}
+
+\begin{proposition*}[Prop.~11 / LADR 2.32: Extending an independent list to a basis]\target{prop-11}
+  Suppose $V$ is finite-dimensional. Every linearly independent list $e_1,\dots,e_m$ in $V$ can be extended to a basis $e_1,\dots,e_m,w_1,\dots,w_l$ of $V$, and the added vectors can be chosen from any given spanning list $f_1,\dots,f_n$ of $V$.
 \end{proposition*}
 \begin{ideabox}
-  To thin a spanning list $f_1,\dots,f_n$ to a basis (a), repeatedly apply the Linear Dependence Lemma (\ilink{prop-8}{Prop.~8}) to delete a vector that lies in the span of the preceding vectors until the remaining list is linearly independent. To extend an independent list $e_1,\dots,e_m$ to a basis (b), place $e_1,\dots,e_m$ \emph{in front of} a spanning list $f_1,\dots,f_n$ to form $e_1,\dots,e_m,f_1,\dots,f_n$, and apply the thinning procedure of (a): because $e_1,\dots,e_m$ are linearly independent and sit at the front, \ilink{prop-8}{Prop.~8} retains every $e_i$ and deletes only redundant $f_j$. Finally, for (c), take a basis $u_1,\dots,u_k$ of $U$, extend it to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$ by (b), and set $W=\spn(w_1,\dots,w_l)$.
+  To extend, put the independent list \emph{in front of} a spanning list and reduce. The reduction only discards a vector that is a combination of vectors before it, and no $e_i$ is a combination of $e_1,\dots,e_{i-1}$, so every $e_i$ is kept. This is why the order matters: the vectors we must keep go first.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (a), start with a spanning list $L=(f_1,\dots,f_n)$. If $L$ is linearly independent, it is a basis. Otherwise, \ilink{prop-8}{Prop.~8} identifies a vector $f_j$ in the span of the earlier vectors whose removal leaves the span equal to $V$. Repeat at most $n$ times until the remaining list is linearly independent and spans $V$.
-    \ii For (b), let $f_1,\dots,f_n$ span $V$. The concatenated list $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$. Applying Step~1 to this list, no $e_i$ can ever lie in the span of its predecessors because $e_1,\dots,e_m$ is linearly independent; thus only vectors among $f_1,\dots,f_n$ are deleted, leaving a basis of $V$ extending $e_1,\dots,e_m$.
-    \ii For (c), by \ilink{prop-14}{Prop.~14} below (LADR 2.25), $U$ is finite-dimensional and has a basis $u_1,\dots,u_k$. Extend it to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$ by (b), and let $W=\spn(w_1,\dots,w_l)$. Then $V=\spn(u_1,\dots,u_k,w_1,\dots,w_l)=U+W$, and if $v\in U\cap W$, then $v=\sum a_iu_i=\sum b_jw_j\implies \sum a_iu_i-\sum b_jw_j=0$, which by linear independence of the full basis forces all $a_i=b_j=0$ and $v=0$. Thus $V=U\oplus W$.
+    \ii The list $e_1,\dots,e_m,f_1,\dots,f_n$ spans $V$, because the $f$'s already do.
+    \ii Reduce it to a basis with the method of \ilink{prop-9}{Prop.~9}, going left to right. Each $e_i$ is accepted, because $e_i\notin\spn(e_1,\dots,e_{i-1})$ by independence. So only $f$'s are discarded, and the resulting basis consists of $e_1,\dots,e_m$ followed by some of the $f$'s.
   \end{steps}
 \end{proof}
 
-\begin{definition*}[Def.~9: Infinite-dimensional bases (Notes Ch.~3, optional)]\target{def-9}
-  An infinite subset $M\subseteq V$ is \vocab{linearly independent} if every finite subset of $M$ is linearly independent; $M$ \vocab{spans} $V$ if every vector in $V$ is a \emph{finite} linear combination of elements of $M$; and $M$ is a \vocab{basis} of $V$ if it is linearly independent and spans $V$. For example, $\{1,x,x^2,\dots\}$ is a basis of $\PP(\FF)$, whereas $\{e_1,e_2,\dots\}$ in $\FF^\infty$ is linearly independent but does \emph{not} span $\FF^\infty$ because $(1,1,1,\dots)$ is not a finite linear combination of the $e_j$'s (\ilink{prob-HW2-P2}{HW2~P2}).
+\begin{methodbox}{How to extend an independent list to a basis}
+  \begin{steps}
+    \ii Append a spanning list you know, usually the standard basis $e_1,\dots,e_n$ of $\FF^n$ or $1,z,\dots,z^m$ of $\PP_m(\FF)$.
+    \ii Reduce from left to right as in the previous method. Your vectors are all kept; you can stop once the accepted vectors span $V$, or once there are $\dim V$ of them (\ilink{prop-13}{Prop.~13} in the next subsection).
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Extending $(1,1,0),(0,1,1)$ to a basis of $\RR^3$]
+  Append $e_1,e_2,e_3$. A combination $a(1,1,0)+b(0,1,1)=(a,a+b,b)$ equals $e_1=(1,0,0)$ only if $a=1$, $b=0$ and $a+b=0$, which is impossible, so $e_1$ is kept. The accepted list $(1,1,0),(0,1,1),(1,0,0)$ already spans $\RR^3$, because $e_2=(1,1,0)-(1,0,0)$ and $e_3=(0,1,1)-e_2$ lie in its span. So it is a basis, and $e_2,e_3$ are discarded.
+\end{example*}
+
+\begin{definition*}[Def.~9: Infinite linearly independent and spanning sets (Notes Ch.~3, optional remarks)]\target{def-9}
+  An infinite subset $M\subseteq V$ is \vocab{linearly independent} if every finite subset of $M$ is linearly independent; $M$ \vocab{spans} $V$ if every vector in $V$ is a \emph{finite} linear combination of elements of $M$; and $M$ is a \vocab{basis} of $V$ if it is linearly independent and spans $V$.
 \end{definition*}
+
+\begin{example*}[The monomials are a basis of $\PP(\RR)$ (Notes Ex.~12)]
+  $M=\{1,x,x^2,\dots\}$ is a basis of $\PP(\RR)$: every polynomial is a finite combination of monomials, and a polynomial is zero only if all its coefficients are zero.
+\end{example*}
+
+\begin{example*}[The unit sequences do not span $\FF^\infty$ (Notes Ex.~13)]
+  In $\FF^\infty$, $M=\{e_1,e_2,\dots\}$ is linearly independent, but it does not span: a finite combination $c_1e_1+\dots+c_Ne_N$ is $0$ after position $N$, so $(1,1,1,\dots)$ is not a finite combination of the $e_j$ (\ilink{prob-HW2-P2}{HW2~P2}). Every vector space does have a basis, but the general proof uses Zorn's lemma (equivalently, the axiom of choice) and does not construct one; for $\FF^\infty$ no explicit basis is known.
+\end{example*}
+
+\begin{methodbox}{How to prove that a space is infinite-dimensional}
+  \begin{steps}
+    \ii For each $n$, exhibit a linearly independent list of length $n$ in $V$.
+    \ii Conclude: if some list of length $N$ spanned $V$, then by \ilink{prop-10}{Prop.~10} every independent list would have length at most $N$, which fails for $n=N+1$.
+  \end{steps}
+  Alternative for a specific candidate list: show that some vector of $V$ is not in its span, as for $\PP(\FF)$ below.
+\end{methodbox}
+
+\begin{example*}[$\PP(\FF)$ is infinite-dimensional (LADR 2.14)]
+  For every $n$, $1,z,\dots,z^{n-1}$ is independent in $\PP(\FF)$. Alternatively: a finite list $p_1,\dots,p_k$ has a largest degree $m$, every combination of it has degree at most $m$, and so $z^{m+1}\notin\spn(p_1,\dots,p_k)$.
+\end{example*}
+
+\revisit The dependence example above found $v_1-2v_2-v_3=0$, so $v_3=v_1-2v_2$, and by \ilink{prop-8}{Prop.~8}(b)
+\[
+  \spn(v_1,v_2,v_3)=\spn(v_1,v_2)=\{(a,2a+b,b):a,b\in\RR\},
+\]
+a plane. The vector $(5,1,-3)$ would need $a=5$, $b=-3$ and $2a+b=1$, but $2\cdot5-3=7\ne1$, so it is not in the span. The vector $(2,5,1)=2v_1+v_2$ is in the span, and in infinitely many ways: $(2,5,1)=(2+t)v_1+(1-2t)v_2-tv_3$ for every $t\in\RR$, since we may add $t$ times the relation. So $v_1,v_2,v_3$ do not give coordinates on $\RR^3$: they neither span nor give unique coefficients. No list of four vectors in $\RR^3$ is independent, because $e_1,e_2,e_3$ spans $\RR^3$ and \ilink{prop-10}{Prop.~10} bounds every independent list by $3$.
 
 \subsection{Dimension of a vector space and of a sum of subspaces (Notes Ch.~4, LADR 2C)}
 
 \begin{qbox}
-  A finite-dimensional vector space $V$ has infinitely many different bases (whenever $V\ne\{0\}$). Why must every single basis of $V$ have the exact same length $\dim V$, and how do we compute the dimension of a sum $U+W$ of two subspaces from $\dim U$, $\dim W$, and $\dim(U\cap W)$?
+  $\PP_2(\RR)$ has the basis $1,x,x^2$ and also the basis $1,x-1,(x-1)^2$. Must every basis of $\PP_2(\RR)$ have three vectors? In $\FF^3$, the planes $U=\spn((1,1,0),(0,1,1))$ and $W=\spn((1,2,2),(2,2,1))$ are different. How large is $U\cap W$, and how can we find it?
 \end{qbox}
 
 \begin{proposition*}[Prop.~12, Def.~10 / LADR 2.34, 2.35: Basis length invariance and dimension $\dim V$]\target{prop-12}\target{def-10}
   Any two bases of a finite-dimensional vector space $V$ have the same length. The \vocab{dimension} of a finite-dimensional vector space $V$, denoted by $\dim V$, is defined to be the length of any basis of $V$.
 \end{proposition*}
 \begin{ideabox}
-  Suppose $B_1$ and $B_2$ are two bases of $V$. Because $B_1$ is linearly independent and $B_2$ spans $V$, \ilink{prop-10}{Prop.~10} gives $\operatorname{length}(B_1)\le\operatorname{length}(B_2)$. Reversing their roles ($B_2$ linearly independent and $B_1$ spanning $V$) gives $\operatorname{length}(B_2)\le\operatorname{length}(B_1)$, so the two lengths must be equal.
+  A basis is both independent and spanning, so \ilink{prop-10}{Prop.~10} can be applied to two bases in both orders.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -151,23 +282,25 @@
   \end{steps}
 \end{proof}
 
-\begin{itemize}
-  \ii \textbf{Standard dimensions (Ex.~14--17):} $\dim\FF^n=n$ (standard basis $e_1,\dots,e_n$); $\dim\PP_m(\FF)=m+1$ (standard basis $1,z,\dots,z^m$ of length $m+1$); $\dim\{0\}=0$ (empty basis $()$). Notice that dimension depends on the scalar field: $\dim_\CC\CC^n=n$, whereas $\dim_\RR\CC^n=2n$.
-\end{itemize}
+\textbf{Standard dimensions (Notes Ex.~14--16).} $\dim\FF^n=n$, with the standard basis $e_1,\dots,e_n$. $\dim\PP_m(\FF)=m+1$, with the basis $1,z,\dots,z^m$ (note the $+1$: the constant polynomial counts). $\dim\{0\}=0$, with the empty basis.
+
+\begin{example*}[$\CC^2$ over $\CC$ and over $\RR$ (Notes Ex.~17)]
+  Over $\CC$, $\dim_\CC\CC^2=2$ with basis $(1,0),(0,1)$. Over $\RR$ only real scalars are allowed, and $(1,0),(i,0),(0,1),(0,i)$ is a basis: $(a+bi,c+di)=a(1,0)+b(i,0)+c(0,1)+d(0,i)$ with unique real $a,b,c,d$. So $\dim_\RR\CC^2=4$, and in general $\dim_\RR\CC^n=2n$.
+\end{example*}
 
 \begin{proposition*}[Prop.~13 / LADR 2.38, 2.42: Linearly independent or spanning list of the right length is a basis]\target{prop-13}
   Suppose $V$ is finite-dimensional with $d=\dim V$.
   \begin{enumerate}[(a)]
-    \ii Every linearly independent list of vectors in $V$ of length $d=\dim V$ is a basis of $V$ (LADR 2.38).
-    \ii Every spanning list of vectors in $V$ of length $d=\dim V$ is a basis of $V$ (LADR 2.42).
+    \ii Every linearly independent list of vectors in $V$ of length $d$ is a basis of $V$ (LADR 2.38).
+    \ii Every spanning list of vectors in $V$ of length $d$ is a basis of $V$ (LADR 2.42).
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  When a list already has the exact length $d=\dim V$, checking \emph{either} linear independence \emph{or} spanning suffices for the other. Indeed, an independent list of length $d$ extends to a basis (\ilink{prop-11}{Prop.~11}), and a spanning list of length $d$ thins to a basis (\ilink{prop-9}{Prop.~9}); because every basis of $V$ has length $d$ (\ilink{prop-12}{Prop.~12}), no vectors could be added or deleted.
+  This is the vector-space version of ``$d$ distinct elements of a $d$-element set are all of it''. Extending an independent list or reducing a spanning list always ends at a basis, and a basis has exactly $d$ vectors, so a list that already has $d$ vectors has no room to grow or shrink.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (a), let $v_1,\dots,v_d$ be linearly independent in $V$. By \ilink{prop-11}{Prop.~11}, it extends to a basis of $V$. Since every basis of $V$ has length $d$ (\ilink{prop-12}{Prop.~12}), this extension adds no vectors, so $v_1,\dots,v_d$ is already a basis of $V$.
+    \ii For (a), let $v_1,\dots,v_d$ be linearly independent in $V$. By \ilink{prop-11}{Prop.~11}, it extends to a basis of $V$. Since every basis of $V$ has length $d$ (\ilink{prop-12}{Prop.~12}), the extension adds no vectors, so $v_1,\dots,v_d$ is already a basis of $V$.
     \ii For (b), let $v_1,\dots,v_d$ span $V$. By \ilink{prop-9}{Prop.~9}, some sub-list is a basis of $V$. Since that basis has length $d$, no vectors were deleted, so $v_1,\dots,v_d$ is already a basis of $V$.
   \end{steps}
 \end{proof}
@@ -179,43 +312,172 @@
   \]
 \end{proposition*}
 \begin{ideabox}
-  By \ilink{prop-10}{Prop.~10}, no linearly independent list in $U$ can have length exceeding $\dim V$, so extending an independent list in $U$ by picking vectors in $U$ outside the current span must terminate after $k\le\dim V$ steps with a basis $u_1,\dots,u_k$ of $U$. Thus $\dim U=k\le\dim V$. When $\dim U=\dim V$, a basis of $U$ is a linearly independent list in $V$ of length $\dim V$, so by \ilink{prop-13}{Prop.~13(a)} it is a basis of $V$ and spans all of $V$, forcing $U=V$.
+  We cannot start from a basis of $U$, since we do not yet know that $U$ has one. Instead we build one: keep adding vectors of $U$ that are outside the current span. Each addition keeps the list independent, and \ilink{prop-10}{Prop.~10} (independent lists in $V$ have length at most $\dim V$) forces the process to stop, which can only happen when the list spans $U$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Any linearly independent list in $U$ is also linearly independent in $V$, so its length is at most $\dim V$ by \ilink{prop-10}{Prop.~10}. Choose a linearly independent list $u_1,\dots,u_k$ in $U$ of maximum possible length $k\le\dim V$.
-    \ii If $\spn(u_1,\dots,u_k)\ne U$, picking $u\in U\setminus\spn(u_1,\dots,u_k)$ produces a linearly independent list $u_1,\dots,u_k,u$ in $U$ of length $k+1$ (by \ilink{prop-8}{Prop.~8}), contradicting maximality of $k$. Thus $u_1,\dots,u_k$ spans $U$ and is a basis of $U$, so $U$ is finite-dimensional and $\dim U=k\le\dim V$.
-    \ii If $\dim U=\dim V$, then a basis of $U$ is a linearly independent list in $V$ of length $\dim V$, hence a basis of $V$ by \ilink{prop-13}{Prop.~13(a)}, so $U=V$. Conversely, $U=V\implies\dim U=\dim V$.
+    \ii Any linearly independent list in $U$ is also linearly independent in $V$, so its length is at most $\dim V$ by \ilink{prop-10}{Prop.~10}. Choose a linearly independent list $u_1,\dots,u_k$ in $U$ of the largest possible length; then $k\le\dim V$.
+    \ii Suppose $\spn(u_1,\dots,u_k)\ne U$, and pick $u\in U$ outside this span. The list $u_1,\dots,u_k,u$ is independent: otherwise \ilink{prop-8}{Prop.~8}(a) would put some vector in the span of the earlier ones, and that cannot be one of $u_1,\dots,u_k$ (they are independent) or $u$ (it is outside their span). This contradicts the maximality of $k$. So $u_1,\dots,u_k$ spans $U$ and is a basis; $U$ is finite-dimensional and $\dim U=k\le\dim V$.
+    \ii \textbf{Assume $\dim U=\dim V$.} A basis of $U$ is a linearly independent list in $V$ of length $\dim V$, hence a basis of $V$ by \ilink{prop-13}{Prop.~13}(a). Its span is both $U$ and $V$, so $U=V$. \textbf{Assume $U=V$.} Then $\dim U=\dim V$ trivially.
   \end{steps}
 \end{proof}
+
+The hypothesis that $V$ is finite-dimensional is needed: in $\PP(\RR)$, the subspace $\{p:p(0)=0\}$ (with basis $x,x^2,\dots$) is a proper subspace, yet both spaces are infinite-dimensional.
+
+\begin{proposition*}[LADR 2.33: Every subspace has a complement]\target{name-every-subspace-has-a-complement}
+  If $U$ is a subspace of a finite-dimensional space $V$, then there is a subspace $W$ of $V$ with $V=U\oplus W$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii By \ilink{prop-14}{Prop.~14}, $U$ has a basis $u_1,\dots,u_k$. Extend it by \ilink{prop-11}{Prop.~11} to a basis $u_1,\dots,u_k,w_1,\dots,w_l$ of $V$, and let $W=\spn(w_1,\dots,w_l)$.
+    \ii \textbf{$U+W=V$.} Every $v\in V$ is a combination of the basis, that is, a combination of the $u$'s (in $U$) plus a combination of the $w$'s (in $W$).
+    \ii \textbf{$U\cap W=\{0\}$.} If $v\in U\cap W$, then $v=\sum a_iu_i$ and $v=\sum b_jw_j$, so $\sum a_iu_i-\sum b_jw_j=0$. Independence of the whole basis forces all $a_i=b_j=0$, so $v=0$. By \xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Week~1, Prop.~7}, $V=U\oplus W$.
+  \end{steps}
+\end{proof}
+
+To find a complement in practice, extend a basis of $U$ to a basis of $V$ and take the span of the added vectors. For $U=\spn((1,1,0),(0,1,1))$ in $\RR^3$, the extension example in the previous subsection added $(1,0,0)$, so $W=\spn((1,0,0))$ is a complement. A subspace has many complements: in $\RR^2$, every line through $0$ other than a line $U$ is a complement of $U$, so there is no single ``complement of $U$''.
+
+\begin{example*}[The basis $1,x-a,\dots,(x-a)^n$ of $\PP_n(\RR)$ (Notes Ex.~18)]
+  The polynomials $1,x-a,(x-a)^2,\dots,(x-a)^n$ have degrees $0,1,\dots,n$, all different, so they are independent (\ilink{fact-G2}{G2}). There are $n+1=\dim\PP_n(\RR)$ of them, so they form a basis by \ilink{prop-13}{Prop.~13}(a), and we never have to check spanning directly. The coordinates are given by Taylor's formula (proved in \ilink{fact-G3}{G3}),
+  \[
+    p(x)=p(a)+p'(a)(x-a)+\frac{p''(a)}{2}(x-a)^2+\dots+\frac{p^{(n)}(a)}{n!}(x-a)^n .
+  \]
+\end{example*}
+
+\begin{methodbox}{How to find a basis and the dimension of a subspace given by conditions}
+  \begin{steps}
+    \ii Write a general element with unknown coefficients: $(x_1,\dots,x_n)$ in $\FF^n$, or $p=c_0+c_1(x-a)+\dots+c_m(x-a)^m$ in $\PP_m$, choosing the point $a$ at which the conditions are imposed so that they become simple.
+    \ii Translate each condition into a linear equation in the coefficients and solve the system, expressing some coefficients in terms of the remaining free ones.
+    \ii Substitute back and group by free coefficients: the general element is $t_1b_1+\dots+t_rb_r$, with $t_1,\dots,t_r$ the free coefficients. So $b_1,\dots,b_r$ spans the subspace.
+    \ii Check that $b_1,\dots,b_r$ is independent; usually each $b_i$ has a $1$ in the position of its own free coefficient and $0$ in the positions of the other free coefficients, which makes this immediate. Then $\dim=r$.
+  \end{steps}
+  Edge cases: if the conditions force every coefficient to be $0$, the subspace is $\{0\}$ with the empty basis; two conditions that are multiples of each other remove only one coefficient.
+\end{methodbox}
+
+\begin{example*}[A subspace of $\FF^4$ given by two equations]
+  Let $U=\{x\in\FF^4: x_1+x_2+x_3+x_4=0,\ x_1-x_3=0\}$. The second equation gives $x_3=x_1$, and then the first gives $x_2=-2x_1-x_4$. With $x_1,x_4$ free,
+  \[
+    (x_1,\,-2x_1-x_4,\,x_1,\,x_4)=x_1(1,-2,1,0)+x_4(0,-1,0,1).
+  \]
+  The two vectors span $U$, and they are independent because of their first and fourth coordinates. So $\dim U=2$.
+\end{example*}
+
+\begin{example*}[Polynomials in $\PP_3(\RR)$ vanishing at $2$]
+  Let $U=\{p\in\PP_3(\RR):p(2)=0\}$. Write $p=c_0+c_1(x-2)+c_2(x-2)^2+c_3(x-2)^3$ in the basis of Notes Ex.~18 with $a=2$. Then $p(2)=c_0$, so the condition is $c_0=0$, and $U=\spn\bigl(x-2,(x-2)^2,(x-2)^3\bigr)$. These three are independent (distinct degrees, \ilink{fact-G2}{G2}), so $\dim U=3$.
+\end{example*}
+
+\begin{example*}[A condition that does not involve every coefficient: $p(1)=p(-1)$ in $\PP_2(\RR)$]
+  For $p=a+bx+cx^2$, $p(1)=a+b+c$ and $p(-1)=a-b+c$, so the condition is $2b=0$, that is, $b=0$. The subspace is $\spn(1,x^2)$, of dimension $2$.
+\end{example*}
+
+\textbf{Dimensions of sums and intersections.} Given bases of $U$ and $W$, a basis of $U+W$ is easy to find: the two bases together span $U+W$, and the reduction method discards the extra vectors. A basis of $U\cap W$ is harder to find directly. The next result connects the two.
 
 \begin{theorem*}[Prop.~15, 16 / LADR 2.43: Dimension of a sum of two subspaces]\target{prop-15}\target{prop-16}
   If $U$ and $W$ are subspaces of a finite-dimensional vector space $V$, then
   \[
     \dim(U+W) = \dim U + \dim W - \dim(U\cap W).
   \]
-  More precisely, if $v_1,\dots,v_r$ is a basis of $U\cap W$, extended to a basis $v_1,\dots,v_r,u_1,\dots,u_k$ of $U$ and to a basis $v_1,\dots,v_r,w_1,\dots,w_l$ of $W$, then $v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l$ is a basis of $U+W$.
+  More precisely (Prop.~15), if $v_1,\dots,v_r$ is a basis of $U\cap W$, extended to a basis $v_1,\dots,v_r,u_1,\dots,u_k$ of $U$ and to a basis $v_1,\dots,v_r,w_1,\dots,w_l$ of $W$, then $v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l$ is a basis of $U+W$.
 \end{theorem*}
 \begin{ideabox}
-  Start in the intersection $U\cap W$ with a basis $v_1,\dots,v_r$, and extend it separately inside $U$ (adding $u_1,\dots,u_k$) and inside $W$ (adding $w_1,\dots,w_l$). The combined list $v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l$ has length $r+k+l=(r+k)+(r+l)-r=\dim U+\dim W-\dim(U\cap W)$ and clearly spans $U+W$. To prove it is linearly independent, set $\sum\alpha_iv_i+\sum\beta_ju_j+\sum\gamma_tw_t=0$ and isolate $\sum\gamma_tw_t=-\sum\alpha_iv_i-\sum\beta_ju_j$. The left side belongs to $W$ while the right side belongs to $U$, so this vector lies in $U\cap W=\spn(v_1,\dots,v_r)$. Expanding $\sum\gamma_tw_t$ in terms of $v_1,\dots,v_r$ and using linear independence of the basis of $W$ forces all $\gamma_t=0$, after which linear independence of the basis of $U$ forces all $\alpha_i=\beta_j=0$.
+  Two arbitrary bases of $U$ and $W$ together would count the vectors of $U\cap W$ twice and need not be independent. The fix is to make the bases share their part in $U\cap W$: start with a basis of $U\cap W$ and extend it separately inside $U$ and inside $W$. Independence of the combined list then comes down to one observation: a combination of the $w$'s that equals a combination of $v$'s and $u$'s lies in both $U$ and $W$, hence in $U\cap W=\spn(v_1,\dots,v_r)$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii Let $v_1,\dots,v_r$ be a basis of $U\cap W$ ($r=\dim(U\cap W)$). By \ilink{prop-11}{Prop.~11}, extend it to a basis $v_1,\dots,v_r,u_1,\dots,u_k$ of $U$ ($\dim U=r+k$) and to a basis $v_1,\dots,v_r,w_1,\dots,w_l$ of $W$ ($\dim W=r+l$).
-    \ii Every vector in $U+W$ is a sum of a linear combination of $v_i,u_j$ and a linear combination of $v_i,w_t$, so $L=(v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l)$ spans $U+W$.
-    \ii To prove $L$ is linearly independent, suppose $\sum_{i=1}^r\alpha_iv_i+\sum_{j=1}^k\beta_ju_j+\sum_{t=1}^l\gamma_tw_t=0$. Then
+    \ii Every vector in $U+W$ is a combination of the $v_i,u_j$ plus a combination of the $v_i,w_t$, so $L=(v_1,\dots,v_r,u_1,\dots,u_k,w_1,\dots,w_l)$ spans $U+W$.
+    \ii To prove $L$ is linearly independent, suppose $\sum_{i}\alpha_iv_i+\sum_{j}\beta_ju_j+\sum_{t}\gamma_tw_t=0$. Then
     \[
       \sum_{t=1}^l \gamma_tw_t = -\sum_{i=1}^r\alpha_iv_i - \sum_{j=1}^k\beta_ju_j.
     \]
-    The left side lies in $W$ and the right side lies in $U$, so $\sum_{t=1}^l\gamma_tw_t\in U\cap W=\spn(v_1,\dots,v_r)$.
-    \ii Writing $\sum_{t=1}^l\gamma_tw_t=\sum_{i=1}^r\delta_iv_i$ gives $\sum_{i=1}^r\delta_iv_i-\sum_{t=1}^l\gamma_tw_t=0$; since $v_1,\dots,v_r,w_1,\dots,w_l$ is linearly independent, $\gamma_1=\dots=\gamma_l=0$.
-    \ii The original equation now reduces to $\sum_{i=1}^r\alpha_iv_i+\sum_{j=1}^k\beta_ju_j=0$; since $v_1,\dots,v_r,u_1,\dots,u_k$ is linearly independent, all $\alpha_i=0$ and $\beta_j=0$. Thus $L$ is a basis of $U+W$ of length $r+k+l=\dim U+\dim W-\dim(U\cap W)$.
+    The left side lies in $W$ and the right side lies in $U$, so $\sum_{t}\gamma_tw_t\in U\cap W=\spn(v_1,\dots,v_r)$.
+    \ii Write $\sum_{t}\gamma_tw_t=\sum_{i}\delta_iv_i$. Then $\sum_{i}\delta_iv_i-\sum_{t}\gamma_tw_t=0$, and since $v_1,\dots,v_r,w_1,\dots,w_l$ is a basis of $W$, all $\gamma_t=0$ (and all $\delta_i=0$).
+    \ii The original equation becomes $\sum_{i}\alpha_iv_i+\sum_{j}\beta_ju_j=0$; since $v_1,\dots,v_r,u_1,\dots,u_k$ is a basis of $U$, all $\alpha_i=0$ and $\beta_j=0$. Thus $L$ is a basis of $U+W$.
+    \ii \textbf{Counting (Prop.~16).} The basis $L$ has $r+k+l$ vectors, so
+    \[
+      \dim(U+W)=r+k+l=(r+k)+(r+l)-r=\dim U+\dim W-\dim(U\cap W).
+    \]
   \end{steps}
 \end{proof}
 
-\begin{proposition*}[Complement criterion and dimension of a direct sum (Prop.~17)]\target{name-complement-criterion}\target{prop-17}
+\begin{methodbox}{How to compute $U+W$ and $U\cap W$ from spanning lists}
+  \begin{steps}
+    \ii \textbf{Basis of $U+W$.} Concatenate bases of $U$ and $W$ and reduce from left to right.
+    \ii \textbf{$\dim(U\cap W)$.} Use \ilink{prop-15}{Prop.~15}: $\dim(U\cap W)=\dim U+\dim W-\dim(U+W)$.
+    \ii \textbf{Basis of $U\cap W$.} Set a general element of $U$ equal to a general element of $W$, $a_1u_1+\dots+a_ku_k=c_1w_1+\dots+c_lw_l$, and solve for the coefficients. Substitute the solutions back into either side. The dimension from Step~2 tells you how many independent vectors to expect.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Ex.~19: Computing the intersection of two planes in $\FF^3$]\target{ex-19}
+  Let $U=\spn\big((1,1,0),(0,1,1)\big)$ and $W=\spn\big((1,2,2),(2,2,1)\big)$ in $\FF^3$.
+  \begin{steps}
+    \ii Since $(1,1,0)$ and $(0,1,1)$ are not scalar multiples of each other, $\dim U=2$; likewise $\dim W=2$.
+    \ii Is $(1,2,2)\in U$? Setting $(1,2,2)=\lambda(1,1,0)+\mu(0,1,1)$ forces $\lambda=1$ (first coordinate) and $\mu=2$ (third coordinate), and then the second coordinate is $\lambda+\mu=3\ne 2$. Thus $(1,2,2)\notin U$, so $(1,1,0),(0,1,1),(1,2,2)$ is a linearly independent list of $3=\dim\FF^3$ vectors, hence a basis of $\FF^3$ (\ilink{prop-13}{Prop.~13}). So $U+W=\FF^3$. (This works over any field, because $3\ne2$ in every field: $3-2=1\ne0$.)
+    \ii By \ilink{prop-15}{Prop.~15}, $\dim(U\cap W)=\dim U+\dim W-\dim(U+W)=2+2-3=1$, so $U\cap W$ is a line.
+    \ii To find it, set $a(1,1,0)+b(0,1,1)=c(1,2,2)+d(2,2,1)$. Coordinate by coordinate,
+    \[
+      a=c+2d,\qquad a+b=2c+2d,\qquad b=2c+d.
+    \]
+    Adding the first and third equations gives $a+b=3c+3d$; comparing with the second gives $c+d=0$. Taking $c=1$, $d=-1$ gives the common vector $(1,2,2)-(2,2,1)=(-1,0,1)$, so $U\cap W=\spn\big((-1,0,1)\big)$.
+  \end{steps}
+\end{example*}
+
+\begin{fig}
+\begin{tikzpicture}
+  % Left panel: Two planes in R^3 intersecting in a line (soft neutral gray washes + true 3D occlusion)
+  \begin{scope}[shift={(0,0)},scale=0.94]
+    % Lower half of steep plane W (below U), protruding cleanly below front edge of U
+    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,-1.15) -- (-1.25,-1.75) -- cycle}
+    \draw[ink guide,draw=inkslate] (-1.25,-0.30) -- (-1.25,-0.785);
+    \draw[ink guide,draw=inkslate] (1.25,0.30) -- (1.25,-0.965);
+
+    % Plane U (horizontal-tilted soft neutral gray wash, whisper-edged)
+    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \PacketInkPath[inkblue!80!black,line width=0.5pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel[inkblue]{$U$}};
+
+    % Visible lower edges of W protruding below front edge of U
+    \PacketInkPath[inkred!85!black,line width=0.5pt]{(-1.25,-0.785) -- (-1.25,-1.75) -- (1.25,-1.15) -- (1.25,-0.965)}
+
+    % Upper half of steep plane W (rising above U)
+    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,1.65) -- (-1.25,1.05) -- cycle}
+    \PacketInkPath[inkred!85!black,line width=0.5pt]{(-1.25,-0.30) -- (-1.25,1.05) -- (1.25,1.65) -- (1.25,0.30)}
+    \node[font=\footnotesize] at (1.6,1.8) {\InkLabel[inkred]{$W$}};
+
+    % Intersection line U \cap W in crisp pure black
+    \PacketInkPath[black,line width=0.8pt]{(-1.85,-0.444) -- (1.98,0.475)}
+    \node[font=\footnotesize,right=3pt] at (1.98,0.475) {\InkLabel{$U\cap W$}};
+    \node[figdot] at (0,0) {};
+    \node[below right=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
+
+    \node[font=\footnotesize] at (0.15,-2.15) {(a) $\dim(U\cap W)=2+2-3=1$};
+  \end{scope}
+
+  % Right panel: Plane U and transverse line W (Direct sum, true 3D occlusion)
+  \begin{scope}[shift={(7.10,0)},scale=0.94]
+    % Plane U (matching soft neutral gray wash)
+    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \PacketInkPath[inkblue!80!black,line width=0.5pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
+    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel[inkblue]{$U$}};
+
+    % Transverse line W: solid below front edge, dotted behind plane, solid above plane
+    \PacketInkPath[black,line width=0.55pt]{(-0.49,-1.55) -- (-0.270,-0.855)}
+    \draw[ink guide,draw=inkslate] (-0.270,-0.855) -- (0,0);
+    \PacketInkPath[black,line width=0.55pt]{(0,0) -- (0.50,1.58) node[right=3pt,font=\footnotesize] {\InkLabel{$W$}}}
+
+    % Origin
+    \node[figdot] at (0,0) {};
+    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
+
+    \node[font=\footnotesize] at (0.0,-2.15) {(b) $U\cap W=\{0\}$, $\RR^3=U\oplus W$};
+  \end{scope}
+\end{tikzpicture}
+\figcap{(a) Two different planes through $0$ in $\RR^3$, such as those of Ex.~19, meet in a line. (b) A plane and a line through $0$ not lying in it meet only in $0$, and together they give $\RR^3=U\oplus W$.}
+\end{fig}
+
+\begin{proposition*}[Complement criterion and dimension of a direct sum (Prop.~17 / LADR 3.94)]\target{name-complement-criterion}\target{prop-17}
   \begin{enumerate}[(A)]
-    \ii \textbf{Two-out-of-three complement criterion:} For subspaces $U,W$ of a finite-dimensional vector space $V$, any two of the following three conditions imply the third (and imply $V=U\oplus W$):
+    \ii \textbf{Two-out-of-three complement criterion:} For subspaces $U,W$ of a finite-dimensional vector space $V$, any two of the following three conditions imply the third (and then $V=U\oplus W$):
     \[
       \text{(a) }\dim U+\dim W=\dim V, \qquad \text{(b) }U\cap W=\{0\}, \qquad \text{(c) }U+W=V.
     \]
@@ -227,83 +489,49 @@
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii In (A), \ilink{prop-15}{Prop.~15} gives $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$. Note that (b) $\iff\dim(U\cap W)=0$, and by \ilink{prop-14}{Prop.~14}, (c) $\iff\dim(U+W)=\dim V$. Thus any two of $\dim U+\dim W=\dim V$, $\dim(U\cap W)=0$, and $\dim(U+W)=\dim V$ immediately force the third.
-    \ii Part (B) follows by induction on $m$ from \ilink{prop-15}{Prop.~15}: at each step $k=2,\dots,m$, $\dim((U_1+\dots+U_{k-1})+U_k)=\dim(U_1+\dots+U_{k-1})+\dim U_k-\dim((U_1+\dots+U_{k-1})\cap U_k)$, so equality holds for all $k$ iff $(U_1+\dots+U_{k-1})\cap U_k=\{0\}$ for all $k=2,\dots,m$.
+    \ii \textbf{Part (A).} \ilink{prop-15}{Prop.~15} gives $\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$. Condition (b) is equivalent to $\dim(U\cap W)=0$, and by \ilink{prop-14}{Prop.~14}, condition (c) is equivalent to $\dim(U+W)=\dim V$. Substituting any two of the three equations $\dim U+\dim W=\dim V$, $\dim(U\cap W)=0$, $\dim(U+W)=\dim V$ into the formula of Prop.~15 gives the third.
+    \ii \textbf{Part (B).} Write $S_k=U_1+\dots+U_k$. For $k=2,\dots,m$, Prop.~15 applied to $S_{k-1}$ and $U_k$ gives
+    \[
+      \dim S_k=\dim S_{k-1}+\dim U_k-\dim(S_{k-1}\cap U_k).
+    \]
+    Adding these equations for $k=2,\dots,m$ gives
+    \[
+      \dim S_m=\dim U_1+\dots+\dim U_m-\sum_{k=2}^m\dim(S_{k-1}\cap U_k).
+    \]
+    \ii The sum of nonnegative integers $\sum_k\dim(S_{k-1}\cap U_k)$ is $0$ exactly when every term is $0$, that is, when $S_{k-1}\cap U_k=\{0\}$ for every $k$. By the definition of a direct sum (\xlink{math110}{2026-08-31-sets-fields-subspaces}{def-6}{Week~1, Def.~6}), that is exactly when the sum is direct.
   \end{steps}
 \end{proof}
 
-\begin{fig}
-\begin{tikzpicture}
-  % Left panel: Two planes in R^3 intersecting in a line (soft neutral gray washes + true 3D occlusion)
-  \begin{scope}[shift={(0,0)},scale=0.94]
-    % Lower half of steep plane W (below U), protruding cleanly below front edge of U
-    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,-1.15) -- (-1.25,-1.75) -- cycle}
-    \draw[ink guide,draw=black!38] (-1.25,-0.30) -- (-1.25,-0.785);
-    \draw[ink guide,draw=black!38] (1.25,0.30) -- (1.25,-0.965);
-
-    % Plane U (horizontal-tilted soft neutral gray wash, whisper-edged)
-    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
-    \PacketInkPath[black!38,line width=0.38pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
-    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel{$U$}};
-
-    % Visible lower edges of W protruding below front edge of U
-    \PacketInkPath[black!45,line width=0.38pt]{(-1.25,-0.785) -- (-1.25,-1.75) -- (1.25,-1.15) -- (1.25,-0.965)}
-
-    % Upper half of steep plane W (rising above U)
-    \InkRegion[inkred]{(-1.25,-0.30) -- (1.25,0.30) -- (1.25,1.65) -- (-1.25,1.05) -- cycle}
-    \PacketInkPath[black!45,line width=0.38pt]{(-1.25,-0.30) -- (-1.25,1.05) -- (1.25,1.65) -- (1.25,0.30)}
-    \node[font=\footnotesize] at (1.35,1.82) {\InkLabel{$W$}};
-
-    % Intersection line U \cap W in crisp pure black
-    \PacketInkPath[black,line width=0.55pt]{(-1.85,-0.444) -- (1.98,0.475)}
-    \node[font=\footnotesize,right=3pt] at (1.98,0.475) {\InkLabel{$U\cap W$}};
-    \node[figdot] at (0,0) {};
-    \node[below right=2pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
-
-    \node[font=\footnotesize] at (0.15,-2.15) {\InkLabel{(a)}};
-  \end{scope}
-
-  % Right panel: Plane U and transverse line W (Direct sum, true 3D occlusion)
-  \begin{scope}[shift={(7.10,0)},scale=0.94]
-    % Plane U (matching soft neutral gray wash)
-    \InkRegion[inkblue]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
-    \PacketInkPath[black!38,line width=0.38pt]{(-2.15,-0.72) -- (1.45,-0.98) -- (2.15,0.72) -- (-1.45,0.98) -- cycle}
-    \node[font=\footnotesize] at (-1.62,1.16) {\InkLabel{$U$}};
-
-    % Transverse line W: solid below front edge, dotted behind plane, solid above plane
-    \PacketInkPath[black,line width=0.55pt]{(-0.49,-1.55) -- (-0.270,-0.855)}
-    \draw[ink guide,draw=black!50] (-0.270,-0.855) -- (0,0);
-    \PacketInkPath[black,line width=0.55pt]{(0,0) -- (0.50,1.58) node[right=3pt,font=\footnotesize] {\InkLabel{$W$}}}
-
-    % Origin
-    \node[figdot] at (0,0) {};
-    \node[below right=2.5pt,font=\scriptsize] at (0,0) {\InkLabel{$0$}};
-
-    \node[font=\footnotesize] at (0.0,-2.15) {\InkLabel{(b)}};
-  \end{scope}
-\end{tikzpicture}
-\figcap{\ilink{prop-15}{Prop.~15} in $\RR^3$: (a) two distinct planes $U,W$ through $0$ intersect in a $1$D line; (b) a plane $U$ and transverse line $W$ meet only at $\{0\}$, giving $\RR^3=U\oplus W$.}
-\end{fig}
-
-\begin{example*}[Ex.~19: Computing the intersection of two planes in $\FF^3$]\target{ex-19}
-  Let $U=\spn\big((1,1,0),(0,1,1)\big)$ and $W=\spn\big((1,2,2),(2,2,1)\big)$ in $\FF^3$.
+\begin{methodbox}{How to prove $V=U\oplus W$ and split a vector as $u+w$}
   \begin{steps}
-    \ii Since $(1,1,0)$ and $(0,1,1)$ are not scalar multiples, $\dim U=2$; likewise $\dim W=2$.
-    \ii Does $(1,2,2)\in W$ lie in $U$? Setting $(1,2,2)=\lambda(1,1,0)+\mu(0,1,1)$ forces $\lambda=1$ (first coordinate) and $\mu=2$ (third coordinate), which gives second coordinate $\lambda+\mu=3\ne 2$. Thus $(1,2,2)\notin U$, so $(1,1,0),(0,1,1),(1,2,2)$ is a linearly independent list of $3=\dim\FF^3$ vectors, hence a basis of $\FF^3$ (\ilink{prop-13}{Prop.~13}). Thus $U+W=\FF^3$.
-    \ii By \ilink{prop-15}{Prop.~15}, $\dim(U\cap W)=\dim U+\dim W-\dim(U+W)=2+2-3=1$, so $U\cap W$ is a $1$-dimensional line.
-    \ii Setting $a(1,1,0)+b(0,1,1)=c(1,2,2)+d(2,2,1)$ gives $a=c+2d$, $a+b=2c+2d$, and $b=2c+d$. Adding the first and third equations gives $a+b=3c+3d$, so $2c+2d=3c+3d\implies c+d=0$. Taking $c=1,d=-1$ gives $(1,2,2)-(2,2,1)=(-1,0,1)\in U\cap W$, so $U\cap W=\spn\big((-1,0,1)\big)$.
+    \ii Compute $\dim U$ and $\dim W$ from bases.
+    \ii If $\dim U+\dim W=\dim V$, check only one of $U\cap W=\{0\}$ and $U+W=V$, whichever is easier (\ilink{name-complement-criterion}{complement criterion}). Usually $U\cap W=\{0\}$ is easier: it is the statement that the bases of $U$ and $W$ together are independent.
+    \ii To split $v$: solve $v=a_1u_1+\dots+a_ku_k+c_1w_1+\dots+c_lw_l$ for the coefficients; then $u=\sum a_iu_i$ and $w=\sum c_jw_j$.
   \end{steps}
+  Edge case: if $\dim U+\dim W\ne\dim V$, then $V=U\oplus W$ is impossible, whatever the intersection.
+\end{methodbox}
+
+\begin{example*}[Splitting $(2,3,5)$ along a plane and a line in $\RR^3$]
+  Let $U=\spn((1,0,1),(0,1,0))$ and $W=\spn((0,0,1))$. A common vector satisfies $(a,b,a)=(0,0,t)$, where $(a,b,a)=a(1,0,1)+b(0,1,0)$; so $a=b=0$ and $t=a=0$: $U\cap W=\{0\}$. Since $2+1=3$, the criterion gives $\RR^3=U\oplus W$. To split $(2,3,5)$, solve $(a,b,a+t)=(2,3,5)$: $a=2$, $b=3$, $t=3$. So $(2,3,5)=(2,3,2)+(0,0,3)$ with $(2,3,2)\in U$ and $(0,0,3)\in W$.
 \end{example*}
 
+\revisit Every basis of $\PP_2(\RR)$ has three vectors, by \ilink{prop-12}{Prop.~12}: two bases are each independent and spanning, so \ilink{prop-10}{Prop.~10} applied in both orders makes their lengths equal. For the two planes of Ex.~19, $U+W=\FF^3$, so \ilink{prop-15}{Prop.~15} gives $\dim(U\cap W)=2+2-3=1$; solving $a(1,1,0)+b(0,1,1)=c(1,2,2)+d(2,2,1)$ found the line $U\cap W=\spn((-1,0,1))$.
+
 \begin{shortcuts}
-  \ii \textbf{The ``right-length'' basis shortcut (\ilink{prop-13}{Prop.~13}):} When testing whether a list of $d=\dim V$ vectors in $V$ is a basis, check \emph{only} linear independence \emph{or} spanning, never both.
-  \ii \textbf{Polynomials of distinct degrees are automatically linearly independent:} If $p_1,\dots,p_k\in\PP(\FF)$ are nonzero polynomials with $\deg p_1<\deg p_2<\dots<\deg p_k$, then in $\lambda_1p_1+\dots+\lambda_kp_k=0$ the leading term of $p_k$ cannot be cancelled by earlier lower-degree polynomials, forcing $\lambda_k=0$ and by induction $\lambda_{k-1}=\dots=\lambda_1=0$. For instance, $1,(x-a),(x-a)^2,\dots,(x-a)^n$ is immediately a basis of $\PP_n(\FF)$ (Ex.~18).
+  \ii \textbf{The ``right-length'' basis shortcut (\ilink{prop-13}{Prop.~13}):} When testing whether a list of $d=\dim V$ vectors in $V$ is a basis, check \emph{only} linear independence \emph{or} spanning, not both.
+  \ii \textbf{Polynomials of distinct degrees are linearly independent} (\ilink{fact-G2}{G2}). So a list such as $1+x^2,\ 3x-x^3,\ x^5$ needs no computation. For instance, $1,(x-a),(x-a)^2,\dots,(x-a)^n$ is a basis of $\PP_n(\FF)$ (Notes Ex.~18).
   \ii \textbf{Proving $V=U\oplus W$ by the two-out-of-three complement criterion:} If you already know $\dim U+\dim W=\dim V$, you only need to check \emph{either} $U\cap W=\{0\}$ \emph{or} $U+W=V$ (\ilink{prob-HW2-P5}{HW2~P5}).
+  \ii \textbf{Counting free coefficients:} a subspace of $\FF^n$ or $\PP_m$ cut out by $c$ independent linear conditions has dimension $n-c$ or $m+1-c$; the method above shows why (each condition removes one coefficient).
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{There is no inclusion--exclusion formula for $\dim(U_1+U_2+U_3)$ using only pairwise intersections:} In $\FF^2$, three distinct lines $U_1,U_2,U_3$ through $0$ satisfy $\dim U_i=1$ and $\dim(U_i\cap U_j)=0$ for all $i\ne j$ (and $\dim(U_1\cap U_2\cap U_3)=0$), yet $\dim(U_1+U_2+U_3)=2\ne 1+1+1-0-0-0+0=3$. Instead, apply \ilink{prop-15}{Prop.~15} twice: $\dim(U_1+U_2+U_3)=\dim U_1+\dim U_2+\dim U_3-\dim(U_1\cap U_2)-\dim((U_1+U_2)\cap U_3)$ (Ex.~20).
-  \ii \textbf{Adding two linearly independent lists term-by-term need not be linearly independent:} Even for $n=1$, $(v)$ and $(-v)$ are linearly independent when $v\ne 0$, yet $(v+(-v))=(0)$ is linearly dependent (\ilink{prob-HW2-P1}{HW2~P1}).
+  \ii \textbf{There is no inclusion--exclusion formula for $\dim(U_1+U_2+U_3)$ using only pairwise intersections (Notes Ex.~20):} In $\FF^2$, three distinct lines $U_1,U_2,U_3$ through $0$ have $\dim U_i=1$ and $\dim(U_i\cap U_j)=0$ for $i\ne j$, and also $\dim(U_1\cap U_2\cap U_3)=0$, yet $\dim(U_1+U_2+U_3)=2$, not $1+1+1=3$. Instead, apply \ilink{prop-15}{Prop.~15} twice:
+  \[
+    \dim(U_1+U_2+U_3)=\dim U_1+\dim U_2+\dim U_3-\dim(U_1\cap U_2)-\dim((U_1+U_2)\cap U_3).
+  \]
+  \ii \textbf{Adding two linearly independent lists term by term need not give an independent list:} for $n=1$, $(v)$ and $(-v)$ are each linearly independent when $v\ne 0$, yet $(v+(-v))=(0)$ is linearly dependent (\ilink{prob-HW2-P1}{HW2~P1}).
+  \ii \textbf{$\dim\PP_m(\FF)$ is $m+1$, not $m$.}
+  \ii \textbf{Pairwise non-parallel is not independence for three or more vectors:} $(1,0),(0,1),(1,1)$ are pairwise not multiples of each other, but dependent.
 \end{trapbox}
 
 \section{Problem set}
@@ -340,7 +568,6 @@
 \begin{prob}\textbf{R3 (Midterm 1 review, Exercise 3).}\ Let $V=\{p\in\PP_2(\RR):p'(1)=p(2)\}$. Construct a basis of $V$ and prove it is a basis.
 \end{prob}
 
-\clearpage
 \section*{Hints}
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW2-P1}{HW2 P1 (LADR 2A.11).}} \emph{Hint:} try $n=1$.
@@ -351,8 +578,56 @@
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW2-P4}{HW2 P4.}} \emph{Hint:} dimensions of subspaces (\ilink{prop-14}{Prop.~14}) and \ilink{prop-13}{Prop.~13}.
 
-\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P5}{HW2 P5 (LADR 2C.12).}} \emph{Hint:} the dimension formula.
+\par\medskip\noindent\textbf{\hyperlink{prob-HW2-P5}{HW2 P5 (LADR 2C.12).}} \emph{Hint:} the \ilink{name-complement-criterion}{complement criterion}, or \ilink{prop-15}{Prop.~15}.
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW2-P6}{HW2 P6.}} \emph{Hint:} write $p$ in the basis $1,(x-1),\dots,(x-1)^4$ of Ex.~18.
+
+
+\clearpage
+\section{Proofs of the facts used}
+
+\begin{proposition*}[G1: A polynomial that is the zero function has all coefficients $0$]\target{fact-G1}
+  Let $\FF=\RR$ or $\CC$ and $p(z)=a_0+a_1z+\dots+a_mz^m$. If $p(z)=0$ for every $z\in\FF$, then $a_0=a_1=\dots=a_m=0$.
+\end{proposition*}
+\begin{ideabox}
+  A nonzero polynomial can vanish at only finitely many points, because each root $\lambda$ splits off a factor $z-\lambda$ and lowers the degree by one. A function that is $0$ at every point of the infinite set $\FF$ therefore cannot come from nonzero coefficients.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Splitting off a root.} For $k\ge1$, $z^k-\lambda^k=(z-\lambda)(z^{k-1}+z^{k-2}\lambda+\dots+\lambda^{k-1})$; multiply out the right side and the middle terms cancel in pairs. So if $p(\lambda)=0$, then
+    \[
+      p(z)=p(z)-p(\lambda)=\sum_{k=1}^m a_k(z^k-\lambda^k)=(z-\lambda)q(z),
+    \]
+    where $q$ is a polynomial whose coefficient of $z^{m-1}$ is $a_m$.
+    \ii \textbf{Claim: if $a_m\ne0$, then $p$ has at most $m$ roots.} Induction on $m$. For $m=0$, $p=a_0\ne0$ has no roots. For $m\ge1$, if $p$ has no root we are done. Otherwise take a root $\lambda$ and write $p=(z-\lambda)q$ by Step~1, with $q$ of the same form with top coefficient $a_m\ne0$ in degree $m-1$. If $p(\mu)=0$ and $\mu\ne\lambda$, then $(\mu-\lambda)q(\mu)=0$ forces $q(\mu)=0$ (no zero divisors, \xlink{math110}{2026-08-31-sets-fields-subspaces}{name-uniqueness-of-identities-and-inverses}{Week~1}). By induction $q$ has at most $m-1$ roots, so $p$ has at most $m$.
+    \ii Suppose some coefficient is nonzero and let $a_j$ be the last nonzero one, so $p(z)=a_0+\dots+a_jz^j$ with $a_j\ne0$. By Step~2, $p$ has at most $j$ roots. But $\RR$ and $\CC$ have infinitely many elements, all of them roots of $p$. This contradiction shows that all coefficients are $0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[G2: Polynomials of distinct degrees are linearly independent]\target{fact-G2}
+  Let $\FF=\RR$ or $\CC$. If $p_1,\dots,p_k$ are nonzero polynomials with $\deg p_1<\deg p_2<\dots<\deg p_k$, then $p_1,\dots,p_k$ is linearly independent.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose $\lambda_1p_1+\dots+\lambda_kp_k=0$ as a function. By \ilink{fact-G1}{G1}, every coefficient of the polynomial $\lambda_1p_1+\dots+\lambda_kp_k$ is $0$.
+    \ii Let $d=\deg p_k$ and let $c\ne0$ be the coefficient of $z^d$ in $p_k$. The polynomials $p_1,\dots,p_{k-1}$ have degree less than $d$, so they contribute nothing to $z^d$. The coefficient of $z^d$ in the combination is therefore $\lambda_kc$, and Step~1 gives $\lambda_kc=0$, so $\lambda_k=0$.
+    \ii The relation becomes $\lambda_1p_1+\dots+\lambda_{k-1}p_{k-1}=0$, and Step~2 applied to $p_{k-1}$ gives $\lambda_{k-1}=0$. Continuing down to $p_1$ gives all $\lambda_j=0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[G3: Derivatives of $(x-a)^k$ and Taylor's formula for polynomials]\target{fact-G3}
+  For $k\ge1$, the derivative of $(x-a)^k$ is $k(x-a)^{k-1}$. Consequently, if $p=c_0+c_1(x-a)+\dots+c_n(x-a)^n$, then $p^{(j)}(a)=j!\,c_j$ for $j=0,\dots,n$, which is Taylor's formula $c_j=p^{(j)}(a)/j!$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Limits of products.} If $F\to L$ and $G\to M$, then $FG\to LM$: write $FG-LM=F(G-M)+M(F-L)$; near the point $|F|\le|L|+1$, so both terms become smaller than any $\varepsilon>0$. With the sum rule (\xlink{math110}{2026-08-31-sets-fields-subspaces}{fact-limits}{Week~1, F3}), this shows that $(x+h-a)^j\to(x-a)^j$ as $h\to0$.
+    \ii \textbf{The derivative.} With $u=x+h-a$ and $w=x-a$, the identity of \ilink{fact-G1}{G1}, Step~1, gives $u^k-w^k=(u-w)(u^{k-1}+u^{k-2}w+\dots+w^{k-1})$ and $u-w=h$. So
+    \[
+      \frac{(x+h-a)^k-(x-a)^k}{h}=\sum_{j=0}^{k-1}(x+h-a)^{j}(x-a)^{k-1-j}\ \longrightarrow\ k(x-a)^{k-1}\quad(h\to0),
+    \]
+    since each of the $k$ terms tends to $(x-a)^{k-1}$ by Step~1.
+    \ii \textbf{Taylor's formula.} Differentiating $j$ times with Step~2 and linearity of the derivative (Week~1, F3), the term $c_k(x-a)^k$ becomes $c_kk(k-1)\cdots(k-j+1)(x-a)^{k-j}$ for $k\ge j$ and $0$ for $k<j$. At $x=a$ every term with $k>j$ contains a factor $x-a=0$, and the term $k=j$ is $c_j\,j!$. So $p^{(j)}(a)=j!\,c_j$.
+  \end{steps}
+\end{proof}
 
 \end{document}

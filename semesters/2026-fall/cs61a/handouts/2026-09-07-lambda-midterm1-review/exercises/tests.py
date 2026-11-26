@@ -16,11 +16,15 @@ def check_curry():
     assert week03.curry_binary(pow)(2)(5) == 32
 
 
-def check_compose_n():
-    inc = lambda x: x + 1
-    assert week03.compose_n(inc, 0)(7) == 7
-    assert week03.compose_n(inc, 1)(7) == 8
-    assert week03.compose_n(lambda x: x * 2, 4)(3) == 48
+def check_repeat_until():
+    double = lambda x: x * 2
+    h = week03.repeat_until(double, lambda v: v > 100)
+    assert callable(h), "repeat_until must return a function"
+    assert h(3) == 192, "3, 6, ..., 96, 192: the first value above 100 is 192"
+    assert h(101) == 101, "x itself is checked first: f is applied zero times"
+    assert h(50) == 200, "the same returned function must work for a different x"
+    collatz = week03.repeat_until(lambda n: n // 2 if n % 2 == 0 else 3 * n + 1, lambda n: n == 1)
+    assert collatz(6) == 1 and collatz(1) == 1, "stop when the value equals 1"
 
 
 def check_alternator():
@@ -41,7 +45,7 @@ def check_max_over_range():
 def main():
     checks = [
         ("curry_binary", check_curry),
-        ("compose_n", check_compose_n),
+        ("repeat_until", check_repeat_until),
         ("make_alternator", check_alternator),
         ("max_over_range", check_max_over_range),
     ]

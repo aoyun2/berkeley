@@ -14,11 +14,11 @@
 
 \section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Existence and Uniqueness (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-2}{Lay 1.2 Thm.~2}):} A consistent linear system has a unique solution if it has no free variables, and infinitely many solutions if it has at least one free variable. Free variables correspond to non-pivot columns of the coefficient matrix.
-  \ii \textbf{Three views of $A\vv x=\vv b$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-3}{Lay 1.4 Thm.~3}):} For $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$, $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$, so $A\vv x=\vv b$ is consistent if and only if $\vv b\in\spn\{\vv a_1,\dots,\vv a_n\}$.
-  \ii \textbf{When columns of $A$ span $\RR^m$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Lay 1.4 Thm.~4}):} The columns of an $m\times n$ matrix $A$ span $\RR^m$ if and only if $A\vv x=\vv b$ is consistent for every $\vv b\in\RR^m$, if and only if $A$ has a pivot position in every row.
-  \ii \textbf{Linearity of $A\vv x$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-5}{Lay 1.4 Thm.~5}):} $A(\vv u+\vv v)=A\vv u+A\vv v$ and $A(c\vv u)=c(A\vv u)$.
-  \ii \textbf{Nontrivial homogeneous solutions:} $A\vv x=\vv 0$ has a nontrivial solution $\vv x\ne\vv 0$ if and only if it has at least one free variable (i.e.\ some column of $A$ has no pivot).
+  \ii \target{fact-w1}\textbf{Existence and Uniqueness (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-2}{Lay 1.2 Thm.~2}):} A consistent linear system has a unique solution if it has no free variables, and infinitely many solutions if it has at least one free variable. Free variables correspond to non-pivot columns of the coefficient matrix.
+  \ii \target{fact-w2}\textbf{Three views of $A\vv x=\vv b$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-3}{Lay 1.4 Thm.~3}):} For $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$, $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$, so $A\vv x=\vv b$ is consistent if and only if $\vv b\in\spn\{\vv a_1,\dots,\vv a_n\}$.
+  \ii \target{fact-w3}\textbf{When columns of $A$ span $\RR^m$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Lay 1.4 Thm.~4}):} The columns of an $m\times n$ matrix $A$ span $\RR^m$ if and only if $A\vv x=\vv b$ is consistent for every $\vv b\in\RR^m$, if and only if $A$ has a pivot position in every row.
+  \ii \target{fact-w4}\textbf{Linearity of $A\vv x$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-5}{Lay 1.4 Thm.~5}):} $A(\vv u+\vv v)=A\vv u+A\vv v$ and $A(c\vv u)=c(A\vv u)$.
+  \ii \target{fact-w5}\textbf{Nontrivial homogeneous solutions:} $A\vv x=\vv 0$ has a nontrivial solution $\vv x\ne\vv 0$ if and only if it has at least one free variable (i.e.\ some column of $A$ has no pivot).
 \end{enumerate}
 
 \section{This week}
@@ -43,20 +43,39 @@ If one vector can be written in terms of the others---say $\vv v_3=2\vv v_1-\vv 
   In such a case, the equation $c_1\vv v_1+\dots+c_p\vv v_p=\vv 0$ is called a \vocab{linear dependence relation} among $\vv v_1,\dots,\vv v_p$.
 \end{definition*}
 
-\begin{itemize}
-  \ii \textbf{Linear independence of matrix columns:} Viewing $\vv a_1,\dots,\vv a_n$ as the columns of an $m\times n$ matrix $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$, the vector equation $x_1\vv a_1+\dots+x_n\vv a_n=\vv 0$ is the matrix equation $A\vv x=\vv 0$. Therefore, by (W5):
+\begin{proposition*}[Independence of matrix columns (Lay 1.7)]\target{prop-indep-columns}
+  For an $m\times n$ matrix $A=[\,\vv a_1\ \ \cdots\ \ \vv a_n\,]$,
   \begin{align*}
-    \text{The columns of }A\text{ are linearly independent} &\iff A\vv x=\vv 0\text{ has only the trivial solution} \\*
+    \text{the columns of }A\text{ are linearly independent} &\iff A\vv x=\vv 0\text{ has only the trivial solution} \\*
     &\iff A\text{ has a \textbf{pivot in every column} (no free variables).}
   \end{align*}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii By the definition of $A\vv x$ (\ilink{fact-w2}{W2}), the vector equation $x_1\vv a_1+\dots+x_n\vv a_n=\vv 0$ is the matrix equation $A\vv x=\vv 0$. So the columns are independent exactly when $A\vv x=\vv 0$ has only the trivial solution.
+    \ii By (\ilink{fact-w5}{W5}), $A\vv x=\vv 0$ has a nontrivial solution exactly when some column of $A$ has no pivot. So it has only the trivial solution exactly when every column has a pivot.
+  \end{steps}
+\end{proof}
+
+\begin{itemize}
   \ii \textbf{Sets of one or two vectors:}
   \begin{enumerate}[(1)]
     \ii A single vector $\{\vv v_1\}$ is linearly independent if and only if $\vv v_1\ne\vv 0$ (since $x_1\vv v_1=\vv 0$ with $x_1\ne 0$ holds iff $\vv v_1=\vv 0$).
-    \ii A set of two vectors $\{\vv v_1,\vv v_2\}$ is linearly dependent if and only if at least one of the vectors is a scalar multiple of the other (geometrically, they lie on the same line through $\vv 0$).
+    \ii A set of two vectors $\{\vv v_1,\vv v_2\}$ is linearly dependent if and only if at least one of the vectors is a scalar multiple of the other (geometrically, they lie on the same line through $\vv 0$). Reason: if $c_1\vv v_1+c_2\vv v_2=\vv 0$ with $c_1\ne0$, then $\vv v_1=-\tfrac{c_2}{c_1}\vv v_2$, and similarly if $c_2\ne0$; conversely $\vv v_1=c\vv v_2$ gives the relation $1\vv v_1-c\vv v_2=\vv 0$.
   \end{enumerate}
 \end{itemize}
 
-\needspace{6\baselineskip}\textbf{Worked example: testing independence and finding a linear dependence relation.} Let $\vv v_1=(1,2,3)$, $\vv v_2=(4,5,6)$, $\vv v_3=(2,1,0)$. Row reducing the coefficient matrix $A=[\,\vv v_1\ \ \vv v_2\ \ \vv v_3\,]$ to RREF gives
+\method{How to test vectors for linear independence and find a dependence relation.}
+\begin{steps}
+  \ii First try the inspection tests: a zero vector in the list, two vectors that are multiples of each other, or more vectors than entries ($p>n$) each force dependence (proved below as \ilink{thm-lay-1-9}{Thm.~1.9}, in item (2) of the list on sets of one or two vectors above, and as \ilink{thm-lay-1-8}{Thm.~1.8}).
+  \ii Otherwise put the vectors as the columns of $A$ and row reduce $A$ (no augmented column is needed, since the right side is $\vv 0$).
+  \ii If every column has a pivot, the vectors are independent (\ilink{prop-indep-columns}{Independence of matrix columns}).
+  \ii If some column has no pivot, they are dependent. For a relation, continue to reduced echelon form, set one free variable to $1$ and the others to $0$, solve for the basic variables, and write $x_1\vv v_1+\dots+x_p\vv v_p=\vv 0$. Check it.
+\end{steps}
+\emph{Edge cases.} With a parameter $h$ in a vector, keep $h$ in place and find the values that remove a pivot (example below). Independence of a set does not depend on the order of the vectors, but the dependence relation does tell you which vector is a combination of the \emph{earlier} ones (\ilink{thm-lay-1-7}{Thm.~1.7}).
+
+\begin{example*}[Testing independence and finding a dependence relation]
+Let $\vv v_1=(1,2,3)$, $\vv v_2=(4,5,6)$, $\vv v_3=(2,1,0)$. Row reducing the coefficient matrix $A=[\,\vv v_1\ \ \vv v_2\ \ \vv v_3\,]$ to RREF gives
 \[
   \begin{bmatrix} 1 & 4 & 2 \\ 2 & 5 & 1 \\ 3 & 6 & 0 \end{bmatrix}
   \xrightarrow[R_3-3R_1]{R_2-2R_1}
@@ -64,7 +83,29 @@ If one vector can be written in terms of the others---say $\vv v_3=2\vv v_1-\vv 
   \xrightarrow{\text{RREF}}
   \begin{bmatrix} 1 & 0 & -2 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{bmatrix}.
 \]
-Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\vv v_1,\vv v_2,\vv v_3\}$ is \textbf{linearly dependent}. Reading the RREF gives $x_1=2x_3$ and $x_2=-x_3$; setting $x_3=1$ produces the explicit linear dependence relation $2\vv v_1-\vv v_2+\vv v_3=\vv 0$.
+Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\vv v_1,\vv v_2,\vv v_3\}$ is \textbf{linearly dependent}. Reading the RREF gives $x_1=2x_3$ and $x_2=-x_3$; setting $x_3=1$ produces the explicit linear dependence relation $2\vv v_1-\vv v_2+\vv v_3=\vv 0$. Check: $(2,4,6)-(4,5,6)+(2,1,0)=(0,0,0)$.
+\end{example*}
+
+\begin{example*}[For which $h$ are three vectors dependent]
+For $\vv v_1=(1,0,2)$, $\vv v_2=(2,1,3)$, $\vv v_3=(0,1,h)$:
+\[
+  \begin{bmatrix}1&2&0\\0&1&1\\2&3&h\end{bmatrix}
+  \xrightarrow{R_3\leftarrow R_3-2R_1}
+  \begin{bmatrix}1&2&0\\0&1&1\\0&-1&h\end{bmatrix}
+  \xrightarrow{R_3\leftarrow R_3+R_2}
+  \begin{bmatrix}1&2&0\\0&1&1\\0&0&h+1\end{bmatrix}.
+\]
+If $h\ne-1$, every column has a pivot and the vectors are independent. If $h=-1$, column~3 has no pivot and they are dependent. Then the reduced echelon form has rows $(1,0,-2)$ and $(0,1,1)$, so $x_1=2x_3$, $x_2=-x_3$; with $x_3=1$ the relation is $2\vv v_1-\vv v_2+\vv v_3=\vv 0$. Check: $(2,0,4)-(2,1,3)+(0,1,-1)=(0,0,0)$.
+\end{example*}
+
+\begin{example*}[Echelon shapes of matrices with independent columns]
+If a $3\times3$ matrix has linearly independent columns, every column has a pivot, so an echelon form looks like the first matrix below ($\blacksquare$ nonzero, $*$ anything). A $4\times2$ matrix with independent columns has the second shape. A $2\times 3$ matrix can never have independent columns: there are only $2$ rows for $3$ pivots.
+\[
+  \begin{bmatrix}\blacksquare&*&*\\0&\blacksquare&*\\0&0&\blacksquare\end{bmatrix},
+  \qquad
+  \begin{bmatrix}\blacksquare&*\\0&\blacksquare\\0&0\\0&0\end{bmatrix}.
+\]
+\end{example*}
 
 \begin{theorem*}[Lay 1.7 Thm.~7: Characterization of Linearly Dependent Sets]\target{thm-lay-1-7}
   An indexed set $S=\{\vv v_1,\dots,\vv v_p\}$ of two or more vectors is linearly dependent if and only if at least one of the vectors in $S$ is a linear combination of the others. In fact, if $S$ is linearly dependent and $\vv v_1\ne\vv 0$, then some $\vv v_j$ (with $j>1$) is a linear combination of the \emph{preceding} vectors, $\vv v_1,\dots,\vv v_{j-1}$.
@@ -93,7 +134,7 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
 \begin{proof}
   \begin{steps}
     \ii Let $A=[\,\vv v_1\ \ \cdots\ \ \vv v_p\,]$, which is an $n\times p$ matrix. The equation $x_1\vv v_1+\dots+x_p\vv v_p=\vv 0$ corresponds to $A\vv x=\vv 0$.
-    \ii Since $A$ has $n$ rows, it has at most $n$ pivot columns. Because $p>n$, at least $p-n\ge 1$ columns of $A$ are non-pivot columns, so $A\vv x=\vv 0$ has at least one free variable and therefore a nontrivial solution (W5). Thus $\{\vv v_1,\dots,\vv v_p\}$ is linearly dependent.
+    \ii Since $A$ has $n$ rows, it has at most $n$ pivot columns. Because $p>n$, at least $p-n\ge 1$ columns of $A$ are non-pivot columns, so $A\vv x=\vv 0$ has at least one free variable and therefore a nontrivial solution (\ilink{fact-w5}{W5}). Thus $\{\vv v_1,\dots,\vv v_p\}$ is linearly dependent.
   \end{steps}
 \end{proof}
 
@@ -108,6 +149,9 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
     \ii By renumbering the vectors if necessary, suppose $\vv v_1=\vv 0$. Then $1\vv v_1+0\vv v_2+\dots+0\vv v_p=1\vv 0+\vv 0=\vv 0$ is a nontrivial linear dependence relation (since $c_1=1\ne 0$), so $S$ is linearly dependent.
   \end{steps}
 \end{proof}
+
+\revisit
+Put the vectors as the columns of a matrix $A$ and row reduce. A redundant vector exists exactly when the list is dependent (\ilink{thm-lay-1-7}{Thm.~1.7}), which happens exactly when some column of $A$ has no pivot (\ilink{prop-indep-columns}{Independence of matrix columns}). The reduced echelon form then gives the weights: for $\vv a_1=(1,-2,3)$, $\vv a_2=(0,1,2)$, $\vv a_3=(2,-5,4)$ from Week~2, column~3 has no pivot and the relation $2\vv a_1-\vv a_2-\vv a_3=\vv 0$ shows that $\vv a_3$ is redundant.
 
 \begin{shortcuts}
   \ii \textbf{Three quick ``by-inspection'' tests for linear dependence:} Before row reducing $\{\vv v_1,\dots,\vv v_p\}\subseteq\RR^n$, note that any yes below forces linear dependence:
@@ -141,14 +185,76 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
 \end{definition*}
 
 \begin{itemize}
-  \ii \textbf{Every matrix transformation is linear:} By (W4), for any $m\times n$ matrix $A$, the mapping $\vv x\mapsto A\vv x$ from $\RR^n$ to $\RR^m$ is a linear transformation, and its range is $\spn\{\vv a_1,\dots,\vv a_n\}$, the column space of $A$.
-  \ii \textbf{Fundamental properties of linear transformations (Lay 1.8):} If $T\colon\RR^n\to\RR^m$ is a linear transformation, then
+  \ii \textbf{Every matrix transformation is linear:} By (\ilink{fact-w4}{W4}), for any $m\times n$ matrix $A$, the mapping $\vv x\mapsto A\vv x$ from $\RR^n$ to $\RR^m$ is a linear transformation, and its range is $\spn\{\vv a_1,\dots,\vv a_n\}$, the column space of $A$.
+\end{itemize}
+
+\begin{proposition*}[Fundamental properties of linear transformations (Lay 1.8)]\target{prop-lin-props}
+  If $T\colon\RR^n\to\RR^m$ is a linear transformation, then
   \begin{enumerate}[(1)]
-    \ii $T(\vv 0)=\vv 0$ (take $c=0$ in (ii): $T(\vv 0)=T(0\vv u)=0\,T(\vv u)=\vv 0$);
+    \ii $T(\vv 0)=\vv 0$;
     \ii $T(c\vv u+d\vv v)=c\,T(\vv u)+d\,T(\vv v)$ for all $\vv u,\vv v\in\RR^n$ and scalars $c,d\in\RR$;
     \ii \textbf{Superposition principle:} $T(c_1\vv v_1+\dots+c_p\vv v_p)=c_1T(\vv v_1)+\dots+c_pT(\vv v_p)$ for all $\vv v_1,\dots,\vv v_p\in\RR^n$ and $c_1,\dots,c_p\in\RR$.
   \end{enumerate}
-\end{itemize}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Property (1).} Take any $\vv u$ and $c=0$ in rule (ii): $T(\vv 0)=T(0\vv u)=0\,T(\vv u)=\vv 0$.
+    \ii \textbf{Property (2).} Rule (i) splits the sum: $T(c\vv u+d\vv v)=T(c\vv u)+T(d\vv v)$. Rule (ii) pulls out each scalar: this equals $c\,T(\vv u)+d\,T(\vv v)$.
+    \ii \textbf{Property (3).} Induction on $p$. For $p=1$ it is rule (ii). If it holds for $p-1$ vectors, write $c_1\vv v_1+\dots+c_p\vv v_p=(c_1\vv v_1+\dots+c_{p-1}\vv v_{p-1})+c_p\vv v_p$. Rule (i) splits off the last term, rule (ii) gives $T(c_p\vv v_p)=c_pT(\vv v_p)$, and the case $p-1$ handles the first part.
+  \end{steps}
+\end{proof}
+
+\method{How to compute images and find the vectors with a given image.}
+\begin{steps}
+  \ii For $T(\vv x)=A\vv x$, the image of $\vv u$ is the product $A\vv u$.
+  \ii To find every $\vv x$ with $T(\vv x)=\vv b$, solve $A\vv x=\vv b$: row reduce $[\,A\ \ \vv b\,]$.
+  \ii If the last column has a pivot, $\vv b$ is not in the range of $T$. Otherwise write the general solution; $\vv x$ is unique exactly when there are no free variables.
+\end{steps}
+
+\begin{example*}[Finding all vectors with a given image]
+Let $T(\vv x)=A\vv x$ with
+\[
+  A=\begin{bmatrix}1&2&-1\\0&1&1\end{bmatrix},
+\]
+so $T\colon\RR^3\to\RR^2$. The image of $\vv u=(1,1,1)$ is $A\vv u=(1+2-1,\ 0+1+1)=(2,2)$. To find all $\vv x$ with $T(\vv x)=(3,1)$:
+\[
+  \aug{rrr|r}{1&2&-1&3\\0&1&1&1}\xrightarrow{R_1\leftarrow R_1-2R_2}\aug{rrr|r}{1&0&-3&1\\0&1&1&1}.
+\]
+So $x_1=1+3x_3$, $x_2=1-x_3$, $x_3$ free: $\vv x=(1,1,0)+x_3(3,-1,1)$. The vector $(3,1)$ is in the range, and it has infinitely many preimages, because $x_3$ is free. Check with $x_3=0$: $A(1,1,0)=(3,1)$.
+\end{example*}
+
+\method{How to decide whether a transformation is linear.}
+\begin{steps}
+  \ii Compute $T(\vv 0)$. If it is not $\vv 0$, $T$ is not linear (Property~(1) of \ilink{prop-lin-props}{Fundamental properties of linear transformations}).
+  \ii If every entry of $T(\vv x)$ is a sum of constant multiples of $x_1,\dots,x_n$ (no constant term, no products, powers or other functions of the variables), write $T(\vv x)=A\vv x$; then $T$ is linear by (\ilink{fact-w4}{W4}).
+  \ii To show that $T$ is not linear, give specific vectors or a scalar where rule (i) or (ii) fails.
+  \ii To prove linearity from the rules directly, take arbitrary $\vv u,\vv v,c$, compute both sides of (i) and (ii), and show they are equal.
+\end{steps}
+
+\begin{example*}[A linear and a nonlinear transformation]
+$S(x_1,x_2)=(x_1-3x_2,\ 4x_2,\ x_1)$ is linear: it equals $A\vv x$ for
+\[
+  A=\begin{bmatrix}1&-3\\0&4\\1&0\end{bmatrix}.
+\]
+By contrast $Q(x_1,x_2)=(x_1x_2,\ x_2)$ has $Q(\vv 0)=\vv 0$ but is not linear. Rule (ii) fails for $\vv u=(1,1)$ and $c=2$:
+\[
+  Q(2\vv u)=Q(2,2)=(4,2),\qquad 2\,Q(\vv u)=2\,(1,1)=(2,2).
+\]
+\end{example*}
+
+\method{How to use linearity to compute $T$ of a combination.}
+\begin{steps}
+  \ii Write the new vector as a combination $c_1\vv v_1+\dots+c_p\vv v_p$ of vectors whose images you know (solve for the weights if needed).
+  \ii Apply the superposition principle: $T(c_1\vv v_1+\dots+c_p\vv v_p)=c_1T(\vv v_1)+\dots+c_pT(\vv v_p)$.
+\end{steps}
+
+\begin{example*}[Images of combinations from two known images]
+$T\colon\RR^2\to\RR^2$ is linear with $T(\vv u)=(4,1)$ and $T(\vv v)=(-1,3)$. Then
+\[
+  T(3\vv u+2\vv v)=3(4,1)+2(-1,3)=(12-2,\ 3+6)=(10,9).
+\]
+If also $\vv u=(1,0)$ and $\vv v=(1,1)$, then $(2,5)=-3\vv u+5\vv v$ (solve $c_1+c_2=2$, $c_2=5$), so $T(2,5)=-3(4,1)+5(-1,3)=(-17,12)$.
+\end{example*}
 
 \begin{fig}
 \begin{tikzpicture}
@@ -204,8 +310,11 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{$T(\vv 0)=\vv 0$ is necessary but not sufficient for linearity:} The transformation $T(x_1,x_2)=(x_1^2,x_2)$ satisfies $T(0,0)=(0,0)$, yet $T(2,0)=(4,0)\ne 2\,T(1,0)=(2,0)$, so it is not linear. A mapping $T\colon\RR^n\to\RR^m$ is linear iff every component of $T(\vv x)$ is a homogeneous degree-$1$ linear combination $a_{i1}x_1+\dots+a_{in}x_n$.
+  \ii \textbf{$T(\vv 0)=\vv 0$ is necessary but not sufficient for linearity:} The transformation $T(x_1,x_2)=(x_1^2,x_2)$ satisfies $T(0,0)=(0,0)$, yet $T(2,0)=(4,0)\ne 2\,T(1,0)=(2,0)$, so it is not linear.
 \end{trapbox}
+
+\revisit
+A function $T\colon\RR^n\to\RR^m$ is linear when it respects sums and scalar multiples, rules (i) and (ii). Every matrix transformation $\vv x\mapsto A\vv x$ has this property by (\ilink{fact-w4}{W4}), and the figure shows what it does geometrically: the unit square goes to the parallelogram on $T(\vv e_1)$ and $T(\vv e_2)$. Shears, rotations, reflections and projections are linear; a translation such as $(x_1,x_2)\mapsto(x_1+x_2,\,2x_1-1)$ is not, since it moves $\vv 0$.
 
 \subsection{The matrix of a linear transformation; one-to-one and onto mappings (Lay 1.9)}
 
@@ -225,8 +334,9 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
   This matrix $A$ is called the \vocab{standard matrix} for the linear transformation $T$.
 \end{theorem*}
 \begin{ideabox}
-  Write any vector $\vv x=(x_1,\dots,x_n)\in\RR^n$ as a linear combination of the standard basis vectors: $\vv x=x_1\vv e_1+x_2\vv e_2+\dots+x_n\vv e_n$. Because $T$ is linear, the superposition principle gives $T(\vv x)=x_1T(\vv e_1)+x_2T(\vv e_2)+\dots+x_nT(\vv e_n)$, which by the definition of matrix--vector multiplication is the product $[\,T(\vv e_1)\ \ \cdots\ \ T(\vv e_n)\,]\vv x$. Moreover, no other matrix $B$ can work, because evaluating $B\vv e_j$ always extracts the $j$-th column of $B$, forcing column $j$ of $B$ to equal $T(\vv e_j)$.
+  A linear map is determined by its values on a few vectors, because the superposition principle computes $T$ of any combination from them. The vectors $\vv e_1,\dots,\vv e_n$ are the natural choice: every $\vv x$ is the combination $x_1\vv e_1+\dots+x_n\vv e_n$ whose weights are its own entries. So the $n$ images $T(\vv e_j)$ are all the information needed, and storing them as columns turns the combination into a matrix--vector product.
 \end{ideabox}
+\Needspace{12\baselineskip}
 \begin{proof}
   \begin{steps}
     \ii Write $\vv x=I_n\vv x=x_1\vv e_1+\dots+x_n\vv e_n$. Because $T$ is linear, the superposition principle gives
@@ -238,7 +348,12 @@ Because column~3 has no pivot ($x_3$ is a free variable in $A\vv x=\vv 0$), $\{\
 \end{proof}
 
 \begin{itemize}
-  \ii \textbf{Standard matrices of geometric linear transformations on $\RR^2$:} Every geometric matrix on $\RR^2$ is found in two seconds by asking: \emph{where does $\vv e_1=(1,0)$ go (column~1), and where does $\vv e_2=(0,1)$ go (column~2)?}
+  \ii \textbf{Standard matrices of geometric linear transformations on $\RR^2$:} Every geometric matrix on $\RR^2$ is found quickly by asking: \emph{where does $\vv e_1=(1,0)$ go (column~1), and where does $\vv e_2=(0,1)$ go (column~2)?}
+  \ii \textbf{Why the geometric moves are linear.} Reflections, shears, projections and expansions are given by formulas such as $(x_1,x_2)\mapsto(x_1,-x_2)$ or $(x_1+kx_2,\,x_2)$, which are matrix products. For the rotation by $\varphi$, write $\vv x=(r\cos\theta,\ r\sin\theta)$. Rotating adds $\varphi$ to the angle, and the angle-addition formulas give
+  \[
+    (r\cos(\theta+\varphi),\ r\sin(\theta+\varphi))=(x_1\cos\varphi-x_2\sin\varphi,\ \ x_1\sin\varphi+x_2\cos\varphi),
+  \]
+  which is $A\vv x$ for the rotation matrix in the table, so the rotation is linear. Its columns are the images of $\vv e_1$ ($\theta=0$) and $\vv e_2$ ($\theta=90^\circ$).
 \end{itemize}
 \begin{center}
 \renewcommand{\arraystretch}{1.15}
@@ -251,10 +366,57 @@ Reflection across the $x_1$-axis & $(1,0),\ (0,-1)$ & $\begin{bmatrix}1&0\\0&-1\
 Reflection across the $x_2$-axis & $(-1,0),\ (0,1)$ & $\begin{bmatrix}-1&0\\0&1\end{bmatrix}$ \\\addlinespace[7pt]
 Reflection across the line $x_2=x_1$ & $(0,1),\ (1,0)$ & $\begin{bmatrix}0&1\\1&0\end{bmatrix}$ \\\addlinespace[7pt]
 Horizontal shear by factor $k$ & $(1,0),\ (k,1)$ & $\begin{bmatrix}1&k\\0&1\end{bmatrix}$ \\\addlinespace[7pt]
-Orthogonal projection onto the $x_1$-axis & $(1,0),\ (0,0)$ & $\begin{bmatrix}1&0\\0&0\end{bmatrix}$ \\\addlinespace[4pt]
+Reflection across the line $x_2=-x_1$ & $(0,-1),\ (-1,0)$ & $\begin{bmatrix}0&-1\\-1&0\end{bmatrix}$ \\\addlinespace[7pt]
+Reflection through the origin & $(-1,0),\ (0,-1)$ & $\begin{bmatrix}-1&0\\0&-1\end{bmatrix}$ \\\addlinespace[7pt]
+Horizontal stretch by $k>0$ & $(k,0),\ (0,1)$ & $\begin{bmatrix}k&0\\0&1\end{bmatrix}$ \\\addlinespace[7pt]
+Vertical shear by factor $k$ & $(1,k),\ (0,1)$ & $\begin{bmatrix}1&0\\k&1\end{bmatrix}$ \\\addlinespace[7pt]
+Orthogonal projection onto the $x_1$-axis & $(1,0),\ (0,0)$ & $\begin{bmatrix}1&0\\0&0\end{bmatrix}$ \\\addlinespace[7pt]
+Orthogonal projection onto the $x_2$-axis & $(0,0),\ (0,1)$ & $\begin{bmatrix}0&0\\0&1\end{bmatrix}$ \\\addlinespace[4pt]
 \bottomrule
 \end{tabular}
 \end{center}
+
+\method{How to find the standard matrix of a linear transformation.}
+\begin{steps}
+  \ii Find $T(\vv e_1),\dots,T(\vv e_n)$, then place them as columns: $A=[\,T(\vv e_1)\ \cdots\ T(\vv e_n)\,]$ (\ilink{thm-lay-1-10}{Thm.~1.10}). The size of $A$ is $m\times n$ for $T\colon\RR^n\to\RR^m$.
+  \ii \emph{From a formula:} row $i$ of $A$ lists the coefficients of $x_1,\dots,x_n$ in entry $i$ of $T(\vv x)$.
+  \ii \emph{From a geometric description:} find where each $\vv e_j$ goes; for a composite of moves, follow each $\vv e_j$ through the moves in order.
+  \ii \emph{From images of other vectors:} write each $\vv e_j$ as a combination of the vectors whose images are known, then use the superposition principle.
+\end{steps}
+\emph{Edge cases.} A missing variable in an entry gives a $0$ in $A$. An entry of $T(\vv x)$ that is identically $0$ gives a zero row. For a composite, the order matters: ``first $S$, then $R$'' applies $S$ first to each $\vv e_j$.
+
+\begin{example*}[A standard matrix from a formula]
+$T(x_1,x_2,x_3)=(2x_1-x_3,\ x_2+4x_3)$ maps $\RR^3\to\RR^2$, so $A$ is $2\times3$. The coefficients give
+\[
+  A=\begin{bmatrix}2&0&-1\\0&1&4\end{bmatrix};\qquad
+  T(\vv e_1)=(2,0),\ T(\vv e_2)=(0,1),\ T(\vv e_3)=(-1,4)
+\]
+are its columns.
+\end{example*}
+
+\begin{example*}[A standard matrix of a composite move]
+$T$ first rotates by $90^\circ$ counterclockwise, then reflects across the line $x_2=x_1$ (which swaps the two entries). Follow the basis vectors:
+\[
+  \vv e_1=(1,0)\mapsto(0,1)\mapsto(1,0),\qquad \vv e_2=(0,1)\mapsto(-1,0)\mapsto(0,-1).
+\]
+So the standard matrix is
+\[
+  A=\begin{bmatrix}1&0\\0&-1\end{bmatrix},
+\]
+which is the matrix of the reflection across the $x_1$-axis: the composite is that single reflection.
+\end{example*}
+
+\begin{example*}[A standard matrix from the images of two other vectors]
+$T\colon\RR^2\to\RR^2$ is linear with $T(1,1)=(3,1)$ and $T(1,-1)=(1,-1)$. Since $\vv e_1=\tfrac12(1,1)+\tfrac12(1,-1)$ and $\vv e_2=\tfrac12(1,1)-\tfrac12(1,-1)$,
+\[
+  T(\vv e_1)=\tfrac12(3,1)+\tfrac12(1,-1)=(2,0),\qquad T(\vv e_2)=\tfrac12(3,1)-\tfrac12(1,-1)=(1,1),
+\]
+so
+\[
+  A=\begin{bmatrix}2&1\\0&1\end{bmatrix}.
+\]
+Check: $A(1,1)=(3,1)$ and $A(1,-1)=(1,-1)$.
+\end{example*}
 
 \begin{definition*}[Onto and one-to-one mappings (Lay 1.9)]
   \begin{itemize}
@@ -263,44 +425,6 @@ Orthogonal projection onto the $x_1$-axis & $(1,0),\ (0,0)$ & $\begin{bmatrix}1&
   \end{itemize}
 \end{definition*}
 
-\begin{fig}
-\begin{tikzpicture}[scale=1.0]
-  % Crisp hairline white frames for domain R^n and codomain R^m
-  \InkStroke[black!80,line width=0.45pt]{(-5.45,-1.55) rectangle (-1.35,1.55)}
-  \InkStroke[black!80,line width=0.45pt]{(1.35,-1.55) rectangle (5.45,1.55)}
-
-  % Quiet top space labels + straight transformation arrow
-  \node[font=\small] (dom) at (-3.40,1.92) {\InkLabel{$\RR^n$}};
-  \node[font=\small] (cod) at (3.40,1.92) {\InkLabel{$\RR^m$}};
-  \draw[ink line,figvec,line width=0.65pt,draw=black] (-1.35,1.92) -- node[above=2pt,font=\footnotesize] {\InkLabel{$T(\vv x)=A\vv x$}} (1.35,1.92);
-
-  % Soft gray wash inside R^n for {x : T(x) = 0}
-  \path[pattern=inkgrain,pattern color=inkblue] (-5.05,-1.25) rectangle (-1.75,0.20);
-  \InkStroke[black!35,line width=0.35pt]{(-5.05,-1.25) rectangle (-1.75,0.20)}
-  \node[font=\scriptsize] at (-3.40,-0.12) {\InkLabel{$\{\vv x\in\RR^n : T(\vv x)=\vv 0\}$}};
-  \fill[black] (-3.40,-0.58) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
-
-  % Point u in open white space of R^n
-  \fill[figblue] (-3.40,0.88) circle (1.6pt) node[left=3pt,font=\footnotesize,text=figblue] {\InkLabel{$\vv u$}};
-
-  % Soft gray wash inside R^m for range T = Col A
-  \path[pattern=inkgrain,pattern color=inkblue] (1.75,-0.92) rectangle (5.05,1.25);
-  \InkStroke[black!35,line width=0.35pt]{(1.75,-0.92) rectangle (5.05,1.25)}
-  \node[font=\scriptsize] at (3.40,0.92) {\InkLabel{$\range T = \Col A$}};
-
-  % Image points inside range T
-  \fill[figblue] (2.55,0.44) circle (1.6pt) node[right=3pt,font=\footnotesize,text=figblue] {\InkLabel{$T(\vv u)$}};
-  \fill[black] (2.55,-0.58) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
-
-  % Point b outside range T
-  \fill[black] (2.55,-1.26) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv b\notin\range T$}};
-
-  % Clean straight mapping arrows (dotted for generic vector, solid for 0)
-  \draw[ink guide arrow,draw=figblue,line width=0.78pt] (-3.24,0.88) -- (2.39,0.46);
-  \InkStroke[figvec,draw=black,line width=0.6pt]{(-1.75,-0.58) -- (2.39,-0.58)}
-\end{tikzpicture}
-\figcap{Action of $T\colon\RR^n\to\RR^m$ ($T(\vv x)=A\vv x$): $T$ is one-to-one when the kernel $\{\vv x:T(\vv x)=\vv 0\}$ collapses to $\{\vv 0\}$ (\ilink{thm-lay-1-11}{Thm.~1.11}), and onto when $\range T=\Col A$ fills $\RR^m$ (\ilink{thm-lay-1-12}{Thm.~1.12}).}
-\end{fig}
 
 \begin{theorem*}[Lay 1.9 Thm.~11: Kernel test for one-to-one linear transformations]\target{thm-lay-1-11}
   Let $T\colon\RR^n\to\RR^m$ be a linear transformation. Then $T$ is one-to-one if and only if the equation $T(\vv x)=\vv 0$ has only the trivial solution.
@@ -323,14 +447,69 @@ Orthogonal projection onto the $x_1$-axis & $(1,0),\ (0,0)$ & $\begin{bmatrix}1&
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-  Because $T(\vv x)=A\vv x$ (\ilink{thm-lay-1-10}{Thm.~1.10}), the range of $T$ is the set of all linear combinations of the columns of $A$, so $T$ is onto $\RR^m$ iff the columns of $A$ span $\RR^m$, which by (W3) holds iff $A$ has a pivot in every row. Likewise, by \ilink{thm-lay-1-11}{Thm.~1.11}, $T$ is one-to-one iff $A\vv x=\vv 0$ has only the trivial solution, which is the exact definition of the columns of $A$ being linearly independent (a pivot in every column of $A$).
+  Onto asks whether $T(\vv x)=\vv b$ has a solution for every $\vv b$ (existence); one-to-one asks whether it ever has two (uniqueness). Once $T(\vv x)=A\vv x$, both become questions about the equation $A\vv x=\vv b$, which earlier results answer with pivots: existence for every $\vv b$ by (\ilink{fact-w3}{W3}), uniqueness through $A\vv x=\vv 0$ by \ilink{thm-lay-1-11}{Thm.~1.11} and \ilink{prop-indep-columns}{Independence of matrix columns}.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii By \ilink{thm-lay-1-10}{Thm.~1.10}, $T(\vv x)=A\vv x$, so $T$ is onto $\RR^m$ iff for each $\vv b\in\RR^m$ the equation $A\vv x=\vv b$ has at least one solution. By (W3) (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Lay 1.4 Thm.~4}), this holds iff the columns of $A$ span $\RR^m$, iff $A$ has a pivot in every row.
-    \ii By \ilink{thm-lay-1-11}{Thm.~1.11}, $T$ is one-to-one iff $A\vv x=\vv 0$ has only the trivial solution, which by Section~2.1 holds iff the columns of $A$ are linearly independent, iff $A$ has a pivot in every column.
+    \ii By \ilink{thm-lay-1-10}{Thm.~1.10}, $T(\vv x)=A\vv x$, so $T$ is onto $\RR^m$ iff for each $\vv b\in\RR^m$ the equation $A\vv x=\vv b$ has at least one solution. By (\ilink{fact-w3}{W3}) (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Lay 1.4 Thm.~4}), this holds iff the columns of $A$ span $\RR^m$, iff $A$ has a pivot in every row.
+    \ii By \ilink{thm-lay-1-11}{Thm.~1.11}, $T$ is one-to-one iff $A\vv x=\vv 0$ has only the trivial solution, which by \ilink{prop-indep-columns}{Independence of matrix columns} holds iff the columns of $A$ are linearly independent, iff $A$ has a pivot in every column.
   \end{steps}
 \end{proof}
+
+\begin{fig}
+\begin{tikzpicture}[scale=1.0]
+  % Crisp hairline white frames for domain R^n and codomain R^m
+  \InkStroke[black!80,line width=0.45pt]{(-5.45,-1.55) rectangle (-1.35,1.55)}
+  \InkStroke[black!80,line width=0.45pt]{(1.35,-1.55) rectangle (5.45,1.55)}
+
+  % Quiet top space labels + straight transformation arrow
+  \node[font=\small] (dom) at (-3.40,1.92) {\InkLabel{$\RR^n$}};
+  \node[font=\small] (cod) at (3.40,1.92) {\InkLabel{$\RR^m$}};
+  \draw[ink line,figvec,line width=0.65pt,draw=black] (-1.35,1.92) -- node[above=2pt,font=\footnotesize] {\InkLabel{$T(\vv x)=A\vv x$}} (1.35,1.92);
+
+  % Soft gray wash inside R^n for {x : T(x) = 0}
+  \path[pattern=inkgrain,pattern color=inkslate] (-5.05,-1.25) rectangle (-1.75,0.20);
+  \InkStroke[black!75,line width=0.45pt]{(-5.05,-1.25) rectangle (-1.75,0.20)}
+  \node[font=\scriptsize] at (-3.40,-0.12) {\InkLabel{$\{\vv x\in\RR^n : T(\vv x)=\vv 0\}$}};
+  \fill[black] (-3.40,-0.58) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
+
+  % Point u in open white space of R^n
+  \fill[figblue] (-3.40,0.88) circle (1.6pt) node[left=3pt,font=\footnotesize,text=figblue] {\InkLabel{$\vv u$}};
+
+  % Soft gray wash inside R^m for range T = Col A
+  \path[pattern=inkgrain,pattern color=inkslate] (1.75,-0.92) rectangle (5.05,1.25);
+  \InkStroke[black!75,line width=0.45pt]{(1.75,-0.92) rectangle (5.05,1.25)}
+  \node[font=\scriptsize] at (3.40,0.92) {\InkLabel{$\range T$}};
+
+  % Image points inside range T
+  \fill[figblue] (2.55,0.44) circle (1.6pt) node[right=3pt,font=\footnotesize,text=figblue] {\InkLabel{$T(\vv u)$}};
+  \fill[black] (2.55,-0.58) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv 0$}};
+
+  % Point b outside range T
+  \fill[black] (2.55,-1.26) circle (1.5pt) node[right=3pt,font=\scriptsize] {\InkLabel{$\vv b\notin\range T$}};
+
+  % Clean straight mapping arrows (dotted for generic vector, solid for 0)
+  \draw[ink guide arrow,draw=figblue,line width=0.78pt] (-3.24,0.88) -- (2.39,0.46);
+  \InkStroke[figvec,draw=black,line width=0.6pt]{(-1.75,-0.58) -- (2.39,-0.58)}
+\end{tikzpicture}
+\figcap{The shaded set on the left is sent to $\vv 0$; $T$ is one-to-one exactly when it is only $\{\vv 0\}$. The shaded set on the right is the range; $T$ is onto exactly when it is all of $\RR^m$, so a point $\vv b$ outside it shows $T$ is not onto.}
+\end{fig}
+
+\method{How to decide whether a linear transformation is one-to-one or onto.}
+\begin{steps}
+  \ii Find the standard matrix $A$ ($m\times n$).
+  \ii Size check first: if $n>m$, $T$ is not one-to-one; if $n<m$, $T$ is not onto.
+  \ii Row reduce $A$ to echelon form. A pivot in every column means one-to-one; a pivot in every row means onto (\ilink{thm-lay-1-12}{Thm.~1.12}).
+  \ii To show failure concretely: for one-to-one, give a nonzero $\vv x$ with $A\vv x=\vv 0$; for onto, give a $\vv b$ for which $[\,A\ \ \vv b\,]$ is inconsistent.
+\end{steps}
+\emph{Edge case.} A square matrix ($m=n$) is either both one-to-one and onto (pivot in every row and column, $n$ pivots) or neither.
+
+\begin{example*}[Deciding one-to-one and onto]
+The map $T\colon\RR^3\to\RR^2$ with matrix $A$ from the example \emph{Finding all vectors with a given image} has $A$ already in echelon form. Both rows have pivots, so $T$ is onto. Column~3 has no pivot, so $T$ is not one-to-one; indeed $\vv x=(3,-1,1)$ is nonzero with $A\vv x=(3-2-1,\ -1+1)=(0,0)$. For $T\colon\RR^2\to\RR^3$, $T(x_1,x_2)=(x_1,\,x_1+x_2,\,x_2)$, the matrix is $3\times2$ with pivots in both columns: one-to-one, but not onto (only $2$ pivots for $3$ rows).
+\end{example*}
+
+\revisit
+Yes. Every linear $T\colon\RR^n\to\RR^m$ equals $\vv x\mapsto A\vv x$ for exactly one matrix, the standard matrix $A=[\,T(\vv e_1)\ \cdots\ T(\vv e_n)\,]$ (\ilink{thm-lay-1-10}{Thm.~1.10}). To construct it from a geometric description, find where $\vv e_1,\dots,\vv e_n$ go: for the rotation by $\varphi$, $\vv e_1\mapsto(\cos\varphi,\sin\varphi)$ and $\vv e_2\mapsto(-\sin\varphi,\cos\varphi)$ give the columns. The pivots of $A$ then decide one-to-one and onto (\ilink{thm-lay-1-12}{Thm.~1.12}).
 
 \begin{shortcuts}
   \ii \textbf{Dimension rules for $T\colon\RR^n\to\RR^m$ ($A$ is $m\times n$):}
@@ -344,7 +523,7 @@ Orthogonal projection onto the $x_1$-axis & $(1,0),\ (0,0)$ & $\begin{bmatrix}1&
 \begin{trapbox}
   \ii \textbf{Do not swap the pivot conditions for onto and one-to-one:}
   \begin{center}
-    \textbf{Onto} $\iff$ columns \textbf{span} $\RR^m$ $\iff$ pivot in every \textbf{row}. \qquad
+    \textbf{Onto} $\iff$ columns \textbf{span} $\RR^m$ $\iff$ pivot in every \textbf{row}. \\
     \textbf{One-to-one} $\iff$ columns \textbf{independent} $\iff$ pivot in every \textbf{column}.
   \end{center}
   \ii \textbf{Codomain vs.\ Range:} The codomain of $T\colon\RR^n\to\RR^m$ is the target space $\RR^m$; the range of $T$ is the subspace $\{T(\vv x):\vv x\in\RR^n\}\subseteq\RR^m$ actually hit by $T$. They are equal if and only if $T$ is onto.

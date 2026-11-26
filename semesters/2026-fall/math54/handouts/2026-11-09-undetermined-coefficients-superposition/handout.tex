@@ -3,6 +3,9 @@
 \usepackage{handout}
 \usepackage{figure-ink}
 \newcommand{\vv}[1]{\mathbf{#1}}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.8pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,frametitlefont=\sffamily\bfseries\color{NavyBlue},frametitleaboveskip=5pt,frametitlebelowskip=1pt,innertopmargin=2pt,innerbottommargin=6pt,skipabove=9pt,skipbelow=4pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle,frametitle={#1}]}{\end{mdframed}}
 \title{Math 54 --- Week 12}
 \subtitle{Nonhomogeneous equations: undetermined coefficients and superposition (Nagle 4.4--4.5)}
 \author{}\date{}\ihead{}
@@ -13,49 +16,53 @@
 \section{Facts used from Weeks 1--11}
 Throughout, $a\neq 0, b, c$ are real constants, $L[y]=ay''+by'+cy$, and $p(r)=ar^2+br+c$ is the auxiliary polynomial.
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Homogeneous equations (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-2}{Week~11}, Nagle 4.2--4.3):} $L$ is linear: $L[c_1y_1+c_2y_2]=c_1L[y_1]+c_2L[y_2]$, and $L[e^{rt}]=p(r)e^{rt}$. The IVP $L[y]=0$, $y(t_0)=Y_0$, $y'(t_0)=Y_1$ has a unique solution (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-1}{Nagle Thm.~1}). If $y_1,y_2$ solve $L[y]=0$ and $W(\tau)=0$ at one point $\tau$, then $y_1,y_2$ are dependent (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{lemma-nagle-4-1}{Nagle Lemma~1}). Thus independent solutions have $W(t)\neq 0$ for all $t$, and every solution is $c_1y_1+c_2y_2$ (Nagle Thm.~2).
-  \ii \textbf{The three root cases (Week~11):} Distinct real roots $r_1\neq r_2$: $e^{r_1t}, e^{r_2t}$. Double root $r$: $e^{rt}, te^{rt}$, and then $2ar+b=0$, i.e.\ $p'(r)=0$. Complex roots $\alpha\pm i\beta$ ($\beta\neq 0$): $e^{\alpha t}\cos\beta t, e^{\alpha t}\sin\beta t$.
-  \ii \textbf{Complex exponentials (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{lemma-nagle-4-2}{Week~11}):} $e^{i\theta}=\cos\theta+i\sin\theta$ and $\frac{d}{dt}e^{rt}=re^{rt}$ hold for $r\in\CC$. For complex $z=u+iv$ and real $a,b,c$, $L[z]=L[u]+iL[v]$, so $L[\operatorname{Re}z]=\operatorname{Re}L[z]$ and $L[\operatorname{Im}z]=\operatorname{Im}L[z]$.
-  \ii \textbf{Triangular matrices (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-3-2}{Week~4}):} The determinant of a triangular matrix equals the product of its diagonal entries; hence a triangular matrix with nonzero diagonal entries is invertible.
-  \ii \textbf{Solutions of $A\vv x=\vv b$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-6}{Week~2}):} If $A\vv p=\vv b$, the solution set is $\vv p+\vv v_h$ where $A\vv v_h=\vv 0$.
-  \ii \textbf{Forced mass--spring model (Nagle 4.1, cited):} A mass $m$ on a spring of stiffness $k$ with damping $b$ driven by outside force $F(t)$ obeys $my''+by'+ky=F(t)$.
+  \ii \target{fact-W1}\textbf{Homogeneous equations (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-2}{Week~11}, Nagle 4.2--4.3):} $L$ is linear: $L[c_1y_1+c_2y_2]=c_1L[y_1]+c_2L[y_2]$, and $L[e^{rt}]=p(r)e^{rt}$. The IVP $L[y]=0$, $y(t_0)=Y_0$, $y'(t_0)=Y_1$ has a unique solution (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-1}{Nagle Thm.~1}). If $y_1,y_2$ solve $L[y]=0$ and $W(\tau)=0$ at one point $\tau$, then $y_1,y_2$ are dependent (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{lemma-nagle-4-1}{Nagle Lemma~1}). Thus independent solutions have $W(t)\neq 0$ for all $t$, and every solution is $c_1y_1+c_2y_2$ (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-2}{Nagle Thm.~2}).
+  \ii \target{fact-W2}\textbf{The three root cases (Week~11):} Distinct real roots $r_1\neq r_2$: $e^{r_1t}, e^{r_2t}$. Double root $r$: $e^{rt}, te^{rt}$, and then $2ar+b=0$, i.e.\ $p'(r)=0$. Complex roots $\alpha\pm i\beta$ ($\beta\neq 0$): $e^{\alpha t}\cos\beta t, e^{\alpha t}\sin\beta t$.
+  \ii \target{fact-W3}\textbf{Complex exponentials (\xlink{math54}{2026-11-02-symmetric-svd-second-order}{lemma-nagle-4-2}{Week~11}):} $e^{i\theta}=\cos\theta+i\sin\theta$ and $\frac{d}{dt}e^{rt}=re^{rt}$ hold for $r\in\CC$. For complex $z=u+iv$ and real $a,b,c$, $L[z]=L[u]+iL[v]$, so $L[\operatorname{Re}z]=\operatorname{Re}L[z]$ and $L[\operatorname{Im}z]=\operatorname{Im}L[z]$.
+  \ii \target{fact-W4}\textbf{Triangular matrices (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-3-2}{Week~4}):} The determinant of a triangular matrix equals the product of its diagonal entries; hence a triangular matrix with nonzero diagonal entries is invertible.
+  \ii \target{fact-W5}\textbf{Solutions of $A\vv x=\vv b$ (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-6}{Week~2}):} If $A\vv p=\vv b$, the solution set is $\vv p+\vv v_h$ where $A\vv v_h=\vv 0$.
+  \ii \target{fact-W6}\textbf{Forced mass--spring model (Nagle 4.1):} A mass $m$ on a spring of stiffness $k$ with damping $b$ driven by outside force $F(t)$ obeys $my''+by'+ky=F(t)$.
 \end{enumerate}
 
 \section{This week}
 \subsection{The method of undetermined coefficients (Nagle 4.4)}
 \begin{qbox}
-  Find one function $y$ solving $y''+3y'+2y=3t$. Trying $y=At$ looks completely natural, since the right side is a multiple of $t$. Why does $y=At$ fail, and what modified guess works?
+  Find one function $y$ solving $y''+3y'+2y=3t$. Trying $y=At$ looks natural, since the right side is a multiple of $t$. Why does $y=At$ fail, and what modified guess works?
 \end{qbox}
 
-An equation $L[y]=f(t)$ with $f\not\equiv 0$ is \textbf{nonhomogeneous}, and any single solution of it is a \textbf{particular solution} $y_p$. When $f$ belongs to a family whose derivatives generate only finitely many linearly independent functions (polynomials, exponentials, sines/cosines, and products thereof), we can choose $y_p$ inside that finite $L$-closed family with unknown coefficients and match terms.
+An equation $L[y]=f(t)$ with $f\not\equiv 0$ is \textbf{nonhomogeneous}, and any single solution of it is a \textbf{particular solution} $y_p$. Suppose the derivatives of $f$ are combinations of finitely many functions; this holds for polynomials, exponentials, sines and cosines, and their products. Then $L$ maps combinations of those functions to combinations of the same functions, so we can look for $y_p$ as such a combination with unknown coefficients and match the coefficients of each function on both sides.
 
-\begin{example*}[Worked example 1 (Nagle): a polynomial right side]
+\begin{example*}[A polynomial right side needs every lower power (Nagle 4.4)]\target{ex-uc-poly}
   For $y''+3y'+2y=3t$, trying $y=At$ gives $y'=A, y''=0$, so $L[At]=3A+2At$. Matching $3t$ forces $2A=3$ and $3A=0$, which is impossible. Differentiation created a constant term ($3A$) that $At$ cannot absorb. Add that lower power: $y=At+B$ gives
   \[
     y''+3y'+2y = 3A + 2(At+B) = 2At + (3A+2B).
   \]
-  Matching $3t$: $2A=3$ and $3A+2B=0 \implies A=\frac32,\ B=-\frac94$, so $y_p=\frac32 t-\frac94$.
+  Matching $3t$ requires $2A=3$ and $3A+2B=0$, so $A=\frac32$, $B=-\frac94$, and $y_p=\frac32 t-\frac94$.
 \end{example*}
 
-\noindent\textbf{The question answered.} $y=At$ fails because $L[t]=2t+3$: taking derivatives produces lower-degree powers. Including all powers up to $\deg f$ ($y_p=At+B$) succeeds: $y_p=\frac32 t-\frac94$.
+\revisit $y=At$ fails because $L[t]=2t+3$: derivatives of $t$ produce lower powers, here the constant $3$, which $At$ cannot cancel. Including all powers up to $\deg f$ ($y_p=At+B$) succeeds: $y_p=\frac32 t-\frac94$.
 
-\begin{example*}[Worked examples 2--4 (Nagle): exponential, sine, and $t^2e^t$]
-  \begin{steps}
-    \ii \textbf{Ex.~2 ($y''+3y'+2y=10e^{3t}$):} Try $y=Ae^{3t}$. By (W1), $L[Ae^{3t}]=Ap(3)e^{3t}=A(9+9+2)e^{3t}=20Ae^{3t}$, giving $A=\frac12$ and $y_p=\frac12 e^{3t}$.
-    \ii \textbf{Ex.~3 ($y''+3y'+2y=\sin t$):} $A\sin t$ fails because $(A\sin t)'=A\cos t$ introduces a cosine. Including both $y=A\sin t+B\cos t$ gives
-    \[
-      y''+3y'+2y = (A-3B)\sin t + (3A+B)\cos t.
-    \]
-    Matching $\sin t$: $A-3B=1,\ 3A+B=0\implies A=\frac{1}{10},\ B=-\frac{3}{10}$, so $y_p=\frac{1}{10}\sin t-\frac{3}{10}\cos t$. (Physically, a damped spring shaken at frequency $1$ responds at frequency $1$ with both $\sin t$ and $\cos t$ to capture a phase shift.)
-    \ii \textbf{Ex.~4 ($y''+4y=5t^2e^t$):} Try $y=(At^2+Bt+C)e^t$. Then $y'=(At^2+(2A+B)t+B+C)e^t$ and $y''=(At^2+(4A+B)t+2A+2B+C)e^t$, so
-    \[
-      y''+4y = \bigl(5At^2 + (4A+5B)t + (2A+2B+5C)\bigr)e^t.
-    \]
-    Matching $5t^2e^t$: $5A=5$, $4A+5B=0$, $2A+2B+5C=0\implies A=1,\ B=-\frac45,\ C=-\frac{2}{25}$, giving $y_p=\bigl(t^2-\frac45 t-\frac{2}{25}\bigr)e^t$.
-  \end{steps}
+\begin{example*}[An exponential right side (Nagle 4.4)]\target{ex-uc-exp}
+  For $y''+3y'+2y=10e^{3t}$, try $y=Ae^{3t}$. By (\ilink{fact-W1}{W1}), $L[Ae^{3t}]=Ap(3)e^{3t}$ with $p(3)=9+9+2=20$, so $L[Ae^{3t}]=20Ae^{3t}$, giving $A=\frac12$ and $y_p=\frac12 e^{3t}$.
 \end{example*}
 
-\noindent\textbf{When the basic guess fails: resonance with the homogeneous solutions.} For $y''+y'=5$, $y=A$ gives $L[A]=0$ because constants solve $y''+y'=0$ ($r=0$ is a root of $r^2+r=0$). Multiplying by $t$ resolves the overlap: $L[At]=0+A=A\implies y_p=5t$. When $r=3$ is a \emph{double} root, as in $y''-6y'+9y=e^{3t}$, both $Ae^{3t}$ and $Ate^{3t}$ vanish under $L$; only $y_p=At^2e^{3t}$ yields $L[At^2e^{3t}]=2Ae^{3t}$, giving $y_p=\frac12 t^2e^{3t}$. Let us derive the exact algebraic formula behind every factor of $t$.
+\begin{example*}[A sine right side needs both sine and cosine (Nagle 4.4)]\target{ex-uc-sin}
+  For $y''+3y'+2y=\sin t$, the guess $A\sin t$ fails because $(A\sin t)'=A\cos t$ introduces a cosine. Including both, $y=A\sin t+B\cos t$ gives
+  \[
+    y''+3y'+2y = (A-3B)\sin t + (3A+B)\cos t.
+  \]
+  Matching $\sin t$ requires $A-3B=1$ and $3A+B=0$, so $A=\frac{1}{10}$, $B=-\frac{3}{10}$, and $y_p=\frac{1}{10}\sin t-\frac{3}{10}\cos t$. Physically, a damped spring shaken at frequency $1$ responds at frequency $1$, and the combination of $\sin t$ and $\cos t$ describes the shift in phase between force and response.
+\end{example*}
+
+\begin{example*}[A polynomial times an exponential (Nagle 4.4)]\target{ex-uc-poly-exp}
+  For $y''+4y=5t^2e^t$, try $y=(At^2+Bt+C)e^t$. Then $y'=(At^2+(2A+B)t+B+C)e^t$ and $y''=(At^2+(4A+B)t+2A+2B+C)e^t$, so
+  \[
+    y''+4y = \bigl(5At^2 + (4A+5B)t + (2A+2B+5C)\bigr)e^t.
+  \]
+  Matching $5t^2e^t$ requires $5A=5$, $4A+5B=0$, $2A+2B+5C=0$, so $A=1$, $B=-\frac45$, $C=-\frac{2}{25}$, giving $y_p=\bigl(t^2-\frac45 t-\frac{2}{25}\bigr)e^t$.
+\end{example*}
+
+\noindent\textbf{When the basic guess fails: the guess solves the homogeneous equation.} For $y''+y'=5$, $y=A$ gives $L[A]=0$ because constants solve $y''+y'=0$ ($r=0$ is a root of $r^2+r=0$). Multiplying by $t$ removes the overlap: $L[At]=0+A=A$, so $y_p=5t$. When $r=3$ is a \emph{double} root, as in $y''-6y'+9y=e^{3t}$, both $Ae^{3t}$ and $Ate^{3t}$ give $0$ under $L$; the guess $At^2e^{3t}$ gives $L[At^2e^{3t}]=2Ae^{3t}$, so $y_p=\frac12 t^2e^{3t}$. The following formula shows exactly how many factors of $t$ are needed.
 
 \begin{theorem*}[The key product formula (Nagle 4.4)]\target{prop-key-formula}
   For any smooth function (or polynomial) $q(t)$ and any constant $r\in\CC$,
@@ -64,58 +71,60 @@ An equation $L[y]=f(t)$ with $f\not\equiv 0$ is \textbf{nonhomogeneous}, and any
   \]
 \end{theorem*}
 \begin{proof}
-  By the product rule (and W3 for $r\in\CC$), $(qe^{rt})'=(q'+rq)e^{rt}$ and $(qe^{rt})''=(q''+2rq'+r^2q)e^{rt}$. Combining gives
+  By the product rule (and (\ilink{fact-W3}{W3}) for $r\in\CC$), $(qe^{rt})'=(q'+rq)e^{rt}$ and $(qe^{rt})''=(q''+2rq'+r^2q)e^{rt}$. Combining gives
   \[
     L[qe^{rt}] = \bigl(a(q''+2rq'+r^2q)+b(q'+rq)+cq\bigr)e^{rt} = \bigl(aq''+(2ar+b)q'+(ar^2+br+c)q\bigr)e^{rt}. \qedhere
   \]
 \end{proof}
 
-From this formula, solving $L[qe^{rt}]=Ct^m e^{rt}$ means finding a polynomial $q$ solving
+By this formula, solving $L[qe^{rt}]=Ct^m e^{rt}$ means finding a polynomial $q$ with $M(q)=Ct^m$, where
 \[
-  a\,q'' + p'(r)\,q' + p(r)\,q = Ct^m.
+  M(q) = a\,q'' + p'(r)\,q' + p(r)\,q.
 \]
-Writing $q=A_n t^n+A_{n-1}t^{n-1}+\dots$ ($A_n\neq 0$), its top three terms in $L[qe^{rt}]e^{-rt}$ are:
+Write $q=A_n t^n+A_{n-1}t^{n-1}+\dots$ with $A_n\neq 0$. The top three terms of $M(q)$ are:
 \begin{align*}
   &\text{degree }n: && A_n\,p(r)\,t^n,\\
   &\text{degree }n-1: && \bigl(nA_n\,p'(r)+A_{n-1}\,p(r)\bigr)t^{n-1},\\
   &\text{degree }n-2: && \bigl(n(n-1)A_n\,a+(n-1)A_{n-1}\,p'(r)+A_{n-2}\,p(r)\bigr)t^{n-2}.
 \end{align*}
-To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ (simple root), the $t^n$ term vanishes so we need $n=m+1$ (and constant term $A_0e^{rt}$ solves $L=0$, so it can be set to $0$, factoring out $t$); if $p(r)=p'(r)=0$ (double root), both top terms vanish so we need $n=m+2$ (dropping $A_0e^{rt}+A_1te^{rt}$ factors out $t^2$). For polynomials $Ct^m=Ct^me^{0t}$, $r=0$: factor $t$ if $c=0\neq b$, factor $t^2$ if $b=c=0$.
+To reach the target degree $m$:
+\begin{itemize}
+  \ii If $p(r)\neq 0$, the degree of $M(q)$ equals $\deg q$, so we need $n=m$.
+  \ii If $p(r)=0\neq p'(r)$ ($r$ a simple root), the $t^n$ term is $0$ and the $t^{n-1}$ term is not, so we need $n=m+1$. The constant term $A_0$ of $q$ contributes $A_0e^{rt}$, which solves $L[y]=0$, so we may take $A_0=0$; then $q$ has the factor $t$.
+  \ii If $p(r)=p'(r)=0$ ($r$ a double root), the top two terms are $0$, so we need $n=m+2$. Dropping $A_0e^{rt}+A_1te^{rt}$, which solves $L[y]=0$, leaves the factor $t^2$.
+  \ii For a polynomial right side, $Ct^m=Ct^me^{0t}$ and $r=0$: the factor is $t$ if $c=0\neq b$, and $t^2$ if $b=c=0$.
+\end{itemize}
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0,>=Stealth]
-  % Spivak-inspired hairline typographic schematic for the three root multiplicity cases
   \InkStroke[black!85,line width=0.65pt]{(0,0) -- (15.8,0)}
-  \InkStroke[black!45,line width=0.38pt]{(0,-0.58) -- (15.8,-0.58)}
-  \InkStroke[black!22,line width=0.35pt]{(0,-2.42) -- (15.8,-2.42)}
+  \InkStroke[black!60,line width=0.38pt]{(0,-0.58) -- (15.8,-0.58)}
   \InkStroke[black!85,line width=0.65pt]{(0,-3.12) -- (15.8,-3.12)}
+  \InkStroke[black!45,line width=0.35pt]{(5.0,-0.10) -- (5.0,-3.02)}
+  \InkStroke[black!45,line width=0.35pt]{(10.1,-0.10) -- (10.1,-3.02)}
 
-  % Subtle vertical hairlines separating the three cases (generous padding for col 3 header)
-  \InkStroke[black!15,line width=0.35pt]{(5.0,-0.10) -- (5.0,-3.02)}
-  \InkStroke[black!15,line width=0.35pt]{(10.1,-0.10) -- (10.1,-3.02)}
+  % Column 1: s = 0
+  \node[font=\footnotesize,text=black] at (2.50,-0.29) {Not a root: $p(r)\neq 0$ \ ($s=0$)};
+  \node[font=\footnotesize,text=black] at (2.50,-1.04) {$a q'' + p'(r)q' + \mathbf{p(r)}\,q = Ct^m$};
+  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black,line width=0.5pt] (0.95,-1.64) -- node[above=1pt,font=\scriptsize,text=black] {keeps the degree} (4.05,-1.64);
+  \node[font=\footnotesize,text=black] at (2.50,-2.05) {$\deg q = m \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\footnotesize,text=black] at (2.50,-2.72) {$y_p = Q_m(t)\,e^{rt}$};
 
-  % Column 1: s = 0 (center 2.50)
-  \node[font=\footnotesize,text=black] at (2.50,-0.29) {Non-root: \InkLabel{$p(r)\neq 0$} \ (\InkLabel{$s=0$})};
-  \node[font=\scriptsize,text=black] at (2.50,-1.04) {\InkLabel{$a q'' + p'(r)q' + \mathbf{p(r)}\,q = Ct^m$}};
-  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black!80,line width=0.5pt] (0.95,-1.64) -- node[above=1pt,font=\scriptsize,text=black!65] {preserves degree} (4.05,-1.64);
-  \node[font=\scriptsize,text=black!75] at (2.50,-2.05) {\InkLabel{$\deg q = m \;\longmapsto\; \deg M(q) = m$}};
-  \node[font=\footnotesize,text=black] at (2.50,-2.77) {\InkLabel{$y_p = Q_m(t)\,e^{rt}$}};
+  % Column 2: s = 1
+  \node[font=\footnotesize,text=black] at (7.55,-0.29) {Simple root: $p(r)=0$ \ ($s=1$)};
+  \node[font=\footnotesize,text=black] at (7.55,-1.04) {$a q'' + \mathbf{p'(r)}\,q' + 0\cdot q = Ct^m$};
+  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black,line width=0.5pt] (6.00,-1.64) -- node[above=1pt,font=\scriptsize,text=black] {lowers the degree by $1$} (9.10,-1.64);
+  \node[font=\footnotesize,text=black] at (7.55,-2.05) {$\deg q = m{+}1 \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\footnotesize,text=black] at (7.55,-2.72) {$y_p = {\color{figred}t}\,Q_m(t)\,e^{rt}$};
 
-  % Column 2: s = 1 (center 7.55)
-  \node[font=\footnotesize,text=black] at (7.55,-0.29) {Simple root: \InkLabel{$p(r)=0$} \ (\InkLabel{$s=1$})};
-  \node[font=\scriptsize,text=black] at (7.55,-1.04) {$a q'' + \mathbf{p'(r)}\,q' + {\color{black!28}0\cdot q} = Ct^m$};
-  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black!80,line width=0.5pt] (6.00,-1.64) -- node[above=1pt,font=\scriptsize,text=black!65] {drops degree by \InkLabel{$1$}} (9.10,-1.64);
-  \node[font=\scriptsize,text=black!75] at (7.55,-2.05) {\InkLabel{$\deg q = m{+}1 \;\longmapsto\; \deg M(q) = m$}};
-  \node[font=\footnotesize,text=black] at (7.55,-2.77) {$y_p = {\color{figred}t}\,Q_m(t)\,e^{rt}$};
-
-  % Column 3: s = 2 (center 12.95)
-  \node[font=\footnotesize,text=black] at (12.95,-0.29) {Double root: \InkLabel{$p(r)=p'(r)=0$} \ (\InkLabel{$s=2$})};
-  \node[font=\scriptsize,text=black] at (12.95,-1.04) {$\mathbf{a}\,q'' + {\color{black!28}0\cdot q' + 0\cdot q} = Ct^m$};
-  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black!80,line width=0.5pt] (11.40,-1.64) -- node[above=1pt,font=\scriptsize,text=black!65] {drops degree by \InkLabel{$2$}} (14.50,-1.64);
-  \node[font=\scriptsize,text=black!75] at (12.95,-2.05) {\InkLabel{$\deg q = m{+}2 \;\longmapsto\; \deg M(q) = m$}};
-  \node[font=\footnotesize,text=black] at (12.95,-2.77) {$y_p = {\color{figred}t^2}\,Q_m(t)\,e^{rt}$};
+  % Column 3: s = 2
+  \node[font=\footnotesize,text=black] at (12.95,-0.29) {Double root: $p(r)=p'(r)=0$ \ ($s=2$)};
+  \node[font=\footnotesize,text=black] at (12.95,-1.04) {$\mathbf{a}\,q'' + 0\cdot q' + 0\cdot q = Ct^m$};
+  \draw[ink line,-{Stealth[length=3.6pt,width=2.1pt]},black,line width=0.5pt] (11.40,-1.64) -- node[above=1pt,font=\scriptsize,text=black] {lowers the degree by $2$} (14.50,-1.64);
+  \node[font=\footnotesize,text=black] at (12.95,-2.05) {$\deg q = m{+}2 \;\longmapsto\; \deg M(q) = m$};
+  \node[font=\footnotesize,text=black] at (12.95,-2.72) {$y_p = {\color{figred}t^2}\,Q_m(t)\,e^{rt}$};
 \end{tikzpicture}
-\figcap{Why the factor $t^s$ equals the multiplicity of $r$ as a root of $p$: each vanishing leading coefficient in $M(q)=aq''+p'(r)q'+p(r)q=Ct^m$ drops the output degree by~$1$, shifting the required trial polynomial upward by one factor of $t$ (with $Q_m\in\mathbb P_m$).}
+\figcap{Each coefficient of $M(q)$ that is $0$ lowers the degree of the output by one, so the trial polynomial needs one more factor of $t$ ($Q_m$ is a polynomial of degree $m$).}
 \end{fig}
 
 \begin{theorem*}[Method of undetermined coefficients (Nagle 4.4)]\target{name-undetermined-coefficients}\target{thm-nagle-4-undetermined}
@@ -133,31 +142,53 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-  In the basis $1,t,\dots,t^m$ of $\mathbb P_m$, differentiation only moves terms \emph{down} to lower powers, so $q\mapsto aq''+p'(r)q'+p(r)q$ has an upper-triangular matrix with $p(r)$ along every diagonal entry. When $p(r)\neq 0$, invertibility (W4) guarantees a unique polynomial solution of degree $\le m$; when $p(r)=0$, the diagonal vanishes, so we differentiate once (replace $q$ by $u=q'$) or twice (at a double root $p'(r)=0$) and integrate.
+  In the basis $1,t,\dots,t^m$ of $\mathbb P_m$, differentiation only moves terms \emph{down} to lower powers, so $M$ has an upper-triangular matrix with $p(r)$ in every diagonal entry. When $p(r)\neq 0$, invertibility (\ilink{fact-W4}{W4}) guarantees a polynomial solution of degree $\le m$. When $p(r)=0$, the diagonal is $0$; then $M(q)$ involves only $q'$ and $q''$, so we solve for $u=q'$ (simple root) or for $q''$ directly (double root, $p'(r)=0$) and integrate.
 \end{ideabox}
 \begin{proof}
-  Let $\mathbb P_m$ be polynomials of degree $\le m$ with basis $\{1,t,\dots,t^m\}$, and define $M(q)=aq''+p'(r)q'+p(r)q$.
+  Let $\mathbb P_m$ be the polynomials of degree $\le m$ with basis $\{1,t,\dots,t^m\}$, and $M(q)=aq''+p'(r)q'+p(r)q$ as above.
   \begin{steps}
-    \ii \textbf{$r$ is not a root ($s=0$).} $M(t^k)=p(r)t^k+(\text{degree}<k)$ since $(t^k)'$ and $(t^k)''$ have lower degree. Hence $M:\mathbb P_m\to\mathbb P_m$ has an upper-triangular matrix in $\{1,\dots,t^m\}$ with diagonal entries $p(r)\neq 0$, which is invertible (W4). Thus some $q\in\mathbb P_m$ gives $M(q)=Ct^m$, so $L[qe^{rt}]=Ct^me^{rt}$.
-    \ii \textbf{$r$ is a simple root ($s=1$).} Now $p(r)=0$, and from $p(t)=a(t-r)(t-r_2)$ ($r_2\neq r$) we have $p'(r)=a(r-r_2)\neq 0$. Thus $M(q)=aq''+p'(r)q'=N(q')$ where $N(u)=au'+p'(r)u$. Just as in Step~1, $N:\mathbb P_m\to\mathbb P_m$ has diagonal entries $p'(r)\neq 0$ and is invertible, giving $u\in\mathbb P_m$ with $N(u)=Ct^m$. Setting $q(t)=\int_0^t u(\tau)\,d\tau$ makes $q'=u$, $M(q)=Ct^m$, and $q(0)=0$, so $q=t\cdot(\text{polynomial in }\mathbb P_m)$.
-    \ii \textbf{$r$ is a double root ($s=2$).} Here $p(r)=p'(r)=0$ (W2), leaving $M(q)=aq''$. Directly,
+    \ii \textbf{$r$ is not a root ($s=0$).} $M(t^k)=p(r)t^k+(\text{degree}<k)$ since $(t^k)'$ and $(t^k)''$ have lower degree. Hence $M:\mathbb P_m\to\mathbb P_m$ has an upper-triangular matrix in $\{1,\dots,t^m\}$ with diagonal entries $p(r)\neq 0$, which is invertible (\ilink{fact-W4}{W4}). Thus some $q\in\mathbb P_m$ gives $M(q)=Ct^m$, so $L[qe^{rt}]=Ct^me^{rt}$.
+    \ii \textbf{$r$ is a simple root ($s=1$).} Now $p(r)=0$, and from $p(t)=a(t-r)(t-r_2)$ ($r_2\neq r$) we have $p'(r)=a(r-r_2)\neq 0$. Thus $M(q)=aq''+p'(r)q'=N(q')$ where $N(u)=au'+p'(r)u$. As in step~1, $N:\mathbb P_m\to\mathbb P_m$ has diagonal entries $p'(r)\neq 0$ and is invertible, giving $u\in\mathbb P_m$ with $N(u)=Ct^m$. Setting $q(t)=\int_0^t u(\tau)\,d\tau$ makes $q'=u$, $M(q)=Ct^m$, and $q(0)=0$, so $q=t\cdot(\text{polynomial in }\mathbb P_m)$.
+    \ii \textbf{$r$ is a double root ($s=2$).} Here $p(r)=p'(r)=0$ (\ilink{fact-W2}{W2}), leaving $M(q)=aq''$. Directly,
     \[
       q(t) = \frac{C}{a(m+1)(m+2)}t^{m+2}
     \]
     satisfies $aq''=Ct^m$ and equals $t^2\cdot(\text{polynomial in }\mathbb P_m)$.
-    \ii \textbf{Part (b): complex exponent $r=\alpha+i\beta$ ($\beta\neq 0$).} The Key Product Formula holds over $\CC$, and triangular invertibility (W4) holds without change over $\CC$. If $p(r)\neq 0$, Step~1 gives $s=0$. If $p(r)=0$, then its roots $\alpha\pm i\beta$ are distinct ($\beta\neq 0$), so $r$ must be simple: $b/a=-2\alpha\implies p'(r)=2a(\alpha+i\beta)-2a\alpha=2ai\beta\neq 0$, and Step~2 gives $s=1$. Either way $s\le 1$, and there is a complex polynomial $Q=Q_1+iQ_2$ ($Q_1,Q_2\in\mathbb P_m$ real) solving $L[t^s Qe^{rt}]=Ct^m e^{rt}$.
-    \ii Taking real and imaginary parts via (W3) since $Ct^me^{rt}=Ct^me^{\alpha t}(\cos\beta t+i\sin\beta t)$ yields solutions
+    \ii \textbf{Part (b): complex exponent $r=\alpha+i\beta$ ($\beta\neq 0$).} The \ilink{prop-key-formula}{key product formula} holds over $\CC$, and the invertibility of a triangular matrix with nonzero diagonal (\ilink{fact-W4}{W4}) holds over $\CC$ as well. If $p(r)\neq 0$, step~1 gives $s=0$. If $p(r)=0$, then the roots $\alpha\pm i\beta$ are distinct ($\beta\neq 0$), so $r$ is a simple root: the sum of the roots is $-b/a=2\alpha$, so $b=-2a\alpha$ and
+    \[
+      p'(r)=2a(\alpha+i\beta)+b=2a(\alpha+i\beta)-2a\alpha=2ai\beta\neq 0,
+    \]
+    and step~2 gives $s=1$. Either way $s\le 1$, and there is a complex polynomial $Q=Q_1+iQ_2$ ($Q_1,Q_2\in\mathbb P_m$ real) with $L[t^s Qe^{rt}]=Ct^m e^{rt}$.
+    \ii Since $Ct^me^{rt}=Ct^me^{\alpha t}\cos\beta t+i\,Ct^me^{\alpha t}\sin\beta t$, taking real and imaginary parts by (\ilink{fact-W3}{W3}) gives solutions for the cosine and the sine right sides:
     \[
       \operatorname{Re}(t^s Qe^{rt}) = t^s e^{\alpha t}(Q_1\cos\beta t - Q_2\sin\beta t),\qquad
-      \operatorname{Im}(t^s Qe^{rt}) = t^s e^{\alpha t}(Q_2\cos\beta t + Q_1\sin\beta t)
+      \operatorname{Im}(t^s Qe^{rt}) = t^s e^{\alpha t}(Q_2\cos\beta t + Q_1\sin\beta t).
     \]
-    for the cosine and sine forcing terms---both matching (b)! \qedhere
+    Both have the form in (b). \qedhere
   \end{steps}
 \end{proof}
 
-\noindent\textbf{First-order constant-coefficient equations ($by'+cy=f$, $b\neq 0$).} Setting $a=0$ gives $L[qe^{rt}]=(bq'+p(r)q)e^{rt}$ with $p(r)=br+c$ and $p'(r)=b\neq 0$. Steps~1--2 apply unchanged ($s=0$ unless $r=-c/b$, where $s=1$): e.g.\ $y'+2y=4t\implies y=At+B\implies 2At+(A+2B)=4t\implies y_p=2t-1$.
+\begin{howto}{How to find a particular solution by undetermined coefficients}\target{howto-uc}
+  \begin{steps}
+    \ii \textbf{Check the method applies.} The coefficients $a,b,c$ must be constants, and $f$ must be a sum of terms $t^me^{rt}$, $t^me^{\alpha t}\cos\beta t$, $t^me^{\alpha t}\sin\beta t$ (rewrite $\sin^2$, $\cos^3$, $\cosh$, $\sinh$ first).
+    \ii \textbf{Roots.} Find the roots of $p(r)=ar^2+br+c$ with their multiplicities.
+    \ii \textbf{Group the terms of $f$.} Put together all terms with the same exponent $r$, or the same pair $\alpha\pm i\beta$ (a cosine and a sine of the same $\beta t$ belong together). For each group let $m$ be the highest power of $t$ that occurs.
+    \ii \textbf{Write the form for each group.} Use a full polynomial of degree $m$ (every power $t^m,\dots,t,1$). For $e^{\alpha t}\cos\beta t$ or $\sin\beta t$ use both $\cos\beta t$ and $\sin\beta t$, each with its own polynomial. Multiply by $t^s$, where $s$ is the number of times $r$ (or $\alpha+i\beta$) is a root of $p$: $0$, $1$ or $2$.
+    \ii \textbf{Find the coefficients.} Substitute into $L[y]$ (or use the \ilink{prop-key-formula}{key product formula}), collect the coefficients of each function $t^ke^{rt}$, $t^ke^{\alpha t}\cos\beta t$, $t^ke^{\alpha t}\sin\beta t$, and solve the resulting linear equations.
+    \ii \textbf{Add the groups.} Because $L$ is linear (\ilink{fact-W1}{W1}), the sum of the particular solutions of the groups solves $L[y]=f$.
+  \end{steps}
+  \textbf{Edge cases.} A constant $f$ has $r=0$: use $A$, $At$ or $At^2$ according as $c\neq 0$, $c=0\neq b$, or $b=c=0$. If $f$ is a polynomial times $e^{rt}$ with $r$ a root, the factor $t^s$ multiplies the whole polynomial, not only its top term. For a second-order equation, a complex $\alpha+i\beta$ is never a double root, so $s\le 1$ for sines and cosines.
+\end{howto}
 
-\begin{example*}[Worked examples 5--7 (Nagle): choosing forms and complex roots]
+\begin{example*}[First-order constant-coefficient equations]\target{ex-uc-first-order}
+  For $by'+cy=f$ with $b\neq 0$, the same argument works with $a=0$: $L[qe^{rt}]=(bq'+p(r)q)e^{rt}$ with $p(r)=br+c$ and $p'(r)=b\neq 0$. Steps~1--2 of the proof apply unchanged, so $s=0$ unless $r=-c/b$, where $s=1$. For example, for $y'+2y=4t$ try $y=At+B$. Then
+  \[
+    y'+2y=2At+(A+2B)=4t,
+  \]
+  so $A=2$, $B=-1$, and $y_p=2t-1$.
+\end{example*}
+
+\begin{example*}[Choosing the form: a table for two operators (Nagle 4.4)]\target{ex-uc-table}
   For $y''+2y'-3y=f$, $p(r)=(r-1)(r+3)$. For $y''-2y'+y=f$, $p(r)=(r-1)^2$.
   \begin{center}
   \small
@@ -175,20 +206,22 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     \bottomrule
   \end{tabular}
   \end{center}
-  \textbf{Ex.~7 (complex root):} For $y''-2y'+2y=5te^t\cos t$, $p(r)=r^2-2r+2$ has roots $1\pm i$. Since $\alpha+i\beta=1+i$ is a root, $s=1$:
+\end{example*}
+
+\begin{example*}[A complex root of $p$ matches the forcing (Nagle 4.4)]\target{ex-uc-complex-root}
+  For $y''-2y'+2y=5te^t\cos t$, $p(r)=r^2-2r+2$ has roots $1\pm i$. Since $\alpha+i\beta=1+i$ is a root, $s=1$, and $m=1$:
   \[
     y_p = t(A_1t+A_0)e^t\cos t + t(B_1t+B_0)e^t\sin t.
   \]
 \end{example*}
 
-\noindent\textbf{Resonance (Nagle 4.10).} When external forcing matches a natural frequency of the undamped oscillator ($p(i\beta)=0\neq p'(i\beta)$), $s=1$ produces linear amplitude growth in time. For $y''+y=\cos t$, $p(r)=r^2+1$ has root $i$ with $p'(i)=2i\neq 0$. Applying the Key Product Formula with $q=t, r=i$ gives $L[te^{it}]=p'(i)e^{it}=2ie^{it}$, so $z=te^{it}/(2i)$ solves $L[z]=e^{it}$, and by (W3):
+\noindent\textbf{Resonance (Nagle 4.10).} When the forcing frequency equals the natural frequency of an undamped oscillator ($p(i\beta)=0\neq p'(i\beta)$), $s=1$ and the amplitude grows linearly in time. For $y''+y=\cos t$, $p(r)=r^2+1$ has the root $i$ with $p'(i)=2i\neq 0$. The \ilink{prop-key-formula}{key product formula} with $q=t$, $r=i$ gives $L[te^{it}]=p'(i)e^{it}=2ie^{it}$, so $z=te^{it}/(2i)$ solves $L[z]=e^{it}$, and by (\ilink{fact-W3}{W3}):
 \[
-  z = \frac{t(\cos t+i\sin t)}{2i} = \frac{t}{2}\sin t - \frac{it}{2}\cos t \implies y_p = \operatorname{Re}z = \frac{t}{2}\sin t.
+  z = \frac{t(\cos t+i\sin t)}{2i} = \frac{t}{2}\sin t - \frac{it}{2}\cos t, \qquad\text{so}\qquad y_p = \operatorname{Re}z = \frac{t}{2}\sin t.
 \]
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
-  % Centered legend above both panels
   \node[font=\scriptsize,anchor=south] at (7.20,3.78) {%
     \rule[0.45ex]{0.55cm}{1.0pt}\hspace{4pt}\InkLabel{$y''+y=\cos t$}: \InkLabel{$y_p=\tfrac{t}{2}\sin t$} (\InkLabel{$s=1$})%
     \hspace{18pt}%
@@ -214,15 +247,14 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     ylabel style={rotate=-90},
     clip=false
   ]
-    % Quiet neutral wash inside the linear growth envelope |y| <= t/2
-    \path[pattern=inkgrain,pattern color=inkblue] (axis cs:0,0) -- (axis cs:13.5,6.75) -- (axis cs:13.5,-6.75) -- cycle;
-    \draw[ink guide,draw=black!30] (axis cs:0,0) -- (axis cs:13.6,0);
-    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50] {0.5*x};
-    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!50] {-0.5*x};
-    \addplot[ink line,domain=0:13.5,samples=180,inkred,line width=0.85pt] {-cos(deg(2*x))/3};
+    \path[pattern=inkgrain,pattern color=inkslate] (axis cs:0,0) -- (axis cs:13.5,6.75) -- (axis cs:13.5,-6.75) -- cycle;
+    \draw[ink guide,draw=black!45] (axis cs:0,0) -- (axis cs:13.6,0);
+    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!70] {0.5*x};
+    \addplot[ink guide,domain=0:13.5,samples=20,draw=black!70] {-0.5*x};
+    \addplot[ink line,domain=0:13.5,samples=180,inkred,line width=0.95pt] {-cos(deg(2*x))/3};
     \addplot[ink plot,domain=0:13.5,samples=180,black,line width=1.0pt] {0.5*x*sin(deg(x))};
-    \node[font=\scriptsize,text=black!75,above=2pt] at (axis cs:10.0,5.15) {\InkLabel{$y = +\tfrac{t}{2}$}};
-    \node[font=\scriptsize,text=black!75,below=2pt] at (axis cs:7.6,-4.05) {\InkLabel{$y = -\tfrac{t}{2}$}};
+    \node[font=\scriptsize,text=black,above=2pt] at (axis cs:10.0,5.15) {\InkLabel{$y = +\tfrac{t}{2}$}};
+    \node[font=\scriptsize,text=black,below=2pt] at (axis cs:7.6,-4.05) {\InkLabel{$y = -\tfrac{t}{2}$}};
   \end{axis}
   \node[font=\footnotesize] at (3.60,-1.05) {\InkLabel{(a) Same scale}};
 
@@ -246,38 +278,41 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     clip=false
   ]
     \path[pattern=inkgrain,pattern color=inkred] (axis cs:0,-0.33333) rectangle (axis cs:13.5,0.33333);
-    \draw[ink guide,draw=black!30] (axis cs:0,0) -- (axis cs:13.6,0);
-    \draw[ink guide,draw=inkred!80] (axis cs:0,0.33333) -- (axis cs:13.5,0.33333);
-    \draw[ink guide,draw=inkred!80] (axis cs:0,-0.33333) -- (axis cs:13.5,-0.33333);
+    \draw[ink guide,draw=black!45] (axis cs:0,0) -- (axis cs:13.6,0);
+    \draw[ink guide,draw=inkred] (axis cs:0,0.33333) -- (axis cs:13.5,0.33333);
+    \draw[ink guide,draw=inkred] (axis cs:0,-0.33333) -- (axis cs:13.5,-0.33333);
     \addplot[ink plot,domain=0:13.5,samples=180,inkred,line width=0.95pt] {-cos(deg(2*x))/3};
     \node[font=\scriptsize,text=inkred,anchor=south] at (axis cs:9.6,0.35) {\InkLabel{$|y_p|\le\tfrac{1}{3}$}};
   \end{axis}
   \node[font=\footnotesize] at (11.62,-1.05) {\InkLabel{(b) Bounded response (zoomed)}};
 \end{tikzpicture}
-\figcap{Resonance vs.\ bounded response for $y''+y=f(t)$: (a) on the same scale, resonant forcing $f=\cos t$ ($s=1$, black) grows linearly inside $\pm t/2$, while non-resonant forcing $f=\cos 2t$ ($s=0$, red) stays close to zero; (b) zooming in vertically shows $y_p=-\tfrac{1}{3}\cos 2t$ oscillating inside the constant band $|y_p|\le\tfrac{1}{3}$.}
+\figcap{(a) On the same scale, the resonant response to $\cos t$ (black) grows between the lines $y=\pm t/2$, while the response to $\cos 2t$ (red) stays near $0$. (b) Enlarged vertically, $y_p=-\tfrac{1}{3}\cos 2t$ stays in the band $|y_p|\le\tfrac{1}{3}$.}
 \end{fig}
 
-\noindent\textbf{Limits of the method.} Undetermined coefficients requires constant coefficients (not $ty''-y'+2y=\sin 3t$) and right-hand sides whose derivatives stay finite-dimensional (not $\tan t,\sec t, 1/t, t^{-1}e^t$, handled in Nagle 4.6 by variation of parameters).
+\noindent\textbf{Limits of the method.} Undetermined coefficients requires constant coefficients (it does not apply to $ty''-y'+2y=\sin 3t$) and right sides whose derivatives are combinations of finitely many functions (it does not apply to $\tan t$, $\sec t$, $1/t$, $t^{-1}e^t$; those are handled by variation of parameters, Nagle 4.6).
 
 \begin{shortcuts}
-  \ii \textbf{Exponential forcing $Ce^{rt}$ ($p(r)\neq 0$):} $y_p=\bigl(C/p(r)\bigr)e^{rt}$ directly by (W1)!
-  \ii \textbf{Sine/cosine via complex exponential ($p(i\beta)\neq 0$):} For $C\sin\beta t$, take $\operatorname{Im}z$ where $z=\frac{C}{p(i\beta)}e^{i\beta t}$ (for $\cos$, take $\operatorname{Re}z$) by (W3)! Example~3: $p(i)=1+3i\implies z=\frac{e^{it}}{1+3i}=\frac{1-3i}{10}(\cos t+i\sin t)\implies y_p=\frac{\sin t-3\cos t}{10}$.
-  \ii \textbf{Resonant trig ($p(i\beta)=0\neq p'(i\beta)$):} Take $\operatorname{Re}z$ or $\operatorname{Im}z$ of $z=\frac{C}{p'(i\beta)}te^{i\beta t}$ using the Key Product Formula with $q=t$.
+  \ii \textbf{Exponential forcing $Ce^{rt}$ ($p(r)\neq 0$):} $y_p=\bigl(C/p(r)\bigr)e^{rt}$ directly by (\ilink{fact-W1}{W1}).
+  \ii \textbf{Sine/cosine via complex exponential ($p(i\beta)\neq 0$):} For $C\sin\beta t$, take $\operatorname{Im}z$ where $z=\frac{C}{p(i\beta)}e^{i\beta t}$ (for $\cos$, take $\operatorname{Re}z$) by (\ilink{fact-W3}{W3}). For the \ilink{ex-uc-sin}{sine example}: $p(i)=1+3i$, so
+  \[
+    z=\frac{e^{it}}{1+3i}=\frac{1-3i}{10}(\cos t+i\sin t),\qquad y_p=\operatorname{Im}z=\frac{\sin t-3\cos t}{10}.
+  \]
+  \ii \textbf{Resonant trig ($p(i\beta)=0\neq p'(i\beta)$):} Take $\operatorname{Re}z$ or $\operatorname{Im}z$ of $z=\frac{C}{p'(i\beta)}te^{i\beta t}$, using the \ilink{prop-key-formula}{key product formula} with $q=t$.
   \ii \textbf{Simple root exponential ($p(r)=0\neq p'(r)$):} $y_p=\frac{C}{p'(r)}te^{rt}$.
-  \ii \textbf{Double root exponential ($p(r)=p'(r)=0$):} $L[qe^{rt}]=aq''e^{rt}=Ce^{rt}$, so integrate twice.
-  \ii \textbf{Powers of $\sin t, \cos t$:} Linearize with identities first: $\sin^2 t=\frac12-\frac12\cos 2t$, $\cos^3 t=\frac34\cos t+\frac14\cos 3t$. Also $4x\sin^2 x+4x\cos^2 x=4x$.
+  \ii \textbf{Double root exponential ($p(r)=p'(r)=0$):} $L[qe^{rt}]=aq''e^{rt}=Ce^{rt}$, so integrate twice: $y_p=\frac{C}{2a}t^2e^{rt}$.
+  \ii \textbf{Powers of $\sin t, \cos t$:} Rewrite with identities first: $\sin^2 t=\frac12-\frac12\cos 2t$ (from $\cos 2t=1-2\sin^2t$), $\cos^3 t=\frac34\cos t+\frac14\cos 3t$ (from $\cos 3t=\cos 2t\cos t-\sin 2t\sin t=4\cos^3t-3\cos t$). Also $4x\sin^2 x+4x\cos^2 x=4x$.
   \ii \textbf{Hyperbolic functions:} Rewrite $\cosh t=\frac12(e^t+e^{-t})$, $\sinh t=\frac12(e^t-e^{-t})$ as exponentials.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{Never omit lower powers in polynomials:} Guessing $At$ for $y''+3y'+2y=3t$ fails (Ex.~1).
-  \ii \textbf{Always pair $\cos\beta t$ AND $\sin\beta t$:} $A\sin t$ alone fails Ex.~3.
-  \ii \textbf{Do \emph{not} omit $t^s$, and do \emph{not} add extra factors of $t$:} $Ate^{3t}$ fails when $p(3)=20\neq 0$; and for $2$nd-order equations a complex root is always simple ($s\le 1$, never $t^2\cos\beta t$).
+  \ii \textbf{Never omit lower powers in polynomials:} Guessing $At$ for $y''+3y'+2y=3t$ fails (\ilink{ex-uc-poly}{polynomial example}).
+  \ii \textbf{Always pair $\cos\beta t$ and $\sin\beta t$:} $A\sin t$ alone fails in the \ilink{ex-uc-sin}{sine example}.
+  \ii \textbf{Do \emph{not} omit $t^s$, and do \emph{not} add extra factors of $t$:} $Ate^{3t}$ fails for $y''+3y'+2y=10e^{3t}$ because $p(3)=20\neq 0$; and for second-order equations a complex root is always simple ($s\le 1$, never $t^2\cos\beta t$).
 \end{trapbox}
 
 \subsection{Superposition and the general solution (Nagle 4.5)}
 \begin{qbox}
-  We already know $y_1=\frac32 t-\frac94$ solves $y''+3y'+2y=3t$ and $y_2=\frac12 e^{3t}$ solves $y''+3y'+2y=10e^{3t}$. How can we immediately solve $y''+3y'+2y=-9t+20e^{3t}$ without recomputing anything, and then describe \emph{every} solution?
+  We already know $y_1=\frac32 t-\frac94$ solves $y''+3y'+2y=3t$ and $y_2=\frac12 e^{3t}$ solves $y''+3y'+2y=10e^{3t}$. How can we solve $y''+3y'+2y=-9t+20e^{3t}$ without recomputing anything, and then describe \emph{every} solution?
 \end{qbox}
 
 \begin{theorem*}[Superposition principle (Nagle 4.5, Thm.~3)]\target{thm-nagle-4-3}
@@ -287,10 +322,13 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
   \]
 \end{theorem*}
 \begin{proof}
-  $L$ is linear (W1): $L[k_1y_1+k_2y_2]=k_1L[y_1]+k_2L[y_2]=k_1f_1+k_2f_2$. \qedhere
+  $L$ is linear (\ilink{fact-W1}{W1}), so
+  \[
+    L[k_1y_1+k_2y_2]=k_1L[y_1]+k_2L[y_2]=k_1f_1+k_2f_2. \qedhere
+  \]
 \end{proof}
 
-\noindent\textbf{The question answered (part 1).} Since $-9t+20e^{3t}=-3(3t)+2(10e^{3t})$, $y_p=-3y_1+2y_2=-\frac92 t+\frac{27}{4}+e^{3t}$ solves the equation immediately. (Compare Nagle 4.5 Ex.~1: $y_1+y_2$ solves $3t+10e^{3t}$.)
+\revisit[ (part 1)] Since $-9t+20e^{3t}=-3(3t)+2(10e^{3t})$, the function $y_p=-3y_1+2y_2=-\frac92 t+\frac{27}{4}+e^{3t}$ solves the equation. (Nagle 4.5 Ex.~1 is the case $k_1=k_2=1$: $y_1+y_2$ solves $L[y]=3t+10e^{3t}$.)
 
 \begin{theorem*}[Existence and uniqueness, nonhomogeneous case (Nagle 4.5, Thm.~4)]\target{thm-nagle-4-4}
   Let $y_p$ solve $L[y]=f$ on an interval $I$ containing $t_0$, and let $\{y_1,y_2\}$ be linearly independent solutions of $L[y]=0$. For any $Y_0,Y_1\in\RR$, the IVP
@@ -300,39 +338,54 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
   has a unique solution on $I$, given by $y=y_p+c_1y_1+c_2y_2$ for unique constants $c_1,c_2$.
 \end{theorem*}
 \begin{ideabox}
-  Just as the solutions of $A\vv x=\vv b$ equal one particular vector plus the null space $\vv p+\vv v_h$ (W5), the difference $y-\tilde y$ of any two solutions of $L[y]=f$ solves $L[u]=0$. Hence $y_p+c_1y_1+c_2y_2$ captures \emph{every} solution, with $c_1,c_2$ solved from the invertible Wronskian system at $t_0$.
+  The solutions of $A\vv x=\vv b$ are one particular vector plus the null space, $\vv p+\vv v_h$ (\ilink{fact-W5}{W5}). In the same way, the difference $y-\tilde y$ of any two solutions of $L[y]=f$ solves $L[u]=0$. Hence $y_p+c_1y_1+c_2y_2$ gives \emph{every} solution, with $c_1,c_2$ found from a $2\times 2$ system whose determinant is the Wronskian at $t_0$.
 \end{ideabox}
 \Needspace{8\baselineskip}
 \begin{proof}
   \begin{steps}
-    \ii \textbf{Solves the ODE:} By superposition, $L[y_p+c_1y_1+c_2y_2]=f+0+0=f$.
-    \ii \textbf{Matches the IVP:} Setting $y(t_0)=Y_0, y'(t_0)=Y_1$ gives the $2\times 2$ system in $(c_1,c_2)$:
+    \ii \textbf{It solves the equation.} By superposition, $L[y_p+c_1y_1+c_2y_2]=f+0+0=f$.
+    \ii \textbf{It matches the initial conditions.} Setting $y(t_0)=Y_0, y'(t_0)=Y_1$ gives the $2\times 2$ system in $(c_1,c_2)$:
     \[
       c_1y_1(t_0)+c_2y_2(t_0) = Y_0-y_p(t_0),\qquad
       c_1y_1'(t_0)+c_2y_2'(t_0) = Y_1-y_p'(t_0).
     \]
-    Its determinant $W[y_1,y_2](t_0)\neq 0$ (W1), yielding unique constants
+    Its determinant is $W[y_1,y_2](t_0)\neq 0$ (\ilink{fact-W1}{W1}), so the constants are unique:
     \[
       c_1 = \frac{(Y_0-y_p(t_0))y_2'(t_0)-(Y_1-y_p'(t_0))y_2(t_0)}{W(t_0)},\qquad
       c_2 = \frac{(Y_1-y_p'(t_0))y_1(t_0)-(Y_0-y_p(t_0))y_1'(t_0)}{W(t_0)}.
     \]
-    \ii \textbf{Uniqueness:} If $\tilde y$ is another IVP solution, $u=y-\tilde y$ obeys $L[u]=0$ with $u(t_0)=u'(t_0)=0$, so $u\equiv 0$ by Nagle Thm.~1 (W1). \qedhere
+    \ii \textbf{Uniqueness.} If $\tilde y$ is another solution of the IVP, $u=y-\tilde y$ obeys $L[u]=0$ with $u(t_0)=u'(t_0)=0$, so $u\equiv 0$ by \xlink{math54}{2026-11-02-symmetric-svd-second-order}{thm-nagle-4-1}{Nagle Thm.~1} (\ilink{fact-W1}{W1}). \qedhere
   \end{steps}
 \end{proof}
 
-\noindent\textbf{The question answered (part 2).} With $r^2+3r+2=(r+1)(r+2)$, all solutions are
+\revisit[ (part 2)] With $r^2+3r+2=(r+1)(r+2)$, the homogeneous solutions are $c_1e^{-t}+c_2e^{-2t}$, and by \ilink{thm-nagle-4-4}{Thm.~4} all solutions are
 \[
   y = -\frac92 t + \frac{27}{4} + e^{3t} + c_1e^{-t} + c_2e^{-2t}.
 \]
 
-\begin{example*}[Worked examples 2--4 (Nagle): initial conditions, transient vs.\ steady state, combining terms]
+\begin{howto}{How to solve an IVP $L[y]=f$, $y(t_0)=Y_0$, $y'(t_0)=Y_1$}\target{howto-ivp}
   \begin{steps}
-    \ii \textbf{Ex.~2 (IVP):} Solve $y''-y=2-t^2$ with $y(0)=1, y'(0)=0$. Try $y_p=t^2$ (indeed $2-t^2$). Homogeneous part $c_1e^t+c_2e^{-t}$ gives $y(0)=c_1+c_2=1$, $y'(0)=c_1-c_2=0\implies c_1=c_2=\frac12$, so $y=t^2+\cosh t$.
-    \ii \textbf{Ex.~3 (forced, damped spring):} Solve $y''+2y'+2y=5\sin t+5\cos t$, $y(0)=1, y'(0)=2$ (W6). Roots of $r^2+2r+2$ are $-1\pm i\implies y_h=e^{-t}(c_1\cos t+c_2\sin t)$. Trying $y_p=A\sin t+B\cos t$ gives $(A-2B)\sin t+(2A+B)\cos t=5\sin t+5\cos t\implies A=3,B=-1$. Apply IVP to the \emph{full} sum $y=e^{-t}(c_1\cos t+c_2\sin t)+3\sin t-\cos t$: $y(0)=c_1-1=1\implies c_1=2$, $y'(0)=-c_1+c_2+3=2\implies c_2=1$, giving
+    \ii \textbf{Homogeneous solutions.} Find the roots of $p$ and write $y_h=c_1y_1+c_2y_2$ (\ilink{fact-W2}{W2}).
+    \ii \textbf{Particular solution.} Find $y_p$ by \ilink{howto-uc}{undetermined coefficients}, using \ilink{thm-nagle-4-3}{superposition} for a sum of terms.
+    \ii \textbf{General solution.} $y=y_p+c_1y_1+c_2y_2$.
+    \ii \textbf{Initial conditions on the full sum.} Differentiate the whole $y$, set $t=t_0$ in $y$ and $y'$, and solve the $2\times 2$ system for $c_1,c_2$.
+  \end{steps}
+  \textbf{Edge cases.} If $t_0\neq 0$, evaluate every function at $t_0$ (for example $e^{-t_0}$), not at $0$. If $f$ is given by different formulas on different intervals, solve on the first interval, then use the values of $y$ and $y'$ at the junction as the initial conditions on the next interval, since a solution and its derivative are continuous there.
+\end{howto}
+
+\begin{example*}[An IVP with a polynomial right side (Nagle 4.5)]\target{ex-ivp-poly}
+  Solve $y''-y=2-t^2$ with $y(0)=1$, $y'(0)=0$. Try $y_p=At^2+Bt+C$: $y_p''-y_p=-At^2-Bt+(2A-C)=2-t^2$ gives $A=1$, $B=0$, $C=0$, so $y_p=t^2$. The homogeneous part is $c_1e^t+c_2e^{-t}$. Then $y(0)=c_1+c_2=1$ and $y'(0)=c_1-c_2=0$, so $c_1=c_2=\frac12$, and $y=t^2+\cosh t$.
+\end{example*}
+
+\begin{example*}[A forced, damped spring: transient and steady state (Nagle 4.5)]\target{ex-ivp-spring}
+  Solve $y''+2y'+2y=5\sin t+5\cos t$, $y(0)=1$, $y'(0)=2$ (a spring as in (\ilink{fact-W6}{W6})).
+  \begin{steps}
+    \ii The roots of $r^2+2r+2$ are $-1\pm i$, so $y_h=e^{-t}(c_1\cos t+c_2\sin t)$.
+    \ii Trying $y_p=A\sin t+B\cos t$ gives $(A-2B)\sin t+(2A+B)\cos t=5\sin t+5\cos t$, so $A=3$, $B=-1$.
+    \ii Apply the initial conditions to the \emph{full} sum $y=e^{-t}(c_1\cos t+c_2\sin t)+3\sin t-\cos t$: $y(0)=c_1-1=1$ gives $c_1=2$, and $y'(0)=-c_1+c_2+3=2$ gives $c_2=1$. So
     \[
       y = 2e^{-t}\cos t + e^{-t}\sin t + 3\sin t - \cos t.
     \]
-    \ii \textbf{Ex.~4 (one guess covers shared exponents):} Solve $y''-y=8te^t+2e^t$. Simple root $r=1\implies s=1$; $t(A_1t+A_0)e^t$ already covers $tA_0e^t$. Applying Prop.\ Key Formula ($q=A_1t^2+A_0t$, $p(1)=0, p'(1)=2, a=1$) gives $L[y_p]=(4A_1t+2A_1+2A_0)e^t\implies A_1=2, A_0=-1\implies y_p=(2t^2-t)e^t$.
   \end{steps}
 \end{example*}
 
@@ -353,11 +406,9 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     legend style={at={(0.5,1.06)},anchor=south,legend columns=3,font=\scriptsize,draw=none,fill=none,legend cell align=left,/tikz/every even column/.append style={column sep=12pt}},
     clip=false
   ]
-    % Quiet gray stipple marking the initial transient window, flush with ymin/ymax
     \path[pattern=inkgrain,pattern color=inkslate] (axis cs:0,-3.8) rectangle (axis cs:3.6,3.9);
-    \draw[ink guide,draw=black!45] (axis cs:3.6,-3.8) -- (axis cs:3.6,3.9);
-    \node[font=\scriptsize\itshape,text=black!65] at (axis cs:1.80,-2.30) {\InkLabel{transient}};
-    % Hairline zero axis
+    \draw[ink guide,draw=black!60] (axis cs:3.6,-3.8) -- (axis cs:3.6,3.9);
+    \node[font=\scriptsize\itshape,text=black] at (axis cs:1.80,-2.30) {\InkLabel{transient}};
     \draw[black!22,line width=0.35pt] (axis cs:0,0) -- (axis cs:12.6,0);
     \addplot[ink plot,domain=0:12.6,samples=180,black,line width=0.85pt] {exp(-x)*(2*cos(deg(x))+sin(deg(x))) + 3*sin(deg(x)) - cos(deg(x))};
     \addlegendentry{total \InkLabel{$y = y_h + y_p$}}
@@ -365,14 +416,30 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
     \addlegendentry{steady state \InkLabel{$y_p = 3\sin t - \cos t$}}
     \addplot[ink plot,domain=0:12.6,samples=160,inkred,line width=0.9pt] {exp(-x)*(2*cos(deg(x))+sin(deg(x)))};
     \addlegendentry{transient \InkLabel{$y_h = e^{-t}(2\cos t + \sin t)$}}
-    % Mark t = 0 values cleanly on the y-axis
     \fill[inkred] (axis cs:0,2) circle (1.5pt);
     \fill[black] (axis cs:0,1) circle (1.5pt);
     \draw[ink line,inkblue,fill=white,line width=0.7pt] (axis cs:0,-1) circle (1.5pt);
   \end{axis}
 \end{tikzpicture}
-\figcap{Example~3: the transient $y_h=e^{-t}(2\cos t+\sin t)$ (solid red) decays to $0$ during the shaded window, leaving $y$ (solid black) tracking the steady state $y_p=3\sin t-\cos t$ (dotted blue).}
+\figcap{The forced, damped spring: the transient $y_h$ (red) decays during the shaded interval, after which $y$ (black) follows the steady state $y_p$ (dotted blue).}
 \end{fig}
+
+\begin{example*}[One guess covers terms with the same exponent (Nagle 4.5)]\target{ex-shared-exponent}
+  Solve $y''-y=8te^t+2e^t$ for a particular solution. Both terms have $r=1$, a simple root, so $s=1$, and the highest power is $m=1$: one form $t(A_1t+A_0)e^t$ covers both terms, including $A_0te^t$ for $2e^t$. The \ilink{prop-key-formula}{key product formula} with $q=A_1t^2+A_0t$, $p(1)=0$, $p'(1)=2$, $a=1$ gives
+  \[
+    L[y_p]=(q''+2q')e^t=(4A_1t+2A_1+2A_0)e^t,
+  \]
+  so $4A_1=8$ and $2A_1+2A_0=2$, giving $A_1=2$, $A_0=-1$, and $y_p=(2t^2-t)e^t$.
+\end{example*}
+
+\begin{example*}[A right side given by two formulas]\target{ex-piecewise}
+  Solve $y''+y=f(t)$, $y(0)=0$, $y'(0)=0$, where $f(t)=1$ for $0\le t<\pi$ and $f(t)=0$ for $t\ge\pi$.
+  \begin{steps}
+    \ii On $[0,\pi]$: $y_p=1$ and $y=1+c_1\cos t+c_2\sin t$. From $y(0)=1+c_1=0$ and $y'(0)=c_2=0$, $y=1-\cos t$.
+    \ii At the junction $t=\pi$: $y(\pi)=1-\cos\pi=2$ and $y'(\pi)=\sin\pi=0$.
+    \ii On $[\pi,\infty)$: $y=c_1\cos t+c_2\sin t$ with $y(\pi)=-c_1=2$ and $y'(\pi)=-c_2=0$, so $y=-2\cos t$. The mass oscillates with amplitude $2$ after the force is switched off.
+  \end{steps}
+\end{example*}
 
 \begin{theorem*}[Method of undetermined coefficients, revisited (Nagle 4.5)]\target{name-undetermined-revisited}
   For $L[y]=P_m(t)e^{rt}$ ($\deg P_m=m$), use $y_p=t^s(A_m t^m+\dots+A_0)e^{rt}$. For $L[y]=P_m(t)e^{\alpha t}\cos\beta t+Q_n(t)e^{\alpha t}\sin\beta t$ ($\beta\neq 0$), use
@@ -382,33 +449,87 @@ To hit target degree $m$: if $p(r)\neq 0$, we need $n=m$; if $p(r)=0\neq p'(r)$ 
   with $s=1$ if $\alpha+i\beta$ is a root of $p$ and $s=0$ otherwise.
 \end{theorem*}
 \begin{proof}
-  Apply Thm.~Nagle 4.4 to each monomial $t^j e^{rt}$ ($j\le m$) or $t^j e^{\alpha t}\cos\beta t, t^j e^{\alpha t}\sin\beta t$ ($j\le k$), observe every lower-degree template embeds into the degree-$m$ (or degree-$k$) template by setting higher coefficients to $0$, and sum via Superposition (Thm.~3)! \qedhere
+  \begin{steps}
+    \ii Apply the \ilink{name-undetermined-coefficients}{method of undetermined coefficients (Nagle 4.4)} to each term $t^j e^{rt}$ ($j\le m$), or $t^j e^{\alpha t}\cos\beta t$ and $t^j e^{\alpha t}\sin\beta t$ ($j\le k$). Each has a particular solution of the stated form with degree $j$ in place of $m$ or $k$.
+    \ii A form of degree $j$ is a form of degree $m$ (or $k$) with the higher coefficients equal to $0$.
+    \ii By \ilink{thm-nagle-4-3}{superposition (Thm.~3)}, the sum of these particular solutions, weighted by the coefficients of $P_m$ and $Q_n$, solves the equation, and it has the stated form. \qedhere
+  \end{steps}
 \end{proof}
 
-\begin{example*}[Worked examples 5--6 (Nagle): full forms \& higher order]
-  \begin{steps}
-    \ii \textbf{Ex.~5 ($y''+2y'+2y=5e^{-t}\sin t+5t^3e^{-t}\cos t$):} Roots $-1\pm i\implies \alpha+i\beta=-1+i$ is a root ($s=1$), $k=\max(0,3)=3$:
-    \[
-      y_p = t(A_3t^3+A_2t^2+A_1t+A_0)e^{-t}\cos t + t(B_3t^3+B_2t^2+B_1t+B_0)e^{-t}\sin t.
-    \]
-    \ii \textbf{Ex.~6 (higher order, Nagle Ch.~6, cited):} $y'''+2y''+y'=5e^{-t}\sin t+3+7te^{-t}$ has $p(r)=r(r+1)^2$: $r=0$ is simple ($3\mapsto Ct$), $r=-1$ is double ($7te^{-t}\mapsto t^2(Dt+E)e^{-t}$), $-1+i$ is not a root ($\mapsto Ae^{-t}\cos t+Be^{-t}\sin t$):
-    \[
-      y_p = Ae^{-t}\cos t+Be^{-t}\sin t + Ct + t^2(Dt+E)e^{-t}.
-    \]
-  \end{steps}
+\begin{example*}[Full forms when the sine and cosine polynomials differ (Nagle 4.5)]\target{ex-full-form}
+  For $y''+2y'+2y=5e^{-t}\sin t+5t^3e^{-t}\cos t$, the roots are $-1\pm i$, so $\alpha+i\beta=-1+i$ is a root ($s=1$), and $k=\max(0,3)=3$:
+  \[
+    y_p = t(A_3t^3+A_2t^2+A_1t+A_0)e^{-t}\cos t + t(B_3t^3+B_2t^2+B_1t+B_0)e^{-t}\sin t.
+  \]
+\end{example*}
+
+\begin{example*}[A third-order equation (Nagle Ch.~6)]\target{ex-third-order}
+  For constant-coefficient equations of any order, the same rule holds with $s$ equal to the multiplicity of $r$ (or $\alpha+i\beta$) as a root of the auxiliary polynomial (\ilink{prop-uc-any-order}{Undetermined coefficients for any order}, proved in Section~3). For $y'''+2y''+y'=5e^{-t}\sin t+3+7te^{-t}$, $p(r)=r(r+1)^2$:
+  \begin{itemize}
+    \ii $r=0$ is a simple root, so the constant $3$ needs $Ct$;
+    \ii $r=-1$ is a double root, so $7te^{-t}$ needs $t^2(Dt+E)e^{-t}$;
+    \ii $-1+i$ is not a root, so $5e^{-t}\sin t$ needs $Ae^{-t}\cos t+Be^{-t}\sin t$.
+  \end{itemize}
+  Hence
+  \[
+    y_p = Ae^{-t}\cos t+Be^{-t}\sin t + Ct + t^2(Dt+E)e^{-t}.
+  \]
 \end{example*}
 
 \begin{shortcuts}
-  \ii \textbf{Linear combinations of solved equations:} Use Superposition (Thm.~3) without re-differentiating.
-  \ii \textbf{Share one form per exponent/frequency:} $8te^t+2e^t$ needs only ONE degree-$1$ form times $t^s$.
-  \ii \textbf{Substitution check:} Always verify $L[y_p]=f$ AND match $y(t_0), y'(t_0)$ on the FINAL sum $y_p+y_h$.
+  \ii \textbf{Linear combinations of solved equations:} Use \ilink{thm-nagle-4-3}{superposition (Thm.~3)} without differentiating again.
+  \ii \textbf{One form per exponent or frequency:} $8te^t+2e^t$ needs only one degree-$1$ form times $t^s$.
+  \ii \textbf{Substitution check:} Verify $L[y_p]=f$, and match $y(t_0), y'(t_0)$ using the final sum $y_p+y_h$.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{\emph{Never} impose $y(t_0), y'(t_0)$ on $y_h$ alone:} Ignoring $y_p$ in Ex.~3 falsely gives $c_1=1, c_2=3$ instead of $c_1=2, c_2=1$.
-  \ii \textbf{Superposition requires the \emph{same} operator $L$ on the left:} Adding $y''+y=1$ to $y''+2y=1$ does not solve $y''+y=2$.
-  \ii \textbf{Excluded equations:} Non-constant coefficients ($y''+ty=1$) or non-finite-family inputs ($t^{-1}e^t,\ \tan t$) are \emph{not} solved by this method.
+  \ii \textbf{\emph{Never} impose $y(t_0), y'(t_0)$ on $y_h$ alone:} ignoring $y_p$ in the \ilink{ex-ivp-spring}{forced spring example} gives $c_1=1$, $c_2=3$ instead of $c_1=2$, $c_2=1$.
+  \ii \textbf{Superposition requires the \emph{same} operator $L$ on the left:} adding solutions of $y''+y=1$ and $y''+2y=1$ does not give a solution of $y''+y=2$.
+  \ii \textbf{Excluded equations:} non-constant coefficients ($y''+ty=1$) or right sides outside the finite families ($t^{-1}e^t,\ \tan t$) are \emph{not} solved by this method.
+  \ii \textbf{A right side given by two formulas:} the solution on the second interval starts from the values $y$ and $y'$ at the junction, not from the original initial conditions.
 \end{trapbox}
+
+\section{Proofs of the facts used}\target{sec-proofs}
+
+\subsection{Undetermined coefficients for equations of any order}\target{proof-uc-any-order}
+Let $L[y]=a_ny^{(n)}+\dots+a_1y'+a_0y$ with real constants $a_j$, $a_n\neq 0$, and $p(r)=a_nr^n+\dots+a_1r+a_0$. A number $r$ is a root of $p$ of \textbf{multiplicity} $s$ if $p(x)=(x-r)^sg(x)$ for a polynomial $g$ with $g(r)\neq 0$ ($s=0$ means $p(r)\neq 0$).
+
+\begin{proposition*}[Undetermined coefficients for any order]\target{prop-uc-any-order}
+  \begin{enumerate}
+    \ii[(a)] For every polynomial $q$ and every $r\in\CC$,
+    \[
+      L[qe^{rt}]=\Bigl(\sum_{k=0}^n\frac{p^{(k)}(r)}{k!}\,q^{(k)}\Bigr)e^{rt}.
+    \]
+    \ii[(b)] If $r$ is a root of $p$ of multiplicity $s$, then $p(r)=p'(r)=\dots=p^{(s-1)}(r)=0$ and $p^{(s)}(r)\neq 0$.
+    \ii[(c)] If $r$ is a root of multiplicity $s$, then $L[y]=Ct^me^{rt}$ has a solution $y_p=t^s(A_mt^m+\dots+A_0)e^{rt}$. This also holds for complex $r=\alpha+i\beta$, and then the real and imaginary parts give solutions of the cosine and sine forms with the same factor $t^s$.
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+  For $n=2$ part (a) is the \ilink{prop-key-formula}{key product formula}, since $p''(r)/2=a$. In general, differentiating $qe^{rt}$ $j$ times spreads the derivatives between $q$ and $e^{rt}$ with binomial coefficients, and regrouping by the derivative of $q$ produces exactly the Taylor coefficients $p^{(k)}(r)/k!$ of $p$ at $r$. A root of multiplicity $s$ makes the first $s$ of them $0$, so $L$ acts on $q$ only through $q^{(s)}$, and $s$ integrations produce the factor $t^s$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Derivatives of a product with $e^{rt}$.} We show by induction on $j$ that
+    \[
+      \frac{d^j}{dt^j}\bigl(qe^{rt}\bigr)=\sum_{k=0}^j\binom jk r^{j-k}q^{(k)}e^{rt}.
+    \] For $j=0$ both sides are $qe^{rt}$. If it holds for $j$, differentiate each term: $\bigl(q^{(k)}e^{rt}\bigr)'=\bigl(q^{(k+1)}+rq^{(k)}\bigr)e^{rt}$. The coefficient of $q^{(k)}e^{rt}$ in the result is $\binom j{k-1}r^{j-k+1}+r\binom jk r^{j-k}=\binom{j+1}k r^{j+1-k}$, by Pascal's rule.
+    \ii \textbf{Part (a).} Summing with the coefficients $a_j$ and collecting the terms with $q^{(k)}$,
+    \[
+      L[qe^{rt}]=\sum_{k=0}^n q^{(k)}\Bigl(\sum_{j\ge k}a_j\binom jk r^{j-k}\Bigr)e^{rt}.
+    \]
+    The $k$th derivative of $r^j$ is $\frac{j!}{(j-k)!}r^{j-k}$, which is $k!\binom jk r^{j-k}$, so the inner sum is $p^{(k)}(r)/k!$.
+    \ii \textbf{Part (b).} Write $p(x)=(x-r)^sg(x)$. The induction of step~1 works for any product $uv$ in place of $qe^{rt}$ and gives the product rule for higher derivatives, $(uv)^{(k)}=\sum_i\binom ki u^{(i)}v^{(k-i)}$. With $u=(x-r)^s$ and $v=g$, evaluated at $x=r$:
+    \[
+      p^{(k)}(r)=\sum_{i=0}^k\binom ki\,u^{(i)}(r)\,g^{(k-i)}(r).
+    \] The $i$th derivative of $(x-r)^s$ at $x=r$ is $0$ for $i\neq s$ and $s!$ for $i=s$. So $p^{(k)}(r)=0$ for $k<s$, and $p^{(s)}(r)=s!\,g(r)\neq 0$.
+    \ii \textbf{Part (c), the polynomial.} By (a) and (b), $L[qe^{rt}]=N(q^{(s)})e^{rt}$, where
+    \[
+      N(u)=\sum_{k=s}^n\frac{p^{(k)}(r)}{k!}u^{(k-s)}.
+    \] On the polynomials of degree $\le m$ with basis $1,t,\dots,t^m$, $N(t^i)=\frac{p^{(s)}(r)}{s!}t^i+(\text{lower powers})$, so $N$ has a triangular matrix with nonzero diagonal entries and is invertible (\ilink{fact-W4}{W4}, which holds over $\CC$ as well). Take $u$ of degree $\le m$ with $N(u)=Ct^m$.
+    \ii \textbf{Part (c), the factor $t^s$.} Let $q$ be $u$ integrated $s$ times, each time from $0$ to $t$. Then $q^{(s)}=u$, so $L[qe^{rt}]=Ct^me^{rt}$, and $q(0)=q'(0)=\dots=q^{(s-1)}(0)=0$. Each integration from $0$ of a polynomial produces a polynomial with no constant term, so $q=t^s\cdot(\text{polynomial of degree}\le m)$.
+    \ii \textbf{Sines and cosines.} For $r=\alpha+i\beta$, step~5 gives a complex $q$. Since $Ct^me^{rt}=Ct^me^{\alpha t}\cos\beta t+i\,Ct^me^{\alpha t}\sin\beta t$ and $L$ has real coefficients, the real and imaginary parts of $qe^{rt}$ solve the equations with the cosine and the sine right sides (\ilink{fact-W3}{W3}, whose argument works for any order), and both have the form $t^s\bigl(P_1(t)\cos\beta t+P_2(t)\sin\beta t\bigr)e^{\alpha t}$. \qedhere
+  \end{steps}
+\end{proof}
 
 \section{Homework this week}
 \begin{itemize}

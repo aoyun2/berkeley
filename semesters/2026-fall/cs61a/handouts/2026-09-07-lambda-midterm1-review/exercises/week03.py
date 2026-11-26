@@ -6,9 +6,11 @@ def curry_binary(f):
     raise NotImplementedError("TODO: implement curry_binary")
 
 
-def compose_n(f, n):
-    """Return f applied n times for integer n >= 0 (n=0 is the identity function)."""
-    raise NotImplementedError("TODO: implement compose_n")
+def repeat_until(f, stop):
+    """Return a one-argument function h such that h(x) is the first value v in the
+    sequence x, f(x), f(f(x)), ... for which stop(v) is true. If stop(x) is already
+    true, h(x) is x itself (f is applied zero times). Assume some value satisfies stop."""
+    raise NotImplementedError("TODO: implement repeat_until")
 
 
 def make_alternator(f, g):

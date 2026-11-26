@@ -13,9 +13,9 @@
 
 \section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Row-operation invariance and uniqueness of RREF (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.2 Thm.~1}):} Elementary row operations preserve the solution set of a linear system, and every matrix is row equivalent to a unique reduced echelon matrix.
-  \ii \textbf{Existence and Uniqueness Theorem (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-2}{Lay 1.2 Thm.~2}):} A linear system is consistent if and only if an echelon form of its augmented matrix has no row $[\,0\ \cdots\ 0\ \ b\,]$ with $b\ne0$ (i.e.\ the rightmost column is not a pivot column). A consistent system has a unique solution when there are no free variables, and infinitely many solutions when there is at least one free variable.
-  \ii \textbf{Pivot counting:} Basic variables correspond to pivot columns of the coefficient matrix; the remaining variables are free. Each row and each column of a matrix contains at most one pivot position.
+  \ii \target{fact-w1}\textbf{Row-operation invariance and uniqueness of RREF (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.2 Thm.~1}):} Elementary row operations preserve the solution set of a linear system, and every matrix is row equivalent to a unique reduced echelon matrix.
+  \ii \target{fact-w2}\textbf{Existence and Uniqueness Theorem (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-2}{Lay 1.2 Thm.~2}):} A linear system is consistent if and only if an echelon form of its augmented matrix has no row $[\,0\ \cdots\ 0\ \ b\,]$ with $b\ne0$ (i.e.\ the rightmost column is not a pivot column). A consistent system has a unique solution when there are no free variables, and infinitely many solutions when there is at least one free variable.
+  \ii \target{fact-w3}\textbf{Pivot counting (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{cor-pivot-counts}{Pivot counts and the right-hand side}):} Basic variables correspond to pivot columns of the coefficient matrix; the remaining variables are free. Each row and each column of a matrix contains at most one pivot position.
 \end{enumerate}
 
 \section{This week}
@@ -57,6 +57,15 @@
   Each property follows immediately from the corresponding property of real numbers applied entry by entry.
 \end{itemize}
 
+\begin{example*}[Computing with vectors entry by entry]
+For $\vv u=(1,2)$ and $\vv v=(3,-1)$ in $\RR^2$,
+\[
+  \vv u+\vv v=(1+3,\ 2-1)=(4,1),\qquad
+  \vv u-2\vv v=(1-6,\ 2+2)=(-5,4).
+\]
+To draw $\vv u+\vv v$, place the tail of $\vv v$ at the head of $\vv u$. Equivalently, by the \textbf{parallelogram rule}, $\vv u+\vv v$ is the diagonal from $\vv 0$ of the parallelogram with sides $\vv u$ and $\vv v$ (panel (a) below). The vector $-2\vv v=(-6,2)$ points opposite to $\vv v$ and is twice as long.
+\end{example*}
+
 \begin{fig}
 \begin{tikzpicture}
   % Left panel: Parallelogram rule for vector addition
@@ -93,10 +102,10 @@
 
     \path[pattern=inkgrain,pattern color=inkblue] (O) -- (V13) -- (B) -- (V22) -- cycle;
     \foreach \i in {0,1,2,3} {
-      \InkStroke[black!22,line width=0.35pt]{($(O)+\i*(1.12,0.18)$) -- ($(O)+\i*(1.12,0.18)+2*(0.46,0.68)$)}
+      \InkStroke[black!50,line width=0.45pt]{($(O)+\i*(1.12,0.18)$) -- ($(O)+\i*(1.12,0.18)+2*(0.46,0.68)$)}
     }
     \foreach \j in {0,1,2} {
-      \InkStroke[black!22,line width=0.35pt]{($(O)+\j*(0.46,0.68)$) -- ($(O)+3*(1.12,0.18)+\j*(0.46,0.68)$)}
+      \InkStroke[black!50,line width=0.45pt]{($(O)+\j*(0.46,0.68)$) -- ($(O)+3*(1.12,0.18)+\j*(0.46,0.68)$)}
     }
 
     \draw[ink guide,draw=inkslate] (V13) -- (B);
@@ -120,10 +129,10 @@
     \node[font=\footnotesize] at (2.65,-0.70) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Vector addition $\vv u+\vv v$ by the parallelogram rule. (b) Non-collinear $\vv v_1,\vv v_2$ form a skewed grid where $\vv b=3\vv v_1+2\vv v_2$ sits at coordinates $(3,2)$.}
+\figcap{(a) The sum $\vv u+\vv v$ is the diagonal of the parallelogram with sides $\vv u$ and $\vv v$. (b) The grid of combinations of $\vv v_1,\vv v_2$; reaching $\vv b$ takes $3$ steps along $\vv v_1$ and $2$ along $\vv v_2$, so $\vv b=3\vv v_1+2\vv v_2$.}
 \end{fig}
 
-\begin{proposition*}[Vector equation and augmented matrix equivalence (Lay 1.3)]
+\begin{proposition*}[Vector equation and augmented matrix equivalence (Lay 1.3)]\target{prop-vector-eq}
   A vector equation
   \[
     x_1\vv a_1 + x_2\vv a_2 + \dots + x_n\vv a_n = \vv b
@@ -144,7 +153,31 @@
   \end{steps}
 \end{proof}
 
-\textbf{Worked example: testing membership in a span.} Let $\vv a_1=(1,-2,3)$, $\vv a_2=(0,1,2)$, $\vv a_3=(2,-5,4)\in\RR^3$. Is $\vv b=(1,0,7)$ in $\spn\{\vv a_1,\vv a_2,\vv a_3\}$? What about $\vv c=(4,-9,14)$?
+\method{How to move between a linear system and a vector equation.}
+\begin{steps}
+  \ii From a system: make one column vector from the coefficients of each variable (use $0$ for a missing variable) and one from the right-hand sides. The system is $x_1\vv a_1+\dots+x_n\vv a_n=\vv b$.
+  \ii From a vector equation: the $i$-th entries of both sides give the $i$-th equation of the system.
+  \ii Either way, the augmented matrix is $[\,\vv a_1\ \cdots\ \vv a_n\ \ \vv b\,]$: the vectors become its columns.
+\end{steps}
+
+\begin{example*}[A system written as a vector equation]
+The system $x_1+2x_2-x_3=3$, $3x_1-x_2+2x_3=1$ has the coefficient columns $(1,3)$, $(2,-1)$, $(-1,2)$ for $x_1,x_2,x_3$, so it is the vector equation
+\[
+  x_1\begin{bmatrix}1\\3\end{bmatrix}+x_2\begin{bmatrix}2\\-1\end{bmatrix}+x_3\begin{bmatrix}-1\\2\end{bmatrix}=\begin{bmatrix}3\\1\end{bmatrix}.
+\]
+Reading the top entries back gives $x_1+2x_2-x_3=3$, and the bottom entries give $3x_1-x_2+2x_3=1$.
+\end{example*}
+
+\method{How to decide whether $\vv b$ is a linear combination of $\vv a_1,\dots,\vv a_n$ (whether $\vv b$ is in their span).}
+\begin{steps}
+  \ii Form the augmented matrix $[\,\vv a_1\ \cdots\ \vv a_n\ \ \vv b\,]$.
+  \ii Row reduce to echelon form. If the last column contains a pivot, $\vv b$ is not in the span.
+  \ii Otherwise $\vv b$ is in the span. To find weights, continue to reduced echelon form, choose values for the free variables (for example $0$), and read off $x_1,\dots,x_n$. Check by computing $x_1\vv a_1+\dots+x_n\vv a_n$.
+\end{steps}
+\emph{Edge cases.} When there are free variables, the weights are not unique; any choice of the free variables gives valid weights. When a vector contains a parameter $h$, keep $h$ in the last column and find the value of $h$ that removes the pivot from that column (second example below). The zero vector is in every span (all weights $0$).
+
+\begin{example*}[Testing membership in a span]
+Let $\vv a_1=(1,-2,3)$, $\vv a_2=(0,1,2)$, $\vv a_3=(2,-5,4)\in\RR^3$. Is $\vv b=(1,0,7)$ in $\spn\{\vv a_1,\vv a_2,\vv a_3\}$? What about $\vv c=(4,-9,14)$?
 \[
   \aug{rrr|r}{1&0&2&1\\-2&1&-5&0\\3&2&4&7} \xrightarrow{\text{row reduce}} \aug{rrr|r}{1&0&2&1\\0&1&-1&2\\0&0&0&0},
   \qquad
@@ -154,6 +187,19 @@
   \ii For $\vv b$: the augmented column is not a pivot column, so the system is consistent and $\vv b\in\spn\{\vv a_1,\vv a_2,\vv a_3\}$. Setting the free variable $x_3=0$ gives $x_1=1,x_2=2$, so $\vv b=1\vv a_1+2\vv a_2+0\vv a_3$.
   \ii For $\vv c$: the third row of the echelon form is $0=4$, so the system is inconsistent and $\vv c\notin\spn\{\vv a_1,\vv a_2,\vv a_3\}$. Geometrically, $\vv a_3=2\vv a_1-\vv a_2$ already lies in the plane $\spn\{\vv a_1,\vv a_2\}$, so $\spn\{\vv a_1,\vv a_2,\vv a_3\}$ is a plane through $\vv 0$ in $\RR^3$ that contains $\vv b$ but misses $\vv c$.
 \end{steps}
+\end{example*}
+
+\begin{example*}[For which $h$ is a vector in a span]
+For which $h$ is $\vv y=(3,h,4)$ in $\spn\{\vv v_1,\vv v_2\}$, where $\vv v_1=(1,2,0)$ and $\vv v_2=(0,1,1)$?
+\[
+  \aug{rr|r}{1&0&3\\2&1&h\\0&1&4}
+  \xrightarrow{R_2\leftarrow R_2-2R_1}
+  \aug{rr|r}{1&0&3\\0&1&h-6\\0&1&4}
+  \xrightarrow{R_3\leftarrow R_3-R_2}
+  \aug{rr|r}{1&0&3\\0&1&h-6\\0&0&10-h}.
+\]
+The last row reads $0=10-h$, so $\vv y$ is in the span exactly when $h=10$. Then $x_1=3$, $x_2=4$, and indeed $3\vv v_1+4\vv v_2=(3,6+4,4)=(3,10,4)$.
+\end{example*}
 
 \begin{fig}
 \tdplotsetmaincoords{68}{116}
@@ -189,6 +235,29 @@
 \figcap{In $\RR^3$, $\spn\{\vv w\}$ ($\vv w\ne\vv 0$) is a line through $\vv 0$, and $\spn\{\vv u,\vv v\}$ for non-collinear $\vv u,\vv v$ is a plane through $\vv 0$.}
 \end{fig}
 
+\method{How to describe a span geometrically.}
+\begin{steps}
+  \ii If every vector in the list is $\vv 0$, the span is the single point $\{\vv 0\}$.
+  \ii If all the vectors are multiples of one nonzero vector $\vv w$, the span is the line through $\vv 0$ in the direction of $\vv w$.
+  \ii For two vectors in $\RR^3$ that are not multiples of each other, the span is the plane through $\vv 0$ containing both.
+  \ii To decide whether the span is all of $\RR^m$, put a general vector $(b_1,\dots,b_m)$ with letters in the last column, row reduce, and check whether the system is consistent for every value of the letters (example below).
+\end{steps}
+
+\begin{example*}[A span that is a line, not a plane]
+For $\vv u=(1,2,-1)$ and $\vv v=(-2,-4,2)$ in $\RR^3$, $\vv v=-2\vv u$. Every combination $c_1\vv u+c_2\vv v=(c_1-2c_2)\vv u$ is a multiple of $\vv u$, so $\spn\{\vv u,\vv v\}$ is the line through $\vv 0$ and $(1,2,-1)$. For $\vv u=(1,0,1)$ and $\vv v=(0,1,1)$, neither is a multiple of the other, so $\spn\{\vv u,\vv v\}$ is a plane through $\vv 0$; it does not contain $(0,0,1)$, because $c_1(1,0,1)+c_2(0,1,1)=(c_1,c_2,c_1+c_2)$ has first two entries $0$ only when $c_1=c_2=0$.
+\end{example*}
+
+\begin{example*}[Every vector of $\RR^2$ is in a span]
+Show that $(h,k)$ is in $\spn\{(1,2),(3,1)\}$ for all $h,k$. Row reduce with $h,k$ in place:
+\[
+  \aug{rr|r}{1&3&h\\2&1&k}\xrightarrow{R_2\leftarrow R_2-2R_1}\aug{rr|r}{1&3&h\\0&-5&k-2h}.
+\]
+Both rows have a pivot in a coefficient column, so the last column never contains a pivot, whatever $h$ and $k$ are. The system is consistent for all $h,k$, and the span is all of $\RR^2$.
+\end{example*}
+
+\revisit
+Read column by column, a linear system with augmented matrix $[\,\vv a_1\ \cdots\ \vv a_n\ \ \vv b\,]$ is the single vector equation $x_1\vv a_1+\dots+x_n\vv a_n=\vv b$ (\ilink{prop-vector-eq}{Vector equation and augmented matrix equivalence}). Solving the system means finding weights that combine the columns into $\vv b$, so the system is consistent exactly when $\vv b$ lies in $\spn\{\vv a_1,\dots,\vv a_n\}$. Geometrically, this span is a point, a line, a plane, or more through $\vv 0$, and the question becomes whether $\vv b$ lies in it.
+
 \begin{shortcuts}
   \ii \textbf{Translating ``Is $\vv b$ in $\spn\{\vv a_1,\dots,\vv a_n\}$?'' into one row reduction:} Form $[\,\vv a_1\ \ \cdots\ \ \vv a_n\ \ \vv b\,]$ and reduce to REF. If the last column has no pivot, the answer is \textbf{yes} (and RREF gives the weights); if the last column has a pivot, the answer is \textbf{no}.
 \end{shortcuts}
@@ -211,8 +280,16 @@
   Note that $A\vv x$ is defined \emph{only} when the number of columns of $A$ equals the number of entries in $\vv x$.
 \end{definition*}
 
+\method{How to compute $A\vv x$.}
+\begin{steps}
+  \ii Check the sizes: $A\vv x$ is defined only when the number of columns of $A$ equals the number of entries of $\vv x$. The result has as many entries as $A$ has rows.
+  \ii \emph{By columns:} multiply column $j$ of $A$ by $x_j$ and add the results.
+  \ii \emph{By rows (row--vector rule):} entry $i$ of $A\vv x$ is $a_{i1}x_1+\dots+a_{in}x_n$, the sum of the products of row~$i$ of $A$ with the entries of $\vv x$.
+\end{steps}
+Both ways give the same numbers: entry $i$ of $x_1\vv a_1+\dots+x_n\vv a_n$ is $x_1a_{i1}+\dots+x_na_{in}$.
+
 \begin{itemize}
-  \ii \textbf{Row--vector rule for computing $A\vv x$:} If $A\vv x$ is defined, then the $i$-th entry of $A\vv x$ is the sum of the products of corresponding entries from row~$i$ of $A$ and from the vector $\vv x$: $(A\vv x)_i=a_{i1}x_1+\dots+a_{in}x_n$. For example,
+  \ii \textbf{Row--vector rule:} If $A\vv x$ is defined, then the $i$-th entry of $A\vv x$ is the sum of the products of corresponding entries from row~$i$ of $A$ and from the vector $\vv x$: $(A\vv x)_i=a_{i1}x_1+\dots+a_{in}x_n$. For example,
   \[
     \begin{bmatrix} 1 & 2 & -1 \\ 0 & -5 & 3 \end{bmatrix}\begin{bmatrix} 4 \\ 3 \\ 7 \end{bmatrix}
     = 4\begin{bmatrix} 1 \\ 0 \end{bmatrix} + 3\begin{bmatrix} 2 \\ -5 \end{bmatrix} + 7\begin{bmatrix} -1 \\ 3 \end{bmatrix}
@@ -220,7 +297,29 @@
     = \begin{bmatrix} 3 \\ 6 \end{bmatrix}.
   \]
   \ii \textbf{Identity matrix $I_n$:} The $n\times n$ matrix $I_n$ with $1$s on the main diagonal and $0$s elsewhere satisfies $I_n\vv x=\vv x$ for every $\vv x\in\RR^n$.
+  \ii \textbf{An undefined product:} the product below is not defined, because the matrix has $2$ columns and the vector has $3$ entries:
+  \[
+    \begin{bmatrix}1&2\\3&4\end{bmatrix}\begin{bmatrix}1\\2\\3\end{bmatrix}.
+  \]
 \end{itemize}
+
+\begin{example*}[One system in three notations]
+The system $2x_1-x_2=1$, $x_1+3x_2=11$ is the vector equation and the matrix equation
+\[
+  x_1\begin{bmatrix}2\\1\end{bmatrix}+x_2\begin{bmatrix}-1\\3\end{bmatrix}=\begin{bmatrix}1\\11\end{bmatrix},
+  \qquad
+  \begin{bmatrix}2&-1\\1&3\end{bmatrix}\begin{bmatrix}x_1\\x_2\end{bmatrix}=\begin{bmatrix}1\\11\end{bmatrix}.
+\]
+The matrix $A$ has the coefficient columns as its columns, $\vv x$ lists the variables, and $\vv b$ lists the right-hand sides. All three have the augmented matrix $[\,A\ \ \vv b\,]$:
+\[
+  \aug{rr|r}{2&-1&1\\1&3&11}
+  \xrightarrow{R_1\leftrightarrow R_2}
+  \aug{rr|r}{1&3&11\\2&-1&1}
+  \xrightarrow{R_2\leftarrow R_2-2R_1}
+  \aug{rr|r}{1&3&11\\0&-7&-21},
+\]
+so $x_2=3$ and $x_1=11-9=2$. Check with the product: $A\vv x=2(2,1)+3(-1,3)=(1,11)$.
+\end{example*}
 
 \begin{theorem*}[Lay 1.4 Thm.~3: Three equivalent views of a linear system]\target{thm-lay-1-3}
   If $A$ is an $m\times n$ matrix, with columns $\vv a_1,\dots,\vv a_n$, and if $\vv b$ is in $\RR^m$, the matrix equation
@@ -237,9 +336,14 @@
   \]
   In particular, the equation $A\vv x=\vv b$ has a solution if and only if $\vv b$ is a linear combination of the columns of $A$.
 \end{theorem*}
-\begin{ideabox}
-  By definition, $A\vv x$ is the linear combination $x_1\vv a_1+\dots+x_n\vv a_n$, so $A\vv x=\vv b$ and $x_1\vv a_1+\dots+x_n\vv a_n=\vv b$ are the exact same equation written in two notations, and Section~2.1 showed that the vector equation has the same solution set as the augmented matrix $[\,\vv a_1\ \ \cdots\ \ \vv a_n\ \ \vv b\,]$. This theorem unifies three viewpoints: algebra (a system of equations), geometry (a linear combination of columns), and operator notation ($A\vv x=\vv b$).
-\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii By the definition of the product, $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$ for every $\vv x$. So a vector $\vv x$ satisfies $A\vv x=\vv b$ exactly when its entries satisfy $x_1\vv a_1+\dots+x_n\vv a_n=\vv b$: the matrix equation and the vector equation have the same solutions.
+    \ii By \ilink{prop-vector-eq}{Vector equation and augmented matrix equivalence}, the vector equation has the same solutions as the system with augmented matrix $[\,\vv a_1\ \cdots\ \vv a_n\ \ \vv b\,]$.
+    \ii A solution exists exactly when some weights $x_1,\dots,x_n$ combine the columns into $\vv b$, that is, when $\vv b$ is a linear combination of the columns.
+  \end{steps}
+\end{proof}
+The three forms are three ways to read the same equations: as equations in numbers (the system), as a combination of columns (the vector equation), and as one product ($A\vv x=\vv b$).
 
 \begin{theorem*}[Lay 1.4 Thm.~4: When the columns of $A$ span $\RR^m$]\target{thm-lay-1-4}
   Let $A$ be an $m\times n$ matrix. Then the following statements are logically equivalent (that is, for a particular $A$, either they are all true statements or they are all false):
@@ -251,15 +355,53 @@
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-  Statements (a), (b), and (c) express the same condition in the three languages of \ilink{thm-lay-1-3}{Thm.~1.3} and the definition of $\spn$. The main strength of the theorem is the equivalence (a)$\iff$(d), which reduces a question about \emph{infinitely many} right-hand sides $\vv b\in\RR^m$ to a single row reduction of $A$. A pivot in every row of $A$ guarantees consistency for every $\vv b$ because in any echelon form $[\,U\ \ \vv d\,]$ of $[\,A\ \ \vv b\,]$, every row already has its leftmost nonzero entry inside $U$, so the augmented column $\vv d$ can never contain a pivot. Conversely, if some row of $A$ has no pivot, then the bottom row of an echelon form $U$ of $A$ is all zeros; choosing $\vv d=(0,\dots,0,1)$ creates an inconsistent row $[\,0\ \cdots\ 0\ 1\,]$, and reversing the row operations produces a vector $\vv b\in\RR^m$ for which $A\vv x=\vv b$ has no solution.
+  Statements (a), (b), and (c) say the same thing in the three forms of \ilink{thm-lay-1-3}{Thm.~1.3}. The useful part is (d): it replaces a question about infinitely many right-hand sides $\vv b$ by one row reduction of $A$. The reason this works is that the row operations that reduce $[\,A\ \ \vv b\,]$ are chosen by looking at $A$ only, so every $\vv b$ produces the same echelon form $U$ of $A$ in the first $n$ columns, and only the last column changes. An inconsistent row needs a zero row of $U$. So the question is whether $U$ has a zero row; if it does, we choose the last column to put a $1$ in that row, and undoing the row operations tells us which $\vv b$ fails.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii Statements (a), (b), and (c) are equivalent by \ilink{thm-lay-1-3}{Thm.~1.3} and the definition of $\spn\{\vv a_1,\dots,\vv a_n\}=\RR^m$.
-    \ii ((d)$\Rightarrow$(a)): Suppose $A$ has a pivot position in every row, and let $U$ be an echelon form of $A$. For any $\vv b\in\RR^m$, applying the same sequence of row operations that reduces $A$ to $U$ transforms $[\,A\ \ \vv b\,]$ into $[\,U\ \ \vv d\,]$ for some $\vv d\in\RR^m$. Because every row of $U$ contains a pivot, no row of $[\,U\ \ \vv d\,]$ can have the form $[\,0\ \cdots\ 0\ d_i\,]$ with $d_i\ne 0$. By (W2), $A\vv x=\vv b$ is consistent.
-    \ii ($\neg$(d)$\Rightarrow\neg$(a)): Suppose $A$ does not have a pivot in every row. Then the last row of an echelon form $U$ of $A$ consists entirely of zeros. Let $\vv d=(0,\dots,0,1)\in\RR^m$, so the last row of $[\,U\ \ \vv d\,]$ is $[\,0\ \cdots\ 0\ 1\,]$. Reversing the sequence of elementary row operations that reduced $A$ to $U$ transforms $[\,U\ \ \vv d\,]$ back into $[\,A\ \ \vv b\,]$ for some $\vv b\in\RR^m$. Since row-equivalent augmented matrices have the same solution set (W1), $A\vv x=\vv b$ has no solution for this $\vv b$.
+    \ii ((d)$\Rightarrow$(a)): Suppose $A$ has a pivot position in every row, and let $U$ be an echelon form of $A$. For any $\vv b\in\RR^m$, applying the same sequence of row operations that reduces $A$ to $U$ transforms $[\,A\ \ \vv b\,]$ into $[\,U\ \ \vv d\,]$ for some $\vv d\in\RR^m$. Because every row of $U$ contains a pivot, no row of $[\,U\ \ \vv d\,]$ can have the form $[\,0\ \cdots\ 0\ d_i\,]$ with $d_i\ne 0$. By (\ilink{fact-w2}{W2}), $A\vv x=\vv b$ is consistent.
+    \ii ($\neg$(d)$\Rightarrow\neg$(a)): Suppose $A$ does not have a pivot in every row. Then the last row of an echelon form $U$ of $A$ consists entirely of zeros. Let $\vv d=(0,\dots,0,1)\in\RR^m$, so the last row of $[\,U\ \ \vv d\,]$ is $[\,0\ \cdots\ 0\ 1\,]$. Reversing the sequence of elementary row operations that reduced $A$ to $U$ transforms $[\,U\ \ \vv d\,]$ back into $[\,A\ \ \vv b\,]$ for some $\vv b\in\RR^m$. Since row-equivalent augmented matrices have the same solution set (\ilink{fact-w1}{W1}), $A\vv x=\vv b$ has no solution for this $\vv b$.
   \end{steps}
 \end{proof}
+
+\method{How to decide whether the columns of $A$ span $\RR^m$ (whether $A\vv x=\vv b$ is solvable for every $\vv b$).}
+\begin{steps}
+  \ii If $A$ has fewer columns than rows ($n<m$), stop: $A$ has at most $n<m$ pivots, so the answer is no.
+  \ii Otherwise row reduce $A$ itself (not an augmented matrix) to echelon form.
+  \ii Count the rows that contain a pivot. The columns span $\RR^m$ exactly when all $m$ rows do (\ilink{thm-lay-1-4}{Thm.~1.4}).
+\end{steps}
+
+\begin{example*}[Columns that span $\RR^3$]
+For the matrix below, the steps $R_3\leftarrow R_3-R_1$ and then $R_3\leftarrow R_3-R_2$ give
+\[
+  \begin{bmatrix}1&0&2\\0&1&1\\1&1&4\end{bmatrix}
+  \longrightarrow
+  \begin{bmatrix}1&0&2\\0&1&1\\0&1&2\end{bmatrix}
+  \longrightarrow
+  \begin{bmatrix}1&0&2\\0&1&1\\0&0&1\end{bmatrix}.
+\]
+Every row has a pivot, so the columns span $\RR^3$ and $A\vv x=\vv b$ has a solution for every $\vv b\in\RR^3$. By contrast, the columns of any $4\times3$ matrix cannot span $\RR^4$, because there are at most $3$ pivots for $4$ rows.
+\end{example*}
+
+\method{How to describe all $\vv b$ for which $A\vv x=\vv b$ is consistent.}
+\begin{steps}
+  \ii Write $\vv b=(b_1,\dots,b_m)$ with letters and row reduce $[\,A\ \ \vv b\,]$, carrying the letters in the last column.
+  \ii Each zero row of the echelon form of $A$ gives an expression in $b_1,\dots,b_m$ in the last column. The system is consistent exactly when every such expression equals $0$.
+  \ii Describe the answer: one condition in $\RR^3$ is a plane through $\vv 0$; no condition means every $\vv b$ works.
+\end{steps}
+
+\begin{example*}[The right-hand sides that work form a plane]
+For $A$ with columns $(1,2,3)$ and $(2,5,7)$:
+\[
+  \aug{rr|c}{1&2&b_1\\2&5&b_2\\3&7&b_3}
+  \xrightarrow[R_3\leftarrow R_3-3R_1]{R_2\leftarrow R_2-2R_1}
+  \aug{rr|c}{1&2&b_1\\0&1&b_2-2b_1\\0&1&b_3-3b_1}
+  \xrightarrow{R_3\leftarrow R_3-R_2}
+  \aug{rr|c}{1&2&b_1\\0&1&b_2-2b_1\\0&0&b_3-b_1-b_2}.
+\]
+$A\vv x=\vv b$ is consistent exactly when $b_1+b_2-b_3=0$. This is the plane through $\vv 0$ spanned by the two columns; check that both columns satisfy it: $1+2-3=0$ and $2+5-7=0$. So $A\vv x=\vv b$ is not consistent for every $\vv b$; for example $\vv b=(0,0,1)$ fails.
+\end{example*}
 
 \begin{theorem*}[Lay 1.4 Thm.~5: Linearity of matrix--vector multiplication]\target{thm-lay-1-5}
   If $A$ is an $m\times n$ matrix, $\vv u$ and $\vv v$ are vectors in $\RR^n$, and $c$ is a scalar, then:
@@ -277,13 +419,19 @@
     \[
       A(\vv u+\vv v) = (u_1+v_1)\vv a_1 + \dots + (u_n+v_n)\vv a_n = (u_1\vv a_1+\dots+u_n\vv a_n) + (v_1\vv a_1+\dots+v_n\vv a_n) = A\vv u + A\vv v.
     \]
-    \ii For (b), $A(c\vv u) = (cu_1)\vv a_1+\dots+(cu_n)\vv a_n = c(u_1\vv a_1)+\dots+c(u_n\vv a_n) = c(A\vv u)$.
+    \ii For (b), expanding the same way and factoring out $c$ gives
+    \[
+      A(c\vv u) = (cu_1)\vv a_1+\dots+(cu_n)\vv a_n = c(u_1\vv a_1)+\dots+c(u_n\vv a_n) = c(A\vv u).
+    \]
   \end{steps}
 \end{proof}
 
 \begin{shortcuts}
   \ii \textbf{Fast dimension check for spanning $\RR^m$:} An $m\times n$ matrix $A$ has at most $\min(m,n)$ pivots. If $n<m$ (fewer columns than rows), $A$ can have at most $n<m$ pivots, so $A$ \emph{cannot} have a pivot in every row and its columns \emph{never} span $\RR^m$ (\ilink{thm-lay-1-4}{Thm.~1.4}).
 \end{shortcuts}
+
+\revisit
+The product $A\vv x$ is defined to be the combination $x_1\vv a_1+\dots+x_n\vv a_n$ of the columns of $A$, so the vector equation becomes the single equation $A\vv x=\vv b$ (\ilink{thm-lay-1-3}{Thm.~1.3}). To tell from $A$ alone whether $A\vv x=\vv b$ is solvable for every $\vv b\in\RR^m$, row reduce $A$ and check for a pivot in every row (\ilink{thm-lay-1-4}{Thm.~1.4}). In the example \emph{Columns that span $\RR^3$} the answer is yes; in the example \emph{The right-hand sides that work form a plane} it is no, and the method there describes exactly which $\vv b$ work.
 
 \begin{trapbox}
   \ii \textbf{\ilink{thm-lay-1-4}{Thm.~1.4}(d) is about the \emph{coefficient} matrix $A$, not the augmented matrix $[\,A\ \ \vv b\,]$:} Having a pivot in every row of $[\,A\ \ \vv b\,]$ does \emph{not} mean $A\vv x=\vv b$ is consistent; if the bottom row's pivot is in the last column $\vv b$, the system is inconsistent.
@@ -300,11 +448,46 @@
   \begin{itemize}
     \ii Every homogeneous system $A\vv x=\vv 0$ has at least one solution, namely $\vv x=\vv 0\in\RR^n$, called the \vocab{trivial solution} (since $A\vv 0=\vv 0$).
     \ii A nonzero vector $\vv x\ne\vv 0$ that satisfies $A\vv x=\vv 0$ is called a \vocab{nontrivial solution}.
-    \ii \textbf{Fundamental fact:} The homogeneous equation $A\vv x=\vv 0$ has a nontrivial solution \emph{if and only if} the equation has at least one free variable (equivalently, at least one column of $A$ is not a pivot column).
   \end{itemize}
 \end{definition*}
 
-\needspace{7\baselineskip}\textbf{Worked example: comparing $A\vv x=\vv 0$ and $A\vv x=\vv b$ in parametric vector form.} Let
+\begin{proposition*}[Nontrivial solutions and free variables (Lay 1.5)]\target{prop-nontrivial}
+  The homogeneous equation $A\vv x=\vv 0$ has a nontrivial solution \emph{if and only if} the equation has at least one free variable (equivalently, at least one column of $A$ is not a pivot column).
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii The system $A\vv x=\vv 0$ is consistent, because $\vv x=\vv 0$ is a solution.
+    \ii By the Existence and Uniqueness Theorem (\ilink{fact-w2}{W2}), a consistent system has exactly one solution when there are no free variables, and infinitely many when there is a free variable.
+    \ii With no free variable, the only solution is the trivial one $\vv 0$. With a free variable, there are infinitely many solutions, so some solution is nonzero.
+  \end{steps}
+\end{proof}
+
+\method{How to decide whether $A\vv x=\vv 0$ has a nontrivial solution.}
+\begin{steps}
+  \ii If $A$ has more columns than rows, the answer is yes without computing: there are at most $m$ pivots for $n>m$ columns, so some column has no pivot.
+  \ii If some column of $A$ is a multiple of another column, or is a combination of other columns that you can see, write that relation as $A\vv x=\vv 0$: this gives a nontrivial solution by inspection.
+  \ii Otherwise row reduce $A$ and look for a column without a pivot (\ilink{prop-nontrivial}{Nontrivial solutions and free variables}).
+\end{steps}
+\emph{Edge case.} A zero column $j$ gives the nontrivial solution $\vv x=\vv e_j$ (entry $1$ in position $j$, zeros elsewhere), since $A\vv e_j$ is column $j$.
+
+\begin{example*}[A nontrivial solution by inspection]
+In
+\[
+  A=\begin{bmatrix}3&-6\\-1&2\\2&-4\end{bmatrix}
+\]
+the second column is $-2$ times the first: $\vv a_2=-2\vv a_1$, so $2\vv a_1+\vv a_2=\vv 0$. Thus $\vv x=(2,1)$ is a nontrivial solution: $A\vv x=2(3,-1,2)+(-6,2,-4)=(0,0,0)$.
+\end{example*}
+
+\begin{example*}[Deciding with little computation]
+A system of $3$ homogeneous equations in $4$ unknowns has a nontrivial solution, since $4>3$. The equation $A\vv x=\vv 0$ with $A$ reducing to the echelon form
+\[
+  \begin{bmatrix}1&2&0\\0&3&1\\0&0&5\end{bmatrix}
+\]
+has only the trivial solution, since all three columns contain pivots.
+\end{example*}
+
+\begin{example*}[Comparing $A\vv x=\vv 0$ and $A\vv x=\vv b$ in parametric vector form]
+Let
 \[
   W = \begin{bmatrix} 1 & 3 & 1 \\ 2 & 7 & 4 \\ 1 & 4 & 3 \end{bmatrix}, \qquad \vv b = \begin{bmatrix} 2 \\ 5 \\ 3 \end{bmatrix}.
 \]
@@ -320,12 +503,19 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
     \vv x = \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} 5x_3 \\ -2x_3 \\ x_3 \end{bmatrix} = x_3\underbrace{\begin{bmatrix} 5 \\ -2 \\ 1 \end{bmatrix}}_{\vv v}.
   \]
   Thus the solution set of $W\vv x=\vv 0$ is the line $\spn\{\vv v\}$ through the origin $\vv 0$. In general, whenever a homogeneous system $A\vv x=\vv 0$ has $k$ free variables, its solution set is $\spn\{\vv v_1,\dots,\vv v_k\}$ (or $\{\vv 0\}$ when $k=0$).
+\end{itemize}
+\end{example*}
+
+\begin{example*}[Comparing $A\vv x=\vv 0$ and $A\vv x=\vv b$: the nonhomogeneous system]
+With $W$, $\vv b$ and the second reduction from the previous example:
+\begin{itemize}
   \ii \textbf{Nonhomogeneous solution set ($W\vv x=\vv b$):} Here $x_1=-1+5x_3$, $x_2=1-2x_3$, and $x_3$ is free, so
   \[
     \vv x = \begin{bmatrix} -1+5x_3 \\ 1-2x_3 \\ x_3 \end{bmatrix} = \underbrace{\begin{bmatrix} -1 \\ 1 \\ 0 \end{bmatrix}}_{\vv p} + x_3\underbrace{\begin{bmatrix} 5 \\ -2 \\ 1 \end{bmatrix}}_{\vv v}.
   \]
   Notice that the same direction vector $\vv v=(5,-2,1)$ appears. Setting $x_3=0$ gives the \vocab{particular solution} $\vv p=(-1,1,0)$ of $W\vv x=\vv b$, and adding $x_3\vv v$ shifts the line $\spn\{\vv v\}$ by $\vv p$.
 \end{itemize}
+\end{example*}
 
 \begin{theorem*}[Lay 1.5 Thm.~6: Solution set of $A\vv x=\vv b$ is a translate of the solution set of $A\vv x=\vv 0$]\target{thm-lay-1-6}
   Suppose the equation $A\vv x=\vv b$ is consistent for some given $\vv b$, and let $\vv p$ be a solution. Then the solution set of $A\vv x=\vv b$ is the set of all vectors of the form
@@ -335,7 +525,7 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   where $\vv v_h$ is any solution of the homogeneous equation $A\vv x=\vv 0$.
 \end{theorem*}
 \begin{ideabox}
-  The solutions of $A\vv x=\vv b$ differ from a single particular solution $\vv p$ by precisely the solutions of $A\vv x=\vv 0$ because matrix--vector multiplication is linear (\ilink{thm-lay-1-5}{Thm.~1.5}). If $\vv w$ is any other solution of $A\vv x=\vv b$, then $A(\vv w-\vv p)=A\vv w-A\vv p=\vv b-\vv b=\vv 0$, so the difference $\vv v_h=\vv w-\vv p$ solves the homogeneous equation $A\vv x=\vv 0$. Conversely, adding any homogeneous solution $\vv v_h$ to $\vv p$ gives $A(\vv p+\vv v_h)=A\vv p+A\vv v_h=\vv b+\vv 0=\vv b$.
+  The example \emph{Comparing $A\vv x=\vv 0$ and $A\vv x=\vv b$ in parametric vector form} shows the pattern: the solutions of $W\vv x=\vv b$ and of $W\vv x=\vv 0$ have the same free-variable part $x_3\vv v$ and differ only by the constant vector $\vv p$. To see why in general, compare two solutions of $A\vv x=\vv b$ by subtracting them. Linearity (\ilink{thm-lay-1-5}{Thm.~1.5}) turns $A(\vv w-\vv p)$ into $A\vv w-A\vv p=\vv b-\vv b$, so the difference solves the homogeneous equation.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -361,7 +551,7 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \coordinate (W) at (4.55,3.27);
 
   % Subtle gray wash highlighting the translation parallelogram
-  \path[pattern=inkgrain,pattern color=inkblue] (O) -- (Vh) -- (W) -- (P) -- cycle;
+  \path[pattern=inkgrain,pattern color=inkslate] (O) -- (Vh) -- (W) -- (P) -- cycle;
 
   % Hairline axes
   \draw[ink line,figaxis] (-0.85,0) -- (5.65,0) node[right,font=\scriptsize] {\InkLabel{$x_1$}};
@@ -376,7 +566,7 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \node[font=\footnotesize,text=figblue,right=5pt] at (5.25,3.55) {\InkLabel{$A\vv x=\vv b$}};
 
   % Translated copy of p (dotted arrow guide)
-  \draw[ink guide arrow,draw=black!50,shorten >=1.6pt] (Vh) -- (W) node[midway,right=3pt,font=\scriptsize,text=black!65] {\InkLabel{$+\vv p$}};
+  \draw[ink guide arrow,draw=black!75,shorten >=1.6pt] (Vh) -- (W) node[midway,right=3pt,font=\scriptsize,text=black] {\InkLabel{$+\vv p$}};
 
   % Vectors (crisp hierarchy over underlying lines, shortened cleanly before dots)
   \InkStroke[figvec,draw=black,line width=0.65pt,shorten >=1.6pt]{(O) -- (Vh)}
@@ -386,7 +576,8 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \node[font=\footnotesize,below right=2pt] at (3.35,1.28) {\InkLabel{$\vv v_h$}};
 
   \draw[ink line,figvec,draw=black,line width=0.65pt,shorten >=1.6pt] (O) -- (P) node[midway,above left=1pt,font=\footnotesize,text=black] {\InkLabel{$\vv p$}};
-  \draw[ink line,figvec,draw=figblue,line width=0.65pt,shorten >=1.6pt] (O) -- (W) node[pos=0.43,sloped,above=3pt,font=\footnotesize,text=figblue] {\InkLabel{$\vv w=\vv p+\vv v_h$}};
+  \draw[ink line,figvec,draw=figblue,line width=0.65pt,shorten >=1.6pt] (O) -- (W);
+  \node[above left=3pt,font=\footnotesize,text=figblue] at (W) {\InkLabel{$\vv w=\vv p+\vv v_h$}};
 
   \fill[black] (O) circle (1.5pt);
   \node[font=\scriptsize,below right=1pt] at (O) {\InkLabel{$\vv 0$}};
@@ -394,7 +585,7 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \fill[black] (Vh) circle (1.5pt);
   \fill[figblue] (W) circle (1.6pt);
 \end{tikzpicture}
-\figcap{Geometric meaning of \ilink{thm-lay-1-6}{Thm.~1.6}: the solution set of a consistent nonhomogeneous system $A\vv x=\vv b$ is obtained by translating the solution set of the homogeneous system $A\vv x=\vv 0$ by any single particular solution $\vv p$ of $A\vv x=\vv b$.}
+\figcap{The solution line of $A\vv x=\vv b$ (blue) is the solution line of $A\vv x=\vv 0$ (black) moved by a particular solution $\vv p$: each $\vv v_h$ on the black line gives $\vv w=\vv p+\vv v_h$ on the blue line.}
 \end{fig}
 
 \needspace{6\baselineskip}\method{Writing a solution set in parametric vector form.}
@@ -404,6 +595,29 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
   \ii Write a typical solution $\vv x$ as a column vector whose entries depend linearly on the free variables.
   \ii Decompose $\vv x$ into a constant vector $\vv p$ (obtained by setting all free variables to $0$) plus a linear combination of vectors $\vv v_1,\dots,\vv v_k$ with the free variables as weights.
 \end{steps}
+\emph{Edge cases.}
+\begin{itemize}
+  \ii For $A\vv x=\vv 0$ the constant vector is $\vv p=\vv 0$, and the solution set is $\spn\{\vv v_1,\dots,\vv v_k\}$.
+  \ii With no free variables there are no $\vv v_i$: the solution set is the single point $\vv p$ (or $\{\vv 0\}$ for a homogeneous system).
+  \ii Each free variable contributes a $1$ in its own position of its vector and $0$ in the positions of the other free variables.
+  \ii The answer is a line when $k=1$ and a plane when $k=2$ (through $\vv 0$ only when $\vv p$ can be taken to be $\vv 0$).
+\end{itemize}
+
+\begin{example*}[A homogeneous equation whose solution set is a plane]
+For the single equation $x_1+4x_2-2x_3=0$, the basic variable is $x_1=-4x_2+2x_3$ and $x_2,x_3$ are free:
+\[
+  \vv x=\begin{bmatrix}-4x_2+2x_3\\x_2\\x_3\end{bmatrix}
+  =x_2\begin{bmatrix}-4\\1\\0\end{bmatrix}+x_3\begin{bmatrix}2\\0\\1\end{bmatrix}.
+\]
+The solution set is $\spn\{(-4,1,0),(2,0,1)\}$, a plane through $\vv 0$. Check: $-4+4-0=0$ and $2+0-2=0$.
+\end{example*}
+
+\begin{example*}[A line given by a point and a direction]
+The line through $\vv p=(1,2)$ in the direction of $\vv v=(3,-1)$ consists of the points $\vv x=\vv p+t\vv v=(1+3t,\ 2-t)$ for $t\in\RR$. It is the translate of the line $\spn\{\vv v\}$ through $\vv 0$ by $\vv p$, which is the shape \ilink{thm-lay-1-6}{Thm.~1.6} gives for the solutions of $A\vv x=\vv b$ with one free variable. For instance, it is the solution set of $x_1+3x_2=7$: both $\vv p$ and $\vv p+\vv v=(4,1)$ satisfy it.
+\end{example*}
+
+\revisit
+By \ilink{thm-lay-1-6}{Thm.~1.6}, the solution set of a consistent equation $A\vv x=\vv b$ is $\vv p+\{\text{solutions of }A\vv x=\vv 0\}$, and the parametric vector form shows the homogeneous solutions are $\spn\{\vv v_1,\dots,\vv v_k\}$, one vector for each free variable. So the shape is a point ($k=0$), a line ($k=1$), a plane ($k=2$), or a higher-dimensional flat set, moved away from $\vv 0$ by $\vv p$. In the example \emph{Comparing $A\vv x=\vv 0$ and $A\vv x=\vv b$ in parametric vector form}, $W\vv x=\vv 0$ gives the line $\spn\{(5,-2,1)\}$ and $W\vv x=\vv b$ gives the parallel line through $(-1,1,0)$.
 
 \begin{shortcuts}
   \ii \textbf{More unknowns than equations ($n>m$) in a homogeneous system:} If $A$ is $m\times n$ with $n>m$, then $A$ has at most $m<n$ pivots, so $A\vv x=\vv 0$ automatically has at least $n-m\ge 1$ free variables and therefore \textbf{always has nontrivial solutions}.
@@ -417,7 +631,7 @@ Row reducing $[\,W\ \ \vv 0\,]$ and $[\,W\ \ \vv b\,]$ to RREF gives
 \end{trapbox}
 
 \section{Homework this week}
-HW1, Section 1.3: 6, 7, 10, 13, 17, 19, 22, 24. Section 1.4: 1, 2, 9, 11, 13, 14, 15, 19, 32, 34. HW2, Section 1.5: 1, 6, 11, 15, 18, 24, 27, 28, 30, 38. (Section 1.7 is in the \xweek{math54}{2026-09-07-independence-linear-transformations}{Week~3 handout}.)
+HW1, Section 1.3: 6, 7, 10, 13, 17, 19, 22, 24. Section 1.4: 1, 2, 9, 11, 13, 14, 15, 19, 32, 34. HW2, Section 1.5: 1, 6, 11, 15, 18, 24, 27, 28, 30, 38. Section~1.7 is taught in the \xweek{math54}{2026-09-07-independence-linear-transformations}{Week~3 handout}.
 
 \section{Problem set}
 \begin{prob}\textbf{P1.}\ Write $\vv b=(5,1,12)$ as a linear combination of $\vv a_1=(1,0,2)$, $\vv a_2=(2,1,3)$, $\vv a_3=(1,-1,4)$, or show it is impossible.

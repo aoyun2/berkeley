@@ -13,10 +13,10 @@
 
 \section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Linear dependence in $\RR^n$ (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-7}{Lay 1.7 Thm.~7--8}):} In a linearly dependent set $\{\vv v_1,\dots,\vv v_p\}$ with $\vv v_1\ne\vv 0$, some $\vv v_j$ ($j>1$) is a linear combination of the preceding vectors $\vv v_1,\dots,\vv v_{j-1}$. Any set of $p>n$ vectors in $\RR^n$ is linearly dependent.
-  \ii \textbf{Pivots and homogeneous systems:} The columns of $A$ are linearly independent $\iff A\vv x=\vv 0$ has only the trivial solution $\iff A$ has a pivot in every column (no free variables). If $A$ has more columns than rows ($p>n$), then $A\vv x=\vv 0$ always has a nontrivial solution.
-  \ii \textbf{Row-operation invariance (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.1}):} If $A$ and $B$ are row equivalent, then $A\vv x=\vv 0$ and $B\vv x=\vv 0$ have the exact same solution set.
-  \ii \textbf{Subspaces associated with $A$ (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-4-1}{Lay 4.1--4.2}):} For an $m\times n$ matrix $A$, $\Nul A$ and $\Row A$ are subspaces of $\RR^n$, and $\Col A$ is a subspace of $\RR^m$. Writing the solution set of $A\vv x=\vv 0$ in parametric vector form produces an explicit linearly independent spanning set for $\Nul A$ with one vector per free variable.
+  \ii \target{fact-w1}\textbf{Linear dependence in $\RR^n$ (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-7}{Lay 1.7 Thm.~7--8}):} In a linearly dependent set $\{\vv v_1,\dots,\vv v_p\}$ with $\vv v_1\ne\vv 0$, some $\vv v_j$ ($j>1$) is a linear combination of the preceding vectors $\vv v_1,\dots,\vv v_{j-1}$. Any set of $p>n$ vectors in $\RR^n$ is linearly dependent.
+  \ii \target{fact-w2}\textbf{Pivots and homogeneous systems:} The columns of $A$ are linearly independent $\iff A\vv x=\vv 0$ has only the trivial solution $\iff A$ has a pivot in every column (no free variables). If $A$ has more columns than rows ($p>n$), then $A\vv x=\vv 0$ always has a nontrivial solution.
+  \ii \target{fact-w3}\textbf{Row-operation invariance (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.1}):} If $A$ and $B$ are row equivalent, then $A\vv x=\vv 0$ and $B\vv x=\vv 0$ have the exact same solution set.
+  \ii \target{fact-w4}\textbf{Subspaces associated with $A$ (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-4-1}{Lay 4.1--4.2}):} For an $m\times n$ matrix $A$, $\Nul A$ and $\Row A$ are subspaces of $\RR^n$, and $\Col A$ is a subspace of $\RR^m$. Writing the solution set of $A\vv x=\vv 0$ in parametric vector form produces an explicit linearly independent spanning set for $\Nul A$ with one vector per free variable.
 \end{enumerate}
 
 \section{This week}
@@ -27,11 +27,17 @@
   A spanning set for a subspace $H$ can contain redundant vectors that are linear combinations of the others, while a linearly independent set in $H$ might be too small to generate all of $H$. How do we find a minimal spanning set---a \emph{basis}---that generates $H$ with zero redundancy, and how does a single row reduction of $A$ reveal bases for $\Nul A$, $\Col A$, and $\Row A$?
 \end{qbox}
 
-In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{linearly independent} if the vector equation $c_1\vv v_1+\dots+c_p\vv v_p=\vv 0$ has only the trivial solution $c_1=\dots=c_p=0$, and \vocab{linearly dependent} otherwise. Because the proof of \xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-7}{Lay 1.7 Thm.~7} used only the vector space axioms, it holds without change in any vector space $V$.
+In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{linearly independent} if the vector equation $c_1\vv v_1+\dots+c_p\vv v_p=\vv 0$ has only the trivial solution $c_1=\dots=c_p=0$, and \vocab{linearly dependent} otherwise. The characterization of dependent sets from Week~3 (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-7}{Lay 1.7 Thm.~7}) holds in any vector space, with the same proof, which we repeat because it uses only the vector space axioms.
 
 \begin{theorem*}[Lay 4.3 Thm.~4: Characterization of Linearly Dependent Sets in $V$]\target{thm-lay-4-4}
   An indexed set $\{\vv v_1,\dots,\vv v_p\}$ of two or more vectors, with $\vv v_1\ne\vv 0$, is linearly dependent if and only if some $\vv v_j$ (with $j>1$) is a linear combination of the preceding vectors, $\vv v_1,\dots,\vv v_{j-1}$.
 \end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Assume $\vv v_j=a_1\vv v_1+\dots+a_{j-1}\vv v_{j-1}$.} Then $a_1\vv v_1+\dots+a_{j-1}\vv v_{j-1}+(-1)\vv v_j+0\vv v_{j+1}+\dots+0\vv v_p=\vv 0$ is a relation with the nonzero weight $-1$, so the set is dependent.
+    \ii \textbf{Assume the set is dependent:} $c_1\vv v_1+\dots+c_p\vv v_p=\vv 0$ with some $c_i\ne0$. Let $j$ be the largest index with $c_j\ne0$. If $j=1$, then $c_1\vv v_1=\vv 0$, and multiplying by $1/c_1$ gives $\vv v_1=\vv 0$, which is excluded. So $j>1$, and since $c_{j+1}=\dots=c_p=0$, solving for $\vv v_j$ gives $\vv v_j=-\tfrac{c_1}{c_j}\vv v_1-\dots-\tfrac{c_{j-1}}{c_j}\vv v_{j-1}$.
+  \end{steps}
+\end{proof}
 
 \begin{definition*}[Basis and standard bases (Lay 4.3)]
   Let $H$ be a subspace of a vector space $V$. An indexed set of vectors $\mathcal{B}=\{\vv b_1,\dots,\vv b_p\}$ in $V$ is a \vocab{basis} for $H$ if:
@@ -40,7 +46,7 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
     \ii the subspace spanned by $\mathcal{B}$ coincides with $H$; that is, $H=\spn\{\vv b_1,\dots,\vv b_p\}$.
   \end{enumerate}
   \begin{itemize}
-    \ii \textbf{Standard bases:} The columns $\vv e_1,\dots,\vv e_n$ of the identity matrix $I_n$ form the \vocab{standard basis} for $\RR^n$. The monomials $\{1,t,t^2,\dots,t^n\}$ form the \vocab{standard basis} for the polynomial space $\mathbb{P}_n$ (they span $\mathbb{P}_n$ by definition, and $c_0+c_1t+\dots+c_nt^n=0$ for all $t\in\RR$ forces $c_0=\dots=c_n=0$).
+    \ii \textbf{Standard bases:} The columns $\vv e_1,\dots,\vv e_n$ of the identity matrix $I_n$ form the \vocab{standard basis} for $\RR^n$. The monomials $\{1,t,t^2,\dots,t^n\}$ form the \vocab{standard basis} for the polynomial space $\mathbb{P}_n$. They span $\mathbb{P}_n$ by definition. They are independent: if $p(t)=c_0+c_1t+\dots+c_nt^n=0$ for all $t\in\RR$, then $p(0)=c_0=0$; differentiating, $p'(t)=c_1+2c_2t+\dots=0$ for all $t$, so $p'(0)=c_1=0$; continuing, the $k$-th derivative at $0$ is $k!\,c_k=0$, so every $c_k=0$.
     \ii \textbf{Columns of an invertible matrix:} By the Invertible Matrix Theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{name-invertible-matrix-theorem}{Lay 2.3 Thm.~8}), the columns of an invertible $n\times n$ matrix $A$ are linearly independent and span $\RR^n$, so they form a basis for $\RR^n$.
   \end{itemize}
 \end{definition*}
@@ -66,11 +72,11 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
   The pivot columns of a matrix $A$ form a basis for $\Col A$.
 \end{theorem*}
 \begin{ideabox}
-  Elementary row operations alter the column vectors themselves, so $\Col A$ and $\Col B$ are usually different subspaces of $\RR^m$. However, row operations \emph{never change the linear dependence relations among the columns}, because $c_1\vv a_1+\dots+c_n\vv a_n=\vv 0$ is the homogeneous system $A\vv c=\vv 0$, which has the exact same solution set as $B\vv c=\vv 0$ where $B=\operatorname{rref}(A)$ (W3)! In $B=\operatorname{rref}(A)$, the pivot columns are distinct standard basis vectors $\vv e_1,\dots,\vv e_r$ (visibly linearly independent), and every non-pivot column of $B$ is a linear combination of the pivot columns of $B$. By row-operation invariance of $A\vv c=\vv 0$, the exact same linear dependence relations hold among the columns of $A$: the pivot columns of $A$ are linearly independent, and every non-pivot column of $A$ is a linear combination of the pivot columns of $A$ and can be discarded by the Spanning Set Theorem (\ilink{thm-lay-4-5}{Thm.~4.5}).
+  Elementary row operations alter the column vectors themselves, so $\Col A$ and $\Col B$ are usually different subspaces of $\RR^m$. However, row operations \emph{never change the linear dependence relations among the columns}, because $c_1\vv a_1+\dots+c_n\vv a_n=\vv 0$ is the homogeneous system $A\vv c=\vv 0$, which has the exact same solution set as $B\vv c=\vv 0$ where $B=\operatorname{rref}(A)$ (\ilink{fact-w3}{W3}). In $B=\operatorname{rref}(A)$, the pivot columns are distinct standard basis vectors $\vv e_1,\dots,\vv e_r$ (visibly linearly independent), and every non-pivot column of $B$ is a linear combination of the pivot columns of $B$. By row-operation invariance of $A\vv c=\vv 0$, the exact same linear dependence relations hold among the columns of $A$: the pivot columns of $A$ are linearly independent, and every non-pivot column of $A$ is a linear combination of the pivot columns of $A$ and can be discarded by the Spanning Set Theorem (\ilink{thm-lay-4-5}{Thm.~4.5}).
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Let $B$ be the reduced echelon form of $A$. By (W3), $A\vv x=\vv 0$ and $B\vv x=\vv 0$ have the exact same solutions, so any linear dependence relation $\sum_{j=1}^n x_j\vv a_j=\vv 0$ among the columns of $A$ holds if and only if $\sum_{j=1}^n x_j\vv b_j=\vv 0$ holds among the corresponding columns of $B$.
+    \ii Let $B$ be the reduced echelon form of $A$. By (\ilink{fact-w3}{W3}), $A\vv x=\vv 0$ and $B\vv x=\vv 0$ have the exact same solutions, so any linear dependence relation $\sum_{j=1}^n x_j\vv a_j=\vv 0$ among the columns of $A$ holds if and only if $\sum_{j=1}^n x_j\vv b_j=\vv 0$ holds among the corresponding columns of $B$.
     \ii The pivot columns of $B$ are the standard basis vectors $\vv e_1,\dots,\vv e_r$ in $\RR^m$, which are linearly independent. By Step~1, no nontrivial linear combination of the pivot columns of $A$ can be $\vv 0$, so the pivot columns of $A$ are linearly independent.
     \ii Every non-pivot column $\vv b_k$ of $B$ has zeros below row~$r$ and is therefore a linear combination of the pivot columns $\vv e_1,\dots,\vv e_r$ of $B$. By Step~1, the corresponding non-pivot column $\vv a_k$ of $A$ is the exact same linear combination of the pivot columns of $A$.
     \ii By the Spanning Set Theorem (\ilink{thm-lay-4-5}{Thm.~4.5}), discarding all non-pivot columns of $A$ leaves the span unchanged, so the pivot columns of $A$ span $\Col A$ and form a basis for $\Col A$.
@@ -85,7 +91,7 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii If $B$ is obtained from $A$ by row operations, then each row of $B$ is a linear combination of the rows of $A$, so $\Row B\subseteq\Row A$. Because $A$ is obtained from $B$ by the inverse row operations, $\Row A\subseteq\Row B$, so $\Row A=\Row B$.
+    \ii If $B$ is obtained from $A$ by row operations, then each row of $B$ is a linear combination of the rows of $A$ (a replacement gives $\operatorname{row}_i+c\operatorname{row}_j$, an interchange or scaling gives a row or a multiple of a row), so every row of $B$ lies in $\Row A$, and since $\Row A$ is a subspace, so does every combination of them: $\Row B\subseteq\Row A$. Because $A$ is obtained from $B$ by the inverse row operations, $\Row A\subseteq\Row B$, so $\Row A=\Row B$.
     \ii If $B$ is in echelon form, its nonzero rows $\vv r_1,\dots,\vv r_r$ span $\Row B=\Row A$. If $c_1\vv r_1+\dots+c_r\vv r_r=\vv 0$, examine the pivot column of $\vv r_1$: since $\vv r_2,\dots,\vv r_r$ all have entry $0$ in that column, we must have $c_1=0$. Repeating for $c_2,\dots,c_r$ shows $c_1=\dots=c_r=0$, so the nonzero rows of $B$ form a basis for $\Row A$.
   \end{steps}
 \end{proof}
@@ -109,18 +115,86 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \draw[ink arrow] ([xshift=12pt]A.east)--node[above,font=\scriptsize]{row reduce} ([xshift=-12pt]B.west);
 \node[below=6pt,font=\scriptsize] at (A.south) {\InkLabel[inkblue]{$\Col A$: pivot cols $1,3,5$}};
 \node[below=6pt,font=\scriptsize] (rowlbl) at (B.south) {\InkLabel[inkgreen]{$\Row A$: nonzero rows}};
-\node[below=3pt,font=\scriptsize] at (rowlbl.south) {\InkLabel[black!65]{free cols $2,4 \implies \dim\Nul A=2$}};
+\node[below=3pt,font=\scriptsize] at (rowlbl.south) {\InkLabel{free cols $2,4 \implies \dim\Nul A=2$}};
 \end{tikzpicture}
 
 \figcap{Row reduction $A\to B=\operatorname{rref}(A)$ yields bases for all three subspaces: pivot columns \textbf{of $A$} span $\Col A$ (\ilink{thm-lay-4-6}{Thm.~4.6}), nonzero rows \textbf{of $B$} span $\Row A$ (\ilink{thm-lay-4-7}{Thm.~4.7}), and solving $B\vv x=\vv 0$ gives the basis $\{(-4,1,0,0,0),\,(-2,0,1,1,0)\}$ for $\Nul A$.}
 \end{fig}
+
+\method{How to find bases for $\Nul A$, $\Col A$ and $\Row A$.}
+\begin{steps}
+  \ii Row reduce $A$ to an echelon form $B$ (to reduced echelon form if you also want $\Nul A$) and mark the pivot columns.
+  \ii $\Col A$: take the pivot columns \emph{of $A$} (\ilink{thm-lay-4-6}{Thm.~4.6}).
+  \ii $\Row A$: take the nonzero rows \emph{of $B$} (\ilink{thm-lay-4-7}{Thm.~4.7}).
+  \ii $\Nul A$: solve $B\vv x=\vv 0$ in parametric vector form; the vectors attached to the free variables form a basis (\ilink{fact-w4}{W4}).
+\end{steps}
+\emph{Edge cases.} If $A$ has no free variable, $\Nul A=\{\vv 0\}$, whose basis is the empty set (dimension $0$). If $A=0$, $\Col A=\Row A=\{\vv 0\}$. To find a basis of $\spn\{\vv v_1,\dots,\vv v_p\}$, apply step~2 to the matrix with these columns.
+
+\begin{example*}[Bases for the three subspaces of the matrix in the figure]
+For the matrix $A$ in the figure, the reduced echelon form $B$ has pivots in columns $1,3,5$.
+\begin{itemize}
+  \ii $\Col A$ has basis $(1,3,2,5)$, $(0,1,1,2)$, $(-1,5,2,8)$: columns $1,3,5$ of $A$.
+  \ii $\Row A$ has basis $(1,4,0,2,0)$, $(0,0,1,-1,0)$, $(0,0,0,0,1)$: the nonzero rows of $B$.
+  \ii $B\vv x=\vv 0$ reads $x_1=-4x_2-2x_4$, $x_3=x_4$, $x_5=0$ with $x_2,x_4$ free, so $\vv x=x_2(-4,1,0,0,0)+x_4(-2,0,1,1,0)$ and these two vectors are a basis of $\Nul A$.
+\end{itemize}
+Check: $3+2=5$ columns.
+\end{example*}
+
+\method{How to decide whether a set is a basis of $\RR^n$.}
+\begin{steps}
+  \ii Count: fewer than $n$ vectors cannot span $\RR^n$, and more than $n$ are dependent (\ilink{fact-w1}{W1}). Either way, not a basis.
+  \ii With exactly $n$ vectors, put them as the columns of a square matrix and check for $n$ pivots (or $\det\ne0$). By the Invertible Matrix Theorem the columns are then independent and span $\RR^n$.
+\end{steps}
+
+\begin{example*}[A basis of $\RR^3$ and two non-bases]
+The vectors $(1,0,1)$, $(2,1,1)$, $(1,1,1)$ form a basis of $\RR^3$: expanding along the first column,
+\[
+  \det\begin{bmatrix}1&2&1\\0&1&1\\1&1&1\end{bmatrix}=1(1-1)-0+1(2-1)=1\ne0.
+\]
+The two vectors $(1,0,1)$, $(2,1,1)$ are independent but do not span $\RR^3$ (a $3\times2$ matrix has at most $2$ pivots), and any four vectors in $\RR^3$ are dependent.
+\end{example*}
+
+\method{How to find a basis and the dimension of a subspace given by a formula or by equations.}
+\begin{steps}
+  \ii \emph{Parametric description} (all vectors of a form with parameters): split the general vector into parameters times fixed vectors; the subspace is their span. Remove redundant vectors with step~2 of the previous method (pivot columns).
+  \ii \emph{Equations} (all vectors satisfying homogeneous equations): the subspace is $\Nul$ of the coefficient matrix; use the null space method.
+  \ii The dimension is the number of vectors in the basis.
+\end{steps}
+
+\begin{example*}[A subspace given by a formula with a redundant vector]
+$H$ is the set of vectors $(a-2b+c,\ 2a+b+c,\ a+3b)$, $a,b,c\in\RR$. Splitting by parameters, $H=\spn\{(1,2,1),(-2,1,3),(1,1,0)\}$. Row reducing the matrix with these columns gives pivots in columns $1,2$ only (in fact $(1,1,0)=\tfrac35(1,2,1)-\tfrac15(-2,1,3)$), so $\{(1,2,1),(-2,1,3)\}$ is a basis and $\dim H=2$.
+\end{example*}
+
+\begin{example*}[A plane given by an equation]
+The plane $x+2y+z=0$ in $\RR^3$ is $\Nul\bigl[\begin{smallmatrix}1&2&1\end{smallmatrix}\bigr]$. With $y,z$ free, $x=-2y-z$, so $(x,y,z)=y(-2,1,0)+z(-1,0,1)$: basis $\{(-2,1,0),(-1,0,1)\}$, dimension $2$.
+\end{example*}
+
+\method{How to test polynomials and functions for linear independence.}
+\begin{steps}
+  \ii Write $c_1f_1+\dots+c_pf_p=0$ (the zero function: equal to $0$ for every $t$).
+  \ii For polynomials, collect the coefficient of each power of $t$ and set each to $0$ (by the independence of $1,t,t^2,\dots$ shown above). Solve the resulting homogeneous system for the $c_i$.
+  \ii For other functions, substitute convenient values of $t$; each gives a linear equation in the $c_i$. If the equations force all $c_i=0$, the functions are independent.
+  \ii To show dependence, exhibit an identity, such as $\sin^2t+\cos^2t-1=0$.
+\end{steps}
+\emph{Edge case.} Substituting values can prove independence but never dependence: a few values may happen to allow a nonzero solution even when the functions are independent, so dependence needs an identity valid for every $t$.
+
+\begin{example*}[Independent polynomials and functions]
+For $1+t$, $t+t^2$, $1+t^2$ in $\mathbb P_2$:
+\[
+  c_1(1+t)+c_2(t+t^2)+c_3(1+t^2)=(c_1+c_3)+(c_1+c_2)t+(c_2+c_3)t^2=0
+\]
+gives $c_1+c_3=0$, $c_1+c_2=0$, $c_2+c_3=0$, whose coefficient matrix has determinant $2\ne0$; only $c=\vv 0$ works, so they are independent. For $\sin t,\cos t$: $c_1\sin t+c_2\cos t=0$ at $t=0$ gives $c_2=0$, and at $t=\pi/2$ gives $c_1=0$, so they are independent. The functions $\sin^2t$, $\cos^2t$, $1$ are dependent: $1\cdot\sin^2t+1\cdot\cos^2t-1\cdot1=0$.
+\end{example*}
+
+\revisit
+A basis is a spanning set with no redundant vector. From any spanning set, discard vectors that are combinations of the others until the set is independent (\ilink{thm-lay-4-5}{Thm.~4.5}). One row reduction of $A$ to $B$ then gives all three bases: pivot columns of $A$ for $\Col A$, nonzero rows of $B$ for $\Row A$, and the free-variable vectors for $\Nul A$, as in the example \emph{Bases for the three subspaces of the matrix in the figure}.
 
 \begin{shortcuts}
   \ii \textbf{Extracting a basis from any spanning set $\spn\{\vv v_1,\dots,\vv v_p\}\subseteq\RR^m$:} Put $\vv v_1,\dots,\vv v_p$ as the columns of an $m\times p$ matrix $A=[\,\vv v_1\ \ \cdots\ \ \vv v_p\,]$, row reduce $A$ to REF to locate the pivot columns, and take the corresponding pivot columns of the original matrix $A$ (\ilink{thm-lay-4-6}{Thm.~4.6}).
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{For $\Col A$, take the pivot columns of the \emph{original} matrix $A$, \emph{never} the echelon form $B$:} In Fig.~6.1 above, every column of $B=\operatorname{rref}(A)$ has $0$ in its fourth entry, whereas $\Col A$ contains $(1,3,2,5)$ with fourth entry $5\ne 0$. Row operations change the column space.
+  \ii \textbf{For $\Col A$, take the pivot columns of the \emph{original} matrix $A$, \emph{never} the echelon form $B$:} For the matrix $A$ in the figure above, every column of $B=\operatorname{rref}(A)$ has $0$ in its fourth entry, whereas $\Col A$ contains $(1,3,2,5)$ with fourth entry $5\ne 0$. Row operations change the column space.
   \ii \textbf{For $\Row A$, take the nonzero rows of the ECHELON form $B$, not the original matrix $A$:} Because row interchanges may have occurred during reduction, the first $r$ rows of $A$ are not guaranteed to be linearly independent, whereas the $r$ nonzero rows of an echelon form $B$ are always a basis for $\Row A$.
 \end{trapbox}
 
@@ -134,12 +208,12 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
   If a vector space $V$ has a basis $\mathcal{B}=\{\vv b_1,\dots,\vv b_n\}$, then any set in $V$ containing more than $n$ vectors must be linearly dependent.
 \end{theorem*}
 \begin{ideabox}
-  Let $\{\vv u_1,\dots,\vv u_p\}$ be any set in $V$ with $p>n$. Because $\mathcal{B}=\{\vv b_1,\dots,\vv b_n\}$ spans $V$, each vector $\vv u_j$ can be expanded as a linear combination $\vv u_j=a_{1j}\vv b_1+\dots+a_{nj}\vv b_n$, recording its $n$ weights as a column vector $\vv a_j\in\RR^n$. Since $p>n$, the $p$ column vectors $\vv a_1,\dots,\vv a_p$ in $\RR^n$ are linearly dependent by (W1) (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-8}{Lay 1.7 Thm.~8}), so there exist weights $c_1,\dots,c_p$ not all zero with $\sum_{j=1}^p c_j\vv a_j=\vv 0$, which immediately gives $\sum_{j=1}^p c_j\vv u_j=\vv 0$ in $V$.
+  Let $\{\vv u_1,\dots,\vv u_p\}$ be any set in $V$ with $p>n$. Because $\mathcal{B}=\{\vv b_1,\dots,\vv b_n\}$ spans $V$, each vector $\vv u_j$ can be expanded as a linear combination $\vv u_j=a_{1j}\vv b_1+\dots+a_{nj}\vv b_n$, recording its $n$ weights as a column vector $\vv a_j\in\RR^n$. Since $p>n$, the $p$ column vectors $\vv a_1,\dots,\vv a_p$ in $\RR^n$ are linearly dependent by (\ilink{fact-w1}{W1}) (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-8}{Lay 1.7 Thm.~8}), so there exist weights $c_1,\dots,c_p$ not all zero with $\sum_{j=1}^p c_j\vv a_j=\vv 0$, which immediately gives $\sum_{j=1}^p c_j\vv u_j=\vv 0$ in $V$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii Let $\{\vv u_1,\dots,\vv u_p\}\subseteq V$ with $p>n$. Since $\mathcal{B}=\{\vv b_1,\dots,\vv b_n\}$ spans $V$, we can write $\vv u_j=\sum_{i=1}^n a_{ij}\vv b_i$ for each $j=1,\dots,p$. Let $M=(a_{ij})$ be the $n\times p$ matrix of these coefficients.
-    \ii Because $p>n$, the homogeneous system $M\vv c=\vv 0$ has more unknowns than equations and therefore has a nontrivial solution $\vv c=(c_1,\dots,c_p)\ne\vv 0$ (W2).
+    \ii Because $p>n$, the homogeneous system $M\vv c=\vv 0$ has more unknowns than equations and therefore has a nontrivial solution $\vv c=(c_1,\dots,c_p)\ne\vv 0$ (\ilink{fact-w2}{W2}).
     \ii Substituting $\vv c$ into $\sum_{j=1}^p c_j\vv u_j$ and interchanging the sums gives
     \[
       \sum_{j=1}^p c_j\vv u_j = \sum_{j=1}^p c_j\sum_{i=1}^n a_{ij}\vv b_i = \sum_{i=1}^n \left(\sum_{j=1}^p a_{ij}c_j\right)\vv b_i = \sum_{i=1}^n (M\vv c)_i\vv b_i = \sum_{i=1}^n 0\vv b_i = \vv 0.
@@ -177,9 +251,9 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii If $H=\{\vv 0\}$, then $\dim H=0\le\dim V$. Otherwise, let $S$ be a linearly independent set in $H$.
-    \ii As long as $\spn S\ne H$, choose a vector $\vv v\in H\setminus\spn S$ and replace $S$ by $S\cup\{\vv v\}$, which remains linearly independent by \ilink{thm-lay-4-4}{Thm.~4.4}.
-    \ii By \ilink{thm-lay-4-9}{Thm.~4.9}, an independent subset of $V$ can contain at most $\dim V$ vectors, so the process terminates with a basis for $H$ of size $\dim H\le\dim V$.
+    \ii If $H=\{\vv 0\}$, then $\dim H=0\le\dim V$. Otherwise, let $S$ be a linearly independent set in $H$ (if none is given, start with one nonzero vector of $H$). If $V=\{\vv 0\}$ there is nothing to prove; otherwise $V$ has a basis of $\dim V$ vectors, obtained from a finite spanning set by \ilink{thm-lay-4-5}{Thm.~4.5}.
+    \ii As long as $\spn S\ne H$, choose a vector $\vv v\in H$ with $\vv v\notin\spn S$ and list it after the vectors of $S$. The new list is independent: if it were dependent, by \ilink{thm-lay-4-4}{Thm.~4.4} some vector would be a combination of the vectors before it (the first vector is nonzero because $S$ is independent). That vector cannot be in $S$, since that would be a dependence relation inside $S$; so it would be $\vv v$, giving $\vv v\in\spn S$, a contradiction.
+    \ii By \ilink{thm-lay-4-9}{Thm.~4.9}, an independent subset of $V$ can contain at most $\dim V$ vectors, so the process stops, and it stops only when $\spn S=H$. Then $S$ is a basis for $H$ with at most $\dim V$ vectors: $H$ is finite-dimensional and $\dim H\le\dim V$.
   \end{steps}
 \end{proof}
 
@@ -208,7 +282,7 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \begin{proof}
   \begin{steps}
     \ii Let $r$ be the number of pivot positions in the $m\times n$ matrix $A$. By \ilink{thm-lay-4-6}{Thm.~4.6}, $\Col A$ has a basis of $r$ pivot columns, so $\operatorname{rank}A=\dim\Col A=r$. By \ilink{thm-lay-4-7}{Thm.~4.7}, $\Row A$ has a basis of $r$ nonzero rows of an echelon form, so $\dim\Row A=r=\operatorname{rank}A$.
-    \ii The remaining $n-r$ columns of $A$ are non-pivot columns, corresponding to the $n-r$ free variables in $A\vv x=\vv 0$. The parametric vector form of $A\vv x=\vv 0$ produces $n-r$ linearly independent vectors that span $\Nul A$, so $\dim\Nul A=\nullity A=n-r$.
+    \ii The remaining $n-r$ columns of $A$ are non-pivot columns, corresponding to the $n-r$ free variables in $A\vv x=\vv 0$. The parametric vector form of $A\vv x=\vv 0$ writes every solution as a combination of $n-r$ vectors, one per free variable, so they span $\Nul A$. They are independent: the vector of the free variable $x_k$ has entry $1$ in position $k$ and entry $0$ in the position of every other free variable, so in a combination equal to $\vv 0$, position $k$ shows that the weight of that vector is $0$. Hence $\dim\Nul A=\nullity A=n-r$.
     \ii Therefore, $\operatorname{rank}A+\dim\Nul A=r+(n-r)=n$.
   \end{steps}
 \end{proof}
@@ -219,24 +293,23 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
   \node[font=\footnotesize] at (3.3,1.82) {\InkLabel{$\RR^m$}};
 
   \node[draw=black!85,pattern=inkgrain,pattern color=inkblue,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Row) at (-3.3,0.92) {\footnotesize \InkLabel{$\Row A$}\\[2pt]\scriptsize \InkLabel{$\dim = r$}};
-  \node[font=\scriptsize,text=black!75] at (-3.3,0.0) {\InkLabel{$\oplus$}};
   \node[draw=black!80,fill=white,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Nul) at (-3.3,-0.92) {\footnotesize \InkLabel{$\Nul A$}\\[2pt]\scriptsize \InkLabel{$\dim = n-r$}};
 
   % Delicate left brace for total domain dimension
-  \draw[decorate,decoration={brace,amplitude=4.5pt,mirror},black!60,line width=0.45pt]
-    ([xshift=-6pt]Row.north west) -- node[left=6pt,font=\scriptsize,text=black!80] {\InkLabel{$\dim\RR^n=n$}} ([xshift=-6pt]Nul.south west);
+  \draw[decorate,decoration={brace,amplitude=4.5pt,mirror},black,line width=0.45pt]
+    ([xshift=-6pt]Row.north west) -- node[left=6pt,font=\scriptsize,text=black] {\InkLabel{$r+(n-r)=n$}} ([xshift=-6pt]Nul.south west);
 
   \node[draw=black!85,pattern=inkgrain,pattern color=inkblue,line width=0.45pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Col) at (3.3,0.92) {\footnotesize \InkLabel{$\Col A$}\\[2pt]\scriptsize \InkLabel{$\dim = r$}};
   \node[draw=black!60,fill=white,line width=0.42pt,minimum width=3.1cm,inner ysep=5.5pt,align=center] (Zero) at (3.3,-0.92) {\footnotesize \InkLabel{$\{\vv 0\}$}\\[2pt]\scriptsize \InkLabel{$\dim = 0$}};
 
-  \draw[ink line,-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt,shorten <=6pt,shorten >=6pt] (Row.east) -- node[above=2pt,font=\scriptsize] {\InkLabel{$\vv x\mapsto A\vv x$}} node[below=2pt,font=\scriptsize,text=black!70] {bijection} (Col.west);
-  \draw[ink guide arrow,draw=black!65,shorten <=6pt,shorten >=6pt] (Nul.east) -- node[above=2pt,font=\scriptsize,text=black!75] {\InkLabel{$A\vv x=\vv 0$}} (Zero.west);
+  \draw[ink line,-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt,shorten <=6pt,shorten >=6pt] (Row.east) -- node[above=2pt,font=\scriptsize] {\InkLabel{$\vv x\mapsto A\vv x$}} (Col.west);
+  \draw[ink guide arrow,draw=black,shorten <=6pt,shorten >=6pt] (Nul.east) -- node[above=2pt,font=\scriptsize,text=black] {\InkLabel{$A\vv x=\vv 0$}} (Zero.west);
 \end{tikzpicture}
-\figcap{Rank Theorem (\ilink{thm-lay-4-14}{Thm.~4.14}): $r$ pivot columns give $\operatorname{rank}A=\dim\Col A=\dim\Row A=r$ (blue) and $n-r$ non-pivot columns give $\dim\Nul A=n-r$, so $\operatorname{rank}A+\dim\Nul A=n$.}
+\figcap{The dimensions in the Rank Theorem: $\Row A$ and $\Col A$ (shaded) both have dimension $r$, the number of pivots, and $\Nul A$, the set sent to $\vv 0$, has dimension $n-r$.}
 \end{fig}
 
-\begin{itemize}
-  \ii \textbf{Invertible Matrix Theorem (continued, Lay 4.5):} For an $n\times n$ square matrix $A$, the statements of the IMT (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{name-invertible-matrix-theorem}{Week~4}) are also equivalent to each of:
+\begin{theorem*}[Invertible Matrix Theorem, continued (Lay 4.5)]\target{thm-imt-continued}
+  For an $n\times n$ square matrix $A$, the statements of the Invertible Matrix Theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{name-invertible-matrix-theorem}{Lay 2.3 Thm.~8}) are also equivalent to each of:
   \begin{enumerate}[(a),start=13]
     \ii The columns of $A$ form a basis of $\RR^n$.
     \ii $\Col A = \RR^n$.
@@ -244,7 +317,57 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
     \ii $\dim\Nul A = \nullity A = 0$.
     \ii $\Nul A = \{\vv 0\}$.
   \end{enumerate}
+\end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii (m) says the columns are independent and span $\RR^n$, which are statements (e) and (h) of the theorem; both hold exactly when $A$ is invertible.
+    \ii (n) is statement (h), since $\Col A$ is the span of the columns.
+    \ii (n)$\Rightarrow$(o) because $\dim\RR^n=n$. (o)$\Rightarrow$(n): a basis of $\Col A$ has $n$ independent vectors in $\RR^n$, so by the Basis Theorem (\ilink{thm-lay-4-12}{Thm.~4.12}) it is a basis of $\RR^n$, and $\Col A=\RR^n$.
+    \ii (o)$\iff$(p) by the Rank Theorem: $\operatorname{rank}A=n-\dim\Nul A$.
+    \ii (p)$\iff$(q) because only $\{\vv 0\}$ has dimension $0$; and (q) is statement (d), $A\vv x=\vv 0$ has only the trivial solution.
+  \end{steps}
+\end{proof}
+
+\method{How to answer dimension questions with the Rank Theorem.}
+\begin{steps}
+  \ii Identify $m$ (rows) and $n$ (columns) of $A$, and whichever of $\operatorname{rank}A$, $\dim\Nul A$ is given.
+  \ii Use $\operatorname{rank}A+\dim\Nul A=n$ and $\operatorname{rank}A\le\min(m,n)$.
+  \ii $\Col A=\RR^m$ exactly when $\operatorname{rank}A=m$; $\Nul A=\{\vv 0\}$ exactly when $\operatorname{rank}A=n$; $\dim\Row A=\operatorname{rank}A$.
+  \ii From an echelon form, count pivots: $\dim\Col A=\dim\Row A=$ number of pivots, $\dim\Nul A=$ number of free columns.
+\end{steps}
+
+\begin{example*}[Dimension questions answered by counting]
+\begin{itemize}
+  \ii $A$ is $7\times9$ with $\dim\Nul A=2$: $\operatorname{rank}A=9-2=7=m$, so $\Col A=\RR^7$.
+  \ii $A$ is $6\times4$ with rank $4$: $\dim\Nul A=0$, so $A\vv x=\vv 0$ has only the trivial solution, but $\Col A\ne\RR^6$.
+  \ii A $3\times5$ matrix cannot have rank $4$, since $\operatorname{rank}A\le3$; so its null space has dimension at least $2$.
+  \ii If an echelon form of a $4\times6$ matrix has $3$ pivots, then $\dim\Col A=\dim\Row A=3$ and $\dim\Nul A=3$.
 \end{itemize}
+\end{example*}
+
+\method{How to extend an independent set to a basis of $\RR^n$.}
+\begin{steps}
+  \ii Form $M=[\,\vv v_1\ \cdots\ \vv v_k\ \ \vv e_1\ \cdots\ \vv e_n\,]$ and row reduce it to echelon form.
+  \ii The pivot columns of $M$ form a basis of $\Col M$ (\ilink{thm-lay-4-6}{Thm.~4.6}), and $\Col M=\RR^n$ because it contains $\vv e_1,\dots,\vv e_n$.
+  \ii The first $k$ columns are pivot columns: if column $j\le k$ were not, it would be a combination of earlier pivot columns, all among $\vv v_1,\dots,\vv v_{j-1}$ (row operations keep column relations, \ilink{fact-w3}{W3}), contradicting independence. So the basis is $\vv v_1,\dots,\vv v_k$ plus the $\vv e_j$ in the remaining pivot columns.
+\end{steps}
+
+\begin{example*}[Extending two vectors to a basis of $\RR^3$]
+Extend $\{(1,0,1),(1,1,0)\}$:
+\[
+  \begin{bmatrix}1&1&1&0&0\\0&1&0&1&0\\1&0&0&0&1\end{bmatrix}
+  \longrightarrow
+  \begin{bmatrix}1&0&0&0&1\\0&1&0&1&0\\0&0&1&-1&-1\end{bmatrix}.
+\]
+The pivot columns are $1,2,3$, so $\{(1,0,1),(1,1,0),(1,0,0)\}$ is a basis of $\RR^3$. Check: the determinant of the matrix with these columns is $-1\ne0$.
+\end{example*}
+
+\begin{example*}[A basis of $\mathbb P_2$ by the Basis Theorem]
+The polynomials $1+t$, $t+t^2$, $1+t^2$ are independent (example \emph{Independent polynomials and functions}), and there are $3=\dim\mathbb P_2$ of them. By the Basis Theorem (\ilink{thm-lay-4-12}{Thm.~4.12}) they form a basis of $\mathbb P_2$; spanning need not be checked.
+\end{example*}
+
+\revisit
+If $V$ has a basis of $n$ vectors, any $n+1$ vectors in $V$ are dependent (\ilink{thm-lay-4-9}{Thm.~4.9}), so a second basis can have neither more nor fewer vectors than the first (\ilink{thm-lay-4-10}{Thm.~4.10}): the number $\dim V$ is well defined. For an $m\times n$ matrix with $r$ pivots, $\dim\Col A=\dim\Row A=r$ and $\dim\Nul A=n-r$ (\ilink{thm-lay-4-14}{Thm.~4.14}): fixing any one of these numbers fixes the other two.
 
 \begin{shortcuts}
   \ii \textbf{Extending an independent set $\{\vv v_1,\dots,\vv v_k\}$ to a basis of $\RR^n$:} Form the $n\times(k+n)$ matrix $[\,\vv v_1\ \ \cdots\ \ \vv v_k\ \ \vv e_1\ \ \cdots\ \ \vv e_n\,]$ and row reduce to locate its $n$ pivot columns. Because $\vv v_1,\dots,\vv v_k$ are linearly independent, the first $k$ columns are automatically pivot columns, and the remaining $n-k$ pivot columns tell you which standard basis vectors $\vv e_j$ to adjoin.
@@ -256,7 +379,7 @@ In any vector space $V$, an indexed set $\{\vv v_1,\dots,\vv v_p\}$ is \vocab{li
 \end{trapbox}
 
 \section{Homework this week}
-HW5, Section 4.3: 3, 5, 13, 15, 20, 23, 24, 26, 29, 31, 41, 44. HW6, Section 4.5: 1, 3, 9, 11, 17, 18, 22, 24, 25, 27, 33, 35, 44, 45 (all the true/false questions in 4.5 are recommended). (Section 4.4 of HW6 is in the \xweek{math54}{2026-10-05-coordinates-eigenvalues}{Week~7 handout}.) Midterm 1 is this week.
+HW5, Section 4.3: 3, 5, 13, 15, 20, 23, 24, 26, 29, 31, 41, 44. HW6, Section 4.5: 1, 3, 9, 11, 17, 18, 22, 24, 25, 27, 33, 35, 44, 45 (all the true/false questions in 4.5 are recommended). Section 4.4 of HW6 is taught in the \xweek{math54}{2026-10-05-coordinates-eigenvalues}{Week~7 handout}.
 
 \section{Problem set}
 \begin{prob}\textbf{P1.}\ For the matrix $A$ below, find bases for $\Col A$, $\Row A$, and $\Nul A$, and verify the Rank Theorem:

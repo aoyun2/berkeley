@@ -11,9 +11,10 @@ def trace_step(n):
     raise NotImplementedError("TODO: implement trace_step")
 
 
-def middle_number(a, b, c):
-    """Return the middle of three numbers using only arithmetic, min, and max (no sorted/list)."""
-    raise NotImplementedError("TODO: implement middle_number")
+def clamp_value(x, low, high):
+    """For low <= high, return x moved into [low, high]: low if x < low, high if x > high,
+    and x itself otherwise. Use only min and max (no if statement)."""
+    raise NotImplementedError("TODO: implement clamp_value")
 
 
 def clamp_distance(x, low, high):

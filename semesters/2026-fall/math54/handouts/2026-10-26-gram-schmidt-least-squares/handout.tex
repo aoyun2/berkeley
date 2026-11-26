@@ -6,6 +6,9 @@
 \newcommand{\vv}[1]{\mathbf{#1}}
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\proj}{proj}\DeclareMathOperator{\dist}{dist}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.8pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,frametitlefont=\sffamily\bfseries\color{NavyBlue},frametitleaboveskip=5pt,frametitlebelowskip=1pt,innertopmargin=2pt,innerbottommargin=6pt,skipabove=9pt,skipbelow=4pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle,frametitle={#1}]}{\end{mdframed}}
 \title{Math 54 --- Week 10}
 \subtitle{The Gram--Schmidt process and QR; least squares; inner product spaces (Lay 6.4, 6.5, 6.7)}
 \author{}\date{}\ihead{}
@@ -15,27 +18,27 @@
 \section{Facts used from Weeks 1--9}
 
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Projection formula (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-8}{Week~9, Thm.~8}):} If $\{\vv u_1,\dots,\vv u_p\}$ is an orthogonal basis of $W\subseteq\RR^n$, then
+  \ii \target{fact-W1}\textbf{Projection formula (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-8}{Week~9, Thm.~8}):} If $\{\vv u_1,\dots,\vv u_p\}$ is an orthogonal basis of $W\subseteq\RR^n$, then
   \[
     \proj_W\vv y = \frac{\vv y\cdot\vv u_1}{\vv u_1\cdot\vv u_1}\vv u_1 + \dots + \frac{\vv y\cdot\vv u_p}{\vv u_p\cdot\vv u_p}\vv u_p,
   \]
   with $\vv y-\proj_W\vv y\in W^\perp$. The decomposition $\vv y=(\text{in }W)+(\text{in }W^\perp)$ is unique.
 
-  \ii \textbf{Best approximation (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-9}{Week~9, Thm.~9}):} $\proj_W\vv y$ is the unique point of $W$ closest to $\vv y$: $\|\vv y-\proj_W\vv y\|<\|\vv y-\vv v\|$ for all other $\vv v\in W$.
+  \ii \target{fact-W2}\textbf{Best approximation (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-9}{Week~9, Thm.~9}):} $\proj_W\vv y$ is the unique point of $W$ closest to $\vv y$: $\|\vv y-\proj_W\vv y\|<\|\vv y-\vv v\|$ for all other $\vv v\in W$.
 
-  \ii \textbf{Orthogonal sets and bases (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-4}{Week~9, Thm.~4}):} Orthogonal sets of nonzero vectors are linearly independent; normalizing gives an orthonormal set. In a $p$-dimensional subspace, $p$ independent vectors form a basis.
+  \ii \target{fact-W3}\textbf{Orthogonal sets and bases (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-4}{Week~9, Thm.~4}):} Orthogonal sets of nonzero vectors are linearly independent; normalizing gives an orthonormal set. In a $p$-dimensional subspace, $p$ independent vectors form a basis.
 
-  \ii \textbf{Orthonormal columns (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-6}{Week~9, Thms.~3 \& 6}):} $Q$ has orthonormal columns $\iff Q^{\mathsf T}Q=I$. Also $(\Col A)^\perp = \Nul A^{\mathsf T}$.
+  \ii \target{fact-W4}\textbf{Orthonormal columns (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-6}{Week~9, Thms.~3 \& 6}):} $Q$ has orthonormal columns $\iff Q^{\mathsf T}Q=I$. Also $(\Col A)^\perp = \Nul A^{\mathsf T}$.
 
-  \ii \textbf{$\Nul(A^{\mathsf T}A)=\Nul A$ (\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P6}{Week~9, P6}):} $A^{\mathsf T}A\vv x=\vv 0 \iff \|A\vv x\|^2=0 \iff A\vv x=\vv 0$.
+  \ii \target{fact-W5}\textbf{$\Nul(A^{\mathsf T}A)=\Nul A$ (\xlink{math54}{2026-10-19-orthogonality-projections}{prob-P6}{Week~9, P6}):} $A^{\mathsf T}A\vv x=\vv 0 \iff \|A\vv x\|^2=0 \iff A\vv x=\vv 0$.
 
-  \ii \textbf{Invertibility (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Weeks~4--5}):} Square $A$ is invertible $\iff \Nul A=\{\vv 0\} \iff \det A\ne 0$. Triangular determinants equal diagonal products; if $R$ is invertible, $(R^{\mathsf T})^{-1}=(R^{-1})^{\mathsf T}$; and $(QR)^{\mathsf T}=R^{\mathsf T}Q^{\mathsf T}$.
+  \ii \target{fact-W6}\textbf{Invertibility (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Weeks~4--5}):} Square $A$ is invertible $\iff \Nul A=\{\vv 0\} \iff \det A\ne 0$. Triangular determinants equal diagonal products; if $R$ is invertible, $(R^{\mathsf T})^{-1}=(R^{-1})^{\mathsf T}$; and $(QR)^{\mathsf T}=R^{\mathsf T}Q^{\mathsf T}$.
 
-  \ii \textbf{Pythagorean theorem (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-2}{Week~9, Thm.~2}):} $\vv u\perp\vv v \iff \|\vv u+\vv v\|^2=\|\vv u\|^2+\|\vv v\|^2$; $\|c\vv v\|=|c|\,\|\vv v\|$.
+  \ii \target{fact-W7}\textbf{Pythagorean theorem (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-2}{Week~9, Thm.~2}):} $\vv u\perp\vv v \iff \|\vv u+\vv v\|^2=\|\vv u\|^2+\|\vv v\|^2$; $\|c\vv v\|=|c|\,\|\vv v\|$.
 
-  \ii \textbf{Matrix--vector products (\xweek{math54}{2026-09-14-matrix-algebra-inverses}{Weeks~2, 4}):} $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$; $(A^{\mathsf T}B)_{ij}=\vv a_i\cdot\vv b_j$; $2\times2$ inverse formula.
+  \ii \target{fact-W8}\textbf{Matrix--vector products (\xweek{math54}{2026-09-14-matrix-algebra-inverses}{Weeks~2, 4}):} $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$; $(A^{\mathsf T}B)_{ij}=\vv a_i\cdot\vv b_j$; $2\times2$ inverse formula.
 
-  \ii \textbf{Rank theorem (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}):} $\rank A+\dim\Nul A=n$ for $m\times n$ matrix $A$.
+  \ii \target{fact-W9}\textbf{Rank theorem (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}):} $\rank A+\dim\Nul A=n$ for $m\times n$ matrix $A$.
 \end{enumerate}
 
 \section{This week}
@@ -43,14 +46,14 @@
 \subsection{The Gram--Schmidt process (Lay 6.4)}
 
 \begin{qbox}
-  The projection formula (W1) requires an \emph{orthogonal} basis of $W$, yet subspaces usually come with an ordinary basis---for example $W=\spn\{(3,6,0),\ (1,2,2)\}$, where $(3,6,0)\cdot(1,2,2)=15\neq 0$. How do we systematically convert \emph{any} basis into an orthogonal (and orthonormal) basis?
+  The projection formula (\ilink{fact-W1}{W1}) requires an \emph{orthogonal} basis of $W$, yet subspaces usually come with an ordinary basis---for example $W=\spn\{(3,6,0),\ (1,2,2)\}$, where $(3,6,0)\cdot(1,2,2)=15\neq 0$. How do we systematically convert \emph{any} basis into an orthogonal (and orthonormal) basis?
 \end{qbox}
 
 For two independent vectors $\vv x_1,\vv x_2$, keep $\vv v_1=\vv x_1$ and subtract the orthogonal projection of $\vv x_2$ onto $\vv v_1$:
 \[
   \vv v_2 = \vv x_2 - \frac{\vv x_2\cdot\vv v_1}{\vv v_1\cdot\vv v_1}\vv v_1.
 \]
-For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\vv x_2\cdot\vv v_1=15 \implies \vv v_2=(1,2,2)-\frac{15}{45}(3,6,0)=(0,0,2)$. Notice $(3,6,0)\cdot(0,0,2)=0$. At step $k$, because $\vv v_1,\dots,\vv v_{k-1}$ are already orthogonal, (W1) lets us subtract $\proj_{W_{k-1}}\vv x_k$ in one sum.
+The subtracted vector is the projection of $\vv x_2$ onto the line through $\vv v_1$ (\ilink{fact-W1}{W1}), so what is left is perpendicular to $\vv v_1$, and $\vv v_2$ is still in $\spn\{\vv x_1,\vv x_2\}$. At step $k$, because $\vv v_1,\dots,\vv v_{k-1}$ are already orthogonal, (\ilink{fact-W1}{W1}) lets us subtract $\proj_{W_{k-1}}\vv x_k$ in one sum.
 
 \begin{theorem*}[The Gram--Schmidt process (Lay 6.4, Thm.~11)]\target{thm-lay-6-11}
   Given a basis $\{\vv x_1,\dots,\vv x_p\}$ for a nonzero subspace $W\subseteq\RR^n$, define $\vv v_1=\vv x_1$ and inductively for $k=2,\dots,p$:
@@ -60,17 +63,17 @@ For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\
   Then $\{\vv v_1,\dots,\vv v_p\}$ is an orthogonal basis of $W$, and $\spn\{\vv v_1,\dots,\vv v_k\}=\spn\{\vv x_1,\dots,\vv x_k\}$ for every $k=1,\dots,p$.
 \end{theorem*}
 \begin{ideabox}
-  Think inductively: once $\{\vv v_1,\dots,\vv v_k\}$ is already an orthogonal basis of $W_k=\spn\{\vv x_1,\dots,\vv x_k\}$, the subtracted combination in $\vv v_{k+1}$ is $\proj_{W_k}\vv x_{k+1}$ from (W1). Subtracting it makes $\vv v_{k+1}\perp W_k$ automatically, and $\vv v_{k+1}\ne\vv 0$ because $\vv x_{k+1}\notin W_k$ by linear independence.
+  Think inductively: once $\{\vv v_1,\dots,\vv v_k\}$ is already an orthogonal basis of $W_k=\spn\{\vv x_1,\dots,\vv x_k\}$, the subtracted combination in $\vv v_{k+1}$ is $\proj_{W_k}\vv x_{k+1}$ from (\ilink{fact-W1}{W1}). Subtracting it makes $\vv v_{k+1}\perp W_k$ automatically, and $\vv v_{k+1}\ne\vv 0$ because $\vv x_{k+1}\notin W_k$ by linear independence.
 \end{ideabox}
 \begin{proof}
-  Let $W_k=\spn\{\vv x_1,\dots,\vv x_k\}$ ($\dim W_k=k$). Induct on $k$ to show $\{\vv v_1,\dots,\vv v_k\}$ is an orthogonal basis of $W_k$. For $k=1$, $\vv v_1=\vv x_1\ne\vv 0$ suffices. Assuming the claim for $k<p$, the formula sets $\vv v_{k+1}=\vv x_{k+1}-\proj_{W_k}\vv x_{k+1}$ by (W1). Hence $\vv v_{k+1}\in W_{k+1}$ and $\vv v_{k+1}\perp W_k$ (in particular orthogonal to $\vv v_1,\dots,\vv v_k$). Since $\vv x_{k+1}\notin W_k$, $\vv v_{k+1}\ne\vv 0$. Thus $\{\vv v_1,\dots,\vv v_{k+1}\}$ is an orthogonal set of $k+1$ nonzero vectors in $W_{k+1}$, hence an orthogonal basis of $W_{k+1}$ by (W3).
+  Let $W_k=\spn\{\vv x_1,\dots,\vv x_k\}$ ($\dim W_k=k$). Induct on $k$ to show $\{\vv v_1,\dots,\vv v_k\}$ is an orthogonal basis of $W_k$. For $k=1$, $\vv v_1=\vv x_1\ne\vv 0$ suffices. Assuming the claim for $k<p$, the formula sets $\vv v_{k+1}=\vv x_{k+1}-\proj_{W_k}\vv x_{k+1}$ by (\ilink{fact-W1}{W1}). Hence $\vv v_{k+1}\in W_{k+1}$ and $\vv v_{k+1}\perp W_k$ (in particular orthogonal to $\vv v_1,\dots,\vv v_k$). Since $\vv x_{k+1}\notin W_k$, $\vv v_{k+1}\ne\vv 0$. Thus $\{\vv v_1,\dots,\vv v_{k+1}\}$ is an orthogonal set of $k+1$ nonzero vectors in $W_{k+1}$, hence an orthogonal basis of $W_{k+1}$ by (\ilink{fact-W3}{W3}).
 \end{proof}
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
   % (a) 2D two-vector Gram-Schmidt
   \begin{scope}[xshift=1.4cm,yshift=0.95cm,scale=0.88]
-    \draw[ink line,black!32,line width=0.38pt] (-0.4,-0.2) -- (3.65,1.825) node[above right=1pt,font=\scriptsize,text=black!65] {\InkLabel{$\spn\{\vv v_1\}$}};
+    \draw[ink line,black!55,line width=0.4pt] (-0.4,-0.2) -- (3.65,1.825) node[above right=1pt,font=\scriptsize,text=black] {\InkLabel{$\spn\{\vv v_1\}$}};
     \draw[ink guide,draw=black!40] (-0.7,1.4) -- (1.5,2.5);
     \draw[ink guide,draw=black!50] (2.2,1.1) -- (1.5,2.5);
     \InkStroke[black!65,line width=0.4pt]{(1.99,0.995) -- (1.885,1.205) -- (2.095,1.31)}
@@ -110,12 +113,27 @@ For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\
 \figcap{(a) Two-vector step: set $\vv v_1=\vv x_1$ and subtract $\vv p=\proj_{\vv v_1}\vv x_2$ to obtain $\vv v_2=\vv x_2-\vv p\perp\vv v_1$. (b) General step ($k=3$): subtract $\proj_{W_2}\vv x_3$ to produce $\vv v_3$ perpendicular to the plane $W_2=\spn\{\vv v_1,\vv v_2\}$.}
 \end{fig}
 
-\begin{example*}[Three-vector Gram--Schmidt and clearing fractions]
+\begin{howto}{How to apply the Gram--Schmidt process}\target{howto-gs}
+  \begin{steps}
+    \ii \textbf{Start.} $\vv v_1=\vv x_1$.
+    \ii \textbf{Step $k$.} Compute $\vv x_k\cdot\vv v_i$ and $\vv v_i\cdot\vv v_i$ for each earlier $\vv v_i$ (the new vectors, not the $\vv x_i$), and subtract $\frac{\vv x_k\cdot\vv v_i}{\vv v_i\cdot\vv v_i}\vv v_i$ for each $i<k$.
+    \ii \textbf{Clear fractions.} Multiply $\vv v_k$ by a convenient nonzero number; this changes neither its orthogonality to the earlier vectors nor the span.
+    \ii \textbf{Check.} $\vv v_k\cdot\vv v_i=0$ for every $i<k$.
+    \ii \textbf{Normalize at the end} for an orthonormal basis: $\vv q_k=\vv v_k/\|\vv v_k\|$.
+  \end{steps}
+  \textbf{Edge cases.} If some $\vv v_k=\vv 0$, then $\vv x_k$ is a combination of the earlier vectors: drop it and continue; the nonzero $\vv v$'s are an orthogonal basis of the span. A vector $\vv x_k$ already orthogonal to the earlier ones is unchanged. A different order of the $\vv x$'s gives a different orthogonal basis of the same space.
+\end{howto}
+
+\begin{example*}[Three-vector Gram--Schmidt and clearing fractions]\target{ex-gs-three}
   Let $\vv x_1=(1,1,0,1)$, $\vv x_2=(2,0,1,1)$, $\vv x_3=(1,2,2,2)$.
   \begin{steps}
     \ii $\vv v_1=(1,1,0,1)$, $\|\vv v_1\|^2=3$.
     \ii $\vv x_2\cdot\vv v_1=3 \implies \vv v_2=\vv x_2-\frac33\vv v_1=(1,-1,1,0)$, $\|\vv v_2\|^2=3$.
-    \ii $\vv x_3\cdot\vv v_1=5$, $\vv x_3\cdot\vv v_2=1 \implies \vv v_3=\vv x_3-\frac53\vv v_1-\frac13\vv v_2 = \frac13(-3,2,5,1)$. Scaling preserves orthogonality, so take $3\vv v_3=(-3,2,5,1)$ (whose dot products with $\vv v_1,\vv v_2$ are $0$) and normalize only at the very end:
+    \ii $\vv x_3\cdot\vv v_1=5$ and $\vv x_3\cdot\vv v_2=1$, so
+    \[
+      \vv v_3=\vv x_3-\frac53\vv v_1-\frac13\vv v_2 = \frac13(-3,2,5,1).
+    \]
+    Scaling preserves orthogonality, so take $3\vv v_3=(-3,2,5,1)$ (whose dot products with $\vv v_1,\vv v_2$ are $0$) and normalize only at the very end:
     \[
       \vv q_1=\frac{1}{\sqrt{3}}(1,1,0,1),\qquad
       \vv q_2=\frac{1}{\sqrt{3}}(1,-1,1,0),\qquad
@@ -123,6 +141,16 @@ For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\
     \]
   \end{steps}
 \end{example*}
+
+\begin{example*}[Gram--Schmidt with a dependent input vector]\target{ex-gs-dependent}
+  Let $\vv x_1=(1,1,0)$, $\vv x_2=(2,2,0)$, $\vv x_3=(1,0,1)$. Then $\vv v_1=(1,1,0)$ and $\vv v_2=\vv x_2-\frac42\vv v_1=\vv 0$, so $\vv x_2$ is dropped. Next $\vv v_3=\vv x_3-\frac12\vv v_1=(\frac12,-\frac12,1)$, scaled to $(1,-1,2)$. The span of the three vectors is the plane with orthogonal basis $(1,1,0)$, $(1,-1,2)$.
+\end{example*}
+
+\revisit For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, and $\vv x_2\cdot\vv v_1=15$, so
+\[
+  \vv v_2=(1,2,2)-\frac{15}{45}(3,6,0)=(0,0,2),
+\]
+and $(3,6,0)\cdot(0,0,2)=0$. So $(3,6,0)$, $(0,0,2)$ is an orthogonal basis of $W$, and normalizing gives the orthonormal basis $\frac{1}{\sqrt5}(1,2,0)$, $(0,0,1)$. For any basis, the \ilink{howto-gs}{Gram--Schmidt steps} do the same.
 
 \begin{shortcuts}
   \ii \textbf{Clear fractions at each step:} Rescale any $\vv v_k$ by a convenient nonzero integer before computing the next projection (checking $\vv v_k\cdot\vv v_i=0$).
@@ -144,23 +172,39 @@ For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\
   If an $m\times n$ matrix $A$ has linearly independent columns, then $A=QR$, where $Q$ is $m\times n$ with orthonormal columns forming a basis of $\Col A$, and $R$ is an $n\times n$ upper-triangular invertible matrix with positive diagonal entries.
 \end{theorem*}
 \begin{proof}
-  Apply Gram--Schmidt (Thm.~11) to columns $\vv x_1,\dots,\vv x_n$ of $A$ to form orthonormal columns $\vv q_k=\vv v_k/\|\vv v_k\|$ of $Q$. Because $\vv x_k = \vv v_k + (\text{comb.\ of }\vv v_1,\dots,\vv v_{k-1}) = r_{1k}\vv q_1+\dots+r_{kk}\vv q_k$ with $r_{kk}=\|\vv v_k\|>0$, putting $(r_{1k},\dots,r_{kk},0,\dots,0)^{\mathsf T}$ as column~$k$ of $R$ makes $QR=A$ (W8). Since $R$ is upper-triangular with diagonal entries $\|\vv v_k\|>0$, $\det R>0$, so $R$ is invertible (W6).
+  Apply Gram--Schmidt (\ilink{thm-lay-6-11}{Thm.~11}) to columns $\vv x_1,\dots,\vv x_n$ of $A$ to form orthonormal columns $\vv q_k=\vv v_k/\|\vv v_k\|$ of $Q$. By the formula of \ilink{thm-lay-6-11}{Thm.~11}, $\vv x_k$ is $\vv v_k$ plus a combination of $\vv v_1,\dots,\vv v_{k-1}$, so $\vv x_k=r_{1k}\vv q_1+\dots+r_{kk}\vv q_k$ with $r_{kk}=\|\vv v_k\|>0$; putting $(r_{1k},\dots,r_{kk},0,\dots,0)^{\mathsf T}$ as column~$k$ of $R$ makes $QR=A$ (\ilink{fact-W8}{W8}). Since $R$ is upper-triangular with diagonal entries $\|\vv v_k\|>0$, $\det R>0$, so $R$ is invertible (\ilink{fact-W6}{W6}).
 \end{proof}
 
-\noindent\textbf{Computing $R$ directly.} Once $Q$ is found, left-multiply $A=QR$ by $Q^{\mathsf T}$ using $Q^{\mathsf T}Q=I$ (W4): $R = Q^{\mathsf T}A$.
+\noindent\textbf{Computing $R$ directly.} Once $Q$ is found, left-multiply $A=QR$ by $Q^{\mathsf T}$ using $Q^{\mathsf T}Q=I$ (\ilink{fact-W4}{W4}): $R = Q^{\mathsf T}A$.
 
-\begin{example*}[Computing $A=QR$]
+\begin{howto}{How to find a QR factorization}\target{howto-qr}
+  \begin{steps}
+    \ii \textbf{Check the columns are independent.} Otherwise Gram--Schmidt produces a zero vector and no such $Q$, $R$ exist.
+    \ii \textbf{Gram--Schmidt} on the columns $\vv x_1,\dots,\vv x_n$ of $A$, in order, then normalize: $Q=[\,\vv q_1\ \cdots\ \vv q_n\,]$.
+    \ii \textbf{$R=Q^{\mathsf T}A$.} Its entry $(i,k)$ is $\vv q_i\cdot\vv x_k$.
+    \ii \textbf{Check.} $R$ is upper triangular with positive diagonal, and $QR=A$.
+  \end{steps}
+  \textbf{Edge cases.} A square $A$ gives an orthogonal $Q$. If a diagonal entry of $R$ comes out negative, a sign was lost in Gram--Schmidt; the diagonal entries are $\|\vv v_k\|>0$. Scaling a $\vv v_k$ to clear fractions does not change $\vv q_k$.
+\end{howto}
+
+\begin{example*}[Computing $A=QR$]\target{ex-qr}
   For
   \[
     A=\begin{bmatrix}1&2\\1&0\\0&1\\1&1\end{bmatrix},
   \]
-  our example above gives $\vv q_1=\frac{1}{\sqrt{3}}(1,1,0,1)$ and $\vv q_2=\frac{1}{\sqrt{3}}(1,-1,1,0)$, so
+  the \ilink{ex-gs-three}{three-vector example} gives $\vv q_1=\frac{1}{\sqrt{3}}(1,1,0,1)$ and $\vv q_2=\frac{1}{\sqrt{3}}(1,-1,1,0)$, so
   \[
     R = Q^{\mathsf T}A = \frac{1}{\sqrt{3}}\begin{bmatrix}1&1&0&1\\1&-1&1&0\end{bmatrix}\begin{bmatrix}1&2\\1&0\\0&1\\1&1\end{bmatrix}
     = \begin{bmatrix}\sqrt{3}&\sqrt{3}\\0&\sqrt{3}\end{bmatrix}.
   \]
   (Note $r_{11}=\|\vv v_1\|=\sqrt{3}$ and $r_{22}=\|\vv v_2\|=\sqrt{3}$.)
 \end{example*}
+
+\revisit Gram--Schmidt makes $\vv x_k$ a combination of $\vv q_1,\dots,\vv q_k$ only. Since the $\vv q_i$ are orthonormal, the coefficient of $\vv q_i$ is $r_{ik}=\vv q_i\cdot\vv x_k$, so
+\[
+  \vv x_k=r_{1k}\vv q_1+\dots+r_{kk}\vv q_k+0\,\vv q_{k+1}+\dots+0\,\vv q_n .
+\]
+Column $k$ of $QR$ is $Q$ times column $k$ of $R$, which is this combination (\ilink{fact-W8}{W8}). Putting $(r_{1k},\dots,r_{kk},0,\dots,0)$ into column $k$ of $R$ for every $k$ gives $A=QR$, and the zeros below the diagonal are exactly the statement that $\vv x_k$ uses only the first $k$ vectors $\vv q_i$.
 
 \subsection{Least-squares problems (Lay 6.5)}
 
@@ -170,7 +214,7 @@ For $W=\spn\{(3,6,0),(1,2,2)\}$: $\vv v_1=(3,6,0)$, $\vv v_1\cdot\vv v_1=45$, $\
 
 \noindent\textbf{Definition.} For $m\times n$ matrix $A$ and $\vv b\in\RR^m$, a \vocab{least-squares solution} of $A\vv x=\vv b$ is a vector $\hat{\vv x}\in\RR^n$ such that $\|\vv b-A\hat{\vv x}\| \le \|\vv b-A\vv x\|$ for all $\vv x\in\RR^n$; $\|\vv b-A\hat{\vv x}\|$ is the \vocab{least-squares error}.
 
-Because $A\vv x$ ranges over $\Col A$, minimizing $\|\vv b-A\vv x\|$ means finding $\hat{\vv x}$ with $A\hat{\vv x}=\hat{\vv b}=\proj_{\Col A}\vv b$ (W2). That happens precisely when the residual $\vv b-A\hat{\vv x}$ is orthogonal to $\Col A$, i.e.\ in $(\Col A)^\perp=\Nul A^{\mathsf T}$ (W4): $A^{\mathsf T}(\vv b-A\hat{\vv x})=\vv 0$.
+Because $A\vv x$ ranges over $\Col A$, minimizing $\|\vv b-A\vv x\|$ means finding $\hat{\vv x}$ with $A\hat{\vv x}=\hat{\vv b}=\proj_{\Col A}\vv b$ (\ilink{fact-W2}{W2}). That happens precisely when the residual $\vv b-A\hat{\vv x}$ is orthogonal to $\Col A$, i.e.\ in $(\Col A)^\perp=\Nul A^{\mathsf T}$ (\ilink{fact-W4}{W4}): $A^{\mathsf T}(\vv b-A\hat{\vv x})=\vv 0$.
 
 \begin{theorem*}[The Normal Equations (Lay 6.5, Thm.~13)]\target{thm-lay-6-13}
   The least-squares solutions of $A\vv x=\vv b$ coincide exactly with the solutions of the \textbf{normal equations}
@@ -180,10 +224,10 @@ Because $A\vv x$ ranges over $\Col A$, minimizing $\|\vv b-A\vv x\|$ means findi
   In particular, this system is always consistent.
 \end{theorem*}
 \begin{proof}
-  If $\hat{\vv x}$ is a least-squares solution, then $A\hat{\vv x}=\hat{\vv b}=\proj_{\Col A}\vv b$ (W2), so $\vv b-A\hat{\vv x}\in(\Col A)^\perp=\Nul A^{\mathsf T}$ (W1, W4), giving $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$. Conversely, if $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$, then $\vv b-A\hat{\vv x}\in\Nul A^{\mathsf T}=(\Col A)^\perp$, so $\vv b=A\hat{\vv x}+(\vv b-A\hat{\vv x})$ decomposes $\vv b$ into $(\Col A)+(\Col A)^\perp$, forcing $A\hat{\vv x}=\proj_{\Col A}\vv b$ by uniqueness (W1). Since $\hat{\vv b}\in\Col A$, solutions always exist.
+  If $\hat{\vv x}$ is a least-squares solution, then $A\hat{\vv x}=\hat{\vv b}=\proj_{\Col A}\vv b$ (\ilink{fact-W2}{W2}), so $\vv b-A\hat{\vv x}\in(\Col A)^\perp=\Nul A^{\mathsf T}$ (\ilink{fact-W1}{W1}, \ilink{fact-W4}{W4}), giving $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$. Conversely, if $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$, then $\vv b-A\hat{\vv x}\in\Nul A^{\mathsf T}=(\Col A)^\perp$, so $\vv b=A\hat{\vv x}+(\vv b-A\hat{\vv x})$ decomposes $\vv b$ into $(\Col A)+(\Col A)^\perp$, forcing $A\hat{\vv x}=\proj_{\Col A}\vv b$ by uniqueness (\ilink{fact-W1}{W1}). Since $\hat{\vv b}\in\Col A$, solutions always exist.
 \end{proof}
 
-\noindent\textbf{The question answered (line fitting).} Requiring $c_0+c_1x_i=y_i$ at $(0,1),(1,2),(2,4)$ gives:
+\revisit[ (line fitting)] Requiring $c_0+c_1x_i=y_i$ at $(0,1),(1,2),(2,4)$ gives:
 \[
   A=\begin{bmatrix}1&0\\1&1\\1&2\end{bmatrix},\quad \vv b=\begin{bmatrix}1\\2\\4\end{bmatrix}
   \implies
@@ -242,7 +286,7 @@ The best-fit line is $y=\frac56+\frac32 x$, with residuals $\vv b-A\hat{\vv x}=\
   \end{axis}
   \node[font=\footnotesize] at ($(axLS.south)+(0,-0.95cm)$) {\InkLabel{(b)}};
 \end{tikzpicture}
-\figcap{(a) Least-squares solution $A\hat{\vv x}=\hat{\vv b}$ places the residual $\vv b-A\hat{\vv x}\perp\Col A$, giving $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$ (\hyperref[thm-lay-6-13]{Thm.~6.13}). (b) Best-fit line $y=\frac56+\frac32 x$ minimizing the sum of squared vertical residuals.}
+\figcap{(a) At the least-squares solution the residual $\vv b-A\hat{\vv x}$ is perpendicular to $\Col A$, which gives $A^{\mathsf T}A\hat{\vv x}=A^{\mathsf T}\vv b$ (\ilink{thm-lay-6-13}{Thm.~13}). (b) Best-fit line $y=\frac56+\frac32 x$ minimizing the sum of squared vertical residuals.}
 \end{fig}
 
 \begin{theorem*}[Uniqueness of least squares \& QR least squares (Lay 6.5, Thms.~14 \& 15)]\target{thm-lay-6-14}\target{thm-lay-6-15}
@@ -254,24 +298,40 @@ The best-fit line is $y=\frac56+\frac32 x$, with residuals $\vv b-A\hat{\vv x}=\
       \ii $A^{\mathsf T}A$ is invertible.
     \end{enumerate}
     When they hold, $\hat{\vv x}=(A^{\mathsf T}A)^{-1}A^{\mathsf T}\vv b$.
-    \ii[(b)] \textbf{(Thm.~15)} If $A=QR$ (Thm.~12), the unique least-squares solution of $A\vv x=\vv b$ solves $R\hat{\vv x}=Q^{\mathsf T}\vv b$, i.e.\ $\hat{\vv x}=R^{-1}Q^{\mathsf T}\vv b$ (solved directly by back-substitution).
+    \ii[(b)] \textbf{(Thm.~15)} If $A=QR$ (\ilink{thm-lay-6-12}{Thm.~12}), the unique least-squares solution of $A\vv x=\vv b$ solves $R\hat{\vv x}=Q^{\mathsf T}\vv b$, i.e.\ $\hat{\vv x}=R^{-1}Q^{\mathsf T}\vv b$ (solved directly by back-substitution).
   \end{enumerate}
 \end{theorem*}
 \begin{proof}
-  (a) By (W5), $\Nul(A^{\mathsf T}A)=\Nul A$, so $A^{\mathsf T}A$ is invertible $\iff \Nul A=\{\vv 0\} \iff$ columns of $A$ are independent (W6). If invertible, Thm.~13 gives unique $\hat{\vv x}=(A^{\mathsf T}A)^{-1}A^{\mathsf T}\vv b$. Conversely if $A\vv w=\vv 0$ ($\vv w\ne\vv 0$), then $\hat{\vv x}+\vv w$ is a distinct least-squares solution since $A(\hat{\vv x}+\vv w)=A\hat{\vv x}$.
+  (a) By (\ilink{fact-W5}{W5}), $\Nul(A^{\mathsf T}A)=\Nul A$, so $A^{\mathsf T}A$ is invertible $\iff \Nul A=\{\vv 0\} \iff$ columns of $A$ are independent (\ilink{fact-W6}{W6}). If invertible, \ilink{thm-lay-6-13}{Thm.~13} gives unique $\hat{\vv x}=(A^{\mathsf T}A)^{-1}A^{\mathsf T}\vv b$. Conversely if $A\vv w=\vv 0$ ($\vv w\ne\vv 0$), then $\hat{\vv x}+\vv w$ is a distinct least-squares solution since $A(\hat{\vv x}+\vv w)=A\hat{\vv x}$.
   (b) Substituting $A=QR$ and $Q^{\mathsf T}Q=I$ into $A^{\mathsf T}A\vv x=A^{\mathsf T}\vv b$ yields $R^{\mathsf T}R\vv x=R^{\mathsf T}Q^{\mathsf T}\vv b$; left-multiplying by $(R^{\mathsf T})^{-1}$ gives $R\vv x=Q^{\mathsf T}\vv b$.
 \end{proof}
 
+\revisit[ (uniqueness)] The least-squares solution is unique exactly when the columns of $A$ are independent (\ilink{thm-lay-6-14}{Thm.~14}). For the line fit the columns $(1,1,1)$ and $(0,1,2)$ are independent, so $y=\frac56+\frac32x$ is the only best-fit line.
+
 Notice: when $A$'s columns are dependent (so $\Nul A\neq\{\vv 0\}$), $\hat{\vv b}$ is still unique while $\hat{\vv x}$ has infinitely many solutions ($\Nul A^{\mathsf T}A=\Nul A$); when $A$'s columns are mutually orthogonal ($\vv a_1,\dots,\vv a_n\neq\vv 0$), $A^{\mathsf T}A$ is diagonal and $\hat{x}_j=\frac{\vv b\cdot\vv a_j}{\vv a_j\cdot\vv a_j}$ without solving any system.
 
+\begin{howto}{How to solve a least-squares problem}\target{howto-ls}
+  \begin{steps}
+    \ii \textbf{Set up.} For a line $y=c_0+c_1x$ through data $(x_i,y_i)$, row $i$ of $A$ is $(1,x_i)$ and $b_i=y_i$; for other models, row $i$ lists the basis functions evaluated at $x_i$.
+    \ii \textbf{Choose the method.} Orthogonal columns: $\hat x_j=(\vv b\cdot\vv a_j)/(\vv a_j\cdot\vv a_j)$. A known $QR$: solve $R\hat{\vv x}=Q^{\mathsf T}\vv b$. Otherwise: the normal equations.
+    \ii \textbf{Normal equations.} Compute $A^{\mathsf T}A$ and $A^{\mathsf T}\vv b$ and row-reduce $[\,A^{\mathsf T}A\mid A^{\mathsf T}\vv b\,]$ (\ilink{thm-lay-6-13}{Thm.~13}).
+    \ii \textbf{Projection and error.} $\hat{\vv b}=A\hat{\vv x}$, and the least-squares error is $\|\vv b-A\hat{\vv x}\|$. Check $A^{\mathsf T}(\vv b-A\hat{\vv x})=\vv 0$.
+  \end{steps}
+  \textbf{Edge cases.} Dependent columns: infinitely many $\hat{\vv x}$ (add any vector of $\Nul A$), but one $\hat{\vv b}$. If $\vv b\in\Col A$, the error is $0$ and $\hat{\vv x}$ solves $A\vv x=\vv b$ exactly. If $\vv b\perp\Col A$, then $A^{\mathsf T}\vv b=\vv 0$ and $\hat{\vv b}=\vv 0$.
+\end{howto}
+
+\begin{example*}[Least squares with dependent columns]\target{ex-ls-dependent}
+  For $A$ with rows $(1,1)$, $(1,1)$, $(0,0)$ and $\vv b=(1,2,3)$: $A^{\mathsf T}A=\begin{psmallmatrix}2&2\\2&2\end{psmallmatrix}$ and $A^{\mathsf T}\vv b=(3,3)$, so the normal equations reduce to $x_1+x_2=\frac32$: every $\hat{\vv x}=(\frac32-s,\,s)$ is a least-squares solution. All of them give the same $\hat{\vv b}=(\frac32,\frac32,0)$, and the error is $\|(-\frac12,\frac12,3)\|=\frac{\sqrt{38}}{2}$.
+\end{example*}
+
 \begin{shortcuts}
-  \ii \textbf{With $QR$ factorization:} Solve $R\hat{\vv x}=Q^{\mathsf T}\vv b$ by back-substitution (better conditioned numerically than forming $A^{\mathsf T}A$).
+  \ii \textbf{With $QR$ factorization:} Solve $R\hat{\vv x}=Q^{\mathsf T}\vv b$ by back-substitution; $R$ is triangular, so no product $A^{\mathsf T}A$ has to be formed or row-reduced.
   \ii \textbf{Orthogonal columns:} $\hat{x}_j = (\vv b\cdot\vv a_j)/(\vv a_j\cdot\vv a_j)$ directly.
 \end{shortcuts}
 
 \begin{trapbox}
   \ii \textbf{\emph{Never} cancel $A^{\mathsf T}$ from $A^{\mathsf T}A\vv x=A^{\mathsf T}\vv b$:} Canceling returns the inconsistent system $A\vv x=\vv b$.
-  \ii \textbf{Distinguish $\hat{\vv x}\in\RR^n$, $\hat{\vv b}=A\hat{\vv x}\in\RR^m$, and error $\|\vv b-A\hat{\vv x}\|$.}
+  \ii \textbf{Three different answers:} the solution $\hat{\vv x}\in\RR^n$, the projection $\hat{\vv b}=A\hat{\vv x}\in\RR^m$, and the error $\|\vv b-A\hat{\vv x}\|$, a number.
 \end{trapbox}
 
 \subsection{Inner product spaces (Lay 6.7)}
@@ -287,20 +347,103 @@ Notice: when $A$'s columns are dependent (so $\Nul A\neq\{\vv 0\}$), $\hat{\vv b
   \ii[(3)] $\ip{c\vv u}{\vv v}=c\ip{\vv u}{\vv v}$ \quad (homogeneity);
   \ii[(4)] $\ip{\vv u}{\vv u}\ge 0$, and $\ip{\vv u}{\vv u}=0$ if and only if $\vv u=\vv 0$ \quad (positive definiteness).
 \end{enumerate}
-Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$, and $\vv u\perp\vv v \iff \ip{\vv u}{\vv v}=0$. By (1)--(3), linearity in the second slot and $\|c\vv v\|=|c|\,\|\vv v\|$ hold automatically, giving the \textbf{parallelogram law} $\|\vv u+\vv v\|^2+\|\vv u-\vv v\|^2=2\|\vv u\|^2+2\|\vv v\|^2$ and \textbf{polarization identity} $\ip{\vv u}{\vv v}=\frac14(\|\vv u+\vv v\|^2-\|\vv u-\vv v\|^2)$.
+Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$, and $\vv u\perp\vv v \iff \ip{\vv u}{\vv v}=0$.
 
-\begin{example*}[Three inner products \& $L^2$ best approximation of $t^2$]
+\begin{proposition*}[Algebra of an inner product]\target{prop-ip-algebra}
+  In any inner product space:
   \begin{enumerate}
-    \ii \emph{Weighted inner product on $\RR^2$:} $\ip{\vv u}{\vv v}=2u_1v_1+3u_2v_2$ (orthogonal depends on the inner product: $\ip{(1,1)}{(3,-2)}=0$).
-    \ii \emph{Evaluation on $\mathbb P_n$:} Pick $n+1$ distinct points $t_0,\dots,t_n$; $\ip{p}{q}=\sum_{k=0}^n p(t_k)q(t_k)$ satisfies (4) because a nonzero polynomial of degree $\le n$ has at most $n$ roots. On $\mathbb P_2$ with $\{-1,0,1\}$, Gram--Schmidt on $\{1,t,t^2\}$ gives $\{1,\ t,\ t^2-\frac23\}$ and $\proj_{\mathbb P_1}t^2=\frac23$.
-    \ii \emph{Integral inner product on $C[0,1]$ (the question answered):} For $\ip{f}{g}=\int_0^1 f(t)g(t)\,dt$, Gram--Schmidt on $\{1,t\}$ gives $1$ and $t-\frac12$ (since $\ip{t}{1}=\frac12$). With $\ip{t^2}{1}=\frac13$, $\ip{t^2}{t-\frac12}=\frac14-\frac16=\frac{1}{12}$, and $\ip{t-\frac12}{t-\frac12}=\frac{1}{12}$,
-    \[
-      \proj_{\mathbb P_1}t^2 = \frac13\cdot 1 + \frac{1/12}{1/12}\left(t-\frac12\right) = t - \frac16,
-      \qquad
-      \|t^2-(t-\tfrac16)\|^2 = \int_0^1 t^4\,dt - \left(\frac19+\frac{1}{12}\right) = \frac{1}{180}.
-    \]
+    \ii[(a)] $\ip{\vv u}{\vv v+\vv w}=\ip{\vv u}{\vv v}+\ip{\vv u}{\vv w}$, $\ip{\vv u}{c\vv v}=c\ip{\vv u}{\vv v}$, and $\|c\vv v\|=|c|\,\|\vv v\|$;
+    \ii[(b)] $\|\vv u\pm\vv v\|^2=\|\vv u\|^2\pm 2\ip{\vv u}{\vv v}+\|\vv v\|^2$; in particular $\vv u\perp\vv v\iff\|\vv u+\vv v\|^2=\|\vv u\|^2+\|\vv v\|^2$ (Pythagoras);
+    \ii[(c)] the \textbf{parallelogram law} $\|\vv u+\vv v\|^2+\|\vv u-\vv v\|^2=2\|\vv u\|^2+2\|\vv v\|^2$ and the \textbf{polarization identity} $\ip{\vv u}{\vv v}=\frac14(\|\vv u+\vv v\|^2-\|\vv u-\vv v\|^2)$.
   \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a)} Move the second slot to the first with symmetry (1), use (2) or (3), and move back. Then $\|c\vv v\|^2=\ip{c\vv v}{c\vv v}=c^2\ip{\vv v}{\vv v}$; take square roots.
+    \ii \textbf{(b)} Expand $\ip{\vv u\pm\vv v}{\vv u\pm\vv v}$ with (2), (3) and (a) into four terms, and combine $\ip{\vv u}{\vv v}=\ip{\vv v}{\vv u}$ by (1).
+    \ii \textbf{(c)} Add the two formulas in (b) for the parallelogram law; subtract them and divide by $4$ for polarization. \qedhere
+  \end{steps}
+\end{proof}
+
+Every result of Week~9 about orthogonal sets, projections and best approximation used only these rules, so it holds in every inner product space. Because they are used below for functions and polynomials, here they are with their proofs.
+
+\begin{proposition*}[Orthogonal sets, projections and best approximation in an inner product space]\target{prop-ip-projection}
+  Let $\vv u_1,\dots,\vv u_p$ be nonzero, pairwise orthogonal vectors in an inner product space $V$, $W=\spn\{\vv u_1,\dots,\vv u_p\}$, $\vv y\in V$, and
+  \[
+    \vv p=\sum_{i=1}^p\frac{\ip{\vv y}{\vv u_i}}{\ip{\vv u_i}{\vv u_i}}\,\vv u_i .
+  \]
+  \begin{enumerate}
+    \ii[(a)] $\vv u_1,\dots,\vv u_p$ are linearly independent.
+    \ii[(b)] $\vv y-\vv p$ is orthogonal to every vector of $W$.
+    \ii[(c)] $\|\vv y-\vv p\|<\|\vv y-\vv v\|$ for every $\vv v\in W$ with $\vv v\neq\vv p$; we write $\vv p=\proj_W\vv y$.
+    \ii[(d)] $\|\vv y-\vv p\|^2=\|\vv y\|^2-\sum_i\ip{\vv y}{\vv u_i}^2/\ip{\vv u_i}{\vv u_i}$.
+    \ii[(e)] Gram--Schmidt (\ilink{thm-lay-6-11}{Thm.~11}) works with $\ip{\cdot}{\cdot}$ in place of the dot product.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a)} If $\sum c_i\vv u_i=\vv 0$, take the inner product with $\vv u_j$: all terms with $i\neq j$ are $0$, leaving $c_j\ip{\vv u_j}{\vv u_j}=0$, and $\ip{\vv u_j}{\vv u_j}>0$ by (4). So $c_j=0$.
+    \ii \textbf{(b)} $\ip{\vv y-\vv p}{\vv u_j}=\ip{\vv y}{\vv u_j}-\frac{\ip{\vv y}{\vv u_j}}{\ip{\vv u_j}{\vv u_j}}\ip{\vv u_j}{\vv u_j}=0$, again because the other $\vv u_i$ are orthogonal to $\vv u_j$. By linearity, $\vv y-\vv p$ is then orthogonal to every combination of the $\vv u_j$.
+    \ii \textbf{(c)} For $\vv v\in W$, $\vv y-\vv v=(\vv y-\vv p)+(\vv p-\vv v)$ with $\vv p-\vv v\in W$. By (b) the two parts are orthogonal, so Pythagoras (\ilink{prop-ip-algebra}{Algebra of an inner product}, (b)) gives $\|\vv y-\vv v\|^2=\|\vv y-\vv p\|^2+\|\vv p-\vv v\|^2$, which is larger than $\|\vv y-\vv p\|^2$ when $\vv v\neq\vv p$.
+    \ii \textbf{(d)} Pythagoras for $\vv y=\vv p+(\vv y-\vv p)$ gives $\|\vv y-\vv p\|^2=\|\vv y\|^2-\|\vv p\|^2$, and expanding $\|\vv p\|^2$ with orthogonality gives $\sum_i c_i^2\ip{\vv u_i}{\vv u_i}$ with $c_i=\ip{\vv y}{\vv u_i}/\ip{\vv u_i}{\vv u_i}$, which is $\sum_i\ip{\vv y}{\vv u_i}^2/\ip{\vv u_i}{\vv u_i}$.
+    \ii \textbf{(e)} The proof of \ilink{thm-lay-6-11}{Thm.~11} used only the formula for $\vv p$ with property (b) and the independence of orthogonal nonzero vectors, (a). \qedhere
+  \end{steps}
+\end{proof}
+
+\begin{howto}{How to check that a formula is an inner product}\target{howto-ip-check}
+  \begin{steps}
+    \ii \textbf{Symmetry.} Swap $\vv u$ and $\vv v$ in the formula and compare.
+    \ii \textbf{Linearity in the first slot.} Replace $\vv u$ by $\vv u+\vv w$ and by $c\vv u$ and expand.
+    \ii \textbf{Positivity.} Show $\ip{\vv u}{\vv u}\ge 0$, usually as a sum of squares or an integral of a square.
+    \ii \textbf{Definiteness.} Show that $\ip{\vv u}{\vv u}=0$ forces $\vv u=\vv 0$. This is the step that fails most often: look for a nonzero $\vv u$ with $\ip{\vv u}{\vv u}=0$.
+  \end{steps}
+  \textbf{Edge cases.} A negative weight breaks positivity; too few evaluation points, or a matrix with dependent columns, breaks definiteness.
+\end{howto}
+
+\begin{example*}[The inner product $(A\vv u)\cdot(A\vv v)$]\target{ex-ip-matrix}
+  For an $n\times n$ matrix $A$ put $\ip{\vv u}{\vv v}=(A\vv u)\cdot(A\vv v)$. Symmetry holds because the dot product is symmetric, and linearity because $A(\vv u+\vv w)=A\vv u+A\vv w$ and $A(c\vv u)=cA\vv u$. Positivity: $\ip{\vv u}{\vv u}=\|A\vv u\|^2\ge 0$. Definiteness: $\|A\vv u\|^2=0$ means $A\vv u=\vv 0$, which forces $\vv u=\vv 0$ exactly when $A$ is invertible (\ilink{fact-W6}{W6}). For $A=\begin{psmallmatrix}1&1\\1&1\end{psmallmatrix}$ the formula is not an inner product: $\vv u=(1,-1)$ has $\ip{\vv u}{\vv u}=0$.
 \end{example*}
+
+\begin{example*}[A weighted inner product on $\RR^2$]\target{ex-ip-weighted}
+  $\ip{\vv u}{\vv v}=2u_1v_1+3u_2v_2$ satisfies (1)--(3) by direct expansion, and $\ip{\vv u}{\vv u}=2u_1^2+3u_2^2$ is positive unless $\vv u=\vv 0$. Orthogonality depends on the inner product: $\ip{(1,1)}{(3,-2)}=6-6=0$, although $(1,1)\cdot(3,-2)=1$.
+\end{example*}
+
+\begin{proposition*}[Number of roots of a polynomial]\target{prop-roots}
+  A nonzero polynomial of degree $\le n$ has at most $n$ roots.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Factoring out a root.} If $p(a)=0$, then $p(t)=p(t)-p(a)=\sum_kc_k(t^k-a^k)$, and each $t^k-a^k=(t-a)(t^{k-1}+t^{k-2}a+\dots+a^{k-1})$. So $p(t)=(t-a)q(t)$ with $q$ a nonzero polynomial of degree $\le n-1$.
+    \ii \textbf{Induction on $n$.} For $n=0$, a nonzero constant has no roots. If the claim holds for $n-1$ and $p$ has a root $a$, write $p=(t-a)q$. Any other root $b\neq a$ of $p$ satisfies $(b-a)q(b)=0$ with $b-a\neq 0$, so it is a root of $q$; $q$ has at most $n-1$ roots, so $p$ has at most $n$. \qedhere
+  \end{steps}
+\end{proof}
+
+\begin{example*}[An evaluation inner product on $\mathbb P_n$]\target{ex-ip-evaluation}
+  Pick $n+1$ distinct points $t_0,\dots,t_n$ and put $\ip{p}{q}=\sum_{k=0}^n p(t_k)q(t_k)$, the dot product of the value vectors. Axioms (1)--(3) hold because they hold for the dot product. For (4), $\ip{p}{p}=\sum p(t_k)^2=0$ means $p$ has the $n+1$ roots $t_0,\dots,t_n$, so $p=0$ by \ilink{prop-roots}{Number of roots of a polynomial}. On $\mathbb P_2$ with $\{-1,0,1\}$, the value vectors of $1,t,t^2$ are $(1,1,1)$, $(-1,0,1)$, $(1,0,1)$. Here $\ip{t}{1}=0$, $\ip{t^2}{1}=2$, $\ip11=3$, $\ip{t^2}{t}=0$, so Gram--Schmidt gives $1$, $t$, and
+  \[
+    t^2-\frac{\ip{t^2}{1}}{\ip11}\,1-\frac{\ip{t^2}{t}}{\ip tt}\,t=t^2-\frac23.
+  \] Hence $\proj_{\mathbb P_1}t^2=\frac23\cdot 1+0\cdot t=\frac23$.
+\end{example*}
+
+\begin{example*}[$L^2$ best approximation of $t^2$ on {$[0,1]$}]\target{ex-ip-l2}
+  For $\ip{f}{g}=\int_0^1 f(t)g(t)\,dt$, Gram--Schmidt on $\{1,t\}$ gives $1$ and $t-\frac12$ (since $\ip{t}{1}=\frac12$ and $\ip11=1$). With $\ip{t^2}{1}=\frac13$, $\ip{t^2}{t-\frac12}=\frac14-\frac16=\frac{1}{12}$, and $\ip{t-\frac12}{t-\frac12}=\frac{1}{12}$, the formula for $\vv p$ and part (d) of the \ilink{prop-ip-projection}{projection proposition} give
+  \[
+    \proj_{\mathbb P_1}t^2 = \frac13\cdot 1 + \frac{1/12}{1/12}\left(t-\frac12\right) = t - \frac16,
+    \qquad
+    \|t^2-(t-\tfrac16)\|^2 = \int_0^1 t^4\,dt - \left(\frac19+\frac{1}{12}\right) = \frac{1}{180}.
+  \]
+\end{example*}
+
+\begin{howto}{How to find a best approximation in an inner product space}\target{howto-ip-approx}
+  \begin{steps}
+    \ii \textbf{Orthogonal basis of $W$.} Run Gram--Schmidt on a basis of $W$, computing every product with the given $\ip{\cdot}{\cdot}$ (integrals, weighted sums or value vectors).
+    \ii \textbf{Coefficients.} $c_i=\ip{\vv y}{\vv u_i}/\ip{\vv u_i}{\vv u_i}$, and $\proj_W\vv y=\sum c_i\vv u_i$.
+    \ii \textbf{Error.} $\|\vv y-\proj_W\vv y\|^2=\|\vv y\|^2-\sum_i\ip{\vv y}{\vv u_i}^2/\ip{\vv u_i}{\vv u_i}$, or compute $\ip{\vv y-\vv p}{\vv y-\vv p}$ directly.
+  \end{steps}
+  \textbf{Edge cases.} Never use the dot product of coefficient vectors when the inner product is an integral. On a symmetric interval or symmetric set of points, even and odd functions are orthogonal, which removes many terms.
+\end{howto}
+
+\revisit For the integral inner product on $[0,1]$, the best linear approximation of $t^2$ is $t-\frac16$, with $\int_0^1\bigl(t^2-t+\frac16\bigr)^2\,dt=\frac1{180}$ (\ilink{ex-ip-l2}{example}). The results carry over because their proofs used only the axioms (1)--(4): the \ilink{prop-ip-projection}{projection proposition} repeats them in this setting.
 
 \begin{theorem*}[Cauchy--Schwarz \& Triangle Inequalities (Lay 6.7, Thms.~16 \& 17)]\target{thm-lay-6-16}\target{thm-lay-6-17}
   In any inner product space $V$, for all $\vv u,\vv v\in V$:
@@ -311,8 +454,16 @@ Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$,
 \end{theorem*}
 \begin{proof}
   \begin{steps}
-    \ii \textbf{(Thm.~16)} If $\vv u=\vv 0$, both sides vanish. Otherwise put $\vv p=\frac{\ip{\vv v}{\vv u}}{\ip{\vv u}{\vv u}}\vv u=\proj_{\spn\{\vv u\}}\vv v$. Since $\vv v-\vv p\perp\vv p$, Pythagoras gives $\|\vv p\|\le\|\vv v\|$, and homogeneity yields $\|\vv p\|=\frac{|\ip{\vv u}{\vv v}|}{\|\vv u\|^2}\|\vv u\|=\frac{|\ip{\vv u}{\vv v}|}{\|\vv u\|}\le\|\vv v\|$.
-    \ii \textbf{(Thm.~17)} Expanding via Cauchy--Schwarz: $\|\vv u+\vv v\|^2=\|\vv u\|^2+2\ip{\vv u}{\vv v}+\|\vv v\|^2\le \|\vv u\|^2+2\|\vv u\|\,\|\vv v\|+\|\vv v\|^2=(\|\vv u\|+\|\vv v\|)^2$; take square roots of nonnegative sides.
+    \ii \textbf{(Thm.~16)} If $\vv u=\vv 0$, both sides vanish. Otherwise put $\vv p=\frac{\ip{\vv v}{\vv u}}{\ip{\vv u}{\vv u}}\vv u=\proj_{\spn\{\vv u\}}\vv v$. Since $\vv v-\vv p\perp\vv p$ (\ilink{prop-ip-projection}{projection proposition}, (b)), Pythagoras (\ilink{prop-ip-algebra}{Algebra of an inner product}, (b)) gives $\|\vv v\|^2=\|\vv p\|^2+\|\vv v-\vv p\|^2$, so $\|\vv p\|\le\|\vv v\|$. By homogeneity,
+    \[
+      \|\vv p\|=\frac{|\ip{\vv u}{\vv v}|}{\|\vv u\|^2}\|\vv u\|=\frac{|\ip{\vv u}{\vv v}|}{\|\vv u\|}\le\|\vv v\|,
+    \]
+    and multiplying by $\|\vv u\|$ gives the inequality.
+    \ii \textbf{(Thm.~17)} Expand with \ilink{prop-ip-algebra}{Algebra of an inner product}, (b), and bound the middle term by Cauchy--Schwarz:
+    \[
+      \|\vv u+\vv v\|^2=\|\vv u\|^2+2\ip{\vv u}{\vv v}+\|\vv v\|^2\le \|\vv u\|^2+2\|\vv u\|\,\|\vv v\|+\|\vv v\|^2=(\|\vv u\|+\|\vv v\|)^2;
+    \]
+    both sides are nonnegative, so take square roots.
   \end{steps}
 \end{proof}
 
@@ -346,7 +497,7 @@ Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$,
 
   % (b) Cauchy-Schwarz right triangle
   \begin{scope}[xshift=7.4cm,yshift=0.95cm]
-    \draw[ink line,black!32,line width=0.38pt] (-0.3,0) -- (3.85,0) node[right=2pt,font=\scriptsize,text=black!65] {\InkLabel{$\spn\{\vv u\}$}};
+    \draw[ink line,black!55,line width=0.4pt] (-0.3,0) -- (3.85,0) node[right=2pt,font=\scriptsize,text=black] {\InkLabel{$\spn\{\vv u\}$}};
     \InkStroke[black!65,line width=0.4pt]{(2.73,0) -- (2.73,0.22) -- (2.95,0.22)}
     \InkStroke[figvec,draw=figblue,line width=0.65pt]{(0,0) -- (2.95,0)}
     \node[below=3pt,font=\scriptsize,text=figblue] at (2.20,0) {\InkLabel{$\vv p$}};
@@ -358,11 +509,11 @@ Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$,
     \node[font=\footnotesize] at (1.65,-2.23) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Orthogonal projection $t-\frac16$ minimizes $\int_0^1(t^2-p(t))^2\,dt$ among linear $p$ (blue shading marks pointwise difference). (b) Cauchy--Schwarz (\hyperref[thm-lay-6-16]{Thm.~6.16}): $\vv p=\proj_{\spn\{\vv u\}}\vv v$ forms a leg of a right triangle with hypotenuse $\vv v$, so $\|\vv p\|\le\|\vv v\|$.}
+\figcap{(a) The projection $t-\frac16$ minimizes $\int_0^1(t^2-p(t))^2\,dt$ among linear $p$; the shading is the difference between the two graphs. (b) Cauchy--Schwarz (\ilink{thm-lay-6-16}{Thm.~16}): $\vv p=\proj_{\spn\{\vv u\}}\vv v$ forms a leg of a right triangle with hypotenuse $\vv v$, so $\|\vv p\|\le\|\vv v\|$.}
 \end{fig}
 
 \begin{shortcuts}
-  \ii \textbf{Symmetric points or interval $[-a,a]$:} An even function and an odd function are orthogonal ($\int_{-a}^a (\text{odd})=0$).
+  \ii \textbf{Symmetric points or interval $[-a,a]$:} An even function and an odd function are orthogonal: their product $h$ is odd, and $\int_{-a}^ah$ is $0$ because the substitution $t\to-t$ turns $\int_{-a}^0h$ into $-\int_0^ah$; for symmetric points the values at $t$ and $-t$ cancel in the same way.
   \ii \textbf{Evaluation inner product:} Turns polynomials into dot products of value vectors in $\RR^{n+1}$.
 \end{shortcuts}
 
@@ -374,9 +525,9 @@ Then $\|\vv v\|=\sqrt{\ip{\vv v}{\vv v}}$, $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$,
 \section{Homework this week}
 HW9, Sections 6.4--6.5, and HW10, Section 6.7.
 \begin{itemize}
-  \ii \textbf{Section 6.4:} \#3 ($\vv v_1=\vv x_1$, $\vv v_2=\vv x_2-\frac{\vv x_2\cdot\vv v_1}{\vv v_1\cdot\vv v_1}\vv v_1$); \#7 (clear fractions, normalize); \#11 (project onto $\vv v_1,\vv v_2$, not $\vv x_1,\vv x_2$); \#15 ($R=Q^{\mathsf T}A$, Thm.~12); \#17 ($c=0$ trap); \#20 ($\vv x-\proj_W\vv x\neq\vv 0$ when $\vv x\notin W$); \#22 ($\Col A=\Col Q$).
-  \ii \textbf{Section 6.5:} \#3 (normal equations); \#5 (reduce $[\,A^{\mathsf T}A\mid A^{\mathsf T}\vv b\,]$); \#11 (orthogonal columns); \#13 (compare $\|\vv b-A\vv u\|$ vs $\|\vv b-A\vv v\|$); \#17, \#19 (Best Approximation); \#22 (Thm.~14).
-  \ii \textbf{Section 6.7:} \#1 (weighted inner product on $\RR^2$); \#3, \#5, \#7 (value vectors at $-1,0,1$); \#9 (symmetric points $\{-3,-1,1,3\}$ make $\ip{t^2}{t}=\ip{t}{1}=0$, so only the constant term of the projection remains); \#13 (axioms for $(A\vv u)\cdot(A\vv v)$); \#16, \#18 (expansion \& parallelogram law); \#20, \#23 (Thm.~17 / axiom 4); \#26 (Thm.~16 with $(a,b),(1,1)$); \#28 ($C[0,1]$ integrals).
+  \ii \textbf{Section 6.4:} \#3 ($\vv v_1=\vv x_1$, $\vv v_2=\vv x_2-\frac{\vv x_2\cdot\vv v_1}{\vv v_1\cdot\vv v_1}\vv v_1$); \#7 (clear fractions, normalize); \#11 (project onto $\vv v_1,\vv v_2$, not $\vv x_1,\vv x_2$); \#15 ($R=Q^{\mathsf T}A$, \ilink{thm-lay-6-12}{Thm.~12}); \#17 ($c=0$ trap); \#20 ($\vv x-\proj_W\vv x\neq\vv 0$ when $\vv x\notin W$); \#22 ($\Col A=\Col Q$).
+  \ii \textbf{Section 6.5:} \#3 (normal equations); \#5 (reduce $[\,A^{\mathsf T}A\mid A^{\mathsf T}\vv b\,]$); \#11 (orthogonal columns); \#13 (compare $\|\vv b-A\vv u\|$ vs $\|\vv b-A\vv v\|$); \#17, \#19 (Best Approximation); \#22 (\ilink{thm-lay-6-14}{Thm.~14}).
+  \ii \textbf{Section 6.7:} \#1 (weighted inner product on $\RR^2$); \#3, \#5, \#7 (value vectors at $-1,0,1$); \#9 (symmetric points $\{-3,-1,1,3\}$ make $\ip{t^2}{t}=\ip{t}{1}=0$, so only the constant term of the projection remains); \#13 (axioms for $(A\vv u)\cdot(A\vv v)$); \#16, \#18 (expansion \& parallelogram law); \#20, \#23 (\ilink{thm-lay-6-17}{Thm.~17} / axiom 4); \#26 (\ilink{thm-lay-6-16}{Thm.~16} with $(a,b),(1,1)$); \#28 ($C[0,1]$ integrals).
 \end{itemize}
 
 \section{Problem set}
@@ -413,7 +564,10 @@ HW9, Sections 6.4--6.5, and HW10, Section 6.7.
   \textbf{P8.}\ Use the Cauchy--Schwarz inequality to prove:
   \begin{enumerate}[(a)]
     \ii $(a+b+c)^2\le 3(a^2+b^2+c^2)$ for real numbers $a,b,c$;
-    \ii for every $f\in C[0,1]$, $\displaystyle\left(\int_0^1 f(t)\,dt\right)^2 \le \int_0^1 f(t)^2\,dt$.
+    \ii for every $f\in C[0,1]$,
+    \[
+      \left(\int_0^1 f(t)\,dt\right)^2 \le \int_0^1 f(t)^2\,dt.
+    \]
   \end{enumerate}
 \end{prob}
 

@@ -5,6 +5,9 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \title{STAT 20 --- Week 13}
 \subtitle{Defining causation and randomized experiments (Notes: Defining Causality, Randomized Experiments)}
 \author{}\date{}\ihead{}
@@ -13,16 +16,17 @@
 
 \section{Facts used from Weeks 1--12}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Types of claims (Week 1).} A \vocab{causal claim} states that intervening to change one variable changes another variable. A \vocab{generalization} describes a broader set of units than those recorded in the data. A \vocab{prediction} guesses an unknown outcome for a unit from observed features.
-  \ii \textbf{Confounding (Week 4).} A strong association between two variables does not establish causation, because a third variable (a lurking variable or \vocab{confounder}) can influence both. For example, hot weather drives both ice-cream sales and sunburns.
-  \ii \textbf{Sample mean and sample variance (Week 2).} For values $x_1,\dots,x_n$,
+  \ii \target{W1}\textbf{Types of claims (Week 1).} A \vocab{causal claim} states that intervening to change one variable changes another variable. A \vocab{generalization} describes a broader set of units than those recorded in the data. A \vocab{prediction} guesses an unknown outcome for a unit from observed features.
+  \ii \target{W2}\textbf{Confounding (Week 4).} A strong association between two variables does not establish causation, because a third variable (a lurking variable or \vocab{confounder}) can influence both. For example, hot weather drives both ice-cream sales and sunburns: on hot days both are high, so they are associated even though neither causes the other.
+  \ii \target{W3}\textbf{Sample mean and sample variance (Week 2).} For values $x_1,\dots,x_n$,
   \[
     \bar x = \frac{1}{n}\sum_{i=1}^n x_i, \qquad \hat\sigma^2 = \frac{1}{n-1}\sum_{i=1}^n (x_i - \bar x)^2, \qquad \hat\sigma = \sqrt{\hat\sigma^2}.
   \]
-  \ii \textbf{Counting and expected value (Weeks 5--7).} With $N$ equally likely outcomes, $\mathbb P(\text{event}) = (\text{favorable outcomes})/N$, and $\binom{n}{k}$ counts ways to choose $k$ of $n$ units. Expectation is linear: $E(aX+bY) = aE(X)+bE(Y)$ even when $X$ and $Y$ are dependent; for an indicator $I$ of an event, $E(I) = \mathbb P(\text{event})$.
-  \ii \textbf{Hypothesis tests by permutation and two-sided doubling (Weeks 9--10).} Under a null hypothesis of independence, permuting group labels breaks any link between treatment and response to generate a null distribution. For a two-sided $p$-value in \cd{infer}, compute the tail proportion on the observed side and double it, capping at $1$.
+  \ii \target{W4}\textbf{Counting and expected value (Weeks 5--7).} With $N$ equally likely outcomes, $\mathbb P(\text{event}) = (\text{favorable outcomes})/N$, and $\binom{n}{k} = \frac{n!}{k!\,(n-k)!}$ counts ways to choose $k$ of $n$ units. Expectation is linear: $E(aX+bY) = aE(X)+bE(Y)$ even when $X$ and $Y$ are dependent; for an indicator $I$ of an event, $E(I) = \mathbb P(\text{event})$. These facts are proved in \ilink{proofs}{Section~4}.
+  \ii \target{W5}\textbf{Hypothesis tests by permutation and two-sided doubling (Weeks 9--10, \xweek{stat20}{review-weeks-9-12}{review of Weeks 9--12}).} Under a null hypothesis of independence, permuting group labels breaks any link between treatment and response to generate a null distribution. For a two-sided $p$-value in \cd{infer}, compute the tail proportion on the observed side and double it, capping at $1$.
 \end{enumerate}
 
+\Needspace{24\baselineskip}
 \section{This week}
 
 \subsection{Defining causation (Notes: Defining Causality)}
@@ -33,7 +37,7 @@
 
 Everyday statements such as ``aspirin cured the headache'' or ``graduating from Berkeley got her a strong job offer'' use causal language informally. Statistics needs a sharp definition of causation that does not rely on synonyms for ``cause''.
 
-\medskip\noindent\textbf{The conditional counterfactual.} Tracing causality back to Thucydides and Hume, we compare what happened in the actual world with what would have happened in an otherwise identical hypothetical world in which the proposed cause was absent.
+\medskip\noindent\textbf{The conditional counterfactual.} The definition compares what happened in the actual world with what would have happened in an otherwise identical hypothetical world in which the proposed cause was absent.
 
 \begin{definition*}[Counterfactual and event causation]
   A \vocab{counterfactual} is a hypothetical world in which an event that occurred did not occur (or vice versa), with all prior circumstances kept fixed. Event $A$ \vocab{causes} event $B$ if, in the counterfactual world where $A$ does not happen, $B$ does not happen either.
@@ -44,6 +48,16 @@ Everyday statements such as ``aspirin cured the headache'' or ``graduating from 
 \begin{definition*}[Causation between variables]
   An explanatory (treatment) variable $X$ \vocab{causes} a response variable $Y$ if, in a counterfactual world where $X$ takes a different value, the probability distribution of $Y$ is different.
 \end{definition*}
+
+\begin{howto}{How to decide whether an event or a variable is a cause}
+\begin{steps}
+  \ii Name the candidate cause and the outcome precisely (``you asked the professor'', ``you hold a sheet'').
+  \ii Build the counterfactual world: remove (or change) only the candidate cause, and keep everything that happened \emph{before} it fixed. Events after it may change as a consequence.
+  \ii Follow what would happen in that world, using the stated rules of the situation.
+  \ii If the outcome (or, for variables, the distribution of the outcome) is different, the candidate is a cause; if it is the same, it is not.
+  \ii Edge case: if another route would have produced the same outcome anyway (a backup), the candidate is not a cause by this definition, even though it was part of what actually happened.
+\end{steps}
+\end{howto}
 
 \begin{example*}[Aspirin and studying (Notes)]
   \begin{itemize}
@@ -76,19 +90,32 @@ Observed table & \$150{,}000 & \cd{NA} \\
   \]
 \end{definition*}
 
-By linearity of expectation (W4), $\tau = E(Y_t) - E(Y_c)$ splits the paired difference into the difference of two group averages. We can therefore estimate $E(Y_t)$ from the observed treated group and $E(Y_c)$ from the observed control group using the difference in sample means (or proportions):
+The last equality is linearity of expectation (\ilink{W4}{W4}) written out for averages,
+\[
+  \frac1n\sum_i (Y_{t,i}-Y_{c,i}) = \frac1n\sum_i Y_{t,i} - \frac1n\sum_i Y_{c,i},
+\]
+because a sum of differences is the difference of the sums. It splits the paired difference into the difference of two group averages. We can therefore estimate $E(Y_t)$ from the observed treated group and $E(Y_c)$ from the observed control group using the difference in sample means (or proportions):
 \[
   \hat\tau = \bar y_{\text{treated}} - \bar y_{\text{control}}.
 \]
 
+\begin{howto}{How to compute $\tau$ and $\hat\tau$}
+\begin{steps}
+  \ii If the full potential-outcome table is given (a hypothetical or simulated population), compute each $\delta_i = Y_{t,i} - Y_{c,i}$ and average them; check that this equals $\bar Y_t - \bar Y_c$.
+  \ii If only observed data are given, each unit shows one outcome: average the outcomes of the treated units and of the control units, and subtract: $\hat\tau = \bar y_{\text{treated}} - \bar y_{\text{control}}$. For a 0/1 outcome the averages are proportions.
+  \ii State the subtraction order (treated minus control) and the units.
+  \ii Before reading $\hat\tau$ as a causal effect, ask how units got into the groups: self-selection allows confounding (\ilink{W2}{W2}); random assignment does not, as the next subsection proves.
+\end{steps}
+\end{howto}
+
 \begin{example*}[Three salaries and observational Cal graduates (Notes)]
   \begin{itemize}
     \ii \textbf{Population mean of individual effects.} Suppose ideal outcomes $(Y_t, Y_c)$ were $(150{,}000, 115{,}000)$ for Evelyn, $(135{,}000, 101{,}000)$ for Nikhil, and $(105{,}500, 100{,}000)$ for Yiwen. The individual effects are $35{,}000$, $34{,}000$, and $5{,}500$, averaging $\tau = (35{,}000 + 34{,}000 + 5{,}500)/3 \approx 24{,}833$, which matches $E(Y_t) - E(Y_c)$.
-    \ii \textbf{Observational groups.} Among six people who chose whether to attend Cal, $2/3$ of Cal graduates and $1/3$ of non-graduates hold a good job, giving $\hat\tau = 2/3 - 1/3 = 1/3$. Because units chose their own group, systematic background differences (W2) prevent reading $\hat\tau = 1/3$ as a causal effect.
+    \ii \textbf{Observational groups.} Among six people who chose whether to attend Cal, $2/3$ of Cal graduates and $1/3$ of non-graduates hold a good job, giving $\hat\tau = 2/3 - 1/3 = 1/3$. Because units chose their own group, systematic background differences (\ilink{W2}{W2}) prevent reading $\hat\tau = 1/3$ as a causal effect.
   \end{itemize}
 \end{example*}
 
-\medskip\noindent\textbf{The question answered.} Remove each candidate action while holding everything else fixed:
+\revisit Apply the method for deciding whether an event is a cause to each candidate action, keeping everything before it fixed:
 \begin{itemize}
   \ii \textbf{(A) Printing, (C) Coming to class, (E) Asking the professor} are all causes: without any one of them, you would not hold a sheet.
   \ii \textbf{(D) Arriving late} is not a cause: had you arrived on time, the Tutor would have handed you a sheet anyway.
@@ -97,13 +124,13 @@ By linearity of expectation (W4), $\tau = E(Y_t) - E(Y_c)$ splits the paired dif
 
 \begin{shortcuts}
   \ii \textbf{Testing an event cause:} Ask whether the outcome changes in the counterfactual world where the candidate event is removed and everything else remains fixed.
-  \ii \textbf{Estimating the ATE from group data:} Compute $\hat\tau = \bar y_{\text{treated}} - \bar y_{\text{control}}$, justified by linearity of expectation $\tau = E(Y_t) - E(Y_c)$ (W4).
+  \ii \textbf{Estimating the ATE from group data:} Compute $\hat\tau = \bar y_{\text{treated}} - \bar y_{\text{control}}$, justified by linearity of expectation $\tau = E(Y_t) - E(Y_c)$ (\ilink{W4}{W4}).
   \ii \textbf{Missing potential outcome:} Treated units have $Y_t$ observed and $Y_c$ missing; control units have $Y_c$ observed and $Y_t$ missing.
 \end{shortcuts}
 
 \begin{trapbox}
   \ii \textbf{Individual effects are never directly observable:} Only one of $Y_{t,i}$ and $Y_{c,i}$ occurs for unit $i$, so $\delta_i$ cannot be calculated from data.
-  \ii \textbf{Observational differences are not causal effects:} Self-selected groups mix the treatment effect with confounding differences (W2).
+  \ii \textbf{Observational differences are not causal effects:} Self-selected groups mix the treatment effect with confounding differences (\ilink{W2}{W2}).
   \ii \textbf{Causation does not require certainty:} Raising daily studying from 23 to 38 minutes causes grades to improve by shifting $\mathbb P(Y \ge \text{A})$ from $0.35$ to $0.52$, even though an A is not guaranteed.
 \end{trapbox}
 
@@ -120,6 +147,15 @@ In an \vocab{experiment}, the researcher assigns units to conditions; in an \voc
   \ii \textbf{Replication:} Using large group sizes reduces accidental chance imbalances, and repeating studies verifies findings.
   \ii \textbf{Blinding:} Keeping subjects unaware (\vocab{single-blind}, using a look-alike \vocab{placebo} when safe and ethical) removes expectation effects; keeping both subjects and researchers unaware (\vocab{double-blind}) also removes differences in how staff interact with treated vs.\ control units.
 \end{itemize}
+
+\begin{howto}{How to evaluate or redesign a study}
+\begin{steps}
+  \ii Identify the units, the treatment and control conditions, and the outcome.
+  \ii Ask who chose each unit's condition. If the units (or anything related to them) chose, it is an observational study: name a variable that could affect both the choice and the outcome, and say in which direction it would bias $\hat\tau$.
+  \ii Redesign with the four principles: a control condition and fixed external conditions; random assignment of the units; enough units in each group; blinding of subjects and of the people who measure the outcome, where it is possible and ethical.
+  \ii Say what the design supports: random assignment supports a causal conclusion for the units studied; generalizing to a population also needs random sampling from it.
+\end{steps}
+\end{howto}
 
 \Needspace{16\baselineskip}
 \begin{fig}
@@ -164,24 +200,58 @@ In an \vocab{experiment}, the researcher assigns units to conditions; in an \voc
 
 \begin{proof}
   \begin{steps}
-    \ii Let $I_i = 1$ if unit $i$ is assigned to treatment and $0$ otherwise. Among all $\binom{n}{m}$ equally likely subsets of size $m$, the ones including unit $i$ select $m-1$ partners from the other $n-1$ units, giving $\binom{n-1}{m-1}$ assignments. By (W4),
+    \ii Let $I_i = 1$ if unit $i$ is assigned to treatment and $0$ otherwise. Among all $\binom{n}{m}$ equally likely subsets of size $m$, the ones including unit $i$ select $m-1$ partners from the other $n-1$ units, giving $\binom{n-1}{m-1}$ assignments. By (\ilink{W4}{W4}),
     \[
-      E(I_i) = \mathbb P(I_i = 1) = \frac{\binom{n-1}{m-1}}{\binom{n}{m}} = \frac{m}{n}.
+      E(I_i) = \mathbb P(I_i = 1) = \frac{\binom{n-1}{m-1}}{\binom{n}{m}} = \frac{(n-1)!}{(m-1)!\,(n-m)!}\cdot\frac{m!\,(n-m)!}{n!} = \frac{m}{n},
     \]
-    \ii Write $\bar y_{\text{treated}} = \frac{1}{m}\sum_{i=1}^n I_i Y_{t,i}$. Because each $Y_{t,i}$ is a fixed constant for unit $i$, linearity of expectation (W4) gives
+    because $m!/(m-1)! = m$ and $(n-1)!/n! = 1/n$.
+    \ii The treated units show their $Y_t$, so the treated mean is
+    \[
+      \bar y_{\text{treated}} = \frac{1}{m}\sum_{i=1}^n I_i Y_{t,i},
+    \]
+    since $I_iY_{t,i}$ is $Y_{t,i}$ for a treated unit and $0$ otherwise. Because each $Y_{t,i}$ is a fixed constant for unit $i$, linearity of expectation (\ilink{W4}{W4}) gives
     \[
       E(\bar y_{\text{treated}}) = \frac{1}{m}\sum_{i=1}^n E(I_i) Y_{t,i} = \frac{1}{m}\sum_{i=1}^n \frac{m}{n} Y_{t,i} = \frac{1}{n}\sum_{i=1}^n Y_{t,i}.
     \]
-    \ii Similarly, $E(1 - I_i) = (n-m)/n$, so $\bar y_{\text{control}} = \frac{1}{n-m}\sum_{i=1}^n (1-I_i)Y_{c,i}$ has $E(\bar y_{\text{control}}) = \frac{1}{n}\sum_{i=1}^n Y_{c,i}$.
-    \ii Subtracting and applying linearity again yields $E(\hat\tau) = \frac{1}{n}\sum_{i=1}^n (Y_{t,i} - Y_{c,i}) = \tau$.
+    \ii Similarly, by linearity $E(1 - I_i) = 1 - E(I_i) = (n-m)/n$, and the control mean is
+    \[
+      \bar y_{\text{control}} = \frac{1}{n-m}\sum_{i=1}^n (1-I_i)Y_{c,i}, \qquad
+      E(\bar y_{\text{control}}) = \frac{1}{n-m}\sum_{i=1}^n \frac{n-m}{n} Y_{c,i} = \frac{1}{n}\sum_{i=1}^n Y_{c,i}.
+    \]
+    \ii Subtracting and applying linearity again,
+    \[
+      E(\hat\tau) = \frac{1}{n}\sum_{i=1}^n Y_{t,i} - \frac{1}{n}\sum_{i=1}^n Y_{c,i} = \frac{1}{n}\sum_{i=1}^n (Y_{t,i} - Y_{c,i}) = \tau.
+    \]
   \end{steps}
 \end{proof}
 
 \begin{example*}[All six assignments (Notes)]
-  Four units have $(Y_c, Y_t) = (3,5), (4,4), (2,6), (5,7)$, so their individual effects are $2, 0, 4, 2$ and $\tau = 2$. Treating $m=2$ at random admits $\binom{4}{2} = 6$ subsets: $\{1,2\}, \{1,3\}, \{1,4\}, \{2,3\}, \{2,4\}, \{3,4\}$, producing estimates $\hat\tau = 1, 1, 3, 1, 3, 3$ (for example $\{1,2\}$ gives $\frac{5+4}{2} - \frac{2+5}{2} = 1$). No single assignment hits $2$, yet their average over all six randomizations is $12/6 = 2 = \tau$.
+  Four units have $(Y_c, Y_t) = (3,5), (4,4), (2,6), (5,7)$, so their individual effects are $2, 0, 4, 2$ and $\tau = 2$. Treating $m=2$ at random admits $\binom{4}{2} = 6$ subsets: $\{1,2\}, \{1,3\}, \{1,4\}, \{2,3\}, \{2,4\}, \{3,4\}$, producing estimates $\hat\tau = 1, 1, 3, 1, 3, 3$. For example, treating $\{1,2\}$ shows $Y_t$ for units 1 and 2 and $Y_c$ for units 3 and 4:
+  \[
+    \hat\tau = \frac{5+4}{2} - \frac{2+5}{2} = 4.5 - 3.5 = 1.
+  \]
+  No single assignment hits $2$, yet their average over all six randomizations is $12/6 = 2 = \tau$.
 \end{example*}
 
-\medskip\noindent\textbf{Covariates, balance, and replication.} A \vocab{covariate} is any variable measured or determined \emph{before} treatment is assigned (such as major, prior GPA, or native-speaker status), so treatment cannot affect it. Repeating Step~1--3 of the theorem on any pre-treatment covariate $x_i$ gives $E(\bar x_{\text{treated}} - \bar x_{\text{control}}) = 0$: randomization balances both observed and unobserved covariates on average. Larger group sizes prevent unlucky draws: with $4$ students ($2$ early risers, $2$ treated), both early risers land together with chance $2/\binom{4}{2} = 1/3$, whereas with $800$ students ($400$ early risers, $400$ treated), the chance drops to $2/\binom{800}{400} \approx 10^{-239}$.
+\begin{howto}{How to check unbiasedness by listing every assignment}
+\begin{steps}
+  \ii From the potential-outcome table, compute $\tau$ as the average of the individual effects.
+  \ii List all $\binom{n}{m}$ treated subsets (for $n=4$, $m=2$: six subsets).
+  \ii For each subset, take $Y_t$ of the treated units and $Y_c$ of the others, and compute $\hat\tau$.
+  \ii Average the $\binom nm$ values of $\hat\tau$; the theorem guarantees the average is $\tau$, so a different answer means an arithmetic slip.
+  \ii For one assignment, the observed data are exactly the $m$ treated $Y_t$ values and the $n-m$ control $Y_c$ values; the other $n$ numbers are missing.
+\end{steps}
+\end{howto}
+
+\medskip\noindent\textbf{Covariates, balance, and replication.} A \vocab{covariate} is any variable measured or determined \emph{before} treatment is assigned (such as major, prior GPA, or native-speaker status), so treatment cannot affect it. Repeating steps 1--3 of the proof of the \hyperref[thm-unbiased-rct]{unbiasedness theorem} with $Y_{t,i} = Y_{c,i} = x_i$ for a pre-treatment covariate $x_i$ (treatment cannot change it, so both potential values are $x_i$) gives $E(\bar x_{\text{treated}} - \bar x_{\text{control}}) = 0$: randomization balances both observed and unobserved covariates on average. Larger group sizes prevent unlucky draws: with $4$ students ($2$ early risers, $2$ treated), both early risers land together with chance $2/\binom{4}{2} = 1/3$, whereas with $800$ students ($400$ early risers, $400$ treated), the chance drops to $2/\binom{800}{400} \approx 10^{-239}$.
+
+\begin{howto}{How to decide whether a variable is a covariate}
+\begin{steps}
+  \ii Find the time at which treatment is assigned.
+  \ii A variable whose value was fixed before that time (age, prior GPA, status at enrollment) is a covariate: treatment cannot change it.
+  \ii A variable measured after assignment that treatment could change (sessions attended, hours studied, the final score) is a post-treatment variable, not a covariate; do not balance on it or condition on it.
+\end{steps}
+\end{howto}
 
 \begin{definition*}[Standardized mean difference (SMD)]
   To compare imbalance across covariates measured on different scales, divide the difference in group means by the pooled standard deviation:
@@ -190,7 +260,17 @@ In an \vocab{experiment}, the researcher assigns units to conditions; in an \voc
   \]
 \end{definition*}
 
-For our six-student dataset, PDF GPAs ($3.81, 3.63, 3.20$) have $\bar x_{\text{pdf}} = 3.5467$ and sample variance $\hat\sigma^2_{\text{pdf}} = 0.09823$ (W3); website GPAs ($2.85, 3.19, 3.80$) have $\bar x_{\text{web}} = 3.2800$ and $\hat\sigma^2_{\text{web}} = 0.2317$. Subtracting website minus PDF gives
+\begin{howto}{How to compute an SMD}
+\begin{steps}
+  \ii Fix the order of subtraction (here website minus PDF) and state it.
+  \ii For each group compute $\bar x$ and the sample variance $\hat\sigma^2$ with $n-1$ in the denominator (\ilink{W3}{W3}).
+  \ii Divide the difference of means by $\sqrt{\tfrac12\hat\sigma_1^2 + \tfrac12\hat\sigma_2^2}$.
+  \ii For a 0/1 covariate the group mean is a proportion $p$; its variance is $\frac{k}{k-1}p(1-p)$ with the sample variance ($k$ units in the group), or $p(1-p)$ in \cd{cobalt} with \cd{binary = "std"}. Say which convention you use.
+  \ii Edge cases: if both groups have variance $0$, the SMD is undefined (a difference of means with no spread to compare it to); if the means are equal, the SMD is $0$ whatever the variances.
+\end{steps}
+\end{howto}
+
+For our six-student dataset, PDF GPAs ($3.81, 3.63, 3.20$) have $\bar x_{\text{pdf}} = 3.5467$ and sample variance $\hat\sigma^2_{\text{pdf}} = 0.09823$ (\ilink{W3}{W3}); website GPAs ($2.85, 3.19, 3.80$) have $\bar x_{\text{web}} = 3.2800$ and $\hat\sigma^2_{\text{web}} = 0.2317$. Subtracting website minus PDF gives
 \[
   \mathrm{SMD}(\text{GPA}) = \frac{3.2800 - 3.5467}{\sqrt{\frac{1}{2}(0.2317) + \frac{1}{2}(0.09823)}} = \frac{-0.2667}{0.4062} \approx -0.66.
 \]
@@ -224,7 +304,7 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
     \addplot[only marks,mark=inkdot,mark size=2.1pt,black] coordinates {(0,1) (0.71,2) (-0.66,3)};
     \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:-0.66,3) {\InkLabel{$-0.66$}};
     \node[font=\scriptsize,text=black!85,above=3.5pt] at (axis cs:0.71,2) {\InkLabel{$+0.71$}};
-    \node[font=\scriptsize,text=black!85,right=4.5pt] at (axis cs:0,1) {\InkLabel{$0$}};
+    \node[font=\scriptsize,text=black,above right=2pt and 3pt] at (axis cs:0,1) {\InkLabel{$0$}};
   \end{axis}
   \node[font=\footnotesize,text=black] at (2.25cm,-1.35cm) {\InkLabel{(a)}};
 
@@ -255,7 +335,7 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
     \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:0.2667,4.42) {\InkLabel{obs.\ $+0.267$}};
     \node[font=\scriptsize,text=figred!90!black,above=2pt] at (axis cs:-0.2667,4.42) {\InkLabel{$-0.267$}};
     % Non-extreme 12 hollow dots
-    \addplot[only marks,mark=inkring,mark options={draw=black!65,fill=white,line width=0.55pt},mark size=1.95pt,black!65] coordinates {
+    \addplot[only marks,mark=inkring,mark options={draw=black!85,fill=white,line width=0.6pt},mark size=1.95pt,black!85] coordinates {
       (-0.260,1) (-0.260,2) (-0.253,3) (-0.147,1) (-0.033,1) (-0.027,2)
       (0.027,1) (0.033,2) (0.147,1) (0.253,1) (0.260,2) (0.260,3)
     };
@@ -267,8 +347,31 @@ For the 0/1 indicator \cd{major == "Statistics"}, $2/3$ in website and $1/3$ in 
   \end{axis}
   \node[font=\footnotesize,text=black] at (10.35cm,-1.35cm) {\InkLabel{(b)}};
 \end{tikzpicture}
-\figcap{\textbf{(a)} Love plot of standardized mean differences (website minus pdf) across three pre-treatment covariates. \textbf{(b)} Exact GPA permutation distribution over all $\binom{6}{3}=20$ assignments; $8$ extreme splits (red, $|\text{diff}|\ge 0.267$) give two-sided $p=0.4$.}
+\figcap{\textbf{(a)} The SMD of each covariate (website minus PDF). \textbf{(b)} The GPA difference for all $\binom{6}{3}=20$ assignments; the $8$ red dots are at least as far from $0$ as the observed $0.267$, so the two-sided $p$-value is $8/20=0.4$.}
 \end{fig}
+
+\medskip\noindent\textbf{Why a permutation test is valid here.} The \vocab{sharp null hypothesis} says that treatment changes nobody's outcome: $Y_{t,i} = Y_{c,i}$ for every unit $i$. If it is true, each unit's observed value would have been the same under any assignment, so the numbers in the data are fixed and only the labels were random. Every one of the $\binom nm$ assignments was equally likely, so computing the statistic for every relabeling gives its exact distribution under the null, and the $p$-value is the proportion of assignments at least as extreme as the one that happened. For a covariate such as GPA the sharp null holds automatically (treatment cannot change a pre-treatment value), so this test checks whether the observed imbalance is unusual for a fair randomization.
+
+\begin{howto}{How to compute an exact permutation $p$-value by listing assignments}
+\begin{steps}
+  \ii Compute the observed statistic (difference in means, in a stated order).
+  \ii List all $\binom{n}{m}$ ways to choose the treated group, and compute the statistic for each.
+  \ii One-tail count: the number of assignments whose statistic is at least as extreme as the observed one \emph{on the observed side} (ties count as extreme).
+  \ii Two-sided $p$-value: double the one-tail proportion and cap it at $1$ (\ilink{W5}{W5}). Counting both tails directly, $|\text{stat}| \ge |\text{observed}|$, gives the same answer when the list of statistics is symmetric about $0$, as it is here.
+  \ii Edge cases: the observed assignment is itself in the list, so the $p$-value is at least $1/\binom nm$ one-sided; an observed statistic of $0$ gives $p = 1$.
+\end{steps}
+\end{howto}
+
+\begin{howto}{How to compute a Monte Carlo permutation $p$-value when listing is too slow}
+\begin{steps}
+  \ii Shuffle the labels $R$ times (\cd{generate(reps = R, type = "permute")}, or \cd{sample()} in base R) and compute the statistic each time.
+  \ii Count the shuffles at least as extreme as the observed statistic; the estimate is that count divided by $R$. With a fixed seed the result is reproducible.
+  \ii If the count is $0$, do not report $p = 0$: the observed assignment is itself a possible assignment. The add-one estimate $(\text{count} + 1)/(R + 1)$ includes it and is never $0$. With $R = 1000$ and count $0$ it is $1/1001$.
+  \ii The resolution of a Monte Carlo estimate is about $1/R$; it cannot distinguish a true $p$ of $0.0005$ from $0$ when $R = 1000$.
+\end{steps}
+\end{howto}
+
+
 
 \medskip\noindent\textbf{Piece-by-piece R code breakdown (STAT~20 tidyverse, \cd{cobalt}, and \cd{infer}).} Every RCT analysis in R separates into three clean pipelines:
 \begin{rcode}
@@ -324,13 +427,21 @@ null_dist |> get_p_value(obs_stat = obs_stat, direction = "both")
 \bottomrule
 \end{tabularx}}
 
-\medskip\noindent\textbf{The question answered.} Although GPA has $\mathrm{SMD} = -0.66$ (higher in the PDF group), listing all $\binom{6}{3}=20$ possible assignments yields an exact two-sided balance $p$-value of $8/20 = 0.4$. With only three students per group, an imbalance of this size occurs routinely under fair random assignment, so it motivates larger sample sizes rather than proving assignment bias.
+\begin{howto}{How to find the probability that $k$ special units all land in the same group}
+\begin{steps}
+  \ii All $k$ in treatment: choose the remaining $m-k$ treated units from the $n-k$ others, $\binom{n-k}{m-k}$ ways.
+  \ii All $k$ in control: choose all $m$ treated units from the $n-k$ others, $\binom{n-k}{m}$ ways (zero if $m > n-k$).
+  \ii Add the two counts and divide by $\binom nm$ (\ilink{W4}{W4}). Example: $n=10$, $m=5$, $k=2$ gives $\big(\binom83+\binom85\big)/\binom{10}5 = (56+56)/252 = 4/9$.
+\end{steps}
+\end{howto}
+
+\revisit Although GPA has $\mathrm{SMD} = -0.66$ (higher in the PDF group), listing all $\binom{6}{3}=20$ possible assignments yields an exact two-sided balance $p$-value of $8/20 = 0.4$. With only three students per group, an imbalance of this size occurs routinely under fair random assignment, so it motivates larger sample sizes rather than proving assignment bias.
 
 \begin{shortcuts}
-  \ii \textbf{Causal vs.\ associative reading:} A randomized controlled trial supports a causal ATE conclusion; an observational comparison alone does not (W2).
+  \ii \textbf{Causal vs.\ associative reading:} A randomized controlled trial supports a causal ATE conclusion; an observational comparison alone does not (\ilink{W2}{W2}).
   \ii \textbf{Identifying a covariate:} Ask whether the variable was fixed before random assignment. Examples: prior GPA (covariate); hours studied \emph{after} receiving PDF vs.\ webpage (post-treatment variable, not a covariate).
   \ii \textbf{Exact permutation tests:} With $n$ total units and $m$ treated, there are $\binom{n}{m}$ equally likely splits under $H_0$; when small enough, listing them gives an exact $p$-value without simulation noise.
-  \ii \textbf{Probability $k$ special units all land in treatment:} Divide favorable assignments by total assignments: $\binom{n-k}{m-k}/\binom{n}{m}$ (W4).
+  \ii \textbf{Probability $k$ special units all land in treatment:} Divide favorable assignments by total assignments: $\binom{n-k}{m-k}/\binom{n}{m}$ (\ilink{W4}{W4}). For ``all in the same group'' add the all-in-control count $\binom{n-k}{m}$.
 \end{shortcuts}
 
 \begin{trapbox}
@@ -340,6 +451,81 @@ null_dist |> get_p_value(obs_stat = obs_stat, direction = "both")
   \ii \textbf{Placebo vs.\ double-blinding:} A sugar pill blinds subjects to expectancy effects, but only double-blinding prevents doctors or graders from treating groups differently.
   \ii \textbf{Sign of an SMD:} Flipping the subtraction direction reverses the sign ($+0.66$ for pdf$-$website vs.\ $-0.66$ for website$-$pdf); always state the order used.
 \end{trapbox}
+
+\subsection{Adjusting for confounding without randomization: stratification and difference in differences}
+
+\begin{qbox}
+  In a company, Group B's average salary is \$31{,}600 below Group A's, yet in each department Group B earns more. How can both be true, and which comparison should be reported? And when a new program starts at one campus only, how can we estimate its effect from measurements before and after at that campus and at a comparison campus?
+\end{qbox}
+
+\begin{example*}[A reversal when the groups are split by department (simulated numbers)]
+Engineering has 4 people in Group A (mean \$150k) and 1 in Group B (\$152k); Operations has 1 person in Group A (\$90k) and 4 in Group B (mean \$95k). Salaries below are in thousands of dollars.
+\[
+  \bar y_A = \frac{4\cdot150 + 90}{5} = 138, \qquad \bar y_B = \frac{152 + 4\cdot 95}{5} = 106.4, \qquad \bar y_B - \bar y_A = -31.6.
+\]
+Within Engineering, B minus A is $152-150 = +2$; within Operations it is $95-90 = +5$.
+\end{example*}
+The reason is that a group's overall mean is a weighted average of its department means, with weights equal to the share of the group in each department: $\bar y_A = \tfrac45\cdot150 + \tfrac15\cdot90$ and $\bar y_B = \tfrac15\cdot152 + \tfrac45\cdot95$. Group A is mostly in the high-paying department and Group B mostly in the low-paying one, so the pooled comparison mixes the group difference with the department difference. Department is a confounder (\ilink{W2}{W2}) of the pooled comparison: it is related both to group membership and to salary. This reversal is called \vocab{Simpson's paradox}.
+
+\begin{howto}{How to compare groups within strata (stratification)}
+\begin{steps}
+  \ii Choose the stratifying variable: a pre-treatment variable related to both group and outcome.
+  \ii Compute the outcome mean for each group within each stratum (\cd{group\_by(dept, group) |> summarize(mean = mean(y), n = n())}).
+  \ii Report the within-stratum differences, and if a single number is wanted, a weighted average of them with stated weights (for example stratum sizes).
+  \ii In a regression \cd{lm(y \textasciitilde{} group + dept)}, the coefficient of \cd{group} is the difference the model predicts between the groups for two people in the same department; the model assumes that difference is the same in every department.
+  \ii State the limitation: stratifying removes confounding only by the variables used, and if the stratifying variable is itself affected by the group (a mediator), the within-stratum difference answers a different question.
+\end{steps}
+\end{howto}
+
+\Needspace{8\baselineskip}
+\noindent\textbf{Difference in differences.} Suppose the treated unit (one campus) and a comparison unit are each measured before and after the treatment starts, with means $T_0, T_1$ (treated, before and after) and $C_0, C_1$ (comparison). Let $T_1^{(0)}$ be the mean the treated campus \emph{would} have had after, without treatment; it is a counterfactual and is never observed. The effect on the treated campus is $T_1 - T_1^{(0)}$.
+
+\begin{theorem*}[Difference in differences under parallel trends]\target{thm-did}
+If the treated campus would have changed by the same amount as the comparison campus without treatment, $T_1^{(0)} - T_0 = C_1 - C_0$ (the \vocab{parallel trends} assumption), then
+\[
+  T_1 - T_1^{(0)} = (T_1 - T_0) - (C_1 - C_0).
+\]
+\end{theorem*}
+\begin{proof}
+\begin{steps}
+  \ii Solve the assumption for the unobserved mean: $T_1^{(0)} = T_0 + (C_1 - C_0)$.
+  \ii Substitute it into the effect:
+  \[
+    T_1 - T_1^{(0)} = T_1 - \big(T_0 + (C_1 - C_0)\big) = (T_1 - T_0) - (C_1 - C_0),
+  \]
+  which is the difference of the two before-to-after changes.
+\end{steps}
+\end{proof}
+The before-to-after change at the treated campus alone mixes the effect with whatever else changed over time (a season, a new semester); the comparison campus measures that shared change, and subtracting it removes it. Parallel trends cannot be checked from these four numbers; it is violated, for example, if only the treated campus also opened a new gym during the study.
+
+\begin{howto}{How to compute and interpret a difference in differences}
+\begin{steps}
+  \ii Compute the four cell means: treated and comparison, before and after (\cd{group\_by(treated, post) |> summarize(mean = mean(y))}).
+  \ii Compute the change at each unit, after minus before, and subtract the comparison change from the treated change.
+  \ii Equivalently fit \cd{lm(y \textasciitilde{} treated * post)}: the coefficient of \cd{treated:post} equals the difference in differences (shown below).
+  \ii State the parallel-trends assumption in words for this setting and one concrete way it could fail.
+  \ii Compare with the naive estimates (treated after minus before; treated minus comparison after) and explain why each mixes in another change.
+\end{steps}
+\end{howto}
+
+\begin{example*}[Weekly gym visits at two campuses (simulated numbers)]
+A warm-up program starts at North campus. Mean weekly visits: North $3.0$ before, $2.9$ after; South (no program) $3.5$ before, $2.8$ after.
+\[
+  \text{DID} = (2.9 - 3.0) - (2.8 - 3.5) = -0.1 - (-0.7) = +0.6 \text{ visits per week}.
+\]
+The naive before-and-after change at North, $-0.1$, has the wrong sign: visits fell everywhere (South fell by $0.7$), and North fell less. The after-only comparison, $2.9 - 2.8 = +0.1$, ignores that North started lower.
+\end{example*}
+
+\noindent\textbf{Why the interaction coefficient is the difference in differences.} The model \cd{y \textasciitilde{} treated * post} predicts $b_0 + b_1\,\text{treated} + b_2\,\text{post} + b_3\,\text{treated}\cdot\text{post}$, which takes four values, one per cell: $b_0$ (comparison, before), $b_0+b_2$ (comparison, after), $b_0+b_1$ (treated, before), $b_0+b_1+b_2+b_3$ (treated, after). Least squares chooses each cell's predicted value to minimize that cell's sum of squared errors, and for a constant $c$,
+\[
+  \sum_{j}(y_j - c)^2 = \sum_j (y_j - \bar y)^2 + k(\bar y - c)^2
+\]
+for the $k$ values $y_j$ of the cell (expand $y_j - c = (y_j - \bar y) + (\bar y - c)$; the cross term is $2(\bar y - c)\sum_j (y_j - \bar y) = 0$). This is smallest at $c = \bar y$, and the four cell values can be set independently through $b_0, b_1, b_2, b_3$, so the fitted values are the four cell means. Then
+\[
+  b_3 = (b_0+b_1+b_2+b_3) - (b_0+b_1) - (b_0+b_2) + b_0 = (T_1 - T_0) - (C_1 - C_0).
+\]
+
+\revisit Both are true because each group's overall mean weights the department means by that group's department mix, and the two groups have very different mixes; the within-department comparison ($+2$ and $+5$, B higher) is the one that removes department as a confounder, with the caveat that other unmeasured variables may still confound it. For the campus program, the difference in differences subtracts the comparison campus's change from the treated campus's change; by the \hyperref[thm-did]{parallel-trends theorem} this equals the effect on the treated campus if, without the program, both campuses would have changed by the same amount.
 
 \section{Problem set}
 
@@ -370,22 +556,40 @@ null_dist |> get_p_value(obs_stat = obs_stat, direction = "both")
 
 \begin{prob}
 \textbf{P4.} Given treatment covariate values $2, 4, 6, 8$ and control values $1, 3, 5$, compute $\mathrm{SMD}(x)$.
-\hint{Use sample variances with $n-1$ in the denominator (W3).}
+\hint{Use sample variances with $n-1$ in the denominator (\ilink{W3}{W3}).}
 \end{prob}
 
 \begin{prob}
 \textbf{P5.} Five units have covariate values $10, 12, 14, 20, 30$. Two units are treated at random, and the units with $20$ and $30$ receive treatment. Compute the exact two-sided $p$-value of a balance test using the difference in means (treated minus control).
-\hint{List all $\binom{5}{2}=10$ splits and double the observed tail proportion (W5).}
+\hint{List all $\binom{5}{2}=10$ splits and double the observed tail proportion (\ilink{W5}{W5}).}
 \end{prob}
 
 \begin{prob}
 \textbf{P6.} Twenty students (four left-handed, sixteen right-handed) are randomly split into a treatment group of $10$ and a control group of $10$. What is the probability that all four left-handed students land in the same group?
-\hint{Count subsets with all four in treatment plus subsets with all four in control, and divide by $\binom{20}{10}$ (W4).}
+\hint{Count subsets with all four in treatment plus subsets with all four in control, and divide by $\binom{20}{10}$ (\ilink{W4}{W4}).}
 \end{prob}
 
 \begin{prob}
 \textbf{P7.} A friend says: ``I drank coffee before the exam and got an A, so coffee caused my A.'' Using the counterfactual definition of causation, state what would have to hold for the claim to be true, and explain why the friend's data cannot verify it.
 \hint{Use potential outcomes $Y_t$ and $Y_c$.}
 \end{prob}
+
+\section{Proofs of the facts used}\target{proofs}
+
+\textbf{Counting subsets (\ilink{W4}{W4}).} To choose an ordered list of $k$ different units from $n$, there are $n$ choices for the first, $n-1$ for the second, \dots, $n-k+1$ for the $k$-th, so $n(n-1)\cdots(n-k+1) = \frac{n!}{(n-k)!}$ ordered lists. Each set of $k$ units appears as $k!$ ordered lists (its $k!$ orderings), so the number of sets is
+\[
+  \binom nk = \frac{n!}{k!\,(n-k)!}.
+\]
+
+\textbf{Linearity of expectation (\ilink{W4}{W4}).} Let the outcomes be $\omega_1,\dots,\omega_N$ with probabilities $p_1,\dots,p_N$, so $E(X) = \sum_j X(\omega_j)\,p_j$. Then
+\[
+  E(aX + bY) = \sum_j \big(aX(\omega_j) + bY(\omega_j)\big)p_j = a\sum_j X(\omega_j)p_j + b\sum_j Y(\omega_j)p_j = aE(X) + bE(Y).
+\]
+Nothing about the relation between $X$ and $Y$ was used, so dependence does not matter. For a sum of many terms, apply this repeatedly.
+
+\textbf{Expectation of an indicator (\ilink{W4}{W4}).} $I = 1$ on the outcomes in the event and $0$ elsewhere, so
+\[
+  E(I) = 1\cdot\mathbb P(\text{event}) + 0\cdot\mathbb P(\text{not the event}) = \mathbb P(\text{event}).
+\]
 
 \end{document}

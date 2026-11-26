@@ -5,6 +5,8 @@
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+% "How to ..." method box: numbered steps for a procedure (standard, Teach every procedure).
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=mdbluebox,linecolor=NavyBlue,backgroundcolor=NavyBlue!3]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
 \title{Math 110 --- Week 9}
 \subtitle{Trace and inner products (Notes Ch.~16--17, LADR 8D, 6A, HW9)}
 \author{}\date{}\ihead{}
@@ -23,7 +25,7 @@
 \maketitle
 
 \section{Facts used from earlier weeks}
-Throughout Section~2.1, $V$ is a finite-dimensional vector space over $\FF$ ($\RR$ or $\CC$) with $n=\dim V$. From \xweek{math110}{2026-10-19-generalized-eigenvectors-jordan}{Week~8}: over $\CC$, $V=\bigoplus_{i=1}^m G(\lambda_i,T)$ where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues of $T$ and $d_i=\dim G(\lambda_i,T)$ is the algebraic multiplicity of $\lambda_i$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-73}{Prop.~73}); the characteristic polynomial factors as $\chi_T(z)=\prod_{i=1}^m(z-\lambda_i)^{d_i}$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-74}{Prop.~74}); and $V$ has a basis in which $\MM(T)$ is upper-triangular with each $\lambda_i$ appearing $d_i$ times on the diagonal (LADR 8.37; a Jordan basis, \xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-76}{Prop.~76}, is one such basis).
+Throughout Section~2.1, $V$ is a finite-dimensional vector space over $\FF$ ($\RR$ or $\CC$) with $n=\dim V$. From \xweek{math110}{2026-10-19-generalized-eigenvectors-jordan}{Week~8}: over $\CC$, $V=\bigoplus_{i=1}^m G(\lambda_i,T)$ where $\lambda_1,\dots,\lambda_m$ are the distinct eigenvalues of $T$ and $d_i=\dim G(\lambda_i,T)$ is the algebraic multiplicity of $\lambda_i$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-73}{Prop.~73}); the characteristic polynomial factors as $\chi_T(z)=\prod_{i=1}^m(z-\lambda_i)^{d_i}$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-74}{Prop.~74}); and $V$ has a basis in which $\MM(T)$ is upper-triangular with each $\lambda_i$ appearing $d_i$ times on the diagonal (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{name-ladr-8-37-block-diagonal-form}{LADR 8.37}; a Jordan basis, \xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-76}{Prop.~76}, is one such basis). For a real $n\times n$ matrix $A$, $\chi_A$ means the characteristic polynomial of $A$ acting on $\CC^n$. For a $2\times2$ matrix, $\chi_A=z^2-(\tr A)z+\det A$ with $\det A=a_{11}a_{22}-a_{12}a_{21}$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-74}{Week 8, after Prop.~74}).
 
 \begin{enumerate}[label=(T\arabic*),leftmargin=2.6em,itemsep=8pt]
   \ii \target{T1}\tool{Change of basis and similarity (\xlink{math110}{2026-09-21-isomorphisms-products-quotients}{prop-32}{LADR 3.84}).} If $B=(v_1,\dots,v_n)$ and $B'=(u_1,\dots,u_n)$ are bases of $V$ and $S=\MM(I,B',B)$ is the invertible change-of-basis matrix whose $j$-th column holds the $B$-coordinates of $u_j$, then
@@ -37,7 +39,7 @@ Throughout Section~2.1, $V$ is a finite-dimensional vector space over $\FF$ ($\R
   \why{Every $v\in V$ decomposes as $v=(v-Pv)+Pv$. Since $P(v-Pv)=Pv-P^2v=0$, we have $v-Pv\in\nul P$, while $Pv\in\range P$. If $w\in\nul P\cap\range P$, then $w=Pu$ for some $u$, so $w=Pu=P^2u=Pw=0$.}
 \end{enumerate}
 
-\section{This week}
+\section{Trace and inner products}
 \subsection{Trace of a matrix and an operator (Ch.~16, LADR 8D)}
 
 \begin{qbox}
@@ -93,21 +95,22 @@ If an operator $T$ is represented by an upper-triangular matrix in a basis where
     \[
       \tr T = \sum_{i=1}^m d_i\lambda_i.
     \]
-    \ii Over $\FF=\RR$ or $\CC$, the number $-\tr T$ is the coefficient of $z^{n-1}$ in the characteristic polynomial $\chi_T(z)$:
+    \ii Over $\FF=\RR$ or $\CC$, the number $-\tr T$ is the coefficient of $z^{n-1}$ in the characteristic polynomial $\chi_T(z)$, and the constant term is $(-1)^n$ times the product of the eigenvalues counted with multiplicity:
     \[
-      \chi_T(z) = z^n - (\tr T)z^{n-1} + \dots + (-1)^n\det T.
+      \chi_T(z) = z^n - (\tr T)z^{n-1} + \dots + (-1)^n\lambda_1^{d_1}\cdots\lambda_m^{d_m}.
     \]
   \end{enumerate}
 \end{proposition*}
 \begin{ideabox}
-  Because $\tr T$ is the same in every basis (\ilink{prop-78}{Prop.~78}), we are free to compute it in a basis tailored to $T$. Over $\CC$, $T$ has an upper-triangular matrix (for instance, in a Jordan basis) whose diagonal lists each eigenvalue $\lambda_i$ exactly $d_i=\dim G(\lambda_i,T)$ times. Adding the diagonal immediately gives $\sum_{i=1}^m d_i\lambda_i$. Furthermore, expanding the factored characteristic polynomial $\chi_T(z)=\prod_{i=1}^m (z-\lambda_i)^{d_i}=(z-\mu_1)\cdots(z-\mu_n)$, the $z^{n-1}$ term is formed by choosing $-\mu_k$ from one factor and $z$ from the remaining $n-1$ factors, yielding $-(\mu_1+\dots+\mu_n)z^{n-1}=-(\tr T)z^{n-1}$.
+  Because $\tr T$ is the same in every basis (\ilink{prop-78}{Prop.~78}), we are free to compute it in a basis tailored to $T$. Over $\CC$, $T$ has an upper-triangular matrix (for instance, in a Jordan basis) whose diagonal lists each eigenvalue $\lambda_i$ exactly $d_i=\dim G(\lambda_i,T)$ times. Adding the diagonal immediately gives $\sum_{i=1}^m d_i\lambda_i$. Furthermore, write the factored characteristic polynomial $\prod_{i=1}^m (z-\lambda_i)^{d_i}$ as $(z-\mu_1)\cdots(z-\mu_n)$, listing each root with multiplicity. In the expansion, the $z^{n-1}$ term is formed by choosing $-\mu_k$ from one factor and $z$ from the remaining $n-1$ factors, yielding $-(\mu_1+\dots+\mu_n)z^{n-1}=-(\tr T)z^{n-1}$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii Suppose $\FF=\CC$. By \xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-76}{Prop.~76} (or LADR 8.37), $V$ has a basis $B$ in which $\MM(T,B)$ is upper-triangular and each distinct eigenvalue $\lambda_i$ appears on the diagonal exactly $d_i=\dim G(\lambda_i,T)$ times.
     \ii Computing $\tr T$ in this basis $B$ gives $\tr T = \tr\MM(T,B) = \sum_{i=1}^m d_i\lambda_i$, proving (a).
     \ii By \xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-74}{Prop.~74}, $\chi_T(z)=\prod_{i=1}^m(z-\lambda_i)^{d_i}$. Writing the $n$ roots with multiplicity as $\mu_1,\dots,\mu_n$, we have $\chi_T(z)=(z-\mu_1)(z-\mu_2)\cdots(z-\mu_n)$.
-    \ii Expanding the product, the coefficient of $z^{n-1}$ is $-(\mu_1+\dots+\mu_n)=-\sum_{i=1}^m d_i\lambda_i=-\tr T$. (If $\FF=\RR$, viewing $A=\MM(T)$ as a complex matrix does not change $\tr A$ or the coefficients of $\chi_A(z)=\det(zI-A)$, so the coefficient of $z^{n-1}$ is still $-\tr T$.)
+    \ii Expanding the product, a term with $z^{n-1}$ takes $-\mu_k$ from one factor and $z$ from the other $n-1$, so the coefficient of $z^{n-1}$ is $-(\mu_1+\dots+\mu_n)=-\sum_{i=1}^m d_i\lambda_i=-\tr T$. The constant term takes $-\mu_k$ from every factor: $(-1)^n\mu_1\cdots\mu_n$.
+    \ii If $\FF=\RR$, let $A=\MM(T)$ in some basis. $\chi_T$ is $\chi_A$, the characteristic polynomial of $A$ acting on $\CC^n$, and $\tr A$ is the same number whether $A$ is viewed as real or complex. So steps 1--4 applied to $A$ on $\CC^n$ give the same statement.
   \end{steps}
 \end{proof}
 
@@ -130,16 +133,54 @@ If an operator $T$ is represented by an upper-triangular matrix in a basis where
   \end{steps}
 \end{proof}
 
-\begin{itemize}
-  \ii \textbf{Worked example (Ex.~64 / LADR 8.53):} Consider the operator on $\CC^3$ with matrix
+\begin{example*}[The sum of the eigenvalues without finding them (Ex.~64 / LADR 8.53)]
+  Consider the operator on $\CC^3$ with matrix
   \[
     A = \begin{pmatrix} 1 & 1 & 1 \\ 1 & 2 & 4 \\ 1 & 3 & 9 \end{pmatrix}.
   \]
-  Finding the individual eigenvalues of $A$ requires solving a cubic polynomial, yet \ilink{prop-79}{Prop.~79} immediately tells us that the sum of the three eigenvalues of $A$ (counted with multiplicity) is $\tr A = 1 + 2 + 9 = 12$.
+  Finding the individual eigenvalues of $A$ requires solving a cubic equation, yet \ilink{prop-79}{Prop.~79} tells us at once that the sum of the three eigenvalues of $A$ (counted with multiplicity) is $\tr A = 1 + 2 + 9 = 12$.
+\end{example*}
+
+\revisit Add up the diagonal entries. The sum does not change under $A\mapsto S^{-1}AS$ (\ilink{prop-78}{Prop.~78}), so it is a number attached to the operator, $\tr T$. Over $\CC$ it equals the sum of the eigenvalues counted with algebraic multiplicity (\ilink{prop-79}{Prop.~79}): for the matrix of Ex.~64 the three eigenvalues add up to $12$ although none of them has been computed.
+
+\begin{itemize}
   \ii \textbf{Trace of a projection:} If $P\in\LL(V)$ satisfies $P^2=P$, then $\tr P = \operatorname{rank}P$. Indeed, by \ilink{T2}{(T2)}, $V=\nul P\oplus\range P$; choosing a basis of $\nul P$ followed by a basis of $\range P$ puts $\MM(P)$ into the block-diagonal form $\operatorname{diag}(0,\dots,0,1,\dots,1)$ with $\dim\range P$ ones, so $\tr P=\dim\range P=\operatorname{rank}P$.
-  \ii \textbf{Trace of a nilpotent operator:} If $N\in\LL(V)$ is nilpotent ($N^k=0$), its only eigenvalue over $\CC$ is $0$, so $\tr N=0$ (and $\tr(N^m)=0$ for every $m\ge 1$).
+  \ii \textbf{Trace of a nilpotent operator:} If $N\in\LL(V)$ is nilpotent ($N^k=0$), its only eigenvalue over $\CC$ is $0$ (an eigenvector $v$ for $\lambda$ gives $0=N^kv=\lambda^kv$), so $\tr N=0$ by \ilink{prop-79}{Prop.~79}; over $\RR$ apply this to the matrix of $N$ acting on $\CC^n$. Every power $N^m$ is nilpotent too, so $\tr(N^m)=0$ for every $m\ge 1$.
   \ii \textbf{Trace of a polynomial in $T$:} Over $\CC$, if $p\in\PP(\CC)$, then in a basis where $\MM(T)$ is upper-triangular with diagonal entries $\lambda_i$ (multiplicity $d_i$), $\MM(p(T))=p(\MM(T))$ is upper-triangular with diagonal entries $p(\lambda_i)$, so $\tr p(T)=\sum_{i=1}^m d_i\,p(\lambda_i)$.
 \end{itemize}
+
+\begin{proposition*}[A nilpotency test by traces of powers]\target{name-nilpotency-test-by-traces}
+  Over $\CC$ (or for a real matrix viewed on $\CC^n$), $T$ is nilpotent if and only if $\tr(T^k)=0$ for $k=1,\dots,n$.
+\end{proposition*}
+\begin{ideabox}
+By the trace of a polynomial in $T$, $\tr(T^k)=\sum_id_i\lambda_i^k$. If the nonzero eigenvalues are $\mu_1,\dots,\mu_r$ with multiplicities $c_1,\dots,c_r$, the conditions say $\sum_jc_j\,p(\mu_j)=0$ for every polynomial $p$ with $p(0)=0$ and degree at most $n$. A polynomial that vanishes at $0$ and at every $\mu_j$ except one isolates that one multiplicity.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Assume $T$ is nilpotent.} Then each $T^k$ is nilpotent, so $\tr(T^k)=0$ (trace of a nilpotent operator, above).
+    \ii \textbf{Assume $\tr(T^k)=0$ for $k=1,\dots,n$.} Let $\mu_1,\dots,\mu_r$ be the distinct nonzero eigenvalues, with algebraic multiplicities $c_1,\dots,c_r\ge1$, so $r\le n$. By the trace of a polynomial in $T$, $0=\tr(T^k)=\sum_jc_j\mu_j^k$ for $1\le k\le n$. By linearity, $\sum_jc_jp(\mu_j)=0$ for every polynomial $p$ of degree $\le n$ with $p(0)=0$.
+    \ii Suppose $r\ge1$ and take $p(x)=x\prod_{j\ne1}(x-\mu_j)$, of degree $r\le n$ with $p(0)=0$. Then $p(\mu_j)=0$ for $j\ne1$, so $c_1p(\mu_1)=0$. But $p(\mu_1)=\mu_1\prod_{j\ne1}(\mu_1-\mu_j)\ne0$ and $c_1\ge1$, a contradiction. So $r=0$: the only eigenvalue is $0$.
+    \ii Then $V=G(0,T)=\nul T^n$ (\xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-73}{Week 8, Prop.~73} and \xlink{math110}{2026-10-19-generalized-eigenvectors-jordan}{prop-70}{Prop.~70}), so $T^n=0$.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to list the Jordan forms allowed by a minimal polynomial and a dimension}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Write $m_T=\prod_i(x-\lambda_i)^{s_i}$. Each $\lambda_i$ is an eigenvalue, its largest Jordan block has size $s_i$, so its algebraic multiplicity satisfies $d_i\ge s_i$ (Week 8, reading the Jordan form).
+  \ii List all $(d_1,\dots,d_m)$ with $d_i\ge s_i$ and $\sum_id_i=n=\dim V$.
+  \ii For each list, split each $d_i$ into block sizes with largest part exactly $s_i$.
+  \ii Read off $\tr T=\sum_id_i\lambda_i$ and $\chi_T=\prod_i(x-\lambda_i)^{d_i}$ for each case.
+\end{enumerate}
+\textbf{Edge cases.} If $\deg m_T=n$, there is only one list ($d_i=s_i$) and $\chi_T=m_T$. Different block splittings of the same $d_i$ have the same trace; only the $d_i$ affect $\tr T$.
+\end{methodbox}
+
+\begin{example*}[$T\in\LL(\CC^4)$ with $m_T=(x-3)^2x$]
+  \begin{steps}
+    \ii $d_3\ge2$, $d_0\ge1$, $d_3+d_0=4$: the lists are $(d_3,d_0)=(2,2)$ and $(3,1)$.
+    \ii $(2,2)$: the blocks for $3$ have largest size $2$ and total $2$, so $J_2(3)$; for $0$, largest size $1$ and total $2$, so $J_1(0)\oplus J_1(0)$. Trace $2\cdot3=6$.
+    \ii $(3,1)$: $J_2(3)\oplus J_1(3)\oplus J_1(0)$. Trace $3\cdot3=9$.
+  \end{steps}
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{$2\times 2$ eigenvalues from trace and determinant:} For any $2\times 2$ matrix $A$, $\chi_A(z)=z^2-(\tr A)z+\det A$, so the eigenvalues $\lambda_1,\lambda_2$ satisfy $\lambda_1+\lambda_2=\tr A$ and $\lambda_1\lambda_2=\det A$. If you know one eigenvalue $\lambda_1$, the second is immediately $\lambda_2=\tr A-\lambda_1$ without factoring $\chi_A$.
@@ -150,7 +191,7 @@ If an operator $T$ is represented by an upper-triangular matrix in a basis where
 \begin{trapbox}
   \ii \textbf{Trace is not multiplicative:} $\tr(AB)\ne(\tr A)(\tr B)$ in general. For $A=B=I_2$, $\tr(AB)=\tr I_2=2$, whereas $(\tr I_2)(\tr I_2)=4$.
   \ii \textbf{Only cyclic permutations preserve $\tr(ABC)$:} $\tr(ABC)$ need not equal $\tr(BAC)$. For $A=E_{12}$, $B=E_{21}$, and $C=E_{11}$, we have $ABC=E_{11}$ ($\tr=1$) while $BAC=0$ ($\tr=0$).
-  \ii \textbf{$\tr T=0$ does not imply $T$ is nilpotent:} The matrix $A=\operatorname{diag}(1,-1)$ has $\tr A=0$, yet $A^2=I_2$, so no power of $A$ is zero. (Equivalently, $T$ is nilpotent iff $\tr(T^k)=0$ for all $k=1,\dots,n$.)
+  \ii \textbf{$\tr T=0$ does not imply $T$ is nilpotent:} The matrix $A=\operatorname{diag}(1,-1)$ has $\tr A=0$, yet $A^2=I_2$, so no power of $A$ is zero. The correct test uses all the powers: $T$ is nilpotent iff $\tr(T^k)=0$ for $k=1,\dots,n$ (\ilink{name-nilpotency-test-by-traces}{A nilpotency test by traces of powers}); here $\tr(A^2)=2\ne0$.
   \ii \textbf{$ST-TS=I$ can hold in infinite dimensions:} The proof of \ilink{prop-80}{Prop.~80} relies on finite dimensionality to define $\tr I=\dim V$. On the infinite-dimensional polynomial space $\PP(\FF)$, differentiation $D(p)=p'$ and multiplication $M(p)(x)=xp(x)$ satisfy $(DM-MD)(p)=(xp)'-xp'=p$, so $DM-MD=I$.
 \end{trapbox}
 
@@ -160,7 +201,7 @@ If an operator $T$ is represented by an upper-triangular matrix in a basis where
   A general vector space $V$ provides addition and scalar multiplication, but no notion of length, distance, or angle. In $\RR^n$, the dot product $x\cdot y = x_1y_1+\dots+x_ny_n$ encodes both length ($\|x\|=\sqrt{x\cdot x}$) and orthogonality ($x\cdot y=0$). How do we extend this geometry to complex vector spaces $\CC^n$ and function spaces such as $\PP(\FF)$ or $C([a,b])$ so that lengths remain positive real numbers and the Pythagorean theorem and Cauchy--Schwarz inequality still hold?
 \end{qbox}
 
-If we tried to define the squared length of $z=(z_1,\dots,z_n)\in\CC^n$ using the un-conjugated formula $z_1^2+\dots+z_n^2$, then the nonzero vector $z=(1,i)\in\CC^2$ would have ``squared length'' $1^2+i^2=0$, and $z=(0,i)$ would have negative ``squared length'' $-1$. To make the squared length of every nonzero complex vector positive, we must multiply each coordinate $z_k$ by its complex conjugate $\overline{z_k}$, because $z_k\overline{z_k}=|z_k|^2\ge 0$. Consequently, the Euclidean inner product on $\CC^n$ must conjugate the second vector:
+If we tried to define the squared length of $z=(z_1,\dots,z_n)\in\CC^n$ as $z_1^2+\dots+z_n^2$, without conjugation, then the nonzero vector $z=(1,i)\in\CC^2$ would have ``squared length'' $1^2+i^2=0$, and $z=(0,i)$ would have negative ``squared length'' $-1$. To make the squared length of every nonzero complex vector positive, we must multiply each coordinate $z_k$ by its complex conjugate $\overline{z_k}$, because $z_k\overline{z_k}=|z_k|^2\ge 0$. Consequently, the Euclidean inner product on $\CC^n$ must conjugate the second vector:
 \[
   \ip{(w_1,\dots,w_n)}{(z_1,\dots,z_n)} = w_1\overline{z_1} + \dots + w_n\overline{z_n}.
 \]
@@ -191,8 +232,8 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
   \begin{itemize}
     \ii \emph{Euclidean inner product on $\FF^n$ (Ex.~65):} $\ip{(w_1,\dots,w_n)}{(z_1,\dots,z_n)}=\sum_{j=1}^n w_j\overline{z_j}$ (the standard dot product when $\FF=\RR$).
     \ii \emph{Weighted inner product on $\FF^n$:} For fixed positive numbers $c_1,\dots,c_n>0$, $\ip wz=\sum_{j=1}^n c_jw_j\overline{z_j}$. If any $c_j<0$, positivity fails at $v=e_j$; if any $c_j=0$, positivity holds but definiteness fails at $v=e_j\ne 0$.
-    \ii \emph{$L^2$ inner product on continuous functions or polynomials (Ex.~66):} On $C([a,b])$ or $\PP(\FF)$ ($a<b$), $\ip fg=\int_a^b f(x)\overline{g(x)}\,dx$. Here $\ip ff=\int_a^b |f(x)|^2\,dx\ge 0$ gives positivity; for definiteness, if the continuous nonnegative function $|f(x)|^2$ integrates to $0$ on $[a,b]$, then $|f(x)|^2=0$ at every $x\in[a,b]$, so $f=0$.
-    \ii \emph{Frobenius inner product on $\FF^{m\times n}$:} $\ip AB=\tr(B^*A)=\sum_{i=1}^m\sum_{j=1}^n a_{ij}\overline{b_{ij}}$, where $B^*=\overline{B}^{\mathsf T}$.
+    \ii \emph{$L^2$ inner product on continuous functions or polynomials (Ex.~66):} On $C([a,b])$ or $\PP(\FF)$ ($a<b$), $\ip fg=\int_a^b f(x)\overline{g(x)}\,dx$. Here $\ip ff=\int_a^b |f(x)|^2\,dx\ge 0$ gives positivity; for definiteness, if $|f(x_0)|^2=c>0$ at some $x_0\in[a,b]$, continuity keeps $|f|^2\ge c/2$ on an interval of some length $\delta>0$ inside $[a,b]$, so $\int_a^b|f|^2\ge c\delta/2>0$. Hence $\int_a^b|f|^2=0$ forces $f=0$.
+    \ii \emph{Frobenius inner product on $\FF^{m\times n}$:} \[ \ip AB=\tr(B^*A)=\sum_{i=1}^m\sum_{j=1}^n a_{ij}\overline{b_{ij}},\qquad B^*=\overline{B}^{\mathsf T}. \]
   \end{itemize}
   \ii \textbf{Why positivity and definiteness must both be checked:}
   \begin{itemize}
@@ -200,6 +241,30 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \ii On $\RR^2$, $\ip xy_3=(x_1+x_2)(y_1+y_2)$ is bilinear, symmetric, and satisfies \emph{positivity} ($\ip xx_3=(x_1+x_2)^2\ge 0$ for all $x\in\RR^2$), yet it fails \emph{definiteness} because the nonzero vector $v=(1,-1)\ne 0$ satisfies $\ip vv_3=(1-1)^2=0$. Such a form is only positive semidefinite, not an inner product.
   \end{itemize}
 \end{itemize}
+
+\begin{methodbox}{How to decide whether a formula is an inner product}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Check linearity in the first slot and (conjugate) symmetry. For formulas built from products of coordinates or from integrals of $f\bar g$ these hold by inspection; write one line for each.
+  \ii Write out $\ip vv$ as a function of the coordinates of $v$ (or as an integral).
+  \ii Positivity and definiteness: try to write $\ip vv$ as a sum of squares with positive coefficients, by completing the square. If you get $k=\dim V$ independent squares, it is an inner product.
+  \ii Otherwise look for a counterexample: a $v$ with $\ip vv<0$ (positivity fails), or a $v\ne0$ with $\ip vv=0$ (definiteness fails), found by setting the squares that appear equal to $0$.
+\end{enumerate}
+\textbf{Edge cases.} A form that uses fewer independent squares than $\dim V$ (or that evaluates functions at too few points) fails definiteness. A negative weight fails positivity. On a function space, the interval must have positive length.
+\end{methodbox}
+
+\begin{example*}[A form with a cross term that is an inner product]
+  On $\RR^2$ let $\ip xy=2x_1y_1+x_1y_2+x_2y_1+x_2y_2$. It is linear in $x$ and symmetric in $x,y$. Completing the square,
+  \[ \ip xx=2x_1^2+2x_1x_2+x_2^2=x_1^2+(x_1+x_2)^2, \]
+  which is $\ge0$, and is $0$ only if $x_1=0$ and $x_1+x_2=0$, i.e.\ $x=0$. So it is an inner product.
+\end{example*}
+
+\begin{example*}[A symmetric form that fails positivity]
+  On $\RR^2$ let $\ip xy=x_1y_2+x_2y_1$. Then $\ip xx=2x_1x_2$, and $x=(1,-1)$ gives $\ip xx=-2<0$. Not an inner product.
+\end{example*}
+
+\begin{example*}[Point evaluations that fail definiteness]
+  On $\PP_3(\RR)$ let $\ip pq=p(0)q(0)+p(1)q(1)$. Then $\ip pp=p(0)^2+p(1)^2\ge0$, but $p(x)=x(x-1)\ne0$ has $\ip pp=0$: two values cannot detect every nonzero polynomial of degree $3$. Not an inner product.
+\end{example*}
 
 \begin{definition*}[Def.~44 / Prop.~81 / LADR 6.7, 6.9: Norm and norm induced by an inner product]\target{def-44}
   A \vocab{norm} on a vector space $V$ over $\FF$ is a function $\|\cdot\|\colon V\to[0,\infty)$ satisfying:
@@ -221,7 +286,7 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \end{itemize}
 
 \begin{definition*}[Def.~45 / LADR 6.10, 6A.16: Orthogonality and angle]\target{def-45}
-  Two vectors $u,v\in V$ are \vocab{orthogonal}, written $u\perp v$, if $\ip uv=0$. In a real inner product space, the \vocab{angle} $\theta\in[0,\pi]$ between two nonzero vectors $u,v\in V$ is defined by $\cos\theta=\dfrac{\ip uv}{\|u\|\,\|v\|}$ (which lies in $[-1,1]$ by \ilink{prop-82}{Prop.~82}).
+  Two vectors $u,v\in V$ are \vocab{orthogonal}, written $u\perp v$, if $\ip uv=0$. In a real inner product space, the \vocab{angle} $\theta\in[0,\pi]$ between two nonzero vectors $u,v\in V$ is defined by $\cos\theta=\ip uv/(\|u\|\,\|v\|)$, which lies in $[-1,1]$ by \ilink{prop-82}{Prop.~82}.
 \end{definition*}
 
 \begin{itemize}
@@ -242,14 +307,14 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \end{itemize}
 
 \begin{proposition*}[LADR 6.13: Orthogonal decomposition along a single vector]\target{name-ladr-6-13-orthogonal-decomposition}
-  Suppose $u,v\in V$ with $v\ne 0$. Set $c=\dfrac{\ip uv}{\|v\|^2}$ and $w=u-\dfrac{\ip uv}{\|v\|^2}v$. Then
+  Suppose $u,v\in V$ with $v\ne 0$. Set $c=\ip uv/\|v\|^2$ and $w=u-cv$. Then
   \[
     u = cv + w \qquad\text{and}\qquad \ip wv = 0\quad (w\perp v).
   \]
   Thus every vector $u\in V$ decomposes uniquely as a scalar multiple of $v$ plus a vector orthogonal to $v$.
 \end{proposition*}
 \begin{ideabox}
-  To drop a perpendicular from $u$ onto the line $\spn(v)$, we look for a scalar $c\in\FF$ such that the remainder $w=u-cv$ is orthogonal to $v$. Imposing the single linear condition $0=\ip{u-cv}{v}=\ip uv-c\ip vv=\ip uv-c\|v\|^2$ and dividing by $\|v\|^2\ne 0$ (guaranteed by definiteness since $v\ne 0$) uniquely pins down $c=\ip uv/\|v\|^2$. This one calculation is the engine behind Cauchy--Schwarz, Gram--Schmidt orthonormalization, and orthogonal projections.
+  To drop a perpendicular from $u$ onto the line $\spn(v)$, we look for a scalar $c\in\FF$ such that the remainder $w=u-cv$ is orthogonal to $v$. Imposing the single linear condition $0=\ip{u-cv}{v}=\ip uv-c\ip vv=\ip uv-c\|v\|^2$ and dividing by $\|v\|^2\ne 0$ (guaranteed by definiteness since $v\ne 0$) uniquely pins down $c=\ip uv/\|v\|^2$. The same calculation is used again to prove Cauchy--Schwarz and, in later weeks, Gram--Schmidt and orthogonal projections.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -265,32 +330,33 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \begin{fig}
 \begin{tikzpicture}[scale=1.18]
   % Line span(v)
-  \PacketInkPath[black!45,line width=0.4pt]{(-0.5,0) -- (5.0,0) node[right=3pt,font=\scriptsize,text=black!75] {\InkLabel{$\spn(v)$}}}
+  \PacketInkPath[black!60,line width=0.4pt]{(-0.5,0) -- (5.0,0)}
+  \node[right=3pt,font=\scriptsize,text=black] at (5.0,0) {\InkLabel{$\spn(v)$}};
 
   % Right-angle mark at foot of perpendicular
   \PacketInkPath[black!60,line width=0.38pt]{(2.20,0) -- (2.20,0.20) -- (2.40,0.20)}
 
   % Vector v
-  \PacketInkPath[figvecsub]{(0,0) -- (4.20,0)}
-  \node[below=3pt,font=\small,text=black!70] at (3.55,0) {\InkLabel{$v$}};
+  \PacketInkPath[ink arrow,draw=black,line width=.55pt]{(0,0) -- (4.20,0)}
+  \node[below=3pt,font=\small] at (3.55,0) {\InkLabel{$v$}};
 
   % Component cv along v (single restrained accent)
-  \PacketInkPath[->,draw=figblue,line width=0.55pt,shorten >=1.4pt]{(0,0) -- (2.40,0)}
-  \node[below=3pt,font=\small,text=figblue!90!black] at (1.20,0) {\InkLabel{$cv$}};
+  \PacketInkPath[->,draw=inkblue,line width=1.0pt,shorten >=1.4pt]{(0,0) -- (2.40,0)}
+  \node[below=3pt,font=\small] at (1.20,0) {\InkLabel[inkblue]{$cv$}};
 
   % Focal vector u
   \PacketInkPath[->,draw=black,line width=0.55pt,shorten >=1.0pt]{(0,0) -- (2.40,1.88)
     node[pos=0.55,above left=2pt,font=\small,text=black] {\InkLabel{$u$}}}
 
   % Orthogonal residual w = u - cv
-  \draw[ink guide arrow,draw=black!75,shorten <=1.4pt,shorten >=2.0pt] (2.40,0) -- (2.40,1.88);
-  \node[right=4pt,font=\small,text=black!85] at (2.40,0.94) {\InkLabel{$w$}};
+  \PacketInkPath[ink arrow,draw=inkred,line width=.55pt,shorten <=1.4pt,shorten >=2.0pt]{(2.40,0) -- (2.40,1.88)}
+  \node[right=4pt,font=\small] at (2.40,0.94) {\InkLabel[inkred]{$w=u-cv$}};
 
   % Origin and foot dots
   \fill[black] (0,0) circle (1.3pt) node[below left=2pt,font=\scriptsize] {\InkLabel{$0$}};
   \fill[black] (2.40,0) circle (1.3pt);
 \end{tikzpicture}
-\figcap{Orthogonal decomposition $u=cv+w$ ($w\perp v$, LADR 6.13): Pythagoras on the right triangle with legs $cv$ and $w$ yields Cauchy--Schwarz $|\ip uv|\le\|u\|\,\|v\|$, with equality iff $w=0$.}
+\figcap{The decomposition $u=cv+w$ of LADR 6.13: $cv$ (blue) is the foot of the perpendicular from $u$ to the line $\spn(v)$, and $w$ (red) is perpendicular to $v$.}
 \end{fig}
 
 \begin{theorem*}[Prop.~82 / LADR 6.14: Cauchy--Schwarz inequality]\target{prop-82}\target{name-cauchy-schwarz}
@@ -301,12 +367,12 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
   This inequality is an equality if and only if one of $u,v$ is a scalar multiple of the other (equivalently, $\{u,v\}$ is linearly dependent).
 \end{theorem*}
 \begin{ideabox}
-  In $\RR^2$, the orthogonal projection of $u$ onto the line $\spn(v)$ is one leg of a right triangle whose hypotenuse is $u$, so the leg $cv$ cannot be longer than $u$. In any inner product space, the orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (LADR 6.13) splits $u$ into two orthogonal pieces $cv$ and $w$. The Pythagorean theorem then gives $\|u\|^2=\|cv\|^2+\|w\|^2=\frac{|\ip uv|^2}{\|v\|^2}+\|w\|^2$. Dropping the nonnegative term $\|w\|^2$ yields Cauchy--Schwarz, and equality holds precisely when the dropped term $\|w\|^2$ vanishes, which by definiteness means $w=0$, i.e.\ $u=cv$.
+  In $\RR^2$, the orthogonal projection of $u$ onto the line $\spn(v)$ is one leg of a right triangle whose hypotenuse is $u$, so the leg $cv$ cannot be longer than $u$. In any inner product space, the orthogonal decomposition $u=cv+w$ with $c=\ip uv/\|v\|^2$ and $w\perp v$ (LADR 6.13) splits $u$ into two orthogonal pieces $cv$ and $w$. The Pythagorean theorem then gives $\|u\|^2=\|cv\|^2+\|w\|^2$, and $\|cv\|^2=|\ip uv|^2/\|v\|^2$. Dropping the nonnegative term $\|w\|^2$ yields Cauchy--Schwarz, and equality holds precisely when the dropped term $\|w\|^2$ vanishes, which by definiteness means $w=0$, i.e.\ $u=cv$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii If $v=0$, then both $|\ip u0|=0$ and $\|u\|\,\|0\|=0$, so equality holds and $v=0\cdot u$ is a scalar multiple of $u$.
-    \ii Suppose $v\ne 0$. By LADR 6.13, write $u=cv+w$ where $c=\dfrac{\ip uv}{\|v\|^2}$ and $w\perp v$. Since $\ip w{cv}=\bar c\ip wv=0$, the vectors $cv$ and $w$ are orthogonal.
+    \ii Suppose $v\ne 0$. By LADR 6.13, write $u=cv+w$ where $c=\ip uv/\|v\|^2$ and $w\perp v$. Since $\ip w{cv}=\bar c\ip wv=0$, the vectors $cv$ and $w$ are orthogonal.
     \ii Applying the Pythagorean theorem to $u=cv+w$ and using homogeneity $\|cv\|=|c|\,\|v\|$ gives
     \[
       \|u\|^2 = \|cv\|^2 + \|w\|^2 = |c|^2\|v\|^2 + \|w\|^2 = \frac{|\ip uv|^2}{\|v\|^4}\|v\|^2 + \|w\|^2 = \frac{|\ip uv|^2}{\|v\|^2} + \|w\|^2 \ge \frac{|\ip uv|^2}{\|v\|^2}.
@@ -349,7 +415,7 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \ip uv &= \frac{1}{4}\Big(\|u+v\|^2 - \|u-v\|^2\Big) && (\text{when }\FF=\RR), \\
     \ip uv &= \frac{1}{4}\Big(\|u+v\|^2 - \|u-v\|^2 + i\|u+iv\|^2 - i\|u-iv\|^2\Big) && (\text{when }\FF=\CC).
   \end{align*}
-  (Conversely, by the Jordan--von Neumann theorem, any norm on $V$ that satisfies the parallelogram equality for all $u,v\in V$ is induced by a unique inner product given by the polarization identity.)
+  Conversely, a norm on $V$ that satisfies the parallelogram equality for all $u,v\in V$ is induced by exactly one inner product, given by the polarization identity (\ilink{name-jordan-von-neumann}{Jordan--von Neumann theorem}, proved in the last section).
 \end{proposition*}
 \begin{ideabox}
   Expanding $\|u+v\|^2=\|u\|^2+2\operatorname{Re}\ip uv+\|v\|^2$ and $\|u-v\|^2=\|u\|^2-2\operatorname{Re}\ip uv+\|v\|^2$, the cross term $2\operatorname{Re}\ip uv$ appears with a plus sign in the first and a minus sign in the second. Adding the two expansions cancels the cross terms completely, leaving $2\|u\|^2+2\|v\|^2$ (the parallelogram equality). Subtracting the two expansions cancels the squared norms $\|u\|^2$ and $\|v\|^2$, isolating $4\operatorname{Re}\ip uv$. Over $\RR$, $\operatorname{Re}\ip uv=\ip uv$ and we are done; over $\CC$, replacing $v$ by $iv$ turns $\operatorname{Re}\ip u{iv}=\operatorname{Re}(-i\ip uv)$ into $\operatorname{Im}\ip uv$, recovering the imaginary part of $\ip uv$ as well.
@@ -361,13 +427,22 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
       \|u+v\|^2 = \|u\|^2 + 2\operatorname{Re}\ip uv + \|v\|^2 \qquad\text{and}\qquad \|u-v\|^2 = \|u\|^2 - 2\operatorname{Re}\ip uv + \|v\|^2.
     \]
     \ii Adding the two equations gives $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$. Subtracting them gives $\|u+v\|^2-\|u-v\|^2=4\operatorname{Re}\ip uv$, which proves the real polarization identity when $\FF=\RR$.
-    \ii When $\FF=\CC$, substitute $iv$ in place of $v$ in the subtraction formula: since $\|iv\|=\|v\|$ and $\ip u{iv}=-i\ip uv$, we have $\operatorname{Re}\ip u{iv}=\operatorname{Re}(-i\ip uv)=\operatorname{Im}\ip uv$, so
+    \ii When $\FF=\CC$, substitute $iv$ in place of $v$ in the identity $\|u+v\|^2-\|u-v\|^2=4\operatorname{Re}\ip uv$ of step 2: since $\|iv\|=\|v\|$ and $\ip u{iv}=-i\ip uv$, we have $\operatorname{Re}\ip u{iv}=\operatorname{Re}(-i\ip uv)=\operatorname{Im}\ip uv$, so
     \[
       \|u+iv\|^2 - \|u-iv\|^2 = 4\operatorname{Re}\ip u{iv} = 4\operatorname{Im}\ip uv.
     \]
     Combining $\ip uv = \operatorname{Re}\ip uv + i\operatorname{Im}\ip uv$ gives the complex polarization identity.
   \end{steps}
 \end{proof}
+
+\begin{example*}[Two norms on $\RR^2$ that do not come from inner products]
+  Define $\|x\|_1=|x_1|+|x_2|$ and $\|x\|_\infty=\max(|x_1|,|x_2|)$; both satisfy the norm axioms of \ilink{def-44}{Def.~44} (each axiom follows from $|a+b|\le|a|+|b|$ for numbers). Test the parallelogram equality with $u=e_1$, $v=e_2$, where $2\|u\|^2+2\|v\|^2=4$ for both norms.
+  \begin{itemize}
+    \ii $\ell_1$: $\|e_1+e_2\|_1^2+\|e_1-e_2\|_1^2=4+4=8\ne4$.
+    \ii $\ell_\infty$: $\|e_1+e_2\|_\infty^2+\|e_1-e_2\|_\infty^2=1+1=2\ne4$.
+  \end{itemize}
+  By \ilink{prop-83}{Prop.~83}, neither norm is induced by an inner product. The usual length $\|x\|_2=\sqrt{x_1^2+x_2^2}$ gives $2+2=4$.
+\end{example*}
 
 \begin{fig}
 \begin{tikzpicture}
@@ -382,22 +457,22 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 
     % Sides
     \PacketInkPath[->,black,line width=0.55pt]{(O) -- (U) node[midway,below=3pt,font=\small] {\InkLabel{$u$}}}
-    \PacketInkPath[black!45,line width=0.42pt]{(V) -- (UV)}
+    \PacketInkPath[black!70,line width=0.42pt]{(V) -- (UV)}
     \PacketInkPath[->,black,line width=0.55pt]{(O) -- (V) node[midway,above left=1pt,font=\small] {\InkLabel{$v$}}}
-    \PacketInkPath[black!45,line width=0.42pt]{(U) -- (UV)}
+    \PacketInkPath[black!70,line width=0.42pt]{(U) -- (UV)}
 
     % Diagonals
     \PacketInkPath[->,draw=figblue,line width=0.55pt,shorten >=1.2pt]{(O) -- (UV)
-      node[pos=0.73,sloped,above=2pt,font=\small,text=figblue!90!black] {\InkLabel{$u+v$}}}
-    \draw[ink guide arrow,draw=black!75,shorten <=1.2pt,shorten >=2.2pt] (V) -- (U);
-    \node[font=\small,text=black!85] at (1.28,1.34) {\InkLabel{$u-v$}};
+      node[pos=0.73,sloped,above=2pt,font=\small] {\InkLabel[inkblue]{$u+v$}}}
+    \PacketInkPath[ink arrow,draw=inkred,line width=.55pt,shorten <=1.2pt,shorten >=2.2pt]{(V) -- (U)}
+    \node[font=\small] at (1.28,1.34) {\InkLabel[inkred]{$u-v$}};
 
     \fill[black] (O) circle (1.3pt) node[below left=2pt,font=\scriptsize] {\InkLabel{$0$}};
     \node[font=\footnotesize] at (2.32,-0.88) {\InkLabel{(a)}};
   \end{scope}
 
   % Panel (b): Unit balls of l1, l2, l_infty
-  \begin{scope}[shift={(8.4,1.40)},scale=0.95]
+  \begin{scope}[shift={(7.6,1.40)},scale=0.95]
     \def\R{1.22}
 
     % Hair-thin axes
@@ -405,14 +480,18 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \PacketInkPath[figaxis]{(0,-1.55) -- (0,1.68) node[above=1pt,font=\scriptsize] {\InkLabel{$x_2$}}}
 
     % Three clean solid unit-ball curves: l_infty (mid-gray), l_2 (black), l_1 (single accent)
-    \PacketInkPath[black!55,line width=0.55pt]{(-\R,-\R) rectangle (\R,\R)}
-    \PacketInkPath[black,line width=0.55pt]{(0,0) circle (\R)}
-    \PacketInkPath[figblue,line width=0.55pt]{(\R,0) -- (0,\R) -- (-\R,0) -- (0,-\R) -- cycle}
+    \PacketInkPath[inkred,line width=0.8pt]{(-\R,-\R) rectangle (\R,\R)}
+    \PacketInkPath[black,line width=0.8pt]{(0,0) circle (\R)}
+    \PacketInkPath[inkblue,line width=0.8pt]{(\R,0) -- (0,\R) -- (-\R,0) -- (0,-\R) -- cycle}
 
     % Atomic curve labels placed cleanly with zero crossings
-    \node[font=\scriptsize,text=black!75,anchor=south west] at (\R-0.02,\R-0.02) {\InkLabel{$\ell_\infty$}};
-    \node[font=\scriptsize,text=black,inner sep=0.6pt] at (-0.98,1.00) {\InkLabel{$\ell_2$}};
-    \node[font=\scriptsize,text=figblue!90!black] at (0.45,-0.43) {\InkLabel{$\ell_1$}};
+    % legend to the right of the panel
+    \draw[inkred,line width=0.8pt] (2.05,0.85)--(2.45,0.85);
+    \node[font=\scriptsize,anchor=west] at (2.5,0.85) {\InkLabel[inkred]{$\|x\|_\infty=1$ (square)}};
+    \draw[black,line width=0.8pt] (2.05,0.35)--(2.45,0.35);
+    \node[font=\scriptsize,anchor=west] at (2.5,0.35) {\InkLabel{$\|x\|_2=1$ (circle)}};
+    \draw[inkblue,line width=0.8pt] (2.05,-0.15)--(2.45,-0.15);
+    \node[font=\scriptsize,anchor=west] at (2.5,-0.15) {\InkLabel[inkblue]{$\|x\|_1=1$ (diamond)}};
 
     % Standard basis dots e_1, e_2
     \fill[black] (\R,0) circle (1.3pt);
@@ -423,24 +502,53 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
     \node[font=\footnotesize] at (0,-1.98) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Parallelogram equality (\ilink{prop-83}{Prop.~83}). (b) Unit spheres $\|x\|=1$ for $\ell_\infty$ (square), $\ell_2$ (circle), and $\ell_1$ (diamond); evaluating $\|e_1\pm e_2\|^2$ shows $\ell_\infty$ and $\ell_1$ violate it.}
+\figcap{(a) The parallelogram with sides $u,v$ and diagonals $u+v$, $u-v$: the squared diagonals add up to the sum of the squared sides (\ilink{prop-83}{Prop.~83}). (b) The unit circles of the three norms of the example above: square for $\|\cdot\|_\infty$, circle for $\|\cdot\|_2$, diamond for $\|\cdot\|_1$.}
 \end{fig}
 
-\Needspace{8\baselineskip}\noindent\textbf{Worked examples of Cauchy--Schwarz.}
-\begin{itemize}
-  \ii \emph{Sum vs.\ sum of squares:} On $\RR^n$ with the dot product, taking $u=(a_1,\dots,a_n)$ and $v=(1,\dots,1)$ gives $(a_1+\dots+a_n)^2=\ip uv^2\le\|u\|^2\|v\|^2=n(a_1^2+\dots+a_n^2)$, with equality iff $u$ is a multiple of $(1,\dots,1)$, i.e.\ $a_1=\dots=a_n$.
-  \ii \emph{Integral Cauchy--Schwarz (Ex.~67):} On $C([0,\pi])$ with $\ip fg=\int_0^\pi f(x)g(x)\,dx$, taking $f(x)=\sqrt{\sin x}$ and $g(x)=1$ gives
+\begin{methodbox}{How to prove an inequality with Cauchy--Schwarz}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Write the side that should be small as $|\ip uv|$ (or its square) in a suitable inner product: a sum $\sum a_kb_k$ is the dot product of $(a_k)$ and $(b_k)$; an integral $\int fg$ is the $L^2$ inner product.
+  \ii If the target has weights, split each term: $a_kb_k=(\sqrt{w_k}\,a_k)(b_k/\sqrt{w_k})$. To bound a plain sum $\sum a_k$ or $\int f$, pair with the all-ones vector or the constant function $1$.
+  \ii Compute $\|u\|^2$ and $\|v\|^2$ and write $|\ip uv|^2\le\|u\|^2\|v\|^2$.
+  \ii Equality case: equality holds exactly when $u$ and $v$ are dependent (\ilink{prop-82}{Prop.~82}); translate that back into the original variables.
+\end{enumerate}
+\textbf{Edge cases.} If $v=0$ the inequality is $0\le0$. If the terms can be negative, the bound is on $|\sum a_kb_k|$; a bound on $\sum a_kb_k$ itself follows from $\sum a_kb_k\le|\sum a_kb_k|$.
+\end{methodbox}
+
+\begin{example*}[A sum against the sum of squares]
+  On $\RR^n$ with the dot product, take $u=(a_1,\dots,a_n)$ and $v=(1,\dots,1)$. Then $\ip uv=a_1+\dots+a_n$, $\|u\|^2=a_1^2+\dots+a_n^2$ and $\|v\|^2=n$, so
+  \[ (a_1+\dots+a_n)^2\le n(a_1^2+\dots+a_n^2), \]
+  with equality iff $u$ is a multiple of $(1,\dots,1)$, i.e.\ $a_1=\dots=a_n$.
+\end{example*}
+
+\begin{example*}[An integral bound (Ex.~67)]
+  On $C([0,\pi])$ with $\ip fg=\int_0^\pi f(x)g(x)\,dx$, take $f(x)=\sqrt{\sin x}$ and $g(x)=1$:
   \[
     \left(\int_0^\pi \sqrt{\sin x}\,dx\right)^2 = \ip fg^2 \le \|f\|^2\|g\|^2 = \left(\int_0^\pi \sin x\,dx\right)\left(\int_0^\pi 1^2\,dx\right) = 2\pi,
   \]
-  so $\int_0^\pi\sqrt{\sin x}\,dx \le \sqrt{2\pi}$ (strict inequality because $\sqrt{\sin x}$ is not a constant multiple of $1$).
-  \ii \emph{Angle computation (Ex.~68):} In $\RR^2$ with the dot product, $u=(1,0)$ and $v=(1,1)$ have $\cos\theta=\frac{\ip uv}{\|u\|\,\|v\|}=\frac{1}{1\cdot\sqrt{2}}=\frac{1}{\sqrt 2}$, so $\theta=\pi/4$.
-\end{itemize}
+  so $\int_0^\pi\sqrt{\sin x}\,dx \le \sqrt{2\pi}$. The inequality is strict because $\sqrt{\sin x}$ is not a constant multiple of $1$.
+\end{example*}
+
+\begin{example*}[A weighted sum]
+  For real $a_k,b_k$,
+  \[ \Bigl(\sum_{k=1}^na_kb_k\Bigr)^2\le\Bigl(\sum_{k=1}^nka_k^2\Bigr)\Bigl(\sum_{k=1}^n\frac{b_k^2}k\Bigr). \]
+  Apply Cauchy--Schwarz to $u=(\sqrt k\,a_k)_k$ and $v=(b_k/\sqrt k)_k$: $\ip uv=\sum a_kb_k$, $\|u\|^2=\sum ka_k^2$, $\|v\|^2=\sum b_k^2/k$. Equality holds iff $\sqrt k\,a_k=c\,b_k/\sqrt k$ for a common $c$, i.e.\ $ka_k=cb_k$ for all $k$ (or all $b_k=0$).
+\end{example*}
+
+\begin{example*}[An angle (Ex.~68)]
+  In $\RR^2$ with the dot product, $u=(1,0)$ and $v=(1,1)$ have $\ip uv=1$, $\|u\|=1$, $\|v\|=\sqrt2$, so $\cos\theta=1/\sqrt2$ and $\theta=\pi/4$.
+\end{example*}
+
+\begin{example*}[Norms and orthogonality for an integral inner product]
+  On $\PP_2(\RR)$ with $\ip pq=\int_0^1p(x)q(x)\,dx$: $\|1\|^2=\int_0^11\,dx=1$, $\|x\|^2=\int_0^1x^2\,dx=\frac13$, $\|x^2\|^2=\int_0^1x^4\,dx=\frac15$. And $\ip1x=\int_0^1x\,dx=\frac12\ne0$, so $1$ and $x$ are not orthogonal for this interval. On a symmetric interval $[-a,a]$ the integral of an odd function is $0$, so there $\ip1x=\ip{x}{x^2}=0$; whether two functions are orthogonal depends on the interval.
+\end{example*}
+
+\revisit Conjugate the second vector: $\ip wz=\sum_jw_j\overline{z_j}$ on $\CC^n$ and $\ip fg=\int_a^bf\overline g$ for functions. Then $\ip zz=\sum_j|z_j|^2>0$ for $z\ne0$ (for $z=(1,i)$, $\ip zz=1+1=2$, not $1^2+i^2=0$), so $\|z\|=\sqrt{\ip zz}$ is a positive length. Every pairing satisfying the axioms of \ilink{def-43}{Def.~43} gives the Pythagorean theorem (LADR 6.12), Cauchy--Schwarz (\ilink{prop-82}{Prop.~82}) and the triangle inequality (\ilink{prop-81}{Prop.~81(iii)}), because their proofs use only those axioms.
 
 \begin{shortcuts}
   \ii \textbf{Splitting a sum or integral for Cauchy--Schwarz:} To bound $\sum a_kb_k$ with weighted squares such as $(\sum k a_k^2)(\sum b_k^2/k)$, factor each term as $a_kb_k=(\sqrt{k}\,a_k)(b_k/\sqrt{k})$ and apply Cauchy--Schwarz to $u_k=\sqrt{k}\,a_k$ and $v_k=b_k/\sqrt{k}$. To bound $\sum a_k$ or $\int_a^b f(x)\,dx$, pair with the all-ones vector $(1,\dots,1)$ or the constant function $1$.
   \ii \textbf{Fast test that a norm is not from an inner product:} Plug $u=e_1$ and $v=e_2$ into the parallelogram equality $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$. A single pair $(u,v)$ where the two sides differ proves that no inner product can induce that norm.
-  \ii \textbf{Testing candidate inner products:} Linearity in the first slot and (conjugate) symmetry are usually immediate by inspection. Focus on positive definiteness: check whether $\ip vv$ is a sum of squares with positive coefficients (or an integral of $|f|^2$ on a genuine interval $[a,b]$ with $a<b$). If $\ip vv$ omits a coordinate or uses only $k<\dim V$ linear combinations of the coordinates, solve those linear equations to find a nonzero $v$ with $\ip vv=0$.
+  \ii \textbf{Testing candidate inner products:} spend the effort on positive definiteness (method box above). If $\ip vv$ omits a coordinate or uses only $k<\dim V$ linear combinations of the coordinates, solve those linear equations to find a nonzero $v$ with $\ip vv=0$.
 \end{shortcuts}
 
 \begin{trapbox}
@@ -504,7 +612,46 @@ Swapping the two vectors now conjugates every term, replacing symmetry by \emph{
 \end{prob}
 
 \begin{prob}
-\textbf{I1. }\ Let $a_1,\dots,a_n>0$. Prove that $(a_1+\dots+a_n)\big(\frac1{a_1}+\dots+\frac1{a_n}\big)\ge n^2$, and find when equality holds.
+\textbf{I1. }\ Let $a_1,\dots,a_n>0$. Prove that
+\[ (a_1+\dots+a_n)\Bigl(\frac1{a_1}+\dots+\frac1{a_n}\Bigr)\ge n^2, \]
+and find when equality holds.
 \end{prob}
+
+
+\section{Proofs of the facts used}
+
+\begin{theorem*}[Jordan--von Neumann theorem]\target{name-jordan-von-neumann}
+  Let $\|\cdot\|$ be a norm on a vector space $V$ over $\FF$ that satisfies $\|u+v\|^2+\|u-v\|^2=2\|u\|^2+2\|v\|^2$ for all $u,v$. Then the polarization identity of \ilink{prop-83}{Prop.~83} defines an inner product with $\ip vv=\|v\|^2$, and it is the only inner product that induces $\|\cdot\|$.
+\end{theorem*}
+\begin{ideabox}
+Polarization is the only candidate, since every inner product satisfies it (\ilink{prop-83}{Prop.~83}). Symmetry and positivity of the candidate are immediate; the work is linearity in the first slot. The parallelogram equality, applied to two well-chosen pairs, gives additivity. Additivity gives homogeneity for rational scalars, and continuity of the norm extends it to all real scalars. Over $\CC$, the extra term with $iv$ supplies homogeneity for the scalar $i$.
+\end{ideabox}
+\begin{proof}
+  \textbf{Real case.} Define $R(u,v)=\frac14\bigl(\|u+v\|^2-\|u-v\|^2\bigr)$.
+  \begin{steps}
+    \ii \emph{Symmetry and positivity.} $\|v-u\|=\|u-v\|$ gives $R(v,u)=R(u,v)$. Also $R(v,v)=\frac14\|2v\|^2=\|v\|^2$, which is $\ge0$ and is $0$ only for $v=0$. And $R(-u,v)=-R(u,v)$, since $\|-u\pm v\|=\|u\mp v\|$; in particular $R(0,v)=0$.
+    \ii \emph{A midpoint identity.} Apply the parallelogram equality to the pair $u+v,\ u'$ and to the pair $u-v,\ u'$:
+    \[ \|u+u'+v\|^2+\|u-u'+v\|^2=2\|u+v\|^2+2\|u'\|^2,\qquad \|u+u'-v\|^2+\|u-u'-v\|^2=2\|u-v\|^2+2\|u'\|^2. \]
+    Subtracting and dividing by $4$ gives $R(u+u',v)+R(u-u',v)=2R(u,v)$ for all $u,u',v$.
+    \ii \emph{Additivity.} With $u'=u$, step 2 gives $R(2u,v)+R(0,v)=2R(u,v)$, so $R(2u,v)=2R(u,v)$. For any $x,y$, put $u=\frac{x+y}2$, $u'=\frac{x-y}2$ in step 2, and use $R(2u,v)=2R(u,v)$:
+    \[ R(x,v)+R(y,v)=2R\Bigl(\frac{x+y}2,v\Bigr)=R(x+y,v). \]
+    \ii \emph{Rational scalars.} Additivity gives $R(ku,v)=kR(u,v)$ for integers $k\ge0$, and step 1 extends it to negative $k$. For $t=p/q$: $qR(tu,v)=R(pu,v)=pR(u,v)$, so $R(tu,v)=tR(u,v)$.
+    \ii \emph{Real scalars.} The reverse triangle inequality $\bigl|\|a\|-\|b\|\bigr|\le\|a-b\|$ (proved from the triangle inequality as in \ilink{prop-81}{Prop.~81}) shows that $t\mapsto\|tu\pm v\|$ is continuous, since $\|tu-su\|=|t-s|\,\|u\|$. So $t\mapsto R(tu,v)$ is continuous, as is $t\mapsto tR(u,v)$. They agree at every rational $t$, and every real $t$ is a limit of rationals, so they agree for all real $t$. Thus $R$ is an inner product.
+  \end{steps}
+  \textbf{Complex case.} Regard $V$ as a real vector space; the norm still satisfies the parallelogram equality, so $R$ above is a real inner product with $R(v,v)=\|v\|^2$. Define $\ip uv=R(u,v)+iR(u,iv)$; this is the complex polarization identity of \ilink{prop-83}{Prop.~83}.
+  \begin{steps}
+    \ii $\|iu\pm iv\|=|i|\,\|u\pm v\|=\|u\pm v\|$, so $R(iu,iv)=R(u,v)$ for all $u,v$. Applying this to the pair $iu,v$:
+    \[ R(iu,v)=R(i\cdot iu,\,iv)=R(-u,iv)=-R(u,iv). \]
+    \ii \emph{Homogeneity for $i$.} By step 1,
+    \[ \ip{iu}v=R(iu,v)+iR(iu,iv)=-R(u,iv)+iR(u,v)=i\bigl(R(u,v)+iR(u,iv)\bigr)=i\ip uv. \]
+    Together with real linearity of $R$ in the first slot, $\ip{(a+ib)u}{v}=(a+ib)\ip uv$ and $\ip\cdot v$ is additive.
+    \ii \emph{Conjugate symmetry.} Using symmetry of $R$ and step 1,
+    \[ \ip vu=R(v,u)+iR(v,iu)=R(u,v)+iR(iu,v)=R(u,v)-iR(u,iv)=\overline{\ip uv}. \]
+    \ii \emph{Positivity.} Since $|1+i|=|1-i|=\sqrt2$,
+    \[ R(v,iv)=\tfrac14\bigl(\|(1+i)v\|^2-\|(1-i)v\|^2\bigr)=\tfrac14(2-2)\|v\|^2=0, \]
+    so $\ip vv=R(v,v)=\|v\|^2$.
+  \end{steps}
+  \textbf{Uniqueness.} Any inner product inducing $\|\cdot\|$ satisfies the polarization identity (\ilink{prop-83}{Prop.~83}), so it is the one defined here.
+\end{proof}
 
 \end{document}

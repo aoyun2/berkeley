@@ -2,6 +2,9 @@
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
 \usepackage{figure-ink}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \title{CS 61A --- Week 4}
 \subtitle{Recursion, mutual recursion, tree recursion (Lectures 9--10, Composing Programs 1.7)}
 \author{}\date{}\ihead{}
@@ -10,28 +13,36 @@
 
 \section{Facts used from Weeks 1--3}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii Calling a function creates a new frame, binds the parameters, and runs the body; the call expression's value is the return value.
-  \ii A function's parent is the frame where it was defined; lookup goes local frame, parent, \dots, global.
-  \ii Digit tools: \cd{n \% 10} (last digit), \cd{n // 10} (all but the last digit).
-  \ii \cd{and}/\cd{or} short-circuit and return the last operand evaluated.
-  \ii A helper function defined inside another function can use the outer function's names.
+  \ii \target{W1}Calling a function creates a new frame, binds the parameters, and runs the body; the call expression's value is the return value. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W2}A function's parent is the frame where it was defined; lookup goes local frame, parent, \dots, global. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W3}Digit tools: \cd{n \% 10} (last digit), \cd{n // 10} (all but the last digit), for \cd{n} $\ge 0$. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W4}\cd{and}/\cd{or} short-circuit and return the last operand evaluated. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W5}A helper function defined inside another function can use the outer function's names, because the outer call's frame is its parent. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
+  \ii \target{W6}The smallest factor greater than 1 of an integer $n\ge2$ is prime: a factor of it greater than 1 would be a smaller factor of $n$. (Shown in \xweek{cs61a}{2026-08-31-control-higher-order}{Week~2}.)
 \end{enumerate}
 
 \section{This week}
 
 \subsection{Which frames an expression sees (Lecture 9)}
-You can tell where a name will be found without drawing a diagram:
-\begin{itemize}
-  \ii An expression outside every \cd{def} and \cd{lambda} is evaluated in the global frame only.
-  \ii An expression inside functions is evaluated in an environment with one frame for each enclosing \cd{def}/\cd{lambda}, from innermost to outermost, and then global.
-\end{itemize}
+\begin{qbox}
+  In the function below, the expression \cd{pow(b, x)} uses three names. Without drawing an environment diagram, in which frame is each one found?
+\end{qbox}
 \begin{py}
 def exp(x):
     def base(b):
         return pow(b, x)     # environment: a base frame, an exp frame, global
     return base
 \end{py}
-In \cd{pow(b, x)}: \cd{b} is found in the \cd{base} frame, \cd{x} in the \cd{exp} frame, \cd{pow} in global. This is how the lecture explained Midterm 1's ``New Print'': inside \cd{f}, the name \cd{print} is always found in a \cd{new\_print} frame.
+\begin{howto}{How to tell which frames an expression sees}
+\begin{steps}
+  \ii If the expression is outside every \cd{def} and \cd{lambda}, it is evaluated in the global frame only.
+  \ii Otherwise list the \cd{def} and \cd{lambda} that enclose it in the source, from the innermost to the outermost. The environment has one frame for each of them, in that order, and then the global frame.
+  \ii A name is found in the first of those frames whose function has it as a parameter or assigns it; built-in names are found after the global frame.
+\end{steps}
+\end{howto}
+This works because a function's parent is the frame in which its \cd{def} or \cd{lambda} was evaluated (\ilink{W2}{W2}), and that is the frame of the function written around it in the source.
+
+\revisit In \cd{pow(b, x)}: \cd{b} is found in the \cd{base} frame (a parameter of \cd{base}), \cd{x} in the \cd{exp} frame (a parameter of \cd{exp}), and \cd{pow} after the global frame, among the built-in names. The lecture used the same reasoning for Midterm 1's ``New Print'': inside \cd{f}, the name \cd{print} is always found in a \cd{new\_print} frame, because \cd{f} is written inside \cd{new\_print}, whose parameter is \cd{print}.
 
 \subsection{Recursive functions (Lecture 9, CP 1.7)}
 \begin{qbox}
@@ -52,12 +63,12 @@ def fact(n):
   \ii Each recursive call must move toward a base case (here \cd{n} decreases by 1).
 \end{itemize}
 \begin{ideabox}
-Nothing new happens in the environment: each call gets its own frame with its own \cd{n} (W1). \cd{fact(3)} opens a frame with \cd{n = 3} and must wait for \cd{fact(2)}; that opens a second frame with \cd{n = 2} and waits for \cd{fact(1)}, which returns \cd{1} at once. Then the waiting calls finish in reverse order: \cd{1 * 2 = 2}, then \cd{2 * 3 = 6}. The frames do not interfere, because each call looks up \cd{n} in its own frame.
+Nothing new happens in the environment: each call gets its own frame with its own \cd{n} (\ilink{W1}{W1}). \cd{fact(3)} opens a frame with \cd{n = 3} and must wait for \cd{fact(2)}; that opens a second frame with \cd{n = 2} and waits for \cd{fact(1)}, which returns \cd{1} at once. Then the waiting calls finish in reverse order: \cd{1 * 2 = 2}, then \cd{2 * 3 = 6}. The frames do not interfere, because each call looks up \cd{n} in its own frame.
 \end{ideabox}
 \Needspace{14\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
-  caller/.style={ink guide,draw=black!50,fill=white,minimum width=1.5cm,minimum height=1.34cm,align=center,font=\rmfamily\footnotesize,text=black!65},
+  caller/.style={draw=black!85,fill=white,line width=0.45pt,minimum width=1.5cm,minimum height=1.34cm,align=center,font=\rmfamily\footnotesize,text=black},
   rframe/.style={ink v3 stroke,draw=black!85,fill=white,line width=0.48pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize},
   bframe/.style={ink v3 stroke,ink grain=inkblue,draw=inkblue!90!black,line width=0.75pt,minimum width=2.95cm,minimum height=1.34cm,inner ysep=5pt,align=center,font=\ttfamily\footnotesize}]
   % Frames left-to-right
@@ -67,33 +78,48 @@ Nothing new happens in the environment: each call gets its own frame with its ow
   \node[bframe] (f1) at (12.8,0) {\InkLabel{\shortstack[c]{\strut fact(1)\\[1.5pt]\strut n = 1\\[1.5pt]\rmfamily\scriptsize\strut base case}}};
 
   % Top call rails (solid black)
-  \draw[->,black!85,line width=0.6pt] (c.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(3)}} ([xshift=-0.42cm]f3.north);
-  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f3.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(2)}} ([xshift=-0.42cm]f2.north);
-  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f2.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black!85]{\InkLabel{fact(1)}} (f1.north);
+  \draw[->,black!85,line width=0.6pt] (c.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black]{\InkLabel{call fact(3)}} ([xshift=-0.42cm]f3.north);
+  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f3.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black]{\InkLabel{call fact(2)}} ([xshift=-0.42cm]f2.north);
+  \draw[->,black!85,line width=0.6pt] ([xshift=0.42cm]f2.north) -- ++(0,0.56) -| node[pos=0.25,above=2pt,font=\ttfamily\scriptsize,text=black]{\InkLabel{call fact(1)}} (f1.north);
 
-  % Bottom return rails (dotted inkblue)
-  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$1$}} ([xshift=0.42cm]f2.south);
-  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$1 \times 2 = 2$}} ([xshift=0.42cm]f3.south);
-  \draw[ink guide arrow,draw=inkblue,line width=0.78pt] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize,text=inkblue]{\InkLabel{$2 \times 3 = 6$}} (c.south);
+  % Bottom return rails (solid inkblue)
+  \draw[->,inkblue,line width=0.75pt] (f1.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize]{\InkLabel[inkblue]{returns $1$}} ([xshift=0.42cm]f2.south);
+  \draw[->,inkblue,line width=0.75pt] ([xshift=-0.42cm]f2.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize]{\InkLabel[inkblue]{returns $1 \times 2 = 2$}} ([xshift=0.42cm]f3.south);
+  \draw[->,inkblue,line width=0.75pt] ([xshift=-0.42cm]f3.south) -- ++(0,-0.56) -| node[pos=0.25,below=2pt,font=\rmfamily\scriptsize]{\InkLabel[inkblue]{returns $2 \times 3 = 6$}} (c.south);
 \end{tikzpicture}
-\figcap{Call frames for \cd{fact(3)}: calls step right (solid black) to the base case \cd{fact(1)} (blue-shaded box), and return values pass back left (dotted blue) to finish each product.}
+\figcap{The frames of \cd{fact(3)}. The calls go right along the top (black) to the base case \cd{fact(1)}; the return values go back left along the bottom (blue) and complete each waiting product.}
 \end{fig}
 
-\method{How to know the recursive case is right (Lecture 10).}
-\begin{itemize}
-  \ii \textbf{Tracing}: follow every call. Possible only for tiny inputs.
-  \ii \textbf{The recursive leap of faith} (induction): \emph{assume} the function already works for every smaller input, and check that the recursive case then gives the right answer for this input. For \cd{fact}: assume \cd{fact(n - 1)} really is $(n-1)!$; then \cd{fact(n - 1) * n} is $n!$. Together with a correct base case, that is a proof.
-\end{itemize}
+\begin{howto}{How to check that a recursive function is correct (the recursive leap of faith, Lecture 10)}
+\begin{steps}
+  \ii Check each base case directly: it returns the right value without a recursive call.
+  \ii For the recursive case, \emph{assume} the function already returns the right answer for every smaller input (what its docstring promises), and check that the recursive case then builds the right answer for this input.
+  \ii Check that every recursive call is on an input closer to a base case, so that the chain of calls ends.
+  \ii For tiny inputs you may also trace every call, as in the figure.
+\end{steps}
+\end{howto}
+
+\begin{example*}[Why the leap of faith proves \cd{fact} correct]
+\textbf{Claim.} For every integer $n\ge0$, \cd{fact(n)} returns $n!$.
+\begin{steps}
+  \ii \textbf{Base cases.} \cd{fact(0)} and \cd{fact(1)} return \cd{1}, and $0! = 1! = 1$.
+  \ii \textbf{Recursive case.} Let $n\ge2$ and assume the claim for every smaller non-negative integer, in particular for $n-1$. The body returns \cd{fact(n - 1) * n}, which by the assumption is $(n-1)!\cdot n = n!$.
+  \ii \textbf{Every $n$ is covered.} Starting from the base cases $0$ and $1$, the recursive case gives the claim for $2$, then $3$, and so on: this is induction on $n$. The calls also end, because each one decreases $n$ by $1$ until it reaches $1$.
+\end{steps}
+The claim says nothing about negative $n$: \cd{fact(-1)} calls \cd{fact(-2)}, \dots\ and never reaches a base case (\cd{RecursionError}).
+\end{example*}
 The leap of faith is functional abstraction applied to the function you are writing: use it by what it promises, not by how it runs.
 
-\method{How to get started on a recursive function (Lecture 10).}
+\begin{howto}{How to write a recursive function (Lecture 10)}
 \begin{steps}
-  \ii Start with the recursive case. Write down calls on smaller inputs you might make, what they return, and how those values could be combined into the answer.
-  \ii Then find the base cases: follow the recursive calls and see where they end.
-  \ii If the function is easy to write with \cd{while}, write that first and convert (next subsection).
+  \ii Start with the recursive case. Write down calls on smaller inputs you might make, what they return (by the leap of faith), and how those values could be combined into the answer.
+  \ii Then find the base cases: follow the recursive calls and see where they end. Every input that the recursive case cannot handle must be a base case.
+  \ii Test the base cases first, and \cd{return} the combined value in the recursive case.
 \end{steps}
+\end{howto}
 
-\textbf{Worked exam question (Spring 2024 Midterm 1, Q4(e), from Lecture 10).} A \emph{dice integer} is a positive integer whose digits are all from 1 to 6. \cd{streak(n)} returns whether \cd{n} is a dice integer in which all digits are the same: \cd{streak(22222)} and \cd{streak(4)} are \cd{True}; \cd{streak(22322)}, \cd{streak(99999)}, \cd{streak(505)} are \cd{False}.
+\begin{example*}[Spring 2024 Midterm 1, Q4(e), from Lecture 10: \cd{streak}, a one-line recursive boolean]
+A \emph{dice integer} is a positive integer whose digits are all from 1 to 6. \cd{streak(n)} returns whether \cd{n} is a dice integer in which all digits are the same: \cd{streak(22222)} and \cd{streak(4)} are \cd{True}; \cd{streak(22322)}, \cd{streak(99999)}, \cd{streak(505)} are \cd{False}.
 \begin{py}
 def streak(n):
     return (n >= 1 and n <= 6) or (n > 9 and ______ and streak(______))
@@ -107,8 +133,13 @@ def streak(n):
 \begin{py}
     return (n >= 1 and n <= 6) or (n > 9 and n % 10 == n // 10 % 10 and streak(n // 10))
 \end{py}
+\end{example*}
+\revisit It does not go on forever because each call is on a smaller input and a base case answers without calling again; the frames then return in reverse order. A function can be used while it is being written because the leap of faith assumes only what the function promises for smaller inputs; the example above turns that assumption into a proof by induction.
 
 \subsection{Iteration and recursion (Lecture 9)}
+\begin{qbox}
+  \cd{fact\_iter} below computes $n!$ with a loop. How can any \cd{while} loop be turned into a recursive function, and what happens when the function we must write has too few parameters?
+\end{qbox}
 \begin{py}
 def fact_iter(n):
     result = 1
@@ -117,7 +148,18 @@ def fact_iter(n):
         n -= 1
     return result
 \end{py}
-\textbf{Converting a loop to recursion: the state of the loop becomes the arguments.} The loop above has two changing names, \cd{n} and the running total. Pass both:
+If a function is easy to write with \cd{while}, it can be written that way first and then converted (Lecture 10):
+\begin{howto}{How to convert a \cd{while} loop into recursion}
+\begin{steps}
+  \ii List the names the loop changes. Each becomes a parameter of a recursive function (a helper if the required function has fewer parameters).
+  \ii The base case is tested with the negation of the loop condition, and the base case returns what the code after the loop returns.
+  \ii The loop body becomes a recursive call on the updated values: \cd{return helper(}\emph{new values}\cd{)}.
+  \ii The required function calls the helper with the starting values of the loop.
+  \ii Check the input for which the loop would run zero times: the first call must then hit the base case.
+\end{steps}
+\end{howto}
+\begin{example*}[Converting \cd{fact\_iter}: the state of the loop becomes the arguments]
+The loop has two changing names, \cd{n} and the running total. Pass both:
 \begin{py}
 def fact_k(n, k):
     """Compute n factorial times k."""
@@ -134,21 +176,36 @@ def fact_tail(n):
             return f(n - 1, k * n)
     return f(n, 1)
 \end{py}
+\cd{fact\_tail(5)} is \cd{120}; \cd{fact\_tail(0)} is \cd{1} because the first call \cd{f(0, 1)} is a base case.
+\end{example*}
 \begin{ideabox}
 Two styles of recursion. In \cd{fact}, work is done \emph{after} the recursive call returns (\cd{... * n}): the answer is assembled on the way back. In \cd{fact\_k}, work is done \emph{before} the call (\cd{k * n} is computed and passed along): the answer is carried forward in an argument and the base case returns it finished.
 
-When the function you were asked for has too few parameters to carry the state, define an inner helper with the extra parameters and start it with the initial values: \cd{return f(n, 1)}. The same recipe turns any \cd{while} loop into recursion: one parameter per changing name, the loop condition becomes the base-case test, and the loop body ends with a recursive call on the updated values. (Lecture did this for the twenty-one game: the helper's arguments were the total and whose turn it is.)
+When the function you were asked for has too few parameters to carry the state, define an inner helper with the extra parameters and start it with the initial values: \cd{return f(n, 1)}. (The lecture did this for the twenty-one game: the helper's arguments were the total and whose turn it is.)
 \end{ideabox}
+\revisit Give the recursive function one parameter for each name the loop changes, make the stopping condition the base case, and replace each pass of the loop by a recursive call on the updated values. When the required function has too few parameters, it calls an inner helper that has them, with the starting values: \cd{fact\_tail(n)} returns \cd{f(n, 1)}.
 
 \subsection{The order of events in a recursive call (CP 1.7)}
-Statements before the recursive call run on the way down; statements after it run on the way back, in reverse order.
+\begin{qbox}
+  What does \cd{cascade(123)} display, and why do the numbers appear in that order?
+\end{qbox}
 \begin{py}
 def cascade(n):
     print(n)
     if n >= 10:
         cascade(n // 10)
         print(n)
-
+\end{py}
+\begin{howto}{How to trace the output of a recursive function}
+\begin{steps}
+  \ii Write the calls one under another, indented by depth: \cd{cascade(123)}, then \cd{cascade(12)}, then \cd{cascade(1)}.
+  \ii Statements before the recursive call run on the way down, in call order.
+  \ii The base-case call runs completely.
+  \ii Statements after the recursive call run on the way back, in reverse call order, each in the frame of its own call (with its own \cd{n}).
+\end{steps}
+\end{howto}
+\begin{example*}[Tracing \cd{cascade(123)}]
+\begin{py}
 >>> cascade(123)
 123
 12
@@ -156,8 +213,16 @@ def cascade(n):
 12
 123
 \end{py}
+The first \cd{print(n)} of each call runs on the way down: \cd{123}, \cd{12}, \cd{1}. The call \cd{cascade(1)} is a base case: \cd{1 >= 10} is false, so it prints only once. Then the second \cd{print(n)} runs on the way back, in \cd{cascade(12)} and then in \cd{cascade(123)}. Edge input: \cd{cascade(5)} displays \cd{5} once.
+\end{example*}
+\revisit \cd{123}, \cd{12}, \cd{1}, \cd{12}, \cd{123}. The first \cd{print} of each call happens before its recursive call, so those lines appear in call order; the second \cd{print} happens after the recursive call has returned, so those lines appear in reverse order, and the base case \cd{cascade(1)} has no second \cd{print}.
 
 \subsection{Helper functions and mutual recursion (Lecture 10)}
+\begin{qbox}
+  To find the smallest factor of \cd{n} recursively we must try $k = 2, 3, \dots$, but \cd{smallest\_factor(n)} has no parameter \cd{k}. And how can two functions that call each other still be checked with the leap of faith?
+\end{qbox}
+\begin{example*}[A recursive helper with its own parameter: \cd{smallest\_factor}]
+The recursion runs over \cd{k}, so a helper takes \cd{k} as its parameter.
 \begin{py}
 def smallest_factor(n):
     """Return the smallest divisor of n above 1."""
@@ -170,10 +235,14 @@ def smallest_factor(n):
     return smallest_divisor(2)
 \end{py}
 \begin{itemize}
-  \ii The recursion is on a new quantity \cd{k} that the original function does not have, so a helper is needed. The helper's docstring states exactly what it returns; that statement is what the leap of faith assumes.
-  \ii Here ``smaller'' means closer to the end: \cd{k} increases toward a divisor (at the latest \cd{k = n}).
+  \ii The recursion is on a new quantity \cd{k} that the original function does not have, so a helper is needed. The helper's docstring states exactly what it returns; that statement is what the leap of faith assumes. The helper finds \cd{n} in its parent frame (\ilink{W5}{W5}).
+  \ii Here ``smaller'' means closer to the end: \cd{k} increases toward a divisor (at the latest \cd{k = n}, since \cd{n \% n == 0}).
+  \ii Edge input: for \cd{n = 1} no \cd{k} $\ge 2$ divides \cd{n}, so the calls never end (\cd{RecursionError}). The domain is $n\ge2$.
 \end{itemize}
-Two functions are \vocab{mutually recursive} if each calls the other.
+\end{example*}
+Two functions are \vocab{mutually recursive} if each calls the other. The leap of faith applies to each of them: assume both return what their docstrings say for smaller inputs.
+\begin{example*}[Mutual recursion: \cd{unique\_prime\_factors} and \cd{no\_k}]
+Each of the two functions below calls the other.
 \begin{py}
 def unique_prime_factors(n):
     """Return the number of unique prime factors of n.
@@ -192,11 +261,13 @@ def unique_prime_factors(n):
     return 1 + no_k(n)
 \end{py}
 \begin{steps}
-  \ii Find the smallest factor \cd{k} (it is prime). It counts as one: \cd{1 + ...}.
+  \ii Find the smallest factor \cd{k}; it is prime (\ilink{W6}{W6}). It counts as one: \cd{1 + ...}.
   \ii \cd{no\_k} divides \cd{k} out as long as it divides (\cd{no\_k(n // k)}).
   \ii When \cd{k} no longer divides what is left, the remaining number has only \emph{other} prime factors: count them with \cd{unique\_prime\_factors}. If nothing is left (\cd{n == 1}) there are none.
 \end{steps}
-For $72000=2^6\cdot3^2\cdot5^3$: count 1 for 2, leaving 1125; count 1 for 3, leaving 125; count 1 for 5, leaving 1. Answer 3.
+For $72000=2^6\cdot3^2\cdot5^3$: count 1 for 2, leaving 1125; count 1 for 3, leaving 125; count 1 for 5, leaving 1. Answer 3. For a prime such as \cd{97}: \cd{k = 97}, \cd{no\_k(97)} calls \cd{no\_k(1)}, which is \cd{0}; answer 1.
+\end{example*}
+\revisit A helper function defined inside \cd{smallest\_factor} has the extra parameter \cd{k}, is started with \cd{smallest\_divisor(2)}, and finds \cd{n} in its parent frame. Mutually recursive functions are checked like any recursive function: assume each one does what its docstring says on smaller inputs (here \cd{unique\_prime\_factors} is only called on \cd{n} with the factor \cd{k} removed), and check that the calls end (every call divides out a factor or stops at \cd{n == 1}).
 
 \subsection{Tree recursion (Lecture 10, CP 1.7)}
 \begin{qbox}
@@ -204,16 +275,25 @@ For $72000=2^6\cdot3^2\cdot5^3$: count 1 for 2, leaving 1125; count 1 for 3, lea
 \end{qbox}
 A function is \vocab{tree recursive} if one call makes more than one recursive call. The calls form a tree.
 
-\textbf{Lecture example: parking.} \cd{n} adjacent spots; each is empty (\cd{.}), holds a motorcycle (\cd{\%}), or is half of a car (\cd{<>}, two adjacent spots). Count the arrangements.
-\begin{ideabox}
-Decide what happens at the first spot, and count each possibility separately; the possibilities do not overlap and together cover everything.
+\begin{howto}{How to count with tree recursion}
+\begin{steps}
+  \ii Choose a split: either ``what is the first choice?'' or a yes/no question about one element (``is the largest part used?'').
+  \ii Check that the options do not overlap and that together they cover every arrangement; otherwise some arrangements are counted twice or missed.
+  \ii For each option, describe what remains as a smaller instance of the same problem, and make one recursive call for it. Add the results.
+  \ii Find the base cases by following the calls: nothing left to arrange is \emph{one} way; overshooting (a negative size) or running out of options is \emph{zero} ways.
+  \ii Test success (\cd{n == 0}) before failure (\cd{m == 0}), so that a finished arrangement is counted.
+  \ii Check small values by hand and against a drawn call tree.
+\end{steps}
+\end{howto}
+
+\begin{example*}[The lecture's parking problem: split by what happens at the first spot]
+\cd{n} adjacent spots; each is empty (\cd{.}), holds a motorcycle (\cd{\%}), or is half of a car (\cd{<>}, two adjacent spots). Count the arrangements. The three possibilities for the first spot do not overlap and together cover everything:
 \begin{itemize}
   \ii The first spot is empty: the remaining $n-1$ spots can be filled in \cd{count\_park(n - 1)} ways.
   \ii The first spot has a motorcycle: again \cd{count\_park(n - 1)} ways.
   \ii A car starts at the first spot: it uses two spots, leaving \cd{count\_park(n - 2)} ways.
 \end{itemize}
 Base cases come from following the calls down: with $0$ spots there is exactly one way (do nothing); with a negative number (a car that does not fit) there are none.
-\end{ideabox}
 \begin{py}
 def count_park(n):
     if n < 0:
@@ -224,12 +304,13 @@ def count_park(n):
         return 2 * count_park(n - 1) + count_park(n - 2)
 \end{py}
 \cd{count\_park(1) = 2}, \cd{count\_park(2) = 5}, \cd{count\_park(3) = 12}, \cd{count\_park(4) = 29}.
+\end{example*}
 \Needspace{18\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
   rcall/.style={ink v3 stroke,draw=black!85,fill=white,line width=0.48pt,inner xsep=5.5pt,inner ysep=3.2pt,align=center,font=\ttfamily\footnotesize},
   bpos/.style={ink v3 stroke,ink grain=inkblue,draw=inkblue!90!black,line width=0.75pt,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black},
-  bneg/.style={ink guide,draw=black!50,fill=white,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black!60},
+  bneg/.style={draw=black!85,fill=white,line width=0.45pt,inner xsep=5.5pt,inner ysep=3pt,align=center,font=\ttfamily\footnotesize,text=black},
   edge/.style={ink v3 stroke,draw=black!65,line width=0.45pt}]
   % Level 0
   \node[rcall] (n3)   at (7.6, 0.00)  {\InkLabel{\shortstack[c]{cp(3)\\[1pt]\rmfamily\scriptsize$2\cdot 5 + 2 = 12$}}};
@@ -249,32 +330,28 @@ def count_park(n):
   \node[bneg]  (nm1l) at (3.7,-5.00)  {\InkLabel{cp(-1) = 0}};
 
   % Tree edges with branch weights (left = 2*cp(n-1), right = +cp(n-2))
-  \draw[edge] ([xshift=-0.45cm]n3.south)  -- (n2.north)   node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
-  \draw[edge] ([xshift= 0.45cm]n3.south)  -- (n1r.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
+  \draw[edge] ([xshift=-0.45cm]n3.south)  -- (n2.north)   node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.45cm]n3.south)  -- (n1r.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n2.south)  -- (n1l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
-  \draw[edge] ([xshift= 0.38cm]n2.south)  -- (n0m.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
+  \draw[edge] ([xshift=-0.38cm]n2.south)  -- (n1l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n2.south)  -- (n0m.north)  node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n1r.south) -- (n0r.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
-  \draw[edge] ([xshift= 0.38cm]n1r.south) -- (nm1r.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
+  \draw[edge] ([xshift=-0.38cm]n1r.south) -- (n0r.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n1r.south) -- (nm1r.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$+$}};
 
-  \draw[edge] ([xshift=-0.38cm]n1l.south) -- (n0l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$2\times$}};
-  \draw[edge] ([xshift= 0.38cm]n1l.south) -- (nm1l.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black!65]{\InkLabel{$+$}};
+  \draw[edge] ([xshift=-0.38cm]n1l.south) -- (n0l.north)  node[pos=0.45,above left=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$2\times$}};
+  \draw[edge] ([xshift= 0.38cm]n1l.south) -- (nm1l.north) node[pos=0.45,above right=0pt and 2pt,font=\scriptsize,text=black]{\InkLabel{$+$}};
 \end{tikzpicture}
-\figcap{Call tree for \cd{count\_park(3)} (\cd{cp}). Left branches recurse on $n-1$ twice (empty spot or motorcycle) and right branches on $n-2$ (car); blue-shaded leaves reach $n=0$ ($1$) and dotted leaves reach $n<0$ ($0$).}
+\figcap{The call tree of \cd{count\_park(3)}, written \cd{cp}. Each left branch is $n-1$ (counted twice: empty spot or motorcycle) and each right branch is $n-2$ (a car); the blue leaves reach $n=0$ and give 1, the white leaves reach $n<0$ and give 0.}
 \end{fig}
 
-\textbf{Lecture example: counting partitions.} \cd{count\_partitions(n, m)} is the number of ways to write \cd{n} as a sum of positive integers, each at most \cd{m}, in non-decreasing order. \cd{count\_partitions(6, 4)} is 9: $2+4$, $1+1+4$, $3+3$, $1+2+3$, $1+1+1+3$, $2+2+2$, $1+1+2+2$, $1+1+1+1+2$, $1+1+1+1+1+1$.
-\begin{ideabox}
-Split the partitions into two disjoint groups that are smaller instances of the same problem by checking whether the largest allowed part, \cd{m}, is used at least once:
+\begin{example*}[The lecture's partition count: split by a yes/no question]
+\cd{count\_partitions(n, m)} is the number of ways to write \cd{n} as a sum of positive integers, each at most \cd{m}, in non-decreasing order. \cd{count\_partitions(6, 4)} is 9: $2+4$, $1+1+4$, $3+3$, $1+2+3$, $1+1+1+3$, $2+2+2$, $1+1+2+2$, $1+1+1+1+2$, $1+1+1+1+1+1$. Split the partitions into two disjoint groups by asking whether the largest allowed part, \cd{m}, is used at least once:
 \begin{itemize}
   \ii Yes: remove one \cd{m}. What remains is a partition of \cd{n - m} with parts up to \cd{m} (another \cd{m} may still be used). \cd{count\_partitions(n - m, m)}.
   \ii No: every part is at most \cd{m - 1}. \cd{count\_partitions(n, m - 1)}.
 \end{itemize}
-For $(6,4)$: with a 4 there are \cd{count\_partitions(2, 4) = 2}; without, \cd{count\_partitions(6, 3) = 7}.
-
-Base cases, by following the two kinds of call: \cd{n} reaches \cd{0} (a complete partition: one way); \cd{n} goes negative (subtracted too much: no way); \cd{m} reaches \cd{0} while \cd{n > 0} (no parts left: no way).
-\end{ideabox}
+For $(6,4)$: with a 4 there are \cd{count\_partitions(2, 4) = 2}; without, \cd{count\_partitions(6, 3) = 7}. Base cases, by following the two kinds of call: \cd{n} reaches \cd{0} (a complete partition: one way); \cd{n} goes negative (subtracted too much: no way); \cd{m} reaches \cd{0} while \cd{n > 0} (no parts left: no way).
 \begin{py}
 def count_partitions(n, m):
     if n == 0:
@@ -288,7 +365,18 @@ def count_partitions(n, m):
         without_m = count_partitions(n, m - 1)
         return with_m + without_m
 \end{py}
-\textbf{Fibonacci (CP 1.7).} \cd{fib(n) = fib(n - 1) + fib(n - 2)} with \cd{fib(0) = 0}, \cd{fib(1) = 1} is the simplest tree recursion. It recomputes the same values many times: the call tree for \cd{fib(n)} has a number of calls that grows exponentially with \cd{n}.
+\end{example*}
+
+\begin{example*}[Fibonacci (CP 1.7): the number of calls grows exponentially]
+\cd{fib(n) = fib(n - 1) + fib(n - 2)} with \cd{fib(0) = 0}, \cd{fib(1) = 1} is the simplest tree recursion. It recomputes the same values many times. Let $C(n)$ be the number of calls made by \cd{fib(n)}, counting the first.
+\begin{steps}
+  \ii $C(0)=C(1)=1$, and for $n\ge2$, $C(n) = 1 + C(n-1) + C(n-2)$, because the call makes itself plus the two recursive calls with all of their calls.
+  \ii $C$ never decreases: $C(n) \ge C(n-1)$, since $C(n)$ contains $C(n-1)$ as a summand and the other summands are positive.
+  \ii So $C(n) \ge 2\,C(n-2)$ for $n\ge2$. Applying this $\lfloor n/2\rfloor$ times, down to $C(0)$ or $C(1)$, gives $C(n)\ge 2^{\lfloor n/2\rfloor}$.
+\end{steps}
+For example $C(10) = 177 \ge 2^5 = 32$. The count at least doubles every time $n$ grows by 2.
+\end{example*}
+\revisit Choose a split into options that do not overlap and cover every arrangement, count each option with one recursive call on what remains, and add. For parking spots the three options for the first spot give \cd{2 * count\_park(n - 1) + count\_park(n - 2)}, so 3 spots have 12 arrangements, without listing them.
 
 \begin{shortcuts}
   \ii \textbf{Template for digit recursion}: base case a single digit (\cd{n < 10}); recursive call on \cd{n // 10}; combine with \cd{n \% 10}.
@@ -305,10 +393,12 @@ def count_partitions(n, m):
   \ii In tree recursion, the options must not overlap and must cover every case, or you count twice or miss some.
   \ii \cd{count\_partitions(n - m, m)}, not \cd{(n - m, m - 1)}: after using one \cd{m} you may use \cd{m} again.
   \ii A helper's \cd{n} can hide the outer function's \cd{n} (as in \cd{no\_k(n)}); check which frame each name belongs to.
+  \ii A digit recursion with base case \cd{n == 0} treats \cd{0} as having no digits; with base case \cd{n < 10} it treats \cd{0} as the single digit \cd{0}. Decide which the problem wants.
 \end{trapbox}
 
+\clearpage
 \section{Problem set}
-All problems here are original; the exam question for this week is the worked \cd{streak} example above. Programming exercises are in \cd{exercises/}.
+The programming exercises are in \cd{exercises/} (run \cd{python3 tests.py} there).
 
 \begin{prob}\textbf{P1 (trace).}\ What is displayed?
 \begin{py}

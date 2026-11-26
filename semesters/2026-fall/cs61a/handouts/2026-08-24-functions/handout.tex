@@ -2,6 +2,9 @@
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
 \usepackage{figure-ink}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \title{CS 61A --- Week 1}
 \subtitle{Expressions, names, functions, environment diagrams, print and None (Lectures 1--2, Composing Programs 1.1--1.3)}
 \author{}\date{}\ihead{}
@@ -13,7 +16,7 @@
 \subsection{Expressions and how Python evaluates them}
 
 \begin{qbox}
-  A program is text. What exactly does Python do, step by step, to turn the text \cd{mul(add(4, mul(4, 6)), add(3, 5))} into the number \cd{224}? Every ``What Would Python Display'' exam question is this question.
+  A program is text. What exactly does Python do, step by step, to turn the text \cd{mul(add(4, mul(4, 6)), add(3, 5))} into the number \cd{224}? Exam questions of the form ``What Would Python Display'' ask exactly this.
 \end{qbox}
 
 \begin{itemize}
@@ -23,17 +26,27 @@
   \ii Every arithmetic expression can be written as a call: \cd{2 + 3} is \cd{add(2, 3)}, \cd{2 * 3} is \cd{mul(2, 3)} (after \cd{from operator import add, mul}).
 \end{itemize}
 
-\method{Evaluation procedure for a call expression.}
+\begin{howto}{How to evaluate a call expression}
 \begin{steps}
   \ii Evaluate the operator. Its value must be a function.
   \ii Evaluate each operand, from left to right. Their values are the \vocab{arguments}.
   \ii Apply the function to the arguments. The result is the value of the call expression.
 \end{steps}
+\end{howto}
 \begin{ideabox}
 The procedure refers to itself: step 2 says ``evaluate each operand'', and an operand may be another call expression, which is evaluated by the same three steps. So a nested expression is evaluated from the inside out, and among operands at the same level, from left to right.
 
 The order matters as soon as evaluating an operand \emph{does} something visible, such as printing. On exams, the order of the displayed lines is decided by this procedure and by nothing else.
 \end{ideabox}
+
+\begin{example*}[Evaluating \cd{mul(add(4, mul(4, 6)), add(3, 5))} by hand]
+\begin{steps}
+  \ii Operator: the name \cd{mul} evaluates to the multiplication function.
+  \ii First operand, \cd{add(4, mul(4, 6))}. Its operator is \cd{add}; its first operand is \cd{4}; its second operand \cd{mul(4, 6)} is a call, so evaluate it by the three steps: it gives \cd{24}. Apply \cd{add} to \cd{4} and \cd{24}: \cd{28}.
+  \ii Second operand, \cd{add(3, 5)}: apply \cd{add} to \cd{3} and \cd{5}: \cd{8}.
+  \ii Apply \cd{mul} to the arguments \cd{28} and \cd{8}: \cd{224}.
+\end{steps}
+\end{example*}
 \Needspace{18\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},
@@ -79,9 +92,12 @@ The order matters as soon as evaluating an operand \emph{does} something visible
   \InkStroke[edge]{(M1c.south)                 -- (M2b.north)}
   \InkStroke[edge]{([xshift= 0.45cm]M1c.south) -- (M2c.north)}
 \end{tikzpicture}
-\figcap{Expression tree. Every boxed call expression has its operator as its leftmost child and its operands to the right, and finishes after all of its children: \cd{mul(4, 6)} (1st), \cd{add(4, 24)} (2nd), \cd{add(3, 5)} (3rd), and \cd{mul(28, 8)} (4th).}
+\figcap{The expression tree of the example. Each boxed call has its operator as its leftmost child and its operands to the right, and it finishes only after all of its children; the labels 1st to 4th give the order in which the calls finish.}
 \end{fig}
 
+\revisit Python applies the three-step procedure to the outer call. It evaluates the operator \cd{mul}, then the first operand and then the second, and each operand that is itself a call goes through the same three steps. The calls therefore finish in the order \cd{mul(4, 6)} $= 24$, \cd{add(4, 24)} $= 28$, \cd{add(3, 5)} $= 8$, and finally \cd{mul(28, 8)} $= 224$.
+
+\Needspace{8\baselineskip}
 \textbf{Arithmetic operators you will use constantly.}
 \begin{itemize}
   \ii \cd{/} is true division and always gives a float: \cd{6 / 3} is \cd{2.0}. \cd{//} is floor division: \cd{7 // 2} is \cd{3}. \cd{\%} is remainder: \cd{7 \% 2} is \cd{1}. \cd{**} is power: \cd{2 ** 10} is \cd{1024}.
@@ -89,16 +105,27 @@ The order matters as soon as evaluating an operand \emph{does} something visible
   \ii \cd{n \% d == 0} tests whether \cd{d} divides \cd{n} evenly.
 \end{itemize}
 
+\Needspace{10\baselineskip}
+\textbf{Edge cases of the arithmetic operators.}
+\begin{itemize}
+  \ii \cd{//} rounds \emph{down} (toward minus infinity), not toward zero: \cd{-7 // 2} is \cd{-4}. The remainder then has the sign of the divisor: \cd{-7 \% 2} is \cd{1}, because $-7 = 2 \cdot (-4) + 1$.
+  \ii So the digit rules above need a non-negative \cd{n}: \cd{-2026 \% 10} is \cd{4} and \cd{-2026 // 10} is \cd{-203}. Apply \cd{abs} first if \cd{n} may be negative.
+  \ii For \cd{n = 0} and for a one-digit \cd{n}, \cd{n // 10} is \cd{0}: \cd{0 // 10} is \cd{0} and \cd{7 // 10} is \cd{0}.
+  \ii If either operand is a float, \cd{//} and \cd{\%} give a float: \cd{7 // 2.0} is \cd{3.0}.
+  \ii Dividing by zero with \cd{/}, \cd{//} or \cd{\%} is an error (\cd{ZeroDivisionError}).
+\end{itemize}
+
 \subsection{Names and assignment}
 
 \begin{qbox}
   After \cd{x = 2}, then \cd{y = x + 1}, then \cd{x = 5}: what is \cd{y}?
 \end{qbox}
-\method{Execution rule for an assignment statement} \cd{name = expression}:
+\begin{howto}{How to execute an assignment statement \cd{name = expression}}
 \begin{steps}
   \ii Evaluate the expression on the right.
   \ii Bind the name on the left to that \emph{value} in the current frame (replacing any earlier binding of the name).
 \end{steps}
+\end{howto}
 \begin{ideabox}
 A name is bound to a value, never to another name or to an expression. When \cd{y = x + 1} runs, Python computes \cd{3} and binds \cd{y} to \cd{3}. Nothing remembers that the \cd{3} came from \cd{x}. So changing \cd{x} later cannot change \cd{y}.
 \end{ideabox}
@@ -109,9 +136,10 @@ A name is bound to a value, never to another name or to an expression. When \cd{
 >>> y
 3
 \end{py}
-\begin{itemize}
-  \ii \textbf{Functions are values, so names can be bound to them.} From lecture:
-\end{itemize}
+\revisit \cd{y} is \cd{3}. The statement \cd{y = x + 1} bound \cd{y} to the value \cd{3}; the later statement \cd{x = 5} changes only the binding of \cd{x}.
+
+\Needspace{8\baselineskip}
+\textbf{Functions are values, so names can be bound to them.} From lecture:
 \begin{py}
 >>> max = pow        # the name max is now bound to the function pow
 >>> max(2, 5 + 5)    # operator evaluates to pow; operands to 2 and 10
@@ -123,8 +151,20 @@ A name is bound to a value, never to another name or to an expression. When \cd{
   \ii \cd{from operator import add, mul} and \cd{from math import sqrt, pi} bind names to values from a library.
 \end{itemize}
 
+\begin{example*}[Multiple assignment compared with two separate assignments]
+Start each time from \cd{x, y = 1, 2}.
+\begin{itemize}
+  \ii \cd{x, y = y, x + y}: the right side is evaluated first with the old values, giving \cd{2} and \cd{1 + 2 = 3}. Then \cd{x} is bound to \cd{2} and \cd{y} to \cd{3}.
+  \ii \cd{x = y} followed by \cd{y = x + y}: the first statement binds \cd{x} to \cd{2}. The second statement uses this new \cd{x}, so \cd{y} is bound to \cd{2 + 2 = 4}.
+\end{itemize}
+The results differ (\cd{2, 3} against \cd{2, 4}) because the second version evaluates \cd{x + y} after \cd{x} has already changed.
+\end{example*}
+
 \subsection{Defining and calling functions}
 
+\begin{qbox}
+  The computation ``double \cd{y}, then add 1'' is needed for many different values of \cd{y}. How do we give it a name, and what happens, step by step, when \cd{g(3)} is evaluated?
+\end{qbox}
 \begin{py}
 def g(y):
     x = 2 * y
@@ -136,12 +176,59 @@ def g(y):
   \ii A \cd{return} statement evaluates its expression, ends the call, and makes that value the value of the call expression.
 \end{itemize}
 
-\method{Procedure for calling a user-defined function.}
+\begin{howto}{How to call a user-defined function}
 \begin{steps}
   \ii Add a new \vocab{local frame}.
   \ii Bind the function's formal parameters to the arguments in that frame.
   \ii Execute the body of the function in the environment that starts with that frame.
 \end{steps}
+\end{howto}
+
+\begin{example*}[Evaluating \cd{g(3)}]
+\begin{steps}
+  \ii The operator \cd{g} evaluates to the function defined above; the operand \cd{3} evaluates to \cd{3}.
+  \ii A new local frame is added, and the parameter \cd{y} is bound to \cd{3} in it.
+  \ii The body runs in that frame: \cd{x = 2 * y} binds \cd{x} to \cd{6} in the local frame, and \cd{return x + 1} ends the call with the value \cd{7}.
+\end{steps}
+\end{example*}
+
+\revisit The \cd{def} statement gives the computation the name \cd{g} without running it. Evaluating \cd{g(3)} evaluates the operator and the operand, opens a new frame with \cd{y} bound to \cd{3}, runs the body there, and the value of the call is the value of the \cd{return} expression, \cd{7}.
+
+\begin{howto}{How to write a function from its description}
+\begin{steps}
+  \ii Read the signature and the docstring. Write down what each parameter is (a number, a function, \dots) and what the function must \emph{return}, as opposed to display.
+  \ii Work one of the docstring's examples by hand, and write down every operation you performed.
+  \ii Write those operations as an expression in the parameters. If the expression is long, bind intermediate results to local names inside the body.
+  \ii End the body with \cd{return} of that expression. Use \cd{print} only if the description asks for output to be displayed.
+  \ii Test it: run \cd{python3 -m doctest -v file.py} to check the docstring examples, or load the file with \mbox{\cd{python3 -i file.py}} and call the function. Also try the edge inputs the description allows: zero, negative numbers, and equal arguments.
+\end{steps}
+\end{howto}
+
+\begin{example*}[A one-expression body: the distance from \cd{x} to the nearer of \cd{a} and \cd{b}]
+\begin{py}
+def distance_to_nearer(x, a, b):
+    """Return the distance from x to whichever of a and b is closer.
+    >>> distance_to_nearer(5, 1, 7)
+    2
+    """
+    return min(abs(x - a), abs(x - b))
+\end{py}
+By hand, for \cd{x = 5}: the distance to \cd{1} is \cd{4}, the distance to \cd{7} is \cd{2}, and the answer is the smaller one. Those three operations (two \cd{abs}, one \cd{min}) are the body. Edge inputs: \cd{distance\_to\_nearer(1, 1, 7)} is \cd{0} (\cd{x} equals \cd{a}), \cd{distance\_to\_nearer(4, 2, 2)} is \cd{2} (\cd{a} equals \cd{b}), and \cd{distance\_to\_nearer(-3, 1, 7)} is \cd{4} (a negative \cd{x}); \cd{abs} makes the order of subtraction irrelevant.
+\end{example*}
+
+\begin{example*}[A body with local names: the area of a triangle from its side lengths]
+\begin{py}
+from math import sqrt
+def triangle_area(a, b, c):
+    """Area of a triangle with side lengths a, b, c (Heron's formula).
+    >>> triangle_area(3, 4, 5)
+    6.0
+    """
+    s = (a + b + c) / 2
+    return sqrt(s * (s - a) * (s - b) * (s - c))
+\end{py}
+The local name \cd{s} (half the perimeter) is used four times, so binding it once keeps the \cd{return} line readable. The value is a float because \cd{/} always gives a float. Edge input: \cd{triangle\_area(1, 2, 3)} is \cd{0.0}, because those sides lie on one line. The local name \cd{s} exists only in the frame of each call; it is not visible in the global frame.
+\end{example*}
 
 \subsection{Frames, environments, and environment diagrams}
 
@@ -158,10 +245,22 @@ def g(y):
 \begin{ideabox}
 Whoever writes \cd{g} must be free to choose the names \cd{x} and \cd{y} without knowing which names the rest of the program uses. Local frames give that: every call gets a fresh frame, the body looks there first, and assignments in the body stay there. When the call returns, the frame is no longer used.
 
-An environment diagram is the bookkeeping for these rules. Drawing one is slow but mechanical, and it removes all guessing from questions about what a name refers to.
+An environment diagram records these rules on paper. Drawing one is slow but mechanical, and it removes all guessing from questions about what a name refers to.
 \end{ideabox}
-\Needspace{24\baselineskip}
-\textbf{Worked example (from lecture).} Trace this program:
+
+\begin{howto}{How to draw an environment diagram}
+\begin{steps}
+  \ii Start with the global frame. Execute statements one at a time, in order.
+  \ii \cd{def}: write the function value \cd{func name(params) [parent=\emph{current frame}]} and bind the name to it.
+  \ii Assignment: evaluate the right side completely, then write or overwrite the binding in the current frame.
+  \ii Call to a user-defined function: evaluate operator and operands first (in the current environment). Then open a new frame labelled \cd{f1}, \cd{f2}, \dots with the function's \emph{original} name (the name in its \cd{def}) and its parent; bind the parameters; run the body.
+  \ii \cd{return}: write the return value in the frame. A function whose body finishes without \cd{return} returns \cd{None}.
+  \ii Calls to built-in functions (\cd{print}, \cd{max}, \cd{add}) do not get a frame in the diagram.
+\end{steps}
+\end{howto}
+
+\begin{example*}[Tracing a call that assigns a local \cd{x} (from lecture)]
+Trace this program statement by statement.
 \begin{py}
 def g(y):
     x = 2 * y
@@ -181,6 +280,7 @@ print(x)
   \ii Back in the global frame: \cd{13 + 3} is \cd{16}; \cd{print} displays \cd{16}.
   \ii \cd{print(x)}: \cd{x} is looked up in the global frame: displays \cd{2}.
 \end{steps}
+\end{example*}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},font=\ttfamily\footnotesize]
   % ---- Global frame ----
@@ -194,7 +294,7 @@ print(x)
   \fill[figblue] (3.35,1.00) circle (1.5pt);
 
   \node[anchor=east] at (2.10,0.36) {\InkLabel{x}};
-  \InkStroke[black,fill=white,line width=0.8pt]{(2.25,0.15) rectangle (4.45,0.57)}
+  \InkStroke[black!65,fill=white,line width=0.4pt]{(2.25,0.15) rectangle (4.45,0.57)}
   \node[text=black] at (3.35,0.36) {\InkLabel{2}};
 
   % ---- Function object ----
@@ -214,27 +314,31 @@ print(x)
   \node at (3.35,-1.54) {\InkLabel{6}};
 
   \node[anchor=east] at (2.10,-2.18) {\InkLabel{x}};
-  \InkStroke[black,fill=white,line width=0.8pt]{(2.25,-2.39) rectangle (4.45,-1.97)}
+  \InkStroke[black!65,fill=white,line width=0.4pt]{(2.25,-2.39) rectangle (4.45,-1.97)}
   \node[text=black] at (3.35,-2.18) {\InkLabel{12}};
 
-  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.10,-2.84) {\InkLabel{Return value}};
+  \node[anchor=east,font=\rmfamily\footnotesize,text=black] at (2.10,-2.84) {\InkLabel{Return value}};
   \InkStroke[black!65,fill=white,line width=0.4pt]{(2.25,-3.05) rectangle (4.45,-2.63)}
   \node at (3.35,-2.84) {\InkLabel{13}};
 \end{tikzpicture}
-\figcap{Environment diagram at the moment \cd{g} returns. Each frame header records its name and parent; the two emphasized cells mark the independent bindings of \cd{x}---inside \cd{f1}, lookup finds \cd{x = 12} locally, while in the global frame \cd{x} remains \cd{2}.}
+\figcap{The environment diagram of the example at the moment \cd{g} returns. There are two bindings of \cd{x}: \cd{x = 12} in the local frame \cd{f1}, which the body finds first, and \cd{x = 2} in the global frame, which the call never changes.}
 \end{fig}
 
-\method{How to draw an environment diagram.}
-\begin{steps}
-  \ii Start with the global frame. Execute statements one at a time, in order.
-  \ii \cd{def}: write the function value \cd{func name(params) [parent=\emph{current frame}]} and bind the name to it.
-  \ii Assignment: evaluate the right side completely, then write or overwrite the binding in the current frame.
-  \ii Call to a user-defined function: evaluate operator and operands first (in the current environment). Then open a new frame labelled \cd{f1}, \cd{f2}, \dots with the function's \emph{original} name (the name in its \cd{def}) and its parent; bind the parameters; run the body.
-  \ii \cd{return}: write the return value in the frame. A function whose body finishes without \cd{return} returns \cd{None}.
-  \ii Calls to built-in functions (\cd{print}, \cd{max}, \cd{add}) do not get a frame in the diagram.
-\end{steps}
+\revisit Inside the body of \cd{g}, the name \cd{x} means the binding in the call's own local frame (\cd{12} in the trace), because lookup checks the local frame first. Outside the body, \cd{x} means the global binding (\cd{2}). Neither can overwrite the other: the assignment \cd{x = 2 * y} in the body writes only into the local frame, and a new call starts with a new local frame. A name that the body uses but never assigns, such as \cd{mul} in the next example, is looked up in the global frame.
 
-\textbf{Name conflicts (from lecture).}
+\begin{example*}[A function called through a second name]
+\begin{py}
+def square(x):
+    return x * x
+
+sq = square
+sq(4)
+\end{py}
+The global frame binds both \cd{square} and \cd{sq} to the same function value \cd{func square(x) [parent=Global]}. The call \cd{sq(4)} opens the frame \cd{f1: square [parent=Global]}, labelled with the name from the \cd{def} line, not \cd{sq}. In \cd{f1}, \cd{x} is \cd{4}, and the return value is \cd{16}.
+\end{example*}
+
+\begin{example*}[A parameter with the same name as the function (from lecture)]
+The parameter of \cd{square} is also called \cd{square}.
 \begin{py}
 from operator import mul
 def square(square):
@@ -246,6 +350,7 @@ square(3)
   \ii In the body, \cd{square} is looked up in \cd{f1} first and is \cd{3}; \cd{mul} is not in \cd{f1}, so it is found in the global frame. The result is \cd{9}.
   \ii It works, but inside the body the function can no longer be reached by the name \cd{square}. Do not reuse names like this.
 \end{itemize}
+\end{example*}
 
 \subsection{print, return, and None}
 
@@ -257,7 +362,7 @@ square(3)
   \ii \cd{print} \emph{displays} its arguments (separated by spaces) and \emph{returns} \cd{None}.
   \ii \cd{None} is a value that represents nothing. A function without a \cd{return} statement returns \cd{None}.
   \ii A \vocab{pure function} only returns a value (\cd{abs}, \cd{pow}, \cd{add}). A \vocab{non-pure function} also has a side effect, such as displaying output (\cd{print}).
-  \ii \textbf{The interactive interpreter} (\cd{>>>}) displays the value of each expression you type, \emph{unless that value is \cd{None}}. A file run with \cd{python3 file.py} displays only what is printed.
+  \ii \textbf{The interactive interpreter} (\cd{>{}>{}>}) displays the value of each expression you type, \emph{unless that value is \cd{None}}. A file run with \cd{python3 file.py} displays only what is printed.
   \ii In the interpreter a string value is displayed with quotes (\cd{'hi'}); \cd{print('hi')} displays \cd{hi} without quotes.
 \end{itemize}
 \begin{py}
@@ -268,15 +373,31 @@ square(3)
 >>> None          # nothing displayed
 >>> print(None)   # print displays the word None
 None
+\end{py}
+
+\begin{howto}{How to answer a ``What Would Python Display'' question}
+\begin{steps}
+  \ii Work one line at a time, in order. Keep track of every name a line binds.
+  \ii For each line, evaluate by the call-expression procedure: operator first, then operands left to right and inside out. Write down everything displayed while the operands are evaluated, in that order.
+  \ii Label every call with its value as you go. For \cd{print}, and for any function that ends without \cd{return}, the value is \cd{None}.
+  \ii Write what the outermost call itself displays.
+  \ii If the line is typed at \cd{>{}>{}>}, is an expression, and its value is not \cd{None}, write that value (a string with its quotes). An assignment statement displays no value.
+  \ii If a step applies an operator to \cd{None} (such as \cd{None + 1}), write \cd{ERROR} at that point; whatever was displayed before the error stays displayed.
+\end{steps}
+\end{howto}
+
+\begin{example*}[A print call whose operands are print calls]
+\begin{py}
 >>> print(print(1), print(2))
 1
 2
 None None
 \end{py}
-\begin{ideabox}
-The last example is the model for every nested-print question. Apply the evaluation procedure to the outer call: its operands \cd{print(1)} and \cd{print(2)} must be evaluated first, left to right. Evaluating \cd{print(1)} displays \cd{1} and has value \cd{None}; evaluating \cd{print(2)} displays \cd{2} and has value \cd{None}. Only then is the outer \cd{print} applied, to the arguments \cd{None} and \cd{None}, so it displays \cd{None None}. The outer call's own value is \cd{None}, which the interpreter does not display.
-\end{ideabox}
-\textbf{The lecture's \cd{noisy} example.}
+Apply the procedure to the outer call: its operands \cd{print(1)} and \cd{print(2)} must be evaluated first, left to right. Evaluating \cd{print(1)} displays \cd{1} and has value \cd{None}; evaluating \cd{print(2)} displays \cd{2} and has value \cd{None}. Only then is the outer \cd{print} applied, to the arguments \cd{None} and \cd{None}, so it displays \cd{None None}. The outer call's own value is \cd{None}, which the interpreter does not display.
+\end{example*}
+
+\begin{example*}[The lecture's \cd{noisy} function: printing and returning]
+The function \cd{noisy} displays its argument and then returns one more than it.
 \begin{py}
 def noisy(x):
     print('NOISY', x)
@@ -294,19 +415,19 @@ NOISY 7
   \ii The outer call \cd{noisy(7)} displays \cd{NOISY 7} and returns \cd{8}.
   \ii The interpreter displays the value \cd{8}.
 \end{steps}
-If \cd{noisy} used \cd{print(x + 1)} instead of \cd{return x + 1}, then \cd{noisy(2)} would return \cd{None}, and \cd{None + None} is an error.
+\end{example*}
 
-\textbf{Search, the lecture's closing example.} Discussion 0 asked for the shortest expression built from \cd{f(x) = x + 1}, \cd{g(x) = 2 * x - 1}, \cd{h(x, y)} (concatenate digits) and the number \cd{5} that evaluates to \cd{2026}. The lecture's program tries every expression with 3 calls, then 4 calls, and so on, and finds \cd{f(g(h(f(g(5)),g(f(f(5))))))} with 8 calls. The point for the course: a program can examine many alternatives by repeating simple operations. The code uses classes, generators and recursion, which come later.
+\begin{example*}[The same function with \cd{print} in place of \cd{return}]
+If \cd{noisy} ended with \cd{print(x + 1)} instead of \cd{return x + 1}, then \cd{noisy(2)} would display \cd{NOISY 2} and \cd{3} and return \cd{None}, and \cd{noisy(3)} would display \cd{NOISY 3} and \cd{4} and return \cd{None}. The operand \mbox{\cd{None + None}} is then an error, so the line displays four lines and then \cd{ERROR}; the outer call never happens.
+\end{example*}
+
+\revisit \cd{return x} gives the value of \cd{x} to the caller and displays nothing; \cd{print(x)} displays \cd{x} and gives \cd{None} to the caller. \cd{None} appears in exam answers because every \cd{print} call and every function that ends without \cd{return} has the value \cd{None}. That value is then either printed by an enclosing \cd{print} (displaying \cd{None}) or used in arithmetic (an error).
+
+\textbf{Search, the lecture's closing example.} Discussion 0 asked for the shortest expression built from \cd{f(x) = x + 1}, \cd{g(x) = 2 * x - 1}, \cd{h(x, y)} (concatenate digits) and the number \cd{5} that evaluates to \cd{2026}. The lecture's program tries every expression with 3 calls, then 4 calls, and so on, and finds \cd{f(g(h(f(g(5)),g(f(f(5))))))} with 8 calls. It shows that a program can examine many alternatives by repeating a few simple operations.
 
 \begin{shortcuts}
-  \ii \textbf{What Would Python Display}: work one line at a time. For each line write, in order:
-  \begin{enumerate}[(1)]
-    \ii everything displayed while operands are evaluated, left to right and inside out;
-    \ii what the outermost call displays;
-    \ii the line's value if you are at \cd{>>>} and it is not \cd{None}.
-  \end{enumerate}
   \ii \textbf{Label every call with its return value} as you go. For \cd{print} the label is always \cd{None}.
-  \ii \textbf{Last digit / the rest}: \cd{n \% 10} and \cd{n // 10}.
+  \ii \textbf{Last digit and the rest}: \cd{n \% 10} and \cd{n // 10}, for \cd{n} $\ge 0$.
   \ii \textbf{Environment diagrams}: an assignment never changes another frame; the frame label uses the name from the \cd{def} line, not the name used in the call.
   \ii \textbf{When the body runs}: not at \cd{def}; only at a call. A name that does not exist inside a body causes an error only when that line is executed.
   \ii \textbf{Operands before the call}: an operand is evaluated in the frame where the call expression is written, not in the new frame.
@@ -314,14 +435,17 @@ If \cd{noisy} used \cd{print(x + 1)} instead of \cd{return x + 1}, then \cd{nois
 \begin{trapbox}
   \ii \cd{print} returns \cd{None}. \cd{x = print(5)} displays \cd{5} and binds \cd{x} to \cd{None}.
   \ii \cd{6 / 3} is \cd{2.0}, not \cd{2}.
+  \ii \cd{-7 // 2} is \cd{-4}, not \cd{-3}, and \cd{-7 \% 2} is \cd{1}.
   \ii \cd{y = x + 1} does not link \cd{y} to \cd{x}.
-  \ii Rebinding a built-in name (\cd{max = pow}) is legal and silently changes what later calls do.
+  \ii Rebinding a built-in name (\cd{max = pow}) is legal and changes what later calls of that name do, without any warning.
   \ii Forgetting \cd{return}: the function returns \cd{None}, and the error appears later, where the result is used.
   \ii In the interpreter a string value shows quotes; printed, it does not.
+  \ii A body that assigns a name anywhere treats that name as local in the whole body. With a global \mbox{\cd{x = 1}}, the body \cd{print(x)} followed by \cd{x = 2} is an error (\cd{UnboundLocalError}) at the \cd{print} line, because the local \cd{x} has no value yet. Use a different local name.
 \end{trapbox}
 
+\clearpage
 \section{Problem set}
-These are original problems of the kind asked in lab and on Midterm 1. (The course's own homework, lab and project questions are for you to do without AI help; they are not reproduced or solved here.) Past-exam questions on these topics also use \cd{lambda}, \cd{and}/\cd{or} and \cd{while}, so they appear in the Week 2 and Week 3 handouts. The programming exercises are in \cd{exercises/}.
+Original problems of the kind asked in lab and on Midterm 1. The programming exercises are in \cd{exercises/} (run \cd{python3 tests.py} there).
 
 \begin{prob}\textbf{P1 (evaluation order).}\ Draw the expression tree and give the value: \cd{sub(pow(2, add(1, 2)), mul(2, add(1, 1)))}. In which order do the five calls finish?
 \end{prob}
@@ -365,6 +489,7 @@ def quiet(x):
 >>> quiet(quiet(1))
 \end{py}
 \end{prob}
+\Needspace{18\baselineskip}
 \begin{prob}\textbf{P6 (environment diagram).}\ Draw the environment diagram and give what is displayed.
 \begin{py}
 def f(x, y):
@@ -396,6 +521,15 @@ def h(n):
 z = 10
 print(z)
 print(h(z))
+\end{py}
+\end{prob}
+\begin{prob}\textbf{P9 (floor division and remainder with negative numbers).}\ What is displayed?
+\begin{py}
+>>> -9 // 4
+>>> -9 % 4
+>>> 9 // -4
+>>> -307 % 10
+>>> abs(-307) % 10
 \end{py}
 \end{prob}
 

@@ -2,6 +2,9 @@
 \usepackage[mdthm,colorsec,noauthor,noasy]{evan}
 \usepackage{handout}
 \usepackage{figure-ink}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \title{CS 61A --- Week 2}
 \subtitle{Control, boolean expressions, iteration, higher-order functions, environments (Lectures 3--5, Composing Programs 1.4--1.6)}
 \author{}\date{}\ihead{}
@@ -10,38 +13,48 @@
 
 \section{Facts used from Week 1}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii Call expression: evaluate the operator, evaluate the operands left to right, apply the function.
-  \ii Calling a user-defined function: new local frame, bind parameters to arguments, execute the body.
-  \ii A name is looked up in the current frame first, then in later frames of the environment.
-  \ii \cd{print} displays its arguments and returns \cd{None}. A function with no \cd{return} returns \cd{None}. The interpreter does not display \cd{None}.
-  \ii \cd{n \% 10} is the last digit of \cd{n}; \cd{n // 10} removes the last digit.
+  \ii \target{W1}Call expression: evaluate the operator, evaluate the operands left to right, apply the function. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W2}Calling a user-defined function: new local frame, bind parameters to arguments, execute the body. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W3}A name is looked up in the current frame first, then in later frames of the environment. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W4}\cd{print} displays its arguments and returns \cd{None}. A function with no \cd{return} returns \cd{None}. The interpreter does not display \cd{None}. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
+  \ii \target{W5}\cd{n \% 10} is the last digit of \cd{n}; \cd{n // 10} removes the last digit (for \cd{n} $\ge 0$). (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
 \end{enumerate}
 
 \section{This week}
 
 \subsection{Print versus return, once more (Lecture 3)}
-With \cd{def f(x): return x + 1}, compare four versions of \cd{h} called as \cd{h(3)}:
+\begin{qbox}
+  With \cd{def f(x): return x + 1}, a function \cd{h(x)} has one of the four bodies \cd{f(x)}, \cd{print(f(x))}, \cd{return print(f(x))}, \cd{return f(x)}. For each body, what does \cd{h(3)} display, and what does it return?
+\end{qbox}
+Apply the rules of (\ilink{W4}{W4}) to each body in turn: a call's value is discarded unless it is returned or printed, \cd{print} returns \cd{None}, and a body that ends without \cd{return} returns \cd{None}.
 \begin{center}\small
 \renewcommand{\arraystretch}{1.18}
 \begin{tabular}{@{}lccl@{}}
 \toprule
 \textbf{Body of \cd{h(x)}} & \textbf{Displays} & \textbf{Returns} & \textbf{Why} \\\midrule
 \cd{f(x)} & \emph{nothing} & \cd{None} & evaluates \cd{4} and discards it; no \cd{return} \\
-\cd{print(f(x))} & \cd{4} & \cd{None} & prints \cd{4}, then falls off the end (no \cd{return}) \\
+\cd{print(f(x))} & \cd{4} & \cd{None} & prints \cd{4}, then reaches the end of the body (no \cd{return}) \\
 \cd{return print(f(x))} & \cd{4} & \cd{None} & returns the value of \cd{print(\dots)}, which is \cd{None} \\
 \cd{return f(x)} & \emph{nothing} & \cd{4} & returns the value of \cd{f(x)} directly; nothing printed \\\bottomrule
 \end{tabular}
 \end{center}
-\textbf{Print, then return, the value of \cd{f(x)}.} Two candidates:
+\revisit The table is the answer. Only the body \cd{return f(x)} gives \cd{4} back to the caller, and only the two bodies that call \cd{print} display \cd{4}.
+
+\begin{example*}[Printing and then returning the value of \cd{f(x)}]
+There are two candidate bodies.
 \begin{py}
 def h(x):              def h(x):
     print(f(x))            y = f(x)
     return f(x)            print(y)
                            return y
 \end{py}
-They differ when \cd{f} is not pure. The left version calls \cd{f} twice, so any side effect of \cd{f} happens twice. With \cd{f = print}: the left version of \cd{h(2)} displays \cd{2}, \cd{None}, \cd{2}; the right version displays \cd{2}, \cd{None}. \textbf{Call once, store the value in a name, use the name.}
+They differ when \cd{f} is not pure. The left version calls \cd{f} twice, so any side effect of \cd{f} happens twice. With \cd{f = print}: the left version of \cd{h(2)} displays \cd{2}, \cd{None}, \cd{2}; the right version displays \cd{2}, \cd{None}. So call the function once, bind its value to a name, and use that name both in the \cd{print} and in the \cd{return}.
+\end{example*}
 
 \subsection{Conditional statements (Lecture 3, CP 1.5)}
+\begin{qbox}
+  With \cd{x = 10}, the statement \cd{if x > 2: print('big')} is followed by \cd{if x > 0: print('positive')}. What is displayed, and what changes if the second \cd{if} is replaced by \cd{elif}?
+\end{qbox}
 \begin{py}
 if x > 2:
     print('big')
@@ -50,35 +63,42 @@ elif x > 0:
 else:
     print('not pos')
 \end{py}
-\method{Execution rule for a conditional statement.}
+\begin{howto}{How to execute a conditional statement}
 \begin{steps}
   \ii Evaluate the header expression of the first clause.
   \ii If it is a true value, execute that clause's suite and skip all remaining clauses.
   \ii Otherwise go to the next clause. An \cd{else} clause is executed if no earlier clause was.
 \end{steps}
+\end{howto}
 \begin{itemize}
-  \ii One \cd{if}/\cd{elif}/\cd{else} statement executes \emph{at most one} suite. Two separate \cd{if} statements are unrelated: both can run. With \cd{x = 10}, ``\cd{if x > 2: print('big')}'' followed by a separate ``\cd{if x > 0: print('positive')}'' displays both lines; with \cd{elif} only \cd{big}.
+  \ii One \cd{if}/\cd{elif}/\cd{else} statement executes \emph{at most one} suite. Two separate \cd{if} statements are unrelated: both can run.
   \ii \textbf{False values}: \cd{False}, \cd{0}, \cd{None}, \cd{''} (the empty string). Every other value seen so far is a true value, including negative numbers and nonempty strings.
   \ii Comparison operators: \cd{>}, \cd{<}, \cd{>=}, \cd{<=}, \cd{==}, \cd{!=}. They evaluate to \cd{True} or \cd{False}. \cd{=} is assignment; \cd{==} is comparison.
+  \ii A conditional without an \cd{else} clause may execute no suite at all.
 \end{itemize}
+\revisit With two separate \cd{if} statements, both headers are tested: \cd{10 > 2} and \cd{10 > 0} are both true, so \cd{big} and then \cd{positive} are displayed. With \cd{elif}, the two clauses form one statement, the first true clause (\cd{x > 2}) runs, and the rest are skipped, so only \cd{big} is displayed.
 
 \subsection{Boolean operators and short-circuiting (Lecture 4)}
 \begin{qbox}
   \cd{1 or 2} is not \cd{True}; it is \cd{1}. And \cd{print(1) or 2} displays \cd{1} and has value \cd{2}. What rule produces these?
 \end{qbox}
-\method{To evaluate \cd{<left> and <right>}:}
+\begin{howto}{How to evaluate \cd{<left> and <right>}}
 \begin{steps}
   \ii Evaluate \cd{<left>}.
   \ii If the result is a false value \cd{v}, the whole expression evaluates to \cd{v}. \cd{<right>} is not evaluated.
   \ii Otherwise the expression evaluates to the value of \cd{<right>}.
 \end{steps}
-\method{To evaluate \cd{<left> or <right>}:}
+\end{howto}
+\begin{howto}{How to evaluate \cd{<left> or <right>}}
 \begin{steps}
   \ii Evaluate \cd{<left>}.
   \ii If the result is a true value \cd{v}, the whole expression evaluates to \cd{v}. \cd{<right>} is not evaluated.
   \ii Otherwise the expression evaluates to the value of \cd{<right>}.
 \end{steps}
+\end{howto}
 \cd{not <exp>} is \cd{True} if the value of \cd{<exp>} is a false value and \cd{False} otherwise. (\cd{not} always gives \cd{True} or \cd{False}; \cd{and}/\cd{or} give one of their operands' values.)
+
+\textbf{Precedence.} \cd{not} binds more tightly than \cd{and}, and \cd{and} more tightly than \cd{or}. So \cd{1 or 0 and 0} means \cd{1 or (0 and 0)}, which is \cd{1}, and \cd{not 1 or 2} means \cd{(not 1) or 2}, which is \cd{False or 2}, which is \cd{2}. Comparisons bind more tightly than all three: \cd{x > 0 and x < 5} means \cd{(x > 0) and (x < 5)}.
 \begin{ideabox}
 For \cd{and}, a false left side already decides the answer, so Python stops and hands back what it has. For \cd{or}, a true left side already decides it. In both cases the value of the whole expression is \emph{the value of the last operand Python evaluated}. That one sentence answers every such question: find where evaluation stops, and report that operand's value.
 
@@ -102,7 +122,10 @@ Two consequences used on exams:
 >>> print(1) and 2       # displays 1; the value None is not displayed
 1
 \end{py}
-\textbf{Worked exam question (Fall 2022 Midterm 1, Q1(c), from Lecture 5).}
+\revisit \cd{or} returns the first operand that is a true value, without evaluating the rest; \cd{1} is a true value, so \cd{1 or 2} is \cd{1}. In \cd{print(1) or 2}, evaluating the left operand displays \cd{1} and gives \cd{None}, a false value, so the right operand is evaluated and the whole expression is \cd{2}.
+
+\begin{example*}[Fall 2022 Midterm 1, Q1(c), from Lecture 5: nested print calls with \cd{or}]
+What does this program display?
 \begin{py}
 s = "Knock"
 print(print(print(s, s) or print("Who's There?")), "Who?")
@@ -114,20 +137,40 @@ print(print(print(s, s) or print("Who's There?")), "Who?")
   \ii The outer call is \cd{print(None, "Who?")}: displays \cd{None Who?}.
 \end{steps}
 Displayed: \cd{Knock Knock} / \cd{Who's There?} / \cd{None} / \cd{None Who?}.
+\end{example*}
 
 \subsection{While statements (Lecture 3, CP 1.5)}
-\method{Execution rule for} \cd{while <condition>: <suite>}
+\begin{qbox}
+  $858 = 2\cdot 3\cdot 11\cdot 13$. How do we make Python repeat a step (find a factor, divide it out) until nothing is left, and how do we write such a loop correctly?
+\end{qbox}
+\begin{howto}{How to execute \cd{while <condition>: <suite>}}
 \begin{steps}
   \ii Evaluate the condition.
   \ii If it is a true value, execute the \emph{entire} suite, then go back to step 1.
   \ii If it is a false value, the statement is finished.
 \end{steps}
+\end{howto}
 \begin{itemize}
   \ii The condition is checked only before each pass. If it becomes false in the middle of the suite, the rest of the suite still runs.
   \ii Some name in the condition must change in the suite, or the loop never ends (unless a \cd{return} inside the loop ends the function).
-  \ii Before writing a loop decide: which names are needed, what each one means, and what their starting values are.
+  \ii If the condition is false the first time, the suite never runs.
+  \ii \cd{while n:} means ``while \cd{n} is a true value''; for a number, that is ``while \cd{n != 0}''.
+  \ii \vocab{Augmented assignment}: \cd{count += 1} means \cd{count = count + 1}, and \cd{n //= 10} means \cd{n = n // 10}.
 \end{itemize}
-\textbf{Lecture example: prime factorisation.} Idea: find the smallest factor $k>1$ of $n$ (it is prime), print it, divide it out, repeat. $858=2\cdot429=2\cdot3\cdot143=2\cdot3\cdot11\cdot13$.
+
+\begin{howto}{How to write a loop that computes a result}
+\begin{steps}
+  \ii Decide which names the loop needs and say in words what each one means after any number of passes (``\cd{total} is the sum of the terms for $1,\dots,k-1$'').
+  \ii Choose starting values that make those sentences true before the first pass (an empty sum is \cd{0}, an empty product is \cd{1}, a count is \cd{0}).
+  \ii Write the condition: the loop must continue exactly while there is something left to process. Check the last value the loop variable takes (\cd{<} against \cd{<=}).
+  \ii Write the suite so that one pass processes one item and keeps every sentence from step 1 true; update the name in the condition.
+  \ii After the loop, return the answer (or, for ``find the first \dots'', return from inside the loop as soon as it is found).
+  \ii Check the edge inputs by hand: the smallest allowed input, an input for which the loop runs zero times, and an input for which it runs once.
+\end{steps}
+\end{howto}
+
+\begin{example*}[The lecture's prime factorisation: one loop repeats, the other searches]
+Find the smallest factor $k>1$ of $n$ (it is prime), print it, divide it out, and repeat. For $858$: $858=2\cdot429=2\cdot3\cdot143=2\cdot3\cdot11\cdot13$.
 \begin{py}
 def prime_factors(n):
     """Print the prime factors of n in non-decreasing order."""
@@ -143,19 +186,31 @@ def smallest_factor(n):
         k = k + 1
     return k
 \end{py}
-\begin{ideabox}
-The job is split in two: one function finds one factor, the other repeats. Each loop has one name that changes (\cd{k} in one, \cd{n} in the other) and a condition that says when to stop. The smallest factor greater than 1 is always prime because a smaller factor of it greater than 1 would already be a smaller factor of \cd{n}.
-\end{ideabox}
-\textbf{The digit loop.} Almost every Midterm 1 iteration question walks through the digits of a number from the right:
+The job is split in two: one function finds one factor, the other repeats. Each loop has one name that changes (\cd{k} in one, \cd{n} in the other) and a condition that says when to stop. \cd{smallest\_factor} is a ``find the first'' loop: its condition is the negation of what it searches for, so it stops at the first \cd{k} that divides \cd{n}. The smallest factor greater than 1 is always prime because a smaller factor of it greater than 1 would already be a smaller factor of \cd{n}. Edge inputs: for a prime such as \cd{13}, \cd{smallest\_factor} runs until \cd{k = 13}; for \cd{n = 1}, \cd{prime\_factors} prints nothing because the condition \cd{1 > 1} is false at once.
+\end{example*}
+
+\begin{example*}[The digit loop, and the edge case \cd{n = 0}: counting digits]
+Most Midterm 1 iteration questions walk through the digits of a number from the right:
 \begin{py}
 while n > 0:
     d = n % 10      # the current last digit
     ...             # use d
     n = n // 10     # drop it
 \end{py}
-Lecture 4's \cd{same\_length(a, b)} counts digits this way (add 1 per pass) for each number and compares the counts.
+Counting digits with this loop (\cd{count} starts at \cd{0} and increases by 1 per pass) gives \cd{0} for \cd{n = 0}, but \cd{0} has one digit. The loop runs zero times for that input. Starting at \cd{count = 1} and looping while there is \emph{more than} one digit left handles every \cd{n >= 0}:
+\begin{py}
+def num_digits(n):
+    """Number of digits of the integer n >= 0."""
+    count = 1
+    while n >= 10:
+        count, n = count + 1, n // 10
+    return count
+\end{py}
+\cd{num\_digits(0)} and \cd{num\_digits(7)} are \cd{1}, \cd{num\_digits(10)} is \cd{2}, \cd{num\_digits(2026)} is \cd{4}. Lecture 4's \cd{same\_length(a, b)} counts the digits of each number this way and compares the counts. To compare neighbouring digits, use \cd{n \% 10} (the last digit) and \cd{n // 10 \% 10} (the digit before it); that loop also needs \mbox{\cd{n >= 10}}, so that a digit before the last one exists.
+\end{example*}
 
-\textbf{Worked exam question (Fall 2022 Midterm 1, Q3, from Lecture 5).} \cd{classify(n)} returns \cd{'perfect'}, \cd{'abundant'} or \cd{'deficient'} according to whether the sum of the factors of \cd{n} below \cd{n} equals, exceeds, or is less than \cd{n}.
+\begin{example*}[Fall 2022 Midterm 1, Q3, from Lecture 5: accumulating a sum of factors]
+\cd{classify(n)} returns \cd{'perfect'}, \cd{'abundant'} or \cd{'deficient'} according to whether the sum of the factors of \cd{n} below \cd{n} equals, exceeds, or is less than \cd{n}.
 \begin{steps}
   \ii Accumulate the \emph{sum} of the proper factors in a name \cd{total}, starting at \cd{0}.
   \ii Loop over every integer \cd{k} from \cd{1} to \cd{n - 1} and test divisibility with \cd{n \% k == 0}.
@@ -175,23 +230,65 @@ def classify(n):
     else:
         return 'abundant'
 \end{py}
+\cd{classify(6)} is \cd{'perfect'} ($1+2+3=6$), \cd{classify(12)} is \cd{'abundant'} ($16>12$), \cd{classify(8)} is \cd{'deficient'} ($7<8$). Off-by-one check: with \cd{k <= n} the loop would also add \cd{n} itself, and \cd{6} would get the total \cd{12}. Edge input: for \cd{n = 1} the loop runs zero times, \cd{total} is \cd{0}, and the answer is \cd{'deficient'}.
+\end{example*}
+
+\revisit A \cd{while} statement repeats its suite as long as its condition is a true value. For $858$, the loop in \cd{prime\_factors} runs while \cd{n > 1}; each pass prints the smallest factor and divides it out, so \cd{n} goes $858, 429, 143, 13, 1$ and the loop displays \cd{2}, \cd{3}, \cd{11}, \cd{13}. A loop is written correctly by deciding what each name means, choosing starting values for which that meaning holds, and checking the inputs for which the loop runs zero times or once.
 
 \subsection{Designing functions (Lecture 4, CP 1.4)}
+\begin{qbox}
+  \cd{round(1.23)} is \cd{1} and \cd{round(1.23, 1)} is \cd{1.2}. How can one function accept both calls, and how should a function be described so that it can be tested?
+\end{qbox}
 \begin{itemize}
   \ii A function's \vocab{domain} is the set of arguments it can take; its \vocab{range} is the set of values it can return; its \vocab{behaviour} is the relationship between input and output. For \cd{square}: any number; a non-negative number; the square of the input.
   \ii Give each function exactly one job, but make it apply to many related situations (\cd{round(1.23)} is \cd{1}, \cd{round(1.23, 1)} is \cd{1.2}).
   \ii \textbf{Do not repeat yourself}: implement a process once and call it many times.
-  \ii A \vocab{docstring} describes the function; examples in it written with \cd{>>>} are \vocab{doctests}, run with \cd{python3 -m doctest file.py}.
+  \ii A \vocab{docstring} describes the function; examples in it written with \cd{>{}>{}>} are \vocab{doctests}, run with \cd{python3 -m doctest file.py}.
   \ii A \vocab{default argument value}, \cd{def f(x, y=10):}, is used when the call does not supply that argument.
 \end{itemize}
+\begin{howto}{How to test a function with doctests}
+\begin{steps}
+  \ii In the docstring, write a line \cd{>{}>{}>} followed by a call, and on the next line the value the interpreter should display (nothing for \cd{None}, a string with its quotes).
+  \ii Include an ordinary case and the edge inputs of the domain (zero, one, the smallest allowed value).
+  \ii Run \cd{python3 -m doctest file.py}. No output means every example passed; add \cd{-v} to see each example reported.
+  \ii A failing example is reported with the expected and the actual display. Printed output counts as display, so a function that prints and returns shows both.
+\end{steps}
+\end{howto}
+\begin{example*}[A default argument value with doctests]
+\begin{py}
+def scale(x, factor=2):
+    """Return x times factor; factor is 2 if it is not given.
+    >>> scale(5)
+    10
+    >>> scale(5, 3)
+    15
+    >>> scale(0)
+    0
+    """
+    return x * factor
+\end{py}
+In \cd{scale(5)} the call supplies one argument, so the new frame binds \cd{x} to \cd{5} and \cd{factor} to its default \cd{2}. In \cd{scale(5, 3)} the argument \cd{3} replaces the default.
+\end{example*}
+\revisit One function accepts both calls when its second parameter has a default value, as in \cd{def round(number, ndigits=None)}: a call without the second argument uses the default. A function is described by its domain, range and behaviour, written in its docstring, and the docstring's \cd{>{}>{}>} examples are tests that \cd{python3 -m doctest} runs.
 
 \subsection{Higher-order functions (Lecture 4, CP 1.6)}
 \begin{qbox}
   Summing the first $n$ integers, the first $n$ cubes, and the first $n$ terms of a series for $\pi$ are the same loop with one line changed. How do we write the loop once?
 \end{qbox}
-A \vocab{higher-order function} takes a function as an argument or returns a function. This is possible because functions are values (Week 1).
+A \vocab{higher-order function} takes a function as an argument or returns a function. This is possible because functions are values (\xweek{cs61a}{2026-08-24-functions}{Week~1}).
 
-\textbf{Functions as arguments.} The part that changes, ``what is the $k$-th term'', becomes a parameter:
+\begin{howto}{How to write similar functions once, as a higher-order function}
+\begin{steps}
+  \ii Write two of the concrete functions, or imagine them side by side.
+  \ii Mark every part in which they differ. If a part depends on the loop variable (``the $k$-th term''), it is a computation, and it becomes a \emph{function} parameter.
+  \ii Add one parameter for each differing part, and replace that part by the parameter: \cd{k * k * k} becomes \cd{term(k)}.
+  \ii Recover each original as a call: pass the function \emph{name} without parentheses (\cd{summation(5, cube)}).
+  \ii Check the edge input for which the loop runs zero times (\cd{summation(0, cube)} is \cd{0}).
+\end{steps}
+\end{howto}
+
+\begin{example*}[Functions as arguments: \cd{summation} (from lecture)]
+The part that changes, ``what is the $k$-th term'', becomes the parameter \cd{term}:
 \begin{py}
 def cube(k):
     return pow(k, 3)
@@ -209,9 +306,22 @@ def summation(n, term):
 \begin{itemize}
   \ii In \cd{summation(5, cube)}, the operand \cd{cube} is a name; it evaluates to the function. It is \emph{not} called there (no parentheses). The parameter \cd{term} is bound to that function, and \cd{term(k)} calls it.
   \ii \cd{summation(5, cube)} is $1+8+27+64+125=225$. With \cd{identity(k)} returning \cd{k}, \cd{summation(5, identity)} is $15$. With \cd{pi\_term(k)} returning \cd{8 / ((4*k - 3) * (4*k - 1))}, the sums approach $\pi$.
-  \ii \cd{f} versus \cd{f()}: the first is the function value, the second is the result of calling it.
+  \ii \cd{f} versus \cd{f()}: the first is the function value, the second is the result of calling it. \cd{summation(5, cube(2))} passes the number \cd{8} as \cd{term}, and \cd{term(k)} then fails because a number cannot be called.
 \end{itemize}
-\textbf{Functions as return values; nested \cd{def}.}
+\end{example*}
+\revisit The loop is written once in \cd{summation(n, term)}, with the changing line replaced by the call \cd{term(k)}. The three sums are \cd{summation(n, identity)}, \cd{summation(n, cube)} and \cd{summation(n, pi\_term)}.
+
+\begin{howto}{How to write a function that returns a function}
+\begin{steps}
+  \ii Decide the parameters of the \emph{returned} function (\cd{adder} takes \cd{k}) and the parameters of the outer function (\cd{make\_adder} takes \cd{n}).
+  \ii Inside the outer body, write a nested \cd{def} for the returned function. Its body may use the outer parameters.
+  \ii End the outer body with \cd{return} followed by the inner function's \emph{name}, without parentheses.
+  \ii Test it with a call followed by a second call: \cd{make\_adder(3)(4)}.
+\end{steps}
+\end{howto}
+
+\begin{example*}[A function that returns a function: \cd{make\_adder}]
+Each call of \cd{make\_adder} defines a new function and returns it.
 \begin{py}
 def make_adder(n):
     """Return a function that takes one argument k and returns k + n.
@@ -225,17 +335,23 @@ def make_adder(n):
 \end{py}
 \begin{itemize}
   \ii \cd{adder} is defined \emph{while \cd{make\_adder} is running}, so each call to \cd{make\_adder} creates a new \cd{adder} function.
-  \ii The body of \cd{adder} uses \cd{n}, which is not one of its own names. It finds \cd{n} in the frame of the \cd{make\_adder} call that created it (next subsection).
+  \ii The body of \cd{adder} uses \cd{n}, which is not one of its own names. It finds \cd{n} in the frame of the \cd{make\_adder} call that created it, by the rule in the next subsection.
   \ii \cd{make\_adder(3)(4)}: the operator \cd{make\_adder(3)} is itself a call expression; it is evaluated first and gives a function, which is then applied to \cd{4}.
-  \ii \cd{compose1(f, g)} returns the function \cd{h} with \cd{h(x) = f(g(x))}:
 \end{itemize}
+\end{example*}
+
+\begin{example*}[A function that combines two functions: \cd{compose1}]
+\cd{compose1(f, g)} returns the function \cd{h} with \cd{h(x) = f(g(x))}:
 \begin{py}
 def compose1(f, g):
     def h(x):
         return f(g(x))
     return h
 \end{py}
-\textbf{Lecture example: strategies.} In the lecture's game, \cd{play(strategy0, strategy1)} takes two functions; each maps the current score to a move. \cd{make\_heckling\_strategy(strategy, heckle)} returns a new strategy that prints \cd{heckle} and then returns what \cd{strategy} would. A function can be wrapped to add behaviour without changing it.
+With \cd{square(x)} returning \cd{x * x}, \cd{compose1(square, make\_adder(1))(3)} first adds 1 and then squares: \cd{16}. The order matters: \cd{compose1(make\_adder(1), square)(3)} is \cd{10}.
+\end{example*}
+
+\textbf{Lecture example: strategies.} In the lecture's game, \cd{play(strategy0, strategy1)} takes two functions; each maps the current score to a move. \cd{make\_heckling\_strategy(strategy, heckle)} returns a new strategy that prints \cd{heckle} and then returns what \cd{strategy} would. A function can be wrapped in this way to add behaviour without changing its code.
 
 \textbf{Program design words from lecture}: \vocab{modularity} (separate parts with separate jobs), \vocab{abstraction} (use a part knowing only what it does, not how), \vocab{separation of concerns}.
 
@@ -253,6 +369,15 @@ The parent is fixed at definition time, not at call time. \cd{adder} was created
 
 So to predict what a name means inside a function, look at where the function was \emph{defined}, never at where it is called.
 \end{ideabox}
+\begin{howto}{How to draw an environment diagram with higher-order functions}
+\begin{steps}
+  \ii Follow the \xweek{cs61a}{2026-08-24-functions}{Week~1} steps: execute statements in order; a \cd{def} creates a function value; an assignment binds in the current frame; a call opens a new frame.
+  \ii At a \cd{def}: write \cd{[parent=...]} on the function value at once. The parent is the \emph{current} frame (global, or the local frame being executed).
+  \ii At a call: label the new frame with the function's name from its \cd{def} line and \emph{copy the function's parent} onto the frame.
+  \ii A name bound to a function as an argument works like any binding: with \cd{def twice(f, x): return f(f(x))}, the call \cd{twice(square, 3)} binds \cd{f} to the \cd{square} function in the new frame.
+  \ii To look up a name, follow the parents from the current frame: local frame, its parent, \dots, global.
+\end{steps}
+\end{howto}
 \Needspace{24\baselineskip}
 \begin{fig}
 \begin{tikzpicture}[>={Stealth[length=4.6pt,width=2pt,inset=1.2pt]},font=\ttfamily\footnotesize]
@@ -277,14 +402,14 @@ So to predict what a name means inside a function, look at where the function wa
   \node[anchor=west,font=\footnotesize,text=black] at (0.12,-0.95) {\InkLabel{\textbf{\cd{f1}: \cd{make\_adder}} \rmfamily\scriptsize[parent=Global]}};
 
   \node[anchor=east] at (2.45,-1.54) {\InkLabel{n}};
-  \InkStroke[black,fill=white,line width=0.8pt]{(2.60,-1.75) rectangle (5.15,-1.33)}
+  \InkStroke[black!65,fill=white,line width=0.4pt]{(2.60,-1.75) rectangle (5.15,-1.33)}
   \node at (3.88,-1.54) {\InkLabel{3}};
 
   \node[anchor=east] at (2.45,-2.16) {\InkLabel{adder}};
   \InkStroke[black!65,fill=white,line width=0.4pt]{(2.60,-2.37) rectangle (5.15,-1.95)}
   \fill[figblue] (3.88,-2.16) circle (1.5pt);
 
-  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.45,-2.98) {\InkLabel{Return value}};
+  \node[anchor=east,font=\rmfamily\footnotesize,text=black] at (2.45,-2.98) {\InkLabel{Return value}};
   \InkStroke[black!65,fill=white,line width=0.4pt]{(2.60,-3.19) rectangle (5.15,-2.77)}
   \fill[figblue] (3.88,-2.98) circle (1.5pt);
 
@@ -298,13 +423,13 @@ So to predict what a name means inside a function, look at where the function wa
   \InkStroke[black!65,fill=white,line width=0.4pt]{(2.60,-5.14) rectangle (5.15,-4.72)}
   \node at (3.88,-4.93) {\InkLabel{4}};
 
-  \node[anchor=east,font=\rmfamily\footnotesize,text=black!75] at (2.45,-5.56) {\InkLabel{Return value}};
+  \node[anchor=east,font=\rmfamily\footnotesize,text=black] at (2.45,-5.56) {\InkLabel{Return value}};
   \InkStroke[black!65,fill=white,line width=0.4pt]{(2.60,-5.77) rectangle (5.15,-5.35)}
   \node at (3.88,-5.56) {\InkLabel{7}};
 
-  % ---- Parent lookup path on left margin ----
-  \draw[ink guide arrow,draw=black!60] (-0.1,-4.35) -- (-0.72,-4.35) -- (-0.72,-1.54) -- (-0.12,-1.54);
-  \node[rotate=90,anchor=south,font=\rmfamily\scriptsize,text=black!65] at (-0.78,-2.94) {\InkLabel{lookup \cd{n}}};
+  % ---- Parent lookup path on left margin: from f2 to the binding of n in f1 ----
+  \InkStroke[->,figred,line width=0.7pt]{(-0.1,-4.35) -- (-0.72,-4.35) -- (-0.72,-1.54) -- (-0.12,-1.54)}
+  \node[rotate=90,anchor=south,font=\rmfamily\scriptsize] at (-0.80,-2.94) {\InkLabel[figred]{lookup of \cd{n}: \cd{f2}, then \cd{f1}}};
 
   % ---- Function objects on right ----
   \node[anchor=west,draw=black!85,fill=white,line width=0.45pt,inner xsep=7pt,inner ysep=4.5pt,align=left] (fma) at (6.8,1.00) {\InkLabel{\shortstack[c]{%
@@ -321,22 +446,21 @@ So to predict what a name means inside a function, look at where the function wa
   \InkStroke[->,figblue,line width=0.65pt]{(3.88,-2.16) -- (fadd.west)}
   \InkStroke[->,figblue,line width=0.65pt]{(3.88,-2.98) -| (fadd.south)}
 \end{tikzpicture}
-\figcap{Environment diagram for \cd{add\_three = make\_adder(3)} followed by \cd{add\_three(4)}. All three blue pointers reference one \cd{adder} function object; evaluating \cd{k + n} in \cd{f2} finds \cd{k = 4} locally and follows \cd{[parent=f1]} (dotted) to \cd{n = 3} in \cd{f1}.}
+\figcap{The diagram after \cd{add\_three = make\_adder(3)} and \cd{add\_three(4)}. The three blue arrows point to one \cd{adder} function, whose parent is \cd{f1}; the red arrow shows where the lookup of \cd{n} in \cd{f2} finds \cd{3}.}
 \end{fig}
-\method{Additions to the diagram recipe of Week 1.}
-\begin{steps}
-  \ii At a \cd{def}: the function's parent is the \emph{current} frame (global, or the local frame being executed).
-  \ii At a call: label the new frame with the function's name from its \cd{def} line and \emph{copy the function's parent} onto the frame.
-  \ii A name bound to a function as an argument works like any binding: with \cd{def twice(f, x): return f(f(x))}, the call \cd{twice(square, 3)} binds \cd{f} to the \cd{square} function in the new frame.
-\end{steps}
-\textbf{Variations on \cd{make\_adder} (the lecture's ``wrong make\_adder?'' quiz).} Each variant changes one thing; \cd{print(add\_three(4))} follows.
+
+\revisit The body \cd{k + n} runs in frame \cd{f2}, whose parent is \cd{f1} because \cd{adder} was defined while \cd{f1} was the current frame. \cd{n} is not in \cd{f2}, so lookup continues in \cd{f1}, where \cd{n} is \cd{3}; the frame \cd{f1} still exists because \cd{adder} refers to it. So \cd{add\_three(4)} returns \cd{7}.
+
+\begin{example*}[Variations on \cd{make\_adder} (the lecture's ``wrong make\_adder?'' quiz)]
+Each variant changes one thing in \cd{make\_adder}; \cd{print(add\_three(4))} follows.
 \begin{itemize}
   \ii Add \cd{k = 5} inside \cd{make\_adder}, before the inner \cd{def}: prints \cd{7}. The \cd{k} of \cd{adder} is its own parameter in \cd{f2}; the \cd{k} in \cd{f1} is never reached.
   \ii Add \cd{n = 5} inside \cd{make\_adder}, before or after the inner \cd{def} but before \cd{return}: prints \cd{9}. The body of \cd{adder} runs later and looks \cd{n} up then; \cd{f1} holds \cd{5} by that time.
-  \ii Add \cd{k = 5} as the first line of \cd{adder}: prints \cd{8}. The parameter is rebound in \cd{f2}.
+  \ii Add \cd{k = 5} as the first statement in the body of \cd{adder}: prints \cd{8}. The parameter is rebound in \cd{f2}.
   \ii Add \cd{add\_five = make\_adder(5)} after \cd{add\_three} is created: prints \cd{7}. The second call has its own frame; \cd{f1} is untouched.
   \ii Add \cd{n = 5} in the global frame: prints \cd{7}. Lookup finds \cd{n} in \cd{f1} before reaching global.
 \end{itemize}
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{\cd{and}/\cd{or}}: the value is the last operand evaluated. \cd{and} stops at the first false value; \cd{or} stops at the first true value.
@@ -354,13 +478,15 @@ So to predict what a name means inside a function, look at where the function wa
   \ii \cd{0}, \cd{''} and \cd{None} are false values, but they are not equal to \cd{False} in every use: \cd{None == False} is \cd{False}.
   \ii \cd{x == 1 or 2} means \cd{(x == 1) or 2}, which is always a true value.
   \ii A \cd{while} loop whose changing statement is inside an \cd{if} may never end.
+  \ii A digit loop with \cd{while n > 0} runs zero times for \cd{n = 0}.
   \ii \cd{return print(x)} returns \cd{None}.
+  \ii In \cd{make\_adder}, writing \cd{return adder(k)} instead of \cd{return adder} is an error: \cd{k} is not defined in the frame of \cd{make\_adder}.
   \ii Calling a non-pure function twice to ``print then return'' doubles its side effects.
   \ii The frame label is the function's defined name (\cd{adder}), not the name it was called by (\cd{add\_three}).
 \end{trapbox}
 
 \section{Problem set}
-P1--P6 are original; E1--E2 are real Midterm 1 questions with the published answers in the solutions. Programming exercises are in \cd{exercises/}.
+The programming exercises are in \cd{exercises/} (run \cd{python3 tests.py} there).
 
 \begin{prob}\textbf{P1 (boolean expressions).}\ What is displayed? Write \cd{ERROR} for an error and \emph{nothing} if nothing is displayed.
 \begin{py}

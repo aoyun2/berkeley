@@ -17,24 +17,28 @@
   figvecsub/.style={ink arrow,draw=inkslate},
   figguide/.style={ink guide,draw=inkslate}
 }
+% Method boxes: "How to ..." with numbered steps.
+\mdfdefinestyle{methodstyle}{nobreak=true,linewidth=0.6pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=methodstyle]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
+\BeforeBeginEnvironment{proof}{\Needspace{6\baselineskip}}
 
 \begin{document}
 \maketitle
 
 \section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Subspaces and direct sums (\xlink{math110}{2026-08-31-sets-fields-subspaces}{def-5}{Def.~5--6}, \xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Prop.~7}):} A subset $U\subseteq V$ is a subspace if $0\in U$ and $\lambda v+w\in U$ for all $v,w\in U,\lambda\in\FF$. Every vector in a direct sum $U_1\oplus\dots\oplus U_m$ is written uniquely as $u_1+\dots+u_m$ ($u_k\in U_k$).
-  \ii \textbf{Basis and unique coordinates (\xlink{math110}{2026-09-07-bases-dimension}{name-basis-unique-representation-ladr-2-28}{LADR 2.28}):} A list $v_1,\dots,v_n$ in $V$ is a basis of $V$ if and only if every $v\in V$ can be written uniquely as $v=\lambda_1v_1+\dots+\lambda_nv_n$.
-  \ii \textbf{Thinning and extending (\xlink{math110}{2026-09-07-bases-dimension}{prop-9}{Prop.~9, 11}):} In a finite-dimensional vector space $V$, every spanning list contains a basis, and every linearly independent list extends to a basis.
-  \ii \textbf{Dimension shortcuts (\xlink{math110}{2026-09-07-bases-dimension}{prop-13}{Prop.~13, 14}):} In a space $V$ of dimension $d$, any linearly independent list of length $d$ (or spanning list of length $d$) is a basis of $V$, and any subspace $U\subseteq V$ with $\dim U=d$ equals $V$.
+  \ii\target{W1} \textbf{Subspaces and direct sums (\xlink{math110}{2026-08-31-sets-fields-subspaces}{def-5}{Def.~5--6}, \xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Prop.~7}):} A subset $U\subseteq V$ is a subspace if $0\in U$ and $\lambda v+w\in U$ for all $v,w\in U,\lambda\in\FF$. Every vector in a direct sum $U_1\oplus\dots\oplus U_m$ is written uniquely as $u_1+\dots+u_m$ ($u_k\in U_k$).
+  \ii\target{W2} \textbf{Basis and unique coordinates (\xlink{math110}{2026-09-07-bases-dimension}{name-basis-unique-representation-ladr-2-28}{LADR 2.28}):} A list $v_1,\dots,v_n$ in $V$ is a basis of $V$ if and only if every $v\in V$ can be written uniquely as $v=\lambda_1v_1+\dots+\lambda_nv_n$.
+  \ii\target{W3} \textbf{Thinning and extending (\xlink{math110}{2026-09-07-bases-dimension}{prop-9}{Prop.~9, 11}):} In a finite-dimensional vector space $V$, every spanning list contains a basis, and every linearly independent list extends to a basis.
+  \ii\target{W4} \textbf{Dimension shortcuts (\xlink{math110}{2026-09-07-bases-dimension}{prop-13}{Prop.~13, 14}):} In a space $V$ of dimension $d$, any linearly independent list of length $d$ (or spanning list of length $d$) is a basis of $V$, and any subspace $U\subseteq V$ with $\dim U=d$ equals $V$.
 \end{enumerate}
 
 \section{This week}
 
-\subsection{Vector space of linear maps $\LL(V,W)$ (Notes Ch.~5.1, LADR 3A)}
+\subsection{Linear maps and the vector space $\LL(V,W)$ (Notes Ch.~5, LADR 3A)}
 
 \begin{qbox}
-  Which functions $T\colon V\to W$ between vector spaces preserve vector addition and scalar multiplication, and how much information is needed to specify such a map $T$ completely on a finite-dimensional space $V$?
+  Is $T(a,b)=(a+b,\,2a)$ a linear map $\RR^2\to\RR^2$? Is $T(a,b)=(a+1,\,b)$? Suppose a linear map $T\colon\RR^2\to\PP_2(\RR)$ satisfies $T(1,0)=1+x$ and $T(0,1)=x^2$. What is $T(3,-2)$, and is $T$ determined by these two values?
 \end{qbox}
 
 \begin{definition*}[Def.~11, 12, 13 / LADR 3.1, 3.2: Linear map, $\LL(V,W)$, operator $\LL(V)$, and restriction]\target{def-11}\target{def-12}\target{def-13}
@@ -43,20 +47,87 @@
     \[
       \text{additivity: } T(u+v) = Tu + Tv \qquad\text{and}\qquad \text{homogeneity: } T(\lambda v) = \lambda(Tv)
     \]
-    for all $u,v\in V$ and $\lambda\in\FF$ (equivalently, $T(\lambda u+v)=\lambda Tu+Tv$).
+    for all $u,v\in V$ and $\lambda\in\FF$. Equivalently, $T(\lambda u+v)=\lambda Tu+Tv$; and then, by applying this repeatedly, $T$ respects every linear combination: $T(\lambda_1v_1+\dots+\lambda_nv_n)=\lambda_1Tv_1+\dots+\lambda_nTv_n$.
     \ii The set of all linear maps from $V$ to $W$ is denoted by $\LL(V,W)$. A linear map from a vector space $V$ to itself is called a \vocab{linear operator} (or \vocab{operator}), and we write $\LL(V)=\LL(V,V)$ (Def.~12).
     \ii If $T\in\LL(V,W)$ and $U$ is a subspace of $V$, the \vocab{restriction} of $T$ to $U$ is the linear map $T|_U\in\LL(U,W)$ defined by $T|_U(u)=Tu$ for all $u\in U$ (Def.~13).
   \end{itemize}
 \end{definition*}
 
-\begin{itemize}
-  \ii \textbf{Every linear map sends $0$ to $0$ (LADR 3.10):} For any $T\in\LL(V,W)$, $T(0)=T(0+0)=T(0)+T(0)$, so adding $-T(0)$ gives $T(0)=0$.
-  \ii \textbf{Examples of linear maps (Ex.~21--23 / LADR 3.3):}
+\textbf{Every linear map sends $0$ to $0$ (LADR 3.10).} For any $T\in\LL(V,W)$, $T(0)=T(0+0)=T(0)+T(0)$, and adding $-T(0)$ to both sides gives $T(0)=0$.
+
+\begin{methodbox}{How to decide whether a map is linear}
+  \begin{steps}
+    \ii Quick test: compute $T(0)$. If $T(0)\ne0$, $T$ is not linear.
+    \ii Write $T(\lambda u+v)$ for general $u,v$ and $\lambda$, expand using the formula for $T$, and compare with $\lambda Tu+Tv$. If they agree for all choices, $T$ is linear.
+    \ii To show $T$ is not linear, give specific $u,v,\lambda$ where they differ. Terms that are constants, products of coordinates, squares, absolute values or conjugates are the usual causes.
+  \end{steps}
+  Edge cases: $T(0)=0$ is necessary but not sufficient ($T(a,b)=(a^2,0)$ has $T(0)=0$ and $T(2e_1)=(4,0)\ne2T(e_1)$). Linearity depends on the field: complex conjugation $z\mapsto\bar z$ on $\CC$ is linear over $\RR$ but not over $\CC$, because $\overline{iz}=-i\bar z\ne i\bar z$ for $z\ne0$.
+\end{methodbox}
+
+\begin{example*}[A linear map and a non-linear map on $\RR^2$]
+  For $T(a,b)=(a+b,2a)$,
+  \[
+    T\bigl(\lambda(a,b)+(c,d)\bigr)=\bigl(\lambda a+c+\lambda b+d,\ 2\lambda a+2c\bigr)=\lambda(a+b,2a)+(c+d,2c),
+  \]
+  so $T$ is linear. For $T'(a,b)=(a+1,b)$, $T'(0,0)=(1,0)\ne0$, so $T'$ is not linear.
+\end{example*}
+
+\begin{example*}[Matrix maps, differentiation, and the shift (Notes Ex.~21, 22)]
   \begin{itemize}
-    \ii \emph{Differentiation and integration:} $D\in\LL(\PP(\RR))$ given by $D(p)=p'$, and backward shift $S(a_0,a_1,a_2,\dots)=(a_1,a_2,a_3,\dots)$ on $\FF^\infty$ (which satisfies $(S^2-S-I)a=0$ on the Fibonacci recurrence subspace $a_{n+2}=a_{n+1}+a_n$).
-    \ii \emph{Three model operators on $\RR^2$ (Ex.~23):} Projection $P(x,y)=(0,y)$ ($P^2=P$); counterclockwise rotation $R_\theta(x,y)=(x\cos\theta-y\sin\theta,x\sin\theta+y\cos\theta)$; and nilpotent shift $N(x,y)=(y,0)$ ($Ne_2=e_1$, $Ne_1=0$, so $N^2=0$).
+    \ii Differentiation $D\in\LL(\PP(\RR))$, $D(p)=p'$, is linear because $(\lambda p+q)'=\lambda p'+q'$ (\xlink{math110}{2026-08-31-sets-fields-subspaces}{fact-limits}{Week~1, F3}).
+    \ii The backward shift $S(a_0,a_1,a_2,\dots)=(a_1,a_2,a_3,\dots)$ on sequences is linear: it shifts $\lambda a+b$ entry by entry. On the recurrence subspace $R=\{a: a_{n+2}=a_{n+1}+a_n\}$ of Week~1, $S$ maps $R$ into $R$ (a shifted sequence satisfies the same recurrence), and the recurrence says exactly $S^2a=Sa+a$, that is, $S^2-S-I=0$ on $R$.
   \end{itemize}
-\end{itemize}
+\end{example*}
+
+\begin{example*}[Three model operators on $\RR^2$ (Notes Ex.~23)]
+  \begin{itemize}
+    \ii Projection onto the $y$-axis, $P(x,y)=(0,y)$: it keeps the $e_2$-direction and sends the $e_1$-direction to $0$, and $P^2=P$.
+    \ii Counterclockwise rotation through $\theta$, $R_\theta(x,y)=(x\cos\theta-y\sin\theta,\ x\sin\theta+y\cos\theta)$.
+    \ii $N(x,y)=(y,0)$, which is $P$ followed by clockwise rotation through a right angle: $N=R_{-\pi/2}P$. It sends $e_2\mapsto e_1\mapsto 0$, so $N^2=0$.
+  \end{itemize}
+\end{example*}
+
+\begin{proposition*}[Prop.~18, 19 / LADR 3.6--3.9: The vector space $\LL(V,W)$ and composition]\target{prop-18}\target{prop-19}
+  \begin{enumerate}[(a)]
+    \ii With $(S+T)(v)=Sv+Tv$ and $(\lambda T)(v)=\lambda(Tv)$, $\LL(V,W)$ is a vector space; its zero element is the zero map.
+    \ii If $T\in\LL(U,V)$ and $S\in\LL(V,W)$, the \vocab{product} (composition) $(ST)(u)=S(Tu)$ lies in $\LL(U,W)$. The product is associative, $(T_1T_2)T_3=T_1(T_2T_3)$; it has identities, $TI_V=T=I_WT$; and it is distributive, $S(T_1+T_2)=ST_1+ST_2$ and $(S_1+S_2)T=S_1T+S_2T$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{$\mu S+T$ is linear.} For $v,w\in V$ and $\lambda\in\FF$,
+    \[
+      (\mu S+T)(\lambda v+w)=\mu(\lambda Sv+Sw)+\lambda Tv+Tw=\lambda(\mu S+T)(v)+(\mu S+T)(w).
+    \]
+    So $\LL(V,W)$ is a subspace of the vector space of all functions $V\to W$ (Week~1, Notes Ex.~6), and in particular a vector space.
+    \ii \textbf{$ST$ is linear.} $ST(\lambda u+v)=S(\lambda Tu+Tv)=\lambda S(Tu)+S(Tv)$.
+    \ii \textbf{The algebraic rules.} Associativity holds for composition of any functions: both sides send $u$ to $T_1(T_2(T_3u))$. $TI_V=T=I_WT$ because $I$ changes nothing. $S(T_1+T_2)u=S(T_1u)+S(T_2u)$ uses linearity of $S$; $(S_1+S_2)Tu=S_1(Tu)+S_2(Tu)$ is the definition of $S_1+S_2$.
+  \end{steps}
+\end{proof}
+
+The product is not commutative in general. Even when $ST$ and $TS$ are both defined, they can be different.
+
+\begin{example*}[Two operators that do not commute (Notes Ex.~24)]
+  On the space $V$ of infinitely differentiable functions $\RR\to\RR$, let $\hat X(f)(x)=xf(x)$ and $\hat P(f)=f'$. By the product rule (\ilink{fact-H1}{H1} at the end),
+  \[
+    (\hat P\hat X-\hat X\hat P)(f)=(xf)'-xf'=f+xf'-xf'=f,
+  \]
+  so $\hat P\hat X-\hat X\hat P=I\ne0$. On $\RR^2$, $NP=N$, because $N(x,y)=(y,0)$ depends only on $y$ and $P(x,y)=(0,y)$ keeps $y$; but $PN=0$, because $N$ lands on the $x$-axis, which $P$ sends to $0$.
+\end{example*}
+
+\begin{proposition*}[Prop.~20: Defining a linear map on a direct sum piece by piece]\target{prop-20}
+  If $V=U_1\oplus\dots\oplus U_m$ and $T_i\in\LL(U_i,W)$ for $i=1,\dots,m$, then there exists a unique $T\in\LL(V,W)$ such that $T|_{U_i}=T_i$ for each $i$. It is given by $T(u_1+\dots+u_m)=T_1(u_1)+\dots+T_m(u_m)$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{The formula defines a function.} Each $v\in V$ has exactly one decomposition $v=u_1+\dots+u_m$ with $u_i\in U_i$ (\xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-7}{Week~1, Prop.~7}), so $T(v)=T_1(u_1)+\dots+T_m(u_m)$ assigns one value to each $v$.
+    \ii \textbf{$T$ is linear.} If $v=\sum u_i$ and $w=\sum w_i$, then $\lambda v+w=\sum(\lambda u_i+w_i)$ is the decomposition of $\lambda v+w$, so
+    \[
+      T(\lambda v+w)=\sum_iT_i(\lambda u_i+w_i)=\lambda\sum_iT_i(u_i)+\sum_iT_i(w_i)=\lambda Tv+Tw.
+    \]
+    \ii \textbf{$T|_{U_i}=T_i$ and uniqueness.} For $u\in U_i$ the decomposition is $u$ in place $i$ and $0$ elsewhere, so $Tu=T_i(u)$. Any linear $T'$ with $T'|_{U_i}=T_i$ satisfies $T'(\sum u_i)=\sum T'(u_i)=\sum T_i(u_i)$, so $T'=T$.
+  \end{steps}
+\end{proof}
 
 \begin{theorem*}[Prop.~21 / LADR 3.4: Linear map lemma (a linear map is determined by its values on a basis)]\target{prop-21}
   Suppose $v_1,\dots,v_n$ is a basis of $V$ and $w_1,\dots,w_n\in W$. Then there exists a unique linear map $T\colon V\to W$ such that
@@ -65,27 +136,41 @@
   \]
 \end{theorem*}
 \begin{ideabox}
-  Both existence and uniqueness come directly from the unique coordinate representation of a basis (W2)! Every vector $v\in V$ has a unique expansion $v=\lambda_1v_1+\dots+\lambda_nv_n$. If $T\colon V\to W$ is linear and satisfies $Tv_j=w_j$, then linearity forces $Tv=\lambda_1Tv_1+\dots+\lambda_nTv_n=\lambda_1w_1+\dots+\lambda_nw_n$, proving uniqueness. Conversely, because the scalars $\lambda_1,\dots,\lambda_n$ are uniquely determined by $v$, defining $Tv=\lambda_1w_1+\dots+\lambda_nw_n$ gives a well-defined function on all of $V$ that is linear and sends each $v_j$ to $w_j$.
+  If such a $T$ exists, linearity leaves no choice: $v=\sum\lambda_jv_j$ must go to $\sum\lambda_jw_j$. So the only candidate is this formula, and the proof checks that it is well defined (the $\lambda_j$ are unique because $v_1,\dots,v_n$ is a basis, \ilink{W2}{(W2)}) and linear. The values $w_j$ can be anything, even $0$ or repeated: a basis imposes no relations among its images.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii \emph{Existence:} For each $v\in V$, there exist unique scalars $\lambda_1,\dots,\lambda_n\in\FF$ such that $v=\lambda_1v_1+\dots+\lambda_nv_n$ (W2). Define $T\colon V\to W$ by $Tv=\lambda_1w_1+\dots+\lambda_nw_n$. Taking $v=v_j$ ($\lambda_k=\delta_{jk}$) gives $Tv_j=w_j$.
-    \ii \emph{Linearity:} If $u=\sum_{j=1}^n\mu_jv_j$ and $v=\sum_{j=1}^n\lambda_jv_j$, then $cu+v=\sum_{j=1}^n(c\mu_j+\lambda_j)v_j$, so $T(cu+v)=\sum_{j=1}^n(c\mu_j+\lambda_j)w_j=c\sum_{j=1}^n\mu_jw_j+\sum_{j=1}^n\lambda_jw_j=cTu+Tv$.
-    \ii \emph{Uniqueness:} If $S\in\LL(V,W)$ also satisfies $Sv_j=w_j$ for each $j$, then for any $v=\sum_{j=1}^n\lambda_jv_j$, linearity of $S$ gives $Sv=\sum_{j=1}^n\lambda_jSv_j=\sum_{j=1}^n\lambda_jw_j=Tv$, so $S=T$.
+    \ii \textbf{Existence.} For each $v\in V$ there are unique scalars with $v=\lambda_1v_1+\dots+\lambda_nv_n$ \ilink{W2}{(W2)}. Define $Tv=\lambda_1w_1+\dots+\lambda_nw_n$. For $v=v_j$ the coefficients are $1$ in place $j$ and $0$ elsewhere, so $Tv_j=w_j$.
+    \ii \textbf{Linearity.} If $u=\sum_j\mu_jv_j$ and $v=\sum_j\lambda_jv_j$, then $cu+v=\sum_j(c\mu_j+\lambda_j)v_j$, and these are its coefficients, so
+    \[
+      T(cu+v)=\sum_{j=1}^n(c\mu_j+\lambda_j)w_j=c\sum_{j=1}^n\mu_jw_j+\sum_{j=1}^n\lambda_jw_j=cTu+Tv.
+    \]
+    \ii \textbf{Uniqueness.} If $S\in\LL(V,W)$ also satisfies $Sv_j=w_j$, then for $v=\sum_j\lambda_jv_j$, linearity of $S$ gives $Sv=\sum_j\lambda_jSv_j=\sum_j\lambda_jw_j=Tv$. So $S=T$.
   \end{steps}
 \end{proof}
 
-\begin{proposition*}[Prop.~18, 19, 20 / LADR 3.5--3.9: Vector space $\LL(V,W)$, composition $ST$, and gluing on a direct sum]\target{prop-18}\target{prop-19}\target{prop-20}
-  \begin{enumerate}[(a)]
-    \ii \textbf{Vector space structure and composition (Prop.~18, 19 / LADR 3.6--3.9):} With pointwise operations $(S+T)(v)=Sv+Tv$ and $(\lambda T)(v)=\lambda(Tv)$, $\LL(V,W)$ is a vector space (zero element the zero map $0$). If $T\in\LL(U,V)$ and $S\in\LL(V,W)$, their \vocab{product} (composition) $(ST)(u)=S(Tu)$ belongs to $\LL(U,W)$ and is associative ($(T_1T_2)T_3=T_1(T_2T_3)$), unital ($TI_V=T=I_WT$), and distributive ($S(T_1+T_2)=ST_1+ST_2$ and $(S_1+S_2)T=S_1T+S_2T$), though noncommutative in general.
-    \ii \textbf{Gluing linear maps on a direct sum (Prop.~20):} If $V=U_1\oplus\dots\oplus U_m$ and $T_i\in\LL(U_i,W)$ for $i=1,\dots,m$, then there exists a unique $T\in\LL(V,W)$ such that $T|_{U_i}=T_i$ for each $i$, given by $T(u_1+\dots+u_m)=T_1(u_1)+\dots+T_m(u_m)$.
-  \end{enumerate}
-\end{proposition*}
+\begin{methodbox}{How to compute $Tv$ from the values of $T$ on a basis}
+  \begin{steps}
+    \ii Write $v$ in the basis: $v=\lambda_1v_1+\dots+\lambda_nv_n$ (solve for the $\lambda_j$ if the basis is not standard).
+    \ii Then $Tv=\lambda_1Tv_1+\dots+\lambda_nTv_n$.
+  \end{steps}
+  Edge case: values given on a list that is \emph{not} a basis may be impossible to match (a dependent list forces the same relation on the values) or may not determine $T$ (a list that does not span leaves $T$ free elsewhere).
+\end{methodbox}
 
-\subsection{Null spaces, ranges, and the Fundamental Theorem of Linear Maps (Notes Ch.~5.2, LADR 3B)}
+\begin{example*}[A linear map $\RR^2\to\PP_2(\RR)$ from two values]
+  With $T(1,0)=1+x$ and $T(0,1)=x^2$: $(3,-2)=3(1,0)-2(0,1)$, so $T(3,-2)=3(1+x)-2x^2=3+3x-2x^2$. In general $T(a,b)=a+ax+bx^2$.
+\end{example*}
+
+\begin{example*}[Values on a dependent list can be impossible]
+  There is no linear $T\colon\RR^2\to\RR$ with $T(1,0)=1$, $T(0,1)=1$, $T(1,1)=3$: linearity forces $T(1,1)=T(1,0)+T(0,1)=2$.
+\end{example*}
+
+\revisit $T(a,b)=(a+b,2a)$ is linear and $T(a,b)=(a+1,b)$ is not, since it sends $0$ to $(1,0)$. Since $(1,0),(0,1)$ is a basis of $\RR^2$, \ilink{prop-21}{Prop.~21} says that the two values determine exactly one linear map, $T(a,b)=a+ax+bx^2$, and $T(3,-2)=3+3x-2x^2$.
+
+\subsection{Null spaces, ranges, and the Fundamental Theorem of Linear Maps (Notes Ch.~5, LADR 3B)}
 
 \begin{qbox}
-  A linear map $T\colon V\to W$ can collapse a subspace of $V$ to $0$ (failing injectivity) and can land in a proper subspace of $W$ (failing surjectivity). Why must the number of dimensions collapsed to $0$ plus the number of dimensions reached in $W$ always equal $\dim V$?
+  For differentiation $D\colon\PP_4(\RR)\to\PP_4(\RR)$, which polynomials does $D$ send to $0$, and which polynomials are derivatives? The two answers have dimensions adding up to $5=\dim\PP_4(\RR)$. Is that a coincidence? Can a linear map $\RR^5\to\RR^2$ be injective?
 \end{qbox}
 
 \begin{definition*}[Def.~14, 15 / LADR 3.11, 3.16: Null space $\nul T$ and range $\range T$]\target{def-14}\target{def-15}
@@ -103,12 +188,15 @@
   \]
 \end{proposition*}
 \begin{ideabox}
-  Injectivity ($Tu=Tv\implies u=v$ for all pairs $u,v\in V$) reduces to checking a single target vector $0$ ($Tw=0\implies w=0$) by linearity: $Tu=Tv$ holds if and only if $T(u-v)=Tu-Tv=0$, i.e.\ $u-v\in\nul T$. Thus two inputs have the same output if and only if their difference lies in $\nul T$.
+  Injectivity is a statement about all pairs $u,v$ with $Tu=Tv$. Linearity turns a pair into one vector: $Tu=Tv$ exactly when $T(u-v)=0$, that is, when $u-v\in\nul T$. So two inputs have the same output exactly when they differ by an element of $\nul T$, and injectivity becomes the single condition $\nul T=\{0\}$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Since $T(0)=0$ and $T(\lambda u+v)=\lambda Tu+Tv$, both $\nul T$ and $\range T$ are subspaces (W1). Surjectivity is $\range T=W$ by definition.
-    \ii If $T$ is injective and $v\in\nul T$, then $Tv=0=T(0)$ forces $v=0$, so $\nul T=\{0\}$. Conversely, if $\nul T=\{0\}$ and $Tu=Tv$, then $T(u-v)=Tu-Tv=0\implies u-v\in\nul T=\{0\}\implies u=v$.
+    \ii \textbf{$\nul T$ is a subspace.} $T(0)=0$, so $0\in\nul T$. If $Tv_1=Tv_2=0$, then $T(\lambda v_1+v_2)=\lambda Tv_1+Tv_2=0$.
+    \ii \textbf{$\range T$ is a subspace.} $0=T(0)\in\range T$. If $w_1=Tv_1$ and $w_2=Tv_2$, then $\lambda w_1+w_2=T(\lambda v_1+v_2)\in\range T$.
+    \ii \textbf{Assume $T$ is injective.} If $v\in\nul T$, then $Tv=0=T(0)$, so $v=0$. Thus $\nul T=\{0\}$.
+    \ii \textbf{Assume $\nul T=\{0\}$.} If $Tu=Tv$, then $T(u-v)=Tu-Tv=0$, so $u-v\in\nul T=\{0\}$ and $u=v$.
+    \ii Surjectivity means every $w\in W$ is some $Tv$, which is the statement $\range T=W$.
   \end{steps}
 \end{proof}
 
@@ -120,89 +208,183 @@
   More precisely, if $u_1,\dots,u_m$ is a basis of $\nul T$ extended to a basis $u_1,\dots,u_m,v_1,\dots,v_n$ of $V$, then $Tv_1,\dots,Tv_n$ is a basis of $\range T$.
 \end{theorem*}
 \begin{ideabox}
-  Start with a basis $u_1,\dots,u_m$ of $\nul T$ and extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_n$ of $V$ (W3), so $\dim V=m+n$ and $\dim\nul T=m$. Applying $T$ to an arbitrary vector $v=\sum a_iu_i+\sum b_jv_j\in V$ cancels every $Tu_i=0$, leaving $Tv=\sum b_jTv_j$. Thus $Tv_1,\dots,Tv_n$ spans $\range T$. Moreover, if $\sum c_jTv_j=0$, then $T(\sum c_jv_j)=0$, meaning $\sum c_jv_j\in\nul T=\spn(u_1,\dots,u_m)$. Writing $\sum c_jv_j=\sum d_iu_i$ gives a linear relation $\sum d_iu_i-\sum c_jv_j=0$ among the full basis $u_1,\dots,u_m,v_1,\dots,v_n$ of $V$, forcing all $c_j=0$. Thus $Tv_1,\dots,Tv_n$ is a basis of $\range T$ of length $n$, giving $\dim V=m+n=\dim\nul T+\dim\range T$.
+  Choose the basis of $V$ to fit $T$: first a basis of $\nul T$, then extend. The first group is sent to $0$, so the images of the added vectors must carry the whole range. They carry it without redundancy because a relation among the $Tv_j$ would put a combination of the $v_j$ into $\nul T$, that is, into the span of the $u_i$, which the basis of $V$ forbids.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Choose a basis $u_1,\dots,u_m$ of $\nul T$ ($\dim\nul T=m$) and extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_n$ of $V$ (W3), so $\dim V=m+n$.
-    \ii For any $v\in V$, write $v=\sum_{i=1}^m a_iu_i+\sum_{j=1}^n b_jv_j$. Applying $T$ and using $Tu_i=0$ gives $Tv=\sum_{j=1}^n b_jTv_j$, so $Tv_1,\dots,Tv_n$ spans $\range T$.
-    \ii To prove $Tv_1,\dots,Tv_n$ is linearly independent, suppose $\sum_{j=1}^n c_jTv_j=0$. By linearity, $T\big(\sum_{j=1}^n c_jv_j\big)=0$, so $\sum_{j=1}^n c_jv_j\in\nul T=\spn(u_1,\dots,u_m)$.
-    \ii Thus $\sum_{j=1}^n c_jv_j=\sum_{i=1}^m d_iu_i$ for some scalars $d_i\in\FF$, giving $\sum_{i=1}^m d_iu_i-\sum_{j=1}^n c_jv_j=0$. Since $u_1,\dots,u_m,v_1,\dots,v_n$ is a basis of $V$, all $c_j=0$ (and $d_i=0$).
+    \ii Choose a basis $u_1,\dots,u_m$ of $\nul T$ and extend it to a basis $u_1,\dots,u_m,v_1,\dots,v_n$ of $V$ \ilink{W3}{(W3)}, so $\dim V=m+n$.
+    \ii \textbf{Spanning.} For any $v\in V$, write
+    \[
+      v=\sum_{i=1}^m a_iu_i+\sum_{j=1}^n b_jv_j .
+    \]
+    Applying $T$ and using $Tu_i=0$ gives $Tv=\sum_{j=1}^n b_jTv_j$. So $Tv_1,\dots,Tv_n$ spans $\range T$.
+    \ii \textbf{Independence.} Suppose $\sum_{j=1}^n c_jTv_j=0$. By linearity, $T\big(\sum_j c_jv_j\big)=0$, so $\sum_j c_jv_j\in\nul T=\spn(u_1,\dots,u_m)$.
+    \ii Write $\sum_j c_jv_j=\sum_i d_iu_i$. Then $\sum_i d_iu_i-\sum_j c_jv_j=0$, and since $u_1,\dots,u_m,v_1,\dots,v_n$ is a basis of $V$, all $c_j=0$ (and $d_i=0$).
     \ii Hence $Tv_1,\dots,Tv_n$ is a basis of $\range T$, so $\dim\range T=n$ and $\dim V=m+n=\dim\nul T+\dim\range T$.
   \end{steps}
 \end{proof}
 
+\begin{methodbox}{How to find $\nul T$ and $\range T$ with bases}
+  \begin{steps}
+    \ii \textbf{Null space.} Solve $Tv=0$ for a general $v$ (unknown coordinates or coefficients). Write the solutions with free parameters; the vectors multiplying the parameters form a basis (the method for subspaces given by conditions in \xweek{math110}{2026-09-07-bases-dimension}{Week~2}).
+    \ii \textbf{Range.} Apply $T$ to a basis (or any spanning list) $v_1,\dots,v_n$ of $V$; the images $Tv_1,\dots,Tv_n$ span $\range T$. Reduce this list to a basis by discarding vectors in the span of earlier ones.
+    \ii \textbf{Check.} $\dim\nul T+\dim\range T$ must equal $\dim V$ (\ilink{prop-24}{Prop.~24}). If you know one dimension, the other follows.
+  \end{steps}
+  Edge cases: the image of a basis spans the range but is usually \emph{not} independent; $\nul T=\{0\}$ has the empty basis; for $T=0$, $\nul T=V$ and $\range T=\{0\}$.
+\end{methodbox}
+
+\begin{example*}[Null space and range of differentiation on $\PP_4(\RR)$ (Notes Ex.~25)]
+  $Dp=0$ exactly when $p$ is constant: writing $p=a_0+\dots+a_4x^4$, $p'=a_1+2a_2x+3a_3x^2+4a_4x^3$ (by \xlink{math110}{2026-09-07-bases-dimension}{fact-G3}{Week~2, G3} with $a=0$), which is the zero polynomial only if $a_1=a_2=a_3=a_4=0$. So $\nul D=\spn(1)$. The images of the basis are $D(1),D(x),\dots,D(x^4)=0,1,2x,3x^2,4x^3$, which span $\PP_3(\RR)$; so $\range D=\PP_3(\RR)$. Check: $1+4=5$.
+\end{example*}
+
+\begin{example*}[Null space and range of a map $\RR^3\to\RR^2$]
+  Let $T(x,y,z)=(x+y,\ y+z)$. $T(x,y,z)=0$ means $x=-y$ and $z=-y$, so $\nul T=\spn((1,-1,1))$, of dimension $1$. By \ilink{prop-24}{Prop.~24}, $\dim\range T=3-1=2$, so $\range T=\RR^2$ (\ilink{W4}{(W4)}) and $T$ is surjective.
+\end{example*}
+
 \begin{fig}
 \begin{tikzpicture}[scale=0.95]
-  % Domain V: single thin-bordered rectangle split horizontally into extended basis and null T
-  \InkRegion[inkblue]{(0,0) rectangle (3.10,1.08)}
-  \PacketInkPath[black!80,line width=0.45pt]{(0,0) rectangle (3.10,2.45)}
-  \PacketInkPath[black!45,line width=0.4pt]{(0,1.08) -- (3.10,1.08)}
-  \node[font=\small] at (1.55,2.74) {\InkLabel{$V$}};
+  \InkRegion[inkslate]{(0,0) rectangle (3.10,1.08)}
+  \PacketInkPath[black!85,line width=0.5pt]{(0,0) rectangle (3.10,2.45)}
+  \PacketInkPath[black!70,line width=0.45pt]{(0,1.08) -- (3.10,1.08)}
+  \node[font=\small] at (1.55,2.74) {$V=\PP_4(\RR)$};
 
-  \node[font=\footnotesize] at (1.55,1.76) {\InkLabel{$v_1,\dots,v_n$}};
-  \node[font=\footnotesize] at (1.55,0.68) {\InkLabel{$u_1,\dots,u_m$}};
-  \node[font=\scriptsize,text=black!65] at (1.55,0.26) {\InkLabel{$\nul T$}};
+  \node[font=\footnotesize] at (1.55,1.76) {\InkLabel{$x,\ x^2,\ x^3,\ x^4$}};
+  \node[font=\footnotesize] at (1.55,0.68) {\InkLabel{$1$}};
+  \node[font=\scriptsize] at (1.55,0.28) {\InkLabel{$\nul D$}};
 
-  % Codomain W containing range T and 0 \in range T
-  \PacketInkPath[black!80,line width=0.45pt]{(6.15,0) rectangle (9.65,2.45)}
-  \node[font=\small] at (7.90,2.74) {\InkLabel{$W$}};
+  \PacketInkPath[black!85,line width=0.5pt]{(6.15,0) rectangle (9.65,2.45)}
+  \node[font=\small] at (7.90,2.74) {$W=\PP_4(\RR)$};
 
-  \PacketInkPath[black!50,line width=0.4pt]{(6.50,0.26) rectangle (9.30,2.22)}
-  \node[font=\footnotesize] at (7.90,1.76) {\InkLabel{$Tv_1,\dots,Tv_n$}};
-  \node[font=\scriptsize,text=black!65] at (7.90,1.32) {\InkLabel{$\range T$}};
+  \PacketInkPath[inkblue,line width=0.6pt]{(6.50,0.26) rectangle (9.30,2.22)}
+  \node[font=\footnotesize] at (7.90,1.76) {\InkLabel{$1,\ 2x,\ 3x^2,\ 4x^3$}};
+  \node[font=\scriptsize] at (7.90,1.30) {\InkLabel[inkblue]{$\range D=\PP_3(\RR)$}};
 
-  \node[figdot] (Z) at (7.90,0.54) {};
+  \node[figdot] (Z) at (7.90,0.62) {};
   \node[right=3pt,font=\scriptsize] at (Z) {\InkLabel{$0$}};
 
-  % Clean straight horizontal mapping arrows (labels centered in the gap between V and W)
-  \PacketInkPath[->,black,line width=0.55pt,shorten >=2.5pt]{(3.10,1.76) -- (6.50,1.76)}
-  \node[above=2.5pt,font=\footnotesize] at (4.625,1.76) {\InkLabel{$T$}};
-  \draw[ink guide arrow,draw=black!65,shorten >=3.5pt] (3.10,0.54) -- (Z);
-  \node[above=2pt,font=\scriptsize,text=black!75] at (4.625,0.54) {\InkLabel{$Tu_i = 0$}};
+  \PacketInkPath[->,black,line width=0.6pt,shorten >=2.5pt]{(3.10,1.76) -- (6.50,1.76)}
+  \node[above=2.5pt,font=\footnotesize] at (4.625,1.76) {\InkLabel{$D$}};
+  \PacketInkPath[->,black,line width=0.6pt,shorten >=3.5pt]{(3.10,0.62) -- (Z)}
+  \node[above=2pt,font=\scriptsize] at (4.625,0.62) {\InkLabel{$D(1)=0$}};
 \end{tikzpicture}
-\figcap{Fundamental Theorem of Linear Maps (\ilink{prop-24}{Prop.~24}): extending a basis $u_1,\dots,u_m$ of $\nul T$ by $v_1,\dots,v_n$ yields a basis $Tv_1,\dots,Tv_n$ of $\range T$, so $\dim V=\dim\nul T+\dim\range T$.}
+\figcap{Rank--nullity for $D$ on $\PP_4(\RR)$: the basis $1$ of $\nul D$ (shaded) is extended by $x,\dots,x^4$, whose images form a basis of $\range D$; so $5=1+4$.}
 \end{fig}
 
 \begin{proposition*}[Prop.~25 / LADR 3.22, 3.24, 3.26, 3.28: Dimension consequences of Rank--Nullity]\target{prop-25}
   Suppose $V$ and $W$ are finite-dimensional vector spaces and $T\in\LL(V,W)$.
   \begin{enumerate}[(a)]
     \ii \textbf{Equal dimensions (Prop.~25):} If $\dim V=\dim W$, then $T$ is injective $\iff T$ is surjective $\iff T$ is bijective.
-    \ii \textbf{To a smaller space (LADR 3.22, 3.26):} If $\dim V>\dim W$, then $T$ is \textbf{not injective} (since $\dim\nul T=\dim V-\dim\range T\ge\dim V-\dim W>0$). In particular, a homogeneous system of $m$ linear equations in $n>m$ unknowns always has nonzero solutions.
-    \ii \textbf{To a larger space (LADR 3.24, 3.28):} If $\dim V<\dim W$, then $T$ is \textbf{not surjective} (since $\dim\range T=\dim V-\dim\nul T\le\dim V<\dim W$). In particular, an inhomogeneous system of $m>n$ linear equations in $n$ unknowns has no solution for some choice of constant terms.
+    \ii \textbf{To a smaller space (LADR 3.22, 3.26):} If $\dim V>\dim W$, then $T$ is \textbf{not injective}. In particular, a homogeneous system of $m$ linear equations in $n>m$ unknowns always has nonzero solutions.
+    \ii \textbf{To a larger space (LADR 3.24, 3.28):} If $\dim V<\dim W$, then $T$ is \textbf{not surjective}. In particular, a system of $m>n$ linear equations in $n$ unknowns has no solution for some choice of constant terms.
   \end{enumerate}
 \end{proposition*}
+\begin{ideabox}
+  This is the linear version of the pigeonhole principle of Week~1, with dimension in place of the number of elements. Every direction lost to the null space is a direction missing from the range, because the two dimensions add up to $\dim V$.
+\end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii When $\dim V=\dim W$, Rank--Nullity (\ilink{prop-24}{Prop.~24}) gives $\dim\range T=\dim V-\dim\nul T=\dim W-\dim\nul T$. Thus $T$ is injective $\iff\dim\nul T=0\iff\dim\range T=\dim W\iff\range T=W$ (by W4) $\iff T$ is surjective.
-    \ii Parts (b) and (c) follow immediately from $\dim\nul T=\dim V-\dim\range T\ge\dim V-\dim W$ and $\dim\range T\le\dim V$ applied to the linear map $T\colon\FF^n\to\FF^m$ defined by the $m$ linear equations.
+    \ii \textbf{(a), assume $T$ is injective.} Then $\nul T=\{0\}$, so by \ilink{prop-24}{Prop.~24} $\dim\range T=\dim V=\dim W$. A subspace of $W$ of dimension $\dim W$ is $W$ \ilink{W4}{(W4)}, so $T$ is surjective.
+    \ii \textbf{(a), assume $T$ is surjective.} Then $\dim\range T=\dim W=\dim V$, and Prop.~24 gives $\dim\nul T=0$, so $T$ is injective. Bijective means both.
+    \ii \textbf{(b).} $\dim\nul T=\dim V-\dim\range T\ge\dim V-\dim W>0$, since $\range T\subseteq W$ has dimension at most $\dim W$. So $\nul T\ne\{0\}$. A homogeneous system of $m$ equations in $n$ unknowns is $Tx=0$ for the linear map $T\colon\FF^n\to\FF^m$ whose components are the left sides; with $n>m$ it has a nonzero solution.
+    \ii \textbf{(c).} $\dim\range T=\dim V-\dim\nul T\le\dim V<\dim W$, so $\range T\ne W$. For the system, some right-hand side $b\in\FF^m$ is not in $\range T$.
   \end{steps}
 \end{proof}
+
+\begin{example*}[$\RR^2=\nul P\oplus\range P$, but not for $N$]
+  For $P(x,y)=(0,y)$, $\nul P=\spn(e_1)$ and $\range P=\spn(e_2)$; rank--nullity reads $2=1+1$, and here $\RR^2=\nul P\oplus\range P$. For $N(x,y)=(y,0)$, $\nul N=\spn(e_1)=\range N$; rank--nullity still reads $2=1+1$, but the two lines are the same, so $\nul N+\range N=\spn(e_1)\ne\RR^2$. Rank--nullity is an equation between dimensions and says nothing about how the two subspaces sit in $V$ (even when $W=V$).
+\end{example*}
+
+\begin{methodbox}{How to decide whether a linear map with given properties exists}
+  \begin{steps}
+    \ii Translate the requirements into dimensions: $\dim\nul T$, $\dim\range T$, injective ($\dim\nul T=0$), surjective ($\dim\range T=\dim W$).
+    \ii Check them against $\dim V=\dim\nul T+\dim\range T$ and $\dim\range T\le\dim W$. If they conflict, no such map exists.
+    \ii If they do not conflict, construct $T$ with \ilink{prop-21}{Prop.~21}: take a basis $u_1,\dots,u_m$ of the required null space, extend it to a basis of $V$ by $v_1,\dots,v_n$, send the $u_i$ to $0$ and the $v_j$ to a basis of the required range. Then check the null space is exactly as required (by Prop.~24 it is $\spn(u_1,\dots,u_m)$).
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Existence questions for maps out of $\RR^3$ and $\RR^4$]
+  \begin{itemize}
+    \ii No linear $T\colon\RR^3\to\RR^4$ is surjective: $\dim\range T\le3<4$.
+    \ii Is there $T\colon\RR^4\to\RR^3$ with $\nul T=\spn(e_1)$? Then $\dim\range T=4-1=3$, so $T$ would be surjective, which is allowed. Construction: $T(x_1,x_2,x_3,x_4)=(x_2,x_3,x_4)$, whose null space is exactly $\spn(e_1)$.
+    \ii Is there $T\colon\RR^3\to\RR^3$ with $\nul T=\range T$? Then $3=2\dim\nul T$, which is impossible for an integer dimension. So no.
+  \end{itemize}
+\end{example*}
+
+\begin{methodbox}{How to compute the dimension of a subspace by rank--nullity}
+  \begin{steps}
+    \ii Write the subspace as $\nul S$ for a linear map $S\colon V\to\FF^k$ whose $k$ components are the defining conditions.
+    \ii Show $S$ is surjective, usually by finding, for each standard basis vector $e_i$ of $\FF^k$, a vector sent to it.
+    \ii Then $\dim\nul S=\dim V-k$ by \ilink{prop-24}{Prop.~24}.
+  \end{steps}
+  Edge case: if the conditions are dependent, $S$ is not surjective and the dimension is larger than $\dim V-k$.
+\end{methodbox}
+
+\begin{example*}[Polynomials in $\PP_3(\RR)$ with $p(0)=p(1)$]
+  Let $S\colon\PP_3(\RR)\to\RR$, $S(p)=p(1)-p(0)$. $S$ is linear and $S(x)=1$, so $S$ is surjective. Hence $\dim\{p:p(0)=p(1)\}=\dim\nul S=4-1=3$; a basis is $1,\ x^2-x,\ x^3-x$.
+\end{example*}
+
+\revisit $\nul D=\spn(1)$ (the constants) and $\range D=\PP_3(\RR)$, of dimensions $1$ and $4$. Their sum is $5=\dim\PP_4(\RR)$ by \ilink{prop-24}{Prop.~24}, which holds for every linear map on a finite-dimensional space. A linear map $\RR^5\to\RR^2$ is never injective: by \ilink{prop-25}{Prop.~25}(b), its null space has dimension at least $5-2=3$.
 
 \subsection{Matrices, matrix multiplication, and column--row factorization (Notes Ch.~6, LADR 3C)}
 
 \begin{qbox}
-  Once bases $B=(v_1,\dots,v_n)$ of $V$ and $C=(w_1,\dots,w_m)$ of $W$ are fixed, how do we encode any linear map $T\in\LL(V,W)$ as an $m\times n$ matrix $\MM(T)$, why is matrix multiplication defined so that $\MM(ST)=\MM(S)\MM(T)$, and why must the column rank of any matrix equal its row rank?
+  Let $T\colon\PP_3(\CC)\to\CC^4$, $T(p)=(p(1),p(i),p(-1),p(-i))$. Record $T$ as a $4\times4$ array of numbers, and use the array to compute $T(1+2x+x^2)$. When two maps are composed, what happens to their arrays?
 \end{qbox}
 
 \begin{definition*}[Def.~16--20 / LADR 3.29, 3.31, 3.41, 3.73, 3.76: Matrix $\MM(T)$, coordinates $\MM(v)$, and product $AB$]\target{def-16}\target{def-17}\target{def-18}\target{def-19}\target{def-20}
   Let $B=(v_1,\dots,v_n)$ be a basis of $V$ and $C=(w_1,\dots,w_m)$ be a basis of $W$.
   \begin{itemize}
-    \ii \textbf{Matrix of a linear map (Def.~16, 17 / LADR 3.31):} For $T\in\LL(V,W)$, the \vocab{matrix of $T$} with respect to the bases $B$ and $C$ is the $m\times n$ matrix $\MM(T)=\MM(T,B,C)=(a_{ij})\in\FF^{m,n}$ whose $j$-th column consists of the scalars $a_{1j},\dots,a_{mj}$ needed to write $Tv_j$ in terms of the basis $C$:
+    \ii \textbf{Matrices (Def.~16):} an $m\times n$ \vocab{matrix} is a rectangular array $A=(a_{ij})$ of entries in $\FF$ with $m$ rows and $n$ columns. The set $\FF^{m,n}$ of such matrices is a vector space with entrywise addition and scalar multiplication.
+    \ii \textbf{Matrix of a linear map (Def.~17 / LADR 3.31):} For $T\in\LL(V,W)$, the \vocab{matrix of $T$} with respect to $B$ and $C$ is the $m\times n$ matrix $\MM(T)=\MM(T,B,C)=(a_{ij})$ whose $j$-th column consists of the scalars needed to write $Tv_j$ in terms of $C$:
     \[
       Tv_j = a_{1j}w_1 + a_{2j}w_2 + \dots + a_{mj}w_m \qquad\text{for each }j=1,\dots,n.
     \]
-    \ii \textbf{Coordinate vector and matrix--vector product (Def.~18, 19 / LADR 3.73, 3.76):} For $v=\lambda_1v_1+\dots+\lambda_nv_n\in V$, the \vocab{matrix of $v$} (or coordinate column) is the $n\times 1$ column $\MM(v)=(\lambda_1,\dots,\lambda_n)^{\mathsf T}\in\FF^{n,1}$, and matrix--vector multiplication is defined so that $\MM(Tv)=\MM(T)\MM(v)$, i.e.\ $(Ax)_i=\sum_{j=1}^n a_{ij}\lambda_j$.
-    \ii \textbf{Matrix multiplication (Def.~20 / LADR 3.41):} If $A=(a_{ij})$ is an $m\times n$ matrix and $M=(m_{jk})$ is an $n\times p$ matrix, then their \vocab{product} $AM$ is the $m\times p$ matrix whose $(i,k)$-entry is
+    \ii \textbf{Coordinates (Def.~18 / LADR 3.73):} For $v=\lambda_1v_1+\dots+\lambda_nv_n\in V$, the \vocab{coordinate column} of $v$ is $\MM(v)=(\lambda_1,\dots,\lambda_n)^{\mathsf T}\in\FF^{n,1}$.
+    \ii \textbf{Matrix times column (Def.~19 / LADR 3.76):} $(Ax)_i=\sum_{j=1}^n a_{ij}x_j$. It is defined so that $\MM(Tv)=\MM(T)\MM(v)$.
+    \ii \textbf{Matrix multiplication (Def.~20 / LADR 3.41):} If $A=(a_{ij})$ is $m\times n$ and $M=(m_{jk})$ is $n\times p$, then $AM$ is the $m\times p$ matrix with entries
     \[
       (AM)_{ik} = \sum_{j=1}^n a_{ij}m_{jk},
     \]
-    engineered so that for any $T\in\LL(U,V)$ and $S\in\LL(V,W)$, $\MM(ST) = \MM(S)\MM(T)$ (LADR 3.43).
+    defined so that $\MM(ST) = \MM(S)\MM(T)$ (LADR 3.43).
   \end{itemize}
 \end{definition*}
 
+\begin{example*}[Matrix arithmetic in $\CC^{2,3}$ (Notes Ex.~26)]
+  \[
+    \begin{pmatrix}1+i&3+2i&4\\5&i&2+i\end{pmatrix}+\begin{pmatrix}4-2i&5&1\\3&2&i\end{pmatrix}=\begin{pmatrix}5-i&8+2i&5\\8&2+i&2+2i\end{pmatrix},
+  \]
+  \[
+    (1+i)\begin{pmatrix}1+i&3+2i&4\\5&i&2+i\end{pmatrix}=\begin{pmatrix}2i&1+5i&4+4i\\5+5i&-1+i&1+3i\end{pmatrix}.
+  \]
+\end{example*}
+
+\begin{example*}[The standard basis of $\FF^{2,2}$ (Notes Ex.~27)]
+  The matrices $E_{i,j}$ with $1$ in row $i$, column $j$ and $0$ elsewhere form a basis of $\FF^{m,n}$:
+  \[
+    E_{1,1}=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad E_{1,2}=\begin{pmatrix}0&1\\0&0\end{pmatrix},\quad E_{2,1}=\begin{pmatrix}0&0\\1&0\end{pmatrix},\quad E_{2,2}=\begin{pmatrix}0&0\\0&1\end{pmatrix}.
+  \]
+  A matrix is $\sum a_{ij}E_{i,j}$ with unique coefficients, its entries. So $\dim\FF^{m,n}=mn$.
+\end{example*}
+
+\begin{methodbox}{How to compute the matrix of a linear map}
+  \begin{steps}
+    \ii Apply $T$ to the $j$-th domain basis vector $v_j$.
+    \ii Write $Tv_j$ in the codomain basis $C$. For a standard basis this is reading off coordinates; otherwise solve for the coefficients.
+    \ii Put these coefficients in column $j$. Repeat for $j=1,\dots,n$.
+  \end{steps}
+  Edge cases: the matrix of $T\colon V\to W$ has $\dim W$ rows and $\dim V$ columns; the order of the basis vectors matters (reordering $B$ permutes columns, reordering $C$ permutes rows); the same map has different matrices in different bases.
+\end{methodbox}
+
+\begin{example*}[Matrices of $P$, $R_\theta$ and $N$ in the standard basis]
+  $P(e_1)=0$, $P(e_2)=e_2$; $R_\theta(e_1)=\cos\theta\,e_1+\sin\theta\,e_2$, $R_\theta(e_2)=-\sin\theta\,e_1+\cos\theta\,e_2$; $N(e_1)=0$, $N(e_2)=e_1$. So
+  \[
+    \MM(P)=\begin{pmatrix}0&0\\0&1\end{pmatrix},\qquad \MM(R_\theta)=\begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix},\qquad \MM(N)=\begin{pmatrix}0&1\\0&0\end{pmatrix}.
+  \]
+  The columns of $\MM(N)$ show the motion $e_2\mapsto e_1\mapsto0$ directly.
+\end{example*}
+
 \begin{example*}[Ex.~28: Constructing $\MM(T)$ column by column]\target{ex-28}
-  Let $T\colon\PP_3(\CC)\to\CC^4$ be given by $T(p)=(p(1),p(i),p(-1),p(-i))$, with respect to the standard bases $B=(1,x,x^2,x^3)$ of $\PP_3(\CC)$ and $C=(e_1,e_2,e_3,e_4)$ of $\CC^4$. Evaluating $T$ on each basis polynomial in $B$ gives $T(1)=(1,1,1,1)$, $T(x)=(1,i,-1,-i)$, $T(x^2)=(1,-1,1,-1)$, and $T(x^3)=(1,-i,-1,i)$, which form the four columns of $\MM(T)$:
+  Let $T\colon\PP_3(\CC)\to\CC^4$, $T(p)=(p(1),p(i),p(-1),p(-i))$, with the standard bases $B=(1,x,x^2,x^3)$ and $C=(e_1,e_2,e_3,e_4)$. Evaluating, $T(1)=(1,1,1,1)$, $T(x)=(1,i,-1,-i)$, $T(x^2)=(1,-1,1,-1)$ and $T(x^3)=(1,-i,-1,i)$. These are the four columns:
   \[
     \MM(T) = \begin{pmatrix}
       1 & 1 & 1 & 1 \\
@@ -213,33 +395,154 @@
   \]
 \end{example*}
 
-\begin{proposition*}[Prop.~26, 27 / LADR 3.35--3.43, 3.46--3.51: Properties of $\MM(T)$ and four views of matrix multiplication]\target{prop-26}\target{prop-27}
-  \begin{enumerate}[(a)]
-    \ii \textbf{Linearity and bijectivity of $\MM$ (Prop.~26 / LADR 3.35--3.40):} With bases $B$ of $V$ ($\dim V=n$) and $C$ of $W$ ($\dim W=m$) fixed, $T\mapsto\MM(T)$ is a linear bijection from $\LL(V,W)$ onto $\FF^{m,n}$ ($\MM(S+T)=\MM(S)+\MM(T)$ and $\MM(\lambda T)=\lambda\MM(T)$), so
-    \[
-      \dim\LL(V,W) = (\dim V)(\dim W) = mn.
-    \]
-    \ii \textbf{Algebra of matrix multiplication and four views of $AM$ (Prop.~27 / LADR 3.46--3.51):} Matrix multiplication is associative ($(AM)N=A(MN)$), distributive, and satisfies $I_mA=A=AI_n$. Moreover, for $A\in\FF^{m,n}$ and $M\in\FF^{n,p}$:
-    \begin{enumerate}[(1)]
-      \ii \emph{Column-by-column (LADR 3.47):} Column~$k$ of $AM$ equals $A$ times column~$k$ of $M$: $(AM)_{\cdot,k}=A\,M_{\cdot,k}$.
-      \ii \emph{Linear combination of columns (LADR 3.50):} Column~$k$ of $AM$ is a linear combination of the columns of $A$ with weights from column~$k$ of $M$.
-      \ii \emph{Row-by-row (LADR 3.48):} Row~$i$ of $AM$ equals row~$i$ of $A$ times $M$: $(AM)_{i,\cdot}=A_{i,\cdot}\,M$.
-      \ii \emph{Linear combination of rows (LADR 3.51):} Row~$i$ of $AM$ is a linear combination of the rows of $M$ with weights from row~$i$ of $A$.
-    \end{enumerate}
-  \end{enumerate}
+\begin{example*}[A non-standard basis can make the matrix simpler]
+  Let $T(x,y)=(2x+y,\ x+2y)$ on $\RR^2$. In the standard basis, $\MM(T)=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$. In the basis $B=C=((1,1),(1,-1))$: $T(1,1)=(3,3)=3\cdot(1,1)+0\cdot(1,-1)$ and $T(1,-1)=(1,-1)=0\cdot(1,1)+1\cdot(1,-1)$, so
+  \[
+    \MM(T,B,B)=\begin{pmatrix}3&0\\0&1\end{pmatrix}.
+  \]
+\end{example*}
+
+\begin{proposition*}[Prop.~26 / LADR 3.35--3.40: $T\mapsto\MM(T)$ is a linear bijection]\target{prop-26}
+  With bases $B$ of $V$ ($\dim V=n$) and $C$ of $W$ ($\dim W=m$) fixed, $T\mapsto\MM(T)$ is a bijection from $\LL(V,W)$ onto $\FF^{m,n}$ with $\MM(S+T)=\MM(S)+\MM(T)$ and $\MM(\lambda T)=\lambda\MM(T)$. Consequently
+  \[
+    \dim\LL(V,W) = (\dim V)(\dim W) = mn.
+  \]
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii For (a), linearity of $\MM$ follows from $(S+T)v_j=Sv_j+Tv_j$ and $(\lambda T)v_j=\lambda(Tv_j)$, and bijectivity follows from \ilink{prop-21}{Prop.~21} (each matrix $A\in\FF^{m,n}$ uniquely specifies the images $Tv_j=\sum_{i=1}^m a_{ij}w_i$). Since $\FF^{m,n}$ has basis $\{E_{i,j}\}$ of size $mn$, $\dim\LL(V,W)=mn$.
-    \ii For (b), if $T\in\LL(U,V)$ has matrix $M=(m_{jk})$ and $S\in\LL(V,W)$ has matrix $A=(a_{ij})$, then $(ST)u_k=S\big(\sum_{j=1}^n m_{jk}v_j\big)=\sum_{j=1}^n m_{jk}Sv_j=\sum_{i=1}^m\big(\sum_{j=1}^n a_{ij}m_{jk}\big)w_i$, proving $\MM(ST)=\MM(S)\MM(T)$ and properties (1)--(4).
+    \ii \textbf{Bijection.} By \ilink{prop-21}{Prop.~21}, $T$ is determined by the list $Tv_1,\dots,Tv_n$, and every list of vectors in $W$ arises from exactly one $T$. Each $Tv_j$ is determined by its coordinate column in $C$ \ilink{W2}{(W2)}, and every column arises. Placing the columns side by side matches maps and matrices one to one.
+    \ii \textbf{Linearity.} $(S+T)v_j=Sv_j+Tv_j$, and the coordinates of a sum are the sums of the coordinates; so column $j$ of $\MM(S+T)$ is the sum of the columns $j$ of $\MM(S)$ and $\MM(T)$. Scalar multiples are the same.
+    \ii \textbf{Dimension.} Let $E'_{i,j}\in\LL(V,W)$ be the map with matrix $E_{i,j}$. For any $T$ with matrix $(a_{ij})$, the map $\sum a_{ij}E'_{i,j}$ has matrix $\sum a_{ij}E_{i,j}=\MM(T)$ by Step~2, so it equals $T$ by Step~1: the $E'_{i,j}$ span. If $\sum c_{ij}E'_{i,j}=0$, its matrix $\sum c_{ij}E_{i,j}$ is $0$, so all $c_{ij}=0$: they are independent. So $\dim\LL(V,W)=mn$.
   \end{steps}
 \end{proof}
 
-\needspace{10\baselineskip}\textbf{Column--row factorization $A=CR$ and equality of column rank and row rank (LADR 3.52--3.58).} For any $A\in\FF^{m,n}$, the \vocab{column rank} of $A$ is the dimension of the span of the columns of $A$ in $\FF^{m,1}$, and the \vocab{row rank} of $A$ is the dimension of the span of the rows of $A$ in $\FF^{1,n}$ (LADR 3.52). These two dimensions are always equal, even when $m\ne n$.
-\begin{itemize}
-  \ii \textbf{Column--row factorization $A=CR$ (LADR 3.56):} Suppose $A$ is an $m\times n$ matrix with column rank $c\ge 1$. Thin the $n$ columns of $A$ to a basis of $c$ columns (\xlink{math110}{2026-09-07-bases-dimension}{prop-9}{Prop.~9}) and stack those $c$ basis columns to form an $m\times c$ matrix $C$. Because every column $k$ of $A$ is a linear combination of the $c$ columns of $C$, put the $c$ weights for column~$k$ of $A$ as column~$k$ of a $c\times n$ matrix $R$. By LADR 3.50 (view (2) of matrix multiplication), $A=CR$.
-  \ii \textbf{Column rank equals row rank (LADR 3.57, 3.58):} Reading the equation $A=CR$ row by row using LADR 3.51 (view (4) of matrix multiplication), every row of $A=CR$ is a linear combination of the $c$ rows of the $c\times n$ matrix $R$. Therefore the $m$ rows of $A$ are spanned by the $c$ rows of $R$, which forces $\text{row rank}(A)\le c=\text{column rank}(A)$. Applying the same inequality to the transpose $A^{\mathsf T}$ (whose columns are the rows of $A$, LADR 3.53) gives $\text{column rank}(A)=\text{row rank}(A^{\mathsf T})\le\text{column rank}(A^{\mathsf T})=\text{row rank}(A)$. Thus $\text{column rank}(A)=\text{row rank}(A)$, called simply the \vocab{rank} of $A$ ($\operatorname{rank}A$).
-\end{itemize}
+\begin{methodbox}{How to find the coordinates of a vector in a basis}
+  \begin{steps}
+    \ii Write $v=\lambda_1v_1+\dots+\lambda_nv_n$ with unknown $\lambda$'s.
+    \ii Compare coordinates or coefficients and solve the linear system. The solution is unique because $v_1,\dots,v_n$ is a basis.
+    \ii $\MM(v)$ is the column $(\lambda_1,\dots,\lambda_n)^{\mathsf T}$. Check by substituting back.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[Coordinates of $1+2x+3x^2$ in two bases (Notes Ex.~29)]
+  In the basis $1,x,x^2$ the coordinates are $(1,2,3)^{\mathsf T}$. In the basis $1+x,\ 1+x^2,\ x+x^2$, write $1+2x+3x^2=a(1+x)+b(1+x^2)+c(x+x^2)$: comparing coefficients, $a+b=1$, $a+c=2$, $b+c=3$. Adding all three gives $a+b+c=3$, so $c=2$, $b=1$, $a=0$. The coordinates are $(0,1,2)^{\mathsf T}$: indeed $0\cdot(1+x)+1\cdot(1+x^2)+2(x+x^2)=1+2x+3x^2$.
+\end{example*}
+
+\begin{proposition*}[Matrix times coordinates gives coordinates of the image (Def.~19)]\target{name-matrix-times-coordinates}
+  For $T\in\LL(V,W)$ and $v\in V$, $\MM(Tv)=\MM(T)\MM(v)$.
+\end{proposition*}
+\begin{proof}
+  Let $v=\sum_j\lambda_jv_j$. By linearity and the definition of $\MM(T)$,
+  \[
+    Tv=\sum_{j=1}^n\lambda_jTv_j=\sum_{j=1}^n\lambda_j\sum_{i=1}^ma_{ij}w_i=\sum_{i=1}^m\Bigl(\sum_{j=1}^na_{ij}\lambda_j\Bigr)w_i .
+  \]
+  So the $i$-th coordinate of $Tv$ is $\sum_ja_{ij}\lambda_j$, which is the $i$-th entry of $\MM(T)\MM(v)$. This depends only on the matrix and the column, not on which $T$, $V$, $W$ and bases produced them.
+\end{proof}
+
+\begin{methodbox}{How to multiply matrices and use them to evaluate a map}
+  \begin{steps}
+    \ii $(AM)_{ik}$ is row $i$ of $A$ times column $k$ of $M$: multiply entry by entry and add. The product exists only when the number of columns of $A$ equals the number of rows of $M$.
+    \ii To compute $Tv$: find $\MM(v)$, multiply by $\MM(T)$, and read the result as coordinates in $C$.
+    \ii For a composition $ST$, multiply in the same order: $\MM(ST)=\MM(S)\MM(T)$ ($T$ acts first, but its matrix is written on the right).
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[A matrix times a column (Notes Ex.~30)]
+  \[
+    \begin{pmatrix}1&2&3\\2&3&4\end{pmatrix}\begin{pmatrix}5\\7\\9\end{pmatrix}=\begin{pmatrix}1\cdot5+2\cdot7+3\cdot9\\2\cdot5+3\cdot7+4\cdot9\end{pmatrix}=\begin{pmatrix}46\\67\end{pmatrix}.
+  \]
+\end{example*}
+
+\begin{example*}[Computing $T(1+2x+x^2)$ with the matrix of Ex.~28 (Notes Ex.~31)]
+  $\MM(1+2x+x^2)=(1,2,1,0)^{\mathsf T}$, and
+  \[
+    \begin{pmatrix}1&1&1&1\\1&i&-1&-i\\1&-1&1&-1\\1&-i&-1&i\end{pmatrix}\begin{pmatrix}1\\2\\1\\0\end{pmatrix}=\begin{pmatrix}4\\2i\\0\\-2i\end{pmatrix}.
+  \]
+  Check directly: $p(1)=4$, $p(i)=1+2i-1=2i$, $p(-1)=0$, $p(-i)=-2i$.
+\end{example*}
+
+\begin{proposition*}[Prop.~27 / LADR 3.43, 3.46--3.51: Matrix of a composition; algebra of matrix multiplication; four views of $AM$]\target{prop-27}
+  \begin{enumerate}[(a)]
+    \ii For $T\in\LL(U,V)$ and $S\in\LL(V,W)$ (with bases fixed), $\MM(ST)=\MM(S)\MM(T)$.
+    \ii Matrix multiplication is associative, $(AM)N=A(MN)$, and distributive, $A(M+N)=AM+AN$ and $(A+M)N=AN+MN$, and the identity matrix $I$ (ones on the diagonal, zeros elsewhere) satisfies $AI=A$ and $IM=M$.
+    \ii For $A\in\FF^{m,n}$ and $M\in\FF^{n,p}$:
+    \begin{enumerate}[(1)]
+      \ii column $k$ of $AM$ equals $A$ times column $k$ of $M$ (LADR 3.47);
+      \ii column $k$ of $AM$ is a linear combination of the columns of $A$ with weights from column $k$ of $M$ (LADR 3.50);
+      \ii row $i$ of $AM$ equals row $i$ of $A$ times $M$ (LADR 3.48);
+      \ii row $i$ of $AM$ is a linear combination of the rows of $M$ with weights from row $i$ of $A$ (LADR 3.51).
+    \end{enumerate}
+  \end{enumerate}
+\end{proposition*}
+\begin{ideabox}
+  Rule (b) is hard to check from the formula of \ilink{def-20}{Def.~20} but immediate for linear maps, so the proof turns matrices into maps: every matrix is the matrix of the map $x\mapsto Ax$ between coordinate spaces, and composition of maps is associative.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a).} Let $U$ have basis $u_1,\dots,u_p$, and let $\MM(T)=(m_{jk})$ and $\MM(S)=(a_{ij})$. Then
+    \[
+      (ST)u_k=S\Bigl(\sum_{j=1}^n m_{jk}v_j\Bigr)=\sum_{j=1}^n m_{jk}Sv_j=\sum_{i=1}^m\Bigl(\sum_{j=1}^n a_{ij}m_{jk}\Bigr)w_i,
+    \]
+    so column $k$ of $\MM(ST)$ has entries $\sum_ja_{ij}m_{jk}=(AM)_{ik}$.
+    \ii \textbf{(b).} Let $L_A\colon\FF^{n}\to\FF^m$, $L_A(x)=Ax$; its matrix in the standard bases is $A$, since $Ae_j$ is column $j$ of $A$. By (a), $AM=\MM(L_AL_M)$. Then, because composition of functions is associative,
+    \[
+      (AM)N=\MM((L_AL_M)L_N)=\MM(L_A(L_ML_N))=A(MN).
+    \] Distributivity follows the same way from \ilink{prop-18}{Prop.~18--19}(b) and \ilink{prop-26}{Prop.~26}; $I=\MM(\text{identity})$ gives $AI=A=IA$.
+    \Needspace{8\baselineskip}\ii \textbf{(c).} Each view is the formula of Def.~20, $(AM)_{ik}=\sum_ja_{ij}m_{jk}$ read differently. For fixed $k$, the entries of column $k$ are $\sum_ja_{ij}m_{jk}$, which is $A$ times column $k$ of $M$, view (1), and also $\sum_jm_{jk}\cdot(\text{column }j\text{ of }A)$, view (2). For fixed $i$, row $i$ has entries $\sum_ja_{ij}m_{jk}$, which is row $i$ of $A$ times $M$, view (3), and also $\sum_ja_{ij}\cdot(\text{row }j\text{ of }M)$, view (4).
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Differentiating after taking an antiderivative (Notes Ex.~32)]
+  Let $T=D\colon\PP_3(\RR)\to\PP_2(\RR)$ and let $S\colon\PP_2(\RR)\to\PP_3(\RR)$ be the linear map with $S(x^k)=x^{k+1}/(k+1)$, which exists by \ilink{prop-21}{Prop.~21}; it is the antiderivative with $S(p)(0)=0$. In the standard bases $D(x^k)=kx^{k-1}$, so
+  \[
+    \MM(S)\MM(D)=\begin{pmatrix}0&0&0\\1&0&0\\0&\tfrac12&0\\0&0&\tfrac13\end{pmatrix}\begin{pmatrix}0&1&0&0\\0&0&2&0\\0&0&0&3\end{pmatrix}=\begin{pmatrix}0&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&1\end{pmatrix}=\MM(SD).
+  \]
+  $SD$ sends $1\mapsto0$ and fixes $x,x^2,x^3$: differentiating loses the constant term. In the other order, $\MM(D)\MM(S)=I_3$, since $DS=I$ on $\PP_2(\RR)$.
+\end{example*}
+
+\textbf{Matrix-vector multiplication is a special case.} If $T\colon\FF\to V$ is the linear map with $T(1)=v$ and $\FF$ has the basis $1$, then $\MM(T)=\MM(v)$, so $\MM(S)\MM(v)=\MM(ST)=\MM(Sv)$.
+
+\textbf{Permutation matrices.} For a permutation $\sigma$ of $\{1,\dots,n\}$, the operator $S_\sigma e_j=e_{\sigma(j)}$ on $\FF^n$ has a matrix with exactly one $1$ in each row and each column and $0$ elsewhere, a \vocab{permutation matrix}. It rearranges the standard basis, and $S_\sigma^k=S_{\sigma^k}$ because applying $S_\sigma$ $k$ times sends $e_j$ to $e_{\sigma^k(j)}$. For example, for $\sigma\colon1\mapsto2\mapsto3\mapsto1$,
+\[
+  S_\sigma=\begin{pmatrix}0&0&1\\1&0&0\\0&1&0\end{pmatrix},\qquad S_\sigma^3=I.
+\]
+
+\textbf{Column--row factorization $A=CR$ and column rank equals row rank (LADR 3.52--3.58).} The \vocab{column rank} of $A\in\FF^{m,n}$ is the dimension of the span of its columns in $\FF^{m,1}$, and the \vocab{row rank} is the dimension of the span of its rows in $\FF^{1,n}$ (LADR 3.52). The \vocab{transpose} $A^{\mathsf T}$ has $(A^{\mathsf T})_{ij}=a_{ji}$, so its columns are the rows of $A$ (LADR 3.53).
+
+\begin{proposition*}[LADR 3.56--3.58: Column--row factorization; column rank equals row rank]\target{name-column-rank-equals-row-rank}
+  If $A\in\FF^{m,n}$ has column rank $c\ge1$, then $A=CR$ for an $m\times c$ matrix $C$ and a $c\times n$ matrix $R$. Consequently the column rank of $A$ equals its row rank, for every $A$, even when $m\ne n$. This common number is the \vocab{rank} of $A$.
+\end{proposition*}
+\begin{ideabox}
+  View (2) of \ilink{prop-27}{Prop.~27} says that a product $CR$ has columns that are combinations of the columns of $C$, and view (4) says that its rows are combinations of the rows of $R$. So if we can write $A=CR$ with $C$ having only $c$ columns, then the rows of $A$ are spanned by just $c$ rows. Such a factorization exists because the columns of $A$ are spanned by $c$ of them.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Building $C$.} Reduce the columns of $A$ to a basis (\xlink{math110}{2026-09-07-bases-dimension}{prop-9}{Week~2, Prop.~9}); it has $c$ columns. Let $C$ be the $m\times c$ matrix with these columns.
+    \ii \textbf{Building $R$.} Each column $k$ of $A$ is a combination of the columns of $C$; put the $c$ weights as column $k$ of a $c\times n$ matrix $R$. By view (2), column $k$ of $CR$ is that combination, which is column $k$ of $A$. So $A=CR$.
+    \ii \textbf{Row rank $\le$ column rank.} By view (4), each row of $A=CR$ is a combination of the $c$ rows of $R$. So the rows of $A$ lie in a space spanned by $c$ vectors, and the row rank is at most $c$ (\xlink{math110}{2026-09-07-bases-dimension}{prop-10}{Week~2, Prop.~10}). If $c=0$, $A=0$ and both ranks are $0$.
+    \ii \textbf{Equality.} Apply Step~3 to $A^{\mathsf T}$, whose columns are the rows of $A$ and whose rows are the columns of $A$: column rank of $A$ $=$ row rank of $A^{\mathsf T}$ $\le$ column rank of $A^{\mathsf T}$ $=$ row rank of $A$. Together with Step~3, the two ranks are equal.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to compute a column--row factorization}
+  \begin{steps}
+    \ii Go through the columns of $A$ left to right and keep each column that is not a combination of the columns already kept. The kept columns are the columns of $C$.
+    \ii For each column of $A$, write it as a combination of the kept columns; the weights form the corresponding column of $R$. A kept column gets a column of $R$ with a single $1$.
+    \ii Check by multiplying $CR$.
+  \end{steps}
+\end{methodbox}
+
+\begin{example*}[A rank-$2$ factorization of a $3\times3$ matrix]
+  Let
+  \[
+    A=\begin{pmatrix}1&2&0\\2&4&1\\3&6&1\end{pmatrix}.
+  \]
+  Column~1 is kept. Column~2 is $2\times$column~1, so it is not kept. Column~3, $(0,1,1)^{\mathsf T}$, is not a multiple of column~1 (its first entry is $0$ but it is nonzero), so it is kept. Thus
+  \[
+    A=CR=\begin{pmatrix}1&0\\2&1\\3&1\end{pmatrix}\begin{pmatrix}1&2&0\\0&0&1\end{pmatrix}.
+  \]
+  The rows of $A$ are $1\cdot r_1$, $2r_1+r_2$ and $3r_1+r_2$, where $r_1=(1,2,0)$ and $r_2=(0,0,1)$ are the rows of $R$: row rank $2$, column rank $2$.
+\end{example*}
 
 \begin{fig}
 \begin{tikzpicture}[scale=0.96]
@@ -261,8 +564,8 @@
   % Matrix C (m x c) with blue column wash and amber row i weights
   \InkRegion[inkblue]{(3.85,0.10) rectangle (4.81,1.95)}
   \InkRegion[inkamber]{(3.85,0.865) rectangle (4.81,1.185)}
-  \PacketInkPath[black!22,line width=0.32pt]{(4.17,0.10) -- (4.17,1.95)}
-  \PacketInkPath[black!22,line width=0.32pt]{(4.49,0.10) -- (4.49,1.95)}
+  \PacketInkPath[black!60,line width=0.4pt]{(4.17,0.10) -- (4.17,1.95)}
+  \PacketInkPath[black!60,line width=0.4pt]{(4.49,0.10) -- (4.49,1.95)}
   \PacketInkPath[inkamber!85!black,line width=0.45pt]{(3.85,0.865) -- (4.81,0.865)}
   \PacketInkPath[inkamber!85!black,line width=0.45pt]{(3.85,1.185) -- (4.81,1.185)}
   \PacketInkPath[black!85,line width=0.5pt]{(3.85,0.10) rectangle (4.81,1.95)}
@@ -271,8 +574,8 @@
 
   % Matrix R (c x n) with c rows r_1..r_c labeled on the right
   \InkRegion[inkblue]{(5.35,0.545) rectangle (7.90,1.505)}
-  \PacketInkPath[black!28,line width=0.35pt]{(5.35,0.865) -- (7.90,0.865)}
-  \PacketInkPath[black!28,line width=0.35pt]{(5.35,1.185) -- (7.90,1.185)}
+  \PacketInkPath[black!60,line width=0.4pt]{(5.35,0.865) -- (7.90,0.865)}
+  \PacketInkPath[black!60,line width=0.4pt]{(5.35,1.185) -- (7.90,1.185)}
   \PacketInkPath[black!85,line width=0.5pt]{(5.35,0.545) rectangle (7.90,1.505)}
   \node[font=\small,inner sep=1.8pt] at (6.625,1.025) {\InkLabel{$R$}};
   \node[font=\scriptsize,above=2.5pt] at (6.625,1.505) {\InkLabel{$n$}};
@@ -284,27 +587,85 @@
 
   \node[font=\scriptsize] at (4.20,-0.38) {\InkLabel[inkamber]{row $i$ of $A$} $= c_{i1}$\,\InkLabel[inkblue]{$r_1$} $+\dots+c_{ic}$\,\InkLabel[inkblue]{$r_c$} $\in\spn(\text{rows of }R)$};
 \end{tikzpicture}
-\figcap{Column--row factorization $A=CR$ (LADR 3.56--3.57): row~$i$ of $A$ combines the $c$ rows $r_1,\dots,r_c$ of $R$ with weights from row~$i$ of $C$, so $\operatorname{row\ rank}(A)\le c=\operatorname{col\ rank}(A)$.}
+\figcap{In $A=CR$, row~$i$ of $A$ is a combination of the $c$ rows of $R$ with weights from row~$i$ of $C$; so the row rank of $A$ is at most $c$, its column rank.}
 \end{fig}
 
-\begin{example*}[Ex.~33: Stochastic matrices and Markov chains (Notes Ch.~6.3)]\target{ex-33}
-  A vector $p\in\RR^n$ with $p_j\ge 0$ and $\sum_{j=1}^n p_j=1$ is a \vocab{probability vector}, and a matrix $P\in\RR^{n,n}$ with $p_{ij}\ge 0$ whose \emph{columns} each sum to $1$ is a \vocab{stochastic matrix} (so $Pp$ is again a probability vector). For
+\textbf{Linear systems.} A system of $m$ equations in $n$ unknowns over $\FF$ is $Ax=b$ with $A\in\FF^{m,n}$, $b\in\FF^m$; it is \vocab{homogeneous} when $b=0$. Its solutions are the vectors $x$ with $L_A(x)=b$, where $L_A(x)=Ax$; the homogeneous solutions form $\nul A=\nul L_A$.
+
+\begin{proposition*}[Solution set of a linear system]\target{name-solution-set-of-a-linear-system}
+  If $Ax=b$ has a solution $p$, then its solution set is $\{p+h: h\in\nul A\}$. Over a finite field with $q$ elements, a consistent system therefore has exactly $q^{\dim\nul A}=q^{\,n-\operatorname{rank}A}$ solutions.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii If $h\in\nul A$, then $A(p+h)=Ap+Ah=b+0=b$, so $p+h$ is a solution.
+    \ii If $Ax=b$, then $A(x-p)=b-b=0$, so $h=x-p\in\nul A$ and $x=p+h$.
+    \ii The map $h\mapsto p+h$ is a bijection from $\nul A$ to the solution set (its inverse is $x\mapsto x-p$). A subspace of dimension $d$ over a field with $q$ elements has a basis $b_1,\dots,b_d$, and its elements $\sum c_ib_i$ correspond one to one to the $q^d$ choices of coefficients \ilink{W2}{(W2)}. Finally $\dim\nul A=n-\operatorname{rank}A$ by \ilink{prop-24}{Prop.~24}, since $\range L_A$ is the span of the columns of $A$.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to solve a linear system over any field (elimination)}
+  \begin{steps}
+    \ii Use one equation to express one unknown (a \vocab{pivot}) in terms of the others, dividing by its nonzero coefficient.
+    \ii Substitute into the remaining equations, and repeat with a new unknown. Operations allowed: add a multiple of one equation to another, multiply an equation by a nonzero scalar, swap equations. Each operation can be undone, so the solution set does not change.
+    \ii When no equations remain, the unknowns not used as pivots are free. Write every solution as a particular solution plus a combination of null-space vectors (\ilink{name-solution-set-of-a-linear-system}{solution set of a linear system}).
+    \ii If an equation becomes $0=c$ with $c\ne0$, the system has no solution.
+  \end{steps}
+  Edge cases over $\FF_2$: $-1=1$ and $2=0$, so subtracting is adding, and $x+x=0$; each free unknown takes $2$ values, so a consistent system has $2^{(\text{number of free unknowns})}$ solutions.
+\end{methodbox}
+
+\begin{example*}[A system over $\FF_2$]
+  Solve $x+y+z=1$, $y+z=0$ over $\FF_2$. The second equation gives $y=-z=z$. Then $x=1-y-z=1+2z=1$. With $z$ free,
+  \[
+    (x,y,z)=(1,0,0)+z(0,1,1),\qquad z\in\{0,1\},
+  \]
+  so the solutions are $(1,0,0)$ and $(1,1,1)$: $2^{3-2}=2$ of them. Check: $1+1+1=3=1$ in $\FF_2$.
+\end{example*}
+
+\begin{example*}[An inconsistent system]
+  Over any field, $x+y=1$, $2x+2y=3$ has no solution: subtracting twice the first equation from the second gives $0=3-2=1$, which is false. Over $\FF_2$, where $2=0$ and $3=1$, the second equation reads $0=1$ directly.
+\end{example*}
+
+\textbf{Stochastic matrices and Markov chains (Notes Ch.~6).} A vector $p\in\RR^n$ with $p_j\ge 0$ and $\sum_jp_j=1$ is a \vocab{probability vector} ($p_j$ is the probability of being in state $j$). A matrix $P\in\RR^{n,n}$ with $p_{ij}\ge 0$ whose \emph{columns} each sum to $1$ is a (column-)\vocab{stochastic matrix}: column $j$ is the distribution of the next state given that the present state is $j$, and the distribution one step later is $Pp$, with $(Pp)_i=\sum_jp_{ij}p_j$ (probability of being in $j$ times the probability of moving from $j$ to $i$, summed over $j$). Probability vectors are columns here; the row convention $\lambda^{\mathsf T}\mapsto\lambda^{\mathsf T}A$ with $A=P^{\mathsf T}$ contains the same information. A permutation matrix is stochastic and describes a deterministic chain.
+
+\begin{proposition*}[A stochastic matrix sends probability vectors to probability vectors]\target{name-stochastic-preserves-probability}
+  If $P$ is stochastic and $p$ is a probability vector, then $Pp$ is a probability vector.
+\end{proposition*}
+\begin{proof}
+  The entries $(Pp)_i=\sum_jp_{ij}p_j$ are sums of products of nonnegative numbers, so they are $\ge0$. Exchanging the order of summation and using that each column sums to $1$,
+  \[
+    \sum_{i=1}^n(Pp)_i=\sum_{j=1}^n\Bigl(\sum_{i=1}^np_{ij}\Bigr)p_j=\sum_{j=1}^np_j=1. \qedhere
+  \]
+\end{proof}
+
+\begin{example*}[Ex.~33: A three-state Markov chain]\target{ex-33}
+  For
   \[
     P = \begin{pmatrix} 1/2 & 1/4 & 0 \\ 1/2 & 1/2 & 1/2 \\ 0 & 1/4 & 1/2 \end{pmatrix}
     \qquad\text{and}\qquad
     p_0 = \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix},
   \]
-  the state distributions $p_k=P^kp_0$ are $p_1=\big(\frac12,\frac12,0\big)^{\mathsf T}$, $p_2=\big(\frac38,\frac12,\frac18\big)^{\mathsf T}$, $p_3=\big(\frac{5}{16},\frac12,\frac{3}{16}\big)^{\mathsf T}$, which converge to the stationary distribution $\pi=\big(\frac14,\frac12,\frac14\big)^{\mathsf T}$ satisfying $P\pi=\pi$.
+  column~1 says that from state $A$ the chain stays in $A$ or moves to $B$, each with probability $\tfrac12$; column~2 says that from $B$ it moves to $A,B,C$ with probabilities $\tfrac14,\tfrac12,\tfrac14$. The distributions $p_k=P^kp_0$ are
+  \[
+    p_1=\Bigl(\tfrac12,\tfrac12,0\Bigr)^{\mathsf T},\qquad p_2=\Bigl(\tfrac38,\tfrac12,\tfrac18\Bigr)^{\mathsf T},\qquad p_3=\Bigl(\tfrac{5}{16},\tfrac12,\tfrac{3}{16}\Bigr)^{\mathsf T},
+  \]
+  which approach $\pi=\big(\frac14,\frac12,\frac14\big)^{\mathsf T}$. Direct multiplication shows $P\pi=\pi$: for example the first entry is $\tfrac12\cdot\tfrac14+\tfrac14\cdot\tfrac12=\tfrac14$. Once the chain has distribution $\pi$, it keeps it.
 \end{example*}
 
+\revisit The columns of $\MM(T)$ are $T(1),T(x),T(x^2),T(x^3)$, giving the matrix of Ex.~28. Multiplying it by the coordinate column $(1,2,1,0)^{\mathsf T}$ of $1+2x+x^2$ gives $T(1+2x+x^2)=(4,2i,0,-2i)$ (\ilink{name-matrix-times-coordinates}{matrix times coordinates}). Composing maps multiplies their matrices, $\MM(ST)=\MM(S)\MM(T)$ (\ilink{prop-27}{Prop.~27}(a)), with the map applied first on the right.
+
 \begin{shortcuts}
-  \ii \textbf{Building $\MM(T,B,C)$ in one rule:} Apply $T$ to the $j$-th domain basis vector $v_j\in B$, expand $Tv_j$ in the codomain basis $C$, and write those coordinates as the $j$-th column of $\MM(T)$.
-  \ii \textbf{Finding the dimension of a subspace defined by $k$ linear constraints:} Express the subspace as $\nul S$ for a linear map $S\colon V\to\FF^k$ whose components are the $k$ linear constraints. If $S$ is surjective ($\range S=\FF^k$), Rank--Nullity immediately gives $\dim(\nul S)=\dim V-k$ (\ilink{prob-HW3-P3}{HW3~P3}).
+  \ii \textbf{Building $\MM(T,B,C)$ in one rule:} column $j$ is the coordinate column of $Tv_j$ in $C$.
+  \ii \textbf{Dimension of a subspace cut out by $k$ conditions:} write it as $\nul S$ for $S\colon V\to\FF^k$; if $S$ is surjective, the dimension is $\dim V-k$ (\ilink{prob-HW3-P3}{HW3~P3}).
+  \ii \textbf{The range is the column span:} for $T$ with matrix $A$, $\range T$ corresponds to the span of the columns of $A$ (view (2) of \ilink{prop-27}{Prop.~27}), so $\operatorname{rank}T=\operatorname{rank}A$.
+  \ii \textbf{Parity:} if $\nul T=\range T$ for an operator on $V$, then $\dim V=2\dim\nul T$ is even.
+  \ii \textbf{Counting solutions over $\FF_q$:} a consistent system with $f$ free unknowns has $q^f$ solutions.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{$\dim V=\dim\nul T+\dim\range T$ does not imply $V=\nul T\oplus\range T$:} Even when $W=V$, the nilpotent operator $N(x,y)=(y,0)$ on $\RR^2$ has $\nul N=\spn(e_1)=\range N$, so $\nul N\cap\range N=\spn(e_1)\ne\{0\}$ and $\nul N+\range N=\spn(e_1)\ne\RR^2$.
-  \ii \textbf{Linear maps preserve linear dependence, but need not preserve linear independence:} Only \emph{injective} linear maps send linearly independent lists to linearly independent lists (\ilink{prob-HW3-P4}{HW3~P4}).
+  \ii \textbf{$\dim V=\dim\nul T+\dim\range T$ does not imply $V=\nul T\oplus\range T$:} for $N(x,y)=(y,0)$ on $\RR^2$, $\nul N=\spn(e_1)=\range N$, so $\nul N\cap\range N=\spn(e_1)\ne\{0\}$ and $\nul N+\range N\ne\RR^2$.
+  \ii \textbf{Linear maps preserve linear dependence, but need not preserve linear independence:} only \emph{injective} linear maps send every linearly independent list to a linearly independent list (\ilink{prob-HW3-P4}{HW3~P4}).
+  \ii \textbf{The matrix depends on the bases:} the same $T$ has matrix $\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ in one basis and $\begin{psmallmatrix}3&0\\0&1\end{psmallmatrix}$ in another.
+  \ii \textbf{Order of multiplication:} $\MM(ST)=\MM(S)\MM(T)$, not $\MM(T)\MM(S)$; for $P$ and $N$, $NP=N$ but $PN=0$.
 \end{trapbox}
 
 \section{Problem set}
@@ -350,7 +711,6 @@
 \begin{prob}\textbf{R4 (Midterm 1 review, Exercise 6).}\ Does there exist a linear map $T\colon\RR^4\to\RR^2$ with $\nul T=\{(x,x,x,x):x\in\RR\}$?
 \end{prob}
 
-\clearpage
 \section*{Hints}
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW3-P1}{HW3 P1.}} \emph{Hint:} apply rank--nullity to the restriction of $T$ to $T^{-1}(U)$.
@@ -366,5 +726,27 @@
 \par\medskip\noindent\textbf{\hyperlink{prob-HW3-P6}{HW3 P6.}} \emph{Hint:} $-1=1$ and $2=0$.
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW3-P7}{HW3 P7 (optional).}} \emph{Hint:} the solutions are one solution plus the null space.
+
+
+\clearpage
+\section{Proofs of the facts used}
+
+\begin{proposition*}[H1: Product rule]\target{fact-H1}
+  If $f,g$ are differentiable at $x$, then so is $fg$, and $(fg)'(x)=f'(x)g(x)+f(x)g'(x)$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Adding and subtracting $f(x)g(x+h)$ in the numerator,
+    \[
+      \frac{f(x+h)g(x+h)-f(x)g(x)}{h}=\frac{f(x+h)-f(x)}{h}\,g(x+h)+f(x)\,\frac{g(x+h)-g(x)}{h}.
+    \]
+    \ii $g$ is continuous at $x$: as $h\to0$,
+    \[
+      g(x+h)-g(x)=h\cdot\frac{g(x+h)-g(x)}{h}\to0\cdot g'(x)=0
+    \]
+    by the limit of a product (\xlink{math110}{2026-09-07-bases-dimension}{fact-G3}{Week~2, G3}, Step~1).
+    \ii By the limits of sums and products (\xlink{math110}{2026-08-31-sets-fields-subspaces}{fact-limits}{Week~1, F3} and Week~2, G3), the right side of Step~1 tends to $f'(x)g(x)+f(x)g'(x)$ as $h\to0$.
+  \end{steps}
+\end{proof}
 
 \end{document}

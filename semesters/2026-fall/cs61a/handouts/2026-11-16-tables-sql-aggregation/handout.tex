@@ -5,6 +5,9 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.7pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=6pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle]{\color{NavyBlue}\textbf{#1}}\par\vspace{2pt}}{\end{mdframed}}
 \lstnewenvironment{sql}[1][]{\endgraf\smallskip\Needspace{7\baselineskip}\noindent\minipage{\linewidth}\lstset{style=hcode,language=SQL,#1}}{\endminipage\endgraf\smallskip}
 \title{CS 61A --- Week 13}
 \subtitle{Tables, SQL, and aggregation (Lectures 34--36, Composing Programs 4.3)}
@@ -12,11 +15,11 @@
 \begin{document}
 \maketitle
 
-\section{Facts used from Weeks 1--12}
+\section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Comparisons and boolean operators (Week 2).} Operators \cd{<}, \cd{>}, \cd{<=}, \cd{>=}, equality, and inequality return truth values, and \cd{and}, \cd{or}, and \cd{not} combine them. Strings compare character by character using character codes, so every uppercase ASCII letter precedes every lowercase ASCII letter: \cd{"Berkeley" < "Chicago"} and \cd{"Zebra" < "apple"} are both true.
-  \ii \textbf{Nested iteration (Week 5).} A nested comprehension \cd{[(a, b) for a in s for b in t]} forms one pair for every combination of an element of \cd{s} and an element of \cd{t}, producing \cd{len(s) * len(t)} pairs in total.
-  \ii \textbf{Integer division (Week 1).} Floor division \cd{7 // 2} evaluates to \cd{3}, rounding the quotient downward toward negative infinity (so \cd{-7 // 2} is \cd{-4}).
+  \ii \target{W1}\textbf{Comparing strings.} Two strings are compared character by character from the left; at the first position where they differ, the string whose character has the smaller code comes first, and if one string runs out first it comes first. The character codes put the uppercase letters \cd{A}--\cd{Z} at 65--90 and the lowercase letters \cd{a}--\cd{z} at 97--122. So \cd{"Berkeley" < "Chicago"} (\cd{B} is 66, \cd{C} is 67), \cd{"Zebra" < "apple"} (\cd{Z} is 90, \cd{a} is 97), and \cd{"ab" < "abc"} (\cd{"ab"} runs out first). SQLite compares text the same way; each of these three comparisons evaluates to \cd{1} (true) in SQLite.
+  \ii \target{W2}\textbf{Counting pairs.} If \cd{s} has $m$ elements and \cd{t} has $n$, there are $mn$ pairs \cd{(a, b)} with \cd{a} from \cd{s} and \cd{b} from \cd{t}: each of the $m$ choices of \cd{a} combines with each of the $n$ choices of \cd{b}, so the pairs are counted as $n + n + \dots + n$ ($m$ terms). For three lists the same argument gives $mnp$ triples.
+  \ii \target{W3}\textbf{Floor division in Python.} \cd{7 // 2} is \cd{3} and \cd{-7 // 2} is \cd{-4}: Python's \cd{//} rounds the quotient down. (Shown in \xweek{cs61a}{2026-08-24-functions}{Week~1}.)
 \end{enumerate}
 
 \section{This week}
@@ -27,11 +30,23 @@
   Without an external data file or a loop in Python, how can you construct a three-row table of cities with their latitudes and longitudes, bind a table name to it, and inspect every row?
 \end{qbox}
 
-Python is a procedural language: a program specifies the exact sequence of steps to compute a value. SQL (Structured Query Language) is a declarative language: a statement describes the properties of the desired result table, and the database query engine chooses how to construct it. A relational database stores \vocab{tables} (also called \vocab{relations}). Every table has a fixed sequence of named \vocab{columns}, and each \vocab{row} (record) holds one value per column. CS~61A uses SQLite, in which every statement terminates with a semicolon (\cd{;}) and keywords such as \cd{SELECT} and \cd{FROM} are case-insensitive.
+Python is a procedural language: a program specifies the exact sequence of steps to compute a value. SQL (Structured Query Language) is a declarative language: a statement describes the properties of the table it should return, and the database query engine chooses how to construct it. A relational database stores \vocab{tables} (also called \vocab{relations}). Every table has a fixed sequence of named \vocab{columns}, and each \vocab{row} (record) holds one value per column. CS~61A uses SQLite, in which every statement terminates with a semicolon (\cd{;}) and keywords such as \cd{SELECT} and \cd{FROM} are case-insensitive.
 
 \medskip\noindent\textbf{Building a table inline.} A \cd{SELECT} clause with constant expressions produces a single-row table, where \cd{AS} assigns each column name. Combining two compatible \cd{SELECT} statements with \cd{UNION} stacks their rows vertically, keeping the column names supplied by the first \cd{SELECT}. Wrapping the query inside \cd{CREATE TABLE name AS ...} saves the resulting table under \cd{name}, and \cd{SELECT * FROM name} displays all columns.
 
+\begin{howto}{How to build a small table by hand}
+\begin{steps}
+  \ii Write the first row as \cd{SELECT} \emph{value} \cd{AS} \emph{column}, \dots, naming every column with \cd{AS}.
+  \ii Write each further row as \cd{SELECT} followed by its values only, in the same column order; any \cd{AS} there is ignored.
+  \ii Join the rows with \cd{UNION} (which removes duplicate rows) or \cd{UNION ALL} (which keeps them). Every row must have the same number of values.
+  \ii Put \cd{CREATE TABLE} \emph{name} \cd{AS} in front and end the statement with \cd{;}.
+  \ii Check with \cd{SELECT * FROM} \emph{name}\cd{;}: count the rows and the columns (one more column than \cd{|} separators per line).
+\end{steps}
+\end{howto}
+
 \Needspace{12\baselineskip}
+\begin{example*}[The \cd{cities} table (from lecture)]
+Three rows, three columns:
 \begin{sql}
 CREATE TABLE cities AS
   SELECT 38 AS latitude, 122 AS longitude, "Berkeley" AS name UNION
@@ -45,6 +60,7 @@ SQLite prints one row per line using vertical bars (\cd{|}) between column value
 42|71|Cambridge
 45|93|Minneapolis
 \end{plain}
+\end{example*}
 
 \Needspace{14\baselineskip}
 \medskip\noindent\textbf{Piece-by-piece breakdown of table creation.} Every clause in the query above performs one specific structural operation:
@@ -67,9 +83,11 @@ SQLite prints one row per line using vertical bars (\cd{|}) between column value
 \bottomrule
 \end{tabularx}}
 
+\Needspace{6\baselineskip}
 \medskip\noindent\textbf{Mutating an existing table.} When a schema is known in advance, you can declare an empty table with \cd{CREATE TABLE name(col1, col2)}, append rows with \cd{INSERT INTO}, modify matching rows with \cd{UPDATE ... SET ... WHERE}, remove matching rows with \cd{DELETE FROM ... WHERE}, or discard the entire table with \cd{DROP TABLE}.
 
 \Needspace{12\baselineskip}
+\begin{example*}[Inserting, updating and deleting rows]
 \begin{sql}
 CREATE TABLE p(name, age);
 INSERT INTO p VALUES ("Ana", 20), ("Ben", 22);
@@ -77,9 +95,10 @@ UPDATE p SET age = age + 1 WHERE name = "Ana";
 DELETE FROM p WHERE age > 21;
 SELECT * FROM p;   -- prints Ana|21
 \end{sql}
-After these four statements run, \cd{Ana}'s age increases from \cd{20} to \cd{21}, and \cd{Ben} (\cd{age = 22}) satisfies \cd{age > 21} so that row is deleted.
+After these four statements run, \cd{Ana}'s age increases from \cd{20} to \cd{21}, and \cd{Ben} (\cd{age = 22}) satisfies \cd{age > 21} so that row is deleted. Edge cases: an \cd{UPDATE} or \cd{DELETE} whose \cd{WHERE} matches no row changes nothing, and one with no \cd{WHERE} at all changes every row.
+\end{example*}
 
-\medskip\noindent\textbf{The question answered.} The \cd{CREATE TABLE cities AS SELECT ... UNION ...;} statement creates the three-row table with named columns, and \cd{SELECT * FROM cities;} prints all three records.
+\revisit The \cd{CREATE TABLE cities AS SELECT ... UNION ...;} statement creates the three-row table with named columns, and \cd{SELECT * FROM cities;} prints all three records.
 
 \begin{shortcuts}
   \ii \textbf{Building a small table by hand:} Specify \cd{AS} column names only on the first \cd{SELECT}, then connect subsequent rows with \cd{UNION SELECT} value lists. Because \cd{UNION} takes headers from the first query, omitting repeated \cd{AS} labels keeps the code clean. Example: \cd{cities} above.
@@ -89,7 +108,8 @@ After these four statements run, \cd{Ana}'s age increases from \cd{20} to \cd{21
 \begin{trapbox}
   \ii \textbf{Aliases after the first \cd{SELECT} in a \cd{UNION} are ignored:} Writing \cd{SELECT 1 AS a UNION SELECT 2 AS b;} produces a single column named \cd{a}, never \cd{b}.
   \ii \textbf{Mismatched column counts in \cd{UNION}:} Every branch of a \cd{UNION} must have the same number of columns; \cd{SELECT 1, 2 UNION SELECT 3;} raises a syntax error.
-  \ii \textbf{Double quotes on a column name:} In SQLite, if a double-quoted token matches a column name, SQLite treats it as the column identifier rather than a string literal. Thus \cd{SELECT "name" FROM cities;} prints \cd{Berkeley}, \cd{Cambridge}, and \cd{Minneapolis}. Always use single quotes (\cd{'name'}) for literal text strings.
+  \ii \textbf{Double quotes on a column name:} In SQLite, if a double-quoted token matches a column name, SQLite treats it as the column identifier rather than a string literal. Thus \cd{SELECT "name" FROM cities;} prints \cd{Berkeley}, \cd{Cambridge}, and \cd{Minneapolis}. Use single quotes (\cd{'name'}) for literal text strings.
+  \ii \textbf{\cd{UNION} removes duplicate rows:} \cd{SELECT 1 AS a UNION SELECT 1;} has one row; \cd{UNION ALL} gives two.
   \ii \textbf{Missing semicolons:} Without a trailing \cd{;}, SQLite keeps reading the next line as part of the same statement, turning two queries into one invalid query.
 \end{trapbox}
 
@@ -99,6 +119,7 @@ After these four statements run, \cd{Ana}'s age increases from \cd{20} to \cd{21
   Given the \cd{cities} table and a second table \cd{temps(city, temp)} with rows \cd{("Berkeley", 68)}, \cd{("Chicago", 59)}, and \cd{("Minneapolis", 55)}, how do you list each city together with both its latitude and its temperature, and how do you list every unordered pair of distinct cities from \cd{temps} with their temperature difference?
 \end{qbox}
 
+\Needspace{10\baselineskip}
 The general single-block \cd{SELECT} syntax combines table sources, filtering, computed output expressions, sorting, and row limits:
 \begin{sql}
 SELECT [columns]
@@ -118,18 +139,29 @@ SELECT name, 60 * ABS(latitude - 38) AS distance FROM cities;
 -- Minneapolis|420
 \end{sql}
 
-\medskip\noindent\textbf{Division and string helpers.} In SQLite, equality uses a single \cd{=} (though \cd{==} is also accepted), and inequality uses \cd{!=} or \cd{<>}. Dividing two integers truncates toward zero: \cd{7 / 2} is \cd{3}, whereas \cd{-7 / 2} is \cd{-3} (unlike Python's floor division in W3, which gives \cd{-4}). Writing \cd{7 / 2.0} or \cd{7 * 1.0 / 2} triggers floating-point division (\cd{3.5}), and \cd{45 \% 7} gives the remainder \cd{3}. For strings, \cd{||} concatenates two strings, \cd{SUBSTR(s, start, len)} extracts a 1-indexed slice, \cd{INSTR(s, sub)} returns the 1-indexed position of \cd{sub} in \cd{s} (\cd{INSTR("Berkeley", "ke")} is \cd{4}), and \cd{LIKE} matches case-insensitive ASCII patterns where \cd{\%} matches any sequence of zero or more characters and \cd{\_} matches any single character:
+\medskip\noindent\textbf{Division and string helpers.} In SQLite, equality uses a single \cd{=} (though \cd{==} is also accepted), and inequality uses \cd{!=} or \cd{<>}. Dividing two integers truncates toward zero: \cd{7 / 2} is \cd{3}, whereas \cd{-7 / 2} is \cd{-3} (unlike Python's floor division in \ilink{W3}{W3}, which gives \cd{-4}); likewise \cd{-7 \% 2} is \cd{-1} in SQLite but \cd{1} in Python. Writing \cd{7 / 2.0} or \cd{7 * 1.0 / 2} triggers floating-point division (\cd{3.5}), and \cd{45 \% 7} gives the remainder \cd{3}. For strings, \cd{||} concatenates two strings, \cd{SUBSTR(s, start, len)} extracts a 1-indexed slice, \cd{INSTR(s, sub)} returns the 1-indexed position of \cd{sub} in \cd{s} (\cd{INSTR("Berkeley", "ke")} is \cd{4}), and \cd{LIKE} matches case-insensitive ASCII patterns where \cd{\%} matches any sequence of zero or more characters and \cd{\_} matches any single character:
 \begin{sql}
 SELECT "Hi, " || name FROM cities WHERE SUBSTR(name, 1, 3) = 'Ber';  -- prints Hi, Berkeley
 \end{sql}
 
-\medskip\noindent\textbf{Joining two tables and breaking down every piece.} Listing \cd{FROM cities, temps} (or equivalently \cd{FROM cities JOIN temps ON ...}) forms the Cartesian product of the two tables (W2): every row of \cd{cities} pairs with every row of \cd{temps}, creating $3 \times 3 = 9$ combined rows before \cd{WHERE} filters out mismatched pairs.
+\medskip\noindent\textbf{Joining two tables and breaking down every piece.} Listing \cd{FROM cities, temps} (or equivalently \cd{FROM cities JOIN temps ON ...}) forms the Cartesian product of the two tables (\ilink{W2}{W2}): every row of \cd{cities} pairs with every row of \cd{temps}, creating $3 \times 3 = 9$ combined rows before \cd{WHERE} filters out mismatched pairs.
+\begin{howto}{How to join two tables}
+\begin{steps}
+  \ii List both tables in \cd{FROM} (\cd{FROM a, b} or \cd{FROM a JOIN b}); give a table an alias with \cd{AS} when a column name occurs in both or the same table is used twice.
+  \ii Write the join condition that says which row of one table belongs with which row of the other (\cd{name = city}), in \cd{ON} or in \cd{WHERE}. Without it every pair is kept.
+  \ii Add the remaining row conditions with \cd{AND}.
+  \ii Select the output columns, qualifying every shared column name as \cd{alias.column}.
+  \ii Check the cardinality: a row with several matches appears once per match, and a row with no match disappears.
+\end{steps}
+\end{howto}
+\begin{example*}[An inner join: each city with its latitude and temperature]
 \begin{sql}
 SELECT name, latitude, temp
 FROM   cities JOIN temps ON name = city;
 -- Output: Berkeley|38|68  and  Minneapolis|45|55
 \end{sql}
-Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row in \cd{cities}, so neither city satisfies \cd{name = city} in an inner join.
+\cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row in \cd{cities}, so neither city satisfies \cd{name = city} in an inner join. Of the $3\cdot3=9$ pairs, only the two with equal names remain.
+\end{example*}
 
 \Needspace{16\baselineskip}
 \begin{fig}
@@ -150,9 +182,9 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
   \node[tcell,anchor=west,text=black]    at (0.12,1.48) {\InkLabel{Berkeley}};
   \node[tcell,anchor=east,text=black]    at (2.82,1.48) {\InkLabel{38}};
   \node[tcell,anchor=east,text=black]    at (3.63,1.48) {\InkLabel{122}};
-  \node[tcell,anchor=west,text=black!45] at (0.12,0.89) {\InkLabel{Cambridge}};
-  \node[tcell,anchor=east,text=black!45] at (2.82,0.89) {\InkLabel{42}};
-  \node[tcell,anchor=east,text=black!45] at (3.63,0.89) {\InkLabel{71}};
+  \node[tcell,anchor=west] at (0.12,0.89) {\InkLabel[figred]{Cambridge}};
+  \node[tcell,anchor=east] at (2.82,0.89) {\InkLabel[figred]{42}};
+  \node[tcell,anchor=east] at (3.63,0.89) {\InkLabel[figred]{71}};
   \node[tcell,anchor=west,text=black]    at (0.12,0.30) {\InkLabel{Minneapolis}};
   \node[tcell,anchor=east,text=black]    at (2.82,0.30) {\InkLabel{45}};
   \node[tcell,anchor=east,text=black]    at (3.63,0.30) {\InkLabel{93}};
@@ -170,19 +202,19 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
   \node[tcell,anchor=east,text=black]    at (8.98,1.99) {\InkLabel{temp}};
   \node[tcell,anchor=west,text=black]    at (6.32,1.48) {\InkLabel{Berkeley}};
   \node[tcell,anchor=east,text=black]    at (8.98,1.48) {\InkLabel{68}};
-  \node[tcell,anchor=west,text=black!45] at (6.32,0.89) {\InkLabel{Chicago}};
-  \node[tcell,anchor=east,text=black!45] at (8.98,0.89) {\InkLabel{59}};
+  \node[tcell,anchor=west] at (6.32,0.89) {\InkLabel[figred]{Chicago}};
+  \node[tcell,anchor=east] at (8.98,0.89) {\InkLabel[figred]{59}};
   \node[tcell,anchor=west,text=black]    at (6.32,0.30) {\InkLabel{Minneapolis}};
   \node[tcell,anchor=east,text=black]    at (8.98,0.30) {\InkLabel{55}};
 
   % ---- Cartesian product edges (x=3.75 to x=6.20) ----
-  \draw[ink guide,draw=black!35] (3.75,1.48) -- (6.20,0.89);
-  \draw[ink guide,draw=black!35] (3.75,1.48) -- (6.20,0.30);
-  \draw[ink guide,draw=black!35] (3.75,0.89) -- (6.20,1.48);
-  \draw[ink guide,draw=black!35] (3.75,0.89) -- (6.20,0.89);
-  \draw[ink guide,draw=black!35] (3.75,0.89) -- (6.20,0.30);
-  \draw[ink guide,draw=black!35] (3.75,0.30) -- (6.20,1.48);
-  \draw[ink guide,draw=black!35] (3.75,0.30) -- (6.20,0.89);
+  \draw[ink dotted,draw=black!70] (3.75,1.48) -- (6.20,0.89);
+  \draw[ink dotted,draw=black!70] (3.75,1.48) -- (6.20,0.30);
+  \draw[ink dotted,draw=black!70] (3.75,0.89) -- (6.20,1.48);
+  \draw[ink dotted,draw=black!70] (3.75,0.89) -- (6.20,0.89);
+  \draw[ink dotted,draw=black!70] (3.75,0.89) -- (6.20,0.30);
+  \draw[ink dotted,draw=black!70] (3.75,0.30) -- (6.20,1.48);
+  \draw[ink dotted,draw=black!70] (3.75,0.30) -- (6.20,0.89);
 
   % Matching pairs (sleek solid figblue arrows)
   \InkStroke[figblue,line width=0.85pt,->]{(3.75,1.48) -- (6.20,1.48)}
@@ -210,17 +242,20 @@ Notice that \cd{Cambridge} has no row in \cd{temps} and \cd{Chicago} has no row 
   \node[tcell,anchor=east,text=black] at (14.28,0.59) {\InkLabel{45}};
   \node[tcell,anchor=east,text=black] at (15.23,0.59) {\InkLabel{55}};
 \end{tikzpicture}
-\figcap{Inner join of \cd{cities} and \cd{temps}: \cd{FROM} forms all $3\times 3=9$ row pairs (seven dotted gray, two solid blue), and \cd{name = city} keeps only the $2$ matching pairs.}
+\figcap{\cd{FROM} forms all $3\times 3=9$ row pairs; the two blue arrows are the pairs with \cd{name = city}, which the join keeps, and the seven dotted lines are removed. The red rows have no partner.}
 \end{fig}
 
-\medskip\noindent\textbf{Self-joins and table aliases.} To compare two rows within the same table, join the table to itself using distinct aliases (\cd{AS a} and \cd{AS b}). Whenever two joined tables share a column name, every reference to that column must be qualified with \cd{alias.column}. Using \cd{a.city < b.city} breaks symmetry so each unordered pair appears exactly once in lexicographic order (W1), and pairs of a city with itself are excluded:
+\medskip\noindent\textbf{Self-joins and table aliases.} To compare two rows within the same table, join the table to itself using distinct aliases (\cd{AS a} and \cd{AS b}). Whenever two joined tables share a column name, every reference to that column must be qualified with \cd{alias.column}. Using \cd{a.city < b.city} breaks symmetry so each unordered pair appears exactly once in lexicographic order (\ilink{W1}{W1}), and pairs of a city with itself are excluded. Why exactly once: for two different cities $x\ne y$, exactly one of $x<y$ and $y<x$ is true, so of the two ordered pairs $(x,y)$ and $(y,x)$ exactly one passes; for $x=y$, $x<x$ is false.
 \Needspace{12\baselineskip}
+\begin{example*}[A self-join: every unordered pair of cities with its temperature difference]
 \begin{sql}
 SELECT a.city, b.city, a.temp - b.temp AS diff
 FROM   temps AS a, temps AS b
 WHERE  a.city < b.city;
 -- Output: Berkeley|Chicago|9,  Berkeley|Minneapolis|13,  Chicago|Minneapolis|4
 \end{sql}
+Of the $3\cdot3=9$ ordered pairs, three are a city with itself and the other six come in three reversed couples, so $3$ pairs survive.
+\end{example*}
 
 \medskip\noindent\textbf{Piece-by-piece breakdown of the self-join query.} Notice how each piece narrows or transforms the working table:
 
@@ -239,7 +274,7 @@ WHERE  a.city < b.city;
 \end{tabularx}}
 
 \medskip
-Three copies multiply to $3 \times 3 \times 3 = 27$ triples, and \cd{WHERE a.city < b.city AND b.city < c.city} selects the single strictly increasing triple \cd{Berkeley|Chicago|Minneapolis}.
+Three copies multiply to $3 \times 3 \times 3 = 27$ triples (\ilink{W2}{W2}), and \cd{WHERE a.city < b.city AND b.city < c.city} selects the single strictly increasing triple \cd{Berkeley|Chicago|Minneapolis}.
 
 \Needspace{10\baselineskip}
 \begin{proposition*}[Rule: logical order of evaluation of a single \cd{SELECT}]
@@ -253,12 +288,37 @@ The result of \cd{SELECT cols FROM tables WHERE cond ORDER BY key LIMIT n} match
 \end{enumerate}
 \end{proposition*}
 
-\noindent\textbf{Consequences.} First, \cd{WHERE} may test columns that never appear in \cd{SELECT}. Second, \cd{ORDER BY} may sort by either an unprinted table column or an \cd{AS} alias defined in \cd{SELECT}. Third, SQLite permits \cd{WHERE} to reference a \cd{SELECT} alias by inline substitution, though standard SQL dialects forbid using output aliases inside \cd{WHERE}.
+\begin{example*}[Tracing the five stages on \cd{cities}]
+Run \cd{SELECT name FROM cities WHERE latitude > 40 ORDER BY longitude LIMIT 1;} stage by stage.
+\begin{steps}
+  \ii \cd{FROM cities}: the three rows \cd{(38, 122, Berkeley)}, \cd{(42, 71, Cambridge)}, \cd{(45, 93, Minneapolis)}.
+  \ii \cd{WHERE latitude > 40}: Berkeley fails ($38 > 40$ is false); Cambridge and Minneapolis remain.
+  \ii \cd{SELECT name}: one output value per remaining row, computed from that row, which still carries its \cd{longitude}.
+  \ii \cd{ORDER BY longitude}: Cambridge (71) before Minneapolis (93).
+  \ii \cd{LIMIT 1}: \cd{Cambridge}. SQLite prints exactly this.
+\end{steps}
+\end{example*}
+\noindent\textbf{Consequences.} The trace shows each of them:
+\begin{itemize}
+  \ii \cd{WHERE} may test columns that never appear in \cd{SELECT} (\cd{latitude} above).
+  \ii \cd{ORDER BY} may sort by an unprinted table column (\cd{longitude} above) or by an \cd{AS} alias defined in \cd{SELECT}.
+  \ii SQLite also permits \cd{WHERE} to use a \cd{SELECT} alias, by substituting its expression: \cd{SELECT name, 60 * ABS(latitude - 38) AS d FROM cities WHERE d > 100;} returns \cd{Cambridge|240} and \cd{Minneapolis|420}. Standard SQL forbids this, so write the expression out on paper exams.
+\end{itemize}
 
-\medskip\noindent\textbf{The question answered.} Each city with its latitude and temperature is returned by \cd{SELECT name, latitude, temp FROM cities JOIN temps ON name = city;}, and every unordered pair with its temperature gap is returned by the self-join with \cd{a.city < b.city}.
+\begin{howto}{How to write a \cd{SELECT} query from a description}
+\begin{steps}
+  \ii Find the tables that hold the needed columns; if there are two, write the join condition.
+  \ii Translate each condition on a single row into \cd{WHERE}, combined with \cd{AND}/\cd{OR}.
+  \ii Write the output columns and computed expressions in the requested order, with \cd{AS} names.
+  \ii Add \cd{ORDER BY} for the requested order, with a second key for ties if the order of tied rows matters, and \cd{LIMIT} if only the first rows are wanted.
+  \ii Check the result by the five-stage trace on a few rows, including a row that should be excluded and two rows that tie.
+\end{steps}
+\end{howto}
+
+\revisit Each city with its latitude and temperature is returned by \cd{SELECT name, latitude, temp FROM cities JOIN temps ON name = city;}, and every unordered pair with its temperature gap is returned by the self-join with \cd{a.city < b.city}.
 
 \begin{shortcuts}
-  \ii \textbf{Size of an unfiltered join:} Joining $m$ rows with $n$ rows produces $mn$ pairs before \cd{WHERE} runs (W2). Example: \cd{cities, temps} forms $3 \times 3 = 9$ rows.
+  \ii \textbf{Size of an unfiltered join:} Joining $m$ rows with $n$ rows produces $mn$ pairs before \cd{WHERE} runs (\ilink{W2}{W2}). Example: \cd{cities, temps} forms $3 \times 3 = 9$ rows.
   \ii \textbf{Unordered vs.\ ordered pairs in a self-join:} Write \cd{a.x < b.x} when each pair must appear once, or \cd{a.x != b.x} when both orders are wanted. Because one of two distinct values is smaller, \cd{a.x < b.x} halves the count cleanly.
   \ii \textbf{Top-$k$ rows:} Write \cd{ORDER BY expr DESC LIMIT k}, or \cd{ORDER BY -expr LIMIT k} for numeric columns. Example: \cd{SELECT name FROM cities ORDER BY latitude DESC LIMIT 1;} returns \cd{Minneapolis}.
   \ii \textbf{Substring filter:} Write \cd{WHERE col LIKE '\%sub\%'} to match any row containing \cd{sub} case-insensitively.
@@ -268,6 +328,7 @@ The result of \cd{SELECT cols FROM tables WHERE cond ORDER BY key LIMIT n} match
   \ii \textbf{Omitting a join condition:} Writing \cd{SELECT * FROM cities, temps;} without \cd{WHERE} or \cd{ON} outputs all $9$ unfiltered combinations, pairing unrelated cities together.
   \ii \textbf{Using \cd{!=} for unique pairs:} Writing \cd{a.city != b.city} outputs both \cd{Berkeley|Chicago} and \cd{Chicago|Berkeley}, doubling every unordered pair.
   \ii \textbf{Truncating integer division:} \cd{SELECT 7 / 2;} outputs \cd{3}. Multiply by \cd{1.0} or write \cd{2.0} to obtain \cd{3.5}.
+  \ii \textbf{Ties with \cd{LIMIT}:} if two rows tie on the \cd{ORDER BY} key, which one \cd{LIMIT 1} returns is not determined; add a second sort key (\cd{ORDER BY total DESC, member}).
   \ii \textbf{Unqualified shared column names:} Writing \cd{SELECT city FROM temps AS a, temps AS b WHERE a.temp > b.temp;} raises an ambiguous column error. Qualify as \cd{a.city} or \cd{b.city}.
 \end{trapbox}
 
@@ -277,6 +338,7 @@ The result of \cd{SELECT cols FROM tables WHERE cond ORDER BY key LIMIT n} match
   Using a table \cd{animals(name, legs, weight)}, how do you find the maximum weight among animals for each distinct leg count, and how do you list every weight shared by at least two animals?
 \end{qbox}
 
+\Needspace{12\baselineskip}
 \begin{sql}
 CREATE TABLE animals AS
   SELECT "dog" AS name, 4 AS legs, 20 AS weight UNION
@@ -291,9 +353,20 @@ An \vocab{aggregate function} combines values from multiple rows into a single s
 SELECT MAX(legs), SUM(weight), COUNT(*), COUNT(DISTINCT legs) FROM animals;  -- 4|12056|6|2
 SELECT MIN(legs), MAX(weight) FROM animals WHERE name <> 't-rex';            -- 2|20
 \end{sql}
-Notice that \cd{COUNT(*)} counts all surviving rows (\cd{6}), whereas \cd{COUNT(DISTINCT legs)} counts unique non-null leg counts (\cd{2}).
+\cd{COUNT(*)} counts all surviving rows (\cd{6}), whereas \cd{COUNT(DISTINCT legs)} counts unique non-null leg counts (\cd{2}). Edge case, an empty input: \cd{SELECT COUNT(*), MAX(weight), SUM(weight) FROM animals WHERE legs = 3;} still returns one row, \cd{0||}, because \cd{COUNT} of nothing is \cd{0} while \cd{MAX} and \cd{SUM} of nothing are \cd{NULL} (printed as nothing). With \cd{GROUP BY legs} added, the same empty input gives no rows at all, because there are no groups.
 
 \medskip\noindent\textbf{Splitting into groups and filtering groups.} Adding \cd{GROUP BY expr} partitions the rows that passed \cd{WHERE} into separate buckets, one per distinct value of \cd{expr}. Aggregate functions then run independently inside each bucket, outputting one row per group. Adding \cd{HAVING condition} discards entire groups whose aggregate summary fails the test.
+\begin{howto}{How to write a grouped query}
+\begin{steps}
+  \ii Decide what one output row stands for (one leg count, one author, one member). Its identifying column is the \cd{GROUP BY} key; group by a unique id rather than a name if names can repeat.
+  \ii Put every condition on individual rows in \cd{WHERE}; it runs before the groups are formed.
+  \ii Put every condition on a whole group (\cd{COUNT(*)}, \cd{SUM}, \cd{MAX}, \dots) in \cd{HAVING}.
+  \ii In \cd{SELECT}, list only the group key and aggregate expressions.
+  \ii Add \cd{ORDER BY} (aggregates and aliases are allowed there) and \cd{LIMIT}.
+  \ii Trace it: write each group's rows, apply the aggregates, then \cd{HAVING}. Check an empty input and a group of one row.
+\end{steps}
+\end{howto}
+\begin{example*}[One group per leg count, and a condition on group size]
 \begin{sql}
 SELECT legs, MAX(weight) FROM animals GROUP BY legs;
 -- Output: 2|12000  and  4|20
@@ -301,6 +374,8 @@ SELECT legs, MAX(weight) FROM animals GROUP BY legs;
 SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
 -- Output: 10
 \end{sql}
+In the second query the groups are the weights \cd{6} (bird), \cd{10} (cat, ferret, penguin), \cd{12000} and \cd{20}, with sizes 1, 3, 1, 1; only the weight-10 group has more than one row.
+\end{example*}
 
 \Needspace{16\baselineskip}
 \begin{fig}
@@ -331,7 +406,7 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
 
   % Downward aggregation arrow 1
   \draw[->,black!80,line width=0.6pt] (2.30,-0.08) -- (2.30,-0.88)
-    node[midway,right=5pt,font=\scriptsize,text=black!75] {\InkLabel{\cd{MAX(weight)}}};
+    node[midway,right=5pt,font=\scriptsize,text=black] {\InkLabel{\cd{MAX(weight)}}};
 
   % Output row 1
   \InkRegion[inkblue]{(0.52,-1.36) rectangle (4.08,-0.96)}
@@ -368,7 +443,7 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
 
   % Downward aggregation arrow 2
   \draw[->,black!80,line width=0.6pt] (8.50,-0.08) -- (8.50,-0.88)
-    node[midway,right=5pt,font=\scriptsize,text=black!75] {\InkLabel{\cd{MAX(weight)}}};
+    node[midway,right=5pt,font=\scriptsize,text=black] {\InkLabel{\cd{MAX(weight)}}};
 
   % Output row 2
   \InkRegion[inkblue]{(6.72,-1.36) rectangle (10.28,-0.96)}
@@ -381,10 +456,12 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
   \node[tval] at (7.31,-1.63) {\InkLabel{4}};
   \node[tval,text=figblue] at (9.09,-1.63) {\InkLabel{20}};
 \end{tikzpicture}
-\figcap{\cd{GROUP BY legs}: SQLite partitions the six rows of \cd{animals} into two buckets (\cd{legs = 2} and \cd{legs = 4}), finds \cd{MAX(weight)} separately in each bucket (blue), and outputs one row per group.}
+\figcap{\cd{GROUP BY legs} splits the six rows into two groups; \cd{MAX(weight)} (blue) is found in each group separately, giving one output row per group.}
 \end{fig}
 
-\medskip\noindent\textbf{Multi-key and computed grouping.} Writing \cd{GROUP BY legs, weight} creates one group for every distinct \cd{(legs, weight)} pair present in the data, and computed keys such as \cd{GROUP BY weight / legs} group rows by integer quotient (\cd{2, 3, 5, 6000}).
+\medskip\noindent\textbf{Multi-key and computed grouping.} Writing \cd{GROUP BY legs, weight} creates one group for every distinct \cd{(legs, weight)} pair present in the data, and computed keys such as \cd{GROUP BY weight / legs} group rows by integer quotient: bird $6/2=3$, penguin $10/2=5$, t-rex $12000/2=6000$, dog $20/4=5$, cat and ferret $10/4=2$, so the groups are \cd{2} (2 rows), \cd{3} (1), \cd{5} (2), \cd{6000} (1).
+
+\noindent An aggregate in \cd{WHERE} is an error: \cd{SELECT legs FROM animals WHERE COUNT(*) > 1 GROUP BY legs;} fails with ``misuse of aggregate''. The next figure shows why.
 
 \Needspace{14\baselineskip}
 \begin{fig}
@@ -402,7 +479,7 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
     \InkStroke[->,line width=0.55pt,black!80]{(\a.east) -- (\b.west)}
   }
 
-  \node[below=4.5mm of s2,font=\scriptsize,text=black!75,align=center] (c2)
+  \node[below=4.5mm of s2,font=\scriptsize,text=black,align=center] (c2)
     {\InkLabel{\shortstack[c]{row predicates\\[-1pt](no aggregates)}}};
   \InkStroke[->,black!70,line width=0.45pt]{(c2.north) -- (s2.south)}
 
@@ -410,11 +487,11 @@ SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;
     {\InkLabel{\shortstack[c]{group predicates\\[-1pt](aggregates allowed)}}};
   \InkStroke[->,figblue,line width=0.45pt]{(c4.north) -- (s4.south)}
 \end{tikzpicture}
-\figcap{Logical execution pipeline of a grouped SQL query. Because \cd{WHERE} runs in Stage~2 before \cd{GROUP BY} forms buckets in Stage~3, aggregate calls such as \cd{SUM(weight)} or \cd{COUNT(*)} are illegal in \cd{WHERE} and belong in \cd{HAVING} (Stage~4).}
+\figcap{The order of the stages of a grouped query. \cd{WHERE} (stage 2) runs before the groups exist, so aggregates such as \cd{COUNT(*)} can only be tested in \cd{HAVING} (stage 4).}
 \end{fig}
 
 \Needspace{24\baselineskip}
-\medskip\noindent\textbf{Piece-by-piece breakdown of a full grouped query.} Trace the order in which SQLite evaluates:
+\medskip\noindent\textbf{Piece-by-piece breakdown of a full grouped query.} Trace the order in which SQLite evaluates this query:
 \begin{sql}
 SELECT   legs, SUM(weight) AS total_w
 FROM     animals
@@ -447,21 +524,56 @@ ORDER BY total_w DESC;
 \medskip\noindent\textbf{Bare columns alongside aggregates.} In SQLite, selecting a column that is neither grouped nor wrapped in an aggregate function follows two distinct rules:
 \begin{itemize}
   \ii If the \cd{SELECT} list contains \emph{exactly one} \cd{MAX} or \cd{MIN} (and no other aggregate), SQLite picks the bare column from the row that attained that extreme value: \cd{SELECT name, MAX(weight) FROM animals;} returns \cd{t-rex|12000}.
-  \ii If the query calls two extreme aggregates (\cd{MAX(weight), MIN(weight)}) or uses \cd{SUM}, \cd{AVG}, or \cd{COUNT}, SQLite picks an arbitrary row from the group for the bare column (with no guarantee of which row it chooses). Always include only grouped keys and aggregate expressions unless you specifically intend a single \cd{MAX}/\cd{MIN} tiebreaker.
+  \ii If the query calls two extreme aggregates (\cd{MAX(weight), MIN(weight)}) or uses \cd{SUM}, \cd{AVG}, or \cd{COUNT}, SQLite picks an arbitrary row from the group for the bare column (with no guarantee of which row it chooses). Include only grouped keys and aggregate expressions unless you intend the single-\cd{MAX}/\cd{MIN} rule.
+  \ii If several rows tie for the single \cd{MAX}, SQLite takes the bare column from one of them, again without a guarantee of which.
 \end{itemize}
 
 \begin{shortcuts}
   \ii \textbf{Most frequent value:} Run \cd{SELECT x, COUNT(*) FROM t GROUP BY x ORDER BY COUNT(*) DESC LIMIT 1;}. Sorting groups by size descending places the mode first.
   \ii \textbf{\cd{WHERE} vs.\ \cd{HAVING}:} Any condition on a single row goes in \cd{WHERE}; any condition on a group summary (\cd{COUNT(*)}, \cd{SUM}, \cd{AVG}, \cd{MAX}) goes in \cd{HAVING}.
-  \ii \textbf{Counting partners per row after a self-join:} Join on the match criterion, then \cd{GROUP BY a.id}. Each joined row represents one matching partner, so \cd{COUNT(*)} counts partners per group.
+  \ii \textbf{Counting partners per row after a self-join:} Join on the condition that pairs a row with its partners, then \cd{GROUP BY a.id}. Each joined row represents one matching partner, so \cd{COUNT(*)} counts partners per group.
   \ii \textbf{Grouping by unique ID, not by name:} Two students or customers may share a name, so grouping by \cd{id} prevents merging distinct individuals into one bucket.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{Putting a single-row filter in \cd{HAVING}:} \cd{SELECT legs, SUM(weight) FROM animals GROUP BY legs HAVING weight >= 10;} tests \cd{weight >= 10} on one arbitrary representative row per group rather than filtering individual animals first, dropping the entire \cd{legs = 2} group if \cd{bird} is picked.
+  \ii \textbf{Putting a single-row filter in \cd{HAVING}:} \cd{SELECT legs, SUM(weight) FROM animals GROUP BY legs HAVING weight >= 10;} tests \cd{weight >= 10} on one arbitrary representative row per group rather than filtering individual animals first. In SQLite 3 it returns only \cd{4|40}: the representative of the \cd{legs = 2} group was \cd{bird}, so the whole group was dropped. With \cd{WHERE weight >= 10} the result is \cd{2|12010} and \cd{4|40}.
   \ii \textbf{Nesting aggregates:} \cd{MAX(COUNT(*))} is illegal in SQLite. To find the largest group size, write \cd{GROUP BY ... ORDER BY COUNT(*) DESC LIMIT 1}.
   \ii \textbf{\cd{COUNT(col)} vs.\ \cd{COUNT(DISTINCT col)}:} \cd{COUNT(legs)} counts all non-null rows (\cd{6}), not distinct values (\cd{2}).
 \end{trapbox}
+
+\revisit \cd{SELECT legs, MAX(weight) FROM animals GROUP BY legs;} returns the maximum weight for each leg count (\cd{2|12000}, \cd{4|20}), and \cd{SELECT weight FROM animals GROUP BY weight HAVING COUNT(*) > 1;} returns the weights shared by at least two animals (\cd{10}). The first is a grouped aggregate; the second needs \cd{HAVING} because its condition is on the size of a group.
+
+\subsection{Rows with no match: \cd{NULL} and anti-joins}
+
+\begin{qbox}
+  Which cities in \cd{cities} have no row in \cd{temps}? An inner join drops exactly those rows, so it cannot list them. What query finds them, and what changes if \cd{temps} contains a row whose \cd{city} is missing (\cd{NULL})?
+\end{qbox}
+
+\vocab{\cd{NULL}} is SQL's value for ``missing''. Any comparison with \cd{NULL}, including \cd{NULL = NULL}, is neither true nor false but \cd{NULL}, and \cd{WHERE} keeps a row only when its condition is true. To test for a missing value, write \cd{x IS NULL} (or \cd{x IS NOT NULL}). \cd{COUNT(*)} counts rows, while \cd{COUNT(col)}, \cd{SUM}, \cd{AVG}, \cd{MAX} and \cd{MIN} skip \cd{NULL} values.
+
+\begin{howto}{How to find the rows of one table that have no match in another (an anti-join)}
+\begin{steps}
+  \ii \textbf{With \cd{NOT EXISTS}:} \cd{SELECT ... FROM a WHERE NOT EXISTS (SELECT 1 FROM b WHERE} \emph{match condition}\cd{)}. The inner query is run for each row of \cd{a}, using that row's columns; the row is kept when the inner query returns no rows.
+  \ii \textbf{With a \cd{LEFT JOIN}:} \cd{SELECT ... FROM a LEFT JOIN b ON} \emph{match condition} \cd{WHERE b.}\emph{col} \cd{IS NULL}. A left join keeps every row of \cd{a}; a row with no partner gets \cd{NULL} in all of \cd{b}'s columns, and the \cd{WHERE} keeps exactly those rows. Test a column of \cd{b} that is never \cd{NULL} in a real match.
+  \ii Do not use \cd{NOT IN (SELECT col FROM b)} when \cd{col} can be \cd{NULL}: see the second example.
+  \ii Check an input where every row has a match (empty result) and an empty \cd{b} (every row of \cd{a} is returned).
+\end{steps}
+\end{howto}
+
+\begin{example*}[Cities without a temperature, two ways]
+\begin{sql}
+SELECT name FROM cities WHERE NOT EXISTS (SELECT 1 FROM temps WHERE city = name);
+SELECT name FROM cities LEFT JOIN temps ON name = city WHERE temp IS NULL;
+-- Both output: Cambridge
+\end{sql}
+Trace of the left join: Berkeley pairs with \cd{(Berkeley, 68)}, Minneapolis with \cd{(Minneapolis, 55)}, and Cambridge has no partner, so it is kept once with \cd{city} and \cd{temp} both \cd{NULL}. The \cd{WHERE temp IS NULL} keeps only that row.
+\end{example*}
+
+\begin{example*}[Why \cd{NOT IN} fails when the list contains \cd{NULL}]
+Insert a row \cd{(NULL, 70)} into \cd{temps}. Then \cd{SELECT name FROM cities WHERE name NOT IN (SELECT city FROM temps);} returns \emph{no rows}. For \cd{Cambridge}, \cd{'Cambridge' NOT IN ('Berkeley', 'Chicago', 'Minneapolis', NULL)} means \cd{'Cambridge' <> 'Berkeley' AND \dots\ AND 'Cambridge' <> NULL}; the last comparison is \cd{NULL}, so the whole condition is \cd{NULL}, not true, and the row is dropped. The \cd{NOT EXISTS} query still returns \cd{Cambridge}, because \cd{city = name} is simply not true for the \cd{NULL} row.
+\end{example*}
+
+\revisit \cd{SELECT name FROM cities WHERE NOT EXISTS (SELECT 1 FROM temps WHERE city = name);} (or the \cd{LEFT JOIN ... IS NULL} form) returns \cd{Cambridge}. If \cd{temps} contains a \cd{NULL} city, these two queries still work, but the \cd{NOT IN} version returns nothing, because a comparison with \cd{NULL} is never true.
 
 \subsection{Local and recursive tables (Composing Programs 4.3.5)}
 
@@ -490,9 +602,23 @@ SELECT previous FROM fib;
 
 Because each step only reads rows already stored in the recursive table, every row must store all state needed to build the next row: \cd{fib} carries both \cd{previous} and \cd{current} so each new row advances to \cd{(current, previous + current)}.
 
-\section{Exam practice: real final exam questions}
+\begin{howto}{How to write a recursive \cd{WITH} table}
+\begin{steps}
+  \ii Decide the columns: everything needed to compute the next row from one row (for Fibonacci, two consecutive numbers).
+  \ii Write the base \cd{SELECT}: the starting row or rows.
+  \ii Write the recursive \cd{SELECT ... FROM} \emph{name} \cd{WHERE} \emph{bound}: it computes the next row from a row already in the table, and the \cd{WHERE} bound must eventually be false, or the query never ends.
+  \ii Join the two with \cd{UNION}, and query the local table after the closing parenthesis.
+  \ii Check the last row: the bound is tested on the \emph{old} row, so the last row produced can go past it (\cd{ints} reaches \cd{15} because \cd{14 < 15}).
+\end{steps}
+\end{howto}
 
-Academic-integrity note: following CS~61A policy, this section contains authentic past final exam problems and original practice problems rather than solutions to graded homework or lab assignments.
+\begin{example*}[Tracing \cd{ints} row by row]
+Start with \cd{5}. The row \cd{5} satisfies \cd{n < 15}, so \cd{6} is added; and so on until the row \cd{14} adds \cd{15}. The row \cd{15} fails \cd{n < 15}, so nothing more is added: the table holds $5,6,\dots,15$, and the outer query keeps the odd values with their squares. In \cd{fib}, the row \cd{(89, 144)} fails \cd{current <= 100}, so it is the last row, and \cd{SELECT previous} prints the Fibonacci numbers up to \cd{89}.
+\end{example*}
+
+\revisit A \cd{WITH name(cols) AS (...)} clause defines a table that exists only for that one statement. If its body is a base \cd{SELECT}, then \cd{UNION}, then a \cd{SELECT} that reads \cd{name} itself, each new row is built from an earlier one until the \cd{WHERE} bound fails, which generates the odd squares $25, 49, \dots, 225$ and the Fibonacci numbers $0, 1, 1, \dots, 89$ shown above.
+
+\section{Exam practice: real final exam questions}
 
 \begin{prob}
 \textbf{R1 (Sp26 Final Q3, music festival).} Consider the tables \cd{artists(aconst, name, genres, rec\_labels)} and \cd{performances(pconst, aconst, stage, start\_time, duration)}:
@@ -578,7 +704,7 @@ ORDER BY ___(g)___;
 
 \section{Original exercises (\cd{books} and \cd{loans})}
 
-The folder \cd{exercises/} (and the interactive web page) provides \cd{data.sql} with tables \cd{books(title, author, year, pages)} and \cd{loans(title, member, days)}, starter blanks in \cd{week13.sql}, and tests in \cd{tests.py}.
+The folder \cd{exercises/} (and the interactive web page) provides \cd{data.sql} with tables \cd{books(title, author, year, pages)} and \cd{loans(title, member, days)}, starter blanks in \cd{week13.sql}, and tests in \cd{tests.py}. Tasks \cd{e1}--\cd{e7} in \cd{week13.sql} are E1--E7 below, and its task \cd{e8} is E9.
 
 \begin{center}\small\renewcommand{\arraystretch}{1.12}
 \begin{tabular}[t]{@{}llcr@{}}
@@ -613,11 +739,11 @@ Dawn & Ana & 5 \\
 \end{center}
 
 \begin{enumerate}[label=\textbf{E\arabic*.},leftmargin=2.4em,itemsep=4pt]
-  \ii Titles of books with more than 260 pages, longest first.
+  \ii Titles of books with more than 260 pages, longest first; break ties in page count by title.
   \ii Each author with their number of books and total pages (only authors with at least two books), ordered by author.
   \ii For each loan: \cd{member}, \cd{title}, and the book's \cd{author}.
   \ii Every pair of distinct books by the same author, each pair once (earlier title first alphabetically).
-  \ii The member with the most total loan days, and that total.
+  \ii The member with the most total loan days, and that total; on a tie, the alphabetically first member; no row if \cd{loans} is empty.
   \ii Authors whose books were borrowed by at least two distinct members.
   \ii Each decade present in \cd{books} (e.g.\ 1965 maps to 1960) with its book count, oldest decade first.
   \ii \textbf{Predict the output without running SQL:}
@@ -626,6 +752,7 @@ Dawn & Ana & 5 \\
     \ii \cd{SELECT author, MAX(pages) FROM books GROUP BY author HAVING COUNT(*) > 1;}
     \ii \cd{SELECT title, SUM(days) FROM loans GROUP BY title HAVING SUM(days) > 20;}
   \end{enumerate}
+  \ii Titles of books never borrowed, alphabetically, with a query that still works if a row of \cd{loans} has a \cd{NULL} title.
 \end{enumerate}
 
 \end{document}

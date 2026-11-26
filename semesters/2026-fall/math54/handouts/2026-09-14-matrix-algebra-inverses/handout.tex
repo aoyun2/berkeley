@@ -14,13 +14,13 @@
 
 \section{Facts used from earlier weeks}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Row equivalence (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.2 Thm.~1}):} Elementary row operations are reversible and preserve solution sets; every matrix is row equivalent to a unique reduced echelon matrix.
-  \ii \textbf{Onto and one-to-one criteria (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-12}{Lay 1.9 Thm.~12}):} For an $m\times n$ matrix $A$:
+  \ii \target{fact-w1}\textbf{Row equivalence (\xlink{math54}{2026-08-24-linear-systems-row-reduction}{thm-lay-1-1}{Lay 1.2 Thm.~1}):} Elementary row operations are reversible and preserve solution sets; every matrix is row equivalent to a unique reduced echelon matrix.
+  \ii \target{fact-w2}\textbf{Onto and one-to-one criteria (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-12}{Lay 1.9 Thm.~12}):} For an $m\times n$ matrix $A$:
   \begin{itemize}
     \ii $A$ has a pivot in every \textbf{row} $\iff$ columns of $A$ span $\RR^m$ $\iff$ $A\vv x=\vv b$ is consistent for every $\vv b\in\RR^m$ $\iff$ $\vv x\mapsto A\vv x$ is \textbf{onto} $\RR^m$.
     \ii $A$ has a pivot in every \textbf{column} $\iff$ columns of $A$ are linearly independent $\iff$ $A\vv x=\vv 0$ has only the trivial solution $\iff$ $\vv x\mapsto A\vv x$ is \textbf{one-to-one}.
   \end{itemize}
-  \ii \textbf{Standard matrix and linearity (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-10}{Lay 1.9 Thm.~10}):} Every linear transformation $T\colon\RR^n\to\RR^m$ is given by $T(\vv x)=A\vv x$ where $A=[\,T(\vv e_1)\ \ \cdots\ \ T(\vv e_n)\,]$; and $A(\vv u+\vv v)=A\vv u+A\vv v$, $A(c\vv u)=c(A\vv u)$.
+  \ii \target{fact-w3}\textbf{Standard matrix and linearity (\xlink{math54}{2026-09-07-independence-linear-transformations}{thm-lay-1-10}{Lay 1.9 Thm.~10}):} Every linear transformation $T\colon\RR^n\to\RR^m$ is given by $T(\vv x)=A\vv x$ where $A=[\,T(\vv e_1)\ \ \cdots\ \ T(\vv e_n)\,]$; and $A(\vv u+\vv v)=A\vv u+A\vv v$, $A(c\vv u)=c(A\vv u)$.
 \end{enumerate}
 
 \section{This week}
@@ -42,8 +42,11 @@
     \text{(f) } & r(sA) = (rs)A
   \end{align*}
 \end{theorem*}
+\begin{proof}
+  Each identity compares two matrices of the same size entry by entry. Entry $(i,j)$ of each side is computed from $a_{ij},b_{ij},c_{ij},r,s$ by the same rule of real-number arithmetic: for example, entry $(i,j)$ of $r(A+B)$ is $r(a_{ij}+b_{ij})$ and of $rA+rB$ is $ra_{ij}+rb_{ij}$, equal by the distributive law for numbers. The other five identities use the commutative, associative, zero, distributive and associative laws for numbers in the same way.
+\end{proof}
 
-To discover the definition of the product $AB$ when $A$ is $m\times n$ and $B=[\,\vv b_1\ \ \cdots\ \ \vv b_p\,]$ is $n\times p$, apply $A$ to $B\vv x=x_1\vv b_1+\dots+x_p\vv b_p$ for $\vv x\in\RR^p$. By linearity of multiplication by $A$ (W3),
+To discover the definition of the product $AB$ when $A$ is $m\times n$ and $B=[\,\vv b_1\ \ \cdots\ \ \vv b_p\,]$ is $n\times p$, apply $A$ to $B\vv x=x_1\vv b_1+\dots+x_p\vv b_p$ for $\vv x\in\RR^p$. By linearity of multiplication by $A$ (\ilink{fact-w3}{W3}),
 \[
   A(B\vv x) = A(x_1\vv b_1 + \dots + x_p\vv b_p) = x_1(A\vv b_1) + \dots + x_p(A\vv b_p) = \begin{bmatrix} A\vv b_1 & A\vv b_2 & \cdots & A\vv b_p \end{bmatrix}\vv x.
 \]
@@ -55,10 +58,53 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
     \[
       AB = A\begin{bmatrix} \vv b_1 & \vv b_2 & \cdots & \vv b_p \end{bmatrix} = \begin{bmatrix} A\vv b_1 & A\vv b_2 & \cdots & A\vv b_p \end{bmatrix}.
     \]
-    \ii \textbf{Row--column rule for $(AB)_{ij}$:} The entry in row~$i$ and column~$j$ of $AB$ is the sum of products of corresponding entries from row~$i$ of $A$ and column~$j$ of $B$: $(AB)_{ij}=a_{i1}b_{1j}+a_{i2}b_{2j}+\dots+a_{in}b_{nj}$. Furthermore, $\operatorname{row}_i(AB)=\operatorname{row}_i(A)\cdot B$.
+    \ii \textbf{Row--column rule:} The entry in row~$i$ and column~$j$ of $AB$ is the sum of products of corresponding entries from row~$i$ of $A$ and column~$j$ of $B$: $(AB)_{ij}=a_{i1}b_{1j}+a_{i2}b_{2j}+\dots+a_{in}b_{nj}$. Furthermore, $\operatorname{row}_i(AB)=\operatorname{row}_i(A)\cdot B$. (Reason: column $j$ of $AB$ is $A\vv b_j$, and by the row--vector rule of Week~2 its entry $i$ is row $i$ of $A$ times $\vv b_j$. Reading these entries along row $i$ for $j=1,\dots,p$ gives the row $\operatorname{row}_i(A)\,B$.)
     \ii Given an $m\times n$ matrix $A$, the \vocab{transpose} of $A$ is the $n\times m$ matrix, denoted by $A^{\mathsf T}$ (or $A^T$), whose columns are formed from the corresponding rows of $A$: $(A^{\mathsf T})_{ij}=a_{ji}$.
   \end{itemize}
 \end{definition*}
+
+\method{How to compute a matrix product.}
+\begin{steps}
+  \ii Check sizes: $AB$ is defined only when (columns of $A$) $=$ (rows of $B$); then $AB$ has the rows of $A$ and the columns of $B$: $(m\times n)(n\times p)=m\times p$.
+  \ii Compute each entry by the row--column rule, or each column as $A\vv b_j$.
+  \ii For a power $A^k$ ($A$ square), multiply step by step: $A^2=AA$, $A^3=A^2A$, and look for a pattern.
+\end{steps}
+\emph{Edge cases.} $BA$ may be undefined, or of a different size, even when $AB$ is defined. Multiplying by a diagonal matrix $D=\operatorname{diag}(d_1,\dots,d_n)$ on the right scales the columns ($AD$ has columns $d_j\vv a_j$); on the left it scales the rows.
+
+\begin{example*}[A $2\times3$ times a $3\times2$ product]
+\[
+  \begin{bmatrix}1&2&0\\-1&1&3\end{bmatrix}\begin{bmatrix}2&1\\0&-1\\1&4\end{bmatrix}
+  =\begin{bmatrix}1(2)+2(0)+0(1) & 1(1)+2(-1)+0(4)\\ -1(2)+1(0)+3(1) & -1(1)+1(-1)+3(4)\end{bmatrix}
+  =\begin{bmatrix}2&-1\\1&10\end{bmatrix}.
+\]
+The product in the other order is $3\times3$, so the two products cannot be equal.
+\end{example*}
+
+\begin{example*}[Multiplying by a diagonal matrix on each side]
+For $A=\bigl[\begin{smallmatrix}1&2\\3&4\end{smallmatrix}\bigr]$ and $D=\bigl[\begin{smallmatrix}2&0\\0&3\end{smallmatrix}\bigr]$:
+\[
+  AD=\begin{bmatrix}2&6\\6&12\end{bmatrix}\ (\text{columns times }2,3),\qquad
+  DA=\begin{bmatrix}2&4\\9&12\end{bmatrix}\ (\text{rows times }2,3).
+\]
+\end{example*}
+
+\begin{example*}[When do two matrices commute]
+For $A=\bigl[\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\bigr]$ and $B=\bigl[\begin{smallmatrix}1&0\\k&1\end{smallmatrix}\bigr]$,
+\[
+  AB=\begin{bmatrix}1+k&1\\k&1\end{bmatrix},\qquad BA=\begin{bmatrix}1&1\\k&k+1\end{bmatrix}.
+\]
+Comparing entry $(1,1)$ gives $1+k=1$, so $AB=BA$ exactly when $k=0$.
+\end{example*}
+
+\begin{proposition*}[Dependent columns of $B$ give dependent columns of $AB$]\target{prop-dep-AB}
+  If the columns of $B$ are linearly dependent, then so are the columns of $AB$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii Dependent columns of $B$ mean $B\vv x=\vv 0$ for some $\vv x\ne\vv 0$.
+    \ii Then $(AB)\vv x=A(B\vv x)=A\vv 0=\vv 0$ with the same $\vv x\ne\vv 0$, so the columns of $AB$ are dependent.
+  \end{steps}
+\end{proof}
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
@@ -101,7 +147,14 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \begin{proof}
   \begin{steps}
     \ii Write $C=[\,\vv c_1\ \ \cdots\ \ \vv c_p\,]$. By the definition of matrix multiplication, the $j$-th column of $BC$ is $B\vv c_j$, so the $j$-th column of $A(BC)$ is $A(B\vv c_j)$. On the other hand, the $j$-th column of $(AB)C$ is $(AB)\vv c_j$, which equals $A(B\vv c_j)$ by the definition of $AB$. Since $A(BC)$ and $(AB)C$ match column by column, $A(BC)=(AB)C$.
-    \ii For (b), column~$j$ of $A(B+C)$ is $A(\vv b_j+\vv c_j)=A\vv b_j+A\vv c_j$, which is column~$j$ of $AB+AC$. Parts (c), (d), and (e) follow similarly from linearity of matrix--vector multiplication and $I_m\vv a_j=\vv a_j$.
+    \ii For (b), column~$j$ of $A(B+C)$ is $A(\vv b_j+\vv c_j)=A\vv b_j+A\vv c_j$ by linearity (\ilink{fact-w3}{W3}), which is column~$j$ of $AB+AC$.
+    \ii For (c), column~$j$ of $(B+C)A$ is $(B+C)\vv a_j$. Writing $\vv a_j=(a_{1j},\dots,a_{nj})$ and the columns of $B,C$ as $\vv b_k,\vv c_k$, this is
+    \[
+      \textstyle\sum_k a_{kj}(\vv b_k+\vv c_k)=\sum_k a_{kj}\vv b_k+\sum_k a_{kj}\vv c_k=B\vv a_j+C\vv a_j,
+    \]
+    which is column~$j$ of $BA+CA$.
+    \ii For (d), column~$j$ of $r(AB)$ is $r(A\vv b_j)$. Column~$j$ of $(rA)B$ is $\sum_k b_{kj}(r\vv a_k)=r\sum_k b_{kj}\vv a_k=r(A\vv b_j)$, and column~$j$ of $A(rB)$ is $A(r\vv b_j)=r(A\vv b_j)$ by linearity.
+    \ii For (e), $I_m\vv x=\vv x$ for every $\vv x\in\RR^m$ (Week~2), so column~$j$ of $I_mA$ is $I_m\vv a_j=\vv a_j$. Column~$j$ of $AI_n$ is $A\vv e_j=0\vv a_1+\dots+1\vv a_j+\dots+0\vv a_n=\vv a_j$.
   \end{steps}
 \end{proof}
 
@@ -115,7 +168,7 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-  First check the sizes to see why the order reverses in $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$: if $A$ is $m\times n$ and $B$ is $n\times p$, then $A^{\mathsf T}$ is $n\times m$ and $B^{\mathsf T}$ is $p\times n$, so $A^{\mathsf T}B^{\mathsf T}$ is not even defined when $m\ne p$, whereas $B^{\mathsf T}A^{\mathsf T}$ has size $(p\times n)(n\times m)=p\times m$, matching $(AB)^{\mathsf T}$. Entry by entry, the $(i,j)$-entry of $(AB)^{\mathsf T}$ is the $(j,i)$-entry of $AB$, namely $\sum_{k=1}^n a_{jk}b_{ki}=\sum_{k=1}^n (B^{\mathsf T})_{ik}(A^{\mathsf T})_{kj}$, which is the $(i,j)$-entry of $B^{\mathsf T}A^{\mathsf T}$.
+  First check the sizes to see why the order reverses in $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$: if $A$ is $m\times n$ and $B$ is $n\times p$, then $A^{\mathsf T}$ is $n\times m$ and $B^{\mathsf T}$ is $p\times n$, so $A^{\mathsf T}B^{\mathsf T}$ is not even defined when $m\ne p$, whereas $B^{\mathsf T}A^{\mathsf T}$ has size $(p\times n)(n\times m)=p\times m$, matching $(AB)^{\mathsf T}$. So the only candidate is $B^{\mathsf T}A^{\mathsf T}$, and the proof compares entries.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
@@ -132,10 +185,13 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \ii \textbf{Three laws of real numbers that FAIL for matrices (Lay 2.1 Warnings):}
   \begin{enumerate}[(1)]
     \ii \emph{Noncommutativity:} $AB\ne BA$ in general (and $(A+B)^2=A^2+AB+BA+B^2$, \emph{not} $A^2+2AB+B^2$).
-    \ii \emph{No cancellation law:} $AB=AC$ with $A\ne 0$ does \emph{not} imply $B=C$ (unless $A$ is invertible).
-    \ii \emph{Zero divisors:} $AB=0$ does \emph{not} imply $A=0$ or $B=0$; for instance, $A=B=\begin{bmatrix}0&1\\0&0\end{bmatrix}\ne 0$ satisfies $A^2=0$.
+    \ii \emph{No cancellation law:} $AB=AC$ with $A\ne 0$ does \emph{not} imply $B=C$ (unless $A$ is invertible). For $A=\bigl[\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\bigr]$, $B=\bigl[\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\bigr]$ and $C=0$, both $AB$ and $AC$ are $0$, but $B\ne C$.
+    \ii \emph{Zero divisors:} $AB=0$ does \emph{not} imply $A=0$ or $B=0$; for instance, $A=B=\bigl[\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\bigr]\ne 0$ satisfies $A^2=0$.
   \end{enumerate}
 \end{trapbox}
+
+\revisit
+Define column $j$ of $AB$ to be $A\vv b_j$. The computation before the definition shows that this is the only choice for which $A(B\vv x)=(AB)\vv x$ for every $\vv x$, and the figure shows the composite: $B$ first, then $A$. In entries this is the row--column rule. For example, applying the vertical shear $B=\bigl[\begin{smallmatrix}1&0\\2&1\end{smallmatrix}\bigr]$ and then the horizontal shear $A=\bigl[\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\bigr]$ to $\vv x$ is multiplying by the single matrix $AB=\bigl[\begin{smallmatrix}3&1\\2&1\end{smallmatrix}\bigr]$.
 
 \subsection{The inverse of a matrix and elementary matrices (Lay 2.2)}
 
@@ -152,18 +208,18 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \end{definition*}
 
 \begin{theorem*}[Lay 2.2 Thm.~4: Inverse of a $2\times 2$ matrix]\target{thm-lay-2-4}
-  Let $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$. If $ad-bc\ne 0$, then $A$ is invertible and
+  Let $A=\bigl[\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\bigr]$. If $ad-bc\ne 0$, then $A$ is invertible and
   \[
     A^{-1} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}.
   \]
   If $ad-bc=0$, then $A$ is not invertible. The quantity $ad-bc$ is called the \vocab{determinant} of $A$, written $\det A=ad-bc$.
 \end{theorem*}
 \begin{ideabox}
-  Direct multiplication of $A=\begin{bmatrix}a&b\\c&d\end{bmatrix}$ and $\widetilde A=\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$ shows that $A\widetilde A=\begin{bmatrix}ad-bc&0\\0&ad-bc\end{bmatrix}=(ad-bc)I_2$. When $ad-bc\ne 0$, dividing by the scalar $ad-bc$ produces $I_2$. When $ad-bc=0$, the rows (and columns) of $A$ are proportional, so $A$ has at most $1$ pivot and cannot be row reduced to $I_2$.
+  Where does the formula come from? Solve $A\vv x=\vv b$ by elimination: multiplying the first equation $ax_1+bx_2=b_1$ by $d$ and the second $cx_1+dx_2=b_2$ by $b$ and subtracting gives $(ad-bc)x_1=db_1-bb_2$; eliminating $x_1$ the same way gives $(ad-bc)x_2=-cb_1+ab_2$. So $(ad-bc)\vv x=\widetilde A\vv b$ with $\widetilde A=\bigl[\begin{smallmatrix}d&-b\\-c&a\end{smallmatrix}\bigr]$, and the number $ad-bc$ is exactly what we must divide by. This suggests checking the product $A\widetilde A$ directly.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Multiplying $A$ on the right and left by $\widetilde A=\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$ gives $A\widetilde A=(ad-bc)I_2=\widetilde AA$. When $ad-bc\ne 0$, dividing by $ad-bc$ shows that $C=\frac{1}{ad-bc}\widetilde A$ satisfies $AC=I_2=CA$.
+    \ii Multiplying $A$ on the right and left by $\widetilde A=\bigl[\begin{smallmatrix}d&-b\\-c&a\end{smallmatrix}\bigr]$ gives $A\widetilde A=(ad-bc)I_2=\widetilde AA$. When $ad-bc\ne 0$, dividing by $ad-bc$ shows that $C=\frac{1}{ad-bc}\widetilde A$ satisfies $AC=I_2=CA$.
     \ii Conversely, suppose $ad-bc=0$. If $A=0$, then $AC=0\ne I_2$ for all $C$. If $A\ne 0$, then at least one column $\vv x\ne\vv 0$ of $\widetilde A$ is nonzero and satisfies $A\vv x=\vv 0$; if $A^{-1}$ existed, multiplying $A\vv x=\vv 0$ by $A^{-1}$ would force $\vv x=A^{-1}\vv 0=\vv 0$, a contradiction.
   \end{steps}
 \end{proof}
@@ -180,6 +236,31 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
     \ii If $\vv u\in\RR^n$ is any solution of $A\vv u=\vv b$, multiplying both sides on the left by $A^{-1}$ gives $\vv u=I_n\vv u=(A^{-1}A)\vv u=A^{-1}(A\vv u)=A^{-1}\vv b$.
   \end{steps}
 \end{proof}
+
+\method{How to use an inverse to solve $A\vv x=\vv b$, and how to solve matrix equations.}
+\begin{steps}
+  \ii For a $2\times2$ matrix, compute $ad-bc$. If it is $0$, $A$ has no inverse. Otherwise $A^{-1}=\frac{1}{ad-bc}\bigl[\begin{smallmatrix}d&-b\\-c&a\end{smallmatrix}\bigr]$ (swap the diagonal, negate the off-diagonal, divide).
+  \ii The solution of $A\vv x=\vv b$ is $\vv x=A^{-1}\vv b$ (\ilink{thm-lay-2-5}{Thm.~2.5}).
+  \ii To solve an equation for an unknown matrix $X$, multiply both sides by inverses on the correct side: from $AXB=C$ with $A,B$ invertible, multiply on the left by $A^{-1}$ and on the right by $B^{-1}$ to get $X=A^{-1}CB^{-1}$. Collect the terms containing $X$ on one side first and factor $X$ out on the side where it appears.
+\end{steps}
+\emph{Edge cases.} You may not divide by a matrix, and $A^{-1}C$ and $CA^{-1}$ are different in general; keep track of the side. Factoring $X$ from $AX+X$ gives $(A+I)X$, not $(A+1)X$.
+
+\begin{example*}[Solving a system with the $2\times2$ inverse]
+For $2x_1+x_2=4$, $5x_1+3x_2=11$, the coefficient matrix has $ad-bc=6-5=1$, so
+\[
+  A^{-1}=\begin{bmatrix}3&-1\\-5&2\end{bmatrix},\qquad
+  \vv x=A^{-1}\begin{bmatrix}4\\11\end{bmatrix}=\begin{bmatrix}12-11\\-20+22\end{bmatrix}=\begin{bmatrix}1\\2\end{bmatrix}.
+\]
+Check: $2+2=4$ and $5+6=11$.
+\end{example*}
+
+\begin{example*}[Solving matrix equations for $X$]
+If $A$, $B$ and $A+B$ are invertible $n\times n$ matrices:
+\begin{itemize}
+  \ii From $(X+A)B=I$: multiply on the right by $B^{-1}$ to get $X+A=B^{-1}$, so $X=B^{-1}-A$.
+  \ii From $AX+BX=C$: factor $X$ on the right, $(A+B)X=C$, so $X=(A+B)^{-1}C$.
+\end{itemize}
+\end{example*}
 
 \begin{theorem*}[Lay 2.2 Thm.~6: Algebraic properties of matrix inverses]\target{thm-lay-2-6}
   \begin{enumerate}[(a)]
@@ -200,14 +281,38 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \begin{proof}
   \begin{steps}
     \ii Part (a) is immediate from $A^{-1}A=I_n=AA^{-1}$.
-    \ii For (b), associativity gives $(AB)(B^{-1}A^{-1})=A(BB^{-1})A^{-1}=AI_nA^{-1}=AA^{-1}=I_n$, and similarly $(B^{-1}A^{-1})(AB)=B^{-1}(A^{-1}A)B=I_n$.
+    \ii For (b), associativity gives
+    \[
+      (AB)(B^{-1}A^{-1})=A(BB^{-1})A^{-1}=AI_nA^{-1}=AA^{-1}=I_n,
+    \]
+    and similarly $(B^{-1}A^{-1})(AB)=B^{-1}(A^{-1}A)B=I_n$.
     \ii For (c), by \ilink{thm-lay-2-3}{Thm.~2.3(d)}, $A^{\mathsf T}(A^{-1})^{\mathsf T}=(A^{-1}A)^{\mathsf T}=I_n^{\mathsf T}=I_n$ and $(A^{-1})^{\mathsf T}A^{\mathsf T}=(AA^{-1})^{\mathsf T}=I_n^{\mathsf T}=I_n$.
   \end{steps}
 \end{proof}
 
-\begin{itemize}
-  \ii \textbf{Elementary matrices:} An \vocab{elementary matrix} $E$ is an $n\times n$ matrix obtained by performing a single elementary row operation on $I_n$. If that same row operation is performed on an $m\times n$ matrix $A$, the resulting matrix equals the product $EA$. Because every row operation is reversible, every elementary matrix $E$ is invertible, and $E^{-1}$ is the elementary matrix of the reverse row operation.
-\end{itemize}
+\begin{definition*}[Elementary matrices (Lay 2.2)]
+  An \vocab{elementary matrix} $E$ is an $m\times m$ matrix obtained by performing a single elementary row operation on $I_m$.
+\end{definition*}
+
+\begin{proposition*}[Row operations are multiplication by elementary matrices (Lay 2.2)]\target{prop-elementary}
+  If an elementary row operation is performed on an $m\times n$ matrix $A$, the resulting matrix is $EA$, where $E$ is obtained by performing the same operation on $I_m$. Every elementary matrix $E$ is invertible, and $E^{-1}$ is the elementary matrix of the reverse row operation.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii By the row--column rule, row $k$ of $EA$ is $\operatorname{row}_k(E)\,A$. If row $k$ of $E$ is the unit row $\vv e_k^{\mathsf T}$ (a $1$ in position $k$, zeros elsewhere), then row $k$ of $EA$ is row $k$ of $A$.
+    \ii \textbf{Replacement $R_i\leftarrow R_i+cR_j$.} Row $i$ of $E$ is $\vv e_i^{\mathsf T}+c\,\vv e_j^{\mathsf T}$, so row $i$ of $EA$ is $\operatorname{row}_i(A)+c\operatorname{row}_j(A)$. Every other row of $E$ is a unit row, so the other rows of $A$ are unchanged. This is the replacement applied to $A$.
+    \ii \textbf{Interchange $R_i\leftrightarrow R_j$.} Rows $i$ and $j$ of $E$ are $\vv e_j^{\mathsf T}$ and $\vv e_i^{\mathsf T}$, so rows $i$ and $j$ of $EA$ are rows $j$ and $i$ of $A$. \textbf{Scaling $R_i\leftarrow cR_i$.} Row $i$ of $E$ is $c\,\vv e_i^{\mathsf T}$, so row $i$ of $EA$ is $c\operatorname{row}_i(A)$.
+    \ii Let $F$ be the elementary matrix of the reverse operation. By Steps~2--3 applied to $A=E$, the product $FE$ is the result of performing the reverse operation on $E$, which returns $I_m$. Likewise $EF=I_m$. So $E$ is invertible with $E^{-1}=F$.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[An elementary matrix and its inverse]
+The operation $R_2\leftarrow R_2-3R_1$ on $I_2$ gives $E=\bigl[\begin{smallmatrix}1&0\\-3&1\end{smallmatrix}\bigr]$, and
+\[
+  E\begin{bmatrix}1&2\\3&4\end{bmatrix}=\begin{bmatrix}1&2\\0&-2\end{bmatrix},
+\]
+which is the same operation applied to the matrix. The reverse operation $R_2\leftarrow R_2+3R_1$ gives $E^{-1}=\bigl[\begin{smallmatrix}1&0\\3&1\end{smallmatrix}\bigr]$; check $E^{-1}E=I_2$.
+\end{example*}
 
 \begin{theorem*}[Lay 2.2 Thm.~7: Row equivalence to $I_n$ and the ${[\,A\ \ I_n\,]}$ inversion algorithm]\target{thm-lay-2-7}
   An $n\times n$ matrix $A$ is invertible if and only if $A$ is row equivalent to $I_n$, and in this case, any sequence of elementary row operations that reduces $A$ to $I_n$ also transforms $I_n$ into $A^{-1}$.
@@ -217,13 +322,22 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Suppose $A$ is invertible. By \ilink{thm-lay-2-5}{Thm.~2.5}, $A\vv x=\vv b$ has a unique solution for every $\vv b$, so $A$ has a pivot in every column ($n$ pivots in an $n\times n$ matrix) and its RREF is $I_n$.
+    \ii Suppose $A$ is invertible. By \ilink{thm-lay-2-5}{Thm.~2.5}, $A\vv x=\vv 0$ has only the solution $\vv 0$, so $A$ has no free variable: a pivot in every column, $n$ pivots in an $n\times n$ matrix. A reduced echelon $n\times n$ matrix with $n$ leading $1$s has them at positions $(1,1),\dots,(n,n)$ (each is strictly right of the one above), and all other entries of these columns are $0$, so the RREF of $A$ is $I_n$.
     \ii Conversely, suppose $A$ is row equivalent to $I_n$, and let $E_1,\dots,E_k$ be the elementary matrices corresponding to the row operations that reduce $A$ to $I_n$: $E_k\cdots E_1 A = I_n$.
-    \ii Let $C=E_k\cdots E_1$. Since each $E_i$ is invertible, $C$ is invertible by \ilink{thm-lay-2-6}{Thm.~2.6(b)}. Multiplying $CA=I_n$ on the left by $C^{-1}$ gives $A=C^{-1}$, so $AC=C^{-1}C=I_n$ as well. Hence $A$ is invertible and $A^{-1}=C=E_k\cdots E_1 I_n$.
+    \ii Let $C=E_k\cdots E_1$. Since each $E_i$ is invertible (\ilink{prop-elementary}{Row operations are multiplication by elementary matrices}), $C$ is invertible by \ilink{thm-lay-2-6}{Thm.~2.6(b)}. Multiplying $CA=I_n$ on the left by $C^{-1}$ gives $A=C^{-1}$, so $AC=C^{-1}C=I_n$ as well. Hence $A$ is invertible and $A^{-1}=C=E_k\cdots E_1 I_n$.
   \end{steps}
 \end{proof}
 
-\needspace{7\baselineskip}\textbf{Worked example: computing $A^{-1}$ via $[\,A\ \ I_3\,]\to[\,I_3\ \ A^{-1}\,]$.}
+\method{How to find $A^{-1}$ by row reduction.}
+\begin{steps}
+  \ii Form the $n\times 2n$ matrix $[\,A\ \ I_n\,]$.
+  \ii Row reduce. If the left half acquires a row of zeros (fewer than $n$ pivots), stop: $A$ is not invertible (\ilink{thm-lay-2-7}{Thm.~2.7}).
+  \ii Otherwise continue until the left half is $I_n$; the right half is then $A^{-1}$.
+  \ii Check one or two entries of $AA^{-1}=I_n$.
+\end{steps}
+\emph{Edge cases.} To find only column $j$ of $A^{-1}$, solve $A\vv x=\vv e_j$, since column $j$ of $A^{-1}$ is $A^{-1}\vv e_j$. For a $2\times2$ matrix the formula of \ilink{thm-lay-2-4}{Thm.~2.4} is faster.
+
+\begin{example*}[{Computing $A^{-1}$ via $[\,A\ \ I_3\,]\to[\,I_3\ \ A^{-1}\,]$}]
 \[
   \aug{rrr|rrr}{1&0&2&1&0&0\\2&1&5&0&1&0\\0&1&2&0&0&1}
   \xrightarrow{R_2-2R_1}
@@ -237,6 +351,22 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \qquad\Longrightarrow\qquad
   A^{-1} = \begin{bmatrix} -3 & 2 & -2 \\ -4 & 2 & -1 \\ 2 & -1 & 1 \end{bmatrix}.
 \]
+Check row~1 of $A$ times the columns of $A^{-1}$: $-3+0+4=1$, $2+0-2=0$, $-2+0+2=0$. The third column $(-2,-1,1)$ is also the solution of $A\vv x=\vv e_3$.
+\end{example*}
+
+\begin{example*}[The algorithm detects a matrix with no inverse]
+\[
+  \aug{rrr|rrr}{1&2&1&1&0&0\\2&5&3&0&1&0\\1&3&2&0&0&1}
+  \xrightarrow[R_3-R_1]{R_2-2R_1}
+  \aug{rrr|rrr}{1&2&1&1&0&0\\0&1&1&-2&1&0\\0&1&1&-1&0&1}
+  \xrightarrow{R_3-R_2}
+  \aug{rrr|rrr}{1&2&1&1&0&0\\0&1&1&-2&1&0\\0&0&0&1&-1&1}.
+\]
+The left half has a zero row, so it has only $2$ pivots and is not row equivalent to $I_3$: the matrix is not invertible.
+\end{example*}
+
+\revisit
+Exactly the matrices that are row equivalent to $I_n$ have inverses (\ilink{thm-lay-2-7}{Thm.~2.7}); for $2\times2$ matrices this is the condition $ad-bc\ne0$ (\ilink{thm-lay-2-4}{Thm.~2.4}). To compute $A^{-1}$, row reduce $[\,A\ \ I_n\,]$ to $[\,I_n\ \ A^{-1}\,]$, as in the example \emph{Computing $A^{-1}$ via $[\,A\ \ I_3\,]\to[\,I_3\ \ A^{-1}\,]$}. Then $A\vv x=\vv b$ is solved by $\vv x=A^{-1}\vv b$, just as $ax=b$ is solved by $x=a^{-1}b$.
 
 \begin{shortcuts}
   \ii \textbf{Solving $A\vv x=\vv b_1,\dots,A\vv x=\vv b_k$ with the same coefficient matrix $A$:} Row reduce the multi-augmented matrix $[\,A\ \ \vv b_1\ \ \cdots\ \ \vv b_k\,]$ once instead of computing $A^{-1}$.
@@ -272,12 +402,12 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \end{multicols}
 \end{theorem*}
 \begin{ideabox}
-  Because $A$ is \emph{square} ($n$ rows and $n$ columns), ``$A$ has a pivot in every column'' and ``$A$ has a pivot in every row'' both say the exact same thing: \textbf{$A$ has $n$ pivots} (statement (c))! That single equivalence merges the entire one-to-one/independence equivalence chain (d)--(f) with the entire onto/spanning equivalence chain (g)--(i) and with row equivalence to $I_n$ ((a)--(b)). Even a one-sided inverse suffices for a square matrix: a left inverse $CA=I_n$ (j) forces $A\vv x=\vv 0\implies\vv x=CA\vv x=\vv 0$ (d), while a right inverse $AD=I_n$ (k) provides a solution $\vv x=D\vv b$ to $A\vv x=\vv b$ for every $\vv b$ (g).
+  Because $A$ is \emph{square} ($n$ rows and $n$ columns), ``$A$ has a pivot in every column'' and ``$A$ has a pivot in every row'' both say the same thing: \textbf{$A$ has $n$ pivots} (statement (c)). So the one-to-one/independence statements (d)--(f), the onto/spanning statements (g)--(i), and row equivalence to $I_n$ ((a)--(b)) all reduce to statement (c). Even a one-sided inverse suffices for a square matrix: a left inverse $CA=I_n$ (j) forces $A\vv x=\vv 0\implies\vv x=CA\vv x=\vv 0$ (d), while a right inverse $AD=I_n$ (k) provides a solution $\vv x=D\vv b$ to $A\vv x=\vv b$ for every $\vv b$ (g).
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii ((a)$\iff$(b)$\iff$(c)): \ilink{thm-lay-2-7}{Thm.~2.7} gives (a)$\iff$(b), and an $n\times n$ matrix has RREF equal to $I_n$ iff it has $n$ pivot positions (c).
-    \ii ((c)$\iff$(d)$\iff$(e)$\iff$(f) and (c)$\iff$(g)$\iff$(h)$\iff$(i)): In an $n\times n$ matrix, having $n$ pivots means having a pivot in every column and a pivot in every row, so (W2) yields both chains.
+    \ii ((c)$\iff$(d)$\iff$(e)$\iff$(f) and (c)$\iff$(g)$\iff$(h)$\iff$(i)): In an $n\times n$ matrix, having $n$ pivots means having a pivot in every column and a pivot in every row, so (\ilink{fact-w2}{W2}) yields both chains.
     \ii ((a)$\Rightarrow$(j)$\Rightarrow$(d) and (a)$\Rightarrow$(k)$\Rightarrow$(g)): If $A$ is invertible, $C=D=A^{-1}$ gives (j) and (k). If $CA=I_n$ and $A\vv x=\vv 0$, then $\vv x=CA\vv x=\vv 0$, giving (d). If $AD=I_n$, then $A(D\vv b)=\vv b$ for all $\vv b$, giving (g).
     \ii ((a)$\iff$(l)): \ilink{thm-lay-2-6}{Thm.~2.6(c)} gives (a)$\Rightarrow$(l), and applying the same result to $A^{\mathsf T}$ with $(A^{\mathsf T})^{\mathsf T}=A$ gives (l)$\Rightarrow$(a).
   \end{steps}
@@ -285,9 +415,9 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 
 \begin{fig}
 \begin{tikzpicture}
-  \node (N) at (-4,0) {\InkLabel{$\operatorname{Nul} A=\{\vv0\}$}};
-  \node (R) at (0,0) {\InkLabel{$\rank A=n$}};
-  \node (C) at (4,0) {\InkLabel{$\operatorname{Col} A=\RR^n$}};
+  \node (N) at (-4,0) {\InkLabel{$A\vv x=\vv 0$ only for $\vv x=\vv 0$}};
+  \node (R) at (0,0) {\InkLabel{$n$ pivots}};
+  \node (C) at (4,0) {\InkLabel{columns span $\RR^n$}};
   \node (I) at (0,-1.2) {\InkLabel{$A\text{ is invertible}$}};
   \InkStroke[<->]{(N.east) -- (R.west)}
   \InkStroke[<->]{(R.east) -- (C.west)}
@@ -301,6 +431,46 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \begin{theorem*}[Lay 2.3 Thm.~9: Invertible linear transformations]\target{thm-lay-2-9}
   Let $T\colon\RR^n\to\RR^n$ be a linear transformation and let $A$ be the standard matrix for $T$. Then $T$ is invertible (there exists a function $S\colon\RR^n\to\RR^n$ with $S(T(\vv x))=\vv x$ and $T(S(\vv x))=\vv x$ for all $\vv x\in\RR^n$) if and only if $A$ is an invertible matrix. In that case, the linear transformation $S$ given by $S(\vv x)=A^{-1}\vv x$ is the unique inverse of $T$.
 \end{theorem*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Assume $A$ is invertible.} Let $S(\vv x)=A^{-1}\vv x$. Then $S(T(\vv x))=A^{-1}A\vv x=\vv x$ and $T(S(\vv x))=AA^{-1}\vv x=\vv x$, so $T$ is invertible with inverse $S$.
+    \ii \textbf{Assume $T$ is invertible, with inverse $S$.} $T$ is one-to-one: if $T(\vv u)=T(\vv v)$, apply $S$ to get $\vv u=S(T(\vv u))=S(T(\vv v))=\vv v$. By the Invertible Matrix Theorem, (f)$\Rightarrow$(a), $A$ is invertible.
+    \ii \textbf{Uniqueness.} If $S$ and $U$ are both inverses of $T$, then for every $\vv y$, $S(\vv y)=S(T(U(\vv y)))=U(\vv y)$, using $T(U(\vv y))=\vv y$ and then $S(T(\vv z))=\vv z$ with $\vv z=U(\vv y)$.
+  \end{steps}
+\end{proof}
+
+\method{How to decide whether a square matrix is invertible with little computation.}
+\begin{steps}
+  \ii Look for an obvious failure of one statement of the Invertible Matrix Theorem: a zero row or column, two equal or proportional columns or rows, or a column that is visibly a combination of others. Any of these makes the columns (or the columns of $A^{\mathsf T}$) dependent, so $A$ is not invertible.
+  \ii Otherwise reduce $A$ to echelon form and count pivots: $n$ pivots means invertible. For a triangular matrix, read the diagonal: all entries nonzero means $n$ pivots.
+  \ii For statements about products, use one-sided inverses: if $AB$ is invertible with inverse $M$, then $A(BM)=I_n$, so $A$ is invertible by (k)$\Rightarrow$(a).
+\end{steps}
+
+\begin{example*}[Invertibility by inspection]
+Consider
+\[
+  P=\begin{bmatrix}1&4&2\\0&3&6\\-2&1&-4\end{bmatrix},\qquad Q=\begin{bmatrix}2&5&1\\0&-1&7\\0&0&3\end{bmatrix}.
+\]
+In $P$ the third column is $2$ times the first, so the columns are dependent and $P$ is not invertible by (e). The triangular matrix $Q$ has $3$ nonzero diagonal entries, hence $3$ pivots, so it is invertible by (c).
+\end{example*}
+
+\method{How to show a linear transformation is invertible and find a formula for $T^{-1}$.}
+\begin{steps}
+  \ii Find the standard matrix $A$ of $T\colon\RR^n\to\RR^n$.
+  \ii Check that $A$ is invertible, and compute $A^{-1}$.
+  \ii Then $T^{-1}(\vv x)=A^{-1}\vv x$ (\ilink{thm-lay-2-9}{Thm.~2.9}); write it out as a formula in $x_1,\dots,x_n$.
+\end{steps}
+
+\begin{example*}[The inverse of a linear transformation]
+$T(x_1,x_2)=(2x_1+x_2,\ 5x_1+3x_2)$ has standard matrix with $ad-bc=6-5=1$, so
+\[
+  A=\begin{bmatrix}2&1\\5&3\end{bmatrix},\qquad A^{-1}=\begin{bmatrix}3&-1\\-5&2\end{bmatrix},\qquad T^{-1}(x_1,x_2)=(3x_1-x_2,\ -5x_1+2x_2).
+\]
+Check: $T(1,0)=(2,5)$ and $T^{-1}(2,5)=(6-5,\ -10+10)=(1,0)$.
+\end{example*}
+
+\revisit
+For a square matrix, a pivot in every column and a pivot in every row are both the statement ``$n$ pivots''. So the two lists of Week~3 merge into one list, and every statement in it is equivalent to invertibility (\ilink{thm-lay-2-8}{Thm.~2.8}). In particular, for square $A$, $A\vv x=\vv 0$ having only the trivial solution already guarantees that $A\vv x=\vv b$ is solvable for every $\vv b$, which is false for non-square matrices.
 
 \subsection{Introduction to determinants (Lay 3.1)}
 
@@ -324,7 +494,14 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \[
     \det A = a_{i1}C_{i1} + a_{i2}C_{i2} + \dots + a_{in}C_{in} = a_{1j}C_{1j} + a_{2j}C_{2j} + \dots + a_{nj}C_{nj}.
   \]
+  In particular $\det A^{\mathsf T}=\det A$.
 \end{theorem*}
+\begin{ideabox}
+  The definition expands along row~1 only. To compare it with an expansion along row~$i$, expand one step further: both expansions then become sums of terms $a_{1j}a_{ik}\cdot(\pm\det M)$, where $M$ is $A$ with rows $1,i$ and columns $j,k$ deleted. The two double sums contain the same products, so the only thing to check is that the signs agree. Columns are handled by first showing $\det A^{\mathsf T}=\det A$, which turns columns into rows.
+\end{ideabox}
+\begin{proof}
+  The proof is a sign count by induction on $n$; it is written out in full in \ilink{proof-cofactor}{Proof of the cofactor expansion theorem} at the end.
+\end{proof}
 
 \begin{theorem*}[Lay 3.1 Thm.~2: Determinant of a triangular matrix]\target{thm-lay-3-2}
   If $A$ is a triangular matrix (upper triangular, lower triangular, or diagonal), then $\det A$ is the product of the entries on the main diagonal of $A$: $\det A = a_{11}a_{22}\cdots a_{nn}$.
@@ -340,6 +517,43 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
   \end{steps}
 \end{proof}
 
+\method{How to compute a determinant by cofactor expansion.}
+\begin{steps}
+  \ii Choose the row or column with the most zeros (\ilink{thm-lay-3-1}{Thm.~3.1} allows any).
+  \ii For each nonzero entry $a_{ij}$ in it, delete row $i$ and column $j$, compute the smaller determinant $\det A_{ij}$, and attach the sign $(-1)^{i+j}$ from the checkerboard pattern.
+  \ii Add the terms $a_{ij}(-1)^{i+j}\det A_{ij}$; repeat on each smaller determinant until it is $2\times2$ ($ad-bc$).
+\end{steps}
+\emph{Edge cases.} A zero row or zero column gives $\det A=0$ (expand along it). For a triangular matrix, multiply the diagonal (\ilink{thm-lay-3-2}{Thm.~3.2}). The most common error is the sign: the $(2,1)$ position has sign $-$.
+
+\begin{example*}[A $3\times3$ determinant along the first row]
+\[
+  \det\begin{bmatrix}2&0&1\\1&3&0\\0&4&-1\end{bmatrix}
+  =2\det\begin{bmatrix}3&0\\4&-1\end{bmatrix}-0+1\det\begin{bmatrix}1&3\\0&4\end{bmatrix}
+  =2(-3-0)+1(4-0)=-2.
+\]
+\end{example*}
+
+\begin{example*}[A $4\times4$ determinant using a column with one nonzero entry]
+In the matrix below, column~3 has a single nonzero entry $a_{43}=3$, with sign $(-1)^{4+3}=-1$:
+\[
+  \det\begin{bmatrix}1&0&0&2\\3&2&0&1\\0&5&0&-1\\2&1&3&4\end{bmatrix}
+  =-3\det\begin{bmatrix}1&0&2\\3&2&1\\0&5&-1\end{bmatrix}
+  =-3\bigl[1(-2-5)-0+2(15-0)\bigr]=-3(23)=-69.
+\]
+\end{example*}
+
+\begin{example*}[How row operations change a $2\times2$ determinant]
+Compare with $\det\bigl[\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\bigr]=ad-bc$:
+\begin{itemize}
+  \ii interchange: $\det\bigl[\begin{smallmatrix}c&d\\a&b\end{smallmatrix}\bigr]=cb-da=-(ad-bc)$;
+  \ii scaling row~1 by $k$: $\det\bigl[\begin{smallmatrix}ka&kb\\c&d\end{smallmatrix}\bigr]=kad-kbc=k(ad-bc)$;
+  \ii replacement $R_2\leftarrow R_2+kR_1$: $\det\bigl[\begin{smallmatrix}a&b\\c+ka&d+kb\end{smallmatrix}\bigr]=a(d+kb)-b(c+ka)=ad-bc$.
+\end{itemize}
+\end{example*}
+
+\revisit
+Define $\det A$ by expanding along the first row, $\det A=a_{11}C_{11}+\dots+a_{1n}C_{1n}$, where each cofactor is a smaller determinant with a sign. By \ilink{thm-lay-3-1}{Thm.~3.1} the same number comes from expanding along any row or column, so we expand along the one with the most zeros; in the $4\times4$ example above this reduced the work to one $3\times3$ determinant.
+
 \begin{shortcuts}
   \ii \textbf{One-sided inverse shortcut for square matrices:} If $A$ and $B$ are square $n\times n$ matrices and you show $AB=I_n$, you do \emph{not} need to check $BA=I_n$: by the Invertible Matrix Theorem (\ilink{thm-lay-2-8}{Thm.~2.8(k)$\Rightarrow$(a)}), $A$ is automatically invertible and $B=A^{-1}$.
   \ii \textbf{Expand cofactors along the row or column with the most zeros:} If a column has only one nonzero entry $a_{ij}$, expanding down that column reduces an $n\times n$ determinant to a single $(n-1)\times(n-1)$ determinant $(-1)^{i+j}a_{ij}\det A_{ij}$ in one step.
@@ -354,12 +568,12 @@ Thus $A(B\vv x)=(AB)\vv x$ holds for every $\vv x\in\RR^p$ if and only if we def
 \end{trapbox}
 
 \section{Homework this week}
-HW3, Section 2.1: 1, 3, 7, 9, 11, 12, 15, 17, 22, 35. Section 2.2: 1, 5, 7, 9, 12, 17, 18, 19, 20, 23, 29, 31, 33, 41. Section 2.3: 3, 7, 11, 13, 15, 21, 23, 28, 33, 38, 41, 44. HW4, Section 3.1: 1, 5, 11, 13, 21. (The rest of HW4 is in the \xweek{math54}{2026-09-21-determinants-vector-spaces}{Week~5 handout}.)
+HW3, Section 2.1: 1, 3, 7, 9, 11, 12, 15, 17, 22, 35. Section 2.2: 1, 5, 7, 9, 12, 17, 18, 19, 20, 23, 29, 31, 33, 41. Section 2.3: 3, 7, 11, 13, 15, 21, 23, 28, 33, 38, 41, 44. HW4, Section 3.1: 1, 5, 11, 13, 21. The rest of HW4 is taught in the \xweek{math54}{2026-09-21-determinants-vector-spaces}{Week~5 handout}.
 
 \section{Problem set}
-\begin{prob}\textbf{P1.}\ Let $A=\begin{bmatrix}1&2\\0&1\end{bmatrix}$ and $B=\begin{bmatrix}1&0\\3&1\end{bmatrix}$. Compute $AB$, $BA$, $(AB)^{\mathsf T}$, and $B^{\mathsf T}A^{\mathsf T}$.
+\begin{prob}\textbf{P1.}\ Let $A=\bigl[\begin{smallmatrix}1&2\\0&1\end{smallmatrix}\bigr]$ and $B=\bigl[\begin{smallmatrix}1&0\\3&1\end{smallmatrix}\bigr]$. Compute $AB$, $BA$, $(AB)^{\mathsf T}$, and $B^{\mathsf T}A^{\mathsf T}$.
 \end{prob}
-\begin{prob}\textbf{P2.}\ Compute $X^3$ for $X=\begin{bmatrix}1&-2\\0&1\end{bmatrix}$, and find a formula for $X^k$.
+\begin{prob}\textbf{P2.}\ Compute $X^3$ for $X=\bigl[\begin{smallmatrix}1&-2\\0&1\end{smallmatrix}\bigr]$, and find a formula for $X^k$.
 \end{prob}
 \begin{prob}\textbf{P3.}\ Use the $2\times2$ inverse formula to solve $3x_1+4x_2=3$, $5x_1+6x_2=7$, and then $3x_1+4x_2=1$, $5x_1+6x_2=0$.
 \end{prob}
@@ -382,5 +596,41 @@ HW3, Section 2.1: 1, 3, 7, 9, 11, 12, 15, 17, 22, 35. Section 2.2: 1, 5, 7, 9, 1
 \end{prob}
 \begin{prob}\textbf{P8.}\ Suppose $A$ is $n\times n$ and $A^3=0$. Show that $I_n-A$ is invertible, with inverse $I_n+A+A^2$.
 \end{prob}
+
+\section{Proofs of the facts used}
+
+\subsection{Proof of the cofactor expansion theorem}\target{proof-cofactor}
+This proves \ilink{thm-lay-3-1}{Thm.~3.1}. Write $A_{ij}$ for $A$ with row $i$ and column $j$ deleted, as in the definition, and $A_{\{1,i\},\{j,k\}}$ for $A$ with rows $1,i$ and columns $j,k$ deleted.
+
+\textbf{The sign of an entry inside a submatrix.} When row $r$ and column $c$ are deleted, an entry in row $i\ne r$ and column $k\ne c$ moves to row $i'$ and column $k'$, where $i'=i$ if $i<r$ and $i'=i-1$ if $i>r$, and similarly $k'=k$ if $k<c$ and $k'=k-1$ if $k>c$. Every sign below comes from this rule.
+
+\textbf{Base case $n=2$.} For $A=\bigl[\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\bigr]$ the four expansions are: row~2, $c(-b)+d(a)$; column~1, $a(d)+c(-b)$; column~2, $b(-c)+d(a)$; row~1, $ad-bc$ by definition. All equal $ad-bc$. Also $\det A^{\mathsf T}=ad-cb=\det A$.
+
+Now let $n\ge3$ and assume every statement below holds for all $(n-1)\times(n-1)$ matrices.
+
+\begin{steps}
+  \ii \textbf{Expansion down column~1 equals the definition.} The definition is $\det A=a_{11}C_{11}+\sum_{j\ge2}a_{1j}C_{1j}$, and the column-1 expansion is $a_{11}C_{11}+\sum_{i\ge2}a_{i1}C_{i1}$. The first terms agree, so we show $\sum_{j\ge2}a_{1j}C_{1j}=\sum_{i\ge2}a_{i1}C_{i1}$.
+  \begin{itemize}
+    \ii For $j\ge2$, expand $\det A_{1j}$ down its first column (allowed by the induction hypothesis). That column holds $a_{21},\dots,a_{n1}$, and $a_{i1}$ sits in row $i-1$, column $1$ of $A_{1j}$. Deleting that row and column leaves $A_{\{1,i\},\{1,j\}}$. So $a_{1j}C_{1j}=\sum_{i\ge2}a_{1j}a_{i1}(-1)^{1+j}(-1)^{(i-1)+1}\det A_{\{1,i\},\{1,j\}}$, with sign $(-1)^{i+j+1}$.
+    \ii For $i\ge2$, expand $\det A_{i1}$ along its first row (the definition). That row holds $a_{12},\dots,a_{1n}$, and $a_{1j}$ sits in row $1$, column $j-1$ of $A_{i1}$. So $a_{i1}C_{i1}=\sum_{j\ge2}a_{i1}a_{1j}(-1)^{i+1}(-1)^{1+(j-1)}\det A_{\{1,i\},\{1,j\}}$, with sign $(-1)^{i+j+1}$.
+  \end{itemize}
+  Both sides are the same double sum over $i,j\ge2$ with the same signs, so they are equal.
+  \ii \textbf{$\det A^{\mathsf T}=\det A$.} The first row of $A^{\mathsf T}$ is $a_{11},\dots,a_{n1}$, and deleting row $1$ and column $j$ of $A^{\mathsf T}$ gives $(A_{j1})^{\mathsf T}$. By the definition and the induction hypothesis $\det (A_{j1})^{\mathsf T}=\det A_{j1}$,
+  \[
+    \det A^{\mathsf T}=\sum_{j}a_{j1}(-1)^{1+j}\det A_{j1},
+  \]
+  which is the expansion of $A$ down column~1. By Step~1 it equals $\det A$.
+  \ii \textbf{Expansion along any row $i\ge2$ equals the definition.} Expand both sides once more, as in Step~1.
+  \begin{itemize}
+    \ii In the definition, the term $a_{1j}C_{1j}$: expand $\det A_{1j}$ along its row $i-1$ (the old row $i$; allowed by the induction hypothesis). The entry $a_{ik}$, $k\ne j$, sits in column $k'$ of $A_{1j}$, with $k'=k$ if $k<j$ and $k'=k-1$ if $k>j$. The sign is $(-1)^{1+j}(-1)^{(i-1)+k'}=(-1)^{i+j+k'}$.
+    \ii In the row-$i$ expansion, the term $a_{ik}C_{ik}$: expand $\det A_{ik}$ along its first row (the definition). The entry $a_{1j}$, $j\ne k$, sits in column $j'$, with $j'=j$ if $j<k$ and $j'=j-1$ if $j>k$. The sign is $(-1)^{i+k}(-1)^{1+j'}=(-1)^{i+k+1+j'}$.
+  \end{itemize}
+  Both produce $\sum_{j\ne k}a_{1j}a_{ik}(\pm)\det A_{\{1,i\},\{j,k\}}$. If $j<k$, the signs are $(-1)^{i+j+k-1}$ and $(-1)^{i+k+1+j}$, which are equal. If $j>k$, they are $(-1)^{i+j+k}$ and $(-1)^{i+k+j}$, again equal. So the two expansions are equal.
+  \ii \textbf{Expansion down any column $j$.} Column $j$ of $A$ is row $j$ of $A^{\mathsf T}$, and deleting row $j$ and column $i$ of $A^{\mathsf T}$ gives $(A_{ij})^{\mathsf T}$, whose determinant is $\det A_{ij}$ by the induction hypothesis. So the cofactors of $A^{\mathsf T}$ along row $j$ are the cofactors $C_{1j},\dots,C_{nj}$ of $A$ down column $j$, and
+  \[
+    a_{1j}C_{1j}+\dots+a_{nj}C_{nj}=(\text{row-}j\text{ expansion of }A^{\mathsf T})=\det A^{\mathsf T}=\det A,
+  \]
+  by Step~3 for $A^{\mathsf T}$ and Step~2.
+\end{steps}
 
 \end{document}

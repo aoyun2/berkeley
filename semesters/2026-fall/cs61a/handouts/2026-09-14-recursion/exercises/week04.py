@@ -1,9 +1,10 @@
 """CS 61A Week 4 exercises: recursion, helper state, and tree recursion (no loops)."""
 
 
-def sum_digits(n):
-    """Fix the sum_b bug: recursively return the sum of base-10 digits of integer n >= 0."""
-    raise NotImplementedError("TODO: implement sum_digits")
+def digit_product(n):
+    """Return the product of all base-10 digits of integer n >= 0, recursively and without
+    loops. A single-digit n is its own product: digit_product(0) == 0, digit_product(7) == 7."""
+    raise NotImplementedError("TODO: implement digit_product")
 
 
 def has_adjacent_equal_digits(n):
@@ -16,6 +17,7 @@ def count_stairs(n, step_a, step_b):
     raise NotImplementedError("TODO: implement count_stairs")
 
 
-def digital_root_steps(n):
-    """Independent transfer: for integer n >= 0, return (root, steps) reducing n by sum_digits until < 10."""
-    raise NotImplementedError("TODO: implement digital_root_steps")
+def persistence(n):
+    """Independent transfer: for integer n >= 0, repeatedly replace n by digit_product(n) until
+    n < 10. Return the pair (final single digit, number of replacements made)."""
+    raise NotImplementedError("TODO: implement persistence")

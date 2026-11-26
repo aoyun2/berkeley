@@ -5,6 +5,8 @@
 \newcommand{\ip}[2]{\langle #1,#2\rangle}
 \DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\nul}{null}\DeclareMathOperator{\range}{range}\DeclareMathOperator{\spn}{span}
 \newcommand{\LL}{\mathcal L}\newcommand{\PP}{\mathcal P}\newcommand{\MM}{\mathcal M}
+% "How to ..." method box: numbered steps for a procedure (standard, Teach every procedure).
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=mdbluebox,linecolor=NavyBlue,backgroundcolor=NavyBlue!3]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
 \title{Math 110 --- Week 8}
 \subtitle{Generalized eigenvectors and Jordan form (Notes Ch.~14--15, LADR 8A--8C, HW8)}
 \author{}\date{}\ihead{}
@@ -39,8 +41,16 @@ $V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Throughout, w
   \why{$STv=0\Rightarrow Tv=0\Rightarrow v=0$.}
   \ii \target{T5}\tool{Polynomials in $T$ commute.} $p(T)q(T)=q(T)p(T)$. Hence $\nul p(T)$ and $\range p(T)$ are $T$-invariant.
   \why{Both products equal $(pq)(T)$. If $p(T)v=0$, then $p(T)(Tv)=T\,p(T)v=0$. And $T\bigl(p(T)u\bigr)=p(T)(Tu)\in\range p(T)$.}
-  \ii \target{T6}\tool{Fundamental theorem of algebra.} A nonconstant $p\in\PP(\CC)$ factors as $c(z-\lambda_1)\cdots(z-\lambda_m)$ (cited). Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$.
-  \why{Divide $p$ by $z-\lambda$: the remainder is a constant, and evaluating at $\lambda$ shows it equals $p(\lambda)$.}
+  \ii \target{T6}\tool{Division, roots and factoring.}
+  \begin{enumerate}[(a)]
+    \ii \emph{Division with remainder.} For $p,s\in\PP(\FF)$ with $s\ne0$ there are $q,r$ with $p=sq+r$ and $r=0$ or $\deg r<\deg s$.
+    \ii \emph{Root--factor theorem.} Over any field, $p(\lambda)=0\iff(z-\lambda)\mid p$. So a nonzero polynomial of degree $m$ has at most $m$ roots.
+    \ii \emph{Fundamental theorem of algebra} (\xlink{math110}{2026-10-05-eigenvalues-pagerank}{prop-52}{Week 6, Prop.~52}, where it is proved). Every nonconstant $p\in\PP(\CC)$ has a root in $\CC$; hence, by (b) repeatedly, $p=c(z-\lambda_1)\cdots(z-\lambda_m)$.
+  \end{enumerate}
+  \why{\begin{steps}
+    \ii (a) Induction on $\deg p$. If $p=0$ or $\deg p<\deg s$, take $q=0$, $r=p$. Otherwise let $p$ have leading term $az^k$ and $s$ leading term $bz^j$ ($k\ge j$). Then $p-\frac ab z^{k-j}s$ has degree less than $k$, so by induction it equals $sq_1+r$ with $r$ as required, and $p=s\bigl(q_1+\frac abz^{k-j}\bigr)+r$.
+    \ii (b) Divide $p$ by $z-\lambda$: the remainder is a constant $r$, and evaluating $p=(z-\lambda)q+r$ at $\lambda$ gives $r=p(\lambda)$. Each root splits off one factor and lowers the degree by $1$, so there are at most $m$ roots.
+  \end{steps}}
   \ii \target{T7}\tool{Eigenvalues.}
   \begin{enumerate}[(a)]
     \ii $\lambda$ is an eigenvalue $\iff T-\lambda I$ is not injective.
@@ -75,19 +85,14 @@ $V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Throughout, w
     \ii If $U$ is invariant, $m_{T|_U}\mid m_T$.
     \ii If $V=U_1\oplus\dots\oplus U_r$ with every $U_i$ invariant, $m_T=\operatorname{lcm}(m_{T|_{U_1}},\dots,m_{T|_{U_r}})$.
   \end{enumerate}
-  \why{(a) Divide $q$ by $m_T$; the remainder is $0$ at $T$ and has smaller degree, so it is $0$. (d) $m_T(T|_U)u=m_T(T)u=0$, then (a). (e) $q(T)=0$ exactly when $q(T|_{U_i})=0$ for all $i$, i.e.\ when every $m_{T|_{U_i}}$ divides $q$. (b), (c) are proved in the Week 7 handout.}
+  \why{(a) Divide $q$ by $m_T$; the remainder is $0$ at $T$ and has smaller degree, so it is $0$. (d) $m_T(T|_U)u=m_T(T)u=0$, then (a). (e) $q(T)=0$ exactly when $q(T|_{U_i})=0$ for all $i$, i.e.\ when every $m_{T|_{U_i}}$ divides $q$. (b) If $Tv=\lambda v$ with $v\ne0$, then $0=m_T(T)v=m_T(\lambda)v$ \ilink{T7}{(T7)}, so $m_T(\lambda)=0$. Conversely, if $m_T(\lambda)=0$, write $m_T=(x-\lambda)q$; $q(T)\ne0$ because $\deg q<\deg m_T$, so some $w=q(T)v$ is nonzero, and $(T-\lambda I)w=m_T(T)v=0$. (c) is \xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-67}{Week 7, Prop.~67}, proved there by induction on $\dim V$.}
 \end{enumerate}
 
-\section{This week}
+\section{Generalized eigenvectors and Jordan form}
 \subsection{Generalized eigenvectors (Ch.~14)}
 
 \begin{qbox}
-  We want the simplest matrix for every operator. With an eigenbasis it is diagonal, but often there are too few eigenvectors.
-  \begin{itemize}
-    \ii $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ has eigenvectors only on $\spn(e_1)$.
-    \ii But $Ne_2=e_1\ne0$ and $N^2e_2=0$: $e_2$ is sent to $0$ by $N^2$ but not by $N$.
-    \ii Idea of the chapter: allow $(T-\lambda I)^kv=0$ for some $k\ge1$ instead of only $k=1$. Over $\CC$ that gives enough vectors for a basis.
-  \end{itemize}
+  The operator $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ on $\FF^2$ has eigenvectors only on the line $\spn(e_1)$, so it has no basis of eigenvectors. But $Ne_2=e_1$ and $N^2e_2=0$: the vector $e_2$ is sent to $0$ by $N^2$, though not by $N$. Suppose we accept every vector $v$ with $(T-\lambda I)^kv=0$ for some $k\ge1$, not only those with $k=1$. Does every operator on a complex vector space then have a basis made of such vectors?
 \end{qbox}
 
 \begin{definition*}[Def.~37 / LADR 8.8, 8.19]\hypertarget{def-37}{}\label{def-37}
@@ -98,23 +103,6 @@ $V$ is finite-dimensional over $\FF$ ($\RR$ or $\CC$), $n=\dim V$. Throughout, w
   \ii A union over all $k$ is awkward. Props.~69--70 show it stops at a fixed power.
   \ii An operator $N$ is \vocab{nilpotent} if $N^k=0$ for some $k$ (\hyperref[def-39]{Def.~39}), e.g.\ $N$ above. So $G(\lambda,T)$ is the part of $V$ on which $T-\lambda I$ acts nilpotently.
 \end{itemize}
-\begin{fig}
-\begin{tikzpicture}[font=\small]
-  \InkRegion[inkblue]{(8.2,-.28) rectangle (8.8,.28)}
-  \node (v) at (0,0) {\InkLabel{$v$}};
-  \node (v1) at (3,0) {\InkLabel{$(T-\lambda I)v$}};
-  \node (d) at (6,0) {\InkLabel{$\cdots$}};
-  \node (w) at (8.5,0) {\InkLabel[inkblue]{$w$}};
-  \node (z) at (11,0) {\InkLabel{$0$}};
-  \foreach \a/\b in {v/v1,v1/d,d/w,w/z} {
-    \InkStroke[ink arrow]{(\a)--(\b)}
-    \node[above=3pt,font=\scriptsize] at ($(\a)!.5!(\b)$) {\InkLabel{$T-\lambda I$}};
-  }
-  \node[below=5pt,font=\scriptsize] at (v.south) {\InkLabel{$G(\lambda,T)$}};
-  \node[below=5pt,font=\scriptsize] at (w.south) {\InkLabel[inkblue]{$E(\lambda,T)$}};
-\end{tikzpicture}
-\figcap{Applying $T-\lambda I$ repeatedly to $v\in G(\lambda,T)$ ends at a nonzero eigenvector $w\in E(\lambda,T)$ (\hyperref[prop-71]{Prop.~71}; blue), as in $e_2\mapsto e_1\mapsto 0$ for $\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$.}
-\end{fig}
 
 \begin{proposition*}[Prop.~69 / LADR 8.1, 8.2: the null-space chain]\hypertarget{prop-69}{}\label{prop-69}
   $\{0\}=\nul T^0\subseteq\nul T\subseteq\nul T^2\subseteq\cdots$. If $\nul T^m=\nul T^{m+1}$, then $\nul T^m=\nul T^{m+k}$ for all $k\ge0$.
@@ -166,14 +154,14 @@ The ascending chain of null spaces stabilizes by power $n=\dim V$ because until 
   \InkStroke[inkblue]{(0,0)--(1,2)--(2,4)--(3,5)--(7,5)}
   \foreach \k/\d in {0/0,1/2,2/4,3/5,4/5,5/5,6/5,7/5}
     \fill[inkblue] (\k,\d) circle (1.35pt);
-  \node[above left=2pt] at (1,2) {\InkLabel[inkblue]{$d_1=2$}};
-  \node[above left=2pt] at (2,4) {\InkLabel[inkblue]{$d_2=4$}};
+  \node[below right=1pt] at (1,2) {\InkLabel[inkblue]{$d_1=2$}};
+  \node[left=7pt] at (2,4.15) {\InkLabel[inkblue]{$d_2=4$}};
   \node[above=3pt] at (3,5) {\InkLabel[inkblue]{$d_3=5$}};
-  \node[below right=0pt,font=\tiny] at (0.5,1.0) {\InkLabel[inkslate]{$+2$}};
-  \node[below right=0pt,font=\tiny] at (1.5,3.0) {\InkLabel[inkslate]{$+2$}};
-  \node[below right=1pt,font=\tiny] at (2.5,4.5) {\InkLabel[inkslate]{$+1$}};
+  \node[below right=0pt] at (0.5,1.0) {\InkLabel{$+2$}};
+  \node[below right=0pt] at (1.5,3.0) {\InkLabel{$+2$}};
+  \node[below right=-1pt] at (2.45,4.5) {\InkLabel{$+1$}};
 \end{tikzpicture}
-\figcap{Ascent of $\dim\nul N^k = 0,2,4,5,5,\dots$ for $Ne_3=e_2, Ne_2=e_1\mapsto 0$ and $Ne_5=e_4\mapsto 0$ on $\FF^5$. The chain stops once it stabilizes at $k=3\le n$ (\hyperref[prop-69]{Prop.~69}, \hyperref[prop-70]{Prop.~70}).}
+\figcap{For $N$ on $\FF^5$ with $e_3\mapsto e_2\mapsto e_1\mapsto0$ and $e_5\mapsto e_4\mapsto0$, $\dim\nul N^k=0,2,4,5,5,\dots$: the dimension rises until two consecutive values agree (at $k=3\le n$) and is constant from then on.}
 \end{fig}
 
 \begin{proposition*}[LADR 8.4, 8.5: splitting off the nilpotent part]\hypertarget{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}{}\label{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}
@@ -199,6 +187,23 @@ Applying $T-\lambda I$ repeatedly to a nonzero generalized eigenvector $v\in G(\
 \begin{proof}
   If $\lambda$ is an eigenvalue, $\{0\}\ne E(\lambda,T)\subseteq G(\lambda,T)$. Conversely, let $v\in G(\lambda,T)$, $v\ne0$, and let $j\ge0$ be the largest exponent with $w=(T-\lambda I)^jv\ne0$ (it exists because $(T-\lambda I)^kv=0$ for some $k$). Then $(T-\lambda I)w=0$ and $w\ne0$.
 \end{proof}
+\begin{fig}
+\begin{tikzpicture}[font=\small]
+  \InkRegion[inkblue]{(8.2,-.28) rectangle (8.8,.28)}
+  \node (v) at (0,0) {\InkLabel{$v$}};
+  \node (v1) at (3,0) {\InkLabel{$(T-\lambda I)v$}};
+  \node (d) at (6,0) {\InkLabel{$\cdots$}};
+  \node (w) at (8.5,0) {\InkLabel[inkblue]{$w$}};
+  \node (z) at (11,0) {\InkLabel{$0$}};
+  \foreach \a/\b in {v/v1,v1/d,d/w,w/z} {
+    \InkStroke[ink arrow]{(\a)--(\b)}
+    \node[above=3pt,font=\scriptsize] at ($(\a)!.5!(\b)$) {\InkLabel{$T-\lambda I$}};
+  }
+  \node[below=5pt,font=\scriptsize] at (v.south) {\InkLabel{$G(\lambda,T)$}};
+  \node[below=5pt,font=\scriptsize] at (w.south) {\InkLabel[inkblue]{$E(\lambda,T)$}};
+\end{tikzpicture}
+\figcap{Applying $T-\lambda I$ repeatedly to a nonzero $v\in G(\lambda,T)$: the last nonzero vector $w$ is an eigenvector. For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ and $\lambda=0$ the chain is $e_2\mapsto e_1\mapsto 0$.}
+\end{fig}
 
 \begin{proposition*}[Prop.~72 / LADR 8.12]\hypertarget{prop-72}{}\label{prop-72}
   Generalized eigenvectors $v_1,\dots,v_m$ for distinct eigenvalues $\lambda_1,\dots,\lambda_m$ are independent.
@@ -232,13 +237,15 @@ Directness of $G(\lambda_1,T)\oplus\dots\oplus G(\lambda_m,T)$ follows from \hyp
 \begin{proof}
   \begin{steps}
     \ii Induction on $n$; $n=1$ is clear. Take an eigenvalue $\lambda_1$ \ilink{T7}{(T7)}.
-    \ii Splitting result for $T-\lambda_1I$: $V=G(\lambda_1,T)\oplus U$, $U=\range(T-\lambda_1I)^n$. $U$ is invariant \ilink{T5}{(T5)}, and $\dim U<n$ since $G(\lambda_1,T)\ne0$ (\hyperref[prop-71]{Prop.~71}).
-    \ii The eigenvalues of $T|_U$ are among $\lambda_1,\dots,\lambda_m$ because any eigenvector of $T|_U$ is an eigenvector of $T$, and $\lambda_1$ is excluded since $T-\lambda_1I$ is injective on $U=\range(T-\lambda_1I)^n$ (part (b) of the splitting result, applied to $T-\lambda_1I$).
+    \ii Apply \ilink{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}{LADR 8.4--8.5} to the operator $T-\lambda_1I$: $V=\nul(T-\lambda_1I)^n\oplus\range(T-\lambda_1I)^n=G(\lambda_1,T)\oplus U$ with $U=\range(T-\lambda_1I)^n$. $U$ is invariant \ilink{T5}{(T5)}, and $\dim U<n$ since $G(\lambda_1,T)\ne0$ (\hyperref[prop-71]{Prop.~71}).
+    \ii The eigenvalues of $T|_U$ are among $\lambda_1,\dots,\lambda_m$ because any eigenvector of $T|_U$ is an eigenvector of $T$, and $\lambda_1$ is excluded since $T-\lambda_1I$ is injective on $U=\range(T-\lambda_1I)^n$ (the second statement of \ilink{name-ladr-8-4-8-5-splitting-off-the-nilpotent-part}{LADR 8.4--8.5}, applied to $T-\lambda_1I$).
     \ii By induction ($\dim U<n$), $U=\bigoplus_{i\ge2}G(\lambda_i,T|_U)$. Each $G(\lambda_i,T|_U)$ is contained in $G(\lambda_i,T)$, because $(T|_U-\lambda_iI)^ku=(T-\lambda_iI)^ku$ for $u\in U$.
     \ii So the $G(\lambda_i,T)$ span $V$. Direct: if $u_1+\dots+u_m=0$, $u_i\in G(\lambda_i,T)$, the nonzero $u_i$ would be independent (\hyperref[prop-72]{Prop.~72}); so all are $0$.
   \end{steps}
 \end{proof}
-On each $G(\lambda_i,T)$, $T=\lambda_iI+N_i$ with $N_i$ nilpotent. So everything reduces to nilpotent operators (Ch.~15).
+\revisit Yes. Over $\CC$, \hyperref[prop-73]{Prop.~73} writes $V$ as the direct sum of the generalized eigenspaces, so a basis of each $G(\lambda_i,T)$, listed one after another, is a basis of $V$ made of generalized eigenvectors. For $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$ the only eigenvalue is $0$ and $G(0,N)=\nul N^2=\FF^2$, with basis $e_1,e_2$. Over $\RR$ the answer can be no: the rotation $(x,y)\mapsto(-y,x)$ of $\RR^2$ has no eigenvalue, so every $G(\lambda,T)$ is $\{0\}$ (\hyperref[prop-71]{Prop.~71}).
+
+On each $G(\lambda_i,T)$ we can write $T=\lambda_iI+N_i$, where $N_i=(T-\lambda_iI)|_{G(\lambda_i,T)}$ satisfies $N_i^n=0$. So the remaining work is to find good bases for operators with a power equal to $0$ (Ch.~15).
 
 \begin{definition*}[Def.~38 / LADR 8.23--8.25: Algebraic vs.\ geometric multiplicity]\hypertarget{def-38}{}\label{def-38}
   \vocab{Algebraic multiplicity} of $\lambda$: $\dim G(\lambda,T)=\dim\nul(T-\lambda I)^n$. \vocab{Geometric multiplicity}: $\dim E(\lambda,T)=\dim\nul(T-\lambda I)$.
@@ -264,7 +271,6 @@ Because $V=\bigoplus_iG(\lambda_i,T)$ (\hyperref[prop-73]{Prop.~73}), checking $
   \end{steps}
 \end{proof}
 \begin{itemize}
-  \ii For a matrix, $\chi_A(x)=\det(xI-A)$ (stated in the notes; needs determinants).
   \ii $2\times2$: $\chi_A=x^2-(\tr A)x+\det A$.
   \why{Multiplying out gives $A^2-(\tr A)A+(\det A)I=0$. If $A\ne cI$, $m_A$ has degree $2$ and divides both this polynomial and $\chi_A$, so all three agree. If $A=cI$, both are $(x-c)^2$.}
   \ii $\chi_T$ and $m_T$ have the same roots; the exponents in $m_T$ can be smaller (LADR 8.30).
@@ -287,8 +293,6 @@ Because $V$ splits into the $T$-invariant direct sum $\bigoplus_{i=1}^m G(\lambd
   \end{steps}
 \end{proof}
 
-\method{Computing $m_T$ from null-space dimensions.} For each eigenvalue $\lambda$, compute $d_k=\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$ for $k=1,2,\dots$. The exponent of $x-\lambda$ is the least $k$ for which $d_{k+1}=d_k$; equivalently, it is the least $k$ for which $d_k$ reaches the algebraic multiplicity.
-
 \begin{proposition*}[LADR 8.31: diagonal of a triangular matrix]\hypertarget{name-ladr-8-31-diagonal-of-a-triangular-matrix}{}\label{name-ladr-8-31-diagonal-of-a-triangular-matrix}
   Over $\CC$, if $\MM(T)$ is upper-triangular, then $\dim G(\lambda,T)$ is the number of times $\lambda$ appears on the diagonal.
 \end{proposition*}
@@ -303,26 +307,59 @@ A diagonal entry records an eigenvalue, but upper-triangular entries can prevent
   \end{steps}
 \end{proof}
 
-\begin{example*}[Computing $G(\lambda,A)$ and $m_A$ (Ex.~61)]\target{ex-61}
+\begin{methodbox}{How to compute $G(\lambda,A)$, the multiplicities and $m_A$}
+For an $n\times n$ complex matrix $A$:
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Find the eigenvalues. If $A$ is triangular, they are the diagonal entries, and the algebraic multiplicity $a_\lambda=\dim G(\lambda,A)$ is the number of times $\lambda$ appears there (LADR 8.31). Otherwise find them as the roots of $m_A$ (\xlink{math110}{2026-10-12-diagonalization-minimal-polynomial}{prop-66}{Week 7, Prop.~66}), for instance from a polynomial that annihilates $A$; for $2\times2$ matrices use $\chi_A=x^2-(\tr A)x+\det A$ (Cayley--Hamilton, above).
+  \ii For each $\lambda$, compute $d_k=\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$ for $k=1,2,\dots$. Stop at the first $k$ with $d_k=d_{k+1}$, or with $d_k=a_\lambda$ if $a_\lambda$ is already known. That $k$ is $s_\lambda$, and $a_\lambda=d_{s_\lambda}$ (\hyperref[prop-69]{Prop.~69}, \hyperref[prop-70]{Prop.~70}).
+  \ii Then $G(\lambda,A)=\nul(A-\lambda I)^{s_\lambda}$: solve that system for a basis. The geometric multiplicity is $d_1$.
+  \ii $m_A=\prod_\lambda(x-\lambda)^{s_\lambda}$ (exponents of $m_T$ over $\CC$, above).
+\end{enumerate}
+\textbf{Edge cases.}
+\begin{itemize}
+  \ii If $a_\lambda=1$, then $d_1=1=a_\lambda$ at once: $s_\lambda=1$ and $G(\lambda,A)=E(\lambda,A)$. No powers are needed.
+  \ii If $d_1=a_\lambda$ for every $\lambda$, all exponents are $1$ and $A$ is diagonalizable.
+  \ii The $d_k$ never decrease, and they increase by at least $1$ at each step until they reach $a_\lambda$ (\hyperref[prop-69]{Prop.~69}). So $s_\lambda\le a_\lambda$, and a value of $d_k$ above $a_\lambda$ means an arithmetic error.
+  \ii Stopping when $d_{k+1}=d_k$ needs one more power than stopping at $d_k=a_\lambda$, so use the diagonal or subtraction from $n$ (``Last one by subtraction'' below) to know $a_\lambda$ in advance when possible.
+\end{itemize}
+\end{methodbox}
+
+\begin{example*}[A triangular matrix with a repeated eigenvalue (Ex.~61)]\target{ex-61}
   Let
   \[
     A=\begin{pmatrix}1&1&1\\0&1&1\\0&0&3\end{pmatrix}.
   \]
   \begin{steps}
-    \ii For $\lambda=1$: $\nul(A-I)=\spn(e_1)$ ($d_1=1$), $\nul(A-I)^2=\spn(e_1,e_2)$ ($d_2=2$), and $\nul(A-I)^3=\spn(e_1,e_2)$ ($d_3=2$).
-    \ii Two consecutive null spaces agree (or by LADR 8.31, $1$ appears twice on the diagonal so $\dim G(1,A)=2$), so the chain has stopped at $k=2$: $G(1,A)=\spn(e_1,e_2)$, and the exponent of $(x-1)$ in $m_A$ is $2$.
-    \ii For $\lambda=3$: $3$ appears once on the diagonal, so $\dim G(3,A)=1$, $G(3,A)=E(3,A)=\spn((3,2,4))$, and $m_A=(x-1)^2(x-3)$.
+    \ii The diagonal is $1,1,3$, so $a_1=2$ and $a_3=1$ (LADR 8.31).
+    \ii For $\lambda=1$ compute the powers:
+    \[ A-I=\begin{pmatrix}0&1&1\\0&0&1\\0&0&2\end{pmatrix},\qquad (A-I)^2=\begin{pmatrix}0&0&3\\0&0&2\\0&0&4\end{pmatrix}. \]
+    $A-I$ has rank $2$, so $d_1=1$ and $\nul(A-I)=\spn(e_1)$. $(A-I)^2$ has rank $1$, so $d_2=2=a_1$. Stop: $s_1=2$ and $G(1,A)=\nul(A-I)^2=\spn(e_1,e_2)$.
+    \ii For $\lambda=3$: $a_3=1$, so $G(3,A)=E(3,A)$. Solving $(A-3I)x=0$ gives $G(3,A)=\spn((3,2,4))$.
+    \ii So $m_A=(x-1)^2(x-3)$; the eigenvalue $1$ has geometric multiplicity $1$ and algebraic multiplicity $2$, so $A$ is not diagonalizable.
   \end{steps}
 \end{example*}
+
+\begin{example*}[A matrix that is not triangular]
+  Let
+  \[ B=\begin{pmatrix}3&-1&-1\\2&0&-1\\2&-1&0\end{pmatrix},\qquad B-I=\begin{pmatrix}2&-1&-1\\2&-1&-1\\2&-1&-1\end{pmatrix}. \]
+  \begin{steps}
+    \ii $B-I$ has three equal rows, so its rank is $1$ and $d_1=2$. So $E(1,B)=\{2x-y-z=0\}$ has dimension $2<3$.
+    \ii Each row $(2,-1,-1)$ times each column $(2,2,2)^{\mathsf T}$ of $B-I$ gives $4-2-2=0$, so $(B-I)^2=0$ and $d_2=3=n$. Stop: $s_1=2$.
+    \ii Since $(x-1)^2$ annihilates $B$, $m_B$ divides it, and the only root of $m_B$, hence the only eigenvalue of $B$, is $1$ \ilink{T11}{(T11(b))}. So $G(1,B)=\nul(B-I)^2=\CC^3$, $a_1=3$, $\chi_B=(x-1)^3$ and $m_B=(x-1)^2$ ($B\ne I$). Since $s_1=2>1$, $B$ is not diagonalizable.
+  \end{steps}
+\end{example*}
+
 
 \begin{shortcuts}
   \ii \textbf{Exponent $1$ test.} The exponent of $\lambda$ in $m$ is $1$ $\iff\dim E(\lambda)$ equals the algebraic multiplicity $\iff\operatorname{rank}(A-\lambda I)=n-d_\lambda$. One rank computation per eigenvalue settles diagonalizability.
   \ii \textbf{Never test $\chi$ itself} when computing $m$: it always works (Cayley--Hamilton). If every smaller candidate fails, $m=\chi$.
   \ii \textbf{Smaller power.} $G(\lambda,T)=\nul(T-\lambda I)^{d}$, $d$ the algebraic multiplicity, and even $\nul(T-\lambda I)^{k}$ with $k$ the exponent of $x-\lambda$ in $m_T$ (exponents of $m_T$, above). Why: $T-\lambda I$ is nilpotent on the $d$-dimensional space $G(\lambda,T)$, so \hyperref[prop-70]{Prop.~70} inside it gives the power $d$.
-  \ii \textbf{Know the target dimension first.} For a triangular matrix, $\dim G(\lambda)$ is the number of $\lambda$'s on the diagonal (LADR 8.31); in general it is the multiplicity of $\lambda$ as a root of $\chi_A=\det(xI-A)$. Stop the chain $\dim\nul(A-\lambda I)^k$ as soon as it reaches that number.
+  \ii \textbf{Know the target dimension first.} For a triangular matrix, $\dim G(\lambda)$ is the number of $\lambda$'s on the diagonal (LADR 8.31); in general it is $n$ minus the algebraic multiplicities of the other eigenvalues when those are known. Stop the chain $\dim\nul(A-\lambda I)^k$ as soon as it reaches that number.
   \ii \textbf{Last one by subtraction.} The algebraic multiplicities add up to $n$, so the last one is $n$ minus the others. And if the $\dim G(\lambda_i)$ you found already add up to $n$, there are no other eigenvalues.
   \ii \textbf{Multiplicity $1$.} If the algebraic multiplicity is $1$, then $G(\lambda)=E(\lambda)$ (since $1\le\dim E\le\dim G=1$).
   \ii \textbf{One eigenvalue.} Over $\CC$, if $\lambda$ is the only eigenvalue, $G(\lambda,T)=V$ and $(T-\lambda I)^n=0$ with no computation.
+\end{shortcuts}
+\begin{shortcuts}
   \ii \textbf{Geometric multiplicity by rank.} $\dim E(\lambda)=n-\operatorname{rank}(A-\lambda I)$, and $\dim\nul(A-\lambda I)^k=n-\operatorname{rank}(A-\lambda I)^k$.
   \ii \textbf{$G(\lambda)$ as a range.} Over $\CC$, $G(\lambda,T)=\range\prod_{\mu\ne\lambda}(T-\mu I)^{d_\mu}$, and $\bigoplus_{\mu\ne\lambda}G(\mu,T)$ is the null space of that product. Useful when the other eigenvalues are simple: for the $A$ of Ex.~61, $G(1,A)=\range(A-3I)=\spn(e_1,e_2)$. Why, with $P$ the product and $H=\bigoplus_{\mu\ne\lambda}G(\mu,T)$:
   \begin{enumerate}[label=\arabic*.,itemsep=1pt]
@@ -365,10 +402,39 @@ A diagonal entry records an eigenvalue, but upper-triangular entries can prevent
 \end{definition*}
 \begin{itemize}
   \ii \textbf{Power bound $N^{\dim V}=0$ (LADR 8.11):} If $N$ is nilpotent, then $V=G(0,N)=\nul N^n$ (\hyperref[prop-70]{Prop.~70}), so $N^n=0$ and $m_N(x)=x^k$ with $k\le n=\dim V$.
-  \ii \textbf{Eigenvalues and non-injectivity (LADR 8.14, 8.16, 8.17):} If $N$ is nilpotent on $V\ne\{0\}$, then $0$ is the only eigenvalue of $N$ ($Nv=\lambda v\implies 0=N^kv=\lambda^kv$), $\nul N\ne\{0\}$ (LADR 8.16), and for every nonzero $\lambda\ne 0$, $\lambda I+N$ is invertible with $(I-N)^{-1}=I+N+\dots+N^{n-1}$ (LADR 8.17). Over $\CC$, conversely, $0$ is the only eigenvalue of $N\iff V=G(0,N)\iff N$ is nilpotent.
+  \ii \textbf{Eigenvalues and invertibility (LADR 8.14, 8.16, 8.17).} Let $N$ be nilpotent on $V\ne\{0\}$.
+  \begin{itemize}
+    \ii $0$ is the only eigenvalue of $N$: if $Nv=\lambda v$ with $v\ne0$, then $0=N^kv=\lambda^kv$, so $\lambda=0$.
+    \ii $\nul N\ne\{0\}$: $N$ cannot be injective, since then $N^k$ would be injective, but $N^k=0$.
+    \ii For $\lambda\ne0$, $\lambda I+N$ is invertible, with inverse $\lambda^{-1}\bigl(I-\lambda^{-1}N+\lambda^{-2}N^2-\dots+(-\lambda^{-1}N)^{n-1}\bigr)$. Multiplying out, the sum telescopes to $I-(-\lambda^{-1}N)^n=I$. For $\lambda=1$ and $N$ replaced by $-N$: $(I-N)^{-1}=I+N+\dots+N^{n-1}$.
+    \ii Over $\CC$, conversely: $0$ is the only eigenvalue of $N\iff V=G(0,N)$ (\hyperref[prop-73]{Prop.~73}) $\iff N^n=0$.
+  \end{itemize}
   \ii $N\ne0$ is never diagonalizable: a diagonal matrix with all eigenvalues $0$ is the zero matrix.
   \ii Index $=\deg m_N\le n$. \ilink{prob-HW8-P1}{HW8~P1}: $D$ on $\PP_n(\CC)$ has index $n+1$, since $D^nx^n=n!\ne0$ and $D^{n+1}=0$.
 \end{itemize}
+
+\begin{methodbox}{How to show an operator is nilpotent and find its index}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii \emph{Matrix given.} Compute $N,N^2,N^3,\dots$ until a power is $0$. The first $k$ with $N^k=0$ is the index. If no power up to $N^n$ is $0$, then $N$ is not nilpotent (Power bound above).
+  \ii \emph{Operator given by a rule} (for instance on polynomials). Find a quantity that $N$ lowers, such as the degree. Show that $N^k$ sends every basis vector to $0$, and find one vector $v$ with $N^{k-1}v\ne0$. Then the index is exactly $k$.
+\end{enumerate}
+\textbf{Edge cases.} The zero operator has index $1$. A strictly upper-triangular $n\times n$ matrix is nilpotent with index at most $n$, but it can be smaller (for $\begin{psmallmatrix}0&0\\0&0\end{psmallmatrix}$ it is $1$). A matrix whose only eigenvalue is $0$ is nilpotent over $\CC$, but not every matrix with a zero diagonal is nilpotent: $\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix}$ squares to $I$.
+\end{methodbox}
+
+\begin{example*}[The index of a triangular matrix]
+  For
+  \[ N=\begin{pmatrix}0&1&2\\0&0&3\\0&0&0\end{pmatrix},\qquad N^2=\begin{pmatrix}0&0&3\\0&0&0\\0&0&0\end{pmatrix},\qquad N^3=0. \]
+  $N^2\ne0$ and $N^3=0$, so $N$ is nilpotent of index $3$. Since the index equals $\deg m_N$, $m_N=x^3$.
+\end{example*}
+
+\begin{example*}[The difference operator on $\PP_3(\CC)$]
+  Let $\Delta p(x)=p(x+1)-p(x)$. For $p=x^k$ the $x^k$ terms cancel and the $x^{k-1}$ term is $kx^{k-1}$, so $\Delta$ lowers the degree of every nonconstant polynomial by exactly $1$ and sends constants to $0$.
+  \begin{steps}
+    \ii So $\Delta^4$ sends each of $1,x,x^2,x^3$ to $0$, hence $\Delta^4=0$.
+    \ii $\Delta x^3=3x^2+3x+1$, $\Delta^2x^3=6x+6$, $\Delta^3x^3=6\ne0$.
+    \ii So $\Delta$ is nilpotent of index $4=\dim\PP_3(\CC)$.
+  \end{steps}
+\end{example*}
 
 \begin{proposition*}[LADR 8.18: nilpotent operators are strictly upper-triangular]\hypertarget{name-ladr-8-18-nilpotent-operators-are-strictly-upper-triangular}{}\label{name-ladr-8-18-nilpotent-operators-are-strictly-upper-triangular}
   If $N$ is nilpotent, then $V$ has a basis in which $\MM(N)$ is upper-triangular with every diagonal entry $0$.
@@ -401,11 +467,11 @@ Since $N^kv=0$ implies $N^{k-1}(Nv)=0$, the operator $N$ maps $\nul N^k$ into $\
 \begin{tikzpicture}[font=\small]
   \node at (0,0) {$\displaystyle\MM(T)=
   \begin{pmatrix}
-    \InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel[inkblue]{$*$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
-    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
-    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}\\
-    \InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[inkred]{$\lambda_2$}&\InkLabel[inkred]{$*$}\\
-    \InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[black!35]{$0$}&\InkLabel[inkred]{$0$}&\InkLabel[inkred]{$\lambda_2$}
+    \InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel[inkblue]{$*$}&\InkLabel{$0$}&\InkLabel{$0$}\\
+    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel[inkblue]{$*$}&\InkLabel{$0$}&\InkLabel{$0$}\\
+    \InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$0$}&\InkLabel[inkblue]{$\lambda_1$}&\InkLabel{$0$}&\InkLabel{$0$}\\
+    \InkLabel{$0$}&\InkLabel{$0$}&\InkLabel{$0$}&\InkLabel[inkred]{$\lambda_2$}&\InkLabel[inkred]{$*$}\\
+    \InkLabel{$0$}&\InkLabel{$0$}&\InkLabel{$0$}&\InkLabel[inkred]{$0$}&\InkLabel[inkred]{$\lambda_2$}
   \end{pmatrix}$};
   \node[anchor=west,align=left] at (3.4,.35) {\InkLabel[inkblue]{$G(\lambda_1,T)$: first three basis vectors}};
   \node[anchor=west,align=left] at (3.4,-.35) {\InkLabel[inkred]{$G(\lambda_2,T)$: last two basis vectors}};
@@ -413,73 +479,121 @@ Since $N^kv=0$ implies $N^{k-1}(Nv)=0$, the operator $N$ maps $\nul N^k$ into $\
 \figcap{Block diagonal form on $V=G(\lambda_1,T)\oplus G(\lambda_2,T)$ (LADR 8.37, \hyperref[prop-73]{Prop.~73}; sizes $3\times 3$ and $2\times 2$): each colored block equals $\lambda_i I$ plus a strictly upper-triangular nilpotent part.}
 \end{fig}
 
+\textbf{Chains.} Let $N$ be nilpotent. A \vocab{chain} is a list $u,Nu,\dots,N^ku$ with $N^ku\ne0$ and $N^{k+1}u=0$. Its \emph{top} is $u$, its \emph{bottom} is $N^ku$, and its \emph{length} is $k+1$. The bottom lies in $\nul N$, because $N(N^ku)=N^{k+1}u=0$, and it is the only vector of the chain in $\nul N$.
+
+\begin{example*}[A chain basis on $\FF^3$]
+  Let $Ne_3=e_2$, $Ne_2=0$ and $Ne_1=0$. Then $e_3,e_2$ is a chain of length $2$ (top $e_3$, bottom $e_2$), and $e_1$ is a chain of length $1$. Together they form a basis. List each chain from the bottom up, in the order $e_2,e_3,e_1$. The columns of $\MM(N)$ are the coordinates of $Ne_2=0$, $Ne_3=e_2$ and $Ne_1=0$:
+  \[ \MM(N)=\begin{pmatrix}0&1&0\\0&0&0\\0&0&0\end{pmatrix}. \]
+  The only nonzero entry is a $1$ directly above the diagonal, in the column of the top $e_3$.
+\end{example*}
+
 \begin{proposition*}[Chain lemma]\hypertarget{name-chain-lemma}{}\label{name-chain-lemma}
   If $N^dv\ne0$ and $N^{d+1}v=0$, then $v,Nv,\dots,N^dv$ are independent.
 \end{proposition*}
 \begin{ideabox}
-In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, applying $N$ shifts every term one step along the chain and annihilates any term shifted past $N^dv$. Applying $N^d$ annihilates every term except $c_0v$, leaving $c_0N^dv=0$ and forcing $c_0=0$; applying $N^{d-1}$ then isolates $c_1N^dv=0$, and continuing inductively shows $c_j=0$ for all $j$.
+Applying $N$ moves every vector of the chain one step down and sends the bottom $N^dv$ to $0$. So in a relation $\sum_{j}c_jN^jv=0$, applying $N^d$ moves $v$ to the bottom and sends every other term to $0$, which leaves only $c_0$. Each further coefficient is isolated the same way by a smaller power.
 \end{ideabox}
 \begin{proof}
-  Apply $N^d$ to $\sum_jc_jN^jv=0$: get $c_0N^dv=0$, so $c_0=0$. Then apply $N^{d-1}$ to get $c_1=0$, and so on.
+  \begin{steps}
+    \ii Apply $N^d$ to $\sum_{j=0}^dc_jN^jv=0$. For $j\ge1$, $N^dN^jv=N^{d+j}v=0$, so only $c_0N^dv=0$ remains. Since $N^dv\ne0$, $c_0=0$.
+    \ii Now apply $N^{d-1}$ to $\sum_{j=1}^dc_jN^jv=0$: only $c_1N^dv=0$ remains, so $c_1=0$.
+    \ii Continuing with $N^{d-2},\dots,N^0$ gives $c_2=\dots=c_d=0$.
+  \end{steps}
 \end{proof}
+
+\begin{proposition*}[Chains with independent bottoms are independent]\hypertarget{name-chains-with-independent-bottoms-are-independent}{}\label{name-chains-with-independent-bottoms-are-independent}
+  Let $N$ be nilpotent. If the bottoms of several chains are independent, then all the vectors of these chains, taken together, are independent.
+\end{proposition*}
+\begin{ideabox}
+The chain lemma isolates one coefficient at a time by applying the power of $N$ that moves one vector exactly to the bottom and sends every vector below it to $0$. With several chains, apply the power that moves the highest vectors with nonzero coefficients to their bottoms. Every lower vector goes to $0$, so the relation becomes a relation among the bottoms.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii The \emph{height} of a chain vector $N^ju$ in a chain with bottom $N^ku$ is $k-j$. If $h$ is the height of a vector $x$, then $N^hx$ is the bottom of its chain; if the height of $x$ is less than $h$, then $N^hx=0$.
+    \ii Suppose a relation among the chain vectors has a nonzero coefficient, and let $h$ be the largest height at which a nonzero coefficient occurs.
+    \ii Apply $N^h$ to the relation. The terms of height below $h$ become $0$. Each term of height $h$ becomes its coefficient times the bottom of its chain. No term with a nonzero coefficient has height above $h$.
+    \ii The result is a relation among the bottoms in which at least one coefficient is nonzero. This contradicts the independence of the bottoms, so every coefficient is $0$.
+  \end{steps}
+\end{proof}
+The chain lemma is the case of one chain: its only bottom $N^dv$ is nonzero, so it is independent by itself.
 
 \begin{theorem*}[Prop.~75 / LADR 8.45: nilpotent normal form]\hypertarget{prop-75}{}\label{prop-75}
   A nilpotent $N$ has a basis made of chains $u,Nu,\dots,N^ku$ ($N^{k+1}u=0$). Listing each chain as $N^ku,\dots,Nu,u$, the matrix $\MM(N)$ has only $1$s and $0$s directly above the diagonal and $0$ everywhere else.
 \end{theorem*}
 \begin{ideabox}
-\textbf{The smallest case that shows everything.} On $\FF^3$ let $Ne_3=e_2$, $Ne_2=0$, $Ne_1=0$. A chain is a list $u,Nu,N^2u,\dots$ stopped at its last nonzero vector. Here $e_3,e_2$ is a chain of length $2$ and $e_1$ is a chain of length $1$, and together they are a basis. In the order $e_2,e_3,e_1$ the matrix of $N$ has a single $1$ (from $Ne_3=e_2$) and zeros elsewhere. The theorem says every nilpotent operator has a basis like this.
-
-\textbf{Where to look for the chains.} Induction needs a smaller space that $N$ maps into itself. $U=\range N$ works: it is invariant, and it is smaller than $V$ because $N$ is not injective \ilink{T2}{(T2)}. In the example $U=\spn(e_2)$, with chain basis $e_2$.
-
-\textbf{What a chain basis of $U$ is missing.} Compare it with what $V$ needs.
-\begin{enumerate}[(1)]
-  \ii Every chain of $U$ starts at a vector $v_i\in\range N$, so $v_i=Nu_i$ for some $u_i$. That $u_i$ is not in the list yet. Put it on top; the chain becomes one longer. (Example: $e_2=Ne_3$, so add $e_3$.)
-  \ii A vector that $N$ sends to $0$ but that is not in $\range N$ lies on no chain. (Example: $e_1$.) Such vectors must be added as chains of length $1$.
-\end{enumerate}
-\textbf{Vectors of $\nul N$ already in the list:} Only the bottom vectors of the chains lie in $\nul N$, since only they are sent to $0$ by $N$. Extending those bottom vectors to a basis of $\nul N$ adjoins the new vectors $w_1,\dots,w_l$.
-
-\textbf{What is left to check.} That the new list has $n$ vectors, and that it is independent. The count is rank--nullity: the old list has $\dim\range N$ vectors, and we added one top per chain ($r$ of them) and $l$ vectors $w$, where $r+l=\dim\nul N$. Independence is the step that needs care. The plan: apply $N$ to a relation. That removes the $w$'s and the bottoms and turns everything else into vectors of the old chain basis of $U$, which we know is independent.
+Induction needs a smaller space that $N$ maps into itself. $U=\range N$ works: it is invariant \ilink{T5}{(T5)}, and $\dim U<n$ because $N$ is not injective. In the example on $\FF^3$ above, $U=\spn(e_2)$, with chain basis $e_2$. A chain basis of $U$ is missing two kinds of vectors.
+\begin{itemize}
+  \ii Every chain of $U$ has a top $v_i\in\range N$, so $v_i=Nu_i$ for some $u_i$. Putting $u_i$ above $v_i$ makes the chain one longer. (Example: $e_2=Ne_3$, so add $e_3$.)
+  \ii A vector that $N$ sends to $0$ but that is not in $\range N$ lies on no chain of $U$. (Example: $e_1$.) Such vectors are added as chains of length $1$.
+\end{itemize}
 \end{ideabox}
-\begin{fig}
-\begin{tikzpicture}[x=1.5cm,y=1.0cm,font=\small]
-  \InkRegion[inkblue]{(-.9,-.38) rectangle (3.9,.38)}
-  \draw[ink guide,draw=inkslate] (-.8,-.3) rectangle (.8,2.4);
-  \draw[ink guide,draw=inkslate] (1.4,-.3) rectangle (2.9,1.4);
-  \node[draw=inkred,inner sep=3pt] (u1) at (0,3.2) {\InkLabel[inkred]{$u_1$}};
-  \node[draw=inkred,inner sep=3pt] (u2) at (2.15,2.15) {\InkLabel[inkred]{$u_2$}};
-  \node[draw=inkred,inner sep=3pt] (w1) at (3.45,0) {\InkLabel[inkred]{$w_1$}};
-  \node (v1) at (0,2.05) {\InkLabel{$v_1=Nu_1$}};
-  \node (m1) at (0,1.02) {\InkLabel{$Nv_1$}};
-  \node (b1) at (0,0) {\InkLabel{$b_1=N^2v_1$}};
-  \node (v2) at (2.15,1.02) {\InkLabel{$v_2=Nu_2$}};
-  \node (b2) at (2.15,0) {\InkLabel{$b_2=Nv_2$}};
-  \foreach \a/\b in {u1/v1,v1/m1,m1/b1,u2/v2,v2/b2} {\InkStroke[ink arrow]{(\a)--(\b)}}
-  \node[font=\scriptsize,anchor=east] at (-.95,1.95) {\InkLabel{$U=\range N$}};
-  \node[font=\scriptsize,anchor=west] at (4.0,0) {\InkLabel[inkblue]{$\nul N$}};
-  \foreach \a in {b1,b2,w1} {
-    \InkStroke[ink arrow]{(\a.south)--($(\a.south)+(0,-.6)$)}
-    \node[below] at ($(\a.south)+(0,-.6)$) {\InkLabel{$0$}};
-  }
-\end{tikzpicture}
-\figcap{Nilpotent chain extension: adding tops $u_1,u_2$ and singleton $w_1$ (red frames) extends the chains in $U=\range N$ (dotted boxes) so that $b_1,b_2,w_1$ form a basis of $\nul N$ (blue band).}
-\end{fig}
+\textbf{What the proof must check.} The vectors of the second kind are chosen as vectors $w_1,\dots,w_l$ that extend the bottoms of the chains of $U$ to a basis of $\nul N$. Then the new list must have $n$ vectors and be independent. The count comes from rank--nullity: the old list has $\dim\range N$ vectors, and we add one top per chain ($r$ of them) and $l$ vectors $w$, where $r+l=\dim\nul N$. For independence, apply $N$ to a relation: the $w$'s and the bottoms go to $0$, and every other vector goes to a vector of the old chain basis of $U$, which is independent.
+
 \begin{proof}
   \begin{steps}
     \ii If $N=0$, any basis works (chains of length $1$). Otherwise $U=\range N$ is invariant with $0<\dim U<n$. By induction $U$ has a chain basis $v_i,Nv_i,\dots,N^{d_i}v_i$ for $i=1,\dots,r$, with $N^{d_i+1}v_i=0$. Write $b_i=N^{d_i}v_i$ for the bottoms.
     \ii \emph{The bottoms are a basis of $\nul N\cap U$.} They lie in $\nul N$ and in $U$, and they are independent (part of a basis). They span: take $x\in U$ with $Nx=0$ and write $x=\sum_{i,j}c_{ij}N^jv_i$. Then $0=Nx=\sum_{j<d_i}c_{ij}N^{j+1}v_i$ (the terms with $j=d_i$ are $0$). The vectors $N^{j+1}v_i$ with $j<d_i$ are different members of the chain basis, so $c_{ij}=0$ for $j<d_i$, and $x=\sum_ic_{id_i}b_i$.
     \ii Choose $u_i$ with $Nu_i=v_i$ (possible since $v_i\in\range N$). Extend $b_1,\dots,b_r$ by $w_1,\dots,w_l$ to a basis of $\nul N$. So $\dim\nul N=r+l$.
-    \ii \emph{The new list} is $u_i,v_i,Nv_i,\dots,b_i$ for each $i$, together with $w_1,\dots,w_l$. \emph{Count:} $\sum_i(d_i+2)+l=\sum_i(d_i+1)+r+l=\dim\range N+\dim\nul N=n$ \ilink{T1}{(T1)}.
+    \ii \emph{The new list} is $u_i,v_i,Nv_i,\dots,b_i$ for each $i$, together with $w_1,\dots,w_l$. \emph{Count:} the new list has \[ \sum_i(d_i+2)+l=\sum_i(d_i+1)+(r+l)=\dim\range N+\dim\nul N=n \] vectors \ilink{T1}{(T1)}.
     \ii \emph{Independence, first half.} Suppose $\sum_ia_iu_i+\sum_{i,j}c_{ij}N^jv_i+\sum_ke_kw_k=0$. Apply $N$. We have $Nu_i=v_i$; $N(N^jv_i)=N^{j+1}v_i$, which is $0$ for $j=d_i$; and $Nw_k=0$. So $\sum_ia_iv_i+\sum_{j<d_i}c_{ij}N^{j+1}v_i=0$. The vectors here are different members of the chain basis of $U$ (the tops $v_i$, and the vectors below them). So every $a_i=0$, and $c_{ij}=0$ for $j<d_i$.
     \ii \emph{Independence, second half.} What is left of the relation is $\sum_ic_{id_i}b_i+\sum_ke_kw_k=0$. The $b_i$ and $w_k$ together are a basis of $\nul N$ (step 3), so these coefficients are $0$ too. This is the reason the $w$'s were chosen to extend the bottoms: a $w$ that was a combination of chain vectors would, by step 5, be a combination of the bottoms, and then bottoms and $w$'s would be dependent.
     \ii So the new list is $n$ independent vectors, a basis \ilink{T3}{(T3)}, and it consists of chains. Listing a chain as $N^ku,\dots,Nu,u$, $N$ sends each vector to the one before it and the first to $0$. That is a column with a single $1$ directly above the diagonal, or a zero column.
   \end{steps}
 \end{proof}
+\begin{fig}
+\begin{tikzpicture}[x=1.55cm,y=1.0cm,font=\small]
+  % null N: amber band; U = range N: blue outline (an L-shape, since chain 2 is shorter)
+  \InkRegion[inkamber]{(-.8,-.5) rectangle (4.55,.5)}
+  \draw[inkamber,line width=.9pt] (-.8,-.5) rectangle (4.55,.5);
+  \draw[inkblue,line width=.9pt,rounded corners=3pt] (-.68,-.36)--(2.68,-.36)--(2.68,1.42)--(.68,1.42)--(.68,2.45)--(-.68,2.45)--cycle;
+  % chain 1
+  \node[draw=inkred,line width=.8pt,fill=white,inner sep=3pt] (u1) at (0,3.25) {\InkLabel[inkred]{$u_1$}};
+  \node (v1) at (0,2.0) {\InkLabel{$v_1$}};
+  \node (m1) at (0,1.0) {\InkLabel{$Nv_1$}};
+  \node (b1) at (0,0) {\InkLabel{$b_1$}};
+  % chain 2
+  \node[draw=inkred,line width=.8pt,fill=white,inner sep=3pt] (u2) at (2,2.0) {\InkLabel[inkred]{$u_2$}};
+  \node (v2) at (2,1.0) {\InkLabel{$v_2$}};
+  \node (b2) at (2,0) {\InkLabel{$b_2$}};
+  % added vector of null N
+  \node[draw=inkred,line width=.8pt,fill=white,inner sep=3pt] (w1) at (3.6,0) {\InkLabel[inkred]{$w_1$}};
+  \foreach \a/\b in {u1/v1,v1/m1,m1/b1,u2/v2,v2/b2} {
+    \InkStroke[ink arrow]{(\a)--(\b)}
+  }
+  \foreach \a in {b1,b2,w1} {
+    \node (z\a) at ($(\a)+(0,-1.15)$) {\InkLabel{$0$}};
+    \InkStroke[ink arrow]{(\a)--(z\a)}
+  }
+  % key: every arrow applies N
+  \InkStroke[ink arrow]{(-2.3,3.55)--(-2.3,2.95)}
+  \node[anchor=west,font=\footnotesize] at (-2.2,3.25) {\InkLabel{apply $N$}};
+  % labels
+  \node[anchor=east,font=\footnotesize,align=right] at (-.85,1.75) {\InkLabel[inkblue]{old chain basis}\\\InkLabel[inkblue]{of $U=\range N$}};
+  \node[anchor=east,font=\footnotesize] at (-.85,0) {\InkLabel[inkamber]{basis of $\nul N$}};
+  \node[anchor=west,font=\footnotesize] at (.3,3.25) {\InkLabel[inkred]{new top, $Nu_1=v_1$}};
+  \node[anchor=west,font=\footnotesize] at (2.3,2.0) {\InkLabel[inkred]{new top, $Nu_2=v_2$}};
+  \node[anchor=south,font=\footnotesize,align=center] at (3.6,.62) {\InkLabel[inkred]{new vector}\\\InkLabel[inkred]{in $\nul N$}};
+\end{tikzpicture}
+\figcap{Building a chain basis of $V$ from a chain basis of $U=\range N$: each chain of $U$ gets a new top $u_i$ with $Nu_i=v_i$, and $w_1$ extends the bottoms $b_1,b_2$ to a basis of $\nul N$. New vectors are framed in red.}
+\end{fig}
+
+\revisit A chain basis is built by induction on $\dim V$ as in the proof of \hyperref[prop-75]{Prop.~75}: take a chain basis of $\range N$, put a new top $u_i$ above each chain, and add vectors $w_k$ that extend the bottoms to a basis of $\nul N$. In such a basis, listed bottom first, $\MM(N)$ has only $0$s and $1$s directly above the diagonal. For the matrices of the question, apply this to $N=B-I$ and $N=C-I$.
+\begin{itemize}
+  \ii $I_3-I=0$: three chains of length $1$, and $\MM(I_3)=I_3$.
+  \ii $B-I$ has rank $1$ and $(B-I)^2=0$. One chain of length $2$ is $e_1\mapsto(2,2,2)$, and $(0,1,-1)$ is a chain of length $1$ (it is in $\nul(B-I)$, and the two bottoms $(2,2,2)$, $(0,1,-1)$ are independent). In the basis $(2,2,2),e_1,(0,1,-1)$, the matrix of $B-I$ has a single $1$, in position $(1,2)$.
+  \ii $C-I$ has rank $2$ and $(C-I)^2$ has rank $1$, so $e_3\notin\nul(C-I)^2$ gives a chain of length $3$: $e_3\mapsto(0,-1,-2)\mapsto(2,2,2)\mapsto0$. In the basis $(2,2,2),(0,-1,-2),e_3$ the matrix of $C-I$ has $1$s in positions $(1,2)$ and $(2,3)$.
+\end{itemize}
+Each chain has one bottom, and the bottoms form a basis of $E(1)$. So the numbers of chains, $3,2,1$, are the values $\dim E(1)=3,2,1$ that showed the three matrices are not similar.
 
 \begin{definition*}[Def.~40]\hypertarget{def-40}{}\label{def-40}
   \vocab{Jordan block}: $J_k(\lambda)=\lambda I+N_k$ ($k\times k$, $1$s on the superdiagonal), so $Je_1=\lambda e_1$, $Je_j=\lambda e_j+e_{j-1}$. \vocab{Jordan normal form}: block diagonal with Jordan blocks. \vocab{Jordan basis}: a basis giving Jordan form.
 \end{definition*}
 
-\textbf{Example (HW8 P1).} $D$ on $\PP_n(\CC)$ is the single block $J_{n+1}(0)$ in the basis $1,x,\frac{x^2}{2!},\dots,\frac{x^n}{n!}$: $D\frac{x^k}{k!}=\frac{x^{k-1}}{(k-1)!}$.
+\begin{example*}[Differentiation as one Jordan block (HW8 P1)]
+  Let $D$ be differentiation on $\PP_n(\CC)$ and $f_k=x^k/k!$ for $k=0,\dots,n$. Then
+  \[ Df_0=0,\qquad Df_k=\frac{kx^{k-1}}{k!}=\frac{x^{k-1}}{(k-1)!}=f_{k-1}\quad(k\ge1). \]
+  So $f_n,f_{n-1},\dots,f_0$ is one chain, and in the basis $f_0,f_1,\dots,f_n$ the matrix of $D$ is the single block $J_{n+1}(0)$.
+\end{example*}
 
 \begin{theorem*}[Prop.~76 / LADR 8.46: Jordan normal form]\hypertarget{prop-76}{}\label{prop-76}
   Every operator on a finite-dimensional complex space has a Jordan basis.
@@ -508,6 +622,36 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 \end{steps}}
 \end{mdframed}
 
+\begin{example*}[Reading the data off the blocks $J_2(3),J_2(3),J_1(0)$]
+  Apply each line of the box above to each eigenvalue.
+  \begin{steps}
+    \ii Eigenvalue $3$: two blocks, so geometric multiplicity $2$; total size $2+2=4$, so algebraic multiplicity $4$; largest block $2$.
+    \ii Eigenvalue $0$: one block of size $1$, so both multiplicities are $1$.
+    \ii $\chi=(x-3)^4x$ and $m=(x-3)^2x$. Since $m$ has the repeated root $3$, the operator is not diagonalizable.
+  \end{steps}
+\end{example*}
+
+\begin{methodbox}{How to build a matrix with prescribed multiplicities}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii For each eigenvalue $\lambda$ with algebraic multiplicity $a$ and geometric multiplicity $g$, you need $g$ Jordan blocks for $\lambda$ whose sizes add up to $a$.
+  \ii Choose such sizes: any list of $g$ positive integers with sum $a$. If a minimal polynomial is prescribed, the largest size must equal the exponent of $x-\lambda$ in it.
+  \ii Put all the blocks on the diagonal of one matrix, with zeros elsewhere.
+  \ii Read off $m$: the exponent of $x-\lambda$ is the largest block for $\lambda$.
+\end{enumerate}
+\textbf{Edge cases.}
+\begin{itemize}
+  \ii $g>a$ or $g=0$ is impossible (there is no list of $g$ positive sizes with sum $a$).
+  \ii $g=a$ forces all blocks of size $1$, so the $\lambda$-part is $\lambda I_a$, diagonal. $g=1$ forces the single block $J_a(\lambda)$.
+  \ii For $2\le g\le a-2$ there is usually more than one answer; any one is correct unless more data (such as $m$) is given.
+\end{itemize}
+\end{methodbox}
+
+\begin{example*}[Eigenvalue $5$ with algebraic multiplicity $4$ and geometric multiplicity $2$]
+  We need $2$ blocks for $5$ with sizes adding to $4$: sizes $3,1$ or $2,2$. Both are valid answers:
+  \[ J_3(5)\oplus J_1(5)=\begin{pmatrix}5&1&0&0\\0&5&1&0\\0&0&5&0\\0&0&0&5\end{pmatrix},\ m=(x-5)^3;\qquad J_2(5)\oplus J_2(5)=\begin{pmatrix}5&1&0&0\\0&5&0&0\\0&0&5&1\\0&0&0&5\end{pmatrix},\ m=(x-5)^2. \]
+  If the minimal polynomial $(x-5)^2$ is also prescribed, only $J_2(5)\oplus J_2(5)$ works.
+\end{example*}
+
 \begin{theorem*}[Prop.~77: counting blocks]\hypertarget{prop-77}{}\label{prop-77}
   Over $\CC$, let $d_k=\dim\nul(T-\lambda I)^k$ ($d_0=0$). For $k\ge1$:
   \begin{itemize}
@@ -519,62 +663,6 @@ In a linear relation $\sum_{j=0}^d c_jN^jv=0$ along a single nilpotent chain, ap
 \begin{ideabox}
 In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(T9)}. A block $J_j(\mu)$ for $\mu\ne\lambda$ is invertible under $T-\lambda I$ and contributes $0$ to $d_k=\dim\nul(T-\lambda I)^k$, whereas $J_j(\lambda)-\lambda I=N_j$ is a shift with $\dim\nul N_j^k=\min(k,j)$: its contribution increases by $1$ at each step from $k-1$ to $k$ while $k\le j$, and stops growing once $k>j$. Thus $d_k-d_{k-1}$ equals the basis-independent number of blocks $J_j(\lambda)$ of size $j\ge k$, proving uniqueness up to block order.
 \end{ideabox}
-\begin{fig}
-\begin{tikzpicture}[font=\scriptsize,x=1cm,y=1cm]
-  \def\cw{0.68}
-  \def\cpitch{0.96}
-
-  % Panel (a): Row 2 counts blocks of size >= 2 (d_2 - d_1 = 3)
-  \begin{scope}[xshift=0cm]
-    \foreach \col/\h in {0/3,1/2,2/2,3/1} {
-      \pgfmathsetmacro{\xpos}{\col*\cpitch}
-      \foreach \row in {1,...,\h} {
-        \pgfmathsetmacro{\bottom}{(\row-1)*\cw}
-        \ifnum\row=3
-          \path[fill=white] (\xpos,\bottom) rectangle ++(\cw,\cw);
-        \else
-          \def\cellcolor{inkslate}
-          \ifnum\row=2 \def\cellcolor{inkblue}\fi
-          \InkRegion[\cellcolor]{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-        \fi
-        \InkStroke{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-      }
-      \node[below=4pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
-    }
-    % Left row indices and downward N arrow flush with stack height
-    \foreach \row in {1,2,3}
-      \node[anchor=east] at (-0.18,\row*\cw-0.5*\cw) {\InkLabel{$\row$}};
-    \InkStroke[ink arrow]{(-0.58,2.00)--(-0.58,0.04)}
-    \node[anchor=east] at (-0.68,1.02) {\InkLabel{$N$}};
-
-    \node[anchor=south] at (1.78,2.34) {\InkLabel[inkblue]{Size $\ge 2$: $d_2-d_1=3$}};
-    \node at (1.78,-0.78) {\InkLabel{(a)}};
-  \end{scope}
-
-  % Panel (b): Exact size 2 = (row 2) - (row 3) = (d_2 - d_1) - (d_3 - d_2) = 2
-  \begin{scope}[xshift=5.80cm]
-    \foreach \col/\h in {0/3,1/2,2/2,3/1} {
-      \pgfmathsetmacro{\xpos}{\col*\cpitch}
-      \foreach \row in {1,...,\h} {
-        \pgfmathsetmacro{\bottom}{(\row-1)*\cw}
-        \def\cellcolor{inkslate}
-        \ifnum\row=3 \def\cellcolor{inkred}\fi
-        \ifnum\row=2
-          \ifnum\col>0 \def\cellcolor{inkgreen}\fi
-        \fi
-        \InkRegion[\cellcolor]{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-        \InkStroke{(\xpos,\bottom) rectangle ++(\cw,\cw)}
-      }
-      \node[below=4pt] at (\xpos+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
-    }
-    \node[anchor=west] at (0.86,1.70) {\InkLabel[inkred]{$d_3-d_2=1$}};
-
-    \node[anchor=south] at (1.78,2.34) {\InkLabel[inkgreen]{Exact size $2$: $(d_2-d_1)-(d_3-d_2)=2$}};
-    \node at (1.78,-0.78) {\InkLabel{(b)}};
-  \end{scope}
-\end{tikzpicture}
-\figcap{Counting Jordan blocks $J_3(0), J_2(0), J_2(0), J_1(0)$ ($N$ shifts down one row; $d_k=\dim\nul N^k$ counts the bottom $k$ rows, so $d_1=4, d_2=7, d_3=8$): \textbf{(a)}~subtracting row~$1$ (gray, $d_1=4$) from the bottom two rows ($\nul N^2$, $d_2=7$) leaves $d_2-d_1=3$ blue cells in row~$2$ (blocks of size $\ge 2$); \textbf{(b)}~subtracting the $d_3-d_2=1$ cell in row~$3$ (red) leaves $2$ green cells of exact size~$2$.}
-\end{fig}
 \begin{proof}
   \begin{steps}
     \ii In a Jordan basis, $d_k=\sum_{\text{blocks}}\dim\nul(J-\lambda I)^k$. Blocks for $\mu\ne\lambda$ contribute $0$; $J_j(\lambda)$ contributes $\min(k,j)$.
@@ -582,8 +670,47 @@ In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(
     \ii Similar matrices are one operator in two bases \ilink{T10}{(T10)}, so they have the same $d_k$ and the same Jordan form. Conversely, matrices with the same Jordan form are both similar to it.
   \end{steps}
 \end{proof}
+\begin{fig}
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+  \def\cw{0.66}
+  % columns: one chain per block J_3(0), J_2(0), J_2(0), J_1(0); row 1 = bottoms (eigenvectors)
+  \foreach \col/\h in {0/3,1/2,2/2,3/1} {
+    \foreach \row in {1,...,\h} {
+      \ifcase\row\or\def\cc{inkblue}\or\def\cc{inkamber}\or\def\cc{inkred}\fi
+      \InkRegion[\cc]{(\col,\row*\cw-\cw) rectangle ++(\cw,\cw)}
+      \draw[\cc,line width=.9pt] (\col,\row*\cw-\cw) rectangle ++(\cw,\cw);
+    }
+    \node[below=3pt] at (\col+0.5*\cw,0) {\InkLabel{$J_{\h}(0)$}};
+  }
+  % N moves one row down
+  \InkStroke[ink arrow]{(-0.45,2.6*\cw)--(-0.45,0.4*\cw)}
+  \node[anchor=east] at (-0.55,1.5*\cw) {\InkLabel{$N$}};
+  % row counts
+  \node[anchor=west] at (4.0,0.5*\cw) {\InkLabel[inkblue]{row $1$: $4=d_1-d_0$ blocks of size $\ge1$}};
+  \node[anchor=west] at (4.0,1.5*\cw) {\InkLabel[inkamber]{row $2$: $3=d_2-d_1$ blocks of size $\ge2$}};
+  \node[anchor=west] at (4.0,2.5*\cw) {\InkLabel[inkred]{row $3$: $1=d_3-d_2$ block of size $\ge3$}};
+\end{tikzpicture}
+\figcap{Each column is the chain of one Jordan block for $0$, with its eigenvector in row $1$; $N$ moves each vector down one row. Rows $1$ to $k$ span $\nul N^k$, so row $k$ has $d_k-d_{k-1}$ cells, one for each block of size at least $k$; here $d_1,d_2,d_3=4,7,8$.}
+\end{fig}
 
-\begin{example*}[Jordan form from null-space dimensions (Ex.~63)]\target{ex-63}
+\begin{methodbox}{How to find the Jordan form from null-space dimensions}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii For each eigenvalue $\lambda$, list $d_0=0,d_1,d_2,\dots$ with $d_k=\dim\nul(T-\lambda I)^k$, up to the first $k$ where $d_k$ equals the algebraic multiplicity (computed as in the method for $G(\lambda,A)$ and $m_A$).
+  \ii Take differences $r_k=d_k-d_{k-1}$: $r_k$ is the number of blocks of size at least $k$.
+  \ii Take differences again: $r_k-r_{k+1}$ is the number of blocks of size exactly $k$.
+  \ii Check: the sizes add up to the algebraic multiplicity, and the number of blocks is $r_1=d_1$.
+\end{enumerate}
+\textbf{Reverse direction} (blocks given, $d_k$ wanted): a block $J_j(\lambda)$ contributes $\min(k,j)$ to $d_k$, so $d_k=\sum_{\text{blocks }J_j(\lambda)}\min(k,j)$.
+
+\textbf{Edge cases.}
+\begin{itemize}
+  \ii The $r_k$ never increase with $k$. An increase means the data are inconsistent.
+  \ii If the list stops before the $d_k$ become constant, the next value is the algebraic multiplicity, which can be found from the total dimension: $n$ minus the multiplicities of the other eigenvalues.
+  \ii The first few $d_k$ alone do not fix the sizes: $d_1,d_2,d_3=2,4,5$ fits blocks of sizes $3,2$ and also $4,2$. The final value of $d_k$, the algebraic multiplicity, is needed.
+\end{itemize}
+\end{methodbox}
+
+\begin{example*}[Jordan form from given null-space dimensions (Ex.~63)]\target{ex-63}
   $T\in\LL(\CC^8)$ with eigenvalues $1,2$. Method: list $d_0,d_1,\dots$, take differences, then differences of differences.
   \begin{center}
   \renewcommand{\arraystretch}{1.22}
@@ -596,10 +723,45 @@ In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(
     \bottomrule
   \end{tabular}
   \end{center}
-  ($d_4=4$ for $\lambda=2$ because $\dim G(2,T)=8-4$.) Answer: $J_2(1)\oplus J_2(1)\oplus J_3(2)\oplus J_1(2)$.
+  For $\lambda=2$, $d_4=4$ because $\dim G(2,T)=8-\dim G(1,T)=8-4$. For $\lambda=2$ the second differences give $r_1-r_2=1$ block of size $1$, $r_2-r_3=0$ of size $2$, $r_3-r_4=1$ of size $3$. Answer: $J_2(1)\oplus J_2(1)\oplus J_3(2)\oplus J_1(2)$.
 \end{example*}
 
-\begin{example*}[Finding a Jordan basis (Ex.~62)]\target{ex-62}
+\begin{example*}[Null-space dimensions from the blocks $J_4(0),J_2(0),J_1(0)$]
+  Use $d_k=\min(k,4)+\min(k,2)+\min(k,1)$:
+  \begin{center}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    $k$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$\\
+    \midrule
+    $d_k$ & $0$ & $1+1+1=3$ & $2+2+1=5$ & $3+2+1=6$ & $4+2+1=7$ & $7$\\
+    $r_k=d_k-d_{k-1}$ & & $3$ & $2$ & $1$ & $1$ & $0$\\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  Reading back: $r_1-r_2=1$ block of size $1$, $r_2-r_3=1$ of size $2$, $r_3-r_4=0$ of size $3$, $r_4-r_5=1$ of size $4$, as it should be.
+\end{example*}
+
+\begin{methodbox}{How to find a Jordan basis}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Find the eigenvalues and, for each one, the block sizes (method above).
+  \ii Fix an eigenvalue $\lambda$ and write $N=A-\lambda I$. Treat its blocks from the largest to the smallest. For a block of size $j$, choose a top $v$ with $N^jv=0$ whose bottom $N^{j-1}v$ is \emph{not} in the span of the bottoms chosen so far. (For $j=1$: $v\in\nul N$, independent of the earlier bottoms.)
+  \ii The chain of $v$ is listed bottom first: $N^{j-1}v,\dots,Nv,v$.
+  \ii Put the chains of all blocks and all eigenvalues side by side as the columns of $S$. Then $S^{-1}AS$ is the Jordan form. Check $AS=SJ$ column by column instead of inverting $S$.
+\end{enumerate}
+\textbf{Why the result is a basis.} The chosen chains have independent bottoms, so all their vectors are independent (\ilink{name-chains-with-independent-bottoms-are-independent}{Chains with independent bottoms are independent}); chains for different eigenvalues lie in different generalized eigenspaces, whose sum is direct (\hyperref[prop-73]{Prop.~73}). The number of vectors is the sum of the algebraic multiplicities, which is $n$.
+
+\textbf{Why a top can always be chosen.} The bottoms $N^{j-1}v$ with $N^jv=0$ are exactly the vectors of $\nul N\cap\range N^{j-1}$: such a bottom is sent to $0$ by $N$, and conversely if $x=N^{j-1}y$ and $Nx=0$ then $N^jy=0$. The map $N^{j-1}$ from $\nul N^j$ onto this space has null space $\nul N^{j-1}$, so the space has dimension $d_j-d_{j-1}=r_j$, the number of blocks of size $\ge j$. The bottoms chosen before (from blocks of size $\ge j$) lie in it and are fewer than $r_j$, so they do not span it.
+
+\textbf{Edge cases.}
+\begin{itemize}
+  \ii A top that is independent of the vectors chosen so far can still fail: in $J_3(0)\oplus J_2(0)$ with chains $e_3\mapsto e_2\mapsto e_1$ and $f_2\mapsto f_1$, the top $f_1+e_2$ satisfies $N^2(f_1+e_2)=0$ and $N(f_1+e_2)=e_1\ne0$, but its bottom is $e_1$ again. Always test the bottom.
+  \ii For a block of size $1$ the top is its own bottom: pick an eigenvector outside the span of the earlier bottoms.
+  \ii If every block has size $1$, the method gives an eigenbasis: $A$ is diagonalizable.
+  \ii Listing a chain top first puts the $1$s below the diagonal.
+\end{itemize}
+\end{methodbox}
+
+\begin{example*}[A Jordan basis for one block (Ex.~62)]\target{ex-62}
   For the $3\times 3$ matrix
   \[
     A=\begin{pmatrix}1&2&3\\0&1&2\\0&0&1\end{pmatrix},
@@ -610,17 +772,52 @@ In any Jordan basis, $\nul(T-\lambda I)^k$ splits across the blocks \ilink{T9}{(
     \ii Go down: $v_2=(A-I)v_3=(3,2,0)$, $v_1=(A-I)v_2=(4,0,0)$ (an eigenvector).
     \ii Check: $Av_1=v_1$, $Av_2=v_2+v_1$, $Av_3=v_3+v_2$. That is $J_3(1)$.
   \end{steps}
-  Why start at the top: the top vector determines the whole chain, and a top outside $\nul(A-\lambda I)^{k-1}$ guarantees full length $k$ (chain lemma).
+  The chain is built from the top because the top determines the whole chain, and a top outside $\nul(A-\lambda I)^{k-1}$ gives a chain of full length $k$, whose vectors are independent by the \ilink{name-chain-lemma}{Chain lemma}.
 
-  \emph{Several blocks:} get the block sizes first (\hyperref[prop-77]{Prop.~77}). For each block of size $j$, largest first, pick a top $v\in\nul(A-\lambda I)^j\setminus\nul(A-\lambda I)^{j-1}$ and keep its chain only if its bottom $(A-\lambda I)^{j-1}v$ is independent of the bottoms already chosen. (Independent of the vectors so far is not enough: in $J_3(0)\oplus J_2(0)$ with chains $e_1,e_2,e_3$ and $f_1,f_2$, the top $f_1+e_2$ gives a chain ending at $e_1$ again.)
 \end{example*}
 
-\needspace{7\baselineskip}\textbf{Powers.} $J=\lambda I+N$ with $\lambda I$ and $N$ commuting, so the binomial theorem applies and $N^j=0$ for $j\ge k$:
-\[ J_k(\lambda)^m=\sum_{j=0}^{\min(m,k-1)}\binom mj\lambda^{m-j}N^j,\qquad J_3(\lambda)^m=\begin{pmatrix}\lambda^m&m\lambda^{m-1}&\binom m2\lambda^{m-2}\\0&\lambda^m&m\lambda^{m-1}\\0&0&\lambda^m\end{pmatrix}. \]
-\begin{itemize}
-  \ii Example: $J_3(1)^{100}$ has $100$ and $4950$ above the diagonal.
-  \ii Any Jordan matrix is $J=D+N$, $D$ diagonal, $N$ nilpotent, $DN=ND$ (on each block $D=\lambda I$); this is the Jordan--Chevalley decomposition. If $J$ is invertible, also $J=DU$ with $U=I+D^{-1}N$, $DU=UD$.
-\end{itemize}
+\begin{example*}[A Jordan basis with two blocks for one eigenvalue]
+  For $B$ (the matrix that is not triangular, above), $N=B-I$ has rank $1$ and $N^2=0$, so $d_1,d_2=2,3$ and the blocks are $J_2(1)$ and $J_1(1)$.
+  \begin{steps}
+    \ii Size $2$: the top must satisfy $Nv\ne0$. Take $v=e_1$; its bottom is $Ne_1=(2,2,2)$.
+    \ii Size $1$: we need $w\in\nul N=\{2x-y-z=0\}$ not in $\spn((2,2,2))$. Take $w=(0,1,-1)$. The vector $(1,1,1)$ is in $\nul N$ but would fail, since it is a multiple of the first bottom.
+    \ii With columns $(2,2,2),e_1,(0,1,-1)$:
+    \[ S=\begin{pmatrix}2&1&0\\2&0&1\\2&0&-1\end{pmatrix},\qquad S^{-1}BS=\begin{pmatrix}1&1&0\\0&1&0\\0&0&1\end{pmatrix}=J_2(1)\oplus J_1(1). \]
+  \end{steps}
+\end{example*}
+
+\begin{example*}[A Jordan basis with two eigenvalues]
+  Let
+  \[ A=\begin{pmatrix}2&1&1\\0&2&1\\0&0&5\end{pmatrix},\qquad A-2I=\begin{pmatrix}0&1&1\\0&0&1\\0&0&3\end{pmatrix},\qquad (A-2I)^2=\begin{pmatrix}0&0&4\\0&0&3\\0&0&9\end{pmatrix}. \]
+  \begin{steps}
+    \ii The diagonal gives $a_2=2$, $a_5=1$. $A-2I$ has rank $2$, so $d_1=1$: one block $J_2(2)$.
+    \ii Top for $\lambda=2$: $v\in\nul(A-2I)^2=\spn(e_1,e_2)$ with $(A-2I)v\ne0$. Take $v=e_2$; its bottom is $(A-2I)e_2=e_1$.
+    \ii For $\lambda=5$: solve $(A-5I)x=0$, which gives the eigenvector $(4,3,9)$.
+    \ii In the basis $e_1,e_2,(4,3,9)$ the matrix is $J_2(2)\oplus J_1(5)$. Check: $Ae_1=2e_1$, $Ae_2=e_1+2e_2$, $A(4,3,9)=(20,15,45)=5(4,3,9)$.
+  \end{steps}
+\end{example*}
+
+\begin{methodbox}{How to compute powers of a Jordan block}
+\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=2pt,topsep=2pt]
+  \ii Write $J_k(\lambda)=\lambda I+N$, where $N=N_k$ has $1$s directly above the diagonal. $N^j$ has $1$s on the $j$-th diagonal above the main one, and $N^k=0$.
+  \ii $\lambda I$ and $N$ commute, so the binomial theorem applies: multiplying out $(\lambda I+N)^m$ and moving every factor $\lambda I$ to the front gives one term $\lambda^{m-j}N^j$ for each choice of the $j$ factors equal to $N$, exactly as for numbers. Since $N^k=0$, the sum stops at $N^{k-1}$:
+  \[ J_k(\lambda)^m=\sum_{j=0}^{\min(m,k-1)}\binom mj\lambda^{m-j}N^j,\qquad J_3(\lambda)^m=\begin{pmatrix}\lambda^m&m\lambda^{m-1}&\binom m2\lambda^{m-2}\\0&\lambda^m&m\lambda^{m-1}\\0&0&\lambda^m\end{pmatrix}. \]
+  \ii So the entry $j$ places above the diagonal is $\binom mj\lambda^{m-j}$.
+  \ii For a matrix in Jordan form, raise each block separately. For $A=SJS^{-1}$, $A^m=SJ^mS^{-1}$.
+\end{enumerate}
+\textbf{Edge cases.} For $\lambda=0$, $J_k(0)^m=N^m$, which is $0$ once $m\ge k$ (in the formula only the term $j=m$ survives, with $0^0=1$). For $m<k-1$ the terms with $j>m$ are absent, as $\binom mj=0$.
+\end{methodbox}
+
+\begin{example*}[Powers of $J_2(3)$]
+  Here $k=2$, so the sum stops at $N^1$:
+  \[ J_2(3)^m=3^mI+m3^{m-1}N=\begin{pmatrix}3^m&m3^{m-1}\\0&3^m\end{pmatrix},\qquad J_2(3)^5=\begin{pmatrix}243&405\\0&243\end{pmatrix}. \]
+\end{example*}
+
+\begin{example*}[Powers of $J_3(1)$ and $J_3(0)$]
+  $J_3(1)^{100}$ has $\binom{100}1=100$ directly above the diagonal and $\binom{100}2=4950$ in the corner. For $\lambda=0$: $J_3(0)^2=N^2$ has a single $1$ in the corner, and $J_3(0)^3=0$.
+\end{example*}
+
+Any Jordan matrix is $J=D+N$ with $D$ diagonal, $N$ nilpotent and $DN=ND$ (on each block $D=\lambda I$); this is the Jordan--Chevalley decomposition. If $J$ is invertible, also $J=DU$ with $U=I+D^{-1}N$ and $DU=UD$.
 
 \begin{theorem*}[LADR 8.39--8.41: Square roots of $I+N$ and invertible complex operators]\target{name-ladr-8-41-square-roots}
   \begin{enumerate}[(a)]

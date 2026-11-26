@@ -5,6 +5,9 @@
 \newcommand{\aug}[2]{\left[\begin{array}{@{}#1@{}}#2\end{array}\right]}
 \newcommand{\vv}[1]{\mathbf{#1}}
 \DeclareMathOperator{\spn}{Span}\DeclareMathOperator{\Nul}{Nul}\DeclareMathOperator{\Col}{Col}\DeclareMathOperator{\Row}{Row}\DeclareMathOperator{\tr}{tr}\DeclareMathOperator{\proj}{proj}\DeclareMathOperator{\dist}{dist}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.8pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,frametitlefont=\sffamily\bfseries\color{NavyBlue},frametitleaboveskip=5pt,frametitlebelowskip=1pt,innertopmargin=2pt,innerbottommargin=6pt,skipabove=9pt,skipbelow=4pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle,frametitle={#1}]}{\end{mdframed}}
 \title{Math 54 --- Week 9}
 \subtitle{Inner product, length and orthogonality; orthogonal sets; orthogonal projections (Lay 6.1--6.3)}
 \author{}\date{}\ihead{}
@@ -14,17 +17,19 @@
 \section{Facts used from Weeks 1--8}
 
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Matrix--vector products (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Weeks~2--4}):} $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$ is the combination of the columns of $A$ with weights $\vv x$. Entry~$i$ of $A\vv x$ is $(\text{row }i\text{ of }A)\cdot\vv x$, and entry~$(i,j)$ of $A^{\mathsf T}B$ is $(\text{col }i\text{ of }A)\cdot(\text{col }j\text{ of }B)$. Also $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$.
+  \ii \target{fact-W1}\textbf{Matrix--vector products (\xlink{math54}{2026-08-31-vectors-ax-b-solution-sets}{thm-lay-1-4}{Weeks~2--4}):} $A\vv x=x_1\vv a_1+\dots+x_n\vv a_n$ is the combination of the columns of $A$ with weights $\vv x$. Entry~$i$ of $A\vv x$ is $(\text{row }i\text{ of }A)\cdot\vv x$, and entry~$(i,j)$ of $A^{\mathsf T}B$ is $(\text{col }i\text{ of }A)\cdot(\text{col }j\text{ of }B)$. Also $(AB)^{\mathsf T}=B^{\mathsf T}A^{\mathsf T}$.
 
-  \ii \textbf{The subspaces of a matrix (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}):} For an $m\times n$ matrix $A$, $\dim\Row A=\dim\Col A=\rank A$ and $\rank A+\dim\Nul A=n$.
+  \ii \target{fact-W2}\textbf{The subspaces of a matrix (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}):} For an $m\times n$ matrix $A$, $\dim\Row A=\dim\Col A=\rank A$ and $\rank A+\dim\Nul A=n$.
 
-  \ii \textbf{Bases (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}):} In a $p$-dimensional subspace, $p$ linearly independent vectors form a basis. Coordinates relative to a basis are unique (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-4-8}{Week~7}).
+  \ii \target{fact-W3}\textbf{Bases (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}):} In a $p$-dimensional subspace, $p$ linearly independent vectors form a basis. Coordinates relative to a basis are unique (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-4-8}{Week~7}).
 
-  \ii \textbf{Invertible matrix theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Week~4}):} If $A$ is square and $BA=I$ for some $B$, then $A$ is invertible and $A^{-1}=B$.
+  \ii \target{fact-W4}\textbf{Invertible matrix theorem (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Week~4}):} If $A$ is square and $BA=I$ for some $B$, then $A$ is invertible and $A^{-1}=B$.
 
-  \ii \textbf{Determinants (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Week~5}):} $\det(AB)=\det A\det B$ and $\det(A^{\mathsf T})=\det A$.
+  \ii \target{fact-W5}\textbf{Determinants (\xlink{math54}{2026-09-21-determinants-vector-spaces}{thm-lay-3-6}{Week~5}):} $\det(AB)=\det A\det B$ and $\det(A^{\mathsf T})=\det A$.
 
-  \ii \textbf{Eigenvalues (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{name-characteristic-equation}{Week~7}):} $\lambda$ is an eigenvalue of square $A$ if $A\vv x=\lambda\vv x$ for some $\vv x\neq\vv 0$.
+  \ii \target{fact-W6}\textbf{Eigenvalues (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{name-characteristic-equation}{Week~7}):} $\lambda$ is an eigenvalue of square $A$ if $A\vv x=\lambda\vv x$ for some $\vv x\neq\vv 0$.
+
+  \ii \target{fact-W7}\textbf{Geometry (prerequisite):} In a triangle with sides $a,b$ enclosing the angle $\theta$ and opposite side $c$, $c^2=a^2+b^2-2ab\cos\theta$ (law of cosines). A point is equidistant from two points exactly when it lies on the perpendicular bisector of the segment joining them.
 \end{enumerate}
 
 \section{This week}
@@ -49,13 +54,16 @@ The \vocab{length (norm)} of $\vv v$ is $\|\vv v\|=\sqrt{\vv v\cdot\vv v}=\sqrt{
     \ii[(c)] \emph{Homogeneity:} $(c\vv u)\cdot\vv v = c(\vv u\cdot\vv v) = \vv u\cdot(c\vv v)$.
     \ii[(d)] \emph{Positive definiteness:} $\vv u\cdot\vv u \ge 0$ for all $\vv u\in\RR^n$, and $\vv u\cdot\vv u = 0$ if and only if $\vv u=\vv 0$.
   \end{enumerate}
-  Consequently, $\|c\vv v\| = \sqrt{(c\vv v)\cdot(c\vv v)} = \sqrt{c^2(\vv v\cdot\vv v)} = |c|\,\|\vv v\|$.
+  Consequently,
+  \[
+    \|c\vv v\| = \sqrt{(c\vv v)\cdot(c\vv v)} = \sqrt{c^2(\vv v\cdot\vv v)} = |c|\,\|\vv v\|.
+  \]
 \end{theorem*}
 \begin{proof}
   Rules (a)--(c) follow directly by writing $\vv u\cdot\vv v=\sum_{i=1}^n u_iv_i$ and applying commutativity/distributivity in $\RR$. For (d), $\vv u\cdot\vv u=\sum_{i=1}^n u_i^2\ge 0$ as a sum of squares of real numbers, and a sum of squares vanishes if and only if every term $u_i=0$, i.e.\ $\vv u=\vv 0$.
 \end{proof}
 
-To see why $\vv u\cdot\vv v=0$ defines perpendicularity in $\RR^2$ or $\RR^3$, take $\vv v\neq\vv 0$. The line through $\vv 0$ and $\vv u$ is perpendicular to $\vv v$ precisely when $\vv u$ lies on the perpendicular bisector of the segment from $-\vv v$ to $\vv v$, meaning $\vv u$ is equidistant from $\vv v$ and $-\vv v$: $\|\vv u-\vv v\|=\|\vv u-(-\vv v)\|$. Expanding squared distances with Thm.~1 gives
+To see why $\vv u\cdot\vv v=0$ defines perpendicularity in $\RR^2$ or $\RR^3$, take $\vv v\neq\vv 0$. The line through $\vv 0$ and $\vv u$ is perpendicular to $\vv v$ precisely when $\vv u$ lies on the perpendicular bisector of the segment from $-\vv v$ to $\vv v$, meaning $\vv u$ is equidistant from $\vv v$ and $-\vv v$ (\ilink{fact-W7}{W7}): $\|\vv u-\vv v\|=\|\vv u-(-\vv v)\|$. Expanding squared distances with \ilink{thm-lay-6-1}{Thm.~1} gives
 \[
   \|\vv u-\vv v\|^2 = \|\vv u\|^2 - 2\vv u\cdot\vv v + \|\vv v\|^2, \qquad
   \|\vv u+\vv v\|^2 = \|\vv u\|^2 + 2\vv u\cdot\vv v + \|\vv v\|^2,
@@ -80,16 +88,30 @@ which are equal \emph{if and only if} $\vv u\cdot\vv v=0$. That simple algebraic
 
 \noindent\textbf{Definition.} Two vectors $\vv u,\vv v\in\RR^n$ are \vocab{orthogonal} if $\vv u\cdot\vv v=0$ (written $\vv u\perp\vv v$; note $\vv 0$ is orthogonal to every vector). Thus $(1,2)\cdot(-2,1)=0$ confirms orthogonality, and $\|(1,-2,2,0)\|=3$.
 
+\begin{howto}{How to compute lengths, distances, unit vectors and orthogonality}\target{howto-basic}
+  \begin{steps}
+    \ii \textbf{Length.} $\|\vv v\|=\sqrt{v_1^2+\dots+v_n^2}$; work with $\|\vv v\|^2$ as long as possible.
+    \ii \textbf{Distance.} Subtract first, then take the length: $\dist(\vv u,\vv v)=\|\vv u-\vv v\|$.
+    \ii \textbf{Unit vector.} Divide by the length: $\vv v/\|\vv v\|$ (only for $\vv v\neq\vv 0$). For $c\vv v$ use $\|c\vv v\|=|c|\,\|\vv v\|$.
+    \ii \textbf{Orthogonality.} Compute $\vv u\cdot\vv v$; the vectors are orthogonal exactly when it is $0$.
+  \end{steps}
+  \textbf{Edge cases.} The zero vector has length $0$, cannot be normalized, and is orthogonal to every vector. A negative scalar keeps the length positive: $\|-2\vv v\|=2\|\vv v\|$.
+\end{howto}
+
 \begin{theorem*}[The Pythagorean Theorem in $\RR^n$ (Lay 6.1, Thm.~2)]\target{thm-lay-6-2}
   Two vectors $\vv u,\vv v\in\RR^n$ are orthogonal if and only if $\|\vv u+\vv v\|^2 = \|\vv u\|^2 + \|\vv v\|^2$.
 \end{theorem*}
 \begin{proof}
-  By Thm.~1, $\|\vv u+\vv v\|^2 = (\vv u+\vv v)\cdot(\vv u+\vv v) = \|\vv u\|^2 + 2(\vv u\cdot\vv v) + \|\vv v\|^2$, which equals $\|\vv u\|^2+\|\vv v\|^2 \iff \vv u\cdot\vv v=0$.
+  By \ilink{thm-lay-6-1}{Thm.~1},
+  \[
+    \|\vv u+\vv v\|^2 = (\vv u+\vv v)\cdot(\vv u+\vv v) = \|\vv u\|^2 + 2(\vv u\cdot\vv v) + \|\vv v\|^2,
+  \]
+  which equals $\|\vv u\|^2+\|\vv v\|^2 \iff \vv u\cdot\vv v=0$.
 \end{proof}
 
 \begin{shortcuts}
   \ii \textbf{Compare lengths by squares:} $\|\vv u\|\le\|\vv v\| \iff \|\vv u\|^2\le\|\vv v\|^2$ (no square roots needed).
-  \ii \textbf{Angle type in $\RR^2,\RR^3$:} From $\vv u\cdot\vv v=\|\vv u\|\,\|\vv v\|\cos\theta$, $\vv u\cdot\vv v>0 \implies$ acute, $=0\implies$ right, $<0\implies$ obtuse.
+  \ii \textbf{Angle type in $\RR^2,\RR^3$:} $\vv u\cdot\vv v=\|\vv u\|\,\|\vv v\|\cos\theta$, where $\theta$ is the angle between nonzero $\vv u,\vv v$: the triangle with sides $\vv u$, $\vv v$, $\vv u-\vv v$ gives $\|\vv u-\vv v\|^2=\|\vv u\|^2+\|\vv v\|^2-2\|\vv u\|\,\|\vv v\|\cos\theta$ (\ilink{fact-W7}{W7}), and comparing with $\|\vv u-\vv v\|^2=\|\vv u\|^2-2\vv u\cdot\vv v+\|\vv v\|^2$ gives the formula. So $\vv u\cdot\vv v>0 \implies$ acute, $=0\implies$ right, $<0\implies$ obtuse.
 \end{shortcuts}
 
 \begin{trapbox}
@@ -107,11 +129,11 @@ which are equal \emph{if and only if} $\vv u\cdot\vv v=0$. That simple algebraic
 \[
   W^\perp = \{\vv x\in\RR^n : \vv x\cdot\vv w=0 \text{ for all }\vv w\in W\}.
 \]
-Three immediate facts follow from Thm.~1:
+Three immediate facts follow from \ilink{thm-lay-6-1}{Thm.~1}:
 \begin{itemize}
-  \ii \emph{Membership test:} If $W=\spn\{\vv w_1,\dots,\vv w_p\}$, then $\vv x\in W^\perp \iff \vv x\cdot\vv w_j=0$ for each generator $j=1,\dots,p$ (by linearity of the dot product).
+  \ii \target{name-membership-test}\textbf{Membership test:} If $W=\spn\{\vv w_1,\dots,\vv w_p\}$, then $\vv x\in W^\perp \iff \vv x\cdot\vv w_j=0$ for each generator $j=1,\dots,p$. One direction holds because the $\vv w_j$ lie in $W$; for the other, every $\vv w\in W$ is $\sum c_j\vv w_j$, and $\vv x\cdot\vv w=\sum c_j(\vv x\cdot\vv w_j)=0$.
   \ii \emph{$W^\perp$ is a subspace} containing $\vv 0$, closed under addition and scalar multiplication.
-  \ii \emph{$W\cap W^\perp=\{\vv 0\}$:} Any $\vv v\in W\cap W^\perp$ satisfies $\vv v\cdot\vv v=0$, forcing $\vv v=\vv 0$ by definiteness (Thm.~1(d)).
+  \ii \emph{$W\cap W^\perp=\{\vv 0\}$:} Any $\vv v\in W\cap W^\perp$ satisfies $\vv v\cdot\vv v=0$, forcing $\vv v=\vv 0$ by definiteness (\ilink{thm-lay-6-1}{Thm.~1}(d)).
 \end{itemize}
 
 \begin{theorem*}[Orthogonality of Fundamental Subspaces (Lay 6.1, Thm.~3)]\target{thm-lay-6-3}
@@ -121,11 +143,11 @@ Three immediate facts follow from Thm.~1:
   \]
 \end{theorem*}
 \begin{ideabox}
-  Inspect entry~$i$ of $A\vv x$: by (W1), $(A\vv x)_i = (\text{row }i\text{ of }A)\cdot\vv x$. Thus $A\vv x=\vv 0$ states that $\vv x$ is orthogonal to \emph{every} row of $A$, which by the membership test means $\vv x\in(\Row A)^\perp$. Replacing $A$ by $A^{\mathsf T}$ (whose rows are the columns of $A$) gives the second identity immediately.
+  Inspect entry~$i$ of $A\vv x$: by (\ilink{fact-W1}{W1}), $(A\vv x)_i = (\text{row }i\text{ of }A)\cdot\vv x$. Thus $A\vv x=\vv 0$ states that $\vv x$ is orthogonal to \emph{every} row of $A$, which by the \ilink{name-membership-test}{membership test} means $\vv x\in(\Row A)^\perp$. Replacing $A$ by $A^{\mathsf T}$ (whose rows are the columns of $A$) gives the second identity immediately.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii By (W1), $A\vv x=\vv 0 \iff (\text{row }i\text{ of }A)\cdot\vv x=0$ for all $i=1,\dots,m \iff \vv x\in(\Row A)^\perp$ by the membership test. Hence $\Nul A=(\Row A)^\perp$.
+    \ii By (\ilink{fact-W1}{W1}), $A\vv x=\vv 0 \iff (\text{row }i\text{ of }A)\cdot\vv x=0$ for all $i=1,\dots,m \iff \vv x\in(\Row A)^\perp$ by the \ilink{name-membership-test}{membership test}. Hence $\Nul A=(\Row A)^\perp$.
     \ii Since $\Row(A^{\mathsf T})=\Col A$, applying Step~1 to $A^{\mathsf T}$ yields $\Nul A^{\mathsf T}=(\Row A^{\mathsf T})^\perp=(\Col A)^\perp$.
   \end{steps}
 \end{proof}
@@ -158,11 +180,11 @@ Three immediate facts follow from Thm.~1:
     \InkRegion[inkblue]{(4.20,0.0) rectangle (6.10,0.92)}
     \InkStroke{(4.20,0.0) rectangle (6.10,0.92)}
     \node[font=\footnotesize] at (5.15,0.60) {\InkLabel{$\Row A$}};
-    \node[font=\scriptsize,text=black!75] at (5.15,0.24) {\InkLabel{$\dim r$}};
+    \node[font=\scriptsize,text=black] at (5.15,0.24) {\InkLabel{$\dim r$}};
 
     \InkStroke{(2.70,-0.92) rectangle (4.20,0.0)}
     \node[font=\footnotesize] at (3.45,-0.30) {\InkLabel{$\Nul A$}};
-    \node[font=\scriptsize,text=black!75] at (3.45,-0.66) {\InkLabel{$\dim(n-r)$}};
+    \node[font=\scriptsize,text=black] at (3.45,-0.66) {\InkLabel{$\dim(n-r)$}};
 
     % Origin and perpendicular square mark in Q4 of domain
     \InkStroke[black!65,line width=0.4pt]{(4.20,-0.16) -- (4.36,-0.16) -- (4.36,0.0)}
@@ -173,11 +195,11 @@ Three immediate facts follow from Thm.~1:
     \InkRegion[inkblue]{(8.40,0.0) rectangle (10.30,0.92)}
     \InkStroke{(8.40,0.0) rectangle (10.30,0.92)}
     \node[font=\footnotesize] at (9.35,0.60) {\InkLabel{$\Col A$}};
-    \node[font=\scriptsize,text=black!75] at (9.35,0.24) {\InkLabel{$\dim r$}};
+    \node[font=\scriptsize,text=black] at (9.35,0.24) {\InkLabel{$\dim r$}};
 
     \InkStroke{(10.30,-0.92) rectangle (11.80,0.0)}
     \node[font=\footnotesize] at (11.05,-0.30) {\InkLabel{$\Nul A^{\mathsf T}$}};
-    \node[font=\scriptsize,text=black!75] at (11.05,-0.66) {\InkLabel{$\dim(m-r)$}};
+    \node[font=\scriptsize,text=black] at (11.05,-0.66) {\InkLabel{$\dim(m-r)$}};
 
     % Origin and perpendicular square mark in Q1 of codomain
     \InkStroke[black!65,line width=0.4pt]{(10.30,0.16) -- (10.46,0.16) -- (10.46,0.0)}
@@ -187,28 +209,49 @@ Three immediate facts follow from Thm.~1:
     % Bijection Row A -> Col A and kernel arrow Nul A -> 0 in R^m
     \draw[ink line,-{Stealth[length=4.2pt,width=2.4pt]},black,line width=0.65pt]
       (6.22,0.46) -- node[above=2pt,font=\scriptsize] {\InkLabel{$A$}}
-      node[below=2pt,font=\scriptsize,text=black!70] {bijection} (8.28,0.46);
+      node[below=2pt,font=\scriptsize,text=black] {bijection} (8.28,0.46);
     \draw[ink guide arrow,draw=black!80,shorten >=3.2pt]
       (4.28,-0.48) to[out=0,in=-132]
-      node[pos=0.48,below=3pt,font=\scriptsize,text=black!75] {\InkLabel{$A\vv x=\vv 0$}}
+      node[pos=0.48,below=3pt,font=\scriptsize,text=black] {\InkLabel{$A\vv x=\vv 0$}}
       (10.30,0.0);
   \end{scope}
   \node[font=\footnotesize] at (7.25,-1.78) {\InkLabel{(b)}};
 \end{tikzpicture}
-\figcap{(a) The orthogonal complement of a plane $W$ through $\vv 0$ in $\RR^3$ is the normal line $W^\perp$. (b) Fundamental subspace decomposition (\hyperref[thm-lay-6-3]{Thm.~6.3}): $\Row A\perp\Nul A$ in $\RR^n$ and $\Col A\perp\Nul A^{\mathsf T}$ in $\RR^m$, with $A$ mapping $\Row A$ bijectively onto $\Col A$.}
+\figcap{(a) The orthogonal complement of a plane $W$ through $\vv 0$ in $\RR^3$ is the normal line $W^\perp$. (b) The four subspaces of $A$ (\ilink{thm-lay-6-3}{Thm.~3}): $\Row A\perp\Nul A$ in $\RR^n$ and $\Col A\perp\Nul A^{\mathsf T}$ in $\RR^m$, with $A$ mapping $\Row A$ bijectively onto $\Col A$.}
 \end{fig}
 
-\noindent\textbf{The question answered \& dimension identity.} Put the spanning vectors $(1,1,1)$ and $(1,-1,0)$ as \emph{rows} of $A$:
+\revisit Put the spanning vectors $(1,1,1)$ and $(1,-1,0)$ as \emph{rows} of $A$:
 \[
   A=\begin{bmatrix}1&1&1\\1&-1&0\end{bmatrix}
   \sim \begin{bmatrix}1&0&1/2\\0&1&1/2\end{bmatrix},
   \qquad W^\perp=\Nul A=\spn\{(1,1,-2)\}.
 \]
-Because $W=\Row A$ gives $\dim W=\rank A$ and $W^\perp=\Nul A$, the Rank Theorem (W2) automatically yields
-\[
-  \dim W + \dim W^\perp = n, \qquad\text{and}\qquad (W^\perp)^\perp = W
-\]
-(since $W\subseteq(W^\perp)^\perp$ and both have dimension $n-\dim W^\perp=\dim W$, W3).
+The vectors perpendicular to both are the multiples of $(1,1,-2)$: they form the line $W^\perp$, and row reduction of the matrix with the spanning vectors as rows computes it, by \ilink{thm-lay-6-3}{Thm.~3}.
+
+\begin{proposition*}[Dimension of $W^\perp$ and $(W^\perp)^\perp=W$]\target{prop-perp-dim}
+  For every subspace $W$ of $\RR^n$: $\dim W+\dim W^\perp=n$, and $(W^\perp)^\perp=W$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{$W$ as a row space.} Take a basis of $W$ (\ilink{fact-W3}{W3}) and put its vectors as the rows of a matrix $A$; then $W=\Row A$, $\dim W=\rank A$, and $W^\perp=\Nul A$ by \ilink{thm-lay-6-3}{Thm.~3}. (For $W=\{\vv 0\}$, $W^\perp=\RR^n$ directly.)
+    \ii \textbf{Dimensions.} The Rank Theorem (\ilink{fact-W2}{W2}) gives $\rank A+\dim\Nul A=n$, that is, $\dim W+\dim W^\perp=n$.
+    \ii \textbf{$W\subseteq(W^\perp)^\perp$.} Every $\vv w\in W$ is orthogonal to every vector of $W^\perp$, by the definition of $W^\perp$.
+    \ii \textbf{Equality.} Applying step~2 to the subspace $W^\perp$ gives $\dim(W^\perp)^\perp=n-\dim W^\perp=\dim W$. A basis of $W$ is then $\dim W$ independent vectors in $(W^\perp)^\perp$, hence a basis of it (\ilink{fact-W3}{W3}), so $(W^\perp)^\perp=W$. \qedhere
+  \end{steps}
+\end{proof}
+
+\begin{howto}{How to find the orthogonal complement $W^\perp$}\target{howto-perp}
+  \begin{steps}
+    \ii \textbf{$W$ given by spanning vectors.} Put them as the rows of $A$, row-reduce, and find a basis of $\Nul A$; that is a basis of $W^\perp$.
+    \ii \textbf{$W$ given by equations} $\vv a_1\cdot\vv x=0,\dots,\vv a_k\cdot\vv x=0$. Then $W=\Nul A=(\Row A)^\perp$ for the matrix with rows $\vv a_i$, so $W^\perp=\Row A=\spn\{\vv a_1,\dots,\vv a_k\}$ (\ilink{prop-perp-dim}{Dimension of $W^\perp$}).
+    \ii \textbf{Check.} Each basis vector of $W^\perp$ has dot product $0$ with each spanning vector of $W$, and $\dim W+\dim W^\perp=n$.
+  \end{steps}
+  \textbf{Edge cases.} $\{\vv 0\}^\perp=\RR^n$ and $(\RR^n)^\perp=\{\vv 0\}$. Dependent spanning vectors are fine: row reduction removes the redundant rows.
+\end{howto}
+
+\begin{example*}[The complement of a plane given by an equation]\target{ex-perp-equation}
+  For $W=\{\vv x\in\RR^3: x_1+x_2+x_3=0\}$, $W$ is the null space of the $1\times 3$ matrix $[\,1\ \ 1\ \ 1\,]$, so $W^\perp=\spn\{(1,1,1)\}$. Check: $\dim W+\dim W^\perp=2+1=3$.
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{Hyperplane given by $\vv a\cdot\vv x=0$ ($\vv a\neq\vv 0$):} $W=(\spn\{\vv a\})^\perp$, so $W^\perp=\spn\{\vv a\}$ immediately.
@@ -236,7 +279,7 @@ Because $W=\Row A$ gives $\dim W=\rank A$ and $W^\perp=\Nul A$, the Rank Theorem
   \[
     0 = \vv 0\cdot\vv u_j = c_1(\vv u_1\cdot\vv u_j)+\dots+c_p(\vv u_p\cdot\vv u_j) = c_j(\vv u_j\cdot\vv u_j),
   \]
-  because every cross term $\vv u_i\cdot\vv u_j=0$ ($i\ne j$). Since $\vv u_j\neq\vv 0$, $\vv u_j\cdot\vv u_j>0$ by positive definiteness (Thm.~1(d)), forcing $c_j=0$ for each $j$.
+  because every cross term $\vv u_i\cdot\vv u_j=0$ ($i\ne j$). Since $\vv u_j\neq\vv 0$, $\vv u_j\cdot\vv u_j>0$ by positive definiteness (\ilink{thm-lay-6-1}{Thm.~1}(d)), forcing $c_j=0$ for each $j$.
 \end{proof}
 
 \begin{theorem*}[Weights in an orthogonal basis (Lay 6.2, Thm.~5)]\target{thm-lay-6-5}
@@ -249,7 +292,7 @@ Because $W=\Row A$ gives $\dim W=\rank A$ and $W^\perp=\Nul A$, the Rank Theorem
   Writing $\vv y=\sum_{i=1}^p c_i\vv u_i$ and dotting with $\vv u_j$ cancels all $i\ne j$ terms, leaving $\vv y\cdot\vv u_j = c_j(\vv u_j\cdot\vv u_j)$; divide by $\vv u_j\cdot\vv u_j>0$.
 \end{proof}
 
-\noindent\textbf{The question answered (part 1).} Check $\vv u_1\cdot\vv u_2=-3+2+1=0$, $\vv u_1\cdot\vv u_3=-\frac32-2+\frac72=0$, $\vv u_2\cdot\vv u_3=\frac12-4+\frac72=0$: three nonzero orthogonal vectors in $\RR^3$ form an orthogonal basis (Thm.~4, W3)! By Thm.~5:
+\revisit[ (part 1)] Check $\vv u_1\cdot\vv u_2=-3+2+1=0$, $\vv u_1\cdot\vv u_3=-\frac32-2+\frac72=0$, $\vv u_2\cdot\vv u_3=\frac12-4+\frac72=0$: three nonzero orthogonal vectors in $\RR^3$ form an orthogonal basis (\ilink{thm-lay-6-4}{Thm.~4}, \ilink{fact-W3}{W3}). By \ilink{thm-lay-6-5}{Thm.~5}:
 \[
   c_1 = \frac{18+1-8}{11}=1, \qquad c_2 = \frac{-6+2-8}{6}=-2, \qquad c_3 = \frac{-3-2-28}{33/2}=-2 \implies \vv y=\vv u_1-2\vv u_2-2\vv u_3.
 \]
@@ -258,7 +301,26 @@ Because $W=\Row A$ gives $\dim W=\rank A$ and $W^\perp=\Nul A$, the Rank Theorem
 \[
   \hat{\vv y} = \proj_L\vv y = \frac{\vv y\cdot\vv u}{\vv u\cdot\vv u}\vv u, \qquad \vv z = \vv y - \hat{\vv y}.
 \]
-For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so Thm.~2 gives $\|\vv y-\beta\vv u\|^2 = \|\vv z\|^2 + \|\hat{\vv y}-\beta\vv u\|^2 \ge \|\vv z\|^2$: $\hat{\vv y}$ is the \emph{unique closest point} of $L$ to $\vv y$, at distance $\|\vv z\|$. For $\vv y=(7,6)$ and $\vv u=(4,2)$: $\vv y\cdot\vv u=40$, $\vv u\cdot\vv u=20 \implies \hat{\vv y}=2\vv u=(8,4)$ and $\vv z=(-1,2)$, so $\dist(\vv y,L)=\sqrt{5}$. Each term $\frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}\vv u_j$ in Thm.~5 is simply $\proj_{\spn\{\vv u_j\}}\vv y$.
+For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so \ilink{thm-lay-6-2}{Thm.~2} gives
+\[
+  \|\vv y-\beta\vv u\|^2 = \|\vv z\|^2 + \|\hat{\vv y}-\beta\vv u\|^2 \ge \|\vv z\|^2,
+\]
+with equality only for $\beta\vv u=\hat{\vv y}$: $\hat{\vv y}$ is the \emph{unique closest point} of $L$ to $\vv y$, at distance $\|\vv z\|$. Each term $\frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}\vv u_j$ in \ilink{thm-lay-6-5}{Thm.~5} is simply $\proj_{\spn\{\vv u_j\}}\vv y$.
+
+\revisit[ (part 2)] For $\vv y=(7,6)$ and $\vv u=(4,2)$: $\vv y\cdot\vv u=40$ and $\vv u\cdot\vv u=20$, so $\hat{\vv y}=2\vv u=(8,4)$ and $\vv z=\vv y-\hat{\vv y}=(-1,2)$, with $\vv z\cdot\vv u=-4+4=0$. The distance from $\vv y$ to the line is $\|\vv z\|=\sqrt{5}$.
+
+\begin{howto}{How to find coordinates in an orthogonal basis}\target{howto-orth-weights}
+  \begin{steps}
+    \ii \textbf{Check the basis.} Every pairwise dot product is $0$ and no vector is $\vv 0$; then the vectors are independent (\ilink{thm-lay-6-4}{Thm.~4}).
+    \ii \textbf{Weights.} $c_j=(\vv y\cdot\vv u_j)/(\vv u_j\cdot\vv u_j)$; for an orthonormal basis $c_j=\vv y\cdot\vv u_j$.
+    \ii \textbf{Check.} $c_1\vv u_1+\dots+c_p\vv u_p=\vv y$.
+  \end{steps}
+  \textbf{Edge cases.} If $\vv y$ is not in the span, the formula still produces numbers, but their combination is the projection of $\vv y$, not $\vv y$; the check in step~3 catches this. If the basis is not orthogonal, the formula gives wrong weights.
+\end{howto}
+
+\begin{example*}[The weight formula for a vector outside the span]\target{ex-weights-outside}
+  For $\vv u_1=(1,1,0)$, $\vv u_2=(1,-1,0)$ and $\vv y=(1,2,3)$, the formula gives $c_1=\frac32$, $c_2=-\frac12$, and $c_1\vv u_1+c_2\vv u_2=(1,2,0)\neq\vv y$: $\vv y$ is not in the plane $x_3=0$, and $(1,2,0)$ is its projection onto that plane.
+\end{example*}
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
@@ -266,8 +328,8 @@ For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so 
   \begin{scope}[xshift=1.8cm,yshift=0.7cm,scale=0.74]
     \InkStroke[figaxis,draw=black!35]{(-1.8,0) -- (4.9,0)}
     \InkStroke[figaxis,draw=black!35]{(0,-0.6) -- (0,3.8)}
-    \InkStroke[black!22,line width=0.35pt]{(-1,-0.5) -- (4.9,2.45)}
-    \InkStroke[black!22,line width=0.35pt]{(0.5,-1) -- (-1.3,2.6)}
+    \InkStroke[black!45,line width=0.38pt]{(-1,-0.5) -- (4.9,2.45)}
+    \InkStroke[black!45,line width=0.38pt]{(0.5,-1) -- (-1.3,2.6)}
 
     \draw[ink guide,draw=black!50] (4,3) -- (4.4,2.2);
     \draw[ink guide,draw=black!50] (4,3) -- (-0.4,0.8);
@@ -295,11 +357,11 @@ For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so 
     \node[font=\footnotesize] at (4.4,-2.06) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Orthogonal basis coordinates compute $\vv y=(4,3)$ from its $1$D projections along $\vv u_1,\vv u_2$ (\hyperref[thm-lay-6-5]{Thm.~6.5}). (b) Closest point $\hat{\vv y}=\proj_L\vv y=(8,4)$ on $L$ to $\vv y=(7,6)$, leaving error $\vv z=(-1,2)$ ($\dist=\sqrt{5}$).}
+\figcap{(a) The coordinates of $\vv y=(4,3)$ in the orthogonal basis $\vv u_1,\vv u_2$ come from its projections onto the two lines (\ilink{thm-lay-6-5}{Thm.~5}). (b) Closest point $\hat{\vv y}=\proj_L\vv y=(8,4)$ on $L$ to $\vv y=(7,6)$, leaving error $\vv z=(-1,2)$ ($\dist=\sqrt{5}$).}
 \end{fig}
 
 \begin{trapbox}
-  \ii \textbf{Thm.~4 needs \emph{nonzero} vectors:} $\{\vv 0,(1,0)\}$ is orthogonal yet linearly dependent.
+  \ii \textbf{\ilink{thm-lay-6-4}{Thm.~4} needs \emph{nonzero} vectors:} $\{\vv 0,(1,0)\}$ is orthogonal yet linearly dependent.
   \ii \textbf{Weight formula fails for non-orthogonal bases:} Always verify pairwise dot products equal $0$ first.
   \ii \textbf{Distance to $L$ is $\|\vv y-\hat{\vv y}\|$, \emph{not} $\|\hat{\vv y}\|$:} Above, $\dist=\|\vv z\|=\sqrt{5}$, not $\|(8,4)\|=\sqrt{80}$.
 \end{trapbox}
@@ -310,7 +372,7 @@ For any other point $\beta\vv u\in L$, $\vv z\perp(\hat{\vv y}-\beta\vv u)$, so 
   Suppose $U$ is a $3\times2$ matrix whose columns $\vv u_1=\frac{1}{\sqrt{2}}(1,1,0)$ and $\vv u_2=\frac{1}{3}(2,-2,1)$ are orthogonal unit vectors. For any $\vv x\in\RR^2$, how does the transformed vector length $\|U\vv x\|$ compare with $\|\vv x\|$?
 \end{qbox}
 
-Normalizing each nonzero orthogonal vector ($\vv v_j/\|\vv v_j\|$) produces an \vocab{orthonormal basis}; then $\vv u_j\cdot\vv u_j=1$, simplifying Thm.~5 weights to $c_j=\vv y\cdot\vv u_j$.
+Normalizing each nonzero orthogonal vector ($\vv v_j/\|\vv v_j\|$) produces an \vocab{orthonormal basis}; then $\vv u_j\cdot\vv u_j=1$, simplifying the \ilink{thm-lay-6-5}{Thm.~5} weights to $c_j=\vv y\cdot\vv u_j$.
 
 \begin{theorem*}[Orthonormal columns preserve dot products and lengths (Lay 6.2, Thms.~6 \& 7)]\target{thm-lay-6-6}\target{thm-lay-6-7}
   An $m\times n$ matrix $U$ has orthonormal columns if and only if $U^{\mathsf T}U = I_n$ (\textbf{Thm.~6}). Whenever $U^{\mathsf T}U = I_n$, for all $\vv x,\vv y\in\RR^n$ (\textbf{Thm.~7}):
@@ -321,16 +383,16 @@ Normalizing each nonzero orthogonal vector ($\vv v_j/\|\vv v_j\|$) produces an \
   \]
 \end{theorem*}
 \begin{proof}
-  By (W1), entry $(i,j)$ of $U^{\mathsf T}U$ is $\vv u_i\cdot\vv u_j$, which equals $\delta_{ij} \iff$ the columns are orthonormal ($U^{\mathsf T}U=I_n$). Then
+  By (\ilink{fact-W1}{W1}), entry $(i,j)$ of $U^{\mathsf T}U$ is $\vv u_i\cdot\vv u_j$, which equals $\delta_{ij} \iff$ the columns are orthonormal ($U^{\mathsf T}U=I_n$). Then
   \[
     (U\vv x)\cdot(U\vv y) = (U\vv x)^{\mathsf T}(U\vv y) = \vv x^{\mathsf T}U^{\mathsf T}U\vv y = \vv x^{\mathsf T}I\vv y = \vv x\cdot\vv y,
   \]
   and setting $\vv y=\vv x$ gives $\|U\vv x\|^2=\|\vv x\|^2$. Setting $\vv x\cdot\vv y=0$ preserves orthogonality.
 \end{proof}
 
-\noindent\textbf{Definition.} A \emph{square} $n\times n$ matrix $U$ with orthonormal columns is called an \vocab{orthogonal matrix}; then $U^{\mathsf T}U=I$ forces $U$ to be invertible with $U^{-1}=U^{\mathsf T}$ (W4).
+\noindent\textbf{Definition.} A \emph{square} $n\times n$ matrix $U$ with orthonormal columns is called an \vocab{orthogonal matrix}; then $U^{\mathsf T}U=I$ forces $U$ to be invertible with $U^{-1}=U^{\mathsf T}$ (\ilink{fact-W4}{W4}).
 
-\begin{proposition*}[Square orthogonal matrices: columns, rows, and eigenvalues $\pm1$ (Lay 6.2)]
+\begin{proposition*}[Square orthogonal matrices: columns, rows, and eigenvalues $\pm1$ (Lay 6.2)]\target{prop-square-orthogonal}
   For a square matrix $U$, the following are equivalent:
   \begin{enumerate}[(a)]
     \ii the columns of $U$ are orthonormal;
@@ -341,10 +403,19 @@ Normalizing each nonzero orthogonal vector ($\vv v_j/\|\vv v_j\|$) produces an \
   Every real eigenvalue of an orthogonal matrix is $1$ or $-1$.
 \end{proposition*}
 \begin{proof}
-  (a)$\Leftrightarrow$(b) is Thm.~6. For square $U$, (W4) makes $U^{\mathsf T}U=I \iff U^{-1}=U^{\mathsf T} \iff UU^{\mathsf T}=I$. Entry $(i,j)$ of $UU^{\mathsf T}=(U^{\mathsf T})^{\mathsf T}U^{\mathsf T}$ is $(\text{row }i\text{ of }U)\cdot(\text{row }j\text{ of }U)$, proving (c)$\Leftrightarrow$(d). Finally, if $U\vv x=\lambda\vv x$ ($\lambda\in\RR$, $\vv x\neq\vv 0$), Thm.~7 gives $\|\vv x\|=\|U\vv x\|=|\lambda|\,\|\vv x\| \implies |\lambda|=1 \implies \lambda=\pm1$.
+  (a)$\Leftrightarrow$(b) is \ilink{thm-lay-6-6}{Thm.~6}. For square $U$, (\ilink{fact-W4}{W4}) makes $U^{\mathsf T}U=I \iff U^{-1}=U^{\mathsf T} \iff UU^{\mathsf T}=I$. Entry $(i,j)$ of $UU^{\mathsf T}=(U^{\mathsf T})^{\mathsf T}U^{\mathsf T}$ is $(\text{row }i\text{ of }U)\cdot(\text{row }j\text{ of }U)$, proving (c)$\Leftrightarrow$(d). Finally, if $U\vv x=\lambda\vv x$ ($\lambda\in\RR$, $\vv x\neq\vv 0$), \ilink{thm-lay-6-7}{Thm.~7} gives $\|\vv x\|=\|U\vv x\|=|\lambda|\,\|\vv x\| \implies |\lambda|=1 \implies \lambda=\pm1$.
 \end{proof}
 
-\noindent\textbf{The question answered.} Since $U^{\mathsf T}U=I_2$, for $\vv x=(\sqrt{2},3)$, $U\vv x=(3,-1,1)$ has length $\sqrt{11}=\sqrt{2+9}=\|\vv x\|$, as Thm.~7 predicts.
+\revisit Since $U^{\mathsf T}U=I_2$, for $\vv x=(\sqrt{2},3)$, $U\vv x=(3,-1,1)$ has length $\sqrt{11}=\sqrt{2+9}=\|\vv x\|$, as \ilink{thm-lay-6-7}{Thm.~7} predicts: $\|U\vv x\|=\|\vv x\|$ for every $\vv x$.
+
+\begin{howto}{How to check that a matrix has orthonormal columns, and use it}\target{howto-orth-matrix}
+  \begin{steps}
+    \ii \textbf{Compute $U^{\mathsf T}U$.} Its entries are the dot products of the columns. It equals $I$ exactly when the columns are orthonormal (\ilink{thm-lay-6-6}{Thm.~6}).
+    \ii \textbf{Square $U$.} Then $U$ is orthogonal, $U^{-1}=U^{\mathsf T}$, and its rows are orthonormal too (\ilink{prop-square-orthogonal}{Square orthogonal matrices}).
+    \ii \textbf{Use it.} $\|U\vv x\|=\|\vv x\|$ and $(U\vv x)\cdot(U\vv y)=\vv x\cdot\vv y$ (\ilink{thm-lay-6-7}{Thm.~7}).
+  \end{steps}
+  \textbf{Edge cases.} If $U^{\mathsf T}U$ is diagonal but not $I$, the columns are orthogonal but not unit: divide each column by its length. A rectangular $U$ with $U^{\mathsf T}U=I$ is not invertible, and $UU^{\mathsf T}\neq I$.
+\end{howto}
 
 \begin{shortcuts}
   \ii \textbf{Immediate inverse of an orthogonal matrix:} $U^{-1}=U^{\mathsf T}$, requiring no row reduction.
@@ -376,7 +447,7 @@ For a line, we projected $\vv y$ onto its direction vector. For a $p$-dimensiona
 \begin{proof}
   \begin{steps}
     \ii Define $\hat{\vv y}$ by the formula above (clearly $\hat{\vv y}\in W$) and set $\vv z=\vv y-\hat{\vv y}$.
-    \ii For each $j=1,\dots,p$, orthogonality zeroes out all $i\neq j$ terms in $\hat{\vv y}\cdot\vv u_j$, leaving $\vv z\cdot\vv u_j = \vv y\cdot\vv u_j - \frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}(\vv u_j\cdot\vv u_j)=0$. By the membership test (§2.2), $\vv z\in W^\perp$.
+    \ii For each $j=1,\dots,p$, orthogonality zeroes out all $i\neq j$ terms in $\hat{\vv y}\cdot\vv u_j$, leaving $\vv z\cdot\vv u_j = \vv y\cdot\vv u_j - \frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}(\vv u_j\cdot\vv u_j)=0$. By the \ilink{name-membership-test}{membership test}, $\vv z\in W^\perp$.
     \ii \emph{Uniqueness:} If $\vv y=\hat{\vv y}_1+\vv z_1=\hat{\vv y}_2+\vv z_2$ with $\hat{\vv y}_k\in W,\vv z_k\in W^\perp$, then $\hat{\vv y}_1-\hat{\vv y}_2=\vv z_2-\vv z_1\in W\cap W^\perp=\{\vv 0\}$, so $\hat{\vv y}_1=\hat{\vv y}_2$ and $\vv z_1=\vv z_2$. (Thus $\proj_W\vv y$ is independent of the choice of orthogonal basis.)
   \end{steps}
 \end{proof}
@@ -388,7 +459,7 @@ For a line, we projected $\vv y$ onto its direction vector. For a $p$-dimensiona
   \]
 \end{theorem*}
 \begin{proof}
-  For any $\vv v\in W$, write $\vv y-\vv v = (\vv y-\hat{\vv y}) + (\hat{\vv y}-\vv v)$. Here $\vv y-\hat{\vv y}\in W^\perp$ (Thm.~8) and $\hat{\vv y}-\vv v\in W$, so they are orthogonal; by Pythagoras (Thm.~2), $\|\vv y-\vv v\|^2=\|\vv y-\hat{\vv y}\|^2+\|\hat{\vv y}-\vv v\|^2$. Whenever $\vv v\neq\hat{\vv y}$, $\|\hat{\vv y}-\vv v\|^2>0$ by Thm.~1(d), giving $\|\vv y-\vv v\|>\|\vv y-\hat{\vv y}\|$.
+  For any $\vv v\in W$, write $\vv y-\vv v = (\vv y-\hat{\vv y}) + (\hat{\vv y}-\vv v)$. Here $\vv y-\hat{\vv y}\in W^\perp$ (\ilink{thm-lay-6-8}{Thm.~8}) and $\hat{\vv y}-\vv v\in W$, so they are orthogonal; by Pythagoras (\ilink{thm-lay-6-2}{Thm.~2}), $\|\vv y-\vv v\|^2=\|\vv y-\hat{\vv y}\|^2+\|\hat{\vv y}-\vv v\|^2$. Whenever $\vv v\neq\hat{\vv y}$, $\|\hat{\vv y}-\vv v\|^2>0$ by \ilink{thm-lay-6-1}{Thm.~1}(d), giving $\|\vv y-\vv v\|>\|\vv y-\hat{\vv y}\|$.
 \end{proof}
 
 \begin{fig}
@@ -432,10 +503,10 @@ For a line, we projected $\vv y$ onto its direction vector. For a $p$-dimensiona
     \node[font=\footnotesize] at (0.15,-2.05) {\InkLabel{(b)}};
   \end{scope}
 \end{tikzpicture}
-\figcap{(a) Orthogonal Decomposition (\hyperref[thm-lay-6-8]{Thm.~6.8}): $\hat{\vv y}=\proj_W\vv y\in W$ leaves $\vv z=\vv y-\hat{\vv y}\in W^\perp$. (b) Best Approximation (\hyperref[thm-lay-6-9]{Thm.~6.9}): for $\vv v\ne\hat{\vv y}$ in $W$, $\|\vv y-\vv v\|^2=\|\vv y-\hat{\vv y}\|^2+\|\hat{\vv y}-\vv v\|^2 > \|\vv y-\hat{\vv y}\|^2$.}
+\figcap{(a) Orthogonal decomposition (\ilink{thm-lay-6-8}{Thm.~8}): $\hat{\vv y}=\proj_W\vv y\in W$ leaves $\vv z=\vv y-\hat{\vv y}\in W^\perp$. (b) Best approximation (\ilink{thm-lay-6-9}{Thm.~9}): for $\vv v\ne\hat{\vv y}$ in $W$, $\|\vv y-\vv v\|^2=\|\vv y-\hat{\vv y}\|^2+\|\hat{\vv y}-\vv v\|^2 > \|\vv y-\hat{\vv y}\|^2$.}
 \end{fig}
 
-\noindent\textbf{The question answered.} Check $\vv u_1\cdot\vv u_2=-4+5-1=0$. With $\vv y\cdot\vv u_1=9$, $\vv u_1\cdot\vv u_1=30$, $\vv y\cdot\vv u_2=3$, $\vv u_2\cdot\vv u_2=6$:
+\revisit Check $\vv u_1\cdot\vv u_2=-4+5-1=0$. With $\vv y\cdot\vv u_1=9$, $\vv u_1\cdot\vv u_1=30$, $\vv y\cdot\vv u_2=3$, $\vv u_2\cdot\vv u_2=6$:
 \[
   \hat{\vv y} = \frac{9}{30}\vv u_1 + \frac{3}{6}\vv u_2 = \left(-\frac25,\,2,\,\frac15\right), \qquad
   \vv z = \vv y-\hat{\vv y} = \left(\frac75,\,0,\,\frac{14}{5}\right), \qquad
@@ -449,7 +520,7 @@ For a line, we projected $\vv y$ onto its direction vector. For a $p$-dimensiona
   \]
 \end{theorem*}
 \begin{proof}
-  Every denominator $\vv u_j\cdot\vv u_j=1$ in Thm.~8, and by (W1), $U^{\mathsf T}\vv y=(\vv u_1\cdot\vv y,\dots,\vv u_p\cdot\vv y)^{\mathsf T}$, so $U(U^{\mathsf T}\vv y)$ forms the combination of the columns $\vv u_j$.
+  Every denominator $\vv u_j\cdot\vv u_j=1$ in \ilink{thm-lay-6-8}{Thm.~8}, and by (\ilink{fact-W1}{W1}), $U^{\mathsf T}\vv y=(\vv u_1\cdot\vv y,\dots,\vv u_p\cdot\vv y)^{\mathsf T}$, so $U(U^{\mathsf T}\vv y)$ forms the combination of the columns $\vv u_j$.
 \end{proof}
 
 Notice when $p=n$ ($W=\RR^n$ and $U$ is orthogonal), $UU^{\mathsf T}=I$; when $p<n$, $UU^{\mathsf T}$ is the symmetric projection matrix onto $\Col U$. For example, with $\vv u_1=\frac{1}{\sqrt{2}}(1,0,1)$ and $\vv u_2=(0,1,0)$,
@@ -457,6 +528,28 @@ Notice when $p=n$ ($W=\RR^n$ and $U$ is orthogonal), $UU^{\mathsf T}=I$; when $p
   UU^{\mathsf T} = \begin{bmatrix}1/2&0&1/2\\0&1&0\\1/2&0&1/2\end{bmatrix}
 \]
 satisfies $(UU^{\mathsf T})^2=UU^{\mathsf T}\neq I_3$.
+
+\begin{howto}{How to project onto a line or subspace and find the distance}\target{howto-project}
+  \begin{steps}
+    \ii \textbf{Orthogonal basis of $W$.} Check that the given basis vectors are pairwise orthogonal. If two basis vectors $\vv u_1,\vv x_2$ are not, replace $\vv x_2$ by $\vv x_2-\proj_{\spn\{\vv u_1\}}\vv x_2$, which is orthogonal to $\vv u_1$ and together with $\vv u_1$ spans the same plane.
+    \ii \textbf{Projection.} $\hat{\vv y}=\sum_j\frac{\vv y\cdot\vv u_j}{\vv u_j\cdot\vv u_j}\vv u_j$ (\ilink{thm-lay-6-8}{Thm.~8}); with an orthonormal basis, $\hat{\vv y}=UU^{\mathsf T}\vv y$ (\ilink{thm-lay-6-10}{Thm.~10}).
+    \ii \textbf{Component and check.} $\vv z=\vv y-\hat{\vv y}$; check $\vv z\cdot\vv u_j=0$ for every $j$.
+    \ii \textbf{Distance.} $\dist(\vv y,W)=\|\vv z\|$; the closest point is $\hat{\vv y}$ (\ilink{thm-lay-6-9}{Thm.~9}).
+  \end{steps}
+  \textbf{Variants and edge cases.} A line is the case $p=1$. For a hyperplane with normal vector $\vv n$, project onto $\spn\{\vv n\}$ and subtract (Shortcuts below). If $\vv y\in W$, then $\hat{\vv y}=\vv y$ and the distance is $0$; if $\vv y\in W^\perp$, then $\hat{\vv y}=\vv 0$; if $W=\RR^n$, then $\hat{\vv y}=\vv y$.
+\end{howto}
+
+\begin{example*}[Projection onto a plane whose basis is not orthogonal]\target{ex-project-nonorth}
+  Let $W=\spn\{(1,1,0),(1,0,1)\}$ and $\vv y=(1,2,3)$. The basis is not orthogonal ($(1,1,0)\cdot(1,0,1)=1$).
+  \begin{steps}
+    \ii Keep $\vv u_1=(1,1,0)$ and replace $(1,0,1)$ by $(1,0,1)-\frac12(1,1,0)=(\frac12,-\frac12,1)$, scaled to $\vv u_2=(1,-1,2)$.
+    \ii $\vv y\cdot\vv u_1=3$, $\vv u_1\cdot\vv u_1=2$, $\vv y\cdot\vv u_2=5$, $\vv u_2\cdot\vv u_2=6$, so
+    \[
+      \hat{\vv y}=\frac32(1,1,0)+\frac56(1,-1,2)=\Bigl(\frac73,\frac23,\frac53\Bigr),\qquad \vv z=\Bigl(-\frac43,\frac43,\frac43\Bigr).
+    \]
+    \ii Check: $\vv z\cdot\vv u_1=0$ and $\vv z\cdot\vv u_2=-\frac43-\frac43+\frac83=0$. The distance is $\|\vv z\|=\frac{4}{\sqrt3}$. The hyperplane shortcut with the normal $\vv n=(1,-1,-1)$, for which $\vv y\cdot\vv n=-4$ and $\vv n\cdot\vv n=3$, gives the same $\hat{\vv y}=\vv y+\frac43\vv n$.
+  \end{steps}
+\end{example*}
 
 \begin{shortcuts}
   \ii \textbf{Projecting onto a hyperplane ($W^\perp=\spn\{\vv n\}$):} Compute $\proj_{W^\perp}\vv y$ first and subtract: $\proj_W\vv y = \vv y - \frac{\vv y\cdot\vv n}{\vv n\cdot\vv n}\vv n$.
@@ -471,9 +564,9 @@ satisfies $(UU^{\mathsf T})^2=UU^{\mathsf T}\neq I_3$.
 \section{Homework this week}
 HW8, Sections 6.1--6.3.
 \begin{itemize}
-  \ii \textbf{Section 6.1:} \#1 (dot products \& quotient $\frac{\vv v\cdot\vv u}{\vv u\cdot\vv u}$); \#7 ($\|\vv w\|$); \#9 (normalize); \#13 ($\|\vv x-\vv y\|$); \#17 (orthogonal iff dot $0$); \#22 (Pythagoras iff); \#23 (membership test); \#27 (Thm.~3: $\Col A\perp\Nul A^{\mathsf T}$); \#30 (positive definiteness Thm.~1(d)); \#34 (hyperplane dimension $n-1$).
-  \ii \textbf{Section 6.2:} \#5 (pairwise dots); \#7, \#9 (Thm.~4 \& Thm.~5 weights); \#15 (distance $\|\vv y-\hat{\vv y}\|$); \#17 (normalize orthogonal set); \#23, \#24 (nonzero requirement in Thm.~4); \#26, \#27 (orthonormal scaling); \#29, \#32 (orthogonal matrices must be square).
-  \ii \textbf{Section 6.3:} \#3, \#7 (confirm $\vv u_1\cdot\vv u_2=0$, Thm.~8); \#11 ($\proj_W\vv y$); \#15 ($\|\vv y-\proj_W\vv y\|$); \#17 ($U^{\mathsf T}U=I_2$, $UU^{\mathsf T}\vv y=\proj_W\vv y$); \#22, \#28 (Thm.~8 uniqueness); \#30 ($UU^{\mathsf T}\vv x=\vv x$ iff $\vv x\in\Col U$).
+  \ii \textbf{Section 6.1:} \#1 (dot products \& quotient $\frac{\vv v\cdot\vv u}{\vv u\cdot\vv u}$); \#7 ($\|\vv w\|$); \#9 (normalize); \#13 ($\|\vv x-\vv y\|$); \#17 (orthogonal iff dot $0$); \#22 (Pythagoras iff); \#23 (membership test); \#27 (\ilink{thm-lay-6-3}{Thm.~3}: $\Col A\perp\Nul A^{\mathsf T}$); \#30 (positive definiteness \ilink{thm-lay-6-1}{Thm.~1}(d)); \#34 (hyperplane dimension $n-1$).
+  \ii \textbf{Section 6.2:} \#5 (pairwise dots); \#7, \#9 (\ilink{thm-lay-6-4}{Thm.~4} \& \ilink{thm-lay-6-5}{Thm.~5} weights); \#15 (distance $\|\vv y-\hat{\vv y}\|$); \#17 (normalize orthogonal set); \#23, \#24 (nonzero requirement in \ilink{thm-lay-6-4}{Thm.~4}); \#26, \#27 (orthonormal scaling); \#29, \#32 (orthogonal matrices must be square).
+  \ii \textbf{Section 6.3:} \#3, \#7 (confirm $\vv u_1\cdot\vv u_2=0$, \ilink{thm-lay-6-8}{Thm.~8}); \#11 ($\proj_W\vv y$); \#15 ($\|\vv y-\proj_W\vv y\|$); \#17 ($U^{\mathsf T}U=I_2$, $UU^{\mathsf T}\vv y=\proj_W\vv y$); \#22, \#28 (\ilink{thm-lay-6-8}{Thm.~8} uniqueness); \#30 ($UU^{\mathsf T}\vv x=\vv x$ iff $\vv x\in\Col U$).
 \end{itemize}
 
 \section{Problem set}

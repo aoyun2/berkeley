@@ -1,6 +1,6 @@
 # Week 4 exercises (CS 61A)
 
-Original Python recursion exercises for Week 4 (bug repair, helper recursion, tree recursion, multi-step transfer).
+Original Python recursion exercises for Week 4 (digit recursion, adjacent-digit checks, tree recursion, multi-step transfer).
 
 All domains here require nonnegative integers `n >= 0`.
 

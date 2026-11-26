@@ -18,58 +18,84 @@
   figvecsub/.style={ink arrow,draw=inkslate},
   figguide/.style={ink guide,draw=inkslate}
 }
+% Method boxes: "How to ..." with numbered steps.
+\mdfdefinestyle{methodstyle}{nobreak=true,linewidth=0.6pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,innertopmargin=5pt,innerbottommargin=5pt,skipabove=8pt,skipbelow=6pt}
+\newenvironment{methodbox}[1]{\begin{mdframed}[style=methodstyle]\textbf{\color{NavyBlue}#1}\par\vspace{2pt}}{\end{mdframed}}
+\BeforeBeginEnvironment{proof}{\Needspace{6\baselineskip}}
 
 \begin{document}
 \maketitle
 
 \section{Facts used from Weeks 1--5}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Dimension bound and Linear Dependence Lemma (\xlink{math110}{2026-09-07-bases-dimension}{prop-8}{W2 Prop.~8, 10}):} In a space of dimension $n$, any $n+1$ vectors are linearly dependent; in any dependent list $v_1,\dots,v_m$, some $v_k$ lies in $\spn(v_1,\dots,v_{k-1})$.
-  \ii \textbf{Operators on finite-dimensional spaces (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-23}{W3 Prop.~23}, \xlink{math110}{2026-09-21-isomorphisms-products-quotients}{prop-31}{W4 Prop.~31}):} For $T\in\LL(V)$ with $\dim V<\infty$, injective $\iff$ surjective $\iff$ invertible, and $T$ is injective $\iff\nul T=\{0\}$.
-  \ii \textbf{$2\times 2$ invertibility and coordinates (\xlink{math110}{2026-09-14-linear-maps-matrices}{def-18}{W3 Def.~18}, \xlink{math110}{2026-09-21-isomorphisms-products-quotients}{prob-HW4-P1}{W4 HW4~P1}):} $\MM(Tv)=\MM(T)\MM(v)$, and $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ is invertible iff $\det A=ad-bc\ne 0$.
-  \ii \textbf{Stochastic matrices and induced quotient maps (\xlink{math110}{2026-09-14-linear-maps-matrices}{ex-33}{W3 Ex.~33}, \xlink{math110}{2026-09-28-quotients-duality}{prop-42}{W5 Prop.~42}):} A stochastic matrix $P$ has entries $P_{ij}\ge 0$ and columns summing to $1$ (sending probability vectors to probability vectors). If $T(U_1)\subseteq U_2$, then $\widetilde T(v+U_1)=Tv+U_2$ is a well-defined linear map $V/U_1\to W/U_2$.
+  \ii\target{W1} \textbf{Dimension bound and Linear Dependence Lemma (\xlink{math110}{2026-09-07-bases-dimension}{prop-8}{W2 Prop.~8, 10}):} In a space of dimension $n$, any $n+1$ vectors are linearly dependent; in any dependent list $v_1,\dots,v_m$, some $v_k$ lies in $\spn(v_1,\dots,v_{k-1})$.
+  \ii\target{W2} \textbf{Operators on finite-dimensional spaces (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-23}{W3 Prop.~23}, \xlink{math110}{2026-09-21-isomorphisms-products-quotients}{prop-31}{W4 Prop.~31}):} For $T\in\LL(V)$ with $\dim V<\infty$, injective $\iff$ surjective $\iff$ invertible, and $T$ is injective $\iff\nul T=\{0\}$.
+  \ii\target{W3} \textbf{$2\times 2$ invertibility and coordinates (\xlink{math110}{2026-09-14-linear-maps-matrices}{def-18}{W3 Def.~18}, \xlink{math110}{2026-09-21-isomorphisms-products-quotients}{name-2x2-inverse-formula}{W4, $2\times2$ inverse}):} $\MM(Tv)=\MM(T)\MM(v)$, and $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ is invertible iff $\det A=ad-bc\ne 0$.
+  \ii\target{W4} \textbf{Stochastic matrices and induced quotient maps (\xlink{math110}{2026-09-14-linear-maps-matrices}{ex-33}{W3 Ex.~33}, \xlink{math110}{2026-09-28-quotients-duality}{prop-42}{W5 Prop.~42}):} A stochastic matrix $P$ has entries $P_{ij}\ge 0$ and columns summing to $1$ (sending probability vectors to probability vectors). If $T(U_1)\subseteq U_2$, then $\widetilde T(v+U_1)=Tv+U_2$ is a well-defined linear map $V/U_1\to W/U_2$.
 \end{enumerate}
 
 \section{This week}
 
-\subsection{Invariant subspaces, eigenvalues, eigenvectors, and eigenspaces (Notes Ch.~11.1, LADR 5A)}
+\subsection{Invariant subspaces, eigenvalues, eigenvectors, and eigenspaces (Notes Ch.~11, LADR 5A)}
 
 \begin{qbox}
-  An operator $T\in\LL(V)$ maps a vector space $V$ back into itself, so we can apply $T$ repeatedly. To decompose $T$ into simpler pieces, we look for subspaces $U\subseteq V$ that $T$ maps into themselves ($T(U)\subseteq U$). What are the $1$-dimensional $T$-invariant subspaces, and how do we characterize the scalars $\lambda\in\FF$ for which $Tv=\lambda v$ has a nonzero solution?
+  Let $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ act on $\RR^2$. Which lines through $0$ does $A$ map into themselves? On such a line $A$ acts as multiplication by a number; which numbers occur? Which lines are mapped into themselves by the rotation $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$?
 \end{qbox}
 
-\begin{definition*}[Def.~30, 31, 32 / LADR 5.2, 5.5, 5.8, 5.52: Invariant subspaces, eigenvalues, eigenvectors, and eigenspaces]\target{def-30}\target{def-31}\target{def-32}
+\begin{definition*}[Def.~30 / LADR 5.2: Invariant subspace]\target{def-30}
+  Let $T\in\LL(V)$. A subspace $U\subseteq V$ is \vocab{invariant under $T$} (\vocab{$T$-invariant}) if $Tu\in U$ for every $u\in U$, that is, $T(U)\subseteq U$. Then $T$ gives the \vocab{restriction operator} $T|_U\in\LL(U)$, $T|_U(u)=Tu$, and the \vocab{quotient operator} $T/U\in\LL(V/U)$, $(T/U)(v+U)=Tv+U$, which is well defined by \ilink{W4}{(W4)} because $T(U)\subseteq U$.
+\end{definition*}
+
+\begin{example*}[Subspaces invariant under every operator (Notes Ex.~48 / LADR 5.3)]
+  For any $T\in\LL(V)$, the subspaces $\{0\}$, $V$, $\nul T$ and $\range T$ are $T$-invariant: $T0=0$; $T(V)\subseteq V$; if $u\in\nul T$ then $Tu=0\in\nul T$; and if $u\in\range T$ then $Tu\in\range T$ because every value of $T$ is in $\range T$.
+\end{example*}
+
+\begin{methodbox}{How to check that a subspace is invariant}
+  \begin{steps}
+    \ii If $U=\spn(u_1,\dots,u_k)$, it is enough to check $Tu_i\in U$ for each spanning vector: then $T(\sum c_iu_i)=\sum c_iTu_i\in U$.
+    \ii If $U$ is given by a condition, take $u$ satisfying it and show $Tu$ satisfies it.
+    \ii To show $U$ is \emph{not} invariant, give one $u\in U$ with $Tu\notin U$.
+  \end{steps}
+  Edge case: invariance depends on the operator, not only on the subspace; the same subspace can be invariant under one operator and not under another.
+\end{methodbox}
+
+\begin{example*}[Invariant and non-invariant subspaces of polynomials]
+  $\PP_2(\RR)$ is invariant under differentiation $D$ on $\PP(\RR)$, since $D$ lowers degree. $U=\{p:p(0)=0\}$ is invariant under $M(p)=xp$, since $(xp)(0)=0$; but $U$ is not invariant under $D$: $x\in U$ while $D(x)=1\notin U$.
+\end{example*}
+
+\begin{definition*}[Def.~31, 32 / LADR 5.5, 5.8, 5.52: Eigenvalue, eigenvector, eigenspace]\target{def-31}\target{def-32}
   Let $T\in\LL(V)$.
   \begin{itemize}
-    \ii \textbf{Invariant subspace (Def.~30 / LADR 5.2, 5.4):} A subspace $U\subseteq V$ is \vocab{invariant under $T$} (or \vocab{$T$-invariant}) if $Tu\in U$ for every $u\in U$ (i.e.\ $T(U)\subseteq U$). When $U$ is $T$-invariant, $T$ defines both a \vocab{restriction operator} $T|_U\in\LL(U)$ ($T|_U(u)=Tu$) and a \vocab{quotient operator} $T/U\in\LL(V/U)$ ($(T/U)(v+U)=Tv+U$, well-defined by W4). For any $T\in\LL(V)$, the subspaces $\{0\}$, $V$, $\nul T$, and $\range T$ are always $T$-invariant (Ex.~48 / LADR 5.3).
-    \ii \textbf{Eigenvalue and eigenvector (Def.~31 / LADR 5.5, 5.8):} A scalar $\lambda\in\FF$ is called an \vocab{eigenvalue} of $T$ if there exists a \textbf{nonzero} vector $v\in V$ ($v\ne 0$) such that
-    \[
-      Tv = \lambda v.
-    \]
-    Any such nonzero vector $v\ne 0$ is called an \vocab{eigenvector} of $T$ corresponding to $\lambda$. By LADR 5.4, a $1$-dimensional subspace $U=\spn(v)$ ($v\ne 0$) is $T$-invariant if and only if $v$ is an eigenvector of $T$.
-    \ii \textbf{Eigenspace (Def.~32 / LADR 5.52):} For $\lambda\in\FF$, the \vocab{eigenspace} of $T$ corresponding to $\lambda$ is the $T$-invariant subspace
-    \[
-      E(\lambda, T) = \nul(T - \lambda I) = \{v\in V : Tv = \lambda v\},
-    \]
-    which consists of $0$ together with all eigenvectors of $T$ having eigenvalue $\lambda$. Thus $\lambda$ is an eigenvalue of $T$ if and only if $E(\lambda,T)\ne\{0\}$.
+    \ii A scalar $\lambda\in\FF$ is an \vocab{eigenvalue} of $T$ if there is a \textbf{nonzero} $v\in V$ with $Tv = \lambda v$. Such a $v$ is an \vocab{eigenvector} for $\lambda$.
+    \ii The \vocab{eigenspace} for $\lambda$ is $E(\lambda, T) = \nul(T - \lambda I) = \{v\in V : Tv = \lambda v\}$: the eigenvectors for $\lambda$ together with $0$. So $\lambda$ is an eigenvalue exactly when $E(\lambda,T)\ne\{0\}$.
   \end{itemize}
 \end{definition*}
 
-\begin{proposition*}[LADR 5.7: Equivalent characterizations of an eigenvalue in finite dimensions]\target{name-ladr-5-7-four-ways-to-say-lambda-is-an-eigenvalue}
-  Suppose $V$ is finite-dimensional, $T\in\LL(V)$, and $\lambda\in\FF$. Then the following four statements are equivalent:
-  \begin{align*}
-    \text{(a) }\lambda\text{ is an eigenvalue of }T \quad&\iff\quad
-    \text{(b) }T-\lambda I\text{ is not injective} \\
-    &\iff\quad
-    \text{(c) }T-\lambda I\text{ is not surjective} \quad\iff\quad
-    \text{(d) }T-\lambda I\text{ is not invertible}.
-  \end{align*}
-  In particular, $0$ is an eigenvalue of $T$ if and only if $T$ is not invertible, with $E(0,T)=\nul T$.
+\begin{proposition*}[LADR 5.4: One-dimensional invariant subspaces are eigenvector lines]\target{name-one-dimensional-invariant-subspaces}
+  For $v\ne0$, the line $\spn(v)$ is $T$-invariant if and only if $v$ is an eigenvector of $T$. Each eigenspace $E(\lambda,T)$ is $T$-invariant.
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii The equation $Tv=\lambda v$ is equivalent to $(T-\lambda I)v=0$, so a nonzero solution $v\ne 0$ exists iff $\nul(T-\lambda I)\ne\{0\}$, proving (a)$\iff$(b).
-    \ii Because $\dim V<\infty$, the operator $T-\lambda I\in\LL(V)$ satisfies injective $\iff$ surjective $\iff$ invertible by (W2), proving (b)$\iff$(c)$\iff$(d).
+    \ii \textbf{Assume $\spn(v)$ is invariant.} Then $Tv\in\spn(v)$, so $Tv=\lambda v$ for some $\lambda$, and $v\ne0$ is an eigenvector.
+    \ii \textbf{Assume $Tv=\lambda v$.} Then $T(cv)=c\lambda v\in\spn(v)$ for every $c$.
+    \ii \textbf{Eigenspaces.} If $Tv=\lambda v$, then $Tv=\lambda v\in E(\lambda,T)$, since $E(\lambda,T)$ is a subspace (a null space).
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[LADR 5.7: Equivalent characterizations of an eigenvalue in finite dimensions]\target{name-ladr-5-7-four-ways-to-say-lambda-is-an-eigenvalue}
+  Suppose $V$ is finite-dimensional, $T\in\LL(V)$, and $\lambda\in\FF$. The following are equivalent:
+  \begin{enumerate}[(a)]
+    \ii $\lambda$ is an eigenvalue of $T$;
+    \ii $T-\lambda I$ is not injective;
+    \ii $T-\lambda I$ is not surjective;
+    \ii $T-\lambda I$ is not invertible.
+  \end{enumerate}
+  In particular, $0$ is an eigenvalue of $T$ exactly when $T$ is not invertible, and $E(0,T)=\nul T$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii $Tv=\lambda v$ is the same equation as $(T-\lambda I)v=0$, so a nonzero solution exists exactly when $\nul(T-\lambda I)\ne\{0\}$, that is, when $T-\lambda I$ is not injective. This is (a)$\iff$(b).
+    \ii For an operator on a finite-dimensional space, injective, surjective and invertible are equivalent \ilink{W2}{(W2)}; negating gives (b)$\iff$(c)$\iff$(d).
   \end{steps}
 \end{proof}
 
@@ -87,10 +113,10 @@
     }
 
     % Symmetric peer eigenspace lines (consistent solid hairlines)
-    \PacketInkPath[black!45, line width=0.45pt]{(-1.15,-1.15) -- (3.32,3.32)
-      node[above=1pt, font=\scriptsize, text=black!80] {\InkLabel{$E(3,A)$}}}
-    \PacketInkPath[black!45, line width=0.45pt]{(-1.10,1.10) -- (1.42,-1.42)
-      node[right=2pt, font=\scriptsize, text=black!80] {\InkLabel{$E(1,A)$}}}
+    \PacketInkPath[black!85, line width=0.6pt]{(-1.15,-1.15) -- (3.32,3.32)
+      node[above=1pt, font=\scriptsize, text=black] {\InkLabel{$E(3,A)$}}}
+    \PacketInkPath[black!85, line width=0.6pt]{(-1.10,1.10) -- (1.42,-1.42)
+      node[right=2pt, font=\scriptsize, text=black] {\InkLabel{$E(1,A)$}}}
 
     % Eigenvector v = (1,1) -> Av = 3v (pure black hierarchy: thin v, bold Av, uninterrupted E(3,A))
     \PacketInkPath[->, black, line width=0.55pt, line cap=round]{(0,0) -- (1,1)}
@@ -119,188 +145,312 @@
 \figcap{Eigenvectors $v=(1,1)$ ($Av=3v$) and $w=(1,-1)$ ($Aw=w$) stay on their invariant lines $E(3,A)$ and $E(1,A)$, whereas $e_1=(1,0)$ (red) turns off $\spn(e_1)$.}
 \end{fig}
 
-\begin{example*}[Ex.~49: Classifying all invariant subspaces of three model operators on $\RR^2$]\target{ex-49}
-  The subspaces of $\RR^2$ are $\{0\}$, $\RR^2$, and $1$-dimensional lines $\spn(v)$ ($v\ne 0$), which are $T$-invariant iff $v$ is an eigenvector.
+\begin{example*}[Ex.~49: Invariant subspaces of three operators on $\RR^2$]\target{ex-49}
+  The subspaces of $\RR^2$ are $\{0\}$, $\RR^2$, and the lines $\spn(v)$; by \ilink{name-one-dimensional-invariant-subspaces}{LADR 5.4}, a line is invariant exactly when $v$ is an eigenvector.
   \begin{steps}
-    \ii \textbf{Diagonal scaling $A_1=\begin{psmallmatrix}1&0\\0&2\end{psmallmatrix}$:} $A_1(x,y)=(x,2y)=\lambda(x,y)$ holds with $(x,y)\ne(0,0)$ iff either $y=0$ ($\lambda=1$, line $\spn(e_1)$) or $x=0$ ($\lambda=2$, line $\spn(e_2)$). Thus $A_1$ has exactly four invariant subspaces: $\{0\}$, $\spn(e_1)$, $\spn(e_2)$, and $\RR^2$.
-    \ii \textbf{Rotation by $90^\circ$, $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$:} No nonzero vector in $\RR^2$ is mapped to a real multiple of itself, so $R$ has no real eigenvectors and only two invariant subspaces in $\RR^2$: $\{0\}$ and $\RR^2$.
-    \ii \textbf{Nilpotent shift $N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$:} $N(x,y)=(y,0)=\lambda(x,y)$ forces $\lambda y=0$ and $y=\lambda x$, so $y=0$ and $\lambda=0$ ($E(0,N)=\spn(e_1)$). Thus $N$ has exactly three invariant subspaces: $\{0\}\subset\spn(e_1)\subset\RR^2$ (note that $\spn(e_2)$ is not invariant since $Ne_2=e_1$).
+    \ii \textbf{$A_1=\begin{psmallmatrix}1&0\\0&2\end{psmallmatrix}$.} $(x,2y)=\lambda(x,y)$ with $(x,y)\ne0$ forces $y=0$, $\lambda=1$, or $x=0$, $\lambda=2$. The invariant subspaces are $\{0\}$, $\spn(e_1)$, $\spn(e_2)$, $\RR^2$.
+    \ii \textbf{$R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$.} $(-y,x)=\lambda(x,y)$ gives $-y=\lambda x$ and $x=\lambda y$, so $x=-\lambda^2x$ and $y=-\lambda^2 y$; with $(x,y)\ne0$ this needs $\lambda^2=-1$, impossible in $\RR$. Only $\{0\}$ and $\RR^2$ are invariant.
+    \ii \textbf{$N=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$.} $(y,0)=\lambda(x,y)$ gives $\lambda y=0$ and $y=\lambda x$. If $\lambda\ne0$ then $y=0$ and $x=0$; so $\lambda=0$ and $y=0$: $E(0,N)=\spn(e_1)$. The invariant subspaces are $\{0\}\subseteq\spn(e_1)\subseteq\RR^2$; $\spn(e_2)$ is not invariant, since $Ne_2=e_1$.
   \end{steps}
 \end{example*}
 
-\begin{itemize}
-  \ii \textbf{Stationary distributions as $\lambda=1$ eigenvectors:} For the stochastic matrix
+\begin{example*}[A stationary distribution is an eigenvector for $1$]
+  For the stochastic matrix
   \[
     P = \begin{pmatrix} 1/2 & 1/4 & 0 \\ 1/2 & 1/2 & 1/2 \\ 0 & 1/4 & 1/2 \end{pmatrix}
   \]
-  of \xlink{math110}{2026-09-14-linear-maps-matrices}{ex-33}{W3 Ex.~33}, the probability vector $\pi=(1/4,1/2,1/4)^{\T}$ satisfies $P\pi=\pi$, so $\pi$ is an eigenvector of $P$ with eigenvalue $\lambda=1$ (a \vocab{stationary distribution}: $P^k\pi=\pi$ for all $k\ge 0$).
-\end{itemize}
+  of \xlink{math110}{2026-09-14-linear-maps-matrices}{ex-33}{Week~3, Ex.~33}, $\pi=(1/4,1/2,1/4)^{\T}$ satisfies $P\pi=\pi$: it is an eigenvector for $\lambda=1$, a \vocab{stationary distribution}, and $P^k\pi=\pi$ for all $k$.
+\end{example*}
 
-\subsection{Polynomials and the Fundamental Theorem of Algebra (Notes Ch.~11.2, LADR Ch.~4)}
+\revisit For $A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$: $A(1,1)=(3,3)$ and $A(1,-1)=(1,-1)$, so the lines $\spn((1,1))$ and $\spn((1,-1))$ are invariant, with $A$ acting as multiplication by $3$ and $1$. These are the only invariant lines. An invariant line is spanned by an eigenvector $(x,y)$ (\ilink{name-one-dimensional-invariant-subspaces}{LADR 5.4}), so $2x+y=\lambda x$ and $x+2y=\lambda y$. Adding the equations gives $3(x+y)=\lambda(x+y)$, and subtracting gives $x-y=\lambda(x-y)$. If $x+y\ne0$, then $\lambda=3$ and the second equation forces $x=y$; if $x+y=0$, then $x-y\ne0$, so $\lambda=1$. Thus the eigenvectors are the multiples of $(1,1)$ and of $(1,-1)$. The rotation $R$ has no invariant line (Ex.~49).
+
+\subsection{Polynomials and the Fundamental Theorem of Algebra (Notes Ch.~11, LADR Ch.~4)}
 
 \begin{qbox}
-  Why did the $90^\circ$ rotation $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$ fail to have any eigenvector over $\RR$, whereas over $\CC$ every operator on a nonzero finite-dimensional space has an eigenvector? How does polynomial division combine with the Fundamental Theorem of Algebra to factor every complex polynomial completely into linear factors?
+  The rotation $R$ has $\chi_R(t)=t^2+1$ (computed later in this week), which has no real roots but the complex roots $\pm i$. Does every nonconstant polynomial with complex coefficients have a complex root? How does a polynomial with real coefficients factor over $\RR$, for example $x^3-1$?
 \end{qbox}
 
-\begin{proposition*}[Prop.~52 / LADR 4.6--4.16: Division algorithm, Fundamental Theorem of Algebra, and factorization]\target{prop-52}\target{name-fundamental-theorem-of-algebra}
+\begin{proposition*}[LADR 4.8--4.11: Division algorithm and roots]\target{name-division-algorithm}
+  Let $\FF=\RR$ or $\CC$.
   \begin{enumerate}[(a)]
-    \ii \textbf{Division algorithm and root--factor theorem (LADR 4.6, 4.8, 4.11):} For any polynomials $p,s\in\PP(\FF)$ with $s\ne 0$, there exist unique polynomials $q,r\in\PP(\FF)$ such that $p=sq+r$ and $\deg r<\deg s$. In particular (taking $s(z)=z-\lambda$), $p(\lambda)=0$ if and only if $p(z)=(z-\lambda)q(z)$ for some $q\in\PP(\FF)$ with $\deg q=\deg p-1$, so a degree-$m$ polynomial has at most $m$ distinct zeros in $\FF$.
-    \ii \textbf{Fundamental Theorem of Algebra (Prop.~52 / LADR 4.13, 4.14):} Every nonconstant polynomial $p\in\PP(\CC)$ has at least one zero in $\CC$. Consequently, every nonconstant $p\in\PP(\CC)$ of degree $m\ge 1$ has a unique factorization (up to ordering of factors)
-    \[
-      p(z) = c(z-\lambda_1)(z-\lambda_2)\cdots(z-\lambda_m) \qquad (c,\lambda_1,\dots,\lambda_m\in\CC,\ c\ne 0).
-    \]
-    \ii \textbf{Factorization of polynomials over $\RR$ (LADR 4.15, 4.16):} If $p\in\PP(\RR)$ has real coefficients, then $p(\lambda)=0\iff p(\bar\lambda)=0$ (non-real roots come in conjugate pairs $\lambda,\bar\lambda$ with $(x-\lambda)(x-\bar\lambda)=x^2-2(\operatorname{Re}\lambda)x+|\lambda|^2\in\PP(\RR)$). Thus every nonconstant $p\in\PP(\RR)$ factors uniquely into linear factors $(x-\lambda_j)$ and irreducible quadratic factors $(x^2+b_kx+c_k)$ with $b_k^2<4c_k$.
+    \ii For $p,s\in\PP(\FF)$ with $s\ne 0$, there are unique $q,r\in\PP(\FF)$ with $p=sq+r$ and $\deg r<\deg s$.
+    \ii $p(\lambda)=0$ if and only if $p(z)=(z-\lambda)q(z)$ for some polynomial $q$; then $\deg q=\deg p-1$. A nonzero polynomial of degree $m$ has at most $m$ roots.
+    \ii If $p\ne0$ and $q\ne0$, then $\deg(pq)=\deg p+\deg q$; in particular $pq\ne0$, and $pf=pg$ with $p\ne0$ implies $f=g$.
   \end{enumerate}
 \end{proposition*}
-\begin{ideabox}
-  Far from the origin, the leading term $c_mz^m$ ($c_m\ne 0$) of a nonconstant complex polynomial $p(z)=c_0+c_1z+\dots+c_mz^m$ dominates ($|p(z)|\to\infty$ as $|z|\to\infty$), so the continuous function $|p(z)|$ attains a global minimum on $\CC$ at some $\zeta\in\CC$. If $|p(\zeta)|$ were strictly positive, shifting $\zeta$ to the origin and normalizing by setting $q(z)=p(\zeta+z)/p(\zeta)=1+a_kz^k+a_{k+1}z^{k+1}+\dots+a_mz^m$ (where $a_kz^k$ with $a_k\ne 0$ is the lowest-degree nonconstant term) yields a polynomial with $q(0)=1$. Because every complex number has a $k$-th root in $\CC$ (via polar form $z=r(\cos\theta+i\sin\theta)$), choosing $\beta\in\CC$ with $a_k\beta^k=-1$ and moving a small real distance $t>0$ in direction $\beta$ gives $q(t\beta)=1-t^k+O(t^{k+1})$, which for small $t>0$ has modulus strictly smaller than $1$, contradicting $|q(z)|\ge 1$ everywhere.
-\end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (a), write $z^j-\lambda^j=(z-\lambda)(z^{j-1}+z^{j-2}\lambda+\dots+\lambda^{j-1})$; then $p(z)-p(\lambda)=\sum_{j=1}^m c_j(z^j-\lambda^j)=(z-\lambda)q(z)$ with $\deg q=\deg p-1$, so $p(\lambda)=0\iff p(z)=(z-\lambda)q(z)$. Induction on $m=\deg p$ shows $p$ has at most $m$ zeros.
-    \ii For (b), let $p(z)=\sum_{j=0}^m c_jz^j$ ($m\ge 1,c_m\ne 0$). By the reverse triangle inequality, $|p(z)|\ge |c_m||z|^m-\sum_{j<m}|c_j||z|^j\to\infty$ as $|z|\to\infty$, so there exists $R>0$ such that $|p(z)|>|p(0)|$ for all $|z|>R$.
-    \ii By the Extreme Value Theorem on the compact disk $\{|z|\le R\}$, $|p|$ attains a minimum at some $\zeta$, which is a global minimum on $\CC$.
-    \ii Suppose for contradiction that $p(\zeta)\ne 0$, and set $q(z)=p(\zeta+z)/p(\zeta)=1+a_kz^k+\dots+a_mz^m$ with $a_k\ne 0$ ($1\le k\le m$) and $|q(z)|\ge 1$ for all $z\in\CC$.
-    \ii Choose $\beta\in\CC$ with $\beta^k=-1/a_k$. For $0<t<1$, $|q(t\beta)|\le |1-t^k|+\sum_{j=k+1}^m |a_j\beta^j|t^j \le 1-t^k+Ct^{k+1}=1-t^k(1-Ct)$ where $C=\sum_{j>k}|a_j\beta^j|$. Choosing $0<t<\min\{1,1/C\}$ gives $|q(t\beta)|<1$, a contradiction. Thus $p(\zeta)=0$, and repeated application of (a) yields the complete linear factorization.
+    \ii \textbf{(c).} If $p$ has top term $az^m$ and $q$ has top term $bz^k$ ($a,b\ne0$), the top term of $pq$ is $abz^{m+k}$ with $ab\ne0$. If $pf=pg$, then $p(f-g)=0$, so $f-g=0$.
+    \ii \textbf{(a), existence.} Induction on $\deg p$. If $\deg p<\deg s$, take $q=0$, $r=p$. Otherwise, with top terms $az^m$ of $p$ and $bz^k$ of $s$ ($m\ge k$), the polynomial $p_1=p-\frac ab z^{m-k}s$ has degree less than $m$; by induction $p_1=sq_1+r$ with $\deg r<\deg s$, and then $p=s\bigl(q_1+\frac abz^{m-k}\bigr)+r$.
+    \ii \textbf{(a), uniqueness.} If $sq+r=sq_1+r_1$, then $s(q-q_1)=r_1-r$. If $q\ne q_1$, the left side has degree at least $\deg s$ by (c), while the right side has degree less than $\deg s$. So $q=q_1$ and then $r=r_1$.
+    \ii \textbf{(b).} Divide by $s=z-\lambda$: $p=(z-\lambda)q+r$ with $r$ constant; evaluating at $\lambda$ gives $r=p(\lambda)$. So $p(\lambda)=0$ exactly when $p=(z-\lambda)q$, and $\deg q=\deg p-1$ by (c). The bound on the number of roots is \xlink{math110}{2026-09-07-bases-dimension}{fact-G1}{Week~2, G1}, Step~2.
   \end{steps}
 \end{proof}
 
-\subsection{Existence and linear independence of eigenvectors (Notes Ch.~11.2, LADR 5A)}
+\begin{theorem*}[Prop.~52 / LADR 4.13: Fundamental Theorem of Algebra]\target{prop-52}\target{name-fundamental-theorem-of-algebra}
+  Every nonconstant polynomial $p\in\PP(\CC)$ has a root in $\CC$.
+\end{theorem*}
+\begin{ideabox}
+  Look at $|p(z)|$, the distance from $p(z)$ to $0$. It is large far from the origin, so it has a smallest value at some point $\zeta$. The question is why that smallest value must be $0$. Small example: $q(z)=1+z^2$ near $0$. Moving along the real axis, $|q(t)|=1+t^2$ grows; moving along the imaginary axis, $|q(it)|=1-t^2$ shrinks. So $0$ is not a minimum point: in some direction the first non-constant term $z^2$ points against the constant $1$. The proof does the same at any point where $p\ne0$: recenter there, find the first non-constant term $a_kz^k$, and move in a direction $\beta$ with $a_k\beta^k=-1$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{$|p|$ is large far away.} Let $p(z)=\sum_{j=0}^m c_jz^j$ with $m\ge 1$, $c_m\ne 0$. By the triangle inequality, for $|z|\ge1$,
+    \[
+      |p(z)|\ge |c_m||z|^m-\sum_{j<m}|c_j||z|^j\ge |z|^{m-1}\Bigl(|c_m||z|-\sum_{j<m}|c_j|\Bigr).
+    \]
+    So there is $R\ge1$ with $|p(z)|>|p(0)|$ whenever $|z|>R$.
+    \ii \textbf{A minimum exists.} $|p|$ is continuous, so on the closed disk $\{|z|\le R\}$ it attains a minimum at some $\zeta$ (\ilink{fact-K2}{K2} at the end). By Step~1, $|p(\zeta)|\le|p(0)|<|p(z)|$ for $|z|>R$, so $\zeta$ is a minimum point on all of $\CC$.
+    \ii \textbf{Recentering.} Suppose, for contradiction, that $p(\zeta)\ne 0$, and set $q(z)=p(\zeta+z)/p(\zeta)$. Expanding the powers $(\zeta+z)^j$, $q$ is a polynomial of degree $m$ with $q(0)=1$:
+    \[
+      q(z)=1+a_kz^k+a_{k+1}z^{k+1}+\dots+a_mz^m,\qquad 1\le k\le m,\ a_k\ne 0,
+    \]
+    and $|q(z)|\ge 1$ for all $z$, because $\zeta$ minimizes $|p|$.
+    \ii \textbf{The direction.} Choose $\beta\in\CC$ with $\beta^k=-1/a_k$, a $k$-th root of a nonzero complex number (\ilink{fact-K1}{K1} at the end). Let $C=\sum_{j>k}|a_j\beta^j|$. For $0<t<1$, $t^j\le t^{k+1}$ when $j\ge k+1$, so
+    \[
+      |q(t\beta)|\le |1-t^k|+\sum_{j=k+1}^m |a_j\beta^j|t^j\le 1-t^k+Ct^{k+1}=1-t^k(1-Ct).
+    \]
+    \ii For $0<t<\min\{1,1/C\}$ (or any $0<t<1$ if $C=0$), $1-Ct>0$, so $|q(t\beta)|<1$. This contradicts Step~3. Hence $p(\zeta)=0$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[LADR 4.14--4.16: Factorization over $\CC$ and over $\RR$]\target{name-factorization}
+  \begin{enumerate}[(a)]
+    \ii Every $p\in\PP(\CC)$ of degree $m\ge1$ factors as $p(z) = c(z-\lambda_1)\cdots(z-\lambda_m)$, and the factorization is unique up to the order of the factors.
+    \ii If $p\in\PP(\RR)$ and $\lambda\in\CC$, then $p(\bar\lambda)=\overline{p(\lambda)}$; so non-real roots come in conjugate pairs, and $(x-\lambda)(x-\bar\lambda)=x^2-2(\operatorname{Re}\lambda)x+|\lambda|^2$ has real coefficients.
+    \ii Every nonconstant $p\in\PP(\RR)$ factors as a constant times linear factors $x-\lambda_j$ ($\lambda_j\in\RR$) and quadratic factors $x^2+b_kx+c_k$ with $b_k^2<4c_k$, uniquely up to order.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a), existence.} Induction on $m$: by \ilink{prop-52}{Prop.~52}, $p$ has a root $\lambda_1$, so $p=(z-\lambda_1)q$ with $\deg q=m-1$ (\ilink{name-division-algorithm}{division algorithm}(b)); apply the induction hypothesis to $q$ (for $m=1$, $q$ is the constant $c$).
+    \ii \textbf{(a), uniqueness.} If $c\prod(z-\lambda_i)=d\prod(z-\mu_j)$, the top coefficients give $c=d$. Setting $z=\lambda_1$ makes the left side $0$, so $\prod(\lambda_1-\mu_j)=0$ and $\lambda_1=\mu_j$ for some $j$ (no zero divisors). Cancel this factor (division algorithm (c)) and repeat.
+    \ii \textbf{(b).} Conjugation respects sums and products (\xlink{math110}{2026-08-31-sets-fields-subspaces}{prop-3}{Week~1, Prop.~3}) and fixes the real coefficients $a_j$, so $\overline{p(\lambda)}=\sum a_j\bar\lambda^j=p(\bar\lambda)$. Thus $p(\lambda)=0$ implies $p(\bar\lambda)=0$. Expanding, $(x-\lambda)(x-\bar\lambda)=x^2-(\lambda+\bar\lambda)x+\lambda\bar\lambda$, and $\lambda+\bar\lambda=2\operatorname{Re}\lambda$, $\lambda\bar\lambda=|\lambda|^2$ are real.
+    \ii \textbf{(c).} Induction on $\deg p$. If $p$ has a real root $\lambda$, split off $x-\lambda$. Otherwise, by Prop.~52 it has a non-real root $\lambda$, and then $\bar\lambda\ne\lambda$ is also a root. Divide $p$ by the real quadratic $s=(x-\lambda)(x-\bar\lambda)$ in $\PP(\RR)$: $p=sq+r$ with $q,r$ real and $\deg r\le1$. Since $r$ vanishes at the two different points $\lambda,\bar\lambda$, $r=0$. The quadratic $s=x^2+bx+c$ has no real root, so $b^2<4c$ by the quadratic formula. Uniqueness follows from (a), since the real factorization determines the complex one.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[Factoring $x^3-1$ over $\RR$ and over $\CC$]
+  $x=1$ is a root, and division gives $x^3-1=(x-1)(x^2+x+1)$. The quadratic has $b^2-4c=1-4<0$, so over $\RR$ this is the complete factorization. Over $\CC$, $x^2+x+1=(x-\omega)(x-\bar\omega)$ with $\omega=(-1+\sqrt3i)/2$ (Week~1, HW1~P2).
+\end{example*}
+
+\revisit Yes: every nonconstant complex polynomial has a complex root (\ilink{prop-52}{Prop.~52}), and so it splits completely into linear factors over $\CC$. A real polynomial splits over $\RR$ into linear factors and quadratic factors with no real roots (\ilink{name-factorization}{factorization}(c)); for example $x^3-1=(x-1)(x^2+x+1)$, and $t^2+1$ is itself such a quadratic.
+
+\subsection{Existence and linear independence of eigenvectors (Notes Ch.~11, LADR 5A)}
 
 \begin{qbox}
-  How do we attach a polynomial $p(z)$ to an abstract operator $T\in\LL(V)$ without using determinants so that the Fundamental Theorem of Algebra guarantees an eigenvalue over $\CC$? And if $v_1,\dots,v_m$ are eigenvectors corresponding to distinct eigenvalues $\lambda_1,\dots,\lambda_m$, why must they be linearly independent?
+  Take $T=R$, the rotation, on $\CC^2$ and the vector $v=e_1$. The vectors $v,\ Tv,\ T^2v$ are three vectors in a $2$-dimensional space, so some combination vanishes. How does that relation lead to an eigenvector? And are eigenvectors for different eigenvalues, such as $(1,1)$ and $(1,-1)$ for $A$, always independent?
 \end{qbox}
 
-\begin{definition*}[LADR 5.14--5.17: Polynomials applied to an operator $p(T)$]\target{name-polynomial-of-operator}
-  For $T\in\LL(V)$ and $m\ge 0$, define $T^0=I$ and $T^m=T\circ\dots\circ T$ ($m$ times). For any polynomial $p(z)=a_0+a_1z+\dots+a_mz^m\in\PP(\FF)$, define the operator $p(T)\in\LL(V)$ by
+\begin{definition*}[LADR 5.14--5.17: Polynomials applied to an operator]\target{name-polynomial-of-operator}
+  For $T\in\LL(V)$ let $T^0=I$ and $T^m=T\circ\dots\circ T$ ($m$ factors). For $p(z)=a_0+a_1z+\dots+a_mz^m$, let
   \[
     p(T) = a_0I + a_1T + a_2T^2 + \dots + a_mT^m.
   \]
-  By LADR 5.16--5.17, the map $p\mapsto p(T)$ is linear and multiplicative: $(pq)(T)=p(T)q(T)=q(T)p(T)$ for all $p,q\in\PP(\FF)$. Moreover, if $Tv=\lambda v$, then $T^kv=\lambda^kv$ for all $k\ge 0$ and thus $p(T)v=p(\lambda)v$ (R1).
 \end{definition*}
 
-\begin{theorem*}[Prop.~53 / LADR 5.19: Every operator on a finite-dimensional complex space has an eigenvalue]\target{prop-53}
-  Every operator $T$ on a finite-dimensional, nonzero, complex vector space $V$ ($\dim V=n\ge 1$) has an eigenvalue (and an eigenvector).
-\end{theorem*}
-\begin{ideabox}
-  Finite dimension yields a polynomial relation for $T$: for any nonzero vector $v\in V$, the $n+1$ vectors $v,Tv,T^2v,\dots,T^nv$ in the $n$-dimensional space $V$ must be linearly dependent (W1). A nontrivial linear relation $a_0v+a_1Tv+\dots+a_mT^mv=0$ ($a_m\ne 0$) of smallest possible degree $m\ge 1$ reads $p(T)v=0$ where $p(z)=a_0+a_1z+\dots+a_mz^m$. By the Fundamental Theorem of Algebra (\ilink{prop-52}{Prop.~52}), $p(z)$ has a root $\lambda\in\CC$ and factors as $p(z)=(z-\lambda)q(z)$ with $\deg q=m-1<m$. Then
-  \[
-    (T - \lambda I)\big(q(T)v\big) = p(T)v = 0.
-  \]
-  Because $m$ was chosen minimal, $w=q(T)v$ cannot be the zero vector, so $w\ne 0$ is an eigenvector of $T$ with eigenvalue $\lambda$.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii Choose any $v\in V$ with $v\ne 0$. Since $\dim V=n$, the list $v,Tv,T^2v,\dots,T^nv$ of length $n+1$ is linearly dependent (W1).
-    \ii Among all nontrivial linear relations $a_0v+a_1Tv+\dots+a_mT^mv=0$ with $a_m\ne 0$, choose one with the smallest possible degree $m$ ($1\le m\le n$).
-    \ii By \ilink{prop-52}{Prop.~52(b)}, the polynomial $p(z)=a_0+a_1z+\dots+a_mz^m\in\PP(\CC)$ factors as $p(z)=(z-\lambda)q(z)$ for some $\lambda\in\CC$ and $q(z)=b_0+\dots+b_{m-1}z^{m-1}$ with $b_{m-1}=a_m\ne 0$.
-    \ii Set $w=q(T)v=b_0v+b_1Tv+\dots+b_{m-1}T^{m-1}v$. Because $m$ is minimal and $b_{m-1}\ne 0$, $w\ne 0$.
-    \ii By multiplicativity of polynomial evaluation, $(T-\lambda I)w=(T-\lambda I)q(T)v=p(T)v=0$, so $Tw=\lambda w$ with $w\ne 0$.
-  \end{steps}
-\end{proof}
-
-\begin{theorem*}[Prop.~54, 55 / LADR 5.11, 5.12: Linear independence of eigenvectors for distinct eigenvalues]\target{prop-54}\target{prop-55}
-  Let $T\in\LL(V)$.
+\begin{proposition*}[LADR 5.16, 5.17 and R1: Rules for $p(T)$]\target{name-rules-for-p-of-T}
   \begin{enumerate}[(a)]
-    \ii \textbf{Independence (Prop.~54 / LADR 5.11):} If $\lambda_1,\dots,\lambda_m\in\FF$ are \textbf{distinct} eigenvalues of $T$ and $v_1,\dots,v_m$ are corresponding eigenvectors ($Tv_j=\lambda_jv_j$, $v_j\ne 0$), then $v_1,\dots,v_m$ is linearly independent.
-    \ii \textbf{Maximum number of eigenvalues (Prop.~55 / LADR 5.12):} If $V$ is finite-dimensional, then each operator on $V$ has at most $\dim V$ distinct eigenvalues.
-  \end{enumerate}
-\end{theorem*}
-\begin{ideabox}
-  Suppose $v_1,\dots,v_m$ were linearly dependent, and use the Linear Dependence Lemma (W1) to pick the \emph{first} vector $v_k$ that lies in the span of the preceding vectors: $v_k=a_1v_1+\dots+a_{k-1}v_{k-1}$, where $v_1,\dots,v_{k-1}$ are linearly independent. Now compare two operations on this equation: applying $T$ multiplies each $v_j$ by its own eigenvalue $\lambda_j$, whereas multiplying the equation by $\lambda_k$ multiplies every $v_j$ by $\lambda_k$. Subtracting the two equations eliminates $v_k$ on the left and leaves
-  \[
-    0 = a_1(\lambda_1-\lambda_k)v_1 + \dots + a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}.
-  \]
-  Because $v_1,\dots,v_{k-1}$ are linearly independent and $\lambda_j-\lambda_k\ne 0$, every $a_j=0$, forcing $v_k=0$, which contradicts $v_k$ being an eigenvector.
-\end{ideabox}
-\begin{proof}
-  \begin{steps}
-    \ii For (a), suppose for contradiction that $v_1,\dots,v_m$ is linearly dependent. By the Linear Dependence Lemma (W1), there is a smallest index $k\in\{2,\dots,m\}$ such that $v_k\in\spn(v_1,\dots,v_{k-1})$, so $v_1,\dots,v_{k-1}$ is linearly independent and
-    \[
-      v_k = a_1v_1 + \dots + a_{k-1}v_{k-1}
-    \]
-    for some scalars $a_1,\dots,a_{k-1}\in\FF$.
-    \ii Applying $T$ to both sides gives $\lambda_kv_k=a_1\lambda_1v_1+\dots+a_{k-1}\lambda_{k-1}v_{k-1}$.
-    \ii Multiplying Step~1 by $\lambda_k$ and subtracting from Step~2 gives $0=a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}$.
-    \ii By linear independence of $v_1,\dots,v_{k-1}$, $a_j(\lambda_j-\lambda_k)=0$ for all $j=1,\dots,k-1$. Since $\lambda_j\ne\lambda_k$, all $a_j=0$, which implies $v_k=0$, contradicting that $v_k$ is an eigenvector.
-    \ii Part~(b) follows immediately from (a) and (W1) (no linearly independent list in $V$ has length exceeding $\dim V$).
-  \end{steps}
-\end{proof}
-
-\subsection{Computing eigenvalues of operators and $2\times 2$ matrices (Notes Ch.~11.2)}
-
-\begin{qbox}
-  How do we reduce the eigenvalue equation $Tv=\lambda v$ on an abstract finite-dimensional space $V$ to a matrix equation on $\FF^{n,1}$, and how does the $2\times 2$ determinant formula compute all eigenvalues and eigenvectors of a $2\times 2$ matrix?
-\end{qbox}
-
-\begin{proposition*}[Prop.~56 and $2\times 2$ characteristic polynomial]\target{prop-56}
-  \begin{enumerate}[(a)]
-    \ii \textbf{Operator vs.\ matrix eigenvalues (Prop.~56):} Fix a basis $B$ of a finite-dimensional space $V$ and let $A=\MM(T,B)$. Then for any $v\in V$ and $\lambda\in\FF$,
-    \[
-      Tv = \lambda v \iff A\,\MM(v,B) = \lambda\,\MM(v,B).
-    \]
-    Thus $\lambda$ is an eigenvalue of $T$ if and only if $\lambda$ is an eigenvalue of $A=\MM(T,B)$.
-    \ii \textbf{$2\times 2$ characteristic polynomial (\ilink{prob-HW6-P4}{HW6~P4}):} For $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}\in\FF^{2,2}$, $\lambda\in\FF$ is an eigenvalue of $A$ if and only if $\lambda I-A$ is not invertible (by \ilink{name-ladr-5-7-four-ways-to-say-lambda-is-an-eigenvalue}{LADR 5.7}), which by (W3) holds iff
-    \[
-      \chi_A(\lambda) := \det(\lambda I - A) = (\lambda-a)(\lambda-d) - bc = \lambda^2 - (a+d)\lambda + (ad-bc) = 0.
-    \]
+    \ii $p\mapsto p(T)$ is linear, and $(pq)(T)=p(T)q(T)=q(T)p(T)$.
+    \ii If $Tv=\lambda v$, then $T^kv=\lambda^kv$ for all $k\ge0$ and $p(T)v=p(\lambda)v$.
   \end{enumerate}
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii Part~(a) follows from $\MM(Tv)=\MM(T)\MM(v)$ (W3) and the fact that $v\mapsto\MM(v,B)$ is an isomorphism $V\xrightarrow{\sim}\FF^{n,1}$.
-    \ii Part~(b) follows from $\det\begin{psmallmatrix}\lambda-a&-b\\-c&\lambda-d\end{psmallmatrix}=(\lambda-a)(\lambda-d)-bc=\lambda^2-(a+d)\lambda+(ad-bc)$.
+    \ii \textbf{Linearity} is the definition: $(\lambda p+q)(T)$ has coefficients $\lambda a_j+b_j$.
+    \ii \textbf{Products.} $T^jT^k=T^{j+k}$ by associativity. For $p=\sum a_jz^j$ and $q=\sum b_kz^k$, distributivity of composition (\xlink{math110}{2026-09-14-linear-maps-matrices}{prop-18}{Week~3, Prop.~18--19}) gives $p(T)q(T)=\sum_{j,k}a_jb_kT^{j+k}$, which is $(pq)(T)$ because $pq=\sum_{j,k}a_jb_kz^{j+k}$. The same expansion with the roles exchanged gives $q(T)p(T)$.
+    \ii \textbf{Eigenvectors.} $T^0v=v$, and if $T^kv=\lambda^kv$ then $T^{k+1}v=T(\lambda^kv)=\lambda^kTv=\lambda^{k+1}v$. Then $p(T)v=\sum a_jT^jv=\sum a_j\lambda^jv=p(\lambda)v$.
   \end{steps}
 \end{proof}
 
-\begin{itemize}
-  \ii \textbf{Structure-based eigenvalues without determinants (Ex.~52):} On $V=\CC^{2,2}$, the transpose operator $T(A)=A^{\T}$ satisfies $T^2=I$. If $TA=\lambda A$ ($A\ne 0$), then $A=T^2A=\lambda^2A$, forcing $\lambda^2=1$, so $\lambda\in\{1,-1\}$. Here $E(1,T)=\{A:A^{\T}=A\}$ is the $3$-dimensional space of symmetric matrices and $E(-1,T)=\{A:A^{\T}=-A\}$ is the $1$-dimensional space of skew-symmetric matrices, with $\CC^{2,2}=E(1,T)\oplus E(-1,T)$.
-\end{itemize}
-
-\subsection{PageRank and the Google matrix (Notes Ch.~11.3)}
-
-\begin{qbox}
-  How did Brin and Page rank $n$ web pages by importance using only the hyperlink graph, and why does introducing a damping factor $0<\alpha<1$ guarantee that the PageRank equation $r=\alpha Pr+(1-\alpha)v$ has a unique probability vector solution $r$ to which power iteration converges geometrically at rate $\alpha^k$?
-\end{qbox}
-
-\begin{itemize}
-  \ii \textbf{Hyperlink transition matrix $P$ and random surfer model:} For a web of $n$ pages where page~$j$ has $d_j>0$ outgoing links, define the transition matrix $P\in\RR^{n,n}$ by $P_{ij}=1/d_j$ if page~$j$ links to page~$i$, and $P_{ij}=0$ otherwise. Because column~$j$ of $P$ sums to $d_j(1/d_j)=1$ and $P_{ij}\ge 0$, $P$ is a \textbf{stochastic matrix}. If a random surfer follows a link uniformly at random at each step, a state distribution $p$ becomes $Pp$ one step later.
-  \ii \textbf{Damping and the PageRank equation:} To handle dangling pages (no outgoing links), disconnected components, and non-unique stationary distributions, fix a \vocab{damping parameter} $0<\alpha<1$ (classically $\alpha=0.85$) and a personalization probability vector $v\in\RR^n$ ($v_i\ge 0,\sum v_i=1$, e.g.\ $v=\frac{1}{n}\one$). At each step, with probability $\alpha$ the surfer follows a link according to $P$, and with probability $1-\alpha$ teleports according to $v$. A stationary distribution $r\in\RR^n$ must satisfy the \vocab{PageRank equation}
-  \[
-    r = \alpha Pr + (1-\alpha)v \qquad\iff\qquad (I - \alpha P)r = (1-\alpha)v.
-  \]
-\end{itemize}
-
-\begin{theorem*}[Prop.~57, 58: Spectral bound $|\lambda|\le 1$ for stochastic matrices and uniqueness of PageRank]\target{prop-57}\target{prop-58}
-  Let $P\in\RR^{n,n}$ be a stochastic matrix ($P_{ij}\ge 0$ and $\sum_{i=1}^n P_{ij}=1$ for all $j$), and define the $\ell_1$-norm $\|x\|_1=\sum_{i=1}^n |x_i|$ on $\CC^n$.
-  \begin{enumerate}[(a)]
-    \ii \textbf{$\ell_1$-nonexpansiveness and spectral bound (Prop.~57):} For every $x\in\CC^n$, $\|Px\|_1\le \|x\|_1$. Consequently, every eigenvalue $\lambda\in\CC$ of $P$ satisfies $|\lambda|\le 1$. (Moreover, $\lambda=1$ is always an eigenvalue of $P$ since $(P-I)^{\T}\one=0$.)
-    \ii \textbf{Existence, uniqueness, and geometric convergence of PageRank (Prop.~58):} For any probability vector $v\in\RR^n$ and any $0<\alpha<1$, the matrix $I-\alpha P$ is invertible, and the PageRank equation $r=\alpha Pr+(1-\alpha)v$ has a unique solution $r\in\RR^n$. This solution $r$ is a probability vector given explicitly by the convergent geometric series
-    \[
-      r = (1-\alpha)\sum_{k=0}^\infty \alpha^k P^k v,
-    \]
-    and for any initial vector $r_0\in\RR^n$, the iteration $r_{k+1}=\alpha Pr_k+(1-\alpha)v$ converges to $r$ with error bound
-    \[
-      \|r_k - r\|_1 \le \alpha^k \|r_0 - r\|_1 \xrightarrow{k\to\infty} 0.
-    \]
-  \end{enumerate}
+\begin{theorem*}[Prop.~53 / LADR 5.19: Every operator on a finite-dimensional complex space has an eigenvalue]\target{prop-53}
+  Every operator $T$ on a finite-dimensional complex vector space $V\ne\{0\}$ has an eigenvalue (and an eigenvector).
 \end{theorem*}
 \begin{ideabox}
-  Because $P_{ij}\ge 0$ and $\sum_i P_{ij}=1$, a stochastic matrix $P$ never expands the $\ell_1$-norm $\|x\|_1=\sum_i |x_i|$: applying the triangle inequality and swapping the order of summation gives $\sum_i |\sum_j P_{ij}x_j|\le \sum_j (\sum_i P_{ij})|x_j|=\|x\|_1$. Three consequences follow:
-  \begin{enumerate}
-    \ii If $Px=\lambda x$ ($x\ne 0$), then $|\lambda|\|x\|_1=\|Px\|_1\le\|x\|_1\implies |\lambda|\le 1$.
-    \ii For $0<\alpha<1$, $I-\alpha P$ is invertible, since $(I-\alpha P)x=0$ would mean $Px=\frac{1}{\alpha}x$, giving $P$ an eigenvalue $\frac{1}{\alpha}>1$, contrary to $|\lambda|\le 1$.
-    \ii Subtracting $r=\alpha Pr+(1-\alpha)v$ from $r_{k+1}=\alpha Pr_k+(1-\alpha)v$ gives $r_{k+1}-r=\alpha P(r_k-r)$, so $\|r_{k+1}-r\|_1\le\alpha\|r_k-r\|_1$ contracts by $\alpha<1$ at each step.
-  \end{enumerate}
+  Finite dimension produces a polynomial relation: for $v\ne 0$, the $n+1$ vectors $v,Tv,\dots,T^nv$ are dependent, so $p(T)v=0$ for some nonzero $p$. Factor $p=(z-\lambda)q$ by the Fundamental Theorem of Algebra. Then $(T-\lambda I)\bigl(q(T)v\bigr)=p(T)v=0$, and $q(T)v$ is an eigenvector as long as it is not $0$. Choosing the relation of smallest degree is what guarantees $q(T)v\ne0$: $q$ has smaller degree, so $q(T)v=0$ would be a shorter relation.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii For (a), by the triangle inequality and $P_{ij}\ge 0$, $\|Px\|_1=\sum_{i=1}^n\big|\sum_{j=1}^n P_{ij}x_j\big|\le\sum_{i=1}^n\sum_{j=1}^n P_{ij}|x_j|=\sum_{j=1}^n\big(\sum_{i=1}^n P_{ij}\big)|x_j|=\sum_{j=1}^n |x_j|=\|x\|_1$. If $Px=\lambda x$ with $x\ne 0$, then $|\lambda|\|x\|_1=\|Px\|_1\le\|x\|_1$; dividing by $\|x\|_1>0$ gives $|\lambda|\le 1$.
-    \ii For (b), if $(I-\alpha P)x=0$, then $Px=\frac{1}{\alpha}x$; since $\frac{1}{\alpha}>1$, part~(a) forces $x=0$. Thus $I-\alpha P$ is injective, hence invertible on $\RR^n$ (W2), so $(I-\alpha P)r=(1-\alpha)v$ has a unique solution $r\in\RR^n$.
-    \ii Each $P^kv$ is a probability vector (W4), so $0\le (P^kv)_i\le 1$ and the series $s=(1-\alpha)\sum_{k=0}^\infty \alpha^k P^kv$ converges entrywise by comparison with $\sum\alpha^k=\frac{1}{1-\alpha}$, with $s_i\ge 0$ and $\one^{\T}s=(1-\alpha)\sum_{k=0}^\infty\alpha^k(\one^{\T}P^kv)=(1-\alpha)\frac{1}{1-\alpha}=1$.
-    \ii Furthermore, $\alpha Ps+(1-\alpha)v=(1-\alpha)\sum_{k=1}^\infty\alpha^k P^kv+(1-\alpha)v=s$, so by uniqueness $r=s$ is a probability vector. Finally, $r_{k+1}-r=\alpha P(r_k-r)\implies\|r_{k+1}-r\|_1\le\alpha\|r_k-r\|_1$, and induction yields $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1$.
+    \ii Choose $v\ne 0$ and let $n=\dim V$. The list $v,Tv,\dots,T^nv$ has $n+1$ vectors, so it is dependent \ilink{W1}{(W1)}.
+    \ii Among all relations $a_0v+a_1Tv+\dots+a_mT^mv=0$ with $a_m\ne 0$, choose one of smallest degree $m$. Then $m\ge 1$, since $a_0v=0$ with $a_0\ne0$ would force $v=0$.
+    \ii By \ilink{name-factorization}{factorization}(a), $p(z)=a_0+\dots+a_mz^m$ is $(z-\lambda)q(z)$ for some $\lambda\in\CC$ and $q(z)=b_0+\dots+b_{m-1}z^{m-1}$ with $b_{m-1}=a_m\ne 0$.
+    \ii Let $w=q(T)v=b_0v+\dots+b_{m-1}T^{m-1}v$. This is a combination of degree $m-1<m$ with top coefficient $b_{m-1}\ne0$, so $w\ne 0$ by the minimality of $m$.
+    \ii By \ilink{name-rules-for-p-of-T}{the rules for $p(T)$}, $(T-\lambda I)w=(T-\lambda I)q(T)v=p(T)v=0$. So $Tw=\lambda w$ with $w\ne 0$.
   \end{steps}
 \end{proof}
+
+\begin{example*}[Following the proof for the rotation on $\CC^2$]
+  With $v=e_1$: $Rv=e_2$ and $R^2v=-e_1$, so $v+R^2v=0$, a relation with $p(z)=z^2+1=(z-i)(z+i)$. With $\lambda=i$ and $q(z)=z+i$, $w=q(R)v=Rv+iv=(i,1)$. Check: $R(i,1)=(-1,i)=i\,(i,1)$.
+\end{example*}
+
+The hypotheses are needed. Over $\RR$ the rotation has no eigenvalue. In infinite dimensions, even over $\CC$, multiplication by $z$ on $\PP(\CC)$ has no eigenvalue: $zp=\lambda p$ with $p\ne0$ is impossible because $\deg(zp)=\deg p+1$ (\ilink{name-division-algorithm}{division algorithm}(c)).
+
+\begin{theorem*}[Prop.~54, 55 / LADR 5.11, 5.12: Eigenvectors for distinct eigenvalues are independent]\target{prop-54}\target{prop-55}
+  Let $T\in\LL(V)$.
+  \begin{enumerate}[(a)]
+    \ii \textbf{(Prop.~54)} If $\lambda_1,\dots,\lambda_m$ are \textbf{distinct} eigenvalues of $T$ with eigenvectors $v_1,\dots,v_m$, then $v_1,\dots,v_m$ is linearly independent.
+    \ii \textbf{(Prop.~55)} If $V$ is finite-dimensional, then $T$ has at most $\dim V$ distinct eigenvalues.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  If the list were dependent, take the first $v_k$ that is a combination of the earlier ones (\ilink{W1}{(W1)}). Apply $T$, which multiplies each $v_j$ by its own $\lambda_j$, and compare with $\lambda_k$ times the same equation, which multiplies every term by $\lambda_k$. Subtracting removes $v_k$ and leaves a relation among the independent $v_1,\dots,v_{k-1}$ with coefficients $a_j(\lambda_j-\lambda_k)$. Because the eigenvalues are distinct, this forces every $a_j=0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii Suppose, for contradiction, that $v_1,\dots,v_m$ is dependent. Let $k$ be the smallest index with $v_k\in\spn(v_1,\dots,v_{k-1})$ (\ilink{W1}{(W1)}); $k\ge2$ since $v_1\ne0$. Then $v_1,\dots,v_{k-1}$ is independent and
+    \[
+      v_k = a_1v_1 + \dots + a_{k-1}v_{k-1}.
+    \]
+    \ii Applying $T$: $\lambda_kv_k=a_1\lambda_1v_1+\dots+a_{k-1}\lambda_{k-1}v_{k-1}$.
+    \ii Subtracting $\lambda_k$ times Step~1 from Step~2:
+    \[
+      0=a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}.
+    \]
+    \ii By independence, $a_j(\lambda_j-\lambda_k)=0$; since $\lambda_j\ne\lambda_k$, every $a_j=0$. Then $v_k=0$, which contradicts that $v_k$ is an eigenvector.
+    \ii \textbf{(b).} Eigenvectors for $m$ distinct eigenvalues form an independent list of length $m$, so $m\le\dim V$ \ilink{W1}{(W1)}.
+  \end{steps}
+\end{proof}
+
+\begin{example*}[$\sin x,\sin 2x,\dots,\sin Nx$ are independent (Notes Ex.~50)]
+  On the space of infinitely differentiable functions $\RR\to\RR$, let $T(f)=f''$. Since $(\sin kx)''=-k^2\sin kx$, each $\sin kx$ is an eigenvector of $T$ for the eigenvalue $-k^2$, and these eigenvalues are distinct. By \ilink{prop-54}{Prop.~54}, the functions are linearly independent.
+\end{example*}
+
+In infinite dimensions there can be infinitely many eigenvalues: the shift $(a_1,a_2,\dots)\mapsto(a_2,a_3,\dots)$ on $\RR^\infty$ has every $\lambda\in\RR$ as an eigenvalue, with eigenvector $(1,\lambda,\lambda^2,\dots)$.
+
+\revisit For the rotation on $\CC^2$, the relation $e_1+R^2e_1=0$ gives $p(z)=z^2+1=(z-i)(z+i)$ and the eigenvector $(R+iI)e_1=(i,1)$ for $i$, as in the example above (\ilink{prop-53}{Prop.~53}). Eigenvectors for different eigenvalues are always independent (\ilink{prop-54}{Prop.~54}); for $A$, $(1,1)$ and $(1,-1)$ belong to $3\ne1$.
+
+\subsection{Computing eigenvalues of operators and $2\times 2$ matrices (Notes Ch.~11)}
+
+\begin{qbox}
+  Find all eigenvalues and eigenvectors of $\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ over $\RR$ and over $\CC$, and of $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$. Is there a basis of eigenvectors in each case? And what are the eigenvalues of $T(p)=xp'$ on $\PP_n(\RR)$?
+\end{qbox}
+
+\begin{proposition*}[Prop.~56: Eigenvalues of an operator and of its matrix; the $2\times2$ characteristic polynomial]\target{prop-56}
+  \begin{enumerate}[(a)]
+    \ii Fix a basis $B$ of a finite-dimensional $V$ and let $A=\MM(T,B)$. Then $Tv = \lambda v$ if and only if $A\,\MM(v,B) = \lambda\,\MM(v,B)$. So $T$ and $A$ have the same eigenvalues, and $v$ is an eigenvector of $T$ exactly when $\MM(v)$ is an eigenvector of $A$.
+    \ii For $A=\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$, $\lambda$ is an eigenvalue of $A$ if and only if
+    \[
+      \chi_A(\lambda) := \det(\lambda I - A) = (\lambda-a)(\lambda-d) - bc = \lambda^2 - (a+d)\lambda + (ad-bc) = 0.
+    \]
+    $\chi_A$ is the \vocab{characteristic polynomial} of the $2\times2$ matrix $A$.
+  \end{enumerate}
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{(a).} $\MM(Tv)=A\MM(v)$ \ilink{W3}{(W3)} and $\MM(\lambda v)=\lambda\MM(v)$, and $v\mapsto\MM(v)$ is injective. So $Tv=\lambda v$ exactly when $A\MM(v)=\lambda\MM(v)$, and $v\ne0$ exactly when $\MM(v)\ne0$.
+    \ii \textbf{(b).} By \ilink{name-ladr-5-7-four-ways-to-say-lambda-is-an-eigenvalue}{LADR 5.7}, $\lambda$ is an eigenvalue exactly when $\lambda I-A=\begin{psmallmatrix}\lambda-a&-b\\-c&\lambda-d\end{psmallmatrix}$ is not invertible, which by the $2\times2$ criterion \ilink{W3}{(W3)} means its determinant $(\lambda-a)(\lambda-d)-bc$ is $0$. Expanding gives $\lambda^2-(a+d)\lambda+(ad-bc)$.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to find the eigenvalues and eigenspaces of a $2\times2$ matrix}
+  \begin{steps}
+    \ii Compute $\chi_A(t)=t^2-(a+d)t+(ad-bc)$ and find its roots in the given field ($\RR$: real roots only; $\CC$: always two roots counted with repetition).
+    \ii For each root $\lambda$, solve $(A-\lambda I)x=0$. Because $A-\lambda I$ is not invertible, its two rows are proportional, so one equation suffices. A nonzero solution is $(b,\ \lambda-a)$ if this is nonzero, otherwise $(\lambda-d,\ c)$.
+    \ii Basis of eigenvectors: two distinct roots always give one (\ilink{prop-54}{Prop.~54}). A repeated root $\lambda$ gives one exactly when $A=\lambda I$; otherwise $E(\lambda,A)$ is a line.
+  \end{steps}
+  Edge cases: over $\RR$ a matrix may have no eigenvalues (negative discriminant); $\lambda=0$ is allowed and means $A$ is not invertible; an eigenvector is never $0$, but the zero vector lies in every eigenspace.
+\end{methodbox}
+
+\begin{example*}[Complex eigenvalues: $\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$]
+  $\chi(t)=t^2-2t+2$, with discriminant $4-8<0$: no real eigenvalues. Over $\CC$ the roots are $1\pm i$. For $\lambda=1+i$, the vector $(b,\lambda-a)=(-1,i)$ is an eigenvector: $A(-1,i)=(-1-i,\ -1+i)=(1+i)(-1,i)$. For $\lambda=1-i$, conjugating gives $(-1,-i)$. Two distinct eigenvalues, so these form a basis of $\CC^2$.
+\end{example*}
+
+\begin{example*}[A repeated eigenvalue with too few eigenvectors: $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$]
+  $\chi(t)=(t-2)^2$, so $\lambda=2$ only. $A-2I=\begin{psmallmatrix}0&1\\0&0\end{psmallmatrix}$, whose null space is $\spn(e_1)$. Every eigenvector is a multiple of $e_1$, so there is no basis of eigenvectors. By contrast $2I$ has the same $\chi$ and $E(2,2I)=\RR^2$.
+\end{example*}
+
+\begin{example*}[Two characteristic polynomials (Notes Ex.~51)]
+  For the rotation $R$, $\chi_R(t)=t^2+1$: no real eigenvalues, and $\pm i$ over $\CC$. For the Fibonacci matrix $F=\begin{psmallmatrix}0&1\\1&1\end{psmallmatrix}$, $\chi_F(t)=t^2-t-1$, with roots $(1\pm\sqrt5)/2$.
+\end{example*}
+
+\begin{methodbox}{How to find eigenvalues of an operator without a determinant}
+  \begin{steps}
+    \ii \textbf{Polynomial relation.} If $p(T)=0$ and $Tv=\lambda v$ with $v\ne0$, then $0=p(T)v=p(\lambda)v$, so $p(\lambda)=0$ (\ilink{name-rules-for-p-of-T}{rules for $p(T)$}). This lists the candidates; then check which occur.
+    \ii \textbf{Degree or leading terms.} On polynomial spaces, compare the top coefficients in $Tp=\lambda p$ to find $\lambda$, then solve for the other coefficients.
+    \ii \textbf{Matrix.} Otherwise pick a basis and use \ilink{prop-56}{Prop.~56}(a).
+  \end{steps}
+  Edge case: a polynomial relation only gives candidates; $p(\lambda)=0$ does not make $\lambda$ an eigenvalue (the identity satisfies $T^2=I$ but has no eigenvalue $-1$).
+\end{methodbox}
+
+\begin{example*}[The transpose operator on $\CC^{2,2}$ (Notes Ex.~52)]
+  $T(A)=A^{\T}$ satisfies $T^2=I$, so every eigenvalue satisfies $\lambda^2=1$. Both occur: $E(1,T)$ is the space of symmetric matrices, with basis $\begin{psmallmatrix}1&0\\0&0\end{psmallmatrix},\begin{psmallmatrix}0&1\\1&0\end{psmallmatrix},\begin{psmallmatrix}0&0\\0&1\end{psmallmatrix}$, and $E(-1,T)$ is the space of skew-symmetric matrices, spanned by $\begin{psmallmatrix}0&1\\-1&0\end{psmallmatrix}$. Their dimensions $3+1=4$ and \ilink{prop-54}{Prop.~54} give $\CC^{2,2}=E(1,T)\oplus E(-1,T)$.
+\end{example*}
+
+\begin{example*}[Eigenvalues of $T(p)=xp'$ on $\PP_n(\RR)$, by leading terms]
+  Let $p=\sum_{j\le k}a_jx^j$ with $a_k\ne0$ and $xp'=\lambda p$. Since $xp'=\sum ja_jx^j$, comparing coefficients gives $(j-\lambda)a_j=0$ for every $j$. From $j=k$: $\lambda=k$. Then $a_j=0$ for $j\ne k$. So the eigenvalues are $0,1,\dots,n$ with $E(k,T)=\spn(x^k)$, and $1,x,\dots,x^n$ is a basis of eigenvectors.
+\end{example*}
+
+\revisit $\begin{psmallmatrix}1&-1\\1&1\end{psmallmatrix}$ has no real eigenvalues and the complex eigenvalues $1\pm i$ with eigenvectors $(-1,\pm i)$, a basis of $\CC^2$. $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$ has only $\lambda=2$, with $E(2)=\spn(e_1)$, so there is no basis of eigenvectors. For $T(p)=xp'$ the eigenvalues are $0,1,\dots,n$, with eigenvectors $x^k$.
+
+\subsection{PageRank and the Google matrix (Notes Ch.~11)}
+
+\begin{qbox}
+  Three web pages link as $1\to2$, $1\to3$, $2\to3$, $3\to1$. A surfer follows a random link from the current page. Which pages are visited most in the long run? If the surfer also jumps to a random page with probability $\tfrac12$ at each step, is the answer still well defined and unique, and how fast does the step-by-step computation approach it?
+\end{qbox}
+
+\textbf{The transition matrix.} For $n$ pages, where page $j$ has $d_j>0$ outgoing links, let $P_{ij}=1/d_j$ if $j$ links to $i$, and $P_{ij}=0$ otherwise. Column $j$ sums to $d_j\cdot(1/d_j)=1$, so $P$ is stochastic: a surfer at $j$ moves to each linked page with equal probability, and a distribution $p$ becomes $Pp$. A page with no outgoing links (a \vocab{dangling page}) gives a zero column; it is repaired by replacing that column with a fixed probability vector $v$ (for example the uniform one). A stationary distribution $\pi=P\pi$ satisfies $\pi_i=\sum_jP_{ij}\pi_j$: a page is important when important pages link to it.
+
+\textbf{Damping.} The naive model can fail: parts of the web may be disconnected, there may be several stationary distributions, and $P^kp$ need not settle down. Fix a \vocab{damping parameter} $0<\alpha<1$ (classically $0.85$) and a probability vector $v$. At each step the surfer follows a link with probability $\alpha$ and jumps according to $v$ with probability $1-\alpha$. The long-run distribution $r$ then satisfies the \vocab{PageRank equation}
+\[
+  r = \alpha Pr + (1-\alpha)v, \qquad\text{that is,}\qquad (I - \alpha P)r = (1-\alpha)v.
+\]
+
+\begin{theorem*}[Prop.~57, 58: Eigenvalues of stochastic matrices; existence and uniqueness of PageRank]\target{prop-57}\target{prop-58}
+  Let $P\in\RR^{n,n}$ be stochastic, and let $\|x\|_1=\sum_{i=1}^n |x_i|$ for $x\in\CC^n$.
+  \begin{enumerate}[(a)]
+    \ii \textbf{(Prop.~57)} $\|Px\|_1\le \|x\|_1$ for every $x\in\CC^n$. Consequently every eigenvalue $\lambda\in\CC$ of $P$ satisfies $|\lambda|\le 1$. Moreover $\lambda=1$ is an eigenvalue of $P$.
+    \ii \textbf{(Prop.~58)} For $0<\alpha<1$ and a probability vector $v$, $I-\alpha P$ is invertible, and the PageRank equation has exactly one solution $r$. It is a probability vector; for any $r_0$, the iteration $r_{k+1}=\alpha Pr_k+(1-\alpha)v$ satisfies
+    \[
+      \|r_k - r\|_1 \le \alpha^k \|r_0 - r\|_1 \longrightarrow 0,
+    \]
+    and $r=(1-\alpha)\sum_{k=0}^\infty \alpha^k P^k v$, meaning that the partial sums converge to $r$.
+  \end{enumerate}
+\end{theorem*}
+\begin{ideabox}
+  A stochastic matrix moves probability around without creating any, so it cannot increase the total size $\|x\|_1$. That single inequality does everything. An eigenvalue with $|\lambda|>1$ would increase $\|x\|_1$, so $1/\alpha>1$ is not an eigenvalue, which makes $I-\alpha P$ invertible. And the difference between two runs of the iteration is multiplied by $\alpha P$ at every step, so it shrinks by the factor $\alpha$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{$\|Px\|_1\le\|x\|_1$.} By the triangle inequality and $P_{ij}\ge0$, then exchanging the sums and using that each column sums to $1$,
+    \[
+      \|Px\|_1=\sum_{i}\Bigl|\sum_{j} P_{ij}x_j\Bigr|\le\sum_{i}\sum_{j} P_{ij}|x_j|=\sum_{j}\Bigl(\sum_{i} P_{ij}\Bigr)|x_j|=\|x\|_1 .
+    \]
+    \ii \textbf{$|\lambda|\le1$.} If $Px=\lambda x$ with $x\ne 0$, then $|\lambda|\,\|x\|_1=\|Px\|_1\le\|x\|_1$; divide by $\|x\|_1>0$.
+    \ii \textbf{$1$ is an eigenvalue.} The row vector $\one^{\T}=(1,\dots,1)$ satisfies $\one^{\T}P=\one^{\T}$ (column sums), so the rows of $P-I$ add up to $0$ and are dependent. So $P-I$ has row rank, hence column rank, less than $n$ (\xlink{math110}{2026-09-14-linear-maps-matrices}{name-column-rank-equals-row-rank}{Week~3, column rank equals row rank}); it is not surjective, and $1$ is an eigenvalue by \ilink{name-ladr-5-7-four-ways-to-say-lambda-is-an-eigenvalue}{LADR 5.7}.
+    \ii \textbf{Uniqueness.} If $(I-\alpha P)x=0$, then $Px=\alpha^{-1}x$ with $\alpha^{-1}>1$, so $x=0$ by Step~2. So $I-\alpha P$ is injective, hence invertible \ilink{W2}{(W2)}, and the equation has exactly one solution $r$.
+    \ii \textbf{Error bound.} Subtracting $r=\alpha Pr+(1-\alpha)v$ from $r_{k+1}=\alpha Pr_k+(1-\alpha)v$ gives $r_{k+1}-r=\alpha P(r_k-r)$, so $\|r_{k+1}-r\|_1\le\alpha\|r_k-r\|_1$ by Step~1, and by induction $\|r_k-r\|_1\le\alpha^k\|r_0-r\|_1$. Since $0<\alpha<1$, $\alpha^k\to0$ (\ilink{fact-K3}{K3} at the end), so $r_k\to r$ entrywise.
+    \ii \textbf{$r$ is a probability vector.} Start the iteration at $r_0=v$. If $r_k$ is a probability vector, so is $r_{k+1}=\alpha(Pr_k)+(1-\alpha)v$: its entries are $\ge0$, and its entries sum to $\alpha\cdot1+(1-\alpha)\cdot1=1$ (\xlink{math110}{2026-09-14-linear-maps-matrices}{name-stochastic-preserves-probability}{Week~3}). A limit of nonnegative numbers is nonnegative (if $r_i<0$, every $r_{k,i}$ would differ from $r_i$ by at least $|r_i|$), and the entry sums $1$ pass to the limit. So $r$ is a probability vector.
+    \ii \textbf{The series.} Start instead at $r_0=0$. By induction $r_K=(1-\alpha)\sum_{k=0}^{K-1}\alpha^kP^kv$, since if this holds for $K$, then
+    \[
+      r_{K+1}=\alpha P r_K+(1-\alpha)v=(1-\alpha)\sum_{k=1}^{K}\alpha^kP^kv+(1-\alpha)v=(1-\alpha)\sum_{k=0}^{K}\alpha^kP^kv.
+    \] By Step~5 these partial sums converge to $r$.
+  \end{steps}
+\end{proof}
+
+\begin{methodbox}{How to compute a stationary distribution or a PageRank vector by hand}
+  \begin{steps}
+    \ii Build $P$ column by column: column $j$ has $1/d_j$ in the rows of the pages that $j$ links to.
+    \ii \textbf{Stationary distribution:} solve $(P-I)\pi=0$ (one equation is redundant), then scale so that the entries sum to $1$.
+    \ii \textbf{PageRank:} solve the linear system $(I-\alpha P)r=(1-\alpha)v$. Check that the entries are $\ge0$ and sum to $1$.
+  \end{steps}
+  Edge cases: with no damping the stationary distribution may not be unique (a web made of two separate cycles has many); a dangling page must be repaired before $P$ is stochastic.
+\end{methodbox}
+
+\begin{example*}[The stationary distribution of the three-page web]
+  For links $1\to2$, $1\to3$, $2\to3$, $3\to1$, the columns are $P e_1=(0,\tfrac12,\tfrac12)$, $Pe_2=(0,0,1)$, $Pe_3=(1,0,0)$. $P\pi=\pi$ reads $\pi_1=\pi_3$, $\pi_2=\tfrac12\pi_1$, $\pi_3=\tfrac12\pi_1+\pi_2$. With $\pi_1=2$: $\pi=(2,1,2)$, and normalizing, $\pi=\tfrac15(2,1,2)$.
+\end{example*}
+
+\begin{example*}[PageRank of a different three-page web]
+  Links $1\to2$, $2\to1$, $2\to3$, $3\to1$, with $\alpha=\tfrac12$ and $v=\tfrac13\one$. Then
+  \[
+    P=\begin{pmatrix}0&1/2&1\\1&0&0\\0&1/2&0\end{pmatrix},
+  \]
+  and $r=\tfrac12Pr+\tfrac16\one$ reads
+  \[
+    r_1=\tfrac12\bigl(\tfrac12r_2+r_3\bigr)+\tfrac16,\qquad r_2=\tfrac12r_1+\tfrac16,\qquad r_3=\tfrac14r_2+\tfrac16 .
+  \]
+  Substituting the second and third equations into the first gives $r_1=\tfrac{15}{39}$, then $r_2=\tfrac{14}{39}$, $r_3=\tfrac{10}{39}$; the sum is $1$.
+\end{example*}
 
 \begin{fig}
 \begin{tikzpicture}[
@@ -317,30 +467,33 @@
 
   % Right: crisp black stochastic transition matrix (muted zeros)
   \node[anchor=west] at (4.55, 0.35) {%
-    $\displaystyle P = \begin{pmatrix}
-      \InkLabel[black!35]{$0$} & \InkLabel[black!35]{$0$} & 1 \\[4pt]
-      \tfrac{1}{2} & \InkLabel[black!35]{$0$} & \InkLabel[black!35]{$0$} \\[4pt]
-      \tfrac{1}{2} & 1 & \InkLabel[black!35]{$0$}
-    \end{pmatrix}$};
+    $\displaystyle P = \left(\,\begin{matrix}
+      0 & 0 & 1 \\[4pt]
+      \tfrac{1}{2} & 0 & 0 \\[4pt]
+      \tfrac{1}{2} & 1 & 0
+    \end{matrix}\,\right)$};
 \end{tikzpicture}
 \figcap{Three-page web graph and transition matrix $P$ (columns split out-links equally): stationary distribution $\pi=\tfrac{1}{5}(2,1,2)^{\T}$, and damped PageRank ($\alpha=\tfrac{1}{2}$) $r=\tfrac{1}{39}(14,10,15)^{\T}$.}
 \end{fig}
 
-\begin{itemize}
-  \ii \textbf{The Google matrix $G=\alpha P+(1-\alpha)v\one^{\T}$:} For any probability vector $x$ ($\one^{\T}x=1$), $Gx=\alpha Px+(1-\alpha)v(\one^{\T}x)=\alpha Px+(1-\alpha)v$, so the PageRank vector $r$ is the unique probability eigenvector of the stochastic Google matrix $G$ with eigenvalue $1$ ($Gr=r$). On the $(n-1)$-dimensional hyperplane $H=\{x\in\RR^n:\one^{\T}x=0\}$, $G$ acts as $\alpha P$, shrinking every error component in $H$ by at least $\alpha$ per step ($\RR^n=\spn(r)\oplus H$).
-\end{itemize}
+\textbf{The Google matrix $G=\alpha P+(1-\alpha)v\one^{\T}$.} For a probability vector $x$ ($\one^{\T}x=1$), $Gx=\alpha Px+(1-\alpha)v(\one^{\T}x)=\alpha Px+(1-\alpha)v$. So $G$ is stochastic, and the PageRank vector is its unique probability eigenvector for $1$: $Gr=r$. On the hyperplane $H=\{x:\one^{\T}x=0\}$, $Gx=\alpha Px$, and $\alpha P$ maps $H$ into $H$ (since $\one^{\T}P=\one^{\T}$). Since $\one^{\T}r=1\ne0$, $r\notin H$, and $\dim H=n-1$, so $\RR^n=\spn(r)\oplus H$: $G$ fixes the PageRank direction and shrinks the error component in $H$ by at least the factor $\alpha$ in $\|\cdot\|_1$ at each step.
+
+\revisit For the web $1\to2$, $1\to3$, $2\to3$, $3\to1$, the long-run distribution without jumps is the stationary distribution $\pi=\tfrac15(2,1,2)$: pages $1$ and $3$ are visited most. With jumps ($\alpha=\tfrac12$, uniform $v$) the answer is the unique solution of the PageRank equation (\ilink{prop-58}{Prop.~58}), $r=\tfrac1{39}(14,10,15)$, and the iteration approaches it with error at most $(\tfrac12)^k$ times the initial error.
 
 \begin{shortcuts}
-  \ii \textbf{$2\times 2$ eigenvalues and eigenvectors:} Solve $\chi_A(t)=t^2-(\operatorname{tr}A)t+\det A=0$. Once you have an eigenvalue $\lambda$, a nonzero eigenvector of $\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$ is immediately given by $(b,\lambda-a)^{\T}$ or $(\lambda-d,c)^{\T}$ (whichever is nonzero).
-  \ii \textbf{Polynomial relations restrict eigenvalues:} If $p(T)=0$ and $Tv=\lambda v$ ($v\ne 0$), then $0=p(T)v=p(\lambda)v\implies p(\lambda)=0$. Thus $P^2=P\implies\lambda\in\{0,1\}$ (\ilink{prob-HW6-P1}{HW6~P1}); $T^2=I\implies\lambda\in\{1,-1\}$; $N^k=0\implies\lambda=0$.
-  \ii \textbf{$n$ distinct eigenvalues in dimension $n$ automatically give a basis of eigenvectors:} By \ilink{prop-54}{Prop.~54} and \xlink{math110}{2026-09-07-bases-dimension}{prop-13}{W2 Prop.~13}, $n$ eigenvectors for distinct eigenvalues in an $n$-dimensional space are linearly independent and therefore form a basis.
-  \ii \textbf{Similar operators $T$ and $S^{-1}TS$ have the exact same eigenvalues:} And $E(\lambda,S^{-1}TS)=S^{-1}\big(E(\lambda,T)\big)$ (\ilink{prob-HW6-P3}{HW6~P3}).
+  \ii \textbf{$2\times 2$ eigenvectors in one line:} once $\lambda$ is known, $(b,\lambda-a)^{\T}$ or $(\lambda-d,c)^{\T}$ (whichever is nonzero) is an eigenvector of $\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}$.
+  \ii \textbf{Trace and determinant:} the eigenvalues of a $2\times2$ matrix over $\CC$ (with repetition) add up to $a+d$ and multiply to $ad-bc$, because $\chi_A(t)=(t-\lambda_1)(t-\lambda_2)$.
+  \ii \textbf{Polynomial relations restrict eigenvalues:} $P^2=P\implies\lambda\in\{0,1\}$ (\ilink{prob-HW6-P1}{HW6~P1}); $T^2=I\implies\lambda\in\{1,-1\}$; $N^k=0\implies\lambda=0$.
+  \ii \textbf{$n$ distinct eigenvalues in dimension $n$ give a basis of eigenvectors:} by \ilink{prop-54}{Prop.~54} and \xlink{math110}{2026-09-07-bases-dimension}{prop-13}{Week~2, Prop.~13}.
+  \ii \textbf{Similar operators have the same eigenvalues:} $E(\lambda,S^{-1}TS)=S^{-1}\bigl(E(\lambda,T)\bigr)$ (\ilink{prob-HW6-P3}{HW6~P3}).
+  \ii \textbf{Triangular matrices:} for $\begin{psmallmatrix}a&b\\0&d\end{psmallmatrix}$, $\chi(t)=(t-a)(t-d)$, so the eigenvalues are the diagonal entries.
 \end{shortcuts}
 
 \begin{trapbox}
-  \ii \textbf{An eigenvector is nonzero by definition ($v\ne 0$), whereas an eigenvalue CAN be $0$:} Never say ``$0$ is an eigenvector''; $0\in E(\lambda,T)$ is included in the eigenspace so that $E(\lambda,T)$ is a subspace, and $\lambda=0$ is an eigenvalue iff $\nul T\ne\{0\}$.
-  \ii \textbf{The sum of two eigenvectors for different eigenvalues is never an eigenvector:} If $Tv_1=\lambda_1v_1$ and $Tv_2=\lambda_2v_2$ with $\lambda_1\ne\lambda_2$, then $T(v_1+v_2)=\lambda_1v_1+\lambda_2v_2$ is not a scalar multiple of $v_1+v_2$ (since $v_1,v_2$ are linearly independent by \ilink{prop-54}{Prop.~54}; see R3(a)).
-  \ii \textbf{Existence of eigenvalues requires both $\FF=\CC$ and $\dim V<\infty$:} Over $\RR$, $90^\circ$ rotation has no eigenvalues; in infinite dimensions even over $\CC$, multiplication by $x$ ($T(p)(x)=xp(x)$ on $\PP(\CC)$) has no eigenvalues since $\deg(xp)=\deg p+1\ne\deg(\lambda p)$.
+  \ii \textbf{An eigenvector is nonzero by definition, but an eigenvalue can be $0$:} $0$ lies in every eigenspace so that $E(\lambda,T)$ is a subspace, and $\lambda=0$ is an eigenvalue exactly when $\nul T\ne\{0\}$.
+  \ii \textbf{The sum of eigenvectors for different eigenvalues is not an eigenvector:} if $T(v_1+v_2)=\mu(v_1+v_2)$, then $(\lambda_1-\mu)v_1+(\lambda_2-\mu)v_2=0$, and independence (\ilink{prop-54}{Prop.~54}) forces $\lambda_1=\mu=\lambda_2$ (R3(a)).
+  \ii \textbf{Existence of eigenvalues needs both $\FF=\CC$ and $\dim V<\infty$:} the real rotation and multiplication by $z$ on $\PP(\CC)$ have none.
+  \ii \textbf{A repeated root of $\chi_A$ does not give two independent eigenvectors:} $\begin{psmallmatrix}2&1\\0&2\end{psmallmatrix}$ has only the line $\spn(e_1)$.
 \end{trapbox}
 
 \section{Problem set}
@@ -380,7 +533,6 @@ find a probability vector $p$ with $Pp=p$ and explain its meaning for the three-
 \begin{prob}\textbf{E1 (PageRank by hand).}\ For the three-page web in the text (links $1\to2$, $1\to3$, $2\to3$, $3\to1$) with $\alpha=\frac12$ and uniform $v$, solve $r=\alpha Pr+(1-\alpha)v$.
 \end{prob}
 
-\clearpage
 \section*{Hints}
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW6-P1}{HW6 P1.}} \emph{Hint:} (a) apply $P$ twice to an eigenvector. (b) $v=(v-Pv)+Pv$.
@@ -390,5 +542,44 @@ find a probability vector $p$ with $Pp=p$ and explain its meaning for the three-
 \par\medskip\noindent\textbf{\hyperlink{prob-HW6-P3}{HW6 P3.}} \emph{Hint:} rewrite $Rv=\lambda v$ as a statement about $Sv$.
 
 \par\medskip\noindent\textbf{\hyperlink{prob-HW6-P6}{HW6 P6 (optional).}} \emph{Hint:} (b) take the first power $T^mv$ that depends on the earlier ones.
+
+\clearpage
+\section{Proofs of the facts used}
+
+\begin{proposition*}[K1: Every nonzero complex number has $k$-th roots]\target{fact-K1}
+  For every $w\in\CC$ with $w\ne0$ and every integer $k\ge1$, there is $\beta\in\CC$ with $\beta^k=w$.
+\end{proposition*}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Polar form.} Let $r=|w|>0$. The point $w/r$ has modulus $1$, so it lies on the unit circle, and there is an angle $\theta$ with $w/r=\cos\theta+i\sin\theta$ (the definition of $\cos$ and $\sin$ as the coordinates of a point on the unit circle). So $w=r(\cos\theta+i\sin\theta)$.
+    \ii \textbf{De Moivre's formula.} For angles $\phi,\psi$, the angle-addition formulas for $\cos$ and $\sin$ give
+    \[
+      (\cos\phi+i\sin\phi)(\cos\psi+i\sin\psi)=\cos(\phi+\psi)+i\sin(\phi+\psi).
+    \]
+    By induction on $k$, $(\cos\phi+i\sin\phi)^k=\cos k\phi+i\sin k\phi$.
+    \ii \textbf{The root.} $r$ has a positive real $k$-th root $r^{1/k}$ (\ilink{fact-K2}{K2}, Step~4). Let $\beta=r^{1/k}\bigl(\cos\tfrac\theta k+i\sin\tfrac\theta k\bigr)$. By Step~2, $\beta^k=r(\cos\theta+i\sin\theta)=w$.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[K2: A continuous function on a closed disk attains a minimum]\target{fact-K2}
+  Let $D=\{z\in\CC:|z|\le R\}$ and let $f\colon D\to\RR$ be continuous. Then there is $\zeta\in D$ with $f(\zeta)\le f(z)$ for all $z\in D$. In particular this applies to $f=|p|$ for a polynomial $p$.
+\end{proposition*}
+\begin{proof}
+  The real numbers have the \vocab{least upper bound property}: every nonempty set of reals that is bounded above has a least upper bound (equivalently, every nonempty set bounded below has a greatest lower bound). This is one of the defining properties of $\RR$.
+  \begin{steps}
+    \ii \textbf{Nested intervals.} If $[a_1,b_1]\supseteq[a_2,b_2]\supseteq\dots$ with $b_n-a_n\to0$, then $c=\sup\{a_n\}$ satisfies $a_n\le c\le b_n$ for all $n$ (each $b_m$ is an upper bound of the $a_n$), so all the intervals share the point $c$.
+    \ii \textbf{Bolzano--Weierstrass.} Every sequence $(z_n)$ in the square $Q=[-R,R]^2\supseteq D$ has a convergent subsequence: cut $Q$ into four equal squares, keep one containing $z_n$ for infinitely many $n$, and repeat. The kept squares are nested with side lengths $2R/2^j\to0$, so by Step~1 (applied to each coordinate) they share a point $z^*$; choosing one index from each kept square, in increasing order, gives a subsequence converging to $z^*$. If all $z_n\in D$, then $|z^*|\le R$, since $|z^*|>R$ would keep all nearby points outside $D$.
+    \ii \textbf{The minimum.} $f$ is bounded below on $D$: otherwise there are $z_n\in D$ with $f(z_n)<-n$, a subsequence converges to some $z^*\in D$, and continuity would make $f(z_{n_j})\to f(z^*)$, impossible. Let $m$ be the greatest lower bound of $f(D)$ and choose $z_n\in D$ with $f(z_n)<m+1/n$. A subsequence converges to some $\zeta\in D$ (Step~2), and by continuity $f(\zeta)=\lim f(z_{n_j})=m$.
+    \ii \textbf{Continuity of $|p|$ and real roots.} A polynomial is continuous by the limit rules for sums and products (\xlink{math110}{2026-08-31-sets-fields-subspaces}{fact-limits}{Week~1, F3}; \xlink{math110}{2026-09-07-bases-dimension}{fact-G3}{Week~2, G3}), and $\bigl||a|-|b|\bigr|\le|a-b|$ makes $|p|$ continuous. The positive $k$-th root of $r>0$ used in K1 exists by the same least upper bound property: $s=\sup\{x\ge0:x^k\le r\}$ satisfies $s^k=r$, because $s^k<r$ or $s^k>r$ would allow a slightly larger, respectively slightly smaller, upper bound.
+  \end{steps}
+\end{proof}
+
+\begin{proposition*}[K3: $\alpha^k\to0$ for $0\le\alpha<1$]\target{fact-K3}
+  If $0\le\alpha<1$, then $\alpha^k\to0$ as $k\to\infty$.
+\end{proposition*}
+\begin{proof}
+  If $\alpha=0$ this is clear. Otherwise write $\alpha=1/(1+h)$ with $h>0$. By induction, $(1+h)^k\ge1+kh$ (Bernoulli's inequality: $(1+h)^{k+1}\ge(1+kh)(1+h)\ge1+(k+1)h$). So $0<\alpha^k\le1/(1+kh)$, which is less than any given $\varepsilon>0$ once $k>1/(h\varepsilon)$.
+\end{proof}
+
 
 \end{document}

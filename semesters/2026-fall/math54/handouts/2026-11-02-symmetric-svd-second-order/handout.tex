@@ -11,6 +11,9 @@
 \DeclareMathOperator{\tr}{tr}
 \DeclareMathOperator{\proj}{proj}
 \DeclareMathOperator{\dist}{dist}
+% Method box: "How to ..." with numbered steps (standard, Teach every procedure).
+\mdfdefinestyle{howtostyle}{nobreak=true,linewidth=0.8pt,linecolor=NavyBlue!70,backgroundcolor=NavyBlue!3,roundcorner=4pt,frametitlefont=\sffamily\bfseries\color{NavyBlue},frametitleaboveskip=5pt,frametitlebelowskip=1pt,innertopmargin=2pt,innerbottommargin=6pt,skipabove=9pt,skipbelow=4pt}
+\newenvironment{howto}[1]{\begin{mdframed}[style=howtostyle,frametitle={#1}]}{\end{mdframed}}
 \title{Math 54 --- Week 11}
 \subtitle{Symmetric matrices and the singular value decomposition (Lay 7.1, 7.4); second-order linear equations (Nagle 4.2--4.3)}
 \author{}\date{}\ihead{}
@@ -20,14 +23,14 @@
 
 \section{Facts used from Weeks 1--10}
 \begin{enumerate}[label=(W\arabic*),leftmargin=2.8em,itemsep=4pt]
-  \ii \textbf{Diagonalization (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-5}{Week~8}):} $A=PDP^{-1}$ with $D$ diagonal $\iff A$ has $n$ linearly independent eigenvectors (the columns of $P$). Eigenvalues are roots of $\det(A-\lambda I)=0$; each eigenspace has dimension at most its algebraic multiplicity (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-7a}{Week~8}); similar matrices ($A=PBP^{-1}$) share the same characteristic polynomial (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-4}{Week~7}).
-  \ii \textbf{Orthogonal matrices (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-6}{Week~9}):} An $n\times n$ orthogonal matrix $U$ has orthonormal columns, $U^{\mathsf T}U=I$, and $U^{-1}=U^{\mathsf T}$; products of orthogonal matrices are orthogonal. An $m\times n$ matrix $U$ with orthonormal columns has $U^{\mathsf T}U=I_n$ even if $m\ne n$. Entry $(i,j)$ of $A^{\mathsf T}B$ is $(\text{col }i\text{ of }A)\cdot(\text{col }j\text{ of }B)$. Product $XY=\sum_j (\text{col }j\text{ of }X)(\text{row }j\text{ of }Y)$ (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Weeks~4}).
-  \ii \textbf{Gram--Schmidt (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-11}{Week~10}):} Every nonzero subspace of $\RR^n$ has an orthonormal basis. An orthonormal set $\{\vv u_1,\dots,\vv u_k\}$ extends to an orthonormal basis of $\RR^n$: extend to a basis (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}) and apply Gram--Schmidt, which leaves $\vv u_1,\dots,\vv u_k$ unchanged.
-  \ii \textbf{Complex numbers (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-9}{Week~8}):} For $z=a+bi\in\CC$, $\bar z=a-bi$, $z\bar z=a^2+b^2\ge 0$ with $z\bar z=0\iff z=0$. Every degree-$n$ polynomial has $n$ complex roots counting multiplicity (Fundamental Theorem of Algebra, cited). Every complex root $\lambda$ of $\det(A-\lambda I)=0$ has an eigenvector $\vv x\ne\vv 0$ in $\CC^n$, and for a real matrix $A$, $\overline{A\vv x}=A\bar{\vv x}$.
-  \ii \textbf{Subspaces (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}, \xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-3}{Week~9}):} $\rank A+\dim\Nul A=n$; $(\Col A)^\perp=\Nul A^{\mathsf T}$ and $(\Row A)^\perp=\Nul A$; $\dim W+\dim W^\perp=n$ and $(W^\perp)^\perp=W$; $\vv x^{\mathsf T}A^{\mathsf T}A\vv x=\|A\vv x\|^2$.
-  \ii \textbf{Projections (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-10}{Weeks~9--10}):} For an orthonormal basis $\vv u_1,\dots,\vv u_p$ of $W$ and $U=[\,\vv u_1\ \cdots\ \vv u_p\,]$, $\proj_W\vv y=UU^{\mathsf T}\vv y$; for unit $\vv u$, $\vv u\vv u^{\mathsf T}$ projects onto $\spn\{\vv u\}$. Least-squares solutions solve $A\hat{\vv x}=\proj_{\Col A}\vv b$.
-  \ii \textbf{Calculus:} $\frac{d}{dt}e^{rt}=re^{rt}$ (real $r$); product rule; Maclaurin series of $e^x,\cos x,\sin x$; $\cos(x-y)=\cos x\cos y+\sin x\sin y$.
-  \ii \textbf{Mass--spring model (Nagle 4.1, cited):} A mass $m>0$ on a spring of stiffness $k$ with damping $b$ (no external force) has position $y(t)$ satisfying $my''+by'+ky=0$.
+  \ii \target{fact-W1}\textbf{Diagonalization (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-5}{Week~8}):} $A=PDP^{-1}$ with $D$ diagonal $\iff A$ has $n$ linearly independent eigenvectors (the columns of $P$). Eigenvalues are roots of $\det(A-\lambda I)=0$; each eigenspace has dimension at most its algebraic multiplicity (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-7a}{Week~8}); similar matrices ($A=PBP^{-1}$) share the same characteristic polynomial (\xlink{math54}{2026-10-05-coordinates-eigenvalues}{thm-lay-5-4}{Week~7}).
+  \ii \target{fact-W2}\textbf{Orthogonal matrices (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-6}{Week~9}):} An $n\times n$ orthogonal matrix $U$ has orthonormal columns, $U^{\mathsf T}U=I$, and $U^{-1}=U^{\mathsf T}$; products of orthogonal matrices are orthogonal. An $m\times n$ matrix $U$ with orthonormal columns has $U^{\mathsf T}U=I_n$ even if $m\ne n$. Entry $(i,j)$ of $A^{\mathsf T}B$ is $(\text{col }i\text{ of }A)\cdot(\text{col }j\text{ of }B)$. Product $XY=\sum_j (\text{col }j\text{ of }X)(\text{row }j\text{ of }Y)$ (\xlink{math54}{2026-09-14-matrix-algebra-inverses}{thm-lay-2-8}{Weeks~4}).
+  \ii \target{fact-W3}\textbf{Gram--Schmidt (\xlink{math54}{2026-10-26-gram-schmidt-least-squares}{thm-lay-6-11}{Week~10}):} Every nonzero subspace of $\RR^n$ has an orthonormal basis. An orthonormal set $\{\vv u_1,\dots,\vv u_k\}$ extends to an orthonormal basis of $\RR^n$: extend to a basis (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-12}{Week~6}) and apply Gram--Schmidt, which leaves $\vv u_1,\dots,\vv u_k$ unchanged.
+  \ii \target{fact-W4}\textbf{Complex numbers (\xlink{math54}{2026-10-12-diagonalization-complex-eigenvalues}{thm-lay-5-9}{Week~8}):} For $z=a+bi\in\CC$, $\bar z=a-bi$, $z\bar z=a^2+b^2\ge 0$ with $z\bar z=0\iff z=0$. Every complex root $\lambda$ of $\det(A-\lambda I)=0$ has an eigenvector $\vv x\ne\vv 0$ in $\CC^n$, and for a real matrix $A$, $\overline{A\vv x}=A\bar{\vv x}$.
+  \ii \target{fact-W5}\textbf{Subspaces (\xlink{math54}{2026-09-28-bases-dimension-rank}{thm-lay-4-14}{Week~6}, \xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-3}{Week~9}):} $\rank A+\dim\Nul A=n$; $(\Col A)^\perp=\Nul A^{\mathsf T}$ and $(\Row A)^\perp=\Nul A$; $\dim W+\dim W^\perp=n$ and $(W^\perp)^\perp=W$; $\vv x^{\mathsf T}A^{\mathsf T}A\vv x=\|A\vv x\|^2$.
+  \ii \target{fact-W6}\textbf{Projections (\xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-10}{Weeks~9--10}):} For an orthonormal basis $\vv u_1,\dots,\vv u_p$ of $W$ and $U=[\,\vv u_1\ \cdots\ \vv u_p\,]$, $\proj_W\vv y=UU^{\mathsf T}\vv y$; for unit $\vv u$, $\vv u\vv u^{\mathsf T}$ projects onto $\spn\{\vv u\}$. Least-squares solutions solve $A\hat{\vv x}=\proj_{\Col A}\vv b$.
+  \ii \target{fact-W7}\textbf{Calculus:} $\frac{d}{dt}e^{rt}=re^{rt}$ (real $r$); product and quotient rules; a differentiable function with a maximum at an interior point has derivative $0$ there; a continuous function on a closed bounded set in $\RR^n$ (such as the unit sphere $\|\vv x\|=1$) attains a maximum (extreme value theorem); Maclaurin series of $e^x,\cos x,\sin x$; $\cos(x-y)=\cos x\cos y+\sin x\sin y$; if $(e^{Kt}E)'\le 0$ then $e^{Kt}E$ is nonincreasing.
+  \ii \target{fact-W8}\textbf{Mass--spring model (Nagle 4.1):} A mass $m>0$ on a spring of stiffness $k$ with damping $b$ (no external force) has position $y(t)$ satisfying $my''+by'+ky=0$: Newton's law $my''=F$ with spring force $-ky$ and damping force $-by'$.
 \end{enumerate}
 
 \section{This week}
@@ -69,18 +72,23 @@
   \end{enumerate}
 \end{theorem*}
 \begin{ideabox}
-  ``Orthogonally diagonalizable $\implies$ symmetric'' follows directly by taking transposes: $(PDP^{\mathsf T})^{\mathsf T}=PDP^{\mathsf T}$. For the converse, complex numbers first confine all eigenvalues to $\RR$ via the scalar $\bar{\vv x}^{\mathsf T}A\vv x$. Then one unit eigenvector $\vv u_1$ splits off an orthogonal complement on which $A$ acts as an $(n-1)\times(n-1)$ symmetric matrix, and induction completes the proof.
+  ``Orthogonally diagonalizable $\implies$ symmetric'' follows directly by taking transposes: $(PDP^{\mathsf T})^{\mathsf T}=PDP^{\mathsf T}$. For the converse we need one real unit eigenvector to start. The unit vector $\vv u$ that makes $\vv u^{\mathsf T}A\vv u$ as large as possible is one: tilting $\vv u$ slightly toward any perpendicular direction $\vv y$ cannot increase $\vv u^{\mathsf T}A\vv u$, which forces $\vv y\cdot A\vv u=0$ for every $\vv y\perp\vv u$, so $A\vv u$ is a multiple of $\vv u$. Then $\vv u_1$ splits off its orthogonal complement, on which $A$ acts as an $(n-1)\times(n-1)$ symmetric matrix, and induction completes the proof.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
     \ii \textbf{($\Rightarrow$) of Thm.~2.} If $A=PDP^{\mathsf T}$ ($D$ diagonal), then $A^{\mathsf T}=(P^{\mathsf T})^{\mathsf T}D^{\mathsf T}P^{\mathsf T}=PDP^{\mathsf T}=A$.
-    \ii \textbf{(a) Eigenvalues are real.} Let $\lambda\in\CC$ be any complex root of $\det(A-\lambda I)=0$, with eigenvector $\vv x\ne\vv 0$ in $\CC^n$ (W4), and set $q=\bar{\vv x}^{\mathsf T}A\vv x\in\CC$. Taking complex conjugate (with $A$ real) and transposing the $1\times 1$ matrix gives
+    \ii \textbf{Every complex eigenvalue is real.} Let $\lambda\in\CC$ be any complex root of $\det(A-\lambda I)=0$, with eigenvector $\vv x\ne\vv 0$ in $\CC^n$ (\ilink{fact-W4}{W4}), and set $q=\bar{\vv x}^{\mathsf T}A\vv x\in\CC$. Taking complex conjugate (with $A$ real) and transposing the $1\times 1$ matrix gives
     \[
       \bar q = \vv x^{\mathsf T}A\bar{\vv x} = (\vv x^{\mathsf T}A\bar{\vv x})^{\mathsf T} = \bar{\vv x}^{\mathsf T}A^{\mathsf T}\vv x = \bar{\vv x}^{\mathsf T}A\vv x = q,
     \]
-    so $q\in\RR$. Meanwhile $q=\lambda(\bar{\vv x}^{\mathsf T}\vv x)$, where $\bar{\vv x}^{\mathsf T}\vv x=|x_1|^2+\dots+|x_n|^2>0$ is real (W4, $\vv x\ne\vv 0$). Thus $\lambda=q/(\bar{\vv x}^{\mathsf T}\vv x)\in\RR$. By (W4), all $n$ roots (with multiplicity) are real.
-    \ii \textbf{(d) by induction on $n$ ($\Leftarrow$ of Thm.~2).} For $n=1$, $A=[a]=[1][a][1]$. Assume the claim for $(n-1)\times(n-1)$ symmetric matrices. By Step~2, $A$ has a real eigenvalue $\lambda_1$ with a unit real eigenvector $\vv u_1\in\RR^n$. Extend $\vv u_1$ to an orthonormal basis $\vv u_1,\dots,\vv u_n$ of $\RR^n$ (W3), and set $U=[\,\vv u_1\ W\,]$ with $W=[\,\vv u_2\ \cdots\ \vv u_n\,]$.
-    \ii Multiplying in blocks (W2),
+    so $q\in\RR$. Meanwhile $q=\lambda(\bar{\vv x}^{\mathsf T}\vv x)$, where $\bar{\vv x}^{\mathsf T}\vv x=|x_1|^2+\dots+|x_n|^2>0$ is real (\ilink{fact-W4}{W4}, $\vv x\ne\vv 0$).  Thus $\lambda=q/(\bar{\vv x}^{\mathsf T}\vv x)\in\RR$.
+    \ii \textbf{$A$ has a real unit eigenvector.} The function $Q(\vv x)=\vv x^{\mathsf T}A\vv x$ is continuous, so on the unit sphere it attains a maximum at some unit $\vv u$ (\ilink{fact-W7}{W7}). Let $\vv y\perp\vv u$ and, for real $\varepsilon$, $\vv x(\varepsilon)=(\vv u+\varepsilon\vv y)/\|\vv u+\varepsilon\vv y\|$, a unit vector with $\|\vv u+\varepsilon\vv y\|^2=1+\varepsilon^2\|\vv y\|^2$. Using $\vv u^{\mathsf T}A\vv y=\vv y^{\mathsf T}A\vv u$ (because $A^{\mathsf T}=A$),
+    \[
+      g(\varepsilon)=Q(\vv x(\varepsilon))=\frac{Q(\vv u)+2\varepsilon\,\vv y^{\mathsf T}A\vv u+\varepsilon^2Q(\vv y)}{1+\varepsilon^2\|\vv y\|^2}.
+    \]
+    The function $g$ has its maximum at $\varepsilon=0$, so $g'(0)=0$ (\ilink{fact-W7}{W7}); by the quotient rule $g'(0)=2\,\vv y^{\mathsf T}A\vv u$. Hence $A\vv u$ is orthogonal to every $\vv y\perp\vv u$, that is, $A\vv u\in\bigl(\spn\{\vv u\}^\perp\bigr)^\perp=\spn\{\vv u\}$ (\ilink{fact-W5}{W5}). So $A\vv u=\lambda\vv u$ with $\lambda=\vv u^{\mathsf T}A\vv u$ real.
+    \ii \textbf{(d) by induction on $n$ ($\Leftarrow$ of Thm.~2).} For $n=1$, $A=[a]=[1][a][1]$. Assume the claim for $(n-1)\times(n-1)$ symmetric matrices. By step~3, $A$ has a real eigenvalue $\lambda_1$ with a unit real eigenvector $\vv u_1\in\RR^n$. Extend $\vv u_1$ to an orthonormal basis $\vv u_1,\dots,\vv u_n$ of $\RR^n$ (\ilink{fact-W3}{W3}), and set $U=[\,\vv u_1\ W\,]$ with $W=[\,\vv u_2\ \cdots\ \vv u_n\,]$.
+    \ii Multiplying in blocks (\ilink{fact-W2}{W2}),
     \[
       U^{\mathsf T}AU = \begin{bmatrix}\vv u_1^{\mathsf T}A\vv u_1 & \vv u_1^{\mathsf T}AW\\ W^{\mathsf T}A\vv u_1 & W^{\mathsf T}AW\end{bmatrix}.
     \]
@@ -92,12 +100,16 @@
     \[
       V_1 = \begin{bmatrix}1&\vv 0^{\mathsf T}\\\vv 0&V\end{bmatrix}, \qquad D = \begin{bmatrix}\lambda_1&\vv 0^{\mathsf T}\\\vv 0&D'\end{bmatrix}.
     \]
-    Then $V_1$ is orthogonal (orthonormal columns from $V$), and $V_1DV_1^{\mathsf T}=\begin{psmallmatrix}\lambda_1&\vv 0^{\mathsf T}\\\vv 0&VD'V^{\mathsf T}\end{psmallmatrix}=U^{\mathsf T}AU$. Left-multiplying by $U$ and right-multiplying by $U^{\mathsf T}$ ($U^{-1}=U^{\mathsf T}$) gives $A=(UV_1)D(UV_1)^{\mathsf T}$ with $UV_1$ orthogonal (W2).
-    \ii \textbf{(b) and (c).} From $A=PDP^{\mathsf T}=PDP^{-1}$, $A$ and $D$ are similar and share the same characteristic polynomial $\det(D-\lambda I)$ (W1). Each eigenvalue $\lambda$ appears $m$ times on $\operatorname{diag}(D)$ (algebraic multiplicity $m$), giving $m$ orthonormal columns in $P$; hence $\dim\Nul(A-\lambda I)\ge m$, and by (W1) it is at most $m$. Part (c) is Thm.~1. \qedhere
+    Then $V_1$ is orthogonal (orthonormal columns from $V$), and $V_1DV_1^{\mathsf T}=\begin{psmallmatrix}\lambda_1&\vv 0^{\mathsf T}\\\vv 0&VD'V^{\mathsf T}\end{psmallmatrix}=U^{\mathsf T}AU$. Left-multiplying by $U$ and right-multiplying by $U^{\mathsf T}$ ($U^{-1}=U^{\mathsf T}$) gives $A=(UV_1)D(UV_1)^{\mathsf T}$ with $UV_1$ orthogonal (\ilink{fact-W2}{W2}).
+    \ii \textbf{(a) $n$ real eigenvalues.} From $A=PDP^{\mathsf T}$ and $\det P\det P^{\mathsf T}=\det(PP^{\mathsf T})=1$,
+    \[
+      \det(A-\lambda I)=\det\bigl(P(D-\lambda I)P^{\mathsf T}\bigr)=\det(D-\lambda I)=(d_1-\lambda)\cdots(d_n-\lambda).
+    \] So the characteristic polynomial has the $n$ real roots $d_1,\dots,d_n$, counted with multiplicity.
+    \ii \textbf{(b) and (c).} From $A=PDP^{\mathsf T}=PDP^{-1}$, $A$ and $D$ are similar and share the same characteristic polynomial $\det(D-\lambda I)$ (\ilink{fact-W1}{W1}). Each eigenvalue $\lambda$ appears $m$ times on $\operatorname{diag}(D)$ (algebraic multiplicity $m$), giving $m$ orthonormal columns in $P$; hence $\dim\Nul(A-\lambda I)\ge m$, and by (\ilink{fact-W1}{W1}) it is at most $m$. Part (c) is \ilink{thm-lay-7-1}{Thm.~1}. \qedhere
   \end{steps}
 \end{proof}
 
-\noindent\textbf{The question answered.} Yes, by the Spectral Theorem. Normalizing the eigenvectors $(1,1)$ and $(1,-1)$ of $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ gives
+\revisit Yes, by the Spectral Theorem. Normalizing the eigenvectors $(1,1)$ and $(1,-1)$ of $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$ gives
 \[
   P = \frac{1}{\sqrt{2}}\begin{bmatrix}1&1\\1&-1\end{bmatrix}, \qquad
   D = \begin{bmatrix}4&0\\0&2\end{bmatrix}, \qquad
@@ -133,18 +145,30 @@
 \figcap{This positive definite symmetric matrix stretches along perpendicular eigenvector axes; both panels use the same unit scale. On $A=\begin{psmallmatrix}3&1\\1&3\end{psmallmatrix}$, the unit circle maps to an ellipse with orthogonal semi-axes $A\vv u_1=4\vv u_1$ and $A\vv u_2=2\vv u_2$.}
 \end{fig}
 
-\begin{example*}[Worked example: a repeated eigenvalue]\target{ex-repeated-sym}
+\begin{howto}{How to orthogonally diagonalize a symmetric matrix}\target{howto-orth-diag}
+  \begin{steps}
+    \ii \textbf{Check symmetry.} If $A^{\mathsf T}\neq A$, no orthogonal $P$ exists (\ilink{thm-lay-7-2}{Spectral Theorem}, Thm.~2).
+    \ii \textbf{Eigenvalues.} Solve $\det(A-\lambda I)=0$ and record the multiplicities; all roots are real.
+    \ii \textbf{Eigenspaces.} For each eigenvalue, row-reduce $A-\lambda I$ and take a basis of $\Nul(A-\lambda I)$. Its dimension must equal the multiplicity (Thm.~3(b) of the \ilink{thm-lay-7-3}{Spectral Theorem}); if it does not, recheck the arithmetic.
+    \ii \textbf{Orthogonalize inside each eigenspace.} Apply Gram--Schmidt (\ilink{fact-W3}{W3}) to the basis of each eigenspace of dimension $\ge 2$. Vectors from different eigenspaces are already orthogonal (\ilink{thm-lay-7-1}{Thm.~1}).
+    \ii \textbf{Normalize and assemble.} Divide each vector by its length. Put the unit vectors into $P$ as columns, and the matching eigenvalues, in the same order, on the diagonal of $D$. Then $A=PDP^{\mathsf T}$.
+    \ii \textbf{Check.} $P^{\mathsf T}P=I$ and $AP=PD$ (column $j$: $A\vv u_j=\lambda_j\vv u_j$).
+  \end{steps}
+  \textbf{Edge cases.} An eigenvalue $0$ is allowed: its unit eigenvectors still go into $P$ and $D$ gets a $0$. If $A=cI$, every unit vector is an eigenvector and any orthogonal $P$ works. A diagonal $A$ needs $P=I$.
+\end{howto}
+
+\begin{example*}[Orthogonal diagonalization with a repeated eigenvalue]\target{ex-repeated-sym}
   Orthogonally diagonalize
   \[
     A=\begin{bmatrix}2&1&1\\1&2&1\\1&1&2\end{bmatrix}.
   \]
   \begin{steps}
-    \ii Since $A(1,1,1)=(4,4,4)$, $\lambda_1=4$ has unit eigenvector $\vv u_1=\frac{1}{\sqrt{3}}(1,1,1)$. Notice $A-I$ is the all-ones matrix of rank~$1$, so $\lambda_2=1$ has 2D eigenspace $x_1+x_2+x_3=0$ (multiplicities $1+2=3$ by Thm.~3(b)).
+    \ii Since $A(1,1,1)=(4,4,4)$, $\lambda_1=4$ has unit eigenvector $\vv u_1=\frac{1}{\sqrt{3}}(1,1,1)$. Notice $A-I$ is the all-ones matrix of rank~$1$, so $\lambda_2=1$ has 2D eigenspace $x_1+x_2+x_3=0$ (multiplicities $1+2=3$ by Thm.~3(b) of the \ilink{thm-lay-7-3}{Spectral Theorem}).
     \ii Pick a basis $(-1,1,0)$, $(-1,0,1)$ of $x_1+x_2+x_3=0$ (note: not yet orthogonal). Run Gram--Schmidt inside that eigenspace:
     \[
       (-1,0,1) - \frac{1}{2}(-1,1,0) = \left(-\frac12,-\frac12,1\right) \quad\longrightarrow\quad \text{scale to } (-1,-1,2).
     \]
-    \ii Both are automatically orthogonal to $(1,1,1)$ by Thm.~1. Normalize all three:
+    \ii Both are orthogonal to $(1,1,1)$ by \ilink{thm-lay-7-1}{Thm.~1}. Normalize all three:
     \[
       P=\begin{bmatrix}1/\sqrt{3} & 1/\sqrt{2} & 1/\sqrt{6}\\ 1/\sqrt{3} & -1/\sqrt{2} & 1/\sqrt{6}\\ 1/\sqrt{3} & 0 & -2/\sqrt{6}\end{bmatrix},\qquad
       D=\begin{bmatrix}4&0&0\\0&1&0\\0&0&1\end{bmatrix},\qquad A=PDP^{\mathsf T}.
@@ -152,20 +176,28 @@
   \end{steps}
 \end{example*}
 
-\noindent\textbf{Spectral decomposition.} Expanding $A=(PD)P^{\mathsf T}$ as a sum of $(\text{column})(\text{row})$ products (W2) gives
+\begin{example*}[A symmetric matrix with eigenvalue $0$]\target{ex-sym-zero}
+  For $A=\begin{psmallmatrix}1&1\\1&1\end{psmallmatrix}$, $\det(A-\lambda I)=(1-\lambda)^2-1=\lambda(\lambda-2)$, so $\lambda=2$ and $\lambda=0$. $A(1,1)=(2,2)$ and $A(-1,1)=(0,0)$, so
+  \[
+    P=\frac{1}{\sqrt2}\begin{bmatrix}1&-1\\1&1\end{bmatrix},\qquad D=\begin{bmatrix}2&0\\0&0\end{bmatrix},\qquad A=PDP^{\mathsf T}.
+  \]
+  $A$ is not invertible, but it is orthogonally diagonalizable: invertibility and diagonalizability are separate questions.
+\end{example*}
+
+\noindent\textbf{Spectral decomposition.} Expanding $A=(PD)P^{\mathsf T}$ as a sum of $(\text{column})(\text{row})$ products (\ilink{fact-W2}{W2}) gives
 \[
   A = \lambda_1\vv u_1\vv u_1^{\mathsf T} + \lambda_2\vv u_2\vv u_2^{\mathsf T} + \dots + \lambda_n\vv u_n\vv u_n^{\mathsf T}.
 \]
-Each $\vv u_j\vv u_j^{\mathsf T}$ has rank~$1$ and is the orthogonal projection matrix onto $\spn\{\vv u_j\}$ (W6), so $A$ acts as a weighted sum of projections onto perpendicular lines. For $A$ of the question,
+Each $\vv u_j\vv u_j^{\mathsf T}$ has rank~$1$ and is the orthogonal projection matrix onto $\spn\{\vv u_j\}$ (\ilink{fact-W6}{W6}), so $A$ acts as a weighted sum of projections onto perpendicular lines. For $A$ of the question,
 \[
   \begin{bmatrix}3&1\\1&3\end{bmatrix} = 4\cdot\frac12\begin{bmatrix}1&1\\1&1\end{bmatrix} + 2\cdot\frac12\begin{bmatrix}1&-1\\-1&1\end{bmatrix}.
 \]
 
 \begin{shortcuts}
-  \ii \textbf{Different eigenvalues need no Gram--Schmidt:} Eigenvectors for distinct eigenvalues of symmetric $A$ are automatically orthogonal (Thm.~1); normalize them only. Use Gram--Schmidt strictly inside an eigenspace of dimension $\ge 2$ (as in the $3\times 3$ example above).
-  \ii \textbf{$2\times 2$ symmetric shortcut:} Once $\vv v_1=(a,b)$ is an eigenvector for $\lambda_1$, $(-b,a)$ is automatically an eigenvector for $\lambda_2\ne\lambda_1$ (orthogonal line by Thm.~1).
-  \ii \textbf{Immediate inverse $P^{-1}=P^{\mathsf T}$:} No row reduction needed to write $A=PDP^{\mathsf T}$ (W2).
-  \ii \textbf{Last $3\times 3$ eigenspace by orthogonality:} For eigenvalues $\lambda_1$ (simple) and $\lambda_2$ (double), the $\lambda_2$-eigenspace is the plane $\vv v_1^\perp$ by Thm.~3(b)--(c).
+  \ii \textbf{Different eigenvalues need no Gram--Schmidt:} Eigenvectors for distinct eigenvalues of symmetric $A$ are already orthogonal (\ilink{thm-lay-7-1}{Thm.~1}); normalize them only. Use Gram--Schmidt strictly inside an eigenspace of dimension $\ge 2$ (as in the $3\times 3$ example above).
+  \ii \textbf{$2\times 2$ symmetric shortcut:} Once $\vv v_1=(a,b)$ is an eigenvector for $\lambda_1$, $(-b,a)$ is an eigenvector for $\lambda_2\ne\lambda_1$, because the $\lambda_2$-eigenspace is a line orthogonal to $\vv v_1$ (\ilink{thm-lay-7-1}{Thm.~1}).
+  \ii \textbf{Immediate inverse $P^{-1}=P^{\mathsf T}$:} No row reduction needed to write $A=PDP^{\mathsf T}$ (\ilink{fact-W2}{W2}).
+  \ii \textbf{Last $3\times 3$ eigenspace by orthogonality:} For eigenvalues $\lambda_1$ (simple) and $\lambda_2$ (double), the $\lambda_2$-eigenspace is the plane $\vv v_1^\perp$ by Thm.~3(b)--(c) of the \ilink{thm-lay-7-3}{Spectral Theorem}.
 \end{shortcuts}
 
 \begin{trapbox}
@@ -184,7 +216,7 @@ Each $\vv u_j\vv u_j^{\mathsf T}$ has rank~$1$ and is the orthogonal projection 
   cannot be orthogonally diagonalized, yet it still maps the unit circle to an ellipse. How long are the semi-axes of this image ellipse, in which perpendicular directions do they point, and which unit inputs $\vv x$ maximize $\|A\vv x\|$?
 \end{qbox}
 
-Even when $A$ is rectangular ($m\times n$), the matrix $A^{\mathsf T}A$ is $n\times n$ and symmetric: $(A^{\mathsf T}A)^{\mathsf T}=A^{\mathsf T}A$. Moreover $\|A\vv x\|^2=\vv x^{\mathsf T}A^{\mathsf T}A\vv x$ (W5). By the Spectral Theorem, $A^{\mathsf T}A$ has an orthonormal basis of eigenvectors $\vv v_1,\dots,\vv v_n\in\RR^n$ with real eigenvalues $\lambda_1\ge\lambda_2\ge\dots\ge\lambda_n$. Every $\lambda_i\ge 0$ because
+Even when $A$ is rectangular ($m\times n$), the matrix $A^{\mathsf T}A$ is $n\times n$ and symmetric: $(A^{\mathsf T}A)^{\mathsf T}=A^{\mathsf T}A$. Moreover $\|A\vv x\|^2=\vv x^{\mathsf T}A^{\mathsf T}A\vv x$ (\ilink{fact-W5}{W5}). By the Spectral Theorem, $A^{\mathsf T}A$ has an orthonormal basis of eigenvectors $\vv v_1,\dots,\vv v_n\in\RR^n$ with real eigenvalues $\lambda_1\ge\lambda_2\ge\dots\ge\lambda_n$. Every $\lambda_i\ge 0$ because
 \[
   \|A\vv v_i\|^2 = \vv v_i^{\mathsf T}(A^{\mathsf T}A\vv v_i) = \lambda_i(\vv v_i\cdot\vv v_i) = \lambda_i.
 \]
@@ -195,14 +227,18 @@ Even when $A$ is rectangular ($m\times n$), the matrix $A^{\mathsf T}A$ is $n\ti
 \[
   \|A\vv x\|^2 = \vv x^{\mathsf T}A^{\mathsf T}A\vv x = \lambda_1 c_1^2 + \dots + \lambda_n c_n^2 \le \lambda_1(c_1^2+\dots+c_n^2) = \lambda_1 = \sigma_1^2,
 \]
-with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\perp\vv v_1$ ($c_1=0$) gives $\max\|A\vv x\|=\sigma_2$ at $\pm\vv v_2$, and so on.
+with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\perp\vv v_1$ ($c_1=0$) gives $\max\|A\vv x\|=\sigma_2$ at $\pm\vv v_2$, and so on. In the same way $\lambda_1c_1^2+\dots+\lambda_nc_n^2\ge\lambda_n(c_1^2+\dots+c_n^2)$, so $\|A\vv x\|\ge\sigma_n\|\vv x\|$ for every $\vv x$: $\sigma_n$ is the minimum stretch.
 
 \begin{theorem*}[The images $A\vv v_i$ form an orthogonal basis of $\Col A$ (Lay 7.4, Thm.~9)]\target{thm-lay-7-9}
   Let $\{\vv v_1,\dots,\vv v_n\}$ be an orthonormal basis of eigenvectors of $A^{\mathsf T}A$ with $\lambda_1\ge\dots\ge\lambda_n$, and suppose $A$ has exactly $r$ nonzero singular values ($\sigma_1\ge\dots\ge\sigma_r>0=\sigma_{r+1}=\dots=\sigma_n$). Then $\{A\vv v_1,\dots,A\vv v_r\}$ is an orthogonal basis of $\Col A$, and $\rank A=r$.
 \end{theorem*}
 \begin{proof}
   \begin{steps}
-    \ii For $i\ne j$, $(A\vv v_i)\cdot(A\vv v_j) = \vv v_i^{\mathsf T}(A^{\mathsf T}A\vv v_j) = \lambda_j(\vv v_i\cdot\vv v_j)=0$, so the image vectors are pairwise orthogonal.
+    \ii For $i\ne j$,
+    \[
+      (A\vv v_i)\cdot(A\vv v_j) = \vv v_i^{\mathsf T}(A^{\mathsf T}A\vv v_j) = \lambda_j(\vv v_i\cdot\vv v_j)=0,
+    \]
+    so the image vectors are pairwise orthogonal.
     \ii Since $\|A\vv v_i\|=\sigma_i$, $A\vv v_1,\dots,A\vv v_r$ are nonzero and orthogonal (hence independent, \xlink{math54}{2026-10-19-orthogonality-projections}{thm-lay-6-4}{Week~9}), while $A\vv v_i=\vv 0$ for $i>r$.
     \ii Every $\vv y=A\vv x\in\Col A$, writing $\vv x=\sum_{i=1}^n c_i\vv v_i$, satisfies $\vv y=\sum_{i=1}^r c_i(A\vv v_i)$, so $\{A\vv v_1,\dots,A\vv v_r\}$ spans $\Col A$ and $\rank A=\dim\Col A=r$. \qedhere
   \end{steps}
@@ -216,23 +252,23 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
   where $U$ ($m\times m$) and $V$ ($n\times n$) are orthogonal, and $\Sigma$ is $m\times n$ with diagonal entries $\sigma_1,\dots,\sigma_r$ in its upper-left $r\times r$ block and zeros elsewhere (including $0$'s down the diagonal for $i>r$).
 \end{theorem*}
 \begin{ideabox}
-  Geometrically, $V=[\,\vv v_1\ \cdots\ \vv v_n\,]$ holds the perpendicular input axes on the unit sphere in $\RR^n$; Thm.~9 guarantees their images $A\vv v_i$ remain perpendicular in $\RR^m$. Normalizing them produces unit output directions $\vv u_i=A\vv v_i/\sigma_i$ ($i\le r$), so $A\vv v_i=\sigma_i\vv u_i$---and column by column that equation reads $AV=U\Sigma$.
+  Geometrically, $V=[\,\vv v_1\ \cdots\ \vv v_n\,]$ holds the perpendicular input axes on the unit sphere in $\RR^n$; \ilink{thm-lay-7-9}{Thm.~9} guarantees their images $A\vv v_i$ remain perpendicular in $\RR^m$. Normalizing them produces unit output directions $\vv u_i=A\vv v_i/\sigma_i$ ($i\le r$), so $A\vv v_i=\sigma_i\vv u_i$---and column by column that equation reads $AV=U\Sigma$.
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii Let $\vv v_1,\dots,\vv v_n$ be as in Thm.~9, and form orthogonal $V=[\,\vv v_1\ \cdots\ \vv v_n\,]$.
-    \ii Define $\vv u_i=A\vv v_i/\sigma_i$ for $1\le i\le r$ (orthonormal by Thm.~9). Extend to an orthonormal basis $\vv u_1,\dots,\vv u_m$ of $\RR^m$ (W3) and form orthogonal $U=[\,\vv u_1\ \cdots\ \vv u_m\,]$.
+    \ii Let $\vv v_1,\dots,\vv v_n$ be as in \ilink{thm-lay-7-9}{Thm.~9}, and form orthogonal $V=[\,\vv v_1\ \cdots\ \vv v_n\,]$.
+    \ii Define $\vv u_i=A\vv v_i/\sigma_i$ for $1\le i\le r$ (orthonormal by \ilink{thm-lay-7-9}{Thm.~9}). Extend to an orthonormal basis $\vv u_1,\dots,\vv u_m$ of $\RR^m$ (\ilink{fact-W3}{W3}) and form orthogonal $U=[\,\vv u_1\ \cdots\ \vv u_m\,]$.
     \ii Since $A\vv v_i=\sigma_i\vv u_i$ for $i\le r$ and $A\vv v_i=\vv 0$ for $i>r$, column-by-column comparison reads $AV=[\,\sigma_1\vv u_1\ \cdots\ \sigma_r\vv u_r\ \vv 0\ \cdots\ \vv 0\,]=U\Sigma$. Multiplying on the right by $V^{-1}=V^{\mathsf T}$ yields $A=U\Sigma V^{\mathsf T}$. \qedhere
   \end{steps}
 \end{proof}
 
-\noindent\textbf{Remarks on the SVD.} The columns of $U$ are \textbf{left singular vectors}, and the columns of $V$ are \textbf{right singular vectors}. While $\Sigma$ is unique, $U$ and $V$ are not (e.g.\ negating both $\vv v_i$ and $\vv u_i$ gives another SVD). Expanding $U\Sigma V^{\mathsf T}$ as $(\text{col})(\text{row})$ products (W2) gives the rank-$1$ decomposition $A=\sigma_1\vv u_1\vv v_1^{\mathsf T}+\dots+\sigma_r\vv u_r\vv v_r^{\mathsf T}$, and transposing yields $A^{\mathsf T}=V\Sigma^{\mathsf T}U^{\mathsf T}$.
+\noindent\textbf{Remarks on the SVD.} The columns of $U$ are \textbf{left singular vectors}, and the columns of $V$ are \textbf{right singular vectors}. While $\Sigma$ is unique, $U$ and $V$ are not (e.g.\ negating both $\vv v_i$ and $\vv u_i$ gives another SVD). Expanding $U\Sigma V^{\mathsf T}$ as $(\text{col})(\text{row})$ products (\ilink{fact-W2}{W2}) gives the rank-$1$ decomposition $A=\sigma_1\vv u_1\vv v_1^{\mathsf T}+\dots+\sigma_r\vv u_r\vv v_r^{\mathsf T}$, and transposing yields $A^{\mathsf T}=V\Sigma^{\mathsf T}U^{\mathsf T}$.
 
-\medskip\noindent\textbf{The question answered.} For $A=\begin{psmallmatrix}3&0\\4&5\end{psmallmatrix}$:
+\revisit For $A=\begin{psmallmatrix}3&0\\4&5\end{psmallmatrix}$:
 \begin{steps}
   \ii $A^{\mathsf T}A=\begin{psmallmatrix}25&20\\20&25\end{psmallmatrix}$ has characteristic polynomial $\lambda^2-50\lambda+225=(\lambda-45)(\lambda-5)$.
   \ii For $\lambda_1=45$, $(A^{\mathsf T}A-45I)$ has first row $(-20,20)\implies\vv v_1=\frac{1}{\sqrt{2}}(1,1)$; for $\lambda_2=5$, $\vv v_2=\frac{1}{\sqrt{2}}(-1,1)$. Thus $\sigma_1=\sqrt{45}=3\sqrt{5}$ and $\sigma_2=\sqrt{5}$.
-  \ii $A\vv v_1=\frac{1}{\sqrt{2}}(3,9)\implies \vv u_1=\frac{1}{\sqrt{10}}(1,3)$, and $A\vv v_2=\frac{1}{\sqrt{2}}(-3,1)\implies \vv u_2=\frac{1}{\sqrt{10}}(-3,1)$. Hence
+  \ii $A\vv v_1=\frac{1}{\sqrt{2}}(3,9)$, so $\vv u_1=A\vv v_1/\sigma_1=\frac{1}{\sqrt{10}}(1,3)$; and $A\vv v_2=\frac{1}{\sqrt{2}}(-3,1)$, so $\vv u_2=\frac{1}{\sqrt{10}}(-3,1)$. Hence
   \[
     A = \underbrace{\frac{1}{\sqrt{10}}\begin{bmatrix}1&-3\\3&1\end{bmatrix}}_{U}
         \underbrace{\begin{bmatrix}3\sqrt{5}&0\\0&\sqrt{5}\end{bmatrix}}_{\Sigma}
@@ -271,15 +307,15 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
 \figcap{SVD of $A=\begin{psmallmatrix}3&0\\4&5\end{psmallmatrix}$: right singular vectors $\vv v_1,\vv v_2$ on the unit circle map to orthogonal semi-axes $A\vv v_1=\sigma_1\vv u_1$ ($\approx 6.7$) and $A\vv v_2=\sigma_2\vv u_2$ ($\approx 2.2$), drawn at half input scale.}
 \end{fig}
 
-\begin{example*}[Worked example: a $3\times 2$ matrix (extending $U$)]
+\begin{example*}[SVD of a $3\times 2$ matrix: extending $U$]\target{ex-svd-3x2}
   Find an SVD of
   \[
     A=\begin{bmatrix}1&1\\0&1\\1&0\end{bmatrix}.
   \]
   \begin{steps}
     \ii $A^{\mathsf T}A=\begin{psmallmatrix}2&1\\1&2\end{psmallmatrix}$ has characteristic polynomial $(\lambda-3)(\lambda-1)$, unit eigenvectors $\vv v_1=\frac{1}{\sqrt{2}}(1,1)$ for $\lambda_1=3$ and $\vv v_2=\frac{1}{\sqrt{2}}(1,-1)$ for $\lambda_2=1$, so $\sigma_1=\sqrt{3}$, $\sigma_2=1$.
-    \ii $A\vv v_1=\frac{1}{\sqrt{2}}(2,1,1)\implies \vv u_1=\frac{1}{\sqrt{6}}(2,1,1)$; $A\vv v_2=\frac{1}{\sqrt{2}}(0,-1,1)\implies \vv u_2=\frac{1}{\sqrt{2}}(0,-1,1)$.
-    \ii Complete $U$ with a unit vector $\vv u_3\perp\vv u_1,\vv u_2$, i.e.\ in $(\Col A)^\perp=\Nul A^{\mathsf T}$ (W5). Solving $2x_1+x_2+x_3=0$ and $-x_2+x_3=0$ gives $\vv u_3=\frac{1}{\sqrt{3}}(1,-1,-1)$. Thus
+    \ii $A\vv v_1=\frac{1}{\sqrt{2}}(2,1,1)$, so $\vv u_1=\frac{1}{\sqrt{6}}(2,1,1)$; $A\vv v_2=\frac{1}{\sqrt{2}}(0,-1,1)$, so $\vv u_2=\frac{1}{\sqrt{2}}(0,-1,1)$.
+    \ii Complete $U$ with a unit vector $\vv u_3\perp\vv u_1,\vv u_2$, i.e.\ in $(\Col A)^\perp=\Nul A^{\mathsf T}$ (\ilink{fact-W5}{W5}). Solving $2x_1+x_2+x_3=0$ and $-x_2+x_3=0$ gives $\vv u_3=\frac{1}{\sqrt{3}}(1,-1,-1)$. Thus
     \[
       A = \begin{bmatrix}2/\sqrt{6}&0&1/\sqrt{3}\\1/\sqrt{6}&-1/\sqrt{2}&-1/\sqrt{3}\\1/\sqrt{6}&1/\sqrt{2}&-1/\sqrt{3}\end{bmatrix}
           \begin{bmatrix}\sqrt{3}&0\\0&1\\0&0\end{bmatrix}
@@ -288,9 +324,9 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
   \end{steps}
 \end{example*}
 
-\noindent\textbf{When $0$ is an eigenvalue of $A^{\mathsf T}A$.} Whenever $\rank A<n$ (either square singular $A$, or wide $n>m$ since $\rank A\le m<n$), zero singular values $\sigma_{r+1}=\dots=\sigma_n=0$ modify three steps cleanly.
+\noindent\textbf{When $0$ is an eigenvalue of $A^{\mathsf T}A$.} Whenever $\rank A<n$ (either square singular $A$, or wide $n>m$ since $\rank A\le m<n$), there are zero singular values $\sigma_{r+1}=\dots=\sigma_n=0$, and three steps of the construction change.
 
-\begin{proposition*}[Zero singular values]
+\begin{proposition*}[Zero singular values]\target{prop-zero-sv}
   Let $A$ be $m\times n$ of rank $r<n$, so $\sigma_{r+1}=\dots=\sigma_n=0$. Then:
   \begin{enumerate}
     \ii[(i)] the $0$-eigenvectors of $A^{\mathsf T}A$ are precisely the nonzero vectors of $\Nul A$; take $\{\vv v_{r+1},\dots,\vv v_n\}$ to be any orthonormal basis of $\Nul A$;
@@ -300,21 +336,23 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
 \end{proposition*}
 \begin{proof}
   \begin{steps}
-    \ii \textbf{(i).} $A\vv x=\vv 0\implies A^{\mathsf T}A\vv x=\vv 0$, and conversely $A^{\mathsf T}A\vv x=\vv 0\implies \|A\vv x\|^2=\vv x^{\mathsf T}A^{\mathsf T}A\vv x=0\implies A\vv x=\vv 0$ (W5).
-    \ii \textbf{(ii).} Proof of Thm.~10 only needs $\vv u_{r+1},\dots,\vv u_m$ to complete $\{\vv u_1,\dots,\vv u_r\}$ to an orthonormal basis of $\RR^m$, i.e.\ an orthonormal basis of $(\Col A)^\perp=\Nul A^{\mathsf T}$ (W5).
-    \ii \textbf{(iii).} By Thm.~3(b) applied to symmetric $A^{\mathsf T}A$, the multiplicity of $0$ as an eigenvalue of $A^{\mathsf T}A$ equals $\dim\Nul(A^{\mathsf T}A)=\dim\Nul A=n-r$. \qedhere
+    \ii \textbf{(i).} $A\vv x=\vv 0\implies A^{\mathsf T}A\vv x=\vv 0$, and conversely $A^{\mathsf T}A\vv x=\vv 0\implies \|A\vv x\|^2=\vv x^{\mathsf T}A^{\mathsf T}A\vv x=0\implies A\vv x=\vv 0$ (\ilink{fact-W5}{W5}).
+    \ii \textbf{(ii).} The proof of the \ilink{thm-lay-7-10}{SVD theorem} only needs $\vv u_{r+1},\dots,\vv u_m$ to complete $\{\vv u_1,\dots,\vv u_r\}$ to an orthonormal basis of $\RR^m$, i.e.\ an orthonormal basis of $(\Col A)^\perp=\Nul A^{\mathsf T}$ (\ilink{fact-W5}{W5}).
+    \ii \textbf{(iii).} By Thm.~3(b) of the \ilink{thm-lay-7-3}{Spectral Theorem} applied to symmetric $A^{\mathsf T}A$, the multiplicity of $0$ as an eigenvalue of $A^{\mathsf T}A$ equals $\dim\Nul(A^{\mathsf T}A)=\dim\Nul A=n-r$. \qedhere
   \end{steps}
 \end{proof}
 
-\begin{example*}[Worked examples: $0$ singular values]
-  \textbf{(a) Square singular matrix:} Let $A=\begin{psmallmatrix}1&-1\\2&-2\end{psmallmatrix}$ ($\det A=0$, eigenvalues $-1$ and $0$). Then $A^{\mathsf T}A=\begin{psmallmatrix}5&-5\\-5&5\end{psmallmatrix}$ has eigenvalues $10$ and $0$. Scaling the unit eigenvector $\vv v_1=\frac{1}{\sqrt{2}}(1,-1)$ gives $\sigma_1=\sqrt{10}$ and $A\vv v_1=\frac{1}{\sqrt{2}}(2,4)$, so $\vv u_1=\frac{1}{\sqrt{5}}(1,2)$. Choosing $\vv v_2=\frac{1}{\sqrt{2}}(1,1)$ in $\Nul A$ (with $\sigma_2=0$) and $\vv u_2=\frac{1}{\sqrt{5}}(-2,1)$ in $\Nul A^{\mathsf T}$ ($x_1+2x_2=0$) produces
+\begin{example*}[SVD of a square singular matrix]\target{ex-svd-singular}
+  Let $A=\begin{psmallmatrix}1&-1\\2&-2\end{psmallmatrix}$ ($\det A=0$, eigenvalues $-1$ and $0$). Then $A^{\mathsf T}A=\begin{psmallmatrix}5&-5\\-5&5\end{psmallmatrix}$ has eigenvalues $10$ and $0$. Scaling the unit eigenvector $\vv v_1=\frac{1}{\sqrt{2}}(1,-1)$ gives $\sigma_1=\sqrt{10}$ and $A\vv v_1=\frac{1}{\sqrt{2}}(2,4)$, so $\vv u_1=\frac{1}{\sqrt{5}}(1,2)$. Choosing $\vv v_2=\frac{1}{\sqrt{2}}(1,1)$ in $\Nul A$ (with $\sigma_2=0$) and $\vv u_2=\frac{1}{\sqrt{5}}(-2,1)$ in $\Nul A^{\mathsf T}$ ($x_1+2x_2=0$) produces
   \[
     A = \underbrace{\frac{1}{\sqrt{5}}\begin{bmatrix}1&-2\\2&1\end{bmatrix}}_{U}
         \underbrace{\begin{bmatrix}\sqrt{10}&0\\0&0\end{bmatrix}}_{\Sigma}
         \underbrace{\frac{1}{\sqrt{2}}\begin{bmatrix}1&-1\\1&1\end{bmatrix}}_{V^{\mathsf T}}
       = \sqrt{10}\,\vv u_1\vv v_1^{\mathsf T}.
   \]
-  \textbf{(b) Double zero (Gram--Schmidt in both $\Nul A$ and $\Nul A^{\mathsf T}$):}
+\end{example*}
+
+\begin{example*}[A double zero singular value: Gram--Schmidt in both $\Nul A$ and $\Nul A^{\mathsf T}$]\target{ex-svd-double-zero}
   \[
     A=\begin{bmatrix}1&1&1\\1&1&1\\0&0&0\end{bmatrix}.
   \]
@@ -342,10 +380,10 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
 
 \needspace{5\baselineskip}\noindent\textbf{What the SVD gives.} Let $A=U\Sigma V^{\mathsf T}$ have rank $r$:
 \begin{itemize}
-  \ii \textbf{Orthonormal bases of all four subspaces:} $\vv u_1,\dots,\vv u_r$ for $\Col A$ (Thm.~9); $\vv u_{r+1},\dots,\vv u_m$ for $(\Col A)^\perp=\Nul A^{\mathsf T}$ (W5); $\vv v_{r+1},\dots,\vv v_n$ for $\Nul A$ (Prop.\ above); and $\vv v_1,\dots,\vv v_r$ for $(\Nul A)^\perp=\Row A$ (W5).
-  \ii \textbf{Reduced SVD \& pseudoinverse:} Retaining only the first $r$ columns $U_r=[\,\vv u_1\ \cdots\ \vv u_r\,]$, $V_r=[\,\vv v_1\ \cdots\ \vv v_r\,]$, and $D=\operatorname{diag}(\sigma_1,\dots,\sigma_r)$ yields the \textbf{reduced SVD} $A=U_r D V_r^{\mathsf T}$. The \textbf{pseudoinverse} is $A^+=V_r D^{-1} U_r^{\mathsf T}$. Because $V_r^{\mathsf T}V_r=I_r$ (W2), $\hat{\vv x}=A^+\vv b$ is automatically a least-squares solution of $A\vv x=\vv b$:
+  \ii \textbf{Orthonormal bases of all four subspaces:} $\vv u_1,\dots,\vv u_r$ for $\Col A$ (\ilink{thm-lay-7-9}{Thm.~9}); $\vv u_{r+1},\dots,\vv u_m$ for $(\Col A)^\perp=\Nul A^{\mathsf T}$ (\ilink{fact-W5}{W5}); $\vv v_{r+1},\dots,\vv v_n$ for $\Nul A$ (\ilink{prop-zero-sv}{Zero singular values}, (i)); and $\vv v_1,\dots,\vv v_r$ for $(\Nul A)^\perp=\Row A$ (\ilink{fact-W5}{W5}).
+  \ii \textbf{Reduced SVD \& pseudoinverse:} Retaining only the first $r$ columns $U_r=[\,\vv u_1\ \cdots\ \vv u_r\,]$, $V_r=[\,\vv v_1\ \cdots\ \vv v_r\,]$, and $D=\operatorname{diag}(\sigma_1,\dots,\sigma_r)$ yields the \textbf{reduced SVD} $A=U_r D V_r^{\mathsf T}$. The \textbf{pseudoinverse} is $A^+=V_r D^{-1} U_r^{\mathsf T}$. Because $V_r^{\mathsf T}V_r=I_r$ (\ilink{fact-W2}{W2}), $\hat{\vv x}=A^+\vv b$ is automatically a least-squares solution of $A\vv x=\vv b$:
   \[
-    A\hat{\vv x} = U_r D(V_r^{\mathsf T}V_r)D^{-1}U_r^{\mathsf T}\vv b = U_r U_r^{\mathsf T}\vv b = \proj_{\Col A}\vv b\quad\text{(W6)}.
+    A\hat{\vv x} = U_r D(V_r^{\mathsf T}V_r)D^{-1}U_r^{\mathsf T}\vv b = U_r U_r^{\mathsf T}\vv b = \proj_{\Col A}\vv b\quad\text{(\ilink{fact-W6}{W6})}.
   \]
   For the $3\times 2$ example above ($r=2$),
   \[
@@ -354,15 +392,31 @@ with equality at $\vv x=\pm\vv v_1$. Restricting further to unit vectors $\vv x\
     \implies A^+ = \frac13\begin{bmatrix}1&-1&2\\1&2&-1\end{bmatrix}.
   \]
   \ii \textbf{Invertible Matrix Theorem, concluded:} For $n\times n$ $A$, invertibility is equivalent to each of: $(\Col A)^\perp=\{\vv 0\}$; $(\Nul A)^\perp=\RR^n$; $\Row A=\RR^n$; $A$ has $n$ nonzero singular values ($\rank A=n$ in every case).
-  \ii \textbf{Condition number:} For invertible $n\times n$ $A$, $\sigma_1/\sigma_n$ is its \textbf{condition number} (ratio of largest to smallest stretch). Lay notes (without proof) that a large condition number signals sensitivity of $A^{-1}\vv b$ to small perturbations in $\vv b$.
+  \ii \textbf{Condition number:} For invertible $n\times n$ $A$, $\kappa=\sigma_1/\sigma_n$ is its \textbf{condition number} (ratio of largest to smallest stretch). It bounds how much a relative change in $\vv b$ can change the solution of $A\vv x=\vv b$: if $A\vv x=\vv b\neq\vv 0$ and $A(\vv x+\delta\vv x)=\vv b+\delta\vv b$, then
+  \[
+    \frac{\|\delta\vv x\|}{\|\vv x\|}\le\kappa\,\frac{\|\delta\vv b\|}{\|\vv b\|}.
+  \]
+  Proof: $A\,\delta\vv x=\delta\vv b$, and the minimum stretch gives $\sigma_n\|\delta\vv x\|\le\|\delta\vv b\|$; the maximum stretch gives $\|\vv b\|=\|A\vv x\|\le\sigma_1\|\vv x\|$. Dividing the first inequality by the second gives the bound. A large $\kappa$ therefore allows a small change in $\vv b$ to produce a large relative change in the solution.
 \end{itemize}
+
+\begin{howto}{How to find a singular value decomposition $A=U\Sigma V^{\mathsf T}$}\target{howto-svd}
+  \begin{steps}
+    \ii \textbf{Choose the side.} If $m\ge n$, work with the $n\times n$ matrix $A^{\mathsf T}A$ (steps 2--6). If $n>m$, it is shorter to start from $AA^{\mathsf T}$ (see Edge cases).
+    \ii \textbf{Eigenvalues.} Find the eigenvalues of $A^{\mathsf T}A$ and list them in decreasing order $\lambda_1\ge\dots\ge\lambda_n\ge 0$. Then $\sigma_i=\sqrt{\lambda_i}$, and $r$ is the number of nonzero $\sigma_i$.
+    \ii \textbf{Right singular vectors.} Find orthonormal eigenvectors $\vv v_1,\dots,\vv v_n$ in the same order, using Gram--Schmidt inside an eigenspace of dimension $\ge 2$; for $\lambda=0$ take an orthonormal basis of $\Nul A$. These are the columns of $V$.
+    \ii \textbf{Left singular vectors from the $\vv v_i$.} For $i\le r$, $\vv u_i=A\vv v_i/\sigma_i$.
+    \ii \textbf{Complete $U$.} If $r<m$, add an orthonormal basis of $\Nul A^{\mathsf T}=(\Col A)^\perp$ as $\vv u_{r+1},\dots,\vv u_m$.
+    \ii \textbf{Assemble and check.} $\Sigma$ is $m\times n$ with $\sigma_1,\dots,\sigma_r$ on the diagonal and $0$ elsewhere. Check $A\vv v_i=\sigma_i\vv u_i$ for each $i$.
+  \end{steps}
+  \textbf{Edge cases.} Zero singular values: never divide by $\sigma_i=0$; use $\Nul A$ and $\Nul A^{\mathsf T}$ (\ilink{prop-zero-sv}{Zero singular values}; \ilink{ex-svd-singular}{square singular example}, \ilink{ex-svd-double-zero}{double zero example}). Wide $A$ ($n>m$): diagonalize $AA^{\mathsf T}$ to get $\vv u_i$, then $\vv v_i=A^{\mathsf T}\vv u_i/\sigma_i$ for $\sigma_i>0$, and complete $V$ with an orthonormal basis of $\Nul A$. Repeated singular values: any orthonormal basis of that eigenspace works for the $\vv v_i$, but each $\vv u_i$ must then be computed from its own $\vv v_i$.
+\end{howto}
 
 \begin{shortcuts}
   \ii \textbf{Get $\vv u_i=A\vv v_i/\sigma_i$:} Never diagonalize $AA^{\mathsf T}$ separately when $m\ge n$; only $\vv u_{r+1},\dots,\vv u_m$ come from $\Nul A^{\mathsf T}$.
   \ii \textbf{Diagonalize the smaller of $A^{\mathsf T}A$ and $AA^{\mathsf T}$:} They share the same nonzero eigenvalues ($A^{\mathsf T}A\vv v=\lambda\vv v\neq\vv 0\implies AA^{\mathsf T}(A\vv v)=\lambda(A\vv v)$). If starting from $AA^{\mathsf T}$, get $\vv v_i=A^{\mathsf T}\vv u_i/\sigma_i$ ($\sigma_i>0$).
   \ii \textbf{Verify $AV=U\Sigma$ column-by-column:} Check $A\vv v_i=\sigma_i\vv u_i$ for every $i$.
-  \ii \textbf{$\rank A$ equals the count of nonzero $\sigma_i$ (Thm.~9).}
-  \ii \textbf{$0$-eigenvectors of $A^{\mathsf T}A$:} Solve $A\vv x=\vv 0$ directly instead of computing $A^{\mathsf T}A$ (Prop.\ (i)).
+  \ii \textbf{$\rank A$ equals the count of nonzero $\sigma_i$ (\ilink{thm-lay-7-9}{Thm.~9}).}
+  \ii \textbf{$0$-eigenvectors of $A^{\mathsf T}A$:} Solve $A\vv x=\vv 0$ directly instead of computing $A^{\mathsf T}A$ (\ilink{prop-zero-sv}{Zero singular values}, (i)).
   \ii \textbf{Extra $U$ columns in $\RR^2$:} Rotate $\vv u_1=(a,b)$ by $90^\circ$ to $\vv u_2=(-b,a)$.
   \ii \textbf{Rank-1 outer product $A=\vv a\vv b^{\mathsf T}$:} $\sigma_1=\|\vv a\|\,\|\vv b\|$, $\vv v_1=\vv b/\|\vv b\|$, $\vv u_1=\vv a/\|\vv a\|$.
   \ii \textbf{Special matrices:} Zero matrix has all $\sigma_i=0$; orthogonal matrix has all $\sigma_i=1$; $\operatorname{diag}(d_1,\dots,d_n)$ has $\sigma_i=|d_i|$ sorted in decreasing order.
@@ -393,8 +447,10 @@ Because $e^{rt}\neq 0$, $y=e^{rt}$ solves $L[y]=0$ iff $ar^2+br+c=0$, the \textb
   \[
     ay''+by'+cy=0,\qquad y(t_0)=Y_0,\qquad y'(t_0)=Y_1
   \]
-  has a unique solution valid for all $t\in(-\infty,\infty)$. (Cited here; Nagle proves this in Ch.~13.) In particular, $y(t_0)=y'(t_0)=0 \implies y\equiv 0$.
+  has a unique solution valid for all $t\in(-\infty,\infty)$. In particular, $y(t_0)=y'(t_0)=0 \implies y\equiv 0$.
 \end{theorem*}
+\noindent\emph{Proof.} Uniqueness: see \ilink{proof-uniqueness}{Uniqueness for constant-coefficient equations} in Section~3; the argument uses only calculus. Existence: once the solutions for each kind of root are found below, \ilink{proof-existence-2}{Existence for second-order equations} in Section~3 combines them with \ilink{thm-nagle-4-2}{Thm.~2}.
+
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
@@ -409,10 +465,10 @@ Because $e^{rt}\neq 0$, $y=e^{rt}$ solves $L[y]=0$ iff $ar^2+br+c=0$, the \textb
     clip=false
   ]
     % Other solutions passing through (0,1) with different slopes
-    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!28,line width=0.42pt] {exp(-3*x)*(1+5.2*x)};
-    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!28,line width=0.42pt] {exp(-3*x)*(1+3.6*x)};
-    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!28,line width=0.42pt] {exp(-3*x)*(1+0.5*x)};
-    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!28,line width=0.42pt] {exp(-3*x)*(1-1.2*x)};
+    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!50,line width=0.45pt] {exp(-3*x)*(1+5.2*x)};
+    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!50,line width=0.45pt] {exp(-3*x)*(1+3.6*x)};
+    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!50,line width=0.45pt] {exp(-3*x)*(1+0.5*x)};
+    \addplot[ink plot,domain=-0.10:1.72,samples=60,black!50,line width=0.45pt] {exp(-3*x)*(1-1.2*x)};
     % Unique solution selected by slope y'(0) = -1
     \addplot[ink plot,domain=-0.12:1.72,samples=70,black,line width=1.1pt] {exp(-3*x)*(1+2*x)};
     % Prescribed tangent segment
@@ -439,9 +495,9 @@ Because $e^{rt}\neq 0$, $y=e^{rt}$ solves $L[y]=0$ iff $ar^2+br+c=0$, the \textb
 \end{ideabox}
 \begin{proof}
   \begin{steps}
-    \ii If $y_1(\tau)\neq 0$, put $k=y_2(\tau)/y_1(\tau)$. Then $ky_1$ solves the ODE with $(ky_1)(\tau)=y_2(\tau)$ and $(ky_1)'(\tau)=y_2(\tau)y_1'(\tau)/y_1(\tau)=y_2'(\tau)$ because $W(\tau)=0$; by Thm.~1, $y_2\equiv ky_1$.
-    \ii If $y_1(\tau)=0$ and $y_1'(\tau)\neq 0$, $W(\tau)=0\implies y_2(\tau)=0$; setting $k=y_2'(\tau)/y_1'(\tau)$ matches value $0$ and slope $y_2'(\tau)$ at $\tau$, so $y_2\equiv ky_1$ by Thm.~1.
-    \ii If $y_1(\tau)=y_1'(\tau)=0$, Thm.~1 gives $y_1\equiv 0 = 0\cdot y_2$. \qedhere
+    \ii If $y_1(\tau)\neq 0$, put $k=y_2(\tau)/y_1(\tau)$. Then $ky_1$ solves the ODE with $(ky_1)(\tau)=y_2(\tau)$ and $(ky_1)'(\tau)=y_2(\tau)y_1'(\tau)/y_1(\tau)$, which equals $y_2'(\tau)$ because $W(\tau)=y_1(\tau)y_2'(\tau)-y_1'(\tau)y_2(\tau)=0$; by \ilink{thm-nagle-4-1}{Thm.~1}, $y_2\equiv ky_1$.
+    \ii If $y_1(\tau)=0$ and $y_1'(\tau)\neq 0$, $W(\tau)=0\implies y_2(\tau)=0$; setting $k=y_2'(\tau)/y_1'(\tau)$ matches value $0$ and slope $y_2'(\tau)$ at $\tau$, so $y_2\equiv ky_1$ by \ilink{thm-nagle-4-1}{Thm.~1}.
+    \ii If $y_1(\tau)=y_1'(\tau)=0$, \ilink{thm-nagle-4-1}{Thm.~1} gives $y_1\equiv 0 = 0\cdot y_2$. \qedhere
   \end{steps}
 \end{proof}
 
@@ -454,24 +510,39 @@ Because $e^{rt}\neq 0$, $y=e^{rt}$ solves $L[y]=0$ iff $ar^2+br+c=0$, the \textb
     \[
       \begin{bmatrix}y_1(t_0)&y_2(t_0)\\y_1'(t_0)&y_2'(t_0)\end{bmatrix}\begin{bmatrix}c_1\\c_2\end{bmatrix}=\begin{bmatrix}Y_0\\Y_1\end{bmatrix},
     \]
-    whose determinant $W(t_0)\neq 0$ by Lemma~1! Thus unique $(c_1,c_2)$ exist.
-    \ii Given any solution $y$, match $c_1y_1+c_2y_2$ to $(y(t_0),y'(t_0))$; by Thm.~1, $y\equiv c_1y_1+c_2y_2$. \qedhere
+    whose determinant $W(t_0)$ is nonzero: if it were $0$, \ilink{lemma-nagle-4-1}{Lemma~1} would make $y_1,y_2$ dependent. Thus unique $(c_1,c_2)$ exist.
+    \ii Given any solution $y$, match $c_1y_1+c_2y_2$ to $(y(t_0),y'(t_0))$; by \ilink{thm-nagle-4-1}{Thm.~1}, $y\equiv c_1y_1+c_2y_2$. \qedhere
   \end{steps}
 \end{proof}
 
 Consequently, for two solutions of the same ODE, $W(t)$ is either never zero (independent) or identically zero (dependent).
 
-\begin{itemize}
-  \ii \textbf{Distinct real roots ($r_1\neq r_2$):} $e^{r_1 t},e^{r_2 t}$ have non-constant ratio $e^{(r_1-r_2)t}$, hence independent; general solution $y=c_1e^{r_1 t}+c_2e^{r_2 t}$.
-  \ii \textbf{The question answered:} $r^2+r-6=(r-2)(r+3)=0\implies y=c_1e^{2t}+c_2e^{-3t}$. Matching $c_1+c_2=2$, $2c_1-3c_2=-1$ gives $c_1=c_2=1$, so $y=e^{2t}+e^{-3t}$---unique by Thms.~1--2!
-  \ii \textbf{Irrational roots:} $y''+4y'+y=0$ has $r=-2\pm\sqrt{3}$; $y(0)=0, y'(0)=1$ gives $y=\frac{1}{2\sqrt{3}}(e^{(-2+\sqrt{3})t}-e^{(-2-\sqrt{3})t})$.
-  \ii \textbf{Initial conditions at $t_0\neq 0$:} Write $y=c_1e^{r_1(t-t_0)}+c_2e^{r_2(t-t_0)}$. For $y''-y'-2y=0$, $y(1)=0,y'(1)=3$, $c_1+c_2=0, 2c_1-c_2=3\implies y=e^{2(t-1)}-e^{-(t-1)}$.
-  \ii \textbf{Repeated root ($b^2=4ac$, $r=-b/(2a)$, $2ar+b=0$):} Trying $y=te^{rt}$ gives $y'=(1+rt)e^{rt}$, $y''=(2r+r^2t)e^{rt}$, so $L[te^{rt}]=(2ar+b)e^{rt}+(ar^2+br+c)te^{rt}=0$. Since $te^{rt}/e^{rt}=t$ is non-constant, general solution $y=(c_1+c_2t)e^{rt}$.
-  \begin{example*}[Worked example: repeated root]
-    For $y''+6y'+9y=0$, $y(0)=1$, $y'(0)=-1$: $(r+3)^2=0\implies y=(c_1+c_2t)e^{-3t}$, $y'(0)=c_2-3c_1=-1$ with $c_1=1$ gives $c_2=2$ and $y=(1+2t)e^{-3t}$.
-  \end{example*}
-  \ii \textbf{Higher order preview:} An $n$th-order equation has a degree-$n$ auxiliary polynomial and $n$ independent basis solutions (Nagle Ch.~6, cited); e.g.\ $y'''-y=0$ has $r^3-1=(r-1)(r^2+r+1)$, whose complex roots $-\frac12\pm\frac{\sqrt{3}}{2}i$ follow next.
-\end{itemize}
+\noindent\textbf{Distinct real roots ($r_1\neq r_2$).} The functions $e^{r_1 t},e^{r_2 t}$ have the non-constant ratio $e^{(r_1-r_2)t}$, hence are independent, and by \ilink{thm-nagle-4-2}{Thm.~2} the general solution is $y=c_1e^{r_1 t}+c_2e^{r_2 t}$.
+
+\revisit $r^2+r-6=(r-2)(r+3)=0$, so $y=c_1e^{2t}+c_2e^{-3t}$ gives all solutions (\ilink{thm-nagle-4-2}{Thm.~2}). Matching $c_1+c_2=2$ and $2c_1-3c_2=-1$ gives $c_1=c_2=1$, so $y=e^{2t}+e^{-3t}$. Two conditions, a value and a slope at the same time, single out one solution, and \ilink{thm-nagle-4-1}{Thm.~1} shows no other solution exists.
+
+\begin{example*}[Irrational roots]\target{ex-irrational-roots}
+  $y''+4y'+y=0$ has $r=-2\pm\sqrt{3}$. The conditions $y(0)=0$, $y'(0)=1$ give $c_1+c_2=0$ and $(-2+\sqrt3)c_1+(-2-\sqrt3)c_2=1$, so $c_1=-c_2=\frac{1}{2\sqrt3}$ and
+  \[
+    y=\frac{1}{2\sqrt{3}}\bigl(e^{(-2+\sqrt{3})t}-e^{(-2-\sqrt{3})t}\bigr).
+  \]
+\end{example*}
+
+\begin{example*}[Initial conditions at $t_0\neq 0$]\target{ex-shifted-ic}
+  Write $y=c_1e^{r_1(t-t_0)}+c_2e^{r_2(t-t_0)}$; these are also solutions, and at $t=t_0$ the exponentials equal $1$. For $y''-y'-2y=0$, $y(1)=0$, $y'(1)=3$: $r=2,-1$, and $c_1+c_2=0$, $2c_1-c_2=3$, so $c_1=1$, $c_2=-1$ and $y=e^{2(t-1)}-e^{-(t-1)}$.
+\end{example*}
+
+\noindent\textbf{Repeated root ($b^2=4ac$, $r=-b/(2a)$, $2ar+b=0$).} Trying $y=te^{rt}$ gives $y'=(1+rt)e^{rt}$, $y''=(2r+r^2t)e^{rt}$, so
+\[
+  L[te^{rt}]=(2ar+b)e^{rt}+(ar^2+br+c)te^{rt}=0.
+\]
+Since $te^{rt}/e^{rt}=t$ is not constant, the general solution is $y=(c_1+c_2t)e^{rt}$.
+
+\begin{example*}[A repeated root with initial conditions]\target{ex-repeated-root}
+  For $y''+6y'+9y=0$, $y(0)=1$, $y'(0)=-1$: $(r+3)^2=0$, so $y=(c_1+c_2t)e^{-3t}$. Then $y(0)=c_1=1$ and $y'(0)=c_2-3c_1=-1$, so $c_2=2$ and $y=(1+2t)e^{-3t}$.
+\end{example*}
+
+\noindent\textbf{Higher order.} For $a_ny^{(n)}+\dots+a_1y'+a_0y=0$ the same substitution gives $L[e^{rt}]=p(r)e^{rt}$ with the degree-$n$ auxiliary polynomial $p$, so $e^{rt}$ is a solution exactly when $p(r)=0$. Uniqueness holds for every order (\ilink{proof-uniqueness}{Uniqueness for constant-coefficient equations}, Section~3), and the general solution of the example $y'''-y=0$, whose auxiliary polynomial is $r^3-1=(r-1)(r^2+r+1)$ with complex roots $-\frac12\pm\frac{\sqrt{3}}{2}i$, is found in \ilink{proof-third-order}{Section~3} once complex roots are treated below.
 
 \begin{shortcuts}
   \ii \textbf{Distinct roots IVP at $t_0=0$:} $c_1+c_2=y(0)$, $r_1c_1+r_2c_2=y'(0)$ (use $e^{r(t-t_0)}$ for $t_0\neq 0$).
@@ -491,11 +562,15 @@ Consequently, for two solutions of the same ODE, $W(t)$ is either never zero (in
   The ODE $y''+y=0$ is solved by $\cos t$ and $\sin t$, yet its auxiliary equation $r^2+1=0$ has roots $\pm i$. How do complex roots produce real solutions? Solve $y''+4y'+13y=0$ with $y(0)=2,\ y'(0)=-1$.
 \end{qbox}
 
-\noindent\textbf{Euler's formula.} Substituting $x=i\theta$ into the Maclaurin series of $e^x$ (W7) groups even powers into $\cos\theta$ and odd powers into $i\sin\theta$:
+\noindent\textbf{Euler's formula.} Substituting $x=i\theta$ into the Maclaurin series of $e^x$ (\ilink{fact-W7}{W7}) groups even powers into $\cos\theta$ and odd powers into $i\sin\theta$:
 \[
   e^{i\theta} = \left(1-\frac{\theta^2}{2!}+\frac{\theta^4}{4!}-\dots\right) + i\left(\theta-\frac{\theta^3}{3!}+\frac{\theta^5}{5!}-\dots\right) = \cos\theta+i\sin\theta.
 \]
-Hence for real $\alpha,\beta$, $e^{(\alpha+i\beta)t}=e^{\alpha t}(\cos\beta t+i\sin\beta t)$.
+This computation motivates the definition, for real $\alpha,\beta$,
+\[
+  e^{(\alpha+i\beta)t}=e^{\alpha t}(\cos\beta t+i\sin\beta t),
+\]
+and the next paragraph checks that this function has the derivative property that made $e^{rt}$ useful.
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.6]
@@ -512,31 +587,35 @@ Hence for real $\alpha,\beta$, $e^{(\alpha+i\beta)t}=e^{\alpha t}(\cos\beta t+i\
   \node[font=\scriptsize] at (0.42,0.16) {\InkLabel{$\theta$}};
   \node[font=\scriptsize,below=3pt] at (0.669,0) {\InkLabel{$\cos\theta$}};
   \node[font=\scriptsize,left=3pt] at (0,0.743) {\InkLabel{$\sin\theta$}};
-  \node[font=\scriptsize,above right=2pt,text=black!65] at (1.0,0) {\InkLabel{$1$}};
+  \node[font=\scriptsize,above right=2pt,text=black] at (1.0,0) {\InkLabel{$1$}};
 \end{tikzpicture}
 \figcap{Euler's formula places $e^{i\theta}=\cos\theta+i\sin\theta$ at angle $\theta$ on the complex unit circle; $e^{(\alpha+i\beta)t}$ scales it by $e^{\alpha t}$ while rotating at angular speed $\beta$.}
 \end{fig}
 
-\noindent\textbf{Complex differentiation still works:} Applying the product rule (W7),
+\noindent\textbf{Complex differentiation still works:} Applying the product rule (\ilink{fact-W7}{W7}) to the real and imaginary parts,
 \[
   \frac{d}{dt}\bigl[e^{\alpha t}(\cos\beta t+i\sin\beta t)\bigr] = (\alpha+i\beta)e^{(\alpha+i\beta)t},
 \]
-so when $b^2-4ac<0$, $r=\alpha\pm i\beta$ ($\alpha=-\frac{b}{2a},\ \beta=\frac{\sqrt{4ac-b^2}}{2a}$) gives complex solution $e^{(\alpha+i\beta)t}$.
+so when $b^2-4ac<0$, $r=\alpha\pm i\beta$ with $\alpha=-b/(2a)$ and $\beta=\sqrt{4ac-b^2}/(2a)$ gives the complex solution $e^{(\alpha+i\beta)t}$.
 
 \begin{theorem*}[Real solutions from a complex solution (Nagle 4.3, Lemma~2)]\target{lemma-nagle-4-2}
   If $z(t)=u(t)+iv(t)$ solves $ay''+by'+cy=0$ with real $a,b,c$, then its real part $u$ and imaginary part $v$ are both real solutions.
 \end{theorem*}
 \begin{proof}
-  $0=az''+bz'+cz=(au''+bu'+cu)+i(av''+bv'+cv)$. Both parenthesized expressions are real since $a,b,c,u,v$ are real; by (W4), both vanish.
+  Since $z'=u'+iv'$ and $z''=u''+iv''$,
+  \[
+    0=az''+bz'+cz=(au''+bu'+cu)+i(av''+bv'+cv).
+  \]
+  Both parenthesized expressions are real since $a,b,c,u,v$ are real, and a complex number is $0$ only if its real and imaginary parts are $0$ (\ilink{fact-W4}{W4}); so both vanish. \qedhere
 \end{proof}
 
-Applying Lemma~2 to $e^{(\alpha+i\beta)t}=e^{\alpha t}\cos\beta t+i\,e^{\alpha t}\sin\beta t$ yields two real solutions with $W(0)=1\cdot\beta-\alpha\cdot 0=\beta\neq 0$, giving the real general solution
+Applying \ilink{lemma-nagle-4-2}{Lemma~2} to $e^{(\alpha+i\beta)t}=e^{\alpha t}\cos\beta t+i\,e^{\alpha t}\sin\beta t$ yields two real solutions with $W(0)=1\cdot\beta-\alpha\cdot 0=\beta\neq 0$, giving the real general solution
 \[
   y(t) = e^{\alpha t}(c_1\cos\beta t+c_2\sin\beta t)
 \]
 (equivalently $d_1e^{(\alpha+i\beta)t}+d_2e^{(\alpha-i\beta)t}$ with complex constants via Euler's formula, Nagle Ex.~1).
 
-\medskip\noindent\textbf{The question answered.} For $y''+4y'+13y=0$, $r=-2\pm 3i$ gives $y=e^{-2t}(c_1\cos 3t+c_2\sin 3t)$. With $y(0)=c_1=2$ and $y'(0)=-2c_1+3c_2=-1$, we get $c_2=1$, so $y=e^{-2t}(2\cos 3t+\sin 3t)$, hitting $y=0$ first at $3t=\pi-\arctan 2$ ($t\approx 0.68$).
+\revisit A complex root gives the complex solution $e^{(\alpha+i\beta)t}$, and \ilink{lemma-nagle-4-2}{Lemma~2} turns it into the two real solutions $e^{\alpha t}\cos\beta t$ and $e^{\alpha t}\sin\beta t$; for $y''+y=0$ ($\alpha=0$, $\beta=1$) these are $\cos t$ and $\sin t$. For $y''+4y'+13y=0$, $r=-2\pm 3i$ gives $y=e^{-2t}(c_1\cos 3t+c_2\sin 3t)$. With $y(0)=c_1=2$ and $y'(0)=-2c_1+3c_2=-1$, we get $c_2=1$, so $y=e^{-2t}(2\cos 3t+\sin 3t)$, hitting $y=0$ first at $3t=\pi-\arctan 2$ ($t\approx 0.68$).
 
 \begin{fig}
 \begin{tikzpicture}[scale=1.0]
@@ -598,22 +677,36 @@ Applying Lemma~2 to $e^{(\alpha+i\beta)t}=e^{\alpha t}\cos\beta t+i\,e^{\alpha t
 \figcap{(a) $y=e^{-2t}(2\cos 3t+\sin 3t)$ oscillates at angular frequency $\beta=3$ inside the dotted envelope $\pm\sqrt{5}\,e^{-2t}$. (b) Three damping regimes for $y''+by'+y=0$ with $y(0)=0,\ y'(0)=1$.}
 \end{fig}
 
-\needspace{5\baselineskip}\noindent\textbf{The mass--spring model ($my''+by'+ky=0$, $m>0$, W8).} Roots satisfy $r_1+r_2=-b/m$, $r_1r_2=k/m$:
+\Needspace{6\baselineskip}\noindent\textbf{The mass--spring model ($my''+by'+ky=0$, $m>0$, \ilink{fact-W8}{W8}).} Roots satisfy $r_1+r_2=-b/m$, $r_1r_2=k/m$:
 \begin{itemize}
   \ii \textbf{Oscillation ($b^2<4mk$):} Decay $\alpha=-b/(2m)$, angular frequency $\beta=\sqrt{4mk-b^2}/(2m)$ ($b=0$ gives undamped oscillation).
-  \ii \textbf{No oscillation ($b^2\ge 4mk$):} Strictly monotone exponential or linear factor vanishes at most once: crosses equilibrium at most once.
-  \ii \textbf{Long-run behavior:} If $b,k>0$, every solution $\to 0$. If $k<0$, one positive root gives growth (e.g.\ $y''+y'-6y=0$). If $b<0<k$, real parts are positive and damping adds energy (Nagle Ex.~4).
+  \ii \textbf{No oscillation ($b^2\ge 4mk$):} the solution is $e^{r_2t}(c_1e^{(r_1-r_2)t}+c_2)$ or $e^{rt}(c_1+c_2t)$; the factor in parentheses is strictly monotone (or constant), so it is $0$ at most once, and the mass crosses equilibrium at most once.
+  \ii \textbf{Long-run behavior:} If $b,k>0$, every solution $\to 0$: real roots have $r_1r_2=k/m>0$ and $r_1+r_2=-b/m<0$, so both are negative, and complex roots have real part $-b/(2m)<0$. If $k<0$, $r_1r_2<0$, so one root is positive and gives growth (e.g.\ $y''+y'-6y=0$). If $b<0<k$, $r_1r_2>0$ and $r_1+r_2>0$ (or real part $-b/(2m)>0$), so the solutions grow: the negative damping adds energy (Nagle Ex.~4).
   \ii \textbf{Three damping regimes ($m,k,b>0$):} \textbf{underdamped} ($b^2<4mk$), \textbf{critically damped} ($b^2=4mk$, $(c_1+c_2t)e^{rt}$), \textbf{overdamped} ($b^2>4mk$, two negative real roots), compared above for $m=k=1$.
-  \ii \textbf{Series $LRC$ circuit:} Kirchhoff's law (cited) gives $Lq''+Rq'+\frac1C q=0$, identical to $my''+by'+ky=0$ with $(L,R,1/C)$ replacing $(m,b,k)$.
+  \ii \textbf{Series $LRC$ circuit:} Kirchhoff's voltage law (the voltage drops $Lq''$, $Rq'$ and $q/C$ around the loop sum to zero) gives $Lq''+Rq'+\frac1C q=0$, identical to $my''+by'+ky=0$ with $(L,R,1/C)$ replacing $(m,b,k)$.
 \end{itemize}
+
+\begin{howto}{How to solve $ay''+by'+cy=0$ with $y(t_0)=Y_0$, $y'(t_0)=Y_1$}\target{howto-second-order}
+  \begin{steps}
+    \ii \textbf{Auxiliary equation.} Solve $ar^2+br+c=0$; the sign of $b^2-4ac$ decides the case.
+    \ii \textbf{Two independent solutions.} Distinct real roots: $e^{r_1t}$, $e^{r_2t}$. Double root $r=-b/(2a)$: $e^{rt}$, $te^{rt}$. Complex roots $\alpha\pm i\beta$ with $\alpha=-b/(2a)$, $\beta=\sqrt{4ac-b^2}/(2a)$: $e^{\alpha t}\cos\beta t$, $e^{\alpha t}\sin\beta t$.
+    \ii \textbf{General solution.} $y=c_1y_1+c_2y_2$ (\ilink{thm-nagle-4-2}{Thm.~2}).
+    \ii \textbf{Initial conditions.} Differentiate $y$, set $t=t_0$ in $y$ and $y'$, and solve the $2\times 2$ system for $c_1,c_2$. For $t_0\neq 0$ it is easier to use $t-t_0$ in place of $t$ in the solutions (\ilink{ex-shifted-ic}{example}).
+  \end{steps}
+  \textbf{Edge cases.} A root $r=0$ (when $c=0$) gives the constant solution $e^{0t}=1$: $y''+2y'=0$ has $y=c_1+c_2e^{-2t}$. If $b=0$ and $c/a<0$ the roots are $\pm\sqrt{-c/a}$; if $b=0$ and $c/a>0$ they are $\pm i\sqrt{c/a}$ (pure oscillation). A first-order equation $ay'+by=0$ has the one root $-b/a$ and needs one initial condition.
+\end{howto}
 
 \begin{shortcuts}
   \ii \textbf{Read $\alpha,\beta$ from coefficients:} $\alpha=-b/(2a)$, $\beta=\sqrt{4ac-b^2}/(2a)$ directly without complex arithmetic.
   \ii \textbf{Initial conditions at $t_0=0$:} $c_1=y(0)$, $c_2=(y'(0)-\alpha y(0))/\beta$.
   \ii \textbf{Quick check of $\alpha\pm i\beta$:} Verify $r^2-2\alpha r+(\alpha^2+\beta^2)=0$ matches $\frac{1}{a}(ar^2+br+c)=0$.
-  \ii \textbf{Amplitude--phase form:} $c_1\cos\beta t+c_2\sin\beta t=R\cos(\beta t-\varphi)$ with $R=\sqrt{c_1^2+c_2^2}$, $\cos\varphi=c_1/R$, $\sin\varphi=c_2/R$ (by W7), bounding $|y|\le Re^{\alpha t}$.
+  \ii \textbf{Amplitude--phase form:} $c_1\cos\beta t+c_2\sin\beta t=R\cos(\beta t-\varphi)$ with $R=\sqrt{c_1^2+c_2^2}$, $\cos\varphi=c_1/R$, $\sin\varphi=c_2/R$ (by \ilink{fact-W7}{W7}), bounding $|y|\le Re^{\alpha t}$.
   \ii \textbf{Identify damping without finding roots:} Compare $b^2$ with $4mk$ (or $R^2$ with $4L/C$).
-  \ii \textbf{Higher order example:} $y'''-y=0\implies r=1,\ -\frac12\pm\frac{\sqrt{3}}{2}i\implies y=c_1e^t+e^{-t/2}\bigl(c_2\cos\frac{\sqrt{3}}{2}t+c_3\sin\frac{\sqrt{3}}{2}t\bigr)$.
+  \ii \textbf{Higher order example:} for $y'''-y=0$ the roots are $r=1,\ -\frac12\pm\frac{\sqrt{3}}{2}i$, and the general solution is
+  \[
+    y=c_1e^t+e^{-t/2}\Bigl(c_2\cos\frac{\sqrt{3}}{2}t+c_3\sin\frac{\sqrt{3}}{2}t\Bigr)
+  \]
+  (\ilink{proof-third-order}{proof in Section~3}).
 \end{shortcuts}
 
 \begin{trapbox}
@@ -622,10 +715,65 @@ Applying Lemma~2 to $e^{(\alpha+i\beta)t}=e^{\alpha t}\cos\beta t+i\,e^{\alpha t
   \ii \textbf{$\beta$ sets frequency, $\alpha$ sets decay/growth:} Zeros are $\pi/\beta$ apart regardless of $\alpha$.
 \end{trapbox}
 
+\Needspace{26\baselineskip}
+\section{Proofs of the facts used}\target{sec-proofs}
+
+\subsection{Uniqueness for constant-coefficient equations}\target{proof-uniqueness}
+\begin{proposition*}[Uniqueness for constant-coefficient equations]\target{prop-uniqueness}
+  Let $a_n\neq 0,a_{n-1},\dots,a_0$ be real constants. If $y$ solves $a_ny^{(n)}+\dots+a_1y'+a_0y=0$ on $\RR$ and $y(t_0)=y'(t_0)=\dots=y^{(n-1)}(t_0)=0$, then $y\equiv 0$. Consequently two solutions with the same values of $y,y',\dots,y^{(n-1)}$ at $t_0$ are equal (apply this to their difference). For $n=2$ this is the uniqueness part of \ilink{thm-nagle-4-1}{Thm.~1}.
+\end{proposition*}
+\begin{ideabox}
+  Measure the size of the state at time $t$ by $E(t)=y^2+(y')^2+\dots+(y^{(n-1)})^2$, which is $0$ exactly when all these values are $0$. The equation expresses $y^{(n)}$ through the lower derivatives, so $E$ cannot change faster than a fixed multiple of itself: $|E'|\le KE$. A quantity that starts at $0$ and grows at most in proportion to its own size stays $0$.
+\end{ideabox}
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{The derivative of $E$.} $E'=2yy'+2y'y''+\dots+2y^{(n-1)}y^{(n)}$, and $y^{(n)}=-\sum_{k<n}(a_k/a_n)y^{(k)}$.
+    \ii \textbf{The bound $|E'|\le KE$.} Use $|2uv|\le u^2+v^2$, which is $(|u|-|v|)^2\ge 0$. Each term $2y^{(k)}y^{(k+1)}$ with $k+1<n$ has absolute value at most $(y^{(k)})^2+(y^{(k+1)})^2\le 2E$. The last term satisfies
+    \[
+      |2y^{(n-1)}y^{(n)}|\le\sum_{k<n}\Bigl|\frac{a_k}{a_n}\Bigr|\,\bigl|2y^{(n-1)}y^{(k)}\bigr|\le\sum_{k<n}\Bigl|\frac{a_k}{a_n}\Bigr|\cdot 2E.
+    \]
+    So $|E'|\le KE$ with $K=2(n-1)+2\sum_{k<n}|a_k/a_n|$.
+    \ii \textbf{For $t\ge t_0$.} $(e^{-Kt}E)'=e^{-Kt}(E'-KE)\le 0$, so $e^{-Kt}E$ is nonincreasing (\ilink{fact-W7}{W7}). It equals $0$ at $t_0$ and is never negative, so it is $0$ for $t\ge t_0$.
+    \ii \textbf{For $t\le t_0$.} $(e^{Kt}E)'=e^{Kt}(E'+KE)\ge 0$, so $e^{Kt}E$ is nondecreasing; it is $\ge 0$ and equals $0$ at $t_0$, so it is $0$ for $t\le t_0$.
+    \ii Hence $E\equiv 0$, and in particular $y\equiv 0$. \qedhere
+  \end{steps}
+\end{proof}
+
+\subsection{Existence for second-order equations}\target{proof-existence-2}
+This proves the existence part of \ilink{thm-nagle-4-1}{Thm.~1}: $ay''+by'+cy=0$, $y(t_0)=Y_0$, $y'(t_0)=Y_1$ has a solution on $\RR$.
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{Two solutions with $W(0)\neq 0$.} In each case of roots we found two solutions on $\RR$:
+    \begin{itemize}
+      \ii distinct real roots: $e^{r_1t},e^{r_2t}$, with $W(0)=r_2-r_1\neq 0$;
+      \ii a double root: $e^{rt},te^{rt}$, with $W(0)=1\cdot 1-r\cdot 0=1$;
+      \ii complex roots: $e^{\alpha t}\cos\beta t,e^{\alpha t}\sin\beta t$, with $W(0)=\beta\neq 0$ (after \ilink{lemma-nagle-4-2}{Lemma~2}).
+    \end{itemize}
+    \ii \textbf{They are independent.} If $c_1y_1+c_2y_2\equiv 0$, then this function and its derivative vanish at $0$, so the matrix with columns $(y_i(0),y_i'(0))$ sends $(c_1,c_2)$ to $\vv 0$; its determinant $W(0)$ is nonzero, so $c_1=c_2=0$.
+    \ii \textbf{The IVP.} By \ilink{thm-nagle-4-2}{Thm.~2}, whose proof uses only \ilink{lemma-nagle-4-1}{Lemma~1} and uniqueness, there are constants with $c_1y_1+c_2y_2$ solving the IVP at any $t_0$. \qedhere
+  \end{steps}
+\end{proof}
+
+\subsection{The general solution of $y'''-y=0$}\target{proof-third-order}
+We prove that every solution of $y'''-y=0$ is
+\[
+  y=c_1e^t+e^{-t/2}\Bigl(c_2\cos\frac{\sqrt3}{2}t+c_3\sin\frac{\sqrt3}{2}t\Bigr).
+\]
+\begin{proof}
+  \begin{steps}
+    \ii \textbf{They are solutions.} $p(r)=r^3-1$ has the roots $1$ and $-\frac12\pm\frac{\sqrt3}{2}i$, so $e^t$ and the complex function $e^{(-\frac12+\frac{\sqrt3}{2}i)t}$ solve the equation. The argument of \ilink{lemma-nagle-4-2}{Lemma~2} works for any order (split $L[z]=0$ into real and imaginary parts), so the real and imaginary parts $y_2=e^{-t/2}\cos\frac{\sqrt3}{2}t$ and $y_3=e^{-t/2}\sin\frac{\sqrt3}{2}t$ are solutions.
+    \ii \textbf{Initial values.} At $t=0$ the values of $(y,y',y'')$ are $(1,1,1)$ for $e^t$, $(1,-\tfrac12,-\tfrac12)$ for $y_2$, and $(0,\tfrac{\sqrt3}{2},-\tfrac{\sqrt3}{2})$ for $y_3$, so
+    \[
+      \det\begin{bmatrix}1&1&0\\1&-\frac12&\frac{\sqrt3}{2}\\1&-\frac12&-\frac{\sqrt3}{2}\end{bmatrix}=\frac{3\sqrt3}{2}\neq 0.
+    \]
+    \ii \textbf{Every solution.} Given a solution $y$, this invertible matrix lets us choose $c_1,c_2,c_3$ so that $c_1e^t+c_2y_2+c_3y_3$ has the same $y(0),y'(0),y''(0)$. By \ilink{prop-uniqueness}{Uniqueness for constant-coefficient equations} ($n=3$), the two are equal. \qedhere
+  \end{steps}
+\end{proof}
+
 \section{Homework this week}
 \begin{itemize}
   \ii \textbf{HW11, Nagle Section 4.3:} 3, 8, 15, 17, 24, 25, 28, 31(a,b,d), 34 (complex roots \& mass--spring/RLC).
-  \ii \textbf{HW10, Lay Section 7.1:} \#4, \#6 (check $A^{\mathsf T}=A$ with signs); \#11 (orthonormal columns $\implies U^{-1}=U^{\mathsf T}$); \#18 (distinct eigenvalues $\implies$ orthogonal by Thm.~1); \#22 (each eigenspace dim~$2$, Gram--Schmidt inside each); \#23, \#24 ($A\vv v$ checks eigenvalue, last eigenspace by orthogonality); \#25, \#28 (transpose $(PDP^{\mathsf T})^{\mathsf T}$); \#30, \#32 (Thm.~1 \& spectral theorem).
+  \ii \textbf{HW10, Lay Section 7.1:} \#4, \#6 (check $A^{\mathsf T}=A$ with signs); \#11 (orthonormal columns $\implies U^{-1}=U^{\mathsf T}$); \#18 (distinct eigenvalues $\implies$ orthogonal by \ilink{thm-lay-7-1}{Thm.~1}); \#22 (each eigenspace dim~$2$, Gram--Schmidt inside each); \#23, \#24 ($A\vv v$ checks eigenvalue, last eigenspace by orthogonality); \#25, \#28 (transpose $(PDP^{\mathsf T})^{\mathsf T}$); \#30, \#32 (\ilink{thm-lay-7-1}{Thm.~1} \& \ilink{thm-lay-7-2}{Spectral Theorem}).
   \ii \textbf{HW10, Lay Section 7.4:} \#1, \#3 (singular values in decreasing order from $A^{\mathsf T}A$); \#7 ($2\times 2$ SVD); \#9 ($3\times 2$ SVD, $\vv u_3\in\Nul A^{\mathsf T}$); \#14 ($\max\|\vv{Ax}\|=\sigma_1$ at $\vv v_1$).
   \ii \textbf{HW10, Nagle Section 4.2:} 1 (distinct real roots); 9 (double root $te^{rt}$); 14 ($r=0\implies e^{0t}=1$); 20 (repeated root shifted to $t-1$); 21 ($ar+b=0$); 28, 30, 31 (test constant ratio $y_2/y_1$; use $\sec^2t=1+\tan^2t$).
 \end{itemize}
@@ -650,7 +798,10 @@ Applying Lemma~2 to $e^{(\alpha+i\beta)t}=e^{\alpha t}\cos\beta t+i\,e^{\alpha t
   \textbf{P4.}\ Let $A$ be symmetric with $A^2=0$. Prove that $A=0$.
 \end{prob}
 \begin{prob}\target{prob-P5}
-  \textbf{P5.}\ Find a singular value decomposition of $A=\begin{bmatrix}1&1\\-2&2\end{bmatrix}$.
+  \textbf{P5.}\ Find a singular value decomposition of
+  \[
+    A=\begin{bmatrix}1&1\\-2&2\end{bmatrix}.
+  \]
 \end{prob}
 \begin{prob}\target{prob-P6}
   \textbf{P6.}\ Find a singular value decomposition of
